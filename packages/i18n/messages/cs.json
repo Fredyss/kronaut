@@ -254,6 +254,7 @@
   "compose_error_empty": "Napište text, nebo přidejte obrázek.",
   "compose_error_when_missing": "Vyberte datum a čas.",
   "compose_error_upload": "Obrázek {position} se nepodařilo nahrát.",
+  "compose_error_ai_marked": "Obrázek {position} je v tomto pracovním prostoru už označený jako vytvořený pomocí AI a toto označení zatím nejde odstranit. Pokud ho chcete zveřejnit, zaškrtněte „Obrázek {position} je vytvořený pomocí AI“, nebo použijte jiný obrázek.",
   "compose_error_fix": "Příspěvek zatím nelze odeslat. Opravte následující a zkuste to znovu:",
   "compose_error_conflict": "Příspěvek se mezitím změnil. Zkuste to znovu.",
   "compose_issue_on_channel": "{channel}: {message}",

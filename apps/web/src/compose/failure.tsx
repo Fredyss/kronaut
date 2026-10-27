@@ -2,7 +2,7 @@ import { ApiRequestError } from '@kronaut/sdk';
 import { type Channel, errorCode, errorDetails, errorStatus } from '../api.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { destinationIndex, issueMessage } from './issues.ts';
-import type { SubmitError, SubmitTarget } from './submit.ts';
+import { MarkedImageError, type SubmitError, type SubmitTarget } from './submit.ts';
 
 const VARIANT_PATH = /(?:^|\.)variants\.(\d+)(?:\.|$)/;
 
@@ -25,6 +25,9 @@ function uploadHeadline(error: SubmitError, nameOf: ChannelName): string {
 
 function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
   const cause = error.cause;
+  if (cause instanceof MarkedImageError) {
+    return m.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
+  }
   if (error.step === 'upload') return uploadHeadline(error, nameOf);
   if (errorDetails(cause).length > 0) return m.compose_error_fix();
   if (errorCode(cause) === 'approval_required') return m.compose_error_approval_required();
@@ -34,7 +37,7 @@ function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
 }
 
 function uploadReason(error: SubmitError): string | null {
-  if (error.step !== 'upload') return null;
+  if (error.step !== 'upload' || error.cause instanceof MarkedImageError) return null;
   const status = errorStatus(error.cause);
   if (status === 415) return issueMessage('mime_unsupported');
   if (status === 413) return issueMessage('file_too_large');

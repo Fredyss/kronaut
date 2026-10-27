@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { channel, MEDIA_ID, mount, policy, post } from './compose-testing.tsx';
+import { channel, MEDIA_ASSET, MEDIA_ID, mount, policy, post } from './compose-testing.tsx';
 
 vi.mock('./compose/editor.tsx', async () => ({
   default: (await import('./compose-testing.tsx')).MockEditor,
@@ -77,6 +77,24 @@ describe('composer', () => {
       dataBase64: '/9j/4A==',
       aiGenerated: true,
     });
+  });
+
+  it('stops before attaching an image the workspace already marked AI-generated', async () => {
+    const { router, mutations } = mount((call) =>
+      call.path.endsWith('/media')
+        ? Response.json({ ...MEDIA_ASSET, aiGenerated: true }, { status: 201 })
+        : undefined,
+    );
+    await fillIn();
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    expect(await screen.findByText(/Image 1 is already marked as AI-generated/)).toBeTruthy();
+    expect(mutations().map((c) => c.path.split('/').at(-1))).toEqual(['media']);
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Image 1 is AI-generated' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    expect(mutations()[1]?.body).toMatchObject({ aiGenerated: true });
   });
 
   it('retries only the schedule, with the same key, after a 503', async () => {

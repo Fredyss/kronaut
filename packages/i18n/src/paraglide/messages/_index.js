@@ -142,6 +142,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
@@ -2520,6 +2521,21 @@ export const compose_date = /** @type {((inputs?: Compose_DateInputs, options?: 
 	if (locale === "sk") return __sk.compose_date(inputs)
 	if (locale === "cs") return __cs.compose_date(inputs)
 	return __en.compose_date(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Image {position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image {position} is AI-generated” to post it, ..." |
+*
+* @param {Compose_Error_Ai_MarkedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_ai_marked = /** @type {((inputs: Compose_Error_Ai_MarkedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Ai_MarkedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_ai_marked(inputs)
+	if (locale === "cs") return __cs.compose_error_ai_marked(inputs)
+	return __en.compose_error_ai_marked(inputs)
 });
 /**
 * | output |

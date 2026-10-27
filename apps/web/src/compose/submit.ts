@@ -57,6 +57,13 @@ export interface FailedImage {
 
 export type SubmitStep = 'upload' | 'create' | 'update' | 'schedule' | 'request';
 
+export class MarkedImageError extends Error {
+  constructor() {
+    super('the image is already marked as AI-generated');
+    this.name = 'MarkedImageError';
+  }
+}
+
 export class SubmitError extends Error {
   readonly step: SubmitStep;
   readonly destinations: readonly SubmitTarget[];
@@ -95,10 +102,15 @@ interface NextDraft {
   readonly fingerprint: string;
 }
 
+interface UploadEntry {
+  readonly key: string;
+  uploaded: { readonly id: string; readonly marked: boolean } | null;
+}
+
 interface Submitter {
   readonly client: Client;
   readonly workspaceId: string;
-  readonly uploads: Map<string, { readonly key: string; mediaId: string | null }>;
+  readonly uploads: Map<string, UploadEntry>;
   create: PendingCreate | null;
   update: Keyed | null;
   draft: { readonly fingerprint: string; post: Post } | null;
@@ -113,26 +125,32 @@ async function upload(
   targets: readonly SubmitTarget[],
 ) {
   const cacheKey = image.aiGenerated ? `${image.id}:ai` : image.id;
-  const entry = s.uploads.get(cacheKey) ?? { key: crypto.randomUUID(), mediaId: null };
+  const entry = s.uploads.get(cacheKey) ?? { key: crypto.randomUUID(), uploaded: null };
   s.uploads.set(cacheKey, entry);
-  if (entry.mediaId !== null) return entry.mediaId;
   try {
-    const filename = image.file.name === '' ? {} : { filename: image.file.name.slice(0, 255) };
-    const { data } = await mediaUpload({
-      client: s.client,
-      path: { workspaceId: s.workspaceId },
-      body: {
-        ...filename,
-        dataBase64: await toBase64(image.file),
-        ...(image.aiGenerated ? { aiGenerated: true } : {}),
-      },
-      headers: { 'Idempotency-Key': entry.key },
-    });
-    entry.mediaId = data.id;
-    return data.id;
+    entry.uploaded ??= await send(s, image, entry.key);
   } catch (error) {
     throw new SubmitError('upload', error, targets, failed);
   }
+  if (entry.uploaded.marked && !image.aiGenerated) {
+    throw new SubmitError('upload', new MarkedImageError(), targets, failed);
+  }
+  return entry.uploaded.id;
+}
+
+async function send(s: Submitter, image: ComposeImage, key: string) {
+  const filename = image.file.name === '' ? {} : { filename: image.file.name.slice(0, 255) };
+  const { data } = await mediaUpload({
+    client: s.client,
+    path: { workspaceId: s.workspaceId },
+    body: {
+      ...filename,
+      dataBase64: await toBase64(image.file),
+      ...(image.aiGenerated ? { aiGenerated: true } : {}),
+    },
+    headers: { 'Idempotency-Key': key },
+  });
+  return { id: data.id, marked: data.aiGenerated };
 }
 
 async function uploadMedia(s: Submitter, input: ComposeInput, targets: readonly SubmitTarget[]) {

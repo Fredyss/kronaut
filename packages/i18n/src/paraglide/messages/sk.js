@@ -140,6 +140,7 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
@@ -984,6 +985,10 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 
 export const compose_date = /** @type {(inputs: Compose_DateInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Dátum`)
+};
+
+export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obrázok ${i?.position} je v tomto pracovnom priestore už označený ako vytvorený pomocou AI a toto označenie zatiaľ nejde odstrániť. Ak ho chcete uverejniť, zaškrtnite „Obrázok ${i?.position} je vytvorený pomocou AI“, alebo použite iný obrázok.`)
 };
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {

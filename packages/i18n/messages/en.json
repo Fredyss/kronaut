@@ -238,6 +238,7 @@
   "compose_error_empty": "Write some text or add an image.",
   "compose_error_when_missing": "Pick a date and a time.",
   "compose_error_upload": "Image {position} couldn't be uploaded.",
+  "compose_error_ai_marked": "Image {position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image {position} is AI-generated” to post it, or use a different image.",
   "compose_error_fix": "The post can't go out yet. Fix the following and try again:",
   "compose_error_conflict": "The post changed in the meantime. Try again.",
   "compose_issue_on_channel": "{channel}: {message}",

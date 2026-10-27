@@ -140,6 +140,7 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
@@ -972,6 +973,10 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 
 export const compose_date = /** @type {(inputs: Compose_DateInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Date`)
+};
+
+export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Image ${i?.position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image ${i?.position} is AI-generated” to post it, or use a different image.`)
 };
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
