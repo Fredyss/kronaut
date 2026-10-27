@@ -202,7 +202,7 @@ export async function runMediaProcess(
     }
     throw error;
   }
-  if (result.outcome !== 'skipped') await deps.staging.remove(key);
+  await deps.staging.remove(key);
   logger.info(
     { outcome: result.outcome, reason: result.reason ?? null },
     'processed an uploaded video',
