@@ -45,9 +45,15 @@ export const BLUESKY_TEXT = [
   { counting: 'utf8-bytes', max: 3000 },
 ];
 export const RULES: Record<string, unknown[]> = {
-  bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null }],
+  bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null, video: null }],
   threads: [
-    { id: 'post', text: [{ counting: 'threads', max: 500 }], maxLinks: 5, imageAspect: null },
+    {
+      id: 'post',
+      text: [{ counting: 'threads', max: 500 }],
+      maxLinks: 5,
+      imageAspect: null,
+      video: null,
+    },
   ],
 };
 

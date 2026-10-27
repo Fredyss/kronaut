@@ -4,7 +4,7 @@ import type { MediaStore } from '@kronaut/media';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { findMediaAsset, MediaAssetSchema } from './dto.ts';
+import { findMediaAsset, MediaAssetSchema, markAiGenerated } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { ingestImage, MEDIA_IMAGE_MAX_BYTES, prepareImage } from './ingest.ts';
 
@@ -52,6 +52,19 @@ export const mediaGetRoute = defineRoute({
   tags: ['media'],
 });
 
+export const mediaMarkAiRoute = defineRoute({
+  id: 'media.mark_ai',
+  method: 'POST',
+  path: '/v1/workspaces/:workspaceId/media/:mediaId/ai-generated',
+  auth: ['session', 'grant'],
+  action: 'media:write',
+  params: z.object({ workspaceId: z.string(), mediaId: z.string() }),
+  response: MediaAssetSchema,
+  summary: 'Mark a media asset as AI-generated',
+  description: 'The mark is sticky: it is never removed once set.',
+  tags: ['media'],
+});
+
 export interface MediaRouteDeps {
   readonly store: MediaStore;
   readonly clock: () => Temporal.Instant;
@@ -86,6 +99,14 @@ export function mediaRoutes(deps: MediaRouteDeps): BoundRoute[] {
         throw new MediaError('forbidden', 'media is not available to restricted principals');
       }
       const asset = await ctx.tenant((trx) => findMediaAsset(trx, workspaceId, mediaId));
+      if (asset === null) throw new MediaError('not_found', 'media asset not found');
+      return { body: asset };
+    }),
+    bindRoute(mediaMarkAiRoute, async ({ params }, ctx) => {
+      const workspaceId = internalId('workspace', params.workspaceId);
+      const mediaId = internalId('media', params.mediaId);
+      ctx.authorize('media:write', { workspaceId });
+      const asset = await ctx.tenant((trx) => markAiGenerated(trx, workspaceId, mediaId));
       if (asset === null) throw new MediaError('not_found', 'media asset not found');
       return { body: asset };
     }),

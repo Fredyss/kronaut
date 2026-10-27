@@ -20,7 +20,13 @@ import {
 } from './db-testing.ts';
 import { findMediaAsset } from './dto.ts';
 import { MEDIA_IMAGE_MAX_BYTES } from './ingest.ts';
-import { MEDIA_UPLOAD_BODY_LIMIT, mediaGetRoute, mediaRoutes, mediaUploadRoute } from './routes.ts';
+import {
+  MEDIA_UPLOAD_BODY_LIMIT,
+  mediaGetRoute,
+  mediaMarkAiRoute,
+  mediaRoutes,
+  mediaUploadRoute,
+} from './routes.ts';
 import {
   bytes,
   expectMediaError,
@@ -355,6 +361,24 @@ describe('media routes', () => {
       context(b, []),
     );
     await expectMediaError(foreign, 'not_found', 404);
+  });
+
+  it('marks an asset AI-generated, keeps the mark, and hides other workspaces', async () => {
+    const mark = mediaRoutes({ store, clock }).find((bound) => bound.route === mediaMarkAiRoute);
+    if (mark === undefined) throw new Error('route missing');
+    const asset = await fx.ingest(a, webpExtendedFixture(11, 11));
+    const params = { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id };
+    const input = { params, query: undefined, body: undefined };
+    const calls: [Action, Resource][] = [];
+    const marked = await mark.handler(input, context(a, calls));
+    expect(mediaMarkAiRoute.response.parse(marked.body).aiGenerated).toBe(true);
+    expect((await mark.handler(input, context(a, []))).body).toEqual(marked.body);
+    expect(calls).toEqual([['media:write', { workspaceId: a.workspaceId }]]);
+    const foreign = {
+      ...input,
+      params: { workspaceId: encodePublicId('workspace', b.workspaceId), mediaId: asset.id },
+    };
+    await expectMediaError(mark.handler(foreign, context(b, [])), 'not_found', 404);
   });
 
   it('refuses a scoped read because media has no scope units', async () => {

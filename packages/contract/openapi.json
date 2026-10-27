@@ -2042,13 +2042,112 @@
                                     "type": "object"
                                   },
                                   "type": "array"
+                                },
+                                "video": {
+                                  "anyOf": [
+                                    {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "aspect": {
+                                          "anyOf": [
+                                            {
+                                              "additionalProperties": false,
+                                              "properties": {
+                                                "max": {
+                                                  "additionalProperties": false,
+                                                  "properties": {
+                                                    "height": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": -9007199254740991,
+                                                      "type": "integer"
+                                                    },
+                                                    "width": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": -9007199254740991,
+                                                      "type": "integer"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "width",
+                                                    "height"
+                                                  ],
+                                                  "type": "object"
+                                                },
+                                                "min": {
+                                                  "additionalProperties": false,
+                                                  "properties": {
+                                                    "height": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": -9007199254740991,
+                                                      "type": "integer"
+                                                    },
+                                                    "width": {
+                                                      "maximum": 9007199254740991,
+                                                      "minimum": -9007199254740991,
+                                                      "type": "integer"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "width",
+                                                    "height"
+                                                  ],
+                                                  "type": "object"
+                                                }
+                                              },
+                                              "required": [
+                                                "min",
+                                                "max"
+                                              ],
+                                              "type": "object"
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
+                                        },
+                                        "maxBytes": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": -9007199254740991,
+                                          "type": "integer"
+                                        },
+                                        "maxDurationMs": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": -9007199254740991,
+                                          "type": "integer"
+                                        },
+                                        "mimes": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": "array"
+                                        },
+                                        "minDurationMs": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": -9007199254740991,
+                                          "type": "integer"
+                                        }
+                                      },
+                                      "required": [
+                                        "mimes",
+                                        "maxBytes",
+                                        "minDurationMs",
+                                        "maxDurationMs",
+                                        "aspect"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 }
                               },
                               "required": [
                                 "id",
                                 "text",
                                 "maxLinks",
-                                "imageAspect"
+                                "imageAspect",
+                                "video"
                               ],
                               "type": "object"
                             },
@@ -3056,6 +3155,214 @@
           "media"
         ],
         "x-kronaut-action": "media:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/media/{mediaId}/ai-generated": {
+      "post": {
+        "description": "The mark is sticky: it is never removed once set.",
+        "operationId": "media.mark_ai",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aiGenerated": {
+                      "type": "boolean"
+                    },
+                    "bytes": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "duplicateOf": {
+                      "anyOf": [
+                        {
+                          "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "durationMs": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "height": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "image",
+                        "video"
+                      ],
+                      "type": "string"
+                    },
+                    "mime": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "rejectedReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "video_stream_missing",
+                            "video_too_short",
+                            "video_too_long",
+                            "video_unreadable",
+                            "video_too_large",
+                            "video_duplicate"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sha256": {
+                      "anyOf": [
+                        {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "uploading",
+                        "quarantined",
+                        "processing",
+                        "ready",
+                        "rejected"
+                      ],
+                      "type": "string"
+                    },
+                    "width": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "mime",
+                    "bytes",
+                    "width",
+                    "height",
+                    "durationMs",
+                    "sha256",
+                    "state",
+                    "aiGenerated",
+                    "rejectedReason",
+                    "duplicateOf"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Mark a media asset as AI-generated",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:write",
         "x-kronaut-auth": [
           "session",
           "grant"

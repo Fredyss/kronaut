@@ -35,6 +35,7 @@ export function webCsp(mediaUrl: URL): string {
     "script-src 'self'",
     "style-src 'self'",
     `img-src 'self' ${mediaUrl.origin} data:`,
+    'media-src blob:',
     "connect-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'none'",

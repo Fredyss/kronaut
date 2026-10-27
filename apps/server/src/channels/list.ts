@@ -6,6 +6,7 @@ import {
   type ImageLimits,
   PREVIEW_ARCHETYPES,
   type TextCounting,
+  type VideoLimits,
 } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
@@ -37,6 +38,15 @@ const PostTypeRulesSchema = z.object({
   ),
   maxLinks: z.number().int().nullable(),
   imageAspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
+  video: z
+    .object({
+      mimes: z.array(z.string()),
+      maxBytes: z.number().int(),
+      minDurationMs: z.number().int(),
+      maxDurationMs: z.number().int(),
+      aspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
+    })
+    .nullable(),
 });
 
 export const ChannelSchema = z.object({
@@ -90,6 +100,16 @@ function imageAspect(image: ImageLimits | undefined) {
   return { min: { ...image.minAspect }, max: { ...image.maxAspect } };
 }
 
+function videoRules(video: VideoLimits | undefined) {
+  if (video === undefined) return null;
+  const aspect =
+    video.minAspect === undefined || video.maxAspect === undefined
+      ? null
+      : { min: { ...video.minAspect }, max: { ...video.maxAspect } };
+  const { mimes, maxBytes, minDurationMs, maxDurationMs } = video;
+  return { mimes: [...mimes], maxBytes, minDurationMs, maxDurationMs, aspect };
+}
+
 function postTypes(
   entry: ProviderEntry | undefined,
   capabilities: unknown,
@@ -105,6 +125,7 @@ function postTypes(
         text: [...postType.text],
         maxLinks: postType.maxLinks ?? null,
         imageAspect: imageAspect(postType.media.image),
+        video: videoRules(postType.media.video),
       },
     ];
   });
