@@ -60,6 +60,7 @@
   - `KRONAUT_SMTP_FROM`: the sender address, required once the host is set.
   - `KRONAUT_SMTP_TLS`: `starttls` (required STARTTLS, the default), `tls` (implicit TLS, the default on port 465) or `none` (a local relay only). Certificates are always verified.
   - Every minute the worker emails each in-app notification from the last day to its recipient, in their UI language, as plain text. Delivery is at most once and best effort; the in-app notification stays the source of truth.
+- **Media GC (`media_gc`, hourly at :23)**: takes up to 500 candidates from `sweep_media_gc`, expired uploads first. An upload still unfinished 24 h after it started is deleted together with its staged parts under `<data>/media/.staging/<key>/`; that directory also holds `.incoming/`, where a part is written before it is checked. Other candidates are counted as skipped for now.
 - **Retention (daily purge job)**: tenant tables are purged per workspace via `sweep_workspaces`; global tables by `purge_instance_retention`, at most 10,000 rows per table per call. `maintain_audit_partitions` keeps audit partitions two months ahead, drops partitions past 400 d and nulls audit PII at 90 d; a non-zero default-partition count is an alert (ADR-0045).
 
   | Data | Kept for |

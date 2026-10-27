@@ -8,6 +8,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { createStaging } from '../media/staging.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { apiRoutes } from './api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, routeRegistry } from './kernel.ts';
@@ -56,6 +57,7 @@ const routes: BoundRoute[] = [
   ...apiRoutes({
     http: deps,
     store: createLocalStore('/nonexistent'),
+    staging: createStaging('/nonexistent'),
     keyring: createKeyring(new Map([[1, randomBytes(32)]])),
     providers: createProviderRegistry([], []),
   }),

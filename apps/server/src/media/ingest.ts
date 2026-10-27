@@ -26,7 +26,7 @@ function sha256(bytes: Uint8Array): Buffer {
   return createHash('sha256').update(bytes).digest();
 }
 
-function originalName(filename: string | undefined): string | null {
+export function originalName(filename: string | undefined): string | null {
   if (filename === undefined) return null;
   const name = filename.normalize('NFC');
   if (name === '' || [...name].length > ORIGINAL_NAME_MAX) {

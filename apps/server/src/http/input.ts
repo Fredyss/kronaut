@@ -1,6 +1,6 @@
 import type { Route } from '@kronaut/contract';
 import type * as z from 'zod';
-import { isJsonContentType, queryObject, readBody } from './body.ts';
+import { isJsonContentType, isOctetStreamContentType, queryObject, readBody } from './body.ts';
 import { HttpError, type IssueDetail } from './errors.ts';
 import type { RouteInput } from './types.ts';
 
@@ -33,6 +33,17 @@ function parseJson(raw: Uint8Array, contentType: string | null): unknown {
   }
 }
 
+function rawBody(route: Route, raw: Uint8Array, contentType: string | null): unknown {
+  if (route.bodyEncoding === 'json') return parseJson(raw, contentType);
+  if (!isOctetStreamContentType(contentType)) {
+    throw new HttpError(
+      'unsupported_media_type',
+      'The request body must be application/octet-stream.',
+    );
+  }
+  return raw;
+}
+
 export async function readLimited(request: Request, limit: number): Promise<Uint8Array> {
   const raw = await readBody(request, limit);
   if (raw === null) throw new HttpError('payload_too_large', 'The request body is too large.');
@@ -53,7 +64,9 @@ export function parseInput(request: RawInput): RouteInput<Route> {
     params: parse('params', route.params, params),
     query: parse('query', route.query, queryObject(search)),
     body:
-      route.body === undefined ? undefined : parse('body', route.body, parseJson(raw, contentType)),
+      route.body === undefined
+        ? undefined
+        : parse('body', route.body, rawBody(route, raw, contentType)),
   };
   if (details.length > 0) {
     throw new HttpError('invalid_request', 'The request is invalid.', { details });

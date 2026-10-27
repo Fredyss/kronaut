@@ -39,7 +39,11 @@ export interface OpenApiOperation {
   readonly parameters?: readonly OpenApiParameter[];
   readonly requestBody?: {
     readonly required: true;
-    readonly content: { readonly 'application/json': { readonly schema: JsonObject } };
+    readonly content: Readonly<
+      Partial<
+        Record<'application/json' | 'application/octet-stream', { readonly schema: JsonObject }>
+      >
+    >;
   };
   readonly responses: Readonly<Record<string, OpenApiResponse>>;
   readonly security: readonly Readonly<Record<string, readonly string[]>>[];
@@ -112,6 +116,15 @@ function parameters(route: Route): readonly OpenApiParameter[] {
   return out;
 }
 
+function requestBody(route: Route): Pick<OpenApiOperation, 'requestBody'> {
+  if (route.body === undefined) return {};
+  const content =
+    route.bodyEncoding === 'octet-stream'
+      ? { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } }
+      : { 'application/json': { schema: jsonSchema(route.id, route.body, 'input') } };
+  return { requestBody: { required: true, content } };
+}
+
 function operation(route: Route): OpenApiOperation {
   const params = parameters(route);
   const success: OpenApiResponse =
@@ -131,16 +144,7 @@ function operation(route: Route): OpenApiOperation {
     ...(route.description === undefined ? {} : { description: route.description }),
     tags: [...route.tags],
     ...(params.length === 0 ? {} : { parameters: params }),
-    ...(route.body === undefined
-      ? {}
-      : {
-          requestBody: {
-            required: true,
-            content: {
-              'application/json': { schema: jsonSchema(route.id, route.body, 'input') },
-            },
-          },
-        }),
+    ...requestBody(route),
     responses: {
       [String(route.status)]: success,
       default: {

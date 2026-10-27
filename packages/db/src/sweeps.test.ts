@@ -11,6 +11,7 @@ const listings = [
   ['verifyingDestinations', (limit: number) => sweeps.verifyingDestinations(limit)],
   ['quarantineDestinations', (limit: number) => sweeps.quarantineDestinations(limit)],
   ['expiringCredentials', (limit: number) => sweeps.expiringCredentials(60, limit)],
+  ['mediaGc', (limit: number) => sweeps.mediaGc(limit)],
   ['workspaces', (limit: number) => sweeps.workspaces(null, limit)],
 ] as const;
 

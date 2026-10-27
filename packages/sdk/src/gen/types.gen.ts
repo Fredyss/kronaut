@@ -812,10 +812,13 @@ export type MediaUploadResponses = {
     201: {
         aiGenerated: boolean;
         bytes: number | null;
+        duplicateOf: string | null;
+        durationMs: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';
         mime: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
         sha256: string | null;
         state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
         width: number | null;
@@ -823,6 +826,60 @@ export type MediaUploadResponses = {
 };
 
 export type MediaUploadResponse = MediaUploadResponses[keyof MediaUploadResponses];
+
+export type MediaVideoUploadData = {
+    body: {
+        aiGenerated?: boolean;
+        bytes: number;
+        filename?: string;
+        kind: 'video';
+        mime: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/uploads';
+};
+
+export type MediaVideoUploadErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaVideoUploadError = MediaVideoUploadErrors[keyof MediaVideoUploadErrors];
+
+export type MediaVideoUploadResponses = {
+    /**
+     * OK
+     */
+    201: {
+        expiresAt: string;
+        media: {
+            aiGenerated: boolean;
+            bytes: number | null;
+            duplicateOf: string | null;
+            durationMs: number | null;
+            height: number | null;
+            id: string;
+            kind: 'image' | 'video';
+            mime: string | null;
+            rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+            sha256: string | null;
+            state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+            width: number | null;
+        };
+        partCount: number;
+        partSize: number;
+    };
+};
+
+export type MediaVideoUploadResponse = MediaVideoUploadResponses[keyof MediaVideoUploadResponses];
 
 export type MediaGetData = {
     body?: never;
@@ -850,10 +907,13 @@ export type MediaGetResponses = {
     200: {
         aiGenerated: boolean;
         bytes: number | null;
+        duplicateOf: string | null;
+        durationMs: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';
         mime: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
         sha256: string | null;
         state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
         width: number | null;
@@ -861,6 +921,82 @@ export type MediaGetResponses = {
 };
 
 export type MediaGetResponse = MediaGetResponses[keyof MediaGetResponses];
+
+export type MediaVideoCompleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/complete';
+};
+
+export type MediaVideoCompleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaVideoCompleteError = MediaVideoCompleteErrors[keyof MediaVideoCompleteErrors];
+
+export type MediaVideoCompleteResponses = {
+    /**
+     * OK
+     */
+    200: {
+        aiGenerated: boolean;
+        bytes: number | null;
+        duplicateOf: string | null;
+        durationMs: number | null;
+        height: number | null;
+        id: string;
+        kind: 'image' | 'video';
+        mime: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+        sha256: string | null;
+        state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+        width: number | null;
+    };
+};
+
+export type MediaVideoCompleteResponse = MediaVideoCompleteResponses[keyof MediaVideoCompleteResponses];
+
+export type MediaVideoPartData = {
+    body: Blob | File;
+    path: {
+        workspaceId: string;
+        mediaId: string;
+        part: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/parts/{part}';
+};
+
+export type MediaVideoPartErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaVideoPartError = MediaVideoPartErrors[keyof MediaVideoPartErrors];
+
+export type MediaVideoPartResponses = {
+    /**
+     * OK
+     */
+    200: {
+        bytes: number;
+        part: number;
+    };
+};
+
+export type MediaVideoPartResponse = MediaVideoPartResponses[keyof MediaVideoPartResponses];
 
 export type DestinationsNeedsActionData = {
     body?: never;

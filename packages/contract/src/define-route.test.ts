@@ -306,6 +306,33 @@ describe('idempotency', () => {
   });
 });
 
+describe('bodyEncoding', () => {
+  const octet = {
+    method: 'PUT',
+    body: z.instanceof(Uint8Array),
+    bodyEncoding: 'octet-stream',
+    idempotency: false,
+  } as const;
+
+  it('defaults to json', () => {
+    expect(make({ method: 'POST', body: z.object({}) }).bodyEncoding).toBe('json');
+  });
+
+  it('accepts an octet-stream route with a body and idempotency off', () => {
+    expect(make(octet).bodyEncoding).toBe('octet-stream');
+  });
+
+  it('rejects an octet-stream route without a body', () => {
+    expect(() => make({ ...octet, body: undefined })).toThrow(/needs a body/);
+  });
+
+  it('rejects an octet-stream route with idempotency', () => {
+    expect(() => make({ ...octet, idempotency: true })).toThrow(/idempotency false/);
+    const { idempotency: _off, ...defaulted } = octet;
+    expect(() => make(defaulted)).toThrow(/idempotency false/);
+  });
+});
+
 describe('summary', () => {
   it('must not be empty', () => {
     expect(make({ summary: 'List' }).summary).toBe('List');

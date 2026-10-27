@@ -32,10 +32,18 @@ export async function readBody(request: Request, limit: number): Promise<Uint8Ar
   return body;
 }
 
-export function isJsonContentType(header: string | null): boolean {
+function hasMediaType(header: string | null, mediaType: string): boolean {
   if (header === null) return false;
   const [type] = header.split(';');
-  return type?.trim().toLowerCase() === 'application/json';
+  return type?.trim().toLowerCase() === mediaType;
+}
+
+export function isJsonContentType(header: string | null): boolean {
+  return hasMediaType(header, 'application/json');
+}
+
+export function isOctetStreamContentType(header: string | null): boolean {
+  return hasMediaType(header, 'application/octet-stream');
 }
 
 export function queryObject(search: URLSearchParams): Record<string, string | string[]> {

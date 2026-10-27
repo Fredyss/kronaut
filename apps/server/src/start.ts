@@ -32,8 +32,9 @@ import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess } from './media/access.ts';
-import { MEDIA_UPLOAD_BODY_LIMIT, MEDIA_UPLOAD_ROUTE_ID } from './media/routes.ts';
 import { createMediaServer } from './media/server.ts';
+import { stagingIn } from './media/staging.ts';
+import { MEDIA_BODY_LIMITS } from './media/upload-routes.ts';
 import { emailDeps } from './notifications/email.ts';
 import { createProviderRegistry } from './providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
@@ -212,7 +213,7 @@ async function startWorker(boot: Boot): Promise<void> {
     logger: jobLogger(logger),
     noHandleSignals: true,
     taskList: {
-      ...cronTaskList(db, logger, publishing, email),
+      ...cronTaskList(db, logger, { ...publishing, staging: stagingIn(config.dataDir) }, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
@@ -251,12 +252,13 @@ async function startApi(boot: Boot): Promise<void> {
     clock,
     publicBaseUrl: config.publicUrl.origin,
     readiness: async () => !state.stopping && (await workerAlive(db)),
-    routeBodyLimits: { [MEDIA_UPLOAD_ROUTE_ID]: MEDIA_UPLOAD_BODY_LIMIT },
+    routeBodyLimits: MEDIA_BODY_LIMITS,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };
   const store = createLocalStore(join(config.dataDir, 'media'));
-  const api = createHttpApp(deps, apiRoutes({ http: deps, store, keyring, providers }));
+  const staging = stagingIn(config.dataDir);
+  const api = createHttpApp(deps, apiRoutes({ http: deps, store, staging, keyring, providers }));
   state.http = await listen(api.fetch, config.port);
 }
 
