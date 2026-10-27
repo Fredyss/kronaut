@@ -83,7 +83,7 @@
   - Workspace export is an async zip.
   - User erasure nulls the PII on `users`; audit rows keep the bare uuid.
   - Hosted workspace deletion has a 7-day grace period, then a cascade, then a `deletion_receipts` row.
-  - A disconnected account → its destinations go to `blocked/account_disconnected`, and credentials are purged after 30 d.
+  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon), and credentials are purged after 30 d.
 - **Migrations (ADR-0024)**
   - Changes follow expand → deploy → contract.
   - The migrator enforces `lock_timeout=3s`, `CREATE INDEX CONCURRENTLY` and `NOT VALID` + `VALIDATE`.

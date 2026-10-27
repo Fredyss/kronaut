@@ -293,7 +293,7 @@ export const channelsProviders = <ThrowOnError extends boolean = true>(options: 
 /**
  * Disconnect a channel
  *
- * The channel stops publishing; due posts to it are blocked. Its credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.
+ * The channel stops publishing; due posts to it are blocked. Where the network supports it, its access token is revoked there; its stored credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.
  */
 export const channelsDisconnect = <ThrowOnError extends boolean = true>(options: Options<ChannelsDisconnectData, ThrowOnError>): RequestResult<ChannelsDisconnectResponses, ChannelsDisconnectErrors, ThrowOnError> => (options.client ?? client).post<ChannelsDisconnectResponses, ChannelsDisconnectErrors, ThrowOnError>({
     security: [{

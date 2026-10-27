@@ -44,6 +44,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 - `publish` runs the step list and returns `{remoteId,url} | {pending}`.
 - `poll`, `verify?`, `analytics?`.
 - `readInstanceCapabilities?(ctx, instanceHost)`: re-reads an instance-scoped provider's server limits. The daily `account_capabilities_refresh` cron stores them for every active account whose `capabilities.fetchedAt` is over 24 h old, one call per host, keeping the old values when a server fails.
+- `revoke?(ctx, {app, account, credentials})`: invalidates the stored token at the network. Disconnecting a channel whose runtime has it enqueues a `revoke_credential` job (ids and credential version only, never the token) in the same transaction. The job revokes only while the account is still disconnected and the credential version unchanged; transient failures retry with the queue's backoff, and a refusal is logged and left to the 30-day purge. Mastodon implements it (ADR-0051).
 - `PublishItem.language` carries the variant's content language when it has one.
 
 **ctx**

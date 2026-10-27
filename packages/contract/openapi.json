@@ -2318,7 +2318,7 @@
     },
     "/v1/workspaces/{workspaceId}/channels/{channelId}/disconnect": {
       "post": {
-        "description": "The channel stops publishing; due posts to it are blocked. Its credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.",
+        "description": "The channel stops publishing; due posts to it are blocked. Where the network supports it, its access token is revoked there; its stored credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.",
         "operationId": "channels.disconnect",
         "parameters": [
           {

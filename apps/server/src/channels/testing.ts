@@ -20,6 +20,7 @@ import { activateKey, createKey } from '../cli/provider-apps.ts';
 import { loadCredential } from '../credential-store.ts';
 import type { AccessGate } from '../http/access.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
+import { installJobQueue } from '../job-queue.ts';
 import { hashPassword } from '../password.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { FAKE_PROVIDER, type FixtureUrls, fakeManifest } from '../publish/testing.ts';
@@ -203,6 +204,7 @@ export async function startConnect(
       .values({ provider: FAKE_PROVIDER, client_id: 'fake-client' })
       .execute(),
   );
+  await installJobQueue(test.ownerUrl, root);
   await root.withActor(CLI, async (trx) => {
     await trx
       .insertInto('memberships')

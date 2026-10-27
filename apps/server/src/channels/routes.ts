@@ -48,6 +48,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindPublicDocument(deps),
     bindList(deps),
     bindConnectable(deps),
-    bindDisconnect(),
+    bindDisconnect(deps.providers),
   ];
 }
