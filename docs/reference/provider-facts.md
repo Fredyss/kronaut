@@ -223,7 +223,7 @@ Mastodon connect facts re-verified 2026-10-26 (MA4, MA5, MA6, MA2).
 - **Authorize** (MA4). `GET /oauth/authorize` with `response_type=code`, `client_id`, `redirect_uri`, `scope`, `state`. PKCE takes `code_challenge` + `code_challenge_method=S256` from 4.3; S256 is the only method.
 - **Token** (MA4). `POST /oauth/token` with `grant_type=authorization_code`, `code`, `client_id`, `client_secret`, `redirect_uri`, plus `code_verifier` when PKCE was used.
   - Returns `access_token`, `token_type`, `scope`, `created_at`: no expiry and no refresh token.
-  - `POST /oauth/revoke` takes `client_id`, `client_secret`, `token`.
+  - `POST /oauth/revoke` takes `client_id`, `client_secret`, `token` as form data and needs no user token. 200 with `{}` when the app owns the token; 403 `unauthorized_client` for a token it doesn't own or a missing one. Repeating it still returns 200. Re-verified 2026-10-27 (MA4).
 - **Account.** `GET /api/v1/accounts/verify_credentials` needs `read:accounts` and returns `id`, `username`, `acct`, `display_name`, `url`. Ids are local to the server.
 - **Instance** (MA5). `GET /api/v2/instance`:
   - `configuration.statuses` (from 4.0): `max_characters` (example 500), `max_media_attachments` (4), `characters_reserved_per_url` (23).

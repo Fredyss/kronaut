@@ -305,6 +305,8 @@ export interface RefreshInput<C> {
   readonly credentials: C;
 }
 
+export type RevokeInput<C> = RefreshInput<C>;
+
 export interface ProviderRuntime<C = unknown, S = unknown> {
   readonly id: string;
   parseCredentials(value: unknown): C;
@@ -315,6 +317,7 @@ export interface ProviderRuntime<C = unknown, S = unknown> {
     input: ConnectFinishInput,
   ): Promise<readonly ConnectedAccount<C>[]>;
   refresh?(ctx: BaseContext, input: RefreshInput<C>): Promise<IssuedCredentials<C>>;
+  revoke?(ctx: BaseContext, input: RevokeInput<C>): Promise<void>;
   publish(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   poll?(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   verify?(ctx: PublishContext, input: PublishInput<C, S>): Promise<VerifyOutcome>;

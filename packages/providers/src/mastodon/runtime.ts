@@ -4,6 +4,7 @@ import { readInstanceCapabilities } from './capabilities.ts';
 import { connectFinish, connectStart, type MastodonCredentials, registerApp } from './connect.ts';
 import type { MastodonSettings } from './manifest.ts';
 import { publishStatus } from './publish.ts';
+import { revokeToken } from './revoke.ts';
 import { verifyStatus } from './verify.ts';
 
 export type { MastodonCredentials } from './connect.ts';
@@ -20,6 +21,8 @@ export const mastodonRuntime: ProviderRuntime<MastodonCredentials, MastodonSetti
   connectStart,
 
   connectFinish,
+
+  revoke: revokeToken,
 
   publish: publishStatus,
 

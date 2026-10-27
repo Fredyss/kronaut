@@ -6,6 +6,8 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { bindRoute } from '../http/types.ts';
+import { enqueueRevoke } from '../jobs.ts';
+import type { ProviderRegistry } from '../providers.ts';
 
 export const channelDisconnectRoute = defineRoute({
   id: 'channels.disconnect',
@@ -19,7 +21,7 @@ export const channelDisconnectRoute = defineRoute({
   idempotency: false,
   summary: 'Disconnect a channel',
   description:
-    'The channel stops publishing; due posts to it are blocked. Its credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.',
+    'The channel stops publishing; due posts to it are blocked. Where the network supports it, its access token is revoked there; its stored credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.',
   tags: ['channels'],
 });
 
@@ -30,11 +32,27 @@ interface Disconnect {
   readonly requestId: string;
 }
 
-async function disconnect(trx: TenantDb, input: Disconnect): Promise<void> {
+async function revokeLater(trx: TenantDb, workspaceId: string, accountId: string) {
+  const credentials = await trx
+    .selectFrom('account_credentials')
+    .select(['id', 'version'])
+    .where('workspace_id', '=', workspaceId)
+    .where('social_account_id', '=', accountId)
+    .execute();
+  for (const { id, version } of credentials) {
+    await enqueueRevoke(trx, { workspaceId, id, version });
+  }
+}
+
+async function disconnect(
+  trx: TenantDb,
+  providers: ProviderRegistry,
+  input: Disconnect,
+): Promise<void> {
   const { workspaceId, accountId } = input;
   const account = await trx
     .selectFrom('social_accounts')
-    .select('status')
+    .select(['status', 'provider'])
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', accountId)
     .forUpdate()
@@ -47,6 +65,9 @@ async function disconnect(trx: TenantDb, input: Disconnect): Promise<void> {
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', accountId)
     .execute();
+  if (providers.get(account.provider)?.runtime.revoke !== undefined) {
+    await revokeLater(trx, workspaceId, accountId);
+  }
   await trx
     .insertInto('audit_events')
     .values({
@@ -65,7 +86,7 @@ async function disconnect(trx: TenantDb, input: Disconnect): Promise<void> {
     .execute();
 }
 
-export function bindDisconnect() {
+export function bindDisconnect(providers: ProviderRegistry) {
   return bindRoute(channelDisconnectRoute, async ({ params }, ctx) => {
     const workspaceId = decodePublicId('workspace', params.workspaceId);
     if (workspaceId === null) throw new HttpError('not_found', 'Not found.');
@@ -74,7 +95,7 @@ export function bindDisconnect() {
     const accountId = decodePublicId('socialAccount', params.channelId);
     if (accountId === null) throw new HttpError('not_found', 'Not found.');
     const input = { workspaceId, accountId, userId: ctx.session.userId, requestId: ctx.requestId };
-    await ctx.tenant((trx) => disconnect(trx, input));
+    await ctx.tenant((trx) => disconnect(trx, providers, input));
     return { body: undefined };
   });
 }

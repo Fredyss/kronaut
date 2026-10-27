@@ -1,5 +1,6 @@
 import { encodePublicId, type ProviderRuntime } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
+import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { FAKE_PROVIDER } from '../publish/testing.ts';
@@ -41,6 +42,7 @@ const runtime: ProviderRuntime = {
     },
   ],
   publish: () => Promise.reject(new Error('not used')),
+  revoke: () => Promise.reject(new Error('the revoke job runs in the worker')),
 };
 
 beforeAll(async () => {
@@ -78,6 +80,19 @@ function account(id: string) {
   });
 }
 
+function revokeJobs(id: string) {
+  return asOwner(async (trx) => {
+    const { rows } = await sql<{ payload: { id: string; version: number } }>`
+      select j.payload from graphile_worker._private_jobs j
+      join graphile_worker._private_tasks t on t.id = j.task_id
+      where t.identifier = 'revoke_credential'
+        and j.payload->>'id' in (
+          select c.id::text from account_credentials c where c.social_account_id = ${id})
+    `.execute(trx);
+    return rows.map((row) => row.payload);
+  });
+}
+
 describe('channel disconnect', () => {
   it('lets an owner or admin disconnect, idempotently, and audits it once', async () => {
     const id = connectedId(await callback(await begin()));
@@ -87,8 +102,10 @@ describe('channel disconnect', () => {
     expect((await disconnect(viewer, channelId)).status).toBe(403);
     expect((await account(id)).status).toBe('active');
 
+    expect(await revokeJobs(id)).toEqual([]);
     expect((await disconnect(owner, channelId)).status).toBe(204);
     expect((await disconnect(admin, channelId)).status).toBe(204);
+    expect(await revokeJobs(id)).toEqual([expect.objectContaining({ version: 1 })]);
     expect(await account(id)).toEqual({
       status: 'disconnected',
       status_reason: 'user',

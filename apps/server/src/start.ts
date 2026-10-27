@@ -15,6 +15,7 @@ import type { Hono } from 'hono';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
+import { revokeTask } from './channels/revoke.ts';
 import {
   type AccessConfig,
   ConfigError,
@@ -214,6 +215,7 @@ async function startWorker(boot: Boot): Promise<void> {
       ...cronTaskList(db, logger, publishing, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
+      [JOBS.revokeCredential]: revokeTask(publishing),
     },
     parsedCronItems: cronItems(email !== null),
   });

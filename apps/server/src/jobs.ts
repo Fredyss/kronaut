@@ -6,6 +6,7 @@ export const JOBS = {
   publish: 'publish',
   verify: 'verify',
   refreshCredential: 'refresh_credential',
+  revokeCredential: 'revoke_credential',
 } as const;
 
 export type JobName = (typeof JOBS)[keyof typeof JOBS];
@@ -18,6 +19,24 @@ export interface DestinationJob {
 export interface CredentialJob {
   readonly workspaceId: string;
   readonly id: string;
+}
+
+export interface RevokeJob {
+  readonly workspaceId: string;
+  readonly id: string;
+  readonly version: number;
+}
+
+export const REVOKE_ATTEMPTS = 8;
+
+export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promise<void> {
+  const payload = JSON.stringify(credential);
+  await sql`
+    select graphile_worker.add_job(${JOBS.revokeCredential}, ${payload}::json,
+      max_attempts := ${REVOKE_ATTEMPTS},
+      job_key := ${`revoke:${credential.id}`},
+      job_key_mode := 'replace')
+  `.execute(trx);
 }
 
 export function destinationJobKey(destinationId: string): string {
