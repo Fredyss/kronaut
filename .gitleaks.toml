@@ -1,0 +1,20 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fake values in tests"
+condition = "AND"
+paths = ['''\.test\.tsx?$''']
+regexTarget = "match"
+regexes = [
+  '''CANARY_''',
+  '''0123456789abcdef''',
+  '''fedcba9876543210''',
+  '''86abcdef123xyz''',
+  '''3m4ab2cdefgh2''',
+]
+
+[[allowlists]]
+description = "Import of linkedinManifest, not a secret"
+regexTarget = "line"
+regexes = ['''import \{ type LinkedinSettings, linkedinManifest \} from ''']
