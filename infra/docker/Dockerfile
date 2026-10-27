@@ -1,8 +1,4 @@
-ARG NODE_BUILD_IMAGE=node:24.21.0-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
-ARG DEBIAN_IMAGE=debian:12.14-slim@sha256:60eac759739651111db372c07be67863818726f754804b8707c90979bda511df
-ARG RUNTIME_IMAGE=gcr.io/distroless/nodejs24-debian12:nonroot@sha256:14d42e2511532589a7c7e01a753667a74fcc96266e137e8125006b87b0c32d0a
-
-FROM ${DEBIAN_IMAGE} AS pg
+FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS pg
 ARG PG_MAJOR=17
 ARG PGDG_FINGERPRINT=B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 RUN apt-get update \
@@ -10,11 +6,11 @@ RUN apt-get update \
  && curl -fsSL -o /tmp/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
  && gpg --show-keys --with-colons /tmp/pgdg.asc | grep -qx "fpr:::::::::${PGDG_FINGERPRINT}:" \
  && gpg --dearmor -o /usr/share/keyrings/pgdg.gpg /tmp/pgdg.asc \
- && echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+ && echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
  && apt-get update \
  && apt-get install -y --no-install-recommends "postgresql-client-${PG_MAJOR}" \
  && rm -rf /var/lib/apt/lists/*
-# Only glibc is left to the runtime image (same bookworm release); every other library the
+# Only glibc is left to the runtime image (same trixie release); every other library the
 # tools resolve is copied, and the binaries find them through an $ORIGIN rpath.
 RUN set -eu; \
     mkdir -p /opt/pg/bin /opt/pg/lib; \
@@ -32,7 +28,9 @@ RUN set -eu; \
       "$tool" --version; \
     done
 
-FROM ${NODE_BUILD_IMAGE} AS deps
+FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS node-build
+
+FROM node-build AS deps
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -58,7 +56,7 @@ RUN find apps packages -name '*.test.ts' -delete \
  && rm -rf apps/web apps/server/e2e packages/sdk packages/ui packages/db/test packages/db/scripts \
  && mkdir -p /skel/data
 
-FROM ${NODE_BUILD_IMAGE} AS web
+FROM node-build AS web
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -78,7 +76,7 @@ RUN pnpm --filter @kronaut/web build \
  && test -f apps/web/dist/web/index.html \
  && ! find apps/web/dist/web -name '*.map' | grep -q .
 
-FROM ${NODE_BUILD_IMAGE} AS notices
+FROM node-build AS notices
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -101,7 +99,7 @@ RUN pnpm install --frozen-lockfile --prod --filter '@kronaut/server...' --filter
 COPY tools/licenses tools/licenses
 RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
-FROM ${RUNTIME_IMAGE}
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:cb606325b7ec4af55462cb0b424a53b452a5b4a894ffe841fcf1048d216fb9f8
 COPY --from=pg /opt/pg /opt/pg
 COPY --from=deps /app /app
 COPY --from=web /app/apps/web/dist/web /app/web
