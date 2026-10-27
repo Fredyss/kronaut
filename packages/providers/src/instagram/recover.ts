@@ -6,17 +6,19 @@ import { sentAltText } from './create-containers.ts';
 import { graph } from './graph-call.ts';
 import type { Input } from './publish-input.ts';
 
-const MEDIA_FIELDS = 'id,timestamp,media_type,permalink,alt_text';
+const MEDIA_FIELDS = 'id,timestamp,media_type,media_product_type,permalink,alt_text';
 
 const MEDIA_TYPES: Readonly<Record<string, string>> = {
   image: 'IMAGE',
   carousel: 'CAROUSEL_ALBUM',
+  reel: 'VIDEO',
 };
 
 const media = z.looseObject({
   id: idField,
   timestamp: z.string().nullish(),
   media_type: z.string().nullish(),
+  media_product_type: z.string().nullish(),
   permalink: z.string().nullish(),
   alt_text: z.string().nullish(),
 });
@@ -35,6 +37,7 @@ export function recover(
     item: media,
     matches: (candidate) => {
       if (mediaType === undefined || candidate.media_type !== mediaType) return false;
+      if (input.postType === 'reel' && candidate.media_product_type !== 'REELS') return false;
       return !(mediaType === 'IMAGE' && altText !== undefined && candidate.alt_text !== altText);
     },
     sentAt,

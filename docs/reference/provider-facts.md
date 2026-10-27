@@ -65,6 +65,7 @@ Instagram video facts checked 2026-10-27 (M1, M2, M11, M15).
 - **Cover:** `cover_url` (JPEG ≤8 MB, sRGB) or `thumb_offset` in ms; `cover_url` wins. Alt text isn't supported for Reels.
 - **Errors** (M11): `-2/2207003` (download too slow) and `-1/2207053` (unknown upload error; make a new container) are retryable; `352/2207026` (format), `1/2207057` (thumb offset) and `9004/2207052` (URL not fetchable) are permanent.
 - **Carousel:** a video child is `{media_type: VIDEO, video_url, is_carousel_item: true}`; its limits are undocumented.
+- Kronaut: post type `reel` publishes one MP4 (≤300 MB, 3 s–15 min, aspect 0.01:1–10:1) as `{media_type: REELS, video_url, share_to_feed: true, caption, is_ai_generated}`, with no alt text and no cover, so Instagram picks the frame. The container is polled every minute for up to 20 min. `2207053` drops the container and creates a new one; `2207026` fails as `video_format_unsupported`. Recovery matches `media_type` `VIDEO` with `media_product_type` `REELS`.
 
 **Facebook Page** (Facebook Login and the Pages API on `graph.facebook.com`, v26.0)
 

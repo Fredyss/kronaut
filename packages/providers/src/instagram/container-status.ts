@@ -4,7 +4,7 @@ import type { ContainerStatus } from '../_kit/meta-container.ts';
 import { PERMANENT_SUBCODES } from './graph-errors.ts';
 import { permanent } from './oauth.ts';
 
-const RETRYABLE_STATUS_SUBCODES = new Set([2207003, 2207008, 2207020, 2207027, 2207052]);
+const RETRYABLE_STATUS_SUBCODES = new Set([2207003, 2207008, 2207020, 2207027, 2207052, 2207053]);
 
 export const STATUS_FIELDS = 'status_code,status';
 

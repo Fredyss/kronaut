@@ -24,7 +24,25 @@ function jpegs(minCount: number, maxCount: number): MediaLimits {
   };
 }
 
+const reel: MediaLimits = {
+  minCount: 1,
+  maxCount: 1,
+  video: {
+    mimes: ['video/mp4'],
+    maxBytes: 300_000_000,
+    minDurationMs: 3_000,
+    maxDurationMs: 900_000,
+    minAspect: { width: 1, height: 100 },
+    maxAspect: { width: 10, height: 1 },
+  },
+  mixed: false,
+  altText: { supported: false, required: false, maxLength: 0 },
+  aiLabel: true,
+};
+
 const containerPolling = { pollIntervalMs: 60_000, giveUpAfterMs: 5 * 60_000 };
+// Instagram processes a Reel container far longer than an image one, so the default five minutes would give up too early.
+const reelPolling = { pollIntervalMs: 60_000, giveUpAfterMs: 20 * 60_000 };
 
 export const instagramManifest: ProviderManifest<InstagramSettings> = {
   id: 'instagram',
@@ -59,6 +77,17 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
       text: caption,
       media: jpegs(2, 20),
       async: containerPolling,
+    },
+    {
+      id: 'reel',
+      delivery: 'api',
+      steps: [
+        { id: 'create_container', effect: 'private' },
+        { id: 'publish_container', effect: 'public' },
+      ],
+      text: caption,
+      media: reel,
+      async: reelPolling,
     },
   ],
   settings: instagramSettings,
