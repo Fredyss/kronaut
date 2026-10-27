@@ -51,13 +51,14 @@ export function checkInput(input: Input): Plan {
   const plan = planOf(facebookManifest, input);
   const { item, spec } = plan;
   if (item.text.trim() === '' && item.media.length === 0) throw permanent('text_empty');
-  const { image, maxCount } = spec.media;
+  const { image, maxCount, altText } = spec.media;
   if (item.media.length > maxCount) throw permanent('too_many_images');
   if (new Set(item.media.map((ref) => ref.id)).size !== item.media.length)
     throw permanent('media_duplicate');
   for (const ref of item.media) {
     if (image === undefined) throw permanent('media_type_unsupported');
     checkImageFile(image, ref);
+    if ((ref.altText?.length ?? 0) > altText.maxLength) throw permanent('alt_text_too_long');
   }
   return plan;
 }

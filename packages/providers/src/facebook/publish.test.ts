@@ -248,6 +248,10 @@ describe('facebook publish: request bodies', () => {
       kind: 'permanent',
       code: 'media_type_unsupported',
     });
+    expect(await reject([main('x', [{ ...png, altText: 'a'.repeat(1_001) }])])).toEqual({
+      kind: 'permanent',
+      code: 'alt_text_too_long',
+    });
     const { clientSecret: _, ...withoutSecret } = app;
     expect(await reject([main('x')], withoutSecret)).toEqual({
       kind: 'app_config',
