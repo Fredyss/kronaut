@@ -58,7 +58,7 @@ catalog:
   tar-stream: 3.2.2
   temporal-polyfill: 1.0.6
   typescript: 7.0.2
-  undici: 8.12.1
+  undici: 8.12.3
   vite: 8.3.4
   vitest: 5.0.4
   zod: 4.6.7
@@ -71,3 +71,7 @@ allowBuilds:
   cpu-features: false
   protobufjs: false
   ssh2: false
+
+overrides:
+  js-yaml@>=4.0.0 <4.3.2: 4.3.2
+  undici@>=8.0.0 <8.12.2: 8.12.3
