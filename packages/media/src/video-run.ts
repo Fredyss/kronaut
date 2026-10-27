@@ -8,7 +8,7 @@ export interface VideoToolOptions {
   readonly threads?: number;
 }
 
-export type VideoToolErrorKind = 'missing' | 'failed' | 'timeout';
+export type VideoToolErrorKind = 'missing' | 'failed' | 'killed' | 'timeout';
 
 export class VideoToolError extends Error {
   readonly kind: VideoToolErrorKind;
@@ -97,10 +97,12 @@ export function runTool(bin: string, args: readonly string[], timeoutMs: number)
         error.code === 'ENOENT' ? new VideoToolError('missing', `${bin} was not found`) : error,
       );
     });
-    child.once('close', (code) => {
+    child.once('close', (code, signal) => {
       clearTimeout(timer);
       if (failure !== null) reject(failure);
       else if (code === 0) resolve(stdout.concat());
+      else if (code === null)
+        reject(new VideoToolError('killed', `${bin} was killed by ${signal}`));
       else reject(new VideoToolError('failed', `${bin} exited with ${code}: ${stderr.text()}`));
     });
   });

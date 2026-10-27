@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
@@ -112,6 +112,13 @@ describe.skipIf(!hasFfmpeg)('video tools against ffmpeg', () => {
     const garbage = join(dir, 'garbage.mp4');
     await writeFile(garbage, randomBytes(4096));
     await expectKind(probeVideo(garbage), 'failed');
+  });
+
+  it('reports a tool killed by a signal as killed', async () => {
+    const tool = join(dir, 'self-kill');
+    await writeFile(tool, '#!/bin/sh\nkill -9 $$\n');
+    await chmod(tool, 0o755);
+    await expectKind(probeVideo(join(dir, 'landscape.mp4'), { ffprobe: tool }), 'killed');
   });
 
   it('kills a run that exceeds its timeout', async () => {

@@ -258,6 +258,30 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
     expect((await row(second.job.id)).duplicate_of_id).toBe(first.job.id);
   });
 
+  it('retries a tool failure until the last attempt, then rejects', async () => {
+    const data = await video('transient', 4, 650);
+    const { job, key } = await upload(a, data);
+    const slow = { ...deps, tools: { timeoutMs: 1 } };
+    await expect(runMediaProcess(slow, job, false)).rejects.toMatchObject({ kind: 'timeout' });
+    expect((await row(job.id)).state).toBe('processing');
+    expect(await staging.parts(key)).toEqual(new Map([[1, data.byteLength]]));
+    expect(await runMediaProcess(slow, job, true)).toBe('rejected');
+    expect(await row(job.id)).toMatchObject({
+      state: 'rejected',
+      rejected_reason: 'video_unreadable',
+    });
+    await expectGone(key);
+  });
+
+  it('drops the staging files of a video deleted while it was queued', async () => {
+    const { job, key } = await upload(a, await video('deleted', 4, 750));
+    await asOwner(async (trx) =>
+      sql`update media_assets set deleted_at = now() where id = ${job.id}`.execute(trx),
+    );
+    expect(await runMediaProcess(deps, job)).toBe('skipped');
+    await expectGone(key);
+  });
+
   it('throws on missing tools and leaves the row processing with its parts', async () => {
     const data = await video('missing', 4, 700);
     const { job, key } = await upload(a, data);

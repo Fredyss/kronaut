@@ -60,17 +60,22 @@ interface Hashed {
   readonly bytes: number;
 }
 
-async function loadStagingKey(deps: MediaProcessDeps, job: MediaJob): Promise<string | null> {
+interface Staged {
+  readonly key: string;
+  readonly live: boolean;
+}
+
+async function loadStaged(deps: MediaProcessDeps, job: MediaJob): Promise<Staged | null> {
   const row = await deps.db.withTenant(job.workspaceId, SYSTEM, (trx) =>
     trx
       .selectFrom('media_assets')
-      .select(['storage_key', 'kind', 'state', 'ai_generated', 'deleted_at'])
+      .select(['storage_key', 'kind', 'state', 'deleted_at'])
       .where('workspace_id', '=', job.workspaceId)
       .where('id', '=', job.id)
       .executeTakeFirst(),
   );
-  if (row === undefined || row.kind !== 'video' || row.deleted_at !== null) return null;
-  return row.state === 'processing' ? row.storage_key : null;
+  if (row === undefined || row.kind !== 'video' || row.state !== 'processing') return null;
+  return { key: row.storage_key, live: row.deleted_at === null };
 }
 
 async function joinParts(staging: Staging, key: string, source: string): Promise<Buffer> {
@@ -103,19 +108,20 @@ async function hashFile(path: string): Promise<Hashed> {
   return { sha256: hash.digest(), bytes };
 }
 
-async function tool<T>(run: () => Promise<T>): Promise<T> {
+// A source ffprobe can't read is bad input; any other tool failure may be the host (OOM, full
+// disk, slow CPU), so it is retried and only rejects the video on the job's last attempt.
+async function tool<T>(run: () => Promise<T>, final: boolean, source = false): Promise<T> {
   try {
     return await run();
   } catch (error) {
-    if (error instanceof VideoToolError && error.kind !== 'missing') {
-      throw new VideoRejected('video_unreadable');
-    }
+    if (!(error instanceof VideoToolError) || error.kind === 'missing') throw error;
+    if (final || (source && error.kind === 'failed')) throw new VideoRejected('video_unreadable');
     throw error;
   }
 }
 
-async function probeSource(source: string, tools: VideoToolOptions | undefined) {
-  const probe = await tool(() => probeVideo(source, tools));
+async function probeSource(source: string, tools: VideoToolOptions | undefined, final: boolean) {
+  const probe = await tool(() => probeVideo(source, tools), final, true);
   if (probe.video === null) throw new VideoRejected('video_stream_missing');
   if (probe.durationMs === null) throw new VideoRejected('video_unreadable');
   if (probe.durationMs < MIN_DURATION_MS) throw new VideoRejected('video_too_short');
@@ -135,21 +141,21 @@ async function storeVerified(
   }
 }
 
-async function convert(deps: MediaProcessDeps, job: MediaJob, key: string) {
+async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final: boolean) {
   const dir = deps.staging.directory(key);
   const source = join(dir, 'source');
   const master = join(dir, 'master.mp4');
   const sourceSha256 = await joinParts(deps.staging, key, source);
-  const probe = await probeSource(source, deps.tools);
-  await tool(() => convertVideo(source, master, probe, deps.tools));
-  const out = await tool(() => probeVideo(master, deps.tools));
+  const probe = await probeSource(source, deps.tools, final);
+  await tool(() => convertVideo(source, master, probe, deps.tools), final);
+  const out = await tool(() => probeVideo(master, deps.tools), final);
   if (out.video === null || out.durationMs === null) throw new VideoRejected('video_unreadable');
   if ((await stat(master)).size > VIDEO_MAX_BYTES) throw new VideoRejected('video_too_large');
   const hashed = await hashFile(master);
   const masterKey = storageKey(job.workspaceId, hashed.sha256);
   await storeVerified(deps.store, masterKey, createReadStream(master), hashed);
   const durationMs = out.durationMs;
-  const poster = await tool(() => extractPoster(master, durationMs, deps.tools));
+  const poster = await tool(() => extractPoster(master, durationMs, deps.tools), final);
   const posterHash = {
     sha256: createHash('sha256').update(poster).digest(),
     bytes: poster.byteLength,
@@ -172,9 +178,10 @@ async function settle(
   deps: MediaProcessDeps,
   job: MediaJob,
   key: string,
+  final: boolean,
 ): Promise<{ outcome: MediaProcessOutcome; reason?: RejectedReason | 'video_duplicate' }> {
   try {
-    const outcome = await finishMedia(deps.db, job, await convert(deps, job, key));
+    const outcome = await finishMedia(deps.db, job, await convert(deps, job, key, final));
     return outcome === 'duplicate' ? { outcome, reason: 'video_duplicate' } : { outcome };
   } catch (error) {
     if (!(error instanceof VideoRejected)) throw error;
@@ -186,16 +193,19 @@ async function settle(
 export async function runMediaProcess(
   deps: MediaProcessDeps,
   job: MediaJob,
+  final = true,
 ): Promise<MediaProcessOutcome> {
   const logger = deps.logger.child({ workspaceId: job.workspaceId, mediaId: job.id });
-  const key = await loadStagingKey(deps, job);
-  if (key === null) {
+  const staged = await loadStaged(deps, job);
+  if (staged === null || !staged.live) {
+    if (staged !== null) await deps.staging.remove(staged.key);
     logger.info({ outcome: 'skipped' }, 'skipped processing an uploaded video');
     return 'skipped';
   }
+  const { key } = staged;
   let result: Awaited<ReturnType<typeof settle>>;
   try {
-    result = await settle(deps, job, key);
+    result = await settle(deps, job, key, final);
   } catch (error) {
     if (error instanceof VideoToolError && error.kind === 'missing') {
       logger.error({ err: error }, 'ffmpeg or ffprobe is missing; the video stays processing');
@@ -211,12 +221,13 @@ export async function runMediaProcess(
 }
 
 export function mediaProcessTask(deps: MediaProcessDeps): Task {
-  return async (payload) => {
+  return async (payload, helpers) => {
     const parsed = PayloadSchema.safeParse(payload);
     if (!parsed.success) {
       deps.logger.error('media process job payload is invalid');
       return;
     }
-    await runMediaProcess(deps, parsed.data);
+    const final = helpers.job.attempts >= helpers.job.max_attempts;
+    await runMediaProcess(deps, parsed.data, final);
   };
 }
