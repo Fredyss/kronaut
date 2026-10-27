@@ -5,6 +5,7 @@ import { AUTH_MODES, type AuthMode, type HttpMethod } from './auth.ts';
 export type ObjectSchema = z.ZodObject<z.core.$ZodLooseShape, z.core.$ZodObjectConfig>;
 export type RouteStatus = 200 | 201 | 202 | 204 | 303;
 export type RouteAuth = readonly [AuthMode, ...AuthMode[]];
+export type BodyEncoding = 'json' | 'octet-stream';
 
 export interface RouteDefinition<
   P extends ObjectSchema | undefined = undefined,
@@ -26,6 +27,7 @@ export interface RouteDefinition<
   readonly description?: string;
   readonly tags?: readonly string[];
   readonly idempotency?: boolean;
+  readonly bodyEncoding?: BodyEncoding;
 }
 
 export interface Route<
@@ -48,6 +50,7 @@ export interface Route<
   readonly description?: string;
   readonly tags: readonly string[];
   readonly idempotency: boolean;
+  readonly bodyEncoding: BodyEncoding;
 }
 
 const ID_PATTERN = /^[a-z][a-z_]*(\.[a-z][a-z_]*)+$/;
@@ -205,6 +208,12 @@ export function defineRoute<
   validateAction(def.action, isPublic, fail);
   validateMethod(def, isPublic, fail);
   if (def.summary.trim() === '') fail('summary must not be empty');
+  const idempotency = def.idempotency ?? (def.method !== 'GET' && !isPublic);
+  const bodyEncoding = def.bodyEncoding ?? 'json';
+  if (bodyEncoding === 'octet-stream') {
+    if (def.body === undefined) fail('an octet-stream route needs a body schema');
+    if (idempotency) fail('an octet-stream route must set idempotency false');
+  }
 
   const route: Route<P, Q, B, R> = {
     id: def.id,
@@ -220,7 +229,8 @@ export function defineRoute<
     summary: def.summary,
     ...(def.description === undefined ? {} : { description: def.description }),
     tags: Object.freeze([...(def.tags ?? [])]),
-    idempotency: def.idempotency ?? (def.method !== 'GET' && !isPublic),
+    idempotency,
+    bodyEncoding,
   };
   const frozen = Object.freeze(route);
   DEFINED.add(frozen);

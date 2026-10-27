@@ -45,6 +45,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
       - run: pnpm test:db
 
   e2e:
@@ -94,6 +95,7 @@ jobs:
           persist-credentials: false
       - run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - run: psql "postgresql://postgres:postgres@127.0.0.1:5432/kronaut" -v ON_ERROR_STOP=1 --single-transaction -f packages/db/schema/v1.sql
+      - run: for f in packages/db/migrations/*.sql; do psql "postgresql://postgres:postgres@127.0.0.1:5432/kronaut" -v ON_ERROR_STOP=1 -f "$f"; done
       - run: psql "postgresql://postgres:postgres@127.0.0.1:5432/kronaut" -v ON_ERROR_STOP=1 -f packages/db/test/agent-dirty-guard.sql
       - run: psql "postgresql://postgres:postgres@127.0.0.1:5432/kronaut" -v ON_ERROR_STOP=1 -f packages/db/test/approval-requester.sql
       - run: psql "postgresql://postgres:postgres@127.0.0.1:5432/kronaut" -v ON_ERROR_STOP=1 -f packages/db/test/privileges.sql

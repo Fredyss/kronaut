@@ -219,7 +219,7 @@ INSERT INTO media_assets (workspace_id, id, kind, state, storage_key, deleted_at
   (:B2, '00000000-0000-7000-8000-000000000602', 'image', 'uploading', repeat('2', 64), NULL, now() - interval '8 days'),
   (:B2, '00000000-0000-7000-8000-000000000603', 'image', 'quarantined', repeat('3', 64), NULL, now()),
   (:B1, '00000000-0000-7000-8000-000000000604', 'image', 'quarantined', repeat('4', 64), now() - interval '1 day', now()),
-  (:B3, '00000000-0000-7000-8000-000000000605', 'image', 'uploading', repeat('5', 64), NULL, now() - interval '1 day');
+  (:B3, '00000000-0000-7000-8000-000000000605', 'image', 'uploading', repeat('5', 64), NULL, now() - interval '23 hours');
 INSERT INTO media_renditions (workspace_id, media_asset_id, purpose, transform_hash, storage_key, sha256, mime, bytes, expires_at) VALUES
   (:B1, '00000000-0000-7000-8000-000000000601', 'publish', decode(repeat('01', 32), 'hex'), 'r1', decode(repeat('01', 32), 'hex'), 'image/jpeg', 1, now() - interval '1 hour'),
   (:B2, '00000000-0000-7000-8000-000000000603', 'publish', decode(repeat('02', 32), 'hex'), 'r2', decode(repeat('02', 32), 'hex'), 'image/jpeg', 1, now() - interval '1 hour');
@@ -244,10 +244,13 @@ SELECT pg_temp.must('TEN-06 credentials: window capped at 7 days, lease and acco
 SELECT pg_temp.must('TEN-06 due webhook deliveries',
   (SELECT array_agg(delivery_id) FROM sweep_due_webhook_deliveries(10)) = ARRAY[
     '00000000-0000-7000-8000-000000000402', '00000000-0000-7000-8000-000000000401']::uuid[]);
-SELECT pg_temp.must('TEN-06 media GC candidates, each once',
+SELECT pg_temp.must('TEN-06 media GC candidates, each once, expired uploads first',
   (SELECT array_agg(media_asset_id) FROM sweep_media_gc(10)) = ARRAY[
-    '00000000-0000-7000-8000-000000000601', '00000000-0000-7000-8000-000000000602',
+    '00000000-0000-7000-8000-000000000602', '00000000-0000-7000-8000-000000000601',
     '00000000-0000-7000-8000-000000000603']::uuid[]);
+SELECT pg_temp.must('TEN-06 media GC: an expired upload is not crowded out by the limit',
+  (SELECT array_agg(media_asset_id) FROM sweep_media_gc(1)) = ARRAY[
+    '00000000-0000-7000-8000-000000000602']::uuid[]);
 SELECT pg_temp.must('TEN-06 workspaces keyset first page',
   (SELECT array_agg(workspace_id) FROM sweep_workspaces(NULL, 2)) = ARRAY[:B1, :B2]::uuid[]);
 SELECT pg_temp.must('TEN-06 workspaces keyset next page',

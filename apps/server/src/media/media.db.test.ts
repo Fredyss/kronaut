@@ -113,9 +113,12 @@ describe('ingestImage', () => {
       bytes: master.byteLength,
       width: 32,
       height: 16,
+      durationMs: null,
       sha256: sha256(master).toString('hex'),
       state: 'ready',
       aiGenerated: false,
+      rejectedReason: null,
+      duplicateOf: null,
     });
     const row = await rowOf(a, asset);
     const key = storageKey(a.workspaceId, sha256(master));

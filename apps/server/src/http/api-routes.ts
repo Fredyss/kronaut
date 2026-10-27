@@ -8,6 +8,8 @@ import { authRoutes } from '../auth/routes.ts';
 import { channelRoutes } from '../channels/routes.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
+import type { Staging } from '../media/staging.ts';
+import { uploadRoutes } from '../media/upload-routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
@@ -18,11 +20,18 @@ import type { BoundRoute } from './types.ts';
 export interface ApiRouteDeps {
   readonly http: HttpDeps;
   readonly store: MediaStore;
+  readonly staging: Staging;
   readonly keyring: Keyring;
   readonly providers: ProviderRegistry;
 }
 
-export function apiRoutes({ http, store, keyring, providers }: ApiRouteDeps): BoundRoute[] {
+export function apiRoutes({
+  http,
+  store,
+  staging,
+  keyring,
+  providers,
+}: ApiRouteDeps): BoundRoute[] {
   return [
     ...systemRoutes(http),
     ...authRoutes(http),
@@ -30,6 +39,7 @@ export function apiRoutes({ http, store, keyring, providers }: ApiRouteDeps): Bo
     ...profileRoutes(http),
     ...passwordChangeRoutes(http),
     ...mediaRoutes({ store, clock: http.clock }),
+    ...uploadRoutes({ staging }),
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),

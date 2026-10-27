@@ -415,6 +415,7 @@ export interface MediaAssets {
   bytes: Int8 | null;
   created_at: Generated<Timestamp>;
   deleted_at: Timestamp | null;
+  duplicate_of_id: string | null;
   duration_ms: number | null;
   height: number | null;
   id: Generated<string>;
@@ -423,11 +424,13 @@ export interface MediaAssets {
   mime: string | null;
   original_name: string | null;
   original_purged_at: Timestamp | null;
+  rejected_reason: string | null;
   sha256: Buffer | null;
   source_sha256: Buffer | null;
   state: string;
   storage_key: string;
   updated_at: Generated<Timestamp>;
+  upload_expires_at: Timestamp | null;
   uploaded_by_grant_id: string | null;
   uploaded_by_user_id: string | null;
   width: number | null;

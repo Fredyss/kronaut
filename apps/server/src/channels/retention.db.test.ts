@@ -5,6 +5,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronTaskList } from '../cron.ts';
+import { createStaging } from '../media/staging.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
 import { DISCONNECTED_CREDENTIAL_DAYS } from './retention.ts';
 
@@ -51,7 +52,10 @@ describe('credential retention', () => {
     const active = await account('active', drop);
     const recent = await account('disconnected', DISCONNECTED_CREDENTIAL_DAYS - 1);
     const expired = await account('disconnected', drop);
-    const tasks = cronTaskList(fixture.db, pino({ level: 'silent' }), fixture.deps);
+    const tasks = cronTaskList(fixture.db, pino({ level: 'silent' }), {
+      ...fixture.deps,
+      staging: createStaging('/nonexistent'),
+    });
 
     await tasks[CRON_TASKS.credentialRetention]?.({}, {} as JobHelpers);
 

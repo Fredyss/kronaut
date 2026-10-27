@@ -13,6 +13,12 @@ export const MEDIA_UPLOAD_BODY_LIMIT = 12 * 1024 * 1024;
 
 const BASE64_MAX_LENGTH = Math.ceil(MEDIA_IMAGE_MAX_BYTES / 3) * 4;
 
+export const FilenameSchema = z
+  .string()
+  .min(1)
+  .max(255)
+  .regex(/^\P{Cc}*$/u);
+
 export const mediaUploadRoute = defineRoute({
   id: MEDIA_UPLOAD_ROUTE_ID,
   method: 'POST',
@@ -21,12 +27,7 @@ export const mediaUploadRoute = defineRoute({
   action: 'media:write',
   params: z.object({ workspaceId: z.string() }),
   body: z.object({
-    filename: z
-      .string()
-      .min(1)
-      .max(255)
-      .regex(/^\P{Cc}*$/u)
-      .optional(),
+    filename: FilenameSchema.optional(),
     dataBase64: z.base64().min(1).max(BASE64_MAX_LENGTH),
     aiGenerated: z.boolean().optional(),
   }),
@@ -56,7 +57,7 @@ export interface MediaRouteDeps {
   readonly clock: () => Temporal.Instant;
 }
 
-function internalId(kind: IdKind, value: string): string {
+export function internalId(kind: IdKind, value: string): string {
   const id = decodePublicId(kind, value);
   if (id === null) throw new MediaError('not_found', 'not found');
   return id;

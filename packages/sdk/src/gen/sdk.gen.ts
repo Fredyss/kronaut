@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client/index.ts';
-import type { ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses } from './types.gen.ts';
+import type { ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -325,6 +325,25 @@ export const mediaUpload = <ThrowOnError extends boolean = true>(options: Option
 });
 
 /**
+ * Start a chunked video upload
+ *
+ * Accepts MP4, QuickTime or WebM up to 300 MB. Send every part with `media.video_part`, then call `media.video_complete` before `expiresAt` (24 h).
+ */
+export const mediaVideoUpload = <ThrowOnError extends boolean = true>(options: Options<MediaVideoUploadData, ThrowOnError>): RequestResult<MediaVideoUploadResponses, MediaVideoUploadErrors, ThrowOnError> => (options.client ?? client).post<MediaVideoUploadResponses, MediaVideoUploadErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media/uploads',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get a media asset
  */
 export const mediaGet = <ThrowOnError extends boolean = true>(options: Options<MediaGetData, ThrowOnError>): RequestResult<MediaGetResponses, MediaGetErrors, ThrowOnError> => (options.client ?? client).get<MediaGetResponses, MediaGetErrors, ThrowOnError>({
@@ -335,6 +354,41 @@ export const mediaGet = <ThrowOnError extends boolean = true>(options: Options<M
         }, { scheme: 'bearer', type: 'http' }],
     url: '/v1/workspaces/{workspaceId}/media/{mediaId}',
     ...options
+});
+
+/**
+ * Complete a chunked video upload
+ *
+ * Checks that every part is present and queues the conversion. Completing again is a no-op.
+ */
+export const mediaVideoComplete = <ThrowOnError extends boolean = true>(options: Options<MediaVideoCompleteData, ThrowOnError>): RequestResult<MediaVideoCompleteResponses, MediaVideoCompleteErrors, ThrowOnError> => (options.client ?? client).post<MediaVideoCompleteResponses, MediaVideoCompleteErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/complete',
+    ...options
+});
+
+/**
+ * Upload one part of a video
+ *
+ * Every part except the last is exactly `partSize` bytes. Sending a part again replaces it.
+ */
+export const mediaVideoPart = <ThrowOnError extends boolean = true>(options: Options<MediaVideoPartData, ThrowOnError>): RequestResult<MediaVideoPartResponses, MediaVideoPartErrors, ThrowOnError> => (options.client ?? client).put<MediaVideoPartResponses, MediaVideoPartErrors, ThrowOnError>({
+    bodySerializer: null,
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/parts/{part}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/octet-stream',
+        ...options.headers
+    }
 });
 
 /**

@@ -7,6 +7,7 @@ export const JOBS = {
   verify: 'verify',
   refreshCredential: 'refresh_credential',
   revokeCredential: 'revoke_credential',
+  mediaProcess: 'media_process',
 } as const;
 
 export type JobName = (typeof JOBS)[keyof typeof JOBS];
@@ -27,7 +28,13 @@ export interface RevokeJob {
   readonly version: number;
 }
 
+export interface MediaJob {
+  readonly workspaceId: string;
+  readonly id: string;
+}
+
 export const REVOKE_ATTEMPTS = 8;
+export const MEDIA_PROCESS_ATTEMPTS = 3;
 
 export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promise<void> {
   const payload = JSON.stringify(credential);
@@ -108,4 +115,15 @@ export function ensureVerifyJob(
   runAt: Temporal.Instant,
 ): Promise<void> {
   return addVerifyJob(trx, destination, runAt, 'preserve_run_at');
+}
+
+export async function enqueueMediaProcess(trx: TenantDb, job: MediaJob): Promise<void> {
+  const payload = JSON.stringify({ workspaceId: job.workspaceId, id: job.id });
+  await sql`
+    select graphile_worker.add_job(${JOBS.mediaProcess}, ${payload}::json,
+      queue_name := 'media',
+      max_attempts := ${MEDIA_PROCESS_ATTEMPTS},
+      job_key := ${`media:${job.id}`},
+      job_key_mode := 'preserve_run_at')
+  `.execute(trx);
 }

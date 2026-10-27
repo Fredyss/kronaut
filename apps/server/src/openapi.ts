@@ -6,6 +6,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { apiRoutes } from './http/api-routes.ts';
 import { deriveHttpKeys, type HttpDeps, routeRegistry } from './http/kernel.ts';
+import { createStaging } from './media/staging.ts';
 import { createProviderRegistry } from './providers.ts';
 
 export const OPENAPI_PATH = new URL('../../../packages/contract/openapi.json', import.meta.url);
@@ -37,6 +38,7 @@ export function renderOpenApi(): string {
   const routes = apiRoutes({
     http,
     store: createLocalStore('/nonexistent'),
+    staging: createStaging('/nonexistent'),
     keyring: createKeyring(new Map([[1, randomBytes(32)]])),
     providers: createProviderRegistry([], []),
   });

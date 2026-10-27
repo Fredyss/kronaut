@@ -254,6 +254,30 @@ describe('operations', () => {
     expect(post.description).toBeUndefined();
   });
 
+  it('describes an octet-stream body as binary without an idempotency header', () => {
+    const upload = defineRoute({
+      id: 'files.put_part',
+      method: 'PUT',
+      path: '/v1/files/:id',
+      auth: 'session',
+      action: 'media:write',
+      params: z.object({ id: z.string() }),
+      body: z.instanceof(Uint8Array),
+      bodyEncoding: 'octet-stream',
+      idempotency: false,
+      response: z.object({ bytes: z.number() }),
+      summary: 'Put a file part',
+    });
+    const put = toOpenApi([upload], INFO).paths['/v1/files/{id}']?.put;
+    expect(put?.requestBody).toEqual({
+      required: true,
+      content: { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } },
+    });
+    expect(put?.parameters).toEqual([
+      { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
+    ]);
+  });
+
   it('describes a reviewer GET with two path params in path order', () => {
     const get = op('/v1/review/{token}/posts/{postId}', 'get');
     expect(get.parameters).toEqual([

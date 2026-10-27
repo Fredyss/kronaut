@@ -14,6 +14,7 @@ const ALL = [
   '0004_user_workspaces_can_approve',
   '0005_membership_email_muted',
   '0006_provider_app_redirect_uri',
+  '0007_video_upload',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -147,7 +148,7 @@ describe('migrate', () => {
       url,
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
-    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
@@ -354,6 +355,50 @@ describe('migrate', () => {
     await expect(query(url, "update memberships set email_muted = '{posts}'")).rejects.toThrow(
       /ck_memberships_email_muted/,
     );
+  });
+
+  it('adds the video upload columns with validated constraints and keeps the media GC grant', async () => {
+    const url = await freshDatabase('video_upload');
+    await migrate({ connectionString: url });
+    const w = '01900000-0000-7000-8000-0000000007b1';
+    const kept = '01900000-0000-7000-8000-0000000007d1';
+    const dup = '01900000-0000-7000-8000-0000000007d2';
+    await query(
+      url,
+      `insert into organizations (id, name) values ('01900000-0000-7000-8000-0000000007a1', 'O');
+       insert into workspaces (id, organization_id, name, slug, timezone)
+         values ('${w}', '01900000-0000-7000-8000-0000000007a1', 'W', 'w', 'UTC');
+       insert into media_assets (workspace_id, id, kind, state, storage_key)
+         values ('${w}', '${kept}', 'video', 'processing', repeat('a', 64));
+       insert into media_assets (workspace_id, id, kind, state, storage_key, rejected_reason, duplicate_of_id)
+         values ('${w}', '${dup}', 'video', 'rejected', repeat('b', 64), 'video_duplicate', '${kept}');`,
+    );
+    await expect(
+      query(url, `update media_assets set rejected_reason = 'video_bogus' where id = '${dup}'`),
+    ).rejects.toThrow(/ck_media_assets_rejected_reason/);
+    await expect(
+      query(url, `update media_assets set rejected_reason = 'video_too_long' where id = '${kept}'`),
+    ).rejects.toThrow(/ck_media_assets_rejected_state/);
+    await query(url, `delete from media_assets where id = '${kept}'`);
+    expect(
+      await query(url, `select id, duplicate_of_id from media_assets where workspace_id = '${w}'`),
+    ).toEqual([{ id: dup, duplicate_of_id: null }]);
+    const constraints = await query<{ conname: string; convalidated: boolean }>(
+      url,
+      `select conname, convalidated from pg_constraint
+        where conrelid = 'public.media_assets'::regclass
+          and conname in ('ck_media_assets_rejected_reason', 'ck_media_assets_rejected_state',
+                          'fk_media_assets_duplicate_of')
+        order by conname`,
+    );
+    expect(constraints.map((row) => row.convalidated)).toEqual([true, true, true]);
+    expect(
+      await query(
+        url,
+        `select has_function_privilege('kronaut_app', 'sweep_media_gc(integer)', 'execute') as app,
+                has_function_privilege('public', 'sweep_media_gc(integer)', 'execute') as anyone`,
+      ),
+    ).toEqual([{ app: true, anyone: false }]);
   });
 
   it('upgrades a database that recorded only v1 and still passes the privilege script', async () => {

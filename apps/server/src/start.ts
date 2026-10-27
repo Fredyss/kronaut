@@ -32,8 +32,10 @@ import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess } from './media/access.ts';
-import { MEDIA_UPLOAD_BODY_LIMIT, MEDIA_UPLOAD_ROUTE_ID } from './media/routes.ts';
+import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
+import { stagingIn } from './media/staging.ts';
+import { MEDIA_BODY_LIMITS } from './media/upload-routes.ts';
 import { emailDeps } from './notifications/email.ts';
 import { createProviderRegistry } from './providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
@@ -186,13 +188,15 @@ async function stopAll(db: Database, state: Running): Promise<void> {
 async function startWorker(boot: Boot): Promise<void> {
   const { config, options, db, clock, providers, keyring, state } = boot;
   const { logger } = options;
+  const store = createLocalStore(join(config.dataDir, 'media'));
+  const staging = stagingIn(config.dataDir);
   const publishing = publishDeps({
     db,
     providers,
     keyring,
     media: createMediaAccess({
       db,
-      store: createLocalStore(join(config.dataDir, 'media')),
+      store,
       signingKey: deriveMediaSigningKey(config.secret),
       mediaBaseUrl: config.mediaUrl,
       clock,
@@ -212,10 +216,11 @@ async function startWorker(boot: Boot): Promise<void> {
     logger: jobLogger(logger),
     noHandleSignals: true,
     taskList: {
-      ...cronTaskList(db, logger, publishing, email),
+      ...cronTaskList(db, logger, { ...publishing, staging }, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
+      [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
     },
     parsedCronItems: cronItems(email !== null),
   });
@@ -251,12 +256,13 @@ async function startApi(boot: Boot): Promise<void> {
     clock,
     publicBaseUrl: config.publicUrl.origin,
     readiness: async () => !state.stopping && (await workerAlive(db)),
-    routeBodyLimits: { [MEDIA_UPLOAD_ROUTE_ID]: MEDIA_UPLOAD_BODY_LIMIT },
+    routeBodyLimits: MEDIA_BODY_LIMITS,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };
   const store = createLocalStore(join(config.dataDir, 'media'));
-  const api = createHttpApp(deps, apiRoutes({ http: deps, store, keyring, providers }));
+  const staging = stagingIn(config.dataDir);
+  const api = createHttpApp(deps, apiRoutes({ http: deps, store, staging, keyring, providers }));
   state.http = await listen(api.fetch, config.port);
 }
 
@@ -301,16 +307,7 @@ export async function startServer(
 
     const providers = createProviderRegistry(manifests, runtimes);
     const keyring = keyringFromEnv(options.env ?? process.env);
-    const boot: Boot = {
-      config,
-      databaseUrl,
-      options,
-      db,
-      clock,
-      providers,
-      keyring,
-      state,
-    };
+    const boot: Boot = { config, databaseUrl, options, db, clock, providers, keyring, state };
 
     if (serves('worker')) await startWorker(boot);
     if (serves('api')) await startApi(boot);

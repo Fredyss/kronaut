@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { refreshCapabilities } from './channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './channels/retention.ts';
+import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
@@ -14,6 +15,7 @@ export const CRON_TASKS = {
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
   credentialRetention: 'credential_retention',
+  mediaGc: 'media_gc',
   notificationEmail: 'notification_email',
   notificationRetention: 'notification_retention',
   publishDueSweep: 'publish_due_sweep',
@@ -51,6 +53,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     identifier: CRON_TASKS.credentialRetention,
     match: '51 3 * * *',
     options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
+  {
+    task: CRON_TASKS.mediaGc,
+    identifier: CRON_TASKS.mediaGc,
+    match: '23 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
   },
   {
     task: CRON_TASKS.notificationEmail,
@@ -154,7 +162,7 @@ export async function maintainAuditPartitions(db: Database, logger: Logger): Pro
 export function cronTaskList(
   db: Database,
   logger: Logger,
-  sweeps: SweepDeps & RefreshDeps,
+  sweeps: SweepDeps & RefreshDeps & MediaGcDeps,
   email: EmailDeps | null = null,
 ): TaskList {
   return {
@@ -182,6 +190,9 @@ export function cronTaskList(
       await recordCronRun(db, CRON_TASKS.credentialRetention, () =>
         purgeDisconnectedCredentials(db),
       );
+    },
+    [CRON_TASKS.mediaGc]: async () => {
+      await recordCronRun(db, CRON_TASKS.mediaGc, () => collectMedia(db, sweeps));
     },
     [CRON_TASKS.notificationRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.notificationRetention, () => purgeNotifications(db));
