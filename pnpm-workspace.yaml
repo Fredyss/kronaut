@@ -39,7 +39,7 @@ catalog:
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   graphile-worker: 0.18.0
-  happy-dom: 21.0.3
+  happy-dom: 21.0.4
   hono: 4.13.13
   jscpd: 5.4.1
   jose: 6.2.13
