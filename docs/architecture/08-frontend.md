@@ -1,0 +1,74 @@
+# Frontend
+
+- **Post editor with variants (ADR-0033):**
+  - The default variant applies to all destinations.
+  - "Customize for <network/account>" forks a full variant, with its own item list, which shows an "inherited / customized" badge and can be reset.
+- **Live validation strip** from the shared manifest ("X 291/280", "IG Reel needs 9:16, 3–90 s", Bluesky graphemes + bytes):
+  - Media is checked in a Web Worker (`createImageBitmap`, mediabunny) *before* upload.
+  - Schedule stays disabled until everything is valid, and each error comes with a fix action.
+- **Previews** are React components per archetype (short-feed, pro-feed, media-grid, vertical-video, chat, article):
+  - They use real truncation cutoffs and crop overlays.
+  - Golden tests per network keep preview == published.
+  - MVP: line clamps approximate the in-feed cutoff (pro-feed 3 lines, media-grid 2 lines); exact per-network cutoffs come later.
+- **Per-media alt text + AI label:**
+  - IG `is_ai_generated`, TikTok `is_aigc`, X `made_with_ai`, YouTube `containsSyntheticMedia`.
+  - The flag is sticky for agent-generated media.
+- **Platform-mandated UX:**
+  - **TikTok:**
+    - no default privacy, and interaction toggles default off
+    - consent text and commercial-content disclosure
+    - live `creator_info` before posting
+  - **Pinterest:** a board picker and a video cover.
+  - **X:** shows the cost per post (higher with a link) from the manifest `cost`.
+- **Approval:**
+  - Draft → In review → Approved → Scheduled.
+  - An edit after approval resets it and shows a visible diff per destination.
+  - A single-member workspace has self-approval on (visible in settings).
+- **Needs action inbox:** unconfirmed / failed / blocked / awaiting_manual. "Send again" on unconfirmed requires ticking "this may post twice".
+- **Calendar:**
+  - week/month/list views
+  - keyboard-first (j/k, n, e, d, ⇧-arrows, ⌘K)
+  - the timezone shown on every time
+  - optimistic drag-reschedule with an undo toast (re-approval warning when outside tolerance)
+- **Autosave:** IndexedDB on every change (1 s debounce) + server revision; a multi-tab conflict banner.
+- **Budgets** (gzipped, CI `size-limit`):
+  - shell + calendar ≤ 150 KB
+  - CSS ≤ 25 KB
+  - route chunks ≤ 40 KB
+  - editor ≤ 130 KB (preloaded on hover)
+  - emoji / cropper / AI / charts lazy, ≤ 40 KB each
+  - INP < 100 ms with 500 posts/week
+  - no prod source maps
+- **Public review pages:** server-rendered escaped HTML, token → cookie exchange, `noindex`, near-zero JS.
+- **Mobile and extension:**
+  - A PWA for review/approve/status (Phase 3).
+  - The extension does share-current-page only (WXT, later). It never reads third-party cookies.
+
+## i18n: English, Slovak, Czech
+
+- **Locales:**
+  - `en` (source), `sk`, `cs`.
+  - Stored per user (`users.locale`); the first visit falls back to `Accept-Language`.
+  - No locale in URLs (the app is behind login). Public review pages use the viewer's `Accept-Language`.
+- **Bundles:** only the active locale ships. Paraglide compiles one module per locale, so sk/cs add 0 KB to an English session. CI fails on a missing key in any locale.
+- **Provider errors (ADR-0038):**
+  - Shown as class codes with a localised message and fix action; raw provider text only under "Technical details".
+  - CI fails if a mapped code is missing in any locale.
+- **Plurals:**
+  - sk/cs have `one / few / many / other` (1 príspevok, 2–4 príspevky, 5+ príspevkov).
+  - Every count message uses plural variants resolved via `Intl.PluralRules`. `count === 1 ? … : …` in code is banned by GritQL.
+- **Dates and numbers:**
+  - Always `Intl` / Temporal `toLocaleString(locale)`, never hand-built formats.
+  - The calendar week starts **Monday** for sk/cs (locale week info with a fallback table), on a 24 h clock.
+- **Diacritics:**
+  - Editor text is normalised to **NFC** before counting, serializing and hashing, so `č` = 1 character, not 2.
+  - Without this, decomposed input pasted from macOS would break X/Bluesky limits and approval hashes.
+  - Golden tests with sk/cs strings live in `@kronaut/compose`.
+- **Length:**
+  - sk/cs UI strings run ~20–35% longer than English, so there are no fixed-width buttons.
+  - Playwright visual snapshots run in `cs` (the longest).
+  - The `cs` visual snapshots are **not in yet**. Today `pnpm test:e2e` (`apps/server/e2e/`) runs a Chromium smoke suite against the real server, the built web app and a throwaway Postgres: setting the first password and signing in and out, the channel list, scheduling a post with Slovak diacritics, and the display name and language settings.
+- **Server-side text:** notification emails, API error `message` and the CLI use the same message catalog. The machine-readable `code` stays English.
+- **Translation flow:**
+  - English source → AI draft → native review by you.
+  - A glossary file (`post` = príspevok / příspěvek, `channel`, `schedule`, `approval`…) is kept in the repo so terminology stays consistent.

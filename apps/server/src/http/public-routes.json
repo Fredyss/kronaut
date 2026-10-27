@@ -1,0 +1,8 @@
+[
+  "GET /healthz",
+  "GET /oauth/:provider/:name",
+  "GET /readyz",
+  "GET /v1/oauth/:provider/callback",
+  "POST /v1/auth/login",
+  "POST /v1/auth/password"
+]

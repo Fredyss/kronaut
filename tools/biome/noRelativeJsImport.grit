@@ -1,0 +1,10 @@
+language js
+
+or {
+  `import $clause from $src`,
+  JsExportNamedFromClause(source=$src),
+  JsExportFromClause(source=$src)
+} as $imp where {
+  $src <: r"[\x27\x22]\.{1,2}/[^\x27\x22]*\.js[\x27\x22]",
+  register_diagnostic(span=$imp, message="Relative imports use the .ts extension (CLAUDE.md code style).", severity="error")
+}

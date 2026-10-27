@@ -1,0 +1,48 @@
+# Security acceptance tests
+
+- **Tenancy:**
+  - `TEN-01 idor_generated` (every id-param route/tool, B→A gets 404)
+  - `TEN-02 cross_ref_db_reject` (composite FKs on groups, destinations, locations)
+  - `TEN-03 worker_export_isolation`
+  - `TEN-04 global_table_default_deny` (exact grant matrix for `kronaut_app` and `kronaut_operator`; own-row and own-organization RLS; neither can create temporary tables)
+  - `TEN-05 definer_allowlist` (exact `SECURITY DEFINER` list, pinned `search_path`, no `PUBLIC` execute)
+  - `TEN-06 sweeps_cross_workspace_bounded` (ids only, cap 1000, deterministic order, paused → empty)
+  - `TEN-07 operator_only_instance_release` (the app can fence; only the operator can release or mark restored)
+- **Authentication and contract:**
+  - `AUTH-01 route_enumeration_401`
+  - `AUTH-02 contract_completeness` (auth, action, resource and response schema declared; unknown keys stripped)
+  - `AUTH-03 session_lifecycle`
+  - `AUTH-04 token_purpose_and_origin`
+- **Authorization:**
+  - `AUTHZ-01 scope_matrix_snapshot`
+  - `AUTHZ-02 non_grantable_scopes` (API and DB CHECK)
+  - `AUTHZ-03 resource_scope` (Vienna grant vs Brno, unassigned accounts and groups)
+  - `AUTHZ-04 grant_lifecycle` (revocation immediate and actionable, channels untouched, sponsor demotion)
+  - `AUTHZ-05 agent_approval_boundary` (agent content needs approval even under mode `none`)
+- **Approvals:**
+  - `APR-01 binding_matrix` ([Security](../architecture/06-security.md))
+  - `APR-02 worker_rehash` (direct DB tamper is blocked)
+  - `APR-03 no_bypass_paths` (UI, REST, MCP, group, CSV, drag)
+  - `APR-04 group_snapshot`
+  - `APR-05 policy_at_claim`
+  - `APR-06 approval_step_up`
+- **Review links:**
+  - `REV-01 link_scope_and_pii`
+  - `REV-02 link_lifecycle_otp_lockout`
+  - `REV-03 review_headers_xss`
+- **Publishing:**
+  - `PUB-01 ambiguous_no_blind_retry`
+  - `PUB-02 disconnected_or_revoked_blocks`
+- **Secrets:** `SEC-01 secret_canary` (REST, MCP, errors, logs, exports, audit, webhooks, AI prompt logs)
+- **Prompt injection:**
+  - `INJ-01 injection_corpus` (draft only; planted links flagged)
+  - `INJ-02 mcp_untrusted_envelope`
+- **Network and files:**
+  - `NET-01 ssrf_suite`
+  - `FILE-01 upload_polyglot_and_traversal`
+  - `HOOK-01 inbound_webhook_forge_replay`
+- **CI:** `CI-01 fork_pr_no_secrets`
+- **Audit:**
+  - `AUD-01 audit_coverage`
+  - `AUD-02 audit_immutability_and_seal`
+- **Rate limits:** `RL-01 per_principal_limits` (XFF ignored)

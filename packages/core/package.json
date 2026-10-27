@@ -1,0 +1,14 @@
+{
+  "name": "@kronaut/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "temporal-polyfill": "catalog:",
+    "zod": "catalog:"
+  }
+}

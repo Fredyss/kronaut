@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "allowJs": true
+  },
+  "include": ["src", "e2e"],
+  "references": [
+    { "path": "../../packages/compose" },
+    { "path": "../../packages/contract" },
+    { "path": "../../packages/core" },
+    { "path": "../../packages/credentials" },
+    { "path": "../../packages/db" },
+    { "path": "../../packages/egress" },
+    { "path": "../../packages/i18n" },
+    { "path": "../../packages/media" },
+    { "path": "../../packages/providers" }
+  ]
+}

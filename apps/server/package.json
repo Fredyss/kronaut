@@ -1,0 +1,37 @@
+{
+  "name": "@kronaut/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "scripts": {
+    "start": "node src/main.ts",
+    "cli": "node src/cli.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "catalog:",
+    "@kronaut/compose": "workspace:*",
+    "@kronaut/contract": "workspace:*",
+    "@kronaut/core": "workspace:*",
+    "@kronaut/credentials": "workspace:*",
+    "@kronaut/db": "workspace:*",
+    "@kronaut/egress": "workspace:*",
+    "@kronaut/i18n": "workspace:*",
+    "@kronaut/media": "workspace:*",
+    "@kronaut/providers": "workspace:*",
+    "@node-rs/argon2": "catalog:",
+    "age-encryption": "catalog:",
+    "graphile-worker": "catalog:",
+    "hono": "catalog:",
+    "jose": "catalog:",
+    "kysely": "catalog:",
+    "pino": "catalog:",
+    "tar-stream": "catalog:",
+    "temporal-polyfill": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/tar-stream": "catalog:"
+  }
+}

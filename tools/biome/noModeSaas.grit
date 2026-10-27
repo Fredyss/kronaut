@@ -1,0 +1,44 @@
+language js
+
+or {
+  `$l === $r`,
+  `$l !== $r`,
+  `$l == $r`,
+  `$l != $r`
+} as $cmp where {
+  or {
+    and {
+      $l <: or {
+        `"saas"`,
+        `'saas'`,
+        r"`saas`"
+      },
+      $r <: or {
+        `MODE`,
+        `$_.MODE`,
+        `$_?.MODE`,
+        `$_["MODE"]`,
+        `$_?.["MODE"]`,
+        `$_['MODE']`,
+        `$_?.['MODE']`
+      }
+    },
+    and {
+      $r <: or {
+        `"saas"`,
+        `'saas'`,
+        r"`saas`"
+      },
+      $l <: or {
+        `MODE`,
+        `$_.MODE`,
+        `$_?.MODE`,
+        `$_["MODE"]`,
+        `$_?.["MODE"]`,
+        `$_['MODE']`,
+        `$_?.['MODE']`
+      }
+    }
+  },
+  register_diagnostic(span=$cmp, message="MODE==='saas' checks belong only in apps/server/src/entitlements (ADR-0019).", severity="error")
+}

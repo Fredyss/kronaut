@@ -1,0 +1,44 @@
+{
+  "name": "@kronaut/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "i18n": "pnpm --filter @kronaut/i18n i18n",
+    "size": "size-limit"
+  },
+  "dependencies": {
+    "@kronaut/compose": "workspace:*",
+    "@kronaut/i18n": "workspace:*",
+    "@kronaut/sdk": "workspace:*",
+    "@kronaut/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@tiptap/core": "catalog:",
+    "@tiptap/extension-document": "catalog:",
+    "@tiptap/extension-hard-break": "catalog:",
+    "@tiptap/extension-paragraph": "catalog:",
+    "@tiptap/extension-text": "catalog:",
+    "@tiptap/pm": "catalog:",
+    "@tiptap/react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "temporal-polyfill": "catalog:"
+  },
+  "devDependencies": {
+    "@inlang/paraglide-js": "catalog:",
+    "@size-limit/file": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "size-limit": "catalog:",
+    "tailwindcss": "catalog:",
+    "vite": "catalog:"
+  }
+}

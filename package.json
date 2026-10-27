@@ -1,0 +1,33 @@
+{
+  "name": "kronaut",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=24.11"
+  },
+  "scripts": {
+    "check": "biome check . && jscpd && tsc -b && vitest run && pnpm licenses:check",
+    "lint": "biome check .",
+    "dup": "jscpd --reporters console",
+    "format": "biome check --write .",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "licenses:check": "node tools/licenses/check.ts",
+    "licenses:notices": "node tools/licenses/notices.ts",
+    "clean": "tsc -b --clean",
+    "test:db": "vitest run --config vitest.db.config.ts",
+    "test:e2e": "pnpm --filter @kronaut/web build && pnpm --filter @kronaut/server exec playwright test -c e2e/playwright.config.ts",
+    "gen:api": "node apps/server/scripts/gen-openapi.ts && pnpm --filter @kronaut/sdk gen"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "happy-dom": "catalog:",
+    "jscpd": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

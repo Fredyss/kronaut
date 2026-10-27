@@ -1,0 +1,33 @@
+import { expect, it } from 'vitest';
+import * as core from './index.ts';
+
+it('re-exports the public runtime names of every module', () => {
+  expect(Object.keys(core).sort()).toEqual([
+    'ACTIONS',
+    'APPROVAL_REAUTH_MAX_AGE_MS',
+    'DESTINATION_STATES',
+    'DESTINATION_TRANSITIONS',
+    'GRANTABLE_SCOPES',
+    'ID_PREFIXES',
+    'MAX_CONNECT_ACCOUNTS',
+    'NEVER_GRANTABLE_ACTIONS',
+    'POLICY_VERSION',
+    'PREVIEW_ARCHETYPES',
+    'PUBLISH_DEADLINE_MS',
+    'ProviderFailure',
+    'READ_SCOPES',
+    'ROLES',
+    'SELF_ACTION',
+    'STATE_REASONS',
+    'TOO_MANY_ACCOUNTS',
+    'authorize',
+    'canTransition',
+    'decodePublicId',
+    'encodePublicId',
+    'isAction',
+    'isGrantableScope',
+    'isProviderFailure',
+    'isReasonFor',
+    'roleAllows',
+  ]);
+});

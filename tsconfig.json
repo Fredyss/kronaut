@@ -1,0 +1,47 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/compose"
+    },
+    {
+      "path": "packages/i18n"
+    },
+    {
+      "path": "packages/contract"
+    },
+    {
+      "path": "packages/sdk"
+    },
+    {
+      "path": "packages/db"
+    },
+    {
+      "path": "packages/credentials"
+    },
+    {
+      "path": "packages/egress"
+    },
+    {
+      "path": "packages/media"
+    },
+    {
+      "path": "packages/providers"
+    },
+    {
+      "path": "packages/ui"
+    },
+    {
+      "path": "apps/server"
+    },
+    {
+      "path": "apps/web"
+    },
+    {
+      "path": "tools"
+    }
+  ]
+}

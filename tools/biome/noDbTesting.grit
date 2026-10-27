@@ -1,0 +1,13 @@
+language js
+
+or {
+  `import $clause from $src`,
+  `import $src`,
+  JsExportNamedFromClause(source=$src),
+  JsExportFromClause(source=$src),
+  `import($src)`,
+  `require($src)`
+} as $imp where {
+  $src <: r"[\x27\x22]@kronaut/db/testing[\x27\x22]",
+  register_diagnostic(span=$imp, message="@kronaut/db/testing is for test files only (CLAUDE.md invariants).", severity="error")
+}

@@ -1,0 +1,368 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/dist",
+      "!packages/db/schema",
+      "!packages/contract/openapi.json",
+      "!packages/sdk/src/gen",
+      "!packages/i18n/src/paraglide"
+    ]
+  },
+  "plugins": [
+    {
+      "path": "./tools/biome/noMathRandom.grit",
+      "includes": [
+        "**/apps/server/**",
+        "**/packages/**",
+        "!**/packages/compose/**",
+        "!**/packages/ui/**"
+      ]
+    },
+    {
+      "path": "./tools/biome/noSelectAll.grit",
+      "includes": ["**/apps/server/**", "**/packages/**", "!**/*.test.ts"]
+    },
+    {
+      "path": "./tools/biome/noModeSaas.grit",
+      "includes": ["**", "!**/apps/server/src/entitlements/**"]
+    },
+    {
+      "path": "./tools/biome/noGlobalFetch.grit",
+      "includes": ["**", "!**/packages/egress/**", "!**/packages/sdk/**"]
+    },
+    {
+      "path": "./tools/biome/noRawDb.grit",
+      "includes": ["**", "!**/packages/db/**"]
+    },
+    {
+      "path": "./tools/biome/noDbTesting.grit",
+      "includes": ["**", "!**/*.test.ts", "!**/packages/db/**", "!**/apps/server/e2e/**"]
+    },
+    {
+      "path": "./tools/biome/noRelativeJsImport.grit",
+      "includes": ["**"]
+    }
+  ],
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": { "maxAllowedComplexity": 15 }
+        },
+        "noExcessiveLinesPerFunction": {
+          "level": "error",
+          "options": { "maxLines": 60, "skipBlankLines": true }
+        },
+        "useMaxParams": { "level": "error", "options": { "max": 4 } }
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "error"
+      },
+      "style": {
+        "noExcessiveLinesPerFile": {
+          "level": "error",
+          "options": { "maxLines": 300, "skipBlankLines": true }
+        },
+        "noRestrictedGlobals": {
+          "level": "error",
+          "options": {
+            "deniedGlobals": {
+              "fetch": "Outbound HTTP goes through @kronaut/egress; the browser calls the API through @kronaut/sdk."
+            }
+          }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["undici", "undici/**"],
+                "message": "Only @kronaut/egress may import undici (02-repo-layout.md)."
+              },
+              {
+                "group": ["nodemailer", "nodemailer/**"],
+                "message": "Only @kronaut/egress may import nodemailer (06-security.md)."
+              },
+              {
+                "group": [
+                  "@kronaut/server",
+                  "@kronaut/server/**",
+                  "@kronaut/web",
+                  "@kronaut/web/**"
+                ],
+                "message": "Packages never import apps (02-repo-layout.md)."
+              }
+            ]
+          }
+        },
+        "useNodejsImportProtocol": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/core/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["undici", "undici/**"],
+                    "message": "Only @kronaut/egress may import undici (02-repo-layout.md)."
+                  },
+                  {
+                    "group": ["nodemailer", "nodemailer/**"],
+                    "message": "Only @kronaut/egress may import nodemailer (06-security.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/server",
+                      "@kronaut/server/**",
+                      "@kronaut/web",
+                      "@kronaut/web/**"
+                    ],
+                    "message": "Packages never import apps (02-repo-layout.md)."
+                  },
+                  {
+                    "group": ["@kronaut/*", "@kronaut/**"],
+                    "message": "core depends on nothing in the workspace (02-repo-layout.md)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/providers/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["undici", "undici/**"],
+                    "message": "Only @kronaut/egress may import undici (02-repo-layout.md)."
+                  },
+                  {
+                    "group": ["nodemailer", "nodemailer/**"],
+                    "message": "Only @kronaut/egress may import nodemailer (06-security.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/server",
+                      "@kronaut/server/**",
+                      "@kronaut/web",
+                      "@kronaut/web/**"
+                    ],
+                    "message": "Packages never import apps (02-repo-layout.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/db",
+                      "@kronaut/db/**",
+                      "kysely",
+                      "kysely/**",
+                      "pg",
+                      "pg/**"
+                    ],
+                    "message": "Providers never touch the DB (CLAUDE.md invariants)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/compose/**",
+        "packages/providers/src/manifests.ts",
+        "packages/providers/src/*/manifest.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["undici", "undici/**"],
+                    "message": "Only @kronaut/egress may import undici (02-repo-layout.md)."
+                  },
+                  {
+                    "group": ["nodemailer", "nodemailer/**"],
+                    "message": "Only @kronaut/egress may import nodemailer (06-security.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/server",
+                      "@kronaut/server/**",
+                      "@kronaut/web",
+                      "@kronaut/web/**"
+                    ],
+                    "message": "Packages never import apps (02-repo-layout.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/db",
+                      "@kronaut/db/**",
+                      "kysely",
+                      "kysely/**",
+                      "pg",
+                      "pg/**"
+                    ],
+                    "message": "Providers never touch the DB (CLAUDE.md invariants)."
+                  },
+                  {
+                    "group": [
+                      "node:*",
+                      "node:*/**",
+                      "@kronaut/credentials",
+                      "@kronaut/credentials/**",
+                      "@kronaut/egress",
+                      "@kronaut/egress/**",
+                      "@kronaut/providers/runtime"
+                    ],
+                    "message": "compose and provider manifests stay browser-safe (02-repo-layout.md)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/sdk/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/egress/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": "off",
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@kronaut/server",
+                      "@kronaut/server/**",
+                      "@kronaut/web",
+                      "@kronaut/web/**"
+                    ],
+                    "message": "Packages never import apps (02-repo-layout.md)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["undici", "undici/**"],
+                    "message": "Only @kronaut/egress may import undici (02-repo-layout.md)."
+                  },
+                  {
+                    "group": ["nodemailer", "nodemailer/**"],
+                    "message": "Only @kronaut/egress may import nodemailer (06-security.md)."
+                  },
+                  {
+                    "group": ["@kronaut/server", "@kronaut/server/**"],
+                    "message": "The web app reaches the server only through @kronaut/sdk (02-repo-layout.md)."
+                  },
+                  {
+                    "group": [
+                      "@kronaut/i18n/messages",
+                      "@kronaut/i18n/messages/_index",
+                      "@kronaut/i18n/src/**"
+                    ],
+                    "message": "These bundle every locale; import m from i18n.ts so only the active locale ships (08-frontend.md)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/db/src/schema.gen.ts"],
+      "linter": { "rules": { "style": { "noExcessiveLinesPerFile": "off" } } }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/testing.ts", "packages/db/test/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveLinesPerFunction": "off" },
+          "style": {
+            "noExcessiveLinesPerFile": {
+              "level": "error",
+              "options": { "maxLines": 500, "skipBlankLines": true }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

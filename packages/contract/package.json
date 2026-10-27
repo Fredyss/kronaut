@@ -1,0 +1,15 @@
+{
+  "name": "@kronaut/contract",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@kronaut/core": "workspace:*",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  }
+}

@@ -1,0 +1,21 @@
+language js
+
+or {
+  `$m.random`,
+  `$m?.random`,
+  `$m["random"]`,
+  `$m['random']`,
+  `$m?.["random"]`,
+  `$m?.['random']`
+} as $ref where {
+  $m <: or {
+    `Math`,
+    `$_.Math`,
+    `$_?.Math`,
+    `$_["Math"]`,
+    `$_['Math']`,
+    `$_?.["Math"]`,
+    `$_?.['Math']`
+  },
+  register_diagnostic(span=$ref, message="Math.random is banned in server code; use randomToken() (06-security.md).", severity="error")
+}

@@ -1,0 +1,73 @@
+packages:
+  - apps/*
+  - packages/*
+
+minimumReleaseAge: 10080
+
+catalog:
+  '@biomejs/biome': 2.5.15
+  '@hey-api/openapi-ts': 0.99.0
+  '@hono/node-server': 2.1.5
+  '@inlang/paraglide-js': 2.29.0
+  '@inlang/plugin-message-format': 4.5.4
+  '@node-rs/argon2': 2.2.2
+  '@playwright/test': 1.64.0
+  '@radix-ui/react-label': 2.1.17
+  '@radix-ui/react-slot': 1.5.0
+  '@size-limit/file': 14.2.0
+  '@tailwindcss/vite': 4.3.3
+  '@tanstack/react-query': 5.104.3
+  '@tanstack/react-router': 1.170.45
+  '@tiptap/core': 3.32.0
+  '@tiptap/extension-document': 3.32.0
+  '@tiptap/extension-hard-break': 3.32.0
+  '@tiptap/extension-paragraph': 3.32.0
+  '@tiptap/extension-text': 3.32.0
+  '@tiptap/pm': 3.32.0
+  '@tiptap/react': 3.32.0
+  '@testcontainers/postgresql': 12.2.1
+  '@testing-library/dom': 10.4.2
+  '@testing-library/react': 16.3.3
+  '@types/node': 24.19.2
+  '@types/nodemailer': 8.0.2
+  '@types/pg': 8.23.1
+  '@types/react': 19.2.18
+  '@types/react-dom': 19.2.7
+  '@types/tar-stream': 3.1.5
+  '@vitejs/plugin-react': 6.1.2
+  age-encryption: 0.3.1
+  class-variance-authority: 0.7.1
+  clsx: 2.1.1
+  graphile-worker: 0.18.0
+  happy-dom: 21.0.3
+  hono: 4.13.13
+  jscpd: 5.4.1
+  jose: 6.2.12
+  kysely-codegen: 0.20.0
+  kysely: 0.29.6
+  nodemailer: 10.1.7
+  pg: 8.23.1
+  pino: 10.4.0
+  prosemirror-model: 1.25.12
+  react-dom: 19.2.9
+  react: 19.2.9
+  sharp: 0.35.5
+  size-limit: 14.2.0
+  tailwind-merge: 3.7.0
+  tailwindcss: 4.3.3
+  tar-stream: 3.2.2
+  temporal-polyfill: 1.0.6
+  typescript: 7.0.2
+  undici: 8.12.1
+  vite: 8.3.4
+  vitest: 5.0.4
+  zod: 4.6.7
+
+catalogs:
+  codegen:
+    typescript: 6.0.3
+
+allowBuilds:
+  cpu-features: false
+  protobufjs: false
+  ssh2: false

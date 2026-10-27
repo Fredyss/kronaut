@@ -1,0 +1,222 @@
+name: kronaut
+
+x-hardened: &hardened
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  tmpfs: [/tmp]
+  restart: unless-stopped
+
+x-kronaut: &kronaut
+  <<: *hardened
+  image: ${KRONAUT_IMAGE:-kronaut:local}
+  init: true
+  stop_grace_period: 35s
+
+x-instance-env: &instance-env
+  KRONAUT_PUBLIC_URL: ${KRONAUT_PUBLIC_URL:?set KRONAUT_PUBLIC_URL in .env}
+  KRONAUT_MEDIA_URL: ${KRONAUT_MEDIA_URL:?set KRONAUT_MEDIA_URL in .env}
+  KRONAUT_INSTANCE_ID_FILE: /run/secrets/instance_id
+  KRONAUT_SECRET_FILE: /run/secrets/kronaut_secret
+  KRONAUT_DATA_DIR: /data
+  KRONAUT_LOG_LEVEL: ${KRONAUT_LOG_LEVEL:-info}
+  TZ: ${TZ:-UTC}
+
+services:
+  postgres:
+    <<: *hardened
+    image: postgres:17.10-alpine3.23@sha256:8189a1f6e40904781fc9e2612687877791d21679866db58b1de996b31fc312e4
+    user: "70:70"
+    tmpfs: [/tmp, /var/run/postgresql]
+    environment:
+      POSTGRES_DB: kronaut
+      POSTGRES_USER: kronaut
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      TZ: ${TZ:-UTC}
+    secrets:
+      - postgres_password
+      - postgres_app_password
+      - postgres_operator_password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    networks: [db]
+    mem_limit: 256m
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U kronaut -d kronaut]
+      interval: 5s
+      retries: 10
+
+  migrate:
+    <<: *kronaut
+    restart: "no"
+    entrypoint: [kronaut]
+    command: [migrate]
+    environment:
+      KRONAUT_MIGRATION_DATABASE_URL_FILE: /run/secrets/migration_database_url
+    secrets: [migration_database_url]
+    networks: [db]
+    mem_limit: 256m
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    <<: *kronaut
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+    command: [--role=all]
+    environment:
+      <<: *instance-env
+      KRONAUT_DATABASE_URL_FILE: /run/secrets/database_url
+      KRONAUT_KEK_1_FILE: /run/secrets/kek_1
+      ACCESS_AUD: ${ACCESS_AUD:?set ACCESS_AUD in .env}
+      ACCESS_TEAM_DOMAIN: ${ACCESS_TEAM_DOMAIN:?set ACCESS_TEAM_DOMAIN in .env}
+      KRONAUT_SMTP_HOST: ${KRONAUT_SMTP_HOST:-}
+      KRONAUT_SMTP_PORT: ${KRONAUT_SMTP_PORT:-}
+      KRONAUT_SMTP_USER: ${KRONAUT_SMTP_USER:-}
+      KRONAUT_SMTP_PASSWORD_FILE: /run/secrets/smtp_password
+      KRONAUT_SMTP_FROM: ${KRONAUT_SMTP_FROM:-}
+      KRONAUT_SMTP_TLS: ${KRONAUT_SMTP_TLS:-}
+    secrets: [instance_id, kronaut_secret, database_url, kek_1, smtp_password]
+    volumes:
+      - data:/data
+    networks: [db, egress]
+    mem_limit: 384m
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - -e
+        - "require('node:http').get('http://127.0.0.1:3000/readyz', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  media:
+    <<: *kronaut
+    command: [--role=media]
+    environment: *instance-env
+    secrets: [instance_id, kronaut_secret]
+    volumes:
+      - data:/data:ro
+    networks: [media]
+    mem_limit: 128m
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - -e
+        - "require('node:http').get('http://127.0.0.1:3000/', (r) => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  cloudflared:
+    <<: *hardened
+    image: cloudflare/cloudflared:2026.9.3@sha256:072c067d25ccbe61d46e18f0d0723255f2bb5304f7317caa95b27031520ff92c
+    command: [tunnel, run]
+    environment:
+      TUNNEL_TOKEN_FILE: /run/secrets/cloudflared_token
+    secrets: [cloudflared_token]
+    networks: [egress, media]
+    mem_limit: 128m
+    depends_on:
+      app:
+        condition: service_healthy
+      media:
+        condition: service_started
+
+  backup:
+    <<: *kronaut
+    entrypoint: [kronaut]
+    command: [backup, schedule, --dir, /backup]
+    environment:
+      KRONAUT_MIGRATION_DATABASE_URL_FILE: /run/secrets/migration_database_url
+      KRONAUT_BACKUP_RECIPIENT_FILE: /run/secrets/backup_recipient
+      KRONAUT_DATA_DIR: /data
+      KRONAUT_BACKUP_TIME: ${KRONAUT_BACKUP_TIME:-03:30}
+      KRONAUT_BACKUP_TIMEZONE: ${KRONAUT_BACKUP_TIMEZONE:-UTC}
+    secrets: [migration_database_url, backup_recipient]
+    volumes:
+      - data:/data:ro
+      - ${KRONAUT_BACKUP_DIR:-../../data/backups}:/backup
+    networks: [db]
+    mem_limit: 384m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  cli:
+    <<: *kronaut
+    profiles: [tools]
+    restart: "no"
+    entrypoint: []
+    command: [kronaut]
+    environment:
+      <<: *instance-env
+      KRONAUT_DATABASE_URL_FILE: /run/secrets/database_url
+      KRONAUT_MIGRATION_DATABASE_URL_FILE: /run/secrets/migration_database_url
+      KRONAUT_OPERATOR_DATABASE_URL_FILE: /run/secrets/operator_database_url
+      KRONAUT_KEK_1_FILE: /run/secrets/kek_1
+      KRONAUT_BACKUP_RECIPIENT_FILE: /run/secrets/backup_recipient
+    secrets:
+      - instance_id
+      - kronaut_secret
+      - database_url
+      - migration_database_url
+      - operator_database_url
+      - kek_1
+      - backup_recipient
+    volumes:
+      - data:/data
+      - ${KRONAUT_BACKUP_DIR:-../../data/backups}:/backup
+    networks: [db]
+    mem_limit: 384m
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+secrets:
+  postgres_password:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/postgres_password
+  postgres_app_password:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/postgres_app_password
+  postgres_operator_password:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/postgres_operator_password
+  migration_database_url:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/migration_database_url
+  database_url:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/database_url
+  operator_database_url:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/operator_database_url
+  instance_id:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/instance_id
+  kronaut_secret:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/kronaut_secret
+  kek_1:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/kek_1
+  backup_recipient:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/backup_recipient
+  smtp_password:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/smtp_password
+  cloudflared_token:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/cloudflared_token
+
+networks:
+  db:
+    internal: true
+  egress: {}
+  media:
+    internal: true
+
+volumes:
+  postgres:
+  data:

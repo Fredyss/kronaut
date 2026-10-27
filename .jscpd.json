@@ -1,0 +1,15 @@
+{
+  "path": ["apps", "packages", "tools"],
+  "format": ["typescript", "tsx"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "packages/i18n/src/paraglide/**",
+    "packages/db/src/schema.gen.ts",
+    "packages/sdk/src/gen/**"
+  ],
+  "threshold": 1,
+  "reporters": ["threshold"]
+}

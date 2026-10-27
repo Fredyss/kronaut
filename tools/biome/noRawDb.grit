@@ -1,0 +1,14 @@
+language js
+
+or {
+  `import $clause from $src`,
+  JsExportNamedFromClause(source=$src),
+  JsExportFromClause(source=$src),
+  `import($src)`,
+  `require($src)`
+} as $imp where {
+  $src <: r"[\x27\x22](?:kysely|pg)(?:/[^\x27\x22]*)?[\x27\x22]",
+  not $imp <: r"(?s)(?:(?:import|export) )?type .*",
+  not $imp <: r"(?s)import \{\s*(?:(?:type [A-Za-z_]\w*(?: as [A-Za-z_]\w*)?|sql)\s*,\s*)*sql(?:\s*,\s*(?:type [A-Za-z_]\w*(?: as [A-Za-z_]\w*)?|sql))*\s*,?\s*\} from [\x27\x22]kysely[\x27\x22];?",
+  register_diagnostic(span=$imp, message="Database access goes through withTenant()/TenantDb in @kronaut/db (CLAUDE.md invariants).", severity="error")
+}

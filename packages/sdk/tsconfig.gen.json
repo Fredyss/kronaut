@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src/gen",
+    "outDir": "dist/gen",
+    "tsBuildInfoFile": "dist/gen.tsbuildinfo",
+    "lib": ["es2024", "dom", "dom.iterable"],
+    "exactOptionalPropertyTypes": false
+  },
+  "include": ["src/gen"]
+}

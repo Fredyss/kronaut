@@ -1,0 +1,5 @@
+language js
+
+`$obj.selectAll($args)` as $call where {
+  register_diagnostic(span=$call, message="selectAll is banned in production code; select explicit columns (01-stack.md).", severity="error")
+}

@@ -1,0 +1,22 @@
+# Media
+
+- **v1 hosting:** `./data/media`, served by `--role=media` on `media.<domain>` through the tunnel. CF Access is bypassed for **that hostname only**, never by path on the app.
+- **Public hostname required:**
+  - IG/Threads/TikTok fetch media from it, OAuth callbacks need it, and Bluesky's confidential client publishes its client-metadata URL on it (ADR-0035).
+  - Setup checks reachability before connecting the first channel.
+- **Signed URLs:** `?exp=&sig=` HMAC.
+  - **Signed at attempt time**, with TTL ~1 h for images and ~6 h for video; re-signed on each retry.
+  - IG/Threads containers live 24 h.
+  - Meta/TikTok fetch windows are measured in Phase 0.
+- **TikTok:**
+  - `PULL_FROM_URL` from a **verified domain** (required for photo posts). `FILE_UPLOAD` is not used from servers.
+  - The `init` call is the public step. SELF_ONLY posts never return a post id (`verify.mode=none`).
+- **Masters and renditions:**
+  - Masters are immutable once ready and identified by sha256, which approval hashes reference.
+  - Per-provider renditions (resize, transcode, crop in per-mille) are derived and cached.
+- **GC:**
+  - originals 30 d after their last reference
+  - renditions 7 d after last use
+  - orphaned uploads 7 d
+  - Thumbnails at 256/768 px AVIF/WebP are kept for the library.
+- **SaaS:** R2 + a Cloudflare Worker with the identical HMAC scheme. Uploads go direct from the browser via presigned multipart PUT.

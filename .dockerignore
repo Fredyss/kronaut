@@ -1,0 +1,16 @@
+**
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+!apps/server/
+!apps/web/
+!packages/
+!infra/docker/kronaut
+!tools/licenses/
+!LICENSE.md
+!NOTICE
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+**/.DS_Store

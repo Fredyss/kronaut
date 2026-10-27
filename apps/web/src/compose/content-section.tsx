@@ -1,0 +1,192 @@
+import { Button } from '@kronaut/ui';
+import { lazy, Suspense, useId } from 'react';
+import type { Channel } from '../api.ts';
+import { useLocale } from '../context.ts';
+import { m } from '../i18n.ts';
+import { channelHint } from './channel-picker.tsx';
+import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
+import { effective } from './contents.ts';
+import { ImagesSection } from './images-section.tsx';
+import { loadEditor, loadPreview, loadTextLimits } from './load.ts';
+import type { PreviewTarget } from './preview/preview.tsx';
+import type { LimitTarget } from './text-limits.tsx';
+import type { ContentsState } from './use-contents.ts';
+
+const PostEditor = lazy(loadEditor);
+const TextLimits = lazy(loadTextLimits);
+const Previews = lazy(loadPreview);
+
+interface ContentSectionProps {
+  readonly state: ContentsState;
+  readonly flagged: readonly string[];
+  readonly pending: boolean;
+  readonly limitsId: string;
+  readonly onIssuesChange: (flagged: readonly string[]) => void;
+}
+
+function tabsFor(state: ContentsState, flagged: readonly string[]): ContentTab[] {
+  const customized = (channel: Channel) => state.contents.customized.has(channel.id);
+  const all: ContentTab = {
+    key: null,
+    label: m.compose_tab_all(),
+    customized: false,
+    problems: state.tabs.some((channel) => !customized(channel) && flagged.includes(channel.id)),
+  };
+  return [
+    all,
+    ...state.tabs.map((channel) => ({
+      key: channel.id,
+      label: channel.displayName,
+      customized: customized(channel),
+      problems: flagged.includes(channel.id),
+    })),
+  ];
+}
+
+function limitTargets({ contents, tabs, active }: ContentsState): LimitTarget[] {
+  return tabs.map((channel) => {
+    const content = effective(contents, channel.id);
+    return {
+      channel,
+      doc: content.doc,
+      files: content.images.map((image) => image.file),
+      shown: active === null ? !contents.customized.has(channel.id) : channel.id === active,
+    };
+  });
+}
+
+function previewTargets(state: ContentsState): PreviewTarget[] {
+  return limitTargets(state).flatMap(({ channel, doc, shown }) => {
+    const choice = state.choiceOf(channel);
+    if (!shown || choice.kind !== 'ok') return [];
+    const { images } = effective(state.contents, channel.id);
+    return [{ channel, doc, images, publishType: choice.publishType }];
+  });
+}
+
+function checkNote(tabs: readonly ContentTab[], active: string | null, locale: string) {
+  const labels = tabs.filter((tab) => tab.problems && tab.key !== active).map((tab) => tab.label);
+  if (labels.length === 0) return null;
+  const channels = new Intl.ListFormat(locale, { type: 'conjunction' }).format(labels);
+  return m.compose_check_content({ channels });
+}
+
+function Inherited({
+  channel,
+  pending,
+  onCustomize,
+}: {
+  readonly channel: string;
+  readonly pending: boolean;
+  readonly onCustomize: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-start gap-3 rounded-md border border-dashed p-4 text-sm">
+      <p className="text-muted-foreground">{m.compose_inherits()}</p>
+      <Button type="button" variant="outline" size="sm" disabled={pending} onClick={onCustomize}>
+        {m.compose_customize({ channel })}
+      </Button>
+    </div>
+  );
+}
+
+function TextHeader({
+  onReset,
+  pending,
+}: {
+  readonly onReset: (() => void) | undefined;
+  readonly pending: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <span className="font-medium text-sm">{m.compose_text_label()}</span>
+      {onReset === undefined ? null : (
+        <Button type="button" variant="ghost" size="sm" disabled={pending} onClick={onReset}>
+          {m.compose_use_default()}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+export function ContentSection(props: ContentSectionProps) {
+  const { state, flagged, pending, limitsId, onIssuesChange } = props;
+  const idPrefix = useId();
+  const editorId = useId();
+  const fileId = useId();
+  const panelId = `${idPrefix}-panel`;
+  const showTabs = state.tabs.length > 0;
+  const { active, editing } = state;
+  const { locale } = useLocale();
+  const channel = state.tabs.find((candidate) => candidate.id === active);
+  const tabs = tabsFor(state, flagged);
+  const reason =
+    channel === undefined ? null : channelHint(channel, state.choiceOf(channel), locale);
+  const previews = previewTargets(state);
+  return (
+    <div className="flex flex-col gap-4">
+      {showTabs ? (
+        <ContentTabs
+          tabs={tabs}
+          active={active}
+          idPrefix={idPrefix}
+          panelId={panelId}
+          onSelect={state.select}
+        />
+      ) : null}
+      <div
+        id={panelId}
+        {...(showTabs ? { role: 'tabpanel', 'aria-labelledby': tabId(idPrefix, active) } : {})}
+        className="flex flex-col gap-8"
+      >
+        <div className="flex flex-col gap-2">
+          {editing ? (
+            <TextHeader
+              pending={pending}
+              onReset={channel === undefined ? undefined : () => state.reset(channel.id)}
+            />
+          ) : null}
+          {editing || channel === undefined ? (
+            <Suspense
+              fallback={
+                <div className="min-h-40 rounded-md border px-3 py-2 text-muted-foreground text-sm">
+                  {m.loading()}
+                </div>
+              }
+            >
+              <PostEditor
+                key={active ?? ''}
+                id={editorId}
+                label={m.compose_text_label()}
+                disabled={pending}
+                initial={state.doc}
+                onChange={state.setDoc}
+              />
+            </Suspense>
+          ) : (
+            <Inherited
+              channel={channel.displayName}
+              pending={pending}
+              onCustomize={() => state.customize(channel.id)}
+            />
+          )}
+          <Suspense fallback={null}>
+            <TextLimits
+              targets={limitTargets(state)}
+              issuesId={limitsId}
+              note={checkNote(tabs, active, locale)}
+              onIssuesChange={onIssuesChange}
+            />
+          </Suspense>
+        </div>
+        {reason === null ? null : <p className="text-destructive text-sm">{reason}</p>}
+        {editing ? <ImagesSection fileId={fileId} images={state.images} pending={pending} /> : null}
+        {previews.length === 0 ? null : (
+          <Suspense fallback={null}>
+            <Previews targets={previews} />
+          </Suspense>
+        )}
+      </div>
+    </div>
+  );
+}

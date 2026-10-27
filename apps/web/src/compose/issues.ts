@@ -1,0 +1,35 @@
+import { m } from '../i18n.ts';
+
+const ISSUES: Readonly<Record<string, () => string>> = {
+  text_too_long: () => m.issue_text_too_long(),
+  too_many_links: () => m.issue_too_many_links(),
+  too_many_media: () => m.issue_too_many_media(),
+  too_few_media: () => m.issue_too_few_media(),
+  media_not_allowed: () => m.issue_media_not_allowed(),
+  mime_unsupported: () => m.issue_mime_unsupported(),
+  file_too_large: () => m.issue_file_too_large(),
+  aspect_out_of_range: () => m.issue_aspect_out_of_range(),
+  image_too_wide: () => m.issue_image_too_wide(),
+  image_too_narrow: () => m.issue_image_too_narrow(),
+  alt_text_too_long: () => m.issue_alt_text_too_long(),
+  alt_text_required: () => m.issue_alt_text_required(),
+  in_past: () => m.issue_in_past(),
+  invalid_time_zone: () => m.issue_invalid_time_zone(),
+  post_type_unavailable: () => m.issue_post_type_unavailable(),
+  provider_unavailable: () => m.issue_provider_unavailable(),
+  not_ready: () => m.issue_not_ready(),
+  unknown_post_type: () => m.issue_unknown_post_type(),
+  too_large: () => m.issue_too_large(),
+};
+
+export function issueMessage(code: string): string {
+  const message = Object.hasOwn(ISSUES, code) ? ISSUES[code] : undefined;
+  return message === undefined ? m.issue_generic() : message();
+}
+
+const DESTINATION_PATH = /(?:^|\.)destinations\.(\d+)(?:\.|$)/;
+
+export function destinationIndex(path: string): number | null {
+  const match = DESTINATION_PATH.exec(path);
+  return match?.[1] === undefined ? null : Number(match[1]);
+}

@@ -1,0 +1,18 @@
+language js
+
+or {
+  `$g.fetch`,
+  `$g?.fetch`,
+  `$g["fetch"]`,
+  `$g['fetch']`,
+  `$g?.["fetch"]`,
+  `$g?.['fetch']`
+} as $ref where {
+  $g <: or {
+    `globalThis`,
+    `window`,
+    `self`,
+    `global`
+  },
+  register_diagnostic(span=$ref, message="Outbound HTTP goes through @kronaut/egress; the browser calls the API through @kronaut/sdk (02-repo-layout.md).", severity="error")
+}

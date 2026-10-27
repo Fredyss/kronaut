@@ -1,0 +1,25 @@
+{
+  "name": "@kronaut/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "imports": {
+    "#paraglide/*": "./src/paraglide/*"
+  },
+  "exports": {
+    "./runtime": "./src/paraglide/runtime.js",
+    "./messages/en": "./src/paraglide/messages/en.js",
+    "./messages/sk": "./src/paraglide/messages/sk.js",
+    "./messages/cs": "./src/paraglide/messages/cs.js",
+    "./notifications": "./src/notifications.ts",
+    "./config": "./i18n.config.ts"
+  },
+  "scripts": {
+    "i18n": "node scripts/i18n.ts"
+  },
+  "devDependencies": {
+    "@inlang/paraglide-js": "catalog:",
+    "@inlang/plugin-message-format": "catalog:"
+  }
+}

@@ -1,0 +1,12 @@
+Kronaut
+Copyright 2026 Frederik Schlentc
+
+Licensed under the Functional Source License, Version 1.1, ALv2 Future License
+(SPDX: FSL-1.1-ALv2). See LICENSE.md. Each version becomes available under the
+Apache License, Version 2.0 on the second anniversary of its release.
+
+Kronaut is an independent, clean-room implementation. It contains no source
+code, translations or other assets from any third-party application other
+than the dependencies listed in THIRD_PARTY_NOTICES.
+
+Third-party components are listed in THIRD_PARTY_NOTICES (generated at build).
