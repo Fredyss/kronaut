@@ -1,6 +1,7 @@
 # Operations
 
 - **Self-host setup:** step by step in the [self-hosting guide](../guides/self-hosting.md) (compose stack, secrets, Cloudflare Tunnel and Access).
+- **FFmpeg and x264 pins (ADR-0054):** to bump them, change the `ARG`s of the `ffmpeg` stage in `infra/docker/Dockerfile` (FFmpeg release tarball from ffmpeg.org, x264 commit on its `stable` branch, each with a sha256 you computed) and the same values in `tools/licenses/native.ts`; a test fails if the two differ.
 - **Backups**
   - **Self-host:** `kronaut export` runs nightly. It produces a `pg_dump` plus media, age-encrypted, kept as 7 daily + 4 weekly copies (RPO 24 h). The KEK is exported separately. Import is CLI-only and has a zip-slip test.
     - **Manual:** `kronaut export --out <file>` and `kronaut import <file> --identity <file>`. `kronaut backup run --dir <dir>` makes one archive in `<dir>`, rotates, and prints its path.
