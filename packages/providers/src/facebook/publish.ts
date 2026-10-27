@@ -51,7 +51,9 @@ function reusable(ctx: PublishContext, state: State): State {
 
 async function uploadPhoto(ctx: PublishContext, page: PageAuth, ref: MediaRef): Promise<string> {
   const bytes = await ctx.media.read(ref.id);
-  const fields = { ...signedFields(page), published: 'false' };
+  const altText = ref.altText ?? '';
+  const described = altText.trim() === '' ? {} : { alt_text_custom: altText };
+  const fields = { ...signedFields(page), published: 'false', ...described };
   const file = {
     name: 'source',
     filename: `upload.${EXTENSIONS[ref.mime] ?? 'jpg'}`,
