@@ -42,11 +42,18 @@ interface Mount {
   readonly channels?: readonly unknown[];
   readonly connect?: () => Response;
   readonly role?: string;
+  readonly providers?: readonly string[];
 }
+
+const PROVIDERS = ['bluesky', 'facebook', 'instagram', 'mastodon', 'threads'];
 
 function mount(path: string, authorizationUrls: string[] = [], options: Mount = {}) {
   const bodies: unknown[] = [];
   const disconnects: string[] = [];
+  const providers = (options.providers ?? PROVIDERS).map((id) => ({
+    id,
+    availability: 'experimental',
+  }));
   const client = createApiClient({
     baseUrl: 'http://kronaut.test',
     fetch: async (input) => {
@@ -61,15 +68,7 @@ function mount(path: string, authorizationUrls: string[] = [], options: Mount = 
         return new Response(null, { status: 204 });
       }
       if (url === '/v1/workspaces/ws_1/channels/providers') {
-        return Response.json({
-          items: [
-            { id: 'bluesky', availability: 'experimental' },
-            { id: 'facebook', availability: 'experimental' },
-            { id: 'instagram', availability: 'experimental' },
-            { id: 'mastodon', availability: 'experimental' },
-            { id: 'threads', availability: 'experimental' },
-          ],
-        });
+        return Response.json({ items: providers });
       }
       if (url === '/v1/workspaces/ws_1/channels/connect') {
         bodies.push(await request.json());
@@ -122,6 +121,15 @@ describe('channels page', () => {
     expect(bodies.at(-1)).toEqual({ provider: 'instagram' });
     expect(assign).toHaveBeenCalledTimes(1);
     fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('keeps keyboard control of the dialog when no network is set up', async () => {
+    mount('/channels', [], { providers: [] });
+    fireEvent.click(await screen.findByRole('button', { name: 'Add channel' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Connect a channel' });
+    expect(document.activeElement).toBe(dialog);
+    fireEvent.keyDown(document.body, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 

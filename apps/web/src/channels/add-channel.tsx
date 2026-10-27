@@ -91,8 +91,19 @@ export function AddChannelDialog(props: AddChannelProps) {
   }, []);
   useEffect(() => {
     const target = picked === null ? 'li button:not([disabled])' : 'input';
-    panel.current?.querySelector<HTMLElement>(target)?.focus();
+    (panel.current?.querySelector<HTMLElement>(target) ?? panel.current)?.focus();
   }, [picked]);
+  useEffect(() => {
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      const root = panel.current;
+      if (event.key !== 'Tab' || root === null || root.contains(document.activeElement)) return;
+      event.preventDefault();
+      root.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
   const providers = [...new Set([...knownProviders(), ...available])];
   const pick = (provider: string) => {
     if (needsForm(provider)) setPicked(provider);
@@ -106,11 +117,9 @@ export function AddChannelDialog(props: AddChannelProps) {
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={bodyId}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') onClose();
-          trapTab(event);
-        }}
-        className="flex max-h-full w-full max-w-2xl flex-col gap-5 overflow-y-auto rounded-2xl border bg-background p-6 shadow-lg"
+        tabIndex={-1}
+        onKeyDown={trapTab}
+        className="flex max-h-full w-full max-w-2xl flex-col gap-5 overflow-y-auto rounded-2xl border bg-background p-6 shadow-lg outline-none"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
