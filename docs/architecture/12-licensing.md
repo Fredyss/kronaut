@@ -15,7 +15,7 @@ Rules:
 - **Copyright holder:** a person now. If a company is founded for the SaaS, the person transfers the copyright to it in writing.
 - **CLA from the first external PR** (CLA Assistant): contributors grant the licensor the right to relicense. Without a CLA, each contributor keeps the rights to their part, and dual-licensing or changing the license becomes impossible.
 - **Dependency license gate (`pnpm licenses:check`, part of `check`):** covers production dependencies only. Allow MIT, MIT-0, Apache-2.0, BSD-2/3, ISC, 0BSD, BlueOak, CC0, MPL-2.0 (file-level), Python-2.0 and Unlicense. Block GPL/AGPL/LGPL in bundled JS, SSPL, BUSL, and unknown licenses. Exceptions are listed by package with a reason in `tools/licenses/policy.ts`. `THIRD_PARTY_NOTICES` is generated in the Docker build (server and web dependencies) and never committed.
-- **ffmpeg** runs as a separate subprocess with a stock binary and is never linked. sharp's prebuilt libvips (LGPL) is dynamically linked and allowed by an explicit exception.
+- **ffmpeg** runs as a separate subprocess and is never linked. It is built unmodified from pinned upstream FFmpeg and x264 release sources in a minimal configuration (ADR-0054); that build is GPL, and the image's notices record the exact sources. sharp's prebuilt libvips (LGPL) is dynamically linked and allowed by an explicit exception.
 - **Legal review** of the FSL + SaaS terms before Phase 3 launch.
 
 ## Licensing formalities

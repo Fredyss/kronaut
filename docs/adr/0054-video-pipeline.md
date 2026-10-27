@@ -27,9 +27,11 @@ Phase 1.1 adds video for every provider, Instagram Reels first (ADR-0052). Image
   - `partSize` is 8 MiB, and an upload expires after 24 h.
 - `PUT /v1/workspaces/:workspaceId/media/:mediaId/parts/:n` takes a raw `application/octet-stream` body.
   - Every part but the last is exactly `partSize`; the body limit is `partSize`.
+  - A part is accepted only while the row is `uploading` and unexpired; otherwise it's 409 `upload_closed`.
   - A repeat of the same part replaces it. Parts are files under the asset's staging directory, so no table tracks them.
 - `POST /v1/workspaces/:workspaceId/media/:mediaId/complete` checks that every part is present and that the total equals `bytes`. It then sets the state to `processing` and enqueues a `media_process` job (job key `media:<id>`). Calling it again is a no-op.
-- The orphaned-upload GC (7 d, [Media](../architecture/07-media.md)) also removes `uploading` rows older than their 24 h expiry, together with their staging files.
+- **Serialization:** a part write and `complete` both lock the asset row (`FOR UPDATE`) for the whole request. A part therefore can't land while `complete` validates, or after it, and the job reads parts that no longer change.
+- **Expiry:** a migration replaces `sweep_media_gc` so that `uploading` rows become candidates 24 h after `created_at`, instead of 7 d. The media GC job, re-checking inside `withTenant()` as for every candidate, deletes the row together with the asset's staging directory. No other cleanup path exists.
 
 ### Conversion
 
@@ -89,7 +91,7 @@ Phase 1.1 adds video for every provider, Instagram Reels first (ADR-0052). Image
 ## Consequences
 
 - Any phone video works, at the cost of a larger image and about a minute or two of worker CPU per short video.
-- One migration adds `media_assets.rejected_reason` (text with a CHECK on the codes above).
+- One migration adds `media_assets.rejected_reason` (text with a CHECK on the codes above) and replaces `sweep_media_gc` with the 24 h upload expiry.
 - The image scan can't see the ffmpeg build's version. FFmpeg and x264 security releases are tracked by hand, and their pins bumped like any other base image.
 - Distributing a GPL binary in the image carries a source obligation; the notices record the exact sources. This is one of the licensing items to confirm with a lawyer.
 - Revisit when: a network needs a different profile; carousel video, covers or captions are added; Facebook documents feed-video limits; or the SaaS mode moves uploads to presigned multipart on R2 ([Media](../architecture/07-media.md)).
