@@ -1,8 +1,8 @@
 import { channelsConnectStart } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { useEffect, useId, useRef } from 'react';
+import { getRouteApi } from '@tanstack/react-router';
+import { useId, useState } from 'react';
 import { type Channel, channelsQuery, connectableQuery, errorStatus, meQuery } from '../api.ts';
 import {
   type ConnectRequest,
@@ -10,6 +10,8 @@ import {
   connectError,
   serverFieldId,
 } from '../channels/connect-option.tsx';
+import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
+import { SearchToasts } from '../channels/search-toasts.tsx';
 import { useApiClient, useLocale } from '../context.ts';
 import { httpsUrl } from '../destinations.ts';
 import { m } from '../i18n.ts';
@@ -20,29 +22,7 @@ export interface ChannelsSearch {
   readonly error?: string;
 }
 
-interface CallbackSearch {
-  readonly connected: string | undefined;
-  readonly error: string | undefined;
-}
-
 const route = getRouteApi('/app/channels');
-
-const CALLBACK_ERRORS: Readonly<Record<string, () => string>> = {
-  state_invalid: () => m.channels_error_state_invalid(),
-  session_mismatch: () => m.channels_error_session_mismatch(),
-  forbidden: () => m.channels_error_forbidden(),
-  provider_denied: () => m.channels_error_provider_denied(),
-  provider_error: () => m.channels_error_provider_error(),
-  app_config: () => m.channels_error_app_config(),
-  no_accounts: () => m.channels_error_no_accounts(),
-  too_many_accounts: () => m.channels_error_too_many_accounts({ max: 100 }),
-  server_error: () => m.channels_error_server_error(),
-};
-
-function callbackError(code: string): string {
-  const message = Object.hasOwn(CALLBACK_ERRORS, code) ? CALLBACK_ERRORS[code] : undefined;
-  return message === undefined ? m.channels_error_generic() : message();
-}
 
 export function statusLabel(status: Channel['status']): string {
   switch (status) {
@@ -97,67 +77,17 @@ function useConnect(workspaceId: string) {
   });
 }
 
-function searchToastKey(
-  { connected, error }: CallbackSearch,
-  channels: readonly Channel[] | undefined,
-): string | null {
-  if (connected === undefined && error === undefined) return null;
-  if (connected !== undefined && channels === undefined) return null;
-  return `${connected ?? ''}|${error ?? ''}`;
-}
-
-function connectedToast(
-  connected: string,
-  channels: readonly Channel[] | undefined,
-  locale: string,
-): string {
-  const names: string[] = [];
-  for (const id of connected.split(',')) {
-    const account = channels?.find((channel) => channel.id === id);
-    if (account === undefined) return m.channels_connected();
-    names.push(account.displayName);
-  }
-  const [only] = names;
-  if (names.length === 1 && only !== undefined) return m.channels_connected_named({ name: only });
-  return m.channels_connected_list({ names: new Intl.ListFormat(locale).format(names) });
-}
-
-function showSearchToasts(
-  { connected, error }: CallbackSearch,
-  channels: readonly Channel[] | undefined,
-  locale: string,
-) {
-  if (error !== undefined) toast(callbackError(error), 'destructive');
-  if (connected !== undefined) toast(connectedToast(connected, channels, locale));
-}
-
-function SearchToasts({ channels }: { readonly channels: readonly Channel[] | undefined }) {
-  const { connected, error } = route.useSearch();
-  const { locale } = useLocale();
-  const navigate = useNavigate();
-  const shown = useRef<string | null>(null);
-  useEffect(() => {
-    const search = { connected, error };
-    const key = searchToastKey(search, channels);
-    if (key === null) return;
-    if (shown.current === key) return;
-    shown.current = key;
-    showSearchToasts(search, channels, locale);
-    void navigate({ to: '/channels', search: {}, replace: true });
-  }, [connected, error, channels, locale, navigate]);
-  return null;
-}
-
-function ChannelCard({
-  channel,
-  onReconnect,
-  pending,
-}: {
+interface CardProps {
   readonly channel: Channel;
   readonly onReconnect: (() => void) | null;
+  readonly onDisconnect: (() => void) | null;
   readonly pending: boolean;
-}) {
+  readonly disconnecting: boolean;
+}
+
+function ChannelCard({ channel, onReconnect, onDisconnect, pending, disconnecting }: CardProps) {
   const { locale } = useLocale();
+  const [confirming, setConfirming] = useState(false);
   const profile = httpsUrl(channel.profileUrl);
   const expires =
     channel.accessExpiresAt === null
@@ -205,23 +135,41 @@ function ChannelCard({
             {m.channels_reconnect()}
           </Button>
         )}
+        {onDisconnect === null || confirming ? null : (
+          <Button size="sm" variant="ghost" onClick={() => setConfirming(true)}>
+            {m.channels_disconnect()}
+          </Button>
+        )}
       </div>
+      {onDisconnect === null || !confirming ? null : (
+        <DisconnectConfirm
+          name={channel.displayName}
+          pending={disconnecting}
+          onConfirm={onDisconnect}
+          onClose={() => setConfirming(false)}
+        />
+      )}
     </li>
   );
 }
 
-function Channels({ workspaceId }: { readonly workspaceId: string }) {
+function Channels({ workspaceId, role }: { readonly workspaceId: string; readonly role: string }) {
   const client = useApiClient();
-  const channels = useQuery(channelsQuery(client, workspaceId));
+  const channels = useQuery({
+    ...channelsQuery(client, workspaceId),
+    select: (items) => items.filter((channel) => channel.status !== 'disconnected'),
+  });
   const connectable = useQuery(connectableQuery(client, workspaceId));
   const connect = useConnect(workspaceId);
+  const disconnect = useDisconnect(workspaceId);
+  const canDisconnect = DISCONNECT_ROLES.has(role);
   const search = route.useSearch();
 
   const fieldPrefix = useId();
   const providers = connectable.data?.map((provider) => provider.id);
   const reconnect = (channel: Channel): (() => void) | null => {
     if (providers === undefined) return null;
-    if (channel.status !== 'needs_reauth' && channel.status !== 'disconnected') return null;
+    if (channel.status !== 'needs_reauth') return null;
     const request = reconnectRequest(channel);
     if (request !== null) return () => connect.mutate({ body: request, fromForm: false });
     const field = serverFieldId(fieldPrefix, channel.provider);
@@ -261,7 +209,9 @@ function Channels({ workspaceId }: { readonly workspaceId: string }) {
               key={channel.id}
               channel={channel}
               onReconnect={reconnect(channel)}
+              onDisconnect={canDisconnect ? () => disconnect.mutate(channel) : null}
               pending={connect.isPending}
+              disconnecting={disconnect.isPending}
             />
           ))}
         </ul>
@@ -283,5 +233,5 @@ export function ChannelsPage() {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
   if (workspace === undefined) return null;
-  return <Channels workspaceId={workspace.id} />;
+  return <Channels workspaceId={workspace.id} role={workspace.role} />;
 }

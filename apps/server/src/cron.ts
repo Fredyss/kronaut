@@ -3,6 +3,7 @@ import { type CronItem, type ParsedCronItem, parseCronItems, type TaskList } fro
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { refreshCapabilities } from './channels/capabilities-refresh.ts';
+import { purgeDisconnectedCredentials } from './channels/retention.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
@@ -12,6 +13,7 @@ export const CRON_TASKS = {
   accountCapabilitiesRefresh: 'account_capabilities_refresh',
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
+  credentialRetention: 'credential_retention',
   notificationEmail: 'notification_email',
   notificationRetention: 'notification_retention',
   publishDueSweep: 'publish_due_sweep',
@@ -43,6 +45,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     identifier: CRON_TASKS.credentialRefresh,
     match: '*/5 * * * *',
     options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
+    task: CRON_TASKS.credentialRetention,
+    identifier: CRON_TASKS.credentialRetention,
+    match: '51 3 * * *',
+    options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
   },
   {
     task: CRON_TASKS.notificationEmail,
@@ -169,6 +177,11 @@ export function cronTaskList(
     },
     [CRON_TASKS.credentialRefresh]: async () => {
       await recordCronRun(db, CRON_TASKS.credentialRefresh, () => refreshExpiring(sweeps));
+    },
+    [CRON_TASKS.credentialRetention]: async () => {
+      await recordCronRun(db, CRON_TASKS.credentialRetention, () =>
+        purgeDisconnectedCredentials(db),
+      );
     },
     [CRON_TASKS.notificationRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.notificationRetention, () => purgeNotifications(db));

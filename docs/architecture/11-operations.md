@@ -68,6 +68,7 @@
   | `publish_attempts` | 180 d |
   | webhook deliveries | 30 d |
   | notifications | 90 d |
+  | credentials of disconnected channels | 30 d |
   | idempotency keys | 24 h (7 d for MCP) |
   | soft-deleted posts | 30 d |
   | `ip_prefix` / `ua_hash` | nulled at 90 d |

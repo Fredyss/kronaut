@@ -93,6 +93,10 @@
 /** @typedef {{}} Channels_ConnectedInputs */
 /** @typedef {{ names: NonNullable<unknown> }} Channels_Connected_ListInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connected_NamedInputs */
+/** @typedef {{}} Channels_DisconnectInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
+/** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
 /** @typedef {{}} Channels_Error_App_ConfigInputs */
@@ -767,6 +771,22 @@ export const channels_connected_list = /** @type {(inputs: Channels_Connected_Li
 
 export const channels_connected_named = /** @type {(inputs: Channels_Connected_NamedInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.name} is connected.`)
+};
+
+export const channels_disconnect = /** @type {(inputs: Channels_DisconnectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Disconnect`)
+};
+
+export const channels_disconnect_body = /** @type {(inputs: Channels_Disconnect_BodyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Disconnect ${i?.name}? Scheduled posts to it won't be published. You can connect it again later.`)
+};
+
+export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconnect_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Disconnect channel`)
+};
+
+export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.name} disconnected.`)
 };
 
 export const channels_empty_body = /** @type {(inputs: Channels_Empty_BodyInputs) => LocalizedString} */ () => {

@@ -752,6 +752,34 @@ export type ChannelsProvidersResponses = {
 
 export type ChannelsProvidersResponse = ChannelsProvidersResponses[keyof ChannelsProvidersResponses];
 
+export type ChannelsDisconnectData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/disconnect';
+};
+
+export type ChannelsDisconnectErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsDisconnectError = ChannelsDisconnectErrors[keyof ChannelsDisconnectErrors];
+
+export type ChannelsDisconnectResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type ChannelsDisconnectResponse = ChannelsDisconnectResponses[keyof ChannelsDisconnectResponses];
+
 export type MediaUploadData = {
     body: {
         dataBase64: string;

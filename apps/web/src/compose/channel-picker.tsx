@@ -124,7 +124,7 @@ export function ChannelsFieldset({
       ) : null}
       {channels === undefined ? null : (
         <ChannelPicker
-          channels={channels}
+          channels={channels.filter((channel) => channel.status !== 'disconnected')}
           filesFor={filesFor}
           customized={customized}
           selected={selected}

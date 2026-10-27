@@ -34,21 +34,31 @@ const PAGE_B = `acct_${'b'.repeat(26)}`;
 const PAGE_C = `acct_${'c'.repeat(26)}`;
 const UNKNOWN = `acct_${'d'.repeat(26)}`;
 
+function me(role = 'owner') {
+  return { ...ME, workspaces: ME.workspaces.map((workspace) => ({ ...workspace, role })) };
+}
+
 interface Mount {
   readonly channels?: readonly unknown[];
   readonly connect?: () => Response;
+  readonly role?: string;
 }
 
 function mount(path: string, authorizationUrls: string[] = [], options: Mount = {}) {
   const bodies: unknown[] = [];
+  const disconnects: string[] = [];
   const client = createApiClient({
     baseUrl: 'http://kronaut.test',
     fetch: async (input) => {
       const request = input as Request;
       const url = new URL(request.url).pathname;
-      if (url === '/v1/me') return Response.json(ME);
+      if (url === '/v1/me') return Response.json(me(options.role));
       if (url === '/v1/workspaces/ws_1/channels') {
         return Response.json({ items: options.channels ?? [CHANNEL] });
+      }
+      if (request.method === 'POST' && url.endsWith('/disconnect')) {
+        disconnects.push(url);
+        return new Response(null, { status: 204 });
       }
       if (url === '/v1/workspaces/ws_1/channels/providers') {
         return Response.json({
@@ -74,7 +84,7 @@ function mount(path: string, authorizationUrls: string[] = [], options: Mount = 
     createMemoryHistory({ initialEntries: [path] }),
   );
   render(<App router={router} queryClient={queryClient} client={client} />);
-  return { router, bodies };
+  return { router, bodies, disconnects };
 }
 
 describe('channels page', () => {
@@ -151,6 +161,25 @@ describe('channels page', () => {
     await screen.findByText(
       'No account was shared. Connect again and select at least one Page you can post to.',
     );
+  });
+
+  it('hides disconnected channels and lets an owner disconnect, but not a viewer', async () => {
+    const gone = { ...CHANNEL, id: 'acct_2', displayName: 'Old channel', status: 'disconnected' };
+    const { disconnects } = mount('/channels', [], { channels: [CHANNEL, gone] });
+    await screen.findByText('Ada on Bluesky');
+    expect(screen.queryByText('Old channel')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
+    screen.getByText(
+      "Disconnect Ada on Bluesky? Scheduled posts to it won't be published. You can connect it again later.",
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect channel' }));
+    await screen.findByText('Ada on Bluesky disconnected.');
+    expect(disconnects).toEqual(['/v1/workspaces/ws_1/channels/acct_1/disconnect']);
+    cleanup();
+
+    mount('/channels', [], { role: 'viewer' });
+    await screen.findByText('Ada on Bluesky');
+    expect(screen.queryByRole('button', { name: 'Disconnect' })).toBeNull();
   });
 
   it('shows a localised toast for ?error= and clears the param', async () => {

@@ -2316,6 +2316,58 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/channels/{channelId}/disconnect": {
+      "post": {
+        "description": "The channel stops publishing; due posts to it are blocked. Its credentials are purged after 30 days. Connecting the same account again restores it. Owners and admins only.",
+        "operationId": "channels.disconnect",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Disconnect a channel",
+        "tags": [
+          "channels"
+        ],
+        "x-kronaut-action": "channels:disconnect",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/media": {
       "post": {
         "description": "Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage.",
