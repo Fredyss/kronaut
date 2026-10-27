@@ -278,6 +278,7 @@
 /** @typedef {{}} Notifications_UnreadInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Password_Min_LengthInputs */
 /** @typedef {{}} Password_Too_LongInputs */
+/** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
@@ -1553,6 +1554,10 @@ export const password_min_length = /** @type {(inputs: Password_Min_LengthInputs
 
 export const password_too_long = /** @type {(inputs: Password_Too_LongInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Heslo je příliš dlouhé.`)
+};
+
+export const post_customized = /** @type {(inputs: Post_CustomizedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text upravený pro tento kanál`)
 };
 
 export const post_destinations_title = /** @type {(inputs: Post_Destinations_TitleInputs) => LocalizedString} */ () => {

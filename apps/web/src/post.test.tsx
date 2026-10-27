@@ -28,6 +28,7 @@ function destination(id: string, state: string, remoteUrl: string | null, error:
     remoteUrl,
     publishedAt: state === 'published' ? '2026-10-24T08:00:05.000Z' : null,
     lastErrorCode: error,
+    variant: null as number | null,
   };
 }
 
@@ -59,9 +60,24 @@ const POST = {
       media: [{ mediaId: 'media_1', position: 0, altText: null }],
     },
   ],
+  variants: [
+    {
+      items: [
+        {
+          position: 0,
+          role: 'main',
+          doc: {
+            type: 'doc',
+            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Only for b' }] }],
+          },
+          media: [],
+        },
+      ],
+    },
+  ],
   destinations: [
     destination('a', 'published', 'https://bsky.app/profile/ada/post/1', null),
-    destination('b', 'failed', 'javascript:alert(1)', 'media_rejected'),
+    { ...destination('b', 'failed', 'javascript:alert(1)', 'media_rejected'), variant: 0 },
   ],
   createdAt: '2026-10-24T07:00:00.000Z',
   updatedAt: '2026-10-24T08:00:05.000Z',
@@ -95,6 +111,8 @@ describe('post status page', () => {
       }),
     ).toBeDefined();
     expect(screen.getByText('media_rejected')).toBeDefined();
+    expect(screen.getAllByText('Text customized for this channel')).toHaveLength(1);
+    expect(screen.getByText('Only for b')).toBeDefined();
     const links = screen.getAllByRole('link', { name: 'View post' });
     expect(links.map((link) => link.getAttribute('href'))).toEqual([
       'https://bsky.app/profile/ada/post/1',

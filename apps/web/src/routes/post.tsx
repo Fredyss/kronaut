@@ -51,13 +51,35 @@ function scheduleLine(post: Post, format: (iso: string) => string): string {
     : m.post_schedule_at_tz({ when: format(at), tz: post.scheduleTz });
 }
 
+type Item = Post['items'][number];
+
+function Content({ item }: { readonly item: Item | undefined }) {
+  const media = item?.media.length ?? 0;
+  return (
+    <>
+      <div className="flex flex-col gap-2 whitespace-pre-wrap break-words text-sm">
+        {docParagraphs(item?.doc).map((paragraph) => (
+          <p key={paragraph.key} className="min-h-[1lh]">
+            {paragraph.text}
+          </p>
+        ))}
+      </div>
+      {media === 0 ? null : (
+        <p className="text-muted-foreground text-sm">{m.post_images({ count: media })}</p>
+      )}
+    </>
+  );
+}
+
 function DestinationRow({
   destination,
   channel,
+  custom,
   format,
 }: {
   readonly destination: Destination;
   readonly channel: Channel | undefined;
+  readonly custom: Item | undefined;
   readonly format: (iso: string) => string;
 }) {
   const link = httpsUrl(destination.remoteUrl);
@@ -98,6 +120,16 @@ function DestinationRow({
             </details>
           </div>
         )}
+        {custom === undefined ? null : (
+          <details className="text-sm">
+            <summary className="cursor-pointer text-muted-foreground">
+              {m.post_customized()}
+            </summary>
+            <div className="mt-2 flex flex-col gap-2">
+              <Content item={custom} />
+            </div>
+          </details>
+        )}
       </div>
       <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">
         {stateLabel(destination.state)}
@@ -130,8 +162,6 @@ function PostStatus({
   if (post.data === undefined)
     return <p className="text-muted-foreground text-sm">{m.loading()}</p>;
   const data = post.data;
-  const item = data.items[0];
-  const media = item?.media.length ?? 0;
   const byId = new Map((channels.data ?? []).map((channel) => [channel.id, channel]));
   return (
     <>
@@ -143,16 +173,7 @@ function PostStatus({
       </div>
       <ApprovalSection workspaceId={workspaceId} post={data} />
       <article className="flex flex-col gap-3 rounded-xl border p-4">
-        <div className="flex flex-col gap-2 whitespace-pre-wrap break-words text-sm">
-          {docParagraphs(item?.doc).map((paragraph) => (
-            <p key={paragraph.key} className="min-h-[1lh]">
-              {paragraph.text}
-            </p>
-          ))}
-        </div>
-        {media === 0 ? null : (
-          <p className="text-muted-foreground text-sm">{m.post_images({ count: media })}</p>
-        )}
+        <Content item={data.items[0]} />
       </article>
       <section className="flex flex-col gap-3">
         <h2 className="font-medium text-lg">{m.post_destinations_title()}</h2>
@@ -162,6 +183,11 @@ function PostStatus({
               key={destination.id}
               destination={destination}
               channel={byId.get(destination.accountId)}
+              custom={
+                destination.variant === null
+                  ? undefined
+                  : data.variants[destination.variant]?.items[0]
+              }
               format={format}
             />
           ))}

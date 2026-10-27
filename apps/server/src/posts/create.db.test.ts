@@ -197,6 +197,17 @@ describe('post routes', () => {
     expect(updated.destinations.map((d) => d.accountId)).toEqual([accountB]);
   });
 
+  it('returns destinations in channel order, whatever order they were sent in', async () => {
+    const created = await create(ownerAuth, {
+      items: [{ doc: doc('order') }],
+      destinations: [
+        { accountId: accountB, publishType: 'post' },
+        { accountId: accountA, publishType: 'post' },
+      ],
+    });
+    expect(created.destinations.map((d) => d.accountId)).toEqual([accountA, accountB]);
+  });
+
   it('refuses to edit a post with a destination past draft', async () => {
     const created = await create(ownerAuth, draft());
     await schedule(created);
