@@ -93,6 +93,21 @@ describe('local store round trip', () => {
     expect(await store.open(KEY)).toBeNull();
   });
 
+  it('opens an inclusive byte range and reports the full size', async () => {
+    await store.put(KEY, Buffer.from('0123456789'));
+    const opened = await store.open(KEY, { start: 2, end: 5 });
+    expect(opened?.size).toBe(10);
+    expect((await readAll(opened?.stream ?? Readable.from([]))).toString()).toBe('2345');
+    for (const range of [
+      { start: -1, end: 2 },
+      { start: 3, end: 2 },
+      { start: 0.5, end: 2 },
+      { start: 0, end: Number.NaN },
+    ]) {
+      await expect(store.open(KEY, range)).rejects.toThrow(TypeError);
+    }
+  });
+
   it('stores under a two-character shard directory', async () => {
     await store.put(KEY_WITH_EXT, Buffer.from('x'));
     expect(await readdir(join(root, KEY.slice(0, 2)))).toEqual([KEY_WITH_EXT]);

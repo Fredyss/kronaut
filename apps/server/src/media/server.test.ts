@@ -17,9 +17,12 @@ let store: MediaStore;
 let app: Hono;
 let jpegKey: string;
 let pngKey: string;
+let mp4Key: string;
 const key = randomBytes(32);
 const jpeg = jpegFixture({ width: 4, height: 4 });
 const png = pngFixture();
+const mp4 = Uint8Array.from({ length: 8192 }, (_, index) => index % 251);
+mp4.set([0, 0, 0, 0x18, ...new TextEncoder().encode('ftypisom')]);
 
 function keyFor(data: Uint8Array): string {
   return storageKey(randomUUID(), createHash('sha256').update(data).digest());
@@ -43,6 +46,8 @@ beforeAll(async () => {
   pngKey = keyFor(png);
   await store.put(jpegKey, jpeg);
   await store.put(pngKey, png);
+  mp4Key = keyFor(mp4);
+  await store.put(mp4Key, mp4);
   app = createMediaServer({
     store,
     signingKey: key,
@@ -176,6 +181,75 @@ describe('createMediaServer', () => {
     const response = await app.request(signed(linkKey));
     expect(response.status).not.toBe(200);
     expect(await response.text()).toBe('');
+  });
+
+  describe('byte ranges', () => {
+    const ranged = (storage: string, range: string, method = 'GET') =>
+      app.request(signed(storage), { method, headers: { Range: range } });
+
+    async function expectPartial(response: Response, start: number, end: number): Promise<void> {
+      expect(response.status).toBe(206);
+      expect(response.headers.get('content-type')).toBe('video/mp4');
+      expect(response.headers.get('accept-ranges')).toBe('bytes');
+      expect(response.headers.get('content-range')).toBe(`bytes ${start}-${end}/${mp4.byteLength}`);
+      expect(response.headers.get('content-length')).toBe(String(end - start + 1));
+      expect(response.headers.get('content-security-policy')).toBe("default-src 'none'; sandbox");
+      expect(new Uint8Array(await response.arrayBuffer())).toEqual(mp4.subarray(start, end + 1));
+    }
+
+    it('serves an MP4 in full with Accept-Ranges', async () => {
+      const response = await app.request(signed(mp4Key));
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toBe('video/mp4');
+      expect(response.headers.get('accept-ranges')).toBe('bytes');
+      expect(response.headers.get('content-range')).toBeNull();
+      expect(new Uint8Array(await response.arrayBuffer())).toEqual(mp4);
+    });
+
+    it('answers a middle, open-ended or suffix range with 206', async () => {
+      await expectPartial(await ranged(mp4Key, 'bytes=100-199'), 100, 199);
+      await expectPartial(await ranged(mp4Key, 'bytes=4000-'), 4000, mp4.byteLength - 1);
+      await expectPartial(await ranged(mp4Key, 'bytes=4000-999999'), 4000, mp4.byteLength - 1);
+      await expectPartial(
+        await ranged(mp4Key, 'bytes=-50'),
+        mp4.byteLength - 50,
+        mp4.byteLength - 1,
+      );
+      await expectPartial(await ranged(mp4Key, 'bytes=-999999'), 0, mp4.byteLength - 1);
+    });
+
+    it('answers an unsatisfiable range with 416', async () => {
+      for (const range of [`bytes=${mp4.byteLength}-`, 'bytes=99999-100000', 'bytes=-0']) {
+        const response = await ranged(mp4Key, range);
+        expect(response.status).toBe(416);
+        expect(response.headers.get('content-range')).toBe(`bytes */${mp4.byteLength}`);
+        expect(await response.text()).toBe('');
+      }
+    });
+
+    it('ignores multi-range and malformed headers', async () => {
+      for (const range of ['bytes=0-1,4-5', 'bytes=5-2', 'bytes=-', 'items=0-1', 'bytes=a-b']) {
+        const response = await ranged(mp4Key, range);
+        expect(response.status).toBe(200);
+        expect(response.headers.get('content-length')).toBe(String(mp4.byteLength));
+        expect(new Uint8Array(await response.arrayBuffer())).toEqual(mp4);
+      }
+    });
+
+    it('answers HEAD with a range with the 206 headers and no body', async () => {
+      const response = await ranged(mp4Key, 'bytes=10-19', 'HEAD');
+      expect(response.status).toBe(206);
+      expect(response.headers.get('content-range')).toBe(`bytes 10-19/${mp4.byteLength}`);
+      expect(response.headers.get('content-length')).toBe('10');
+      expect(await response.text()).toBe('');
+    });
+
+    it('applies ranges to images too', async () => {
+      const response = await ranged(jpegKey, 'bytes=0-3');
+      expect(response.status).toBe(206);
+      expect(response.headers.get('content-type')).toBe('image/jpeg');
+      expect(new Uint8Array(await response.arrayBuffer())).toEqual(jpeg.subarray(0, 4));
+    });
   });
 
   it('requires a 32-byte signing key', () => {

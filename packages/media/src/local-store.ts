@@ -6,12 +6,20 @@ import { link, lstat, mkdir, open as openFile, rm, unlink } from 'node:fs/promis
 import { isAbsolute, join } from 'node:path';
 import { isStorageKey } from './storage-key.ts';
 
+export interface ByteRange {
+  readonly start: number;
+  readonly end: number;
+}
+
 export interface MediaStore {
   put(
     key: string,
     data: Uint8Array | AsyncIterable<Uint8Array>,
   ): Promise<{ bytes: number; sha256: Buffer }>;
-  open(key: string): Promise<{ stream: NodeJS.ReadableStream; size: number } | null>;
+  open(
+    key: string,
+    range?: ByteRange,
+  ): Promise<{ stream: NodeJS.ReadableStream; size: number } | null>;
   has(key: string): Promise<boolean>;
   delete(key: string): Promise<void>;
 }
@@ -24,6 +32,14 @@ const SHARD_LENGTH = 2;
 function assertKey(key: string): void {
   if (!isStorageKey(key)) {
     throw new TypeError('invalid storage key');
+  }
+}
+
+function assertRange(range: ByteRange | undefined): void {
+  if (range === undefined) return;
+  const { start, end } = range;
+  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start > end) {
+    throw new TypeError('invalid byte range');
   }
 }
 
@@ -121,6 +137,7 @@ async function writeObject(
 
 async function openObject(
   path: string,
+  range: ByteRange | undefined,
 ): Promise<{ stream: NodeJS.ReadableStream; size: number } | null> {
   let handle: FileHandle;
   try {
@@ -136,7 +153,8 @@ async function openObject(
     if (!stats.isFile()) {
       throw new Error('media object is not a regular file');
     }
-    return { stream: handle.createReadStream(), size: stats.size };
+    const bounds = range === undefined ? {} : { start: range.start, end: range.end };
+    return { stream: handle.createReadStream(bounds), size: stats.size };
   } catch (error) {
     await handle.close().catch(() => undefined);
     throw error;
@@ -161,9 +179,10 @@ export function createLocalStore(root: string): MediaStore {
       return writeObject(tmpDir, finalPath, chunks);
     },
 
-    async open(key) {
+    async open(key, range) {
       assertKey(key);
-      return openObject(pathFor(key));
+      assertRange(range);
+      return openObject(pathFor(key), range);
     },
 
     async has(key) {
