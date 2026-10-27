@@ -52,6 +52,7 @@ Phase 1.1 adds video for every provider, Instagram Reels first (ADR-0052). Image
   - The master is stored under its sha256 key ([ADR-0023](0023-tenant-scoped-media-storage-keys.md)). The row becomes `ready` with `mime` `video/mp4`, `bytes`, `width`, `height` and `duration_ms`.
   - A WebP poster frame is stored as the `thumb_768` rendition for previews.
   - The source and staging files are deleted at once; only the master is referenced by approvals and hashes.
+- **Duplicate master:** when the master's storage key already belongs to another asset of the workspace, that asset is kept, exactly as for a duplicate image: it is revived if soft-deleted, and its AI mark stays sticky. The upload's own row becomes `rejected` with `video_duplicate`, and its new `duplicate_of_id` names the kept asset, so the client switches to it.
 - **Resource limits:** one conversion at a time per worker, `-threads 2`, run at a lower priority, with a 20-minute timeout. A timeout rejects the source as `video_unreadable`.
 
 ### Binaries
@@ -91,7 +92,7 @@ Phase 1.1 adds video for every provider, Instagram Reels first (ADR-0052). Image
 ## Consequences
 
 - Any phone video works, at the cost of a larger image and about a minute or two of worker CPU per short video.
-- One migration adds `media_assets.rejected_reason` (text with a CHECK on the codes above) and replaces `sweep_media_gc` with the 24 h upload expiry.
+- One migration adds `media_assets.rejected_reason` (text with a CHECK on the codes above, `video_duplicate` included) and `media_assets.duplicate_of_id`, and replaces `sweep_media_gc` with the 24 h upload expiry. Expired uploads come first in the sweep, so other candidates can't crowd them out.
 - The image scan can't see the ffmpeg build's version. FFmpeg and x264 security releases are tracked by hand, and their pins bumped like any other base image.
 - Distributing a GPL binary in the image carries a source obligation; the notices record the exact sources. This is one of the licensing items to confirm with a lawyer.
 - Revisit when: a network needs a different profile; carousel video, covers or captions are added; Facebook documents feed-video limits; or the SaaS mode moves uploads to presigned multipart on R2 ([Media](../architecture/07-media.md)).
