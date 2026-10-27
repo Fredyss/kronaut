@@ -28,6 +28,60 @@ RUN set -eu; \
       "$tool" --version; \
     done
 
+FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS ffmpeg
+ARG X264_COMMIT=b35605ace3ddf7c1a5d67a2eb553f034aef41d55
+ARG X264_URL=https://code.videolan.org/videolan/x264/-/archive/${X264_COMMIT}/x264-${X264_COMMIT}.tar.gz
+ARG X264_SHA256=cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9
+ARG FFMPEG_VERSION=9.0.2
+ARG FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
+ARG FFMPEG_SHA256=8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates curl gcc libc6-dev make nasm pkgconf xz-utils \
+ && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+RUN set -eu; \
+    curl -fsSL -o x264.tar.gz "${X264_URL}"; \
+    echo "${X264_SHA256}  x264.tar.gz" | sha256sum -c -; \
+    mkdir x264; \
+    tar -xzf x264.tar.gz -C x264 --strip-components=1; \
+    cd x264; \
+    ./configure --prefix=/opt/x264 --enable-static --disable-cli --enable-pic --bit-depth=8; \
+    make -j"$(nproc)"; \
+    make install-lib-static
+RUN set -eu; \
+    curl -fsSL -o ffmpeg.tar.xz "${FFMPEG_URL}"; \
+    echo "${FFMPEG_SHA256}  ffmpeg.tar.xz" | sha256sum -c -; \
+    mkdir ffmpeg; \
+    tar -xJf ffmpeg.tar.xz -C ffmpeg --strip-components=1; \
+    cd ffmpeg; \
+    PKG_CONFIG_PATH=/opt/x264/lib/pkgconfig ./configure \
+      --pkg-config-flags=--static \
+      --disable-shared --enable-static \
+      --disable-everything --disable-autodetect --disable-network --disable-doc --disable-debug --disable-ffplay \
+      --enable-ffmpeg --enable-ffprobe \
+      --enable-gpl --enable-libx264 \
+      --enable-swscale --enable-swresample \
+      --enable-protocol=file,pipe \
+      --enable-demuxer=mov,matroska \
+      --enable-muxer=mp4,image2pipe \
+      --enable-decoder=h264,hevc,vp8,vp9,mjpeg \
+      --enable-decoder=aac,aac_latm,mp3,mp3float,opus,vorbis,flac,alac,ac3,eac3 \
+      --enable-decoder=pcm_s16le,pcm_s16be,pcm_s24le,pcm_s24be,pcm_s32le,pcm_f32le,pcm_f32be \
+      --enable-encoder=libx264,aac,mjpeg \
+      --enable-parser=h264,hevc,aac,aac_latm,vp8,vp9,opus,vorbis,mpegaudio,ac3,flac,mjpeg \
+      --enable-filter=scale,format,fps,setsar,transpose,hflip,vflip,null,anull,aresample,aformat,crop; \
+    make -j"$(nproc)"; \
+    install -D -m 0755 -t /opt/ffmpeg/bin ffmpeg ffprobe
+RUN set -eu; \
+    for tool in /opt/ffmpeg/bin/*; do \
+      extra=$(ldd "$tool" | awk '{ print $1 }' | grep -vE '^(linux-vdso\.so\.1|libc\.so\.6|libm\.so\.6|libpthread\.so\.0|libdl\.so\.2|/lib(64)?/ld-linux[-a-z0-9_]*\.so\.[0-9]+)$' || true); \
+      if [ -n "$extra" ]; then echo "unexpected library in $tool: $extra" >&2; exit 1; fi; \
+    done; \
+    /opt/ffmpeg/bin/ffmpeg -hide_banner -encoders | awk '{ print $2 }' > /tmp/encoders; \
+    for enc in libx264 aac mjpeg; do grep -qxF "$enc" /tmp/encoders || { echo "missing encoder $enc" >&2; exit 1; }; done; \
+    /opt/ffmpeg/bin/ffmpeg -hide_banner -muxers | awk '{ print $2 }' | grep -qxF mp4 || { echo "missing muxer mp4" >&2; exit 1; }; \
+    /opt/ffmpeg/bin/ffprobe -version
+
 FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS node-build
 
 FROM node-build AS deps
@@ -101,13 +155,14 @@ RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
 FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:cb606325b7ec4af55462cb0b424a53b452a5b4a894ffe841fcf1048d216fb9f8
 COPY --from=pg /opt/pg /opt/pg
+COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=deps /app /app
 COPY --from=web /app/apps/web/dist/web /app/web
 COPY --from=notices /app/THIRD_PARTY_NOTICES /app/THIRD_PARTY_NOTICES
 COPY LICENSE.md NOTICE /app/
 COPY --from=deps --chown=65532:65532 /skel/data /data
 COPY --chmod=0755 infra/docker/kronaut /usr/local/bin/kronaut
-ENV PATH=/opt/pg/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+ENV PATH=/opt/ffmpeg/bin:/opt/pg/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     KRONAUT_DATA_DIR=/data \
     KRONAUT_WEB_DIR=/app/web
 WORKDIR /app

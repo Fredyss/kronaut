@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { collectPackages, type Pkg } from './collect.ts';
+import { NATIVE_COMPONENTS, renderNative } from './native.ts';
 
 const LICENSE_FILE = /^(licen[cs]e|copying|notice)([-_.].*)?$/i;
 const SEPARATOR = `\n${'-'.repeat(72)}\n\n`;
@@ -30,5 +31,6 @@ function render(pkg: Pkg): string {
 
 const packages = collectPackages();
 const target = process.argv[2] ?? './THIRD_PARTY_NOTICES';
-writeFileSync(target, `${HEADER}${SEPARATOR}${packages.map(render).join(SEPARATOR)}`);
+const sections = [...packages.map(render), renderNative(NATIVE_COMPONENTS)];
+writeFileSync(target, `${HEADER}${SEPARATOR}${sections.join(SEPARATOR)}`);
 console.log(`notices: ${packages.length} packages written to ${target}`);
