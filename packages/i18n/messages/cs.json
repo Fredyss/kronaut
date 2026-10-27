@@ -218,6 +218,8 @@
       }
     }
   ],
+  "compose_ai_generated_label": "Obrázek {position} je vytvořený pomocí AI",
+  "compose_ai_generated_hint": "Instagram ho označí jako vytvořený pomocí AI. Ostatní sítě takové označení nemají.",
   "compose_image_move_up": "Posunout obrázek {position} výš",
   "compose_image_move_down": "Posunout obrázek {position} níž",
   "compose_image_remove": "Odebrat",

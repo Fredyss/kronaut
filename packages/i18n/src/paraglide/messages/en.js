@@ -125,6 +125,8 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Compose_Ai_Generated_HintInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
@@ -906,6 +908,14 @@ export const channels_subtitle = /** @type {(inputs: Channels_SubtitleInputs) =>
 
 export const channels_title = /** @type {(inputs: Channels_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Channels`)
+};
+
+export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Instagram marks it as made with AI. The other networks have no such label.`)
+};
+
+export const compose_ai_generated_label = /** @type {(inputs: Compose_Ai_Generated_LabelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Image ${i?.position} is AI-generated`)
 };
 
 export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {

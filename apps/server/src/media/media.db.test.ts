@@ -1,27 +1,26 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { type Action, decodePublicId, encodePublicId, type Resource } from '@kronaut/core';
-import { type Actor, createDatabase, type Database } from '@kronaut/db';
+import { createHash, randomUUID } from 'node:crypto';
+import { readdir } from 'node:fs/promises';
+import { type Action, encodePublicId, type Resource } from '@kronaut/core';
+import type { Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
-import {
-  createLocalStore,
-  type MediaStore,
-  type ReencodeFormat,
-  reencodeImage,
-  storageKey,
-} from '@kronaut/media';
+import { type MediaStore, storageKey } from '@kronaut/media';
 import { sql } from 'kysely';
 import pino from 'pino';
-import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RequestContext } from '../http/types.ts';
-import { createMediaAccess } from './access.ts';
+import {
+  asUser,
+  clock,
+  type MediaDb,
+  masterOf,
+  NOW,
+  startMediaDb,
+  type Tenant,
+  uuidOf,
+} from './db-testing.ts';
 import { findMediaAsset } from './dto.ts';
-import { ingestImage, MEDIA_IMAGE_MAX_BYTES, prepareImage } from './ingest.ts';
+import { MEDIA_IMAGE_MAX_BYTES } from './ingest.ts';
 import { MEDIA_UPLOAD_BODY_LIMIT, mediaGetRoute, mediaRoutes, mediaUploadRoute } from './routes.ts';
-import { createMediaServer } from './server.ts';
 import {
   bytes,
   expectMediaError,
@@ -44,60 +43,14 @@ import {
   withOrientation,
 } from './testing.ts';
 
-interface Tenant {
-  userId: string;
-  workspaceId: string;
-}
-
-const SYSTEM: Actor = { kind: 'system' };
-const NOW = Temporal.Instant.from('2026-10-21T12:00:00Z');
-const clock = () => NOW;
-
 let test: TestDatabase;
+let fx: MediaDb;
 let db: Database;
 let root: string;
 let store: MediaStore;
 let a: Tenant;
 let b: Tenant;
-const signingKey = randomBytes(32);
-
-async function provision(label: string): Promise<Tenant> {
-  const userId = await db.withActor(SYSTEM, async (trx) => {
-    const result = await sql<{ id: string }>`
-      select auth_create_user(${`${label}@example.test`}, ${`${label}@example.test`},
-                              ${`User ${label}`}, 'hash', 'en') as id
-    `.execute(trx);
-    return result.rows[0]?.id ?? '';
-  });
-  const workspaceId = await db.withActor({ kind: 'user', id: userId }, async (trx) => {
-    const result = await sql<{ workspace_id: string }>`
-      select workspace_id
-        from provision_organization(${`Org ${label}`}, ${`Workspace ${label}`}, ${`ws-${label}`}, 'Europe/Bratislava')
-    `.execute(trx);
-    return result.rows[0]?.workspace_id ?? '';
-  });
-  return { userId, workspaceId };
-}
-
-function asUser(tenant: Tenant): Actor {
-  return { kind: 'user', id: tenant.userId };
-}
-
-async function ingest(tenant: Tenant, data: Uint8Array, filename?: string) {
-  const prepared = await prepareImage({
-    bytes: data,
-    ...(filename === undefined ? {} : { filename }),
-  });
-  return db.withTenant(tenant.workspaceId, asUser(tenant), (trx) =>
-    ingestImage(trx, store, tenant.workspaceId, prepared),
-  );
-}
-
-function uuidOf(asset: { id: string }): string {
-  const id = decodePublicId('media', asset.id);
-  if (id === null) throw new Error(`not a media id: ${asset.id}`);
-  return id;
-}
+const ingest: MediaDb['ingest'] = (...args) => fx.ingest(...args);
 
 function rowOf(tenant: Tenant, asset: { id: string }) {
   return db.withTenant(tenant.workspaceId, asUser(tenant), (trx) =>
@@ -127,27 +80,19 @@ function sha256(data: Uint8Array): Buffer {
   return createHash('sha256').update(data).digest();
 }
 
-async function masterOf(data: Uint8Array, format: ReencodeFormat): Promise<Uint8Array> {
-  return (await reencodeImage(data, format)).bytes;
-}
-
 async function storedFiles(): Promise<string[]> {
   return (await readdir(root, { recursive: true })).sort();
 }
 
 beforeAll(async () => {
   test = await startTestDatabase();
-  db = createDatabase({ connectionString: test.appUrl });
-  root = await mkdtemp(join(tmpdir(), 'kronaut-media-db-'));
-  store = createLocalStore(root);
-  a = await provision('media-a');
-  b = await provision('media-b');
+  fx = await startMediaDb(test, 'media');
+  ({ db, store, root, a, b } = fx);
 });
 
 afterAll(async () => {
-  await db?.destroy();
+  await fx?.stop();
   await test?.stop();
-  if (root !== undefined) await rm(root, { recursive: true, force: true });
 });
 
 describe('ingestImage', () => {
@@ -170,6 +115,7 @@ describe('ingestImage', () => {
       height: 16,
       sha256: sha256(master).toString('hex'),
       state: 'ready',
+      aiGenerated: false,
     });
     const row = await rowOf(a, asset);
     const key = storageKey(a.workspaceId, sha256(master));
@@ -259,6 +205,15 @@ describe('ingestImage', () => {
     expect(withExif).toEqual(first);
     expect(await countAssets(a)).toBe(before);
     expect((await rowOf(a, first))?.original_name).toBe('first.jpg');
+  });
+
+  it('marks an image AI-generated and never clears the mark on a repeat upload', async () => {
+    const image = jpegFixture({ width: 9, height: 7 });
+    const plain = await ingest(a, image);
+    expect(plain.aiGenerated).toBe(false);
+    const marked = await ingest(a, image, undefined, true);
+    expect(marked).toEqual({ ...plain, aiGenerated: true });
+    expect(await ingest(a, image)).toEqual(marked);
   });
 
   it('keeps workspaces apart even for identical bytes', async () => {
@@ -469,70 +424,5 @@ describe('media routes', () => {
     expect(parse('tab\there.jpg')).toBe(false);
     expect(parse('del\u007f.jpg')).toBe(false);
     expect(parse('café 2026.jpg')).toBe(true);
-  });
-});
-
-describe('createMediaAccess', () => {
-  function access() {
-    return createMediaAccess({
-      db,
-      store,
-      signingKey,
-      mediaBaseUrl: new URL('https://media.example.test/ignored/path'),
-      clock,
-    });
-  }
-
-  it('signs a URL that the media server serves', async () => {
-    const original = jpegFixture({ width: 40, height: 30, exif: true });
-    const master = await masterOf(original, 'jpeg');
-    const asset = await ingest(a, original);
-    const url = await access().signedUrl(a.workspaceId, uuidOf(asset), 300);
-    expect(url).toMatch(/^https:\/\/media\.example\.test\/m\/[0-9a-f]{64}\?exp=\d+&sig=[\w-]{43}$/);
-    expect(new URL(url).searchParams.get('exp')).toBe(String(NOW.epochMilliseconds / 1000 + 300));
-    const server = createMediaServer({ store, signingKey, clock });
-    const response = await server.request(url);
-    expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toBe('image/jpeg');
-    expect(response.headers.get('cache-control')).toBe('private, max-age=300');
-    expect(new Uint8Array(await response.arrayBuffer())).toEqual(master);
-    const later = createMediaServer({
-      store,
-      signingKey,
-      clock: () => NOW.add({ seconds: 301 }),
-    });
-    expect((await later.request(url)).status).toBe(404);
-  });
-
-  it('reads the stored master', async () => {
-    const original = pngFixture({ width: 6, height: 5 });
-    const asset = await ingest(a, original);
-    expect(await access().read(a.workspaceId, uuidOf(asset))).toEqual(
-      await masterOf(original, 'png'),
-    );
-  });
-
-  it('refuses assets of another workspace, unready assets and bad ttls', async () => {
-    const asset = await ingest(a, jpegFixture({ width: 2, height: 2 }));
-    await expect(access().signedUrl(b.workspaceId, uuidOf(asset), 60)).rejects.toThrow();
-    await expect(access().read(b.workspaceId, uuidOf(asset))).rejects.toThrow();
-    const pending = await db.withTenant(a.workspaceId, asUser(a), (trx) =>
-      trx
-        .insertInto('media_assets')
-        .values({
-          workspace_id: a.workspaceId,
-          kind: 'image',
-          state: 'uploading',
-          storage_key: randomBytes(32).toString('hex'),
-        })
-        .returning('id')
-        .executeTakeFirstOrThrow(),
-    );
-    await expect(access().signedUrl(a.workspaceId, pending.id, 60)).rejects.toThrow();
-    for (const ttl of [0, -1, 1.5, 86_401, Number.NaN]) {
-      await expect(access().signedUrl(a.workspaceId, uuidOf(asset), ttl)).rejects.toThrow(
-        RangeError,
-      );
-    }
   });
 });

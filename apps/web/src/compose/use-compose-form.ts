@@ -76,7 +76,15 @@ function emptyProblem(plan: Plan, base: Content): string | null {
 }
 
 function toCompose({ doc, images }: Content): ComposeContent {
-  return { doc, images: images.map(({ id, file, altText }) => ({ id, file, altText })) };
+  return {
+    doc,
+    images: images.map(({ id, file, altText, aiGenerated }) => ({
+      id,
+      file,
+      altText,
+      aiGenerated,
+    })),
+  };
 }
 
 function useApprovalMode(workspaceId: string, failure: SubmitError | null) {

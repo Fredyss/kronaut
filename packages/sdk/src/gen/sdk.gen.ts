@@ -308,7 +308,7 @@ export const channelsDisconnect = <ThrowOnError extends boolean = true>(options:
 /**
  * Upload an image
  *
- * Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage.
+ * Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage. `aiGenerated: true` marks the image as AI-generated; uploading the same image again never clears the mark.
  */
 export const mediaUpload = <ThrowOnError extends boolean = true>(options: Options<MediaUploadData, ThrowOnError>): RequestResult<MediaUploadResponses, MediaUploadErrors, ThrowOnError> => (options.client ?? client).post<MediaUploadResponses, MediaUploadErrors, ThrowOnError>({
     security: [{

@@ -13,6 +13,8 @@
 - **Per-media alt text + AI label:**
   - IG `is_ai_generated`, TikTok `is_aigc`, X `made_with_ai`, YouTube `containsSyntheticMedia`.
   - The flag is sticky for agent-generated media.
+  - Compose sets it per image as `aiGenerated` on the upload. The flag lives on the deduplicated `media_assets` row, so an upload can set it but never clear it; clearing belongs to the media library.
+  - Of the shipped networks only Instagram takes it (`is_ai_generated` on the single image or carousel parent). Threads, Facebook Pages, Bluesky, Mastodon and LinkedIn have no such field (checked 2026-10-27).
 - **Platform-mandated UX:**
   - **TikTok:**
     - no default privacy, and interaction toggles default off

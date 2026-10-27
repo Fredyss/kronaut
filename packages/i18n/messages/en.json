@@ -204,6 +204,8 @@
       }
     }
   ],
+  "compose_ai_generated_label": "Image {position} is AI-generated",
+  "compose_ai_generated_hint": "Instagram marks it as made with AI. The other networks have no such label.",
   "compose_image_move_up": "Move image {position} up",
   "compose_image_move_down": "Move image {position} down",
   "compose_image_remove": "Remove",

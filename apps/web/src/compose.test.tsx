@@ -65,6 +65,20 @@ describe('composer', () => {
     expect(new Set(keys).size).toBe(3);
   });
 
+  it('sends the AI mark with the upload of an image marked AI-generated', async () => {
+    const { router, mutations } = mount();
+    await fillIn();
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Image 1 is AI-generated' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    expect(mutations()[0]?.body).toEqual({
+      filename: 'cat.jpg',
+      dataBase64: '/9j/4A==',
+      aiGenerated: true,
+    });
+  });
+
   it('retries only the schedule, with the same key, after a 503', async () => {
     const { router, mutations } = mount((call, count) =>
       call.path.endsWith('/schedule') && count === 1

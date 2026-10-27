@@ -19,6 +19,7 @@ export interface ComposeImage {
   readonly id: string;
   readonly file: File;
   readonly altText: string;
+  readonly aiGenerated: boolean;
 }
 
 export interface ComposeContent {
@@ -111,15 +112,20 @@ async function upload(
   failed: FailedImage,
   targets: readonly SubmitTarget[],
 ) {
-  const entry = s.uploads.get(image.id) ?? { key: crypto.randomUUID(), mediaId: null };
-  s.uploads.set(image.id, entry);
+  const cacheKey = image.aiGenerated ? `${image.id}:ai` : image.id;
+  const entry = s.uploads.get(cacheKey) ?? { key: crypto.randomUUID(), mediaId: null };
+  s.uploads.set(cacheKey, entry);
   if (entry.mediaId !== null) return entry.mediaId;
   try {
     const filename = image.file.name === '' ? {} : { filename: image.file.name.slice(0, 255) };
     const { data } = await mediaUpload({
       client: s.client,
       path: { workspaceId: s.workspaceId },
-      body: { ...filename, dataBase64: await toBase64(image.file) },
+      body: {
+        ...filename,
+        dataBase64: await toBase64(image.file),
+        ...(image.aiGenerated ? { aiGenerated: true } : {}),
+      },
       headers: { 'Idempotency-Key': entry.key },
     });
     entry.mediaId = data.id;
