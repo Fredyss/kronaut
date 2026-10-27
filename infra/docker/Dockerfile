@@ -1,8 +1,4 @@
-ARG NODE_BUILD_IMAGE=node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66
-ARG DEBIAN_IMAGE=debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad
-ARG RUNTIME_IMAGE=gcr.io/distroless/nodejs24-debian13:nonroot@sha256:cb606325b7ec4af55462cb0b424a53b452a5b4a894ffe841fcf1048d216fb9f8
-
-FROM ${DEBIAN_IMAGE} AS pg
+FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS pg
 ARG PG_MAJOR=17
 ARG PGDG_FINGERPRINT=B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 RUN apt-get update \
@@ -32,7 +28,9 @@ RUN set -eu; \
       "$tool" --version; \
     done
 
-FROM ${NODE_BUILD_IMAGE} AS deps
+FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS node-build
+
+FROM node-build AS deps
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -58,7 +56,7 @@ RUN find apps packages -name '*.test.ts' -delete \
  && rm -rf apps/web apps/server/e2e packages/sdk packages/ui packages/db/test packages/db/scripts \
  && mkdir -p /skel/data
 
-FROM ${NODE_BUILD_IMAGE} AS web
+FROM node-build AS web
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -78,7 +76,7 @@ RUN pnpm --filter @kronaut/web build \
  && test -f apps/web/dist/web/index.html \
  && ! find apps/web/dist/web -name '*.map' | grep -q .
 
-FROM ${NODE_BUILD_IMAGE} AS notices
+FROM node-build AS notices
 ARG PNPM_VERSION=12.14.0
 ENV CI=true
 RUN npm install --global --no-fund --no-audit "pnpm@${PNPM_VERSION}"
@@ -101,7 +99,7 @@ RUN pnpm install --frozen-lockfile --prod --filter '@kronaut/server...' --filter
 COPY tools/licenses tools/licenses
 RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
-FROM ${RUNTIME_IMAGE}
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:cb606325b7ec4af55462cb0b424a53b452a5b4a894ffe841fcf1048d216fb9f8
 COPY --from=pg /opt/pg /opt/pg
 COPY --from=deps /app /app
 COPY --from=web /app/apps/web/dist/web /app/web

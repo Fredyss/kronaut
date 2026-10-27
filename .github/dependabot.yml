@@ -30,3 +30,13 @@ updates:
     groups:
       images:
         patterns: ['*']
+
+  - package-ecosystem: docker-compose
+    directory: /infra/compose
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      compose:
+        patterns: ['*']
