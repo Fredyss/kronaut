@@ -11,7 +11,7 @@ interface PasswordDialogProps {
 
 const FOCUSABLE = 'input:not([disabled]), button:not([disabled])';
 
-function trapTab(event: KeyboardEvent<HTMLDivElement>): void {
+export function trapTab(event: KeyboardEvent<HTMLDivElement>): void {
   if (event.key !== 'Tab') return;
   const items = [...event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE)];
   const first = items[0];

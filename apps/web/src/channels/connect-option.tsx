@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from '@kronaut/ui';
+import { Button, Input, Label } from '@kronaut/ui';
 import { type FormEvent, useId } from 'react';
 import { detailCodes, errorDetails, errorStatus } from '../api.ts';
 import { m } from '../i18n.ts';
@@ -56,7 +47,7 @@ export function serverFieldId(prefix: string, provider: string): string {
   return `${prefix}-${provider}-server`;
 }
 
-interface OptionProps {
+export interface OptionProps {
   readonly provider: string;
   readonly pending: boolean;
   readonly connect: (request: ConnectRequest) => void;
@@ -128,58 +119,10 @@ function HandleForm({ provider, pending, connect }: OptionProps) {
   );
 }
 
-function ConnectOption(props: OptionProps) {
-  const ui = providerUi(props.provider);
-  if (ui.instance) return <ServerForm {...props} />;
-  if (ui.loginHint) return <HandleForm {...props} />;
-  return (
-    <Button
-      variant="outline"
-      disabled={props.pending}
-      onClick={() => props.connect({ provider: props.provider })}
-    >
-      {m.channels_connect_button({ name: ui.name() })}
-    </Button>
-  );
-}
-
-export function ConnectSection({
-  providers,
-  pending,
-  connect,
-  errorFor,
-  fieldPrefix,
-}: {
-  readonly providers: readonly string[];
-  readonly pending: boolean;
-  readonly connect: (request: ConnectRequest) => void;
-  readonly errorFor: (provider: string) => string | null;
-  readonly fieldPrefix: string;
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <h2>{m.channels_connect_title()}</h2>
-        </CardTitle>
-        <CardDescription>
-          {providers.length === 0 ? m.channels_connect_none() : m.channels_connect_body()}
-        </CardDescription>
-      </CardHeader>
-      {providers.length === 0 ? null : (
-        <CardContent className="flex flex-col gap-4">
-          {providers.map((provider) => (
-            <ConnectOption
-              key={provider}
-              provider={provider}
-              pending={pending}
-              connect={connect}
-              error={errorFor(provider)}
-              fieldPrefix={fieldPrefix}
-            />
-          ))}
-        </CardContent>
-      )}
-    </Card>
+export function ConnectForm(props: OptionProps) {
+  return providerUi(props.provider).instance ? (
+    <ServerForm {...props} />
+  ) : (
+    <HandleForm {...props} />
   );
 }

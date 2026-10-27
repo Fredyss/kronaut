@@ -2,7 +2,7 @@ import * as en from '@kronaut/i18n/messages/en';
 import { expect, test } from '@playwright/test';
 import { appUrl, CHANNEL } from './env.ts';
 
-test('lists the seeded Bluesky channel and offers to connect Bluesky', async ({ page }) => {
+test('lists the seeded Bluesky channel and offers Bluesky in the add dialog', async ({ page }) => {
   await page.goto(appUrl('/'));
   await page
     .getByRole('navigation', { name: en.nav_label({}) })
@@ -15,9 +15,11 @@ test('lists the seeded Bluesky channel and offers to connect Bluesky', async ({ 
   await expect(channel).toContainText(CHANNEL.handle);
   await expect(channel).toContainText(en.channel_status_active({}));
 
-  await expect(page.getByRole('heading', { name: en.channels_connect_title({}) })).toBeVisible();
+  await page.getByRole('button', { name: en.channels_add({}) }).click();
+  const dialog = page.getByRole('dialog', { name: en.channels_connect_title({}) });
+  await expect(dialog).toBeVisible();
   await expect(
-    page.getByRole('button', {
+    dialog.getByRole('button', {
       name: en.channels_connect_button({ name: en.provider_bluesky({}) }),
     }),
   ).toBeEnabled();

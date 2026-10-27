@@ -84,6 +84,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channel_Status_DisabledInputs */
 /** @typedef {{}} Channel_Status_DisconnectedInputs */
 /** @typedef {{}} Channel_Status_Needs_ReauthInputs */
+/** @typedef {{}} Channels_AddInputs */
+/** @typedef {{}} Channels_All_NetworksInputs */
 /** @typedef {{}} Channels_Connect_Bad_UrlInputs */
 /** @typedef {{}} Channels_Connect_BodyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connect_ButtonInputs */
@@ -114,6 +116,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
+/** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -192,6 +195,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Destination_State_ScheduledInputs */
 /** @typedef {{}} Destination_State_UnconfirmedInputs */
 /** @typedef {{}} Destination_State_VerifyingInputs */
+/** @typedef {{}} Dialog_CloseInputs */
 /** @typedef {{}} DismissInputs */
 /** @typedef {{ workspace: NonNullable<unknown> }} Email_FooterInputs */
 /** @typedef {{ url: NonNullable<unknown> }} Email_ManageInputs */
@@ -1645,6 +1649,36 @@ export const channel_status_needs_reauth = /** @type {((inputs?: Channel_Status_
 /**
 * | output |
 * | --- |
+* | "Add channel" |
+*
+* @param {Channels_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_add = /** @type {((inputs?: Channels_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_add(inputs)
+	if (locale === "cs") return __cs.channels_add(inputs)
+	return __en.channels_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "All networks" |
+*
+* @param {Channels_All_NetworksInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_all_networks = /** @type {((inputs?: Channels_All_NetworksInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_All_NetworksInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_all_networks(inputs)
+	if (locale === "cs") return __cs.channels_all_networks(inputs)
+	return __en.channels_all_networks(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The network returned an unsafe sign-in address, so connecting stopped." |
 *
 * @param {Channels_Connect_Bad_UrlInputs} inputs
@@ -1870,7 +1904,7 @@ export const channels_disconnected = /** @type {((inputs: Channels_DisconnectedI
 /**
 * | output |
 * | --- |
-* | "Connect an account below to start publishing." |
+* | "Add a channel to start publishing." |
 *
 * @param {Channels_Empty_BodyInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -2092,6 +2126,21 @@ export const channels_handle_placeholder = /** @type {((inputs?: Channels_Handle
 	if (locale === "sk") return __sk.channels_handle_placeholder(inputs)
 	if (locale === "cs") return __cs.channels_handle_placeholder(inputs)
 	return __en.channels_handle_placeholder(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Not set up" |
+*
+* @param {Channels_Not_Set_UpInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_not_set_up = /** @type {((inputs?: Channels_Not_Set_UpInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Not_Set_UpInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_not_set_up(inputs)
+	if (locale === "cs") return __cs.channels_not_set_up(inputs)
+	return __en.channels_not_set_up(inputs)
 });
 /**
 * | output |
@@ -3267,6 +3316,21 @@ export const destination_state_verifying = /** @type {((inputs?: Destination_Sta
 	if (locale === "sk") return __sk.destination_state_verifying(inputs)
 	if (locale === "cs") return __cs.destination_state_verifying(inputs)
 	return __en.destination_state_verifying(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Close" |
+*
+* @param {Dialog_CloseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const dialog_close = /** @type {((inputs?: Dialog_CloseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Dialog_CloseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.dialog_close(inputs)
+	if (locale === "cs") return __cs.dialog_close(inputs)
+	return __en.dialog_close(inputs)
 });
 /**
 * | output |
