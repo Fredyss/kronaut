@@ -134,6 +134,7 @@
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
 /** @typedef {{}} Compose_Channel_UnsupportedInputs */
+/** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
 /** @typedef {{}} Compose_Channels_TitleInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
 /** @typedef {{}} Compose_Connect_ChannelInputs */
@@ -167,6 +168,7 @@
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
+/** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
@@ -184,6 +186,36 @@
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
 /** @typedef {{}} Compose_TitleInputs */
 /** @typedef {{}} Compose_Use_DefaultInputs */
+/** @typedef {{}} Compose_Video_Ai_FailedInputs */
+/** @typedef {{}} Compose_Video_Ai_LabelInputs */
+/** @typedef {{}} Compose_Video_Ai_MarkedInputs */
+/** @typedef {{}} Compose_Video_Ai_SavingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ErrorInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MetadataInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MimeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
+/** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_LimitInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
+/** @typedef {{}} Compose_Video_Preview_CardInputs */
+/** @typedef {{}} Compose_Video_ProcessingInputs */
+/** @typedef {{}} Compose_Video_ProgressInputs */
+/** @typedef {{}} Compose_Video_ReadyInputs */
+/** @typedef {{ duration: NonNullable<unknown> }} Compose_Video_Ready_DurationInputs */
+/** @typedef {{}} Compose_Video_Rejected_Stream_MissingInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LargeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LongInputs */
+/** @typedef {{ min: NonNullable<unknown> }} Compose_Video_Rejected_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
+/** @typedef {{}} Compose_Video_RetryInputs */
+/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
+/** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
+/** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
 /** @typedef {{}} Destination_State_BlockedInputs */
@@ -938,7 +970,7 @@ export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Im
 };
 
 export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Needs at least one image.`)
+	return /** @type {LocalizedString} */ (`Needs an image or a video.`)
 };
 
 export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
@@ -949,6 +981,10 @@ export const compose_channel_too_many_images = /** @type {(inputs: Compose_Chann
 
 export const compose_channel_unsupported = /** @type {(inputs: Compose_Channel_UnsupportedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Posting to this network isn't supported yet.`)
+};
+
+export const compose_channel_video_unsupported = /** @type {(inputs: Compose_Channel_Video_UnsupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video isn't supported on this network yet.`)
 };
 
 export const compose_channels_title = /** @type {(inputs: Compose_Channels_TitleInputs) => LocalizedString} */ () => {
@@ -1089,6 +1125,10 @@ export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs
 	return /** @type {LocalizedString} */ (`${i?.network} ${i?.count}/${i?.max}`)
 };
 
+export const compose_media_exclusive = /** @type {(inputs: Compose_Media_ExclusiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A post can have images or one video, not both.`)
+};
+
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`No channels are connected yet.`)
 };
@@ -1155,6 +1195,126 @@ export const compose_title = /** @type {(inputs: Compose_TitleInputs) => Localiz
 
 export const compose_use_default = /** @type {(inputs: Compose_Use_DefaultInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Use the content from All channels`)
+};
+
+export const compose_video_ai_failed = /** @type {(inputs: Compose_Video_Ai_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The AI label couldn't be saved.`)
+};
+
+export const compose_video_ai_label = /** @type {(inputs: Compose_Video_Ai_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The video is AI-generated`)
+};
+
+export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_MarkedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This video is marked as AI-generated in this workspace, and the label can't be removed.`)
+};
+
+export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Saving the AI label…`)
+};
+
+export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.name}: only MP4, QuickTime and WebM videos can be added.`)
+};
+
+export const compose_video_error = /** @type {(inputs: Compose_Video_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The video couldn't be uploaded.`)
+};
+
+export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Or one MP4, QuickTime or WebM video up to ${i?.max}.`)
+};
+
+export const compose_video_issue_aspect = /** @type {(inputs: Compose_Video_Issue_AspectInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video's aspect ratio doesn't fit ${i?.channel}.`)
+};
+
+export const compose_video_issue_kind = /** @type {(inputs: Compose_Video_Issue_KindInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} doesn't take a video for this kind of post.`)
+};
+
+export const compose_video_issue_metadata = /** @type {(inputs: Compose_Video_Issue_MetadataInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video's length or size couldn't be read for ${i?.channel}.`)
+};
+
+export const compose_video_issue_mime = /** @type {(inputs: Compose_Video_Issue_MimeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} doesn't accept this video's format.`)
+};
+
+export const compose_video_issue_too_large = /** @type {(inputs: Compose_Video_Issue_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video is larger than ${i?.channel} allows (${i?.max}).`)
+};
+
+export const compose_video_issue_too_long = /** @type {(inputs: Compose_Video_Issue_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video is longer than ${i?.channel} allows (${i?.max}).`)
+};
+
+export const compose_video_issue_too_short = /** @type {(inputs: Compose_Video_Issue_Too_ShortInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video is shorter than ${i?.channel} needs (${i?.min}).`)
+};
+
+export const compose_video_limit = /** @type {(inputs: Compose_Video_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A post can have only one video.`)
+};
+
+export const compose_video_preview = /** @type {(inputs: Compose_Video_PreviewInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Preview of ${i?.name}`)
+};
+
+export const compose_video_preview_card = /** @type {(inputs: Compose_Video_Preview_CardInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video preview`)
+};
+
+export const compose_video_processing = /** @type {(inputs: Compose_Video_ProcessingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Processing…`)
+};
+
+export const compose_video_progress = /** @type {(inputs: Compose_Video_ProgressInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upload progress`)
+};
+
+export const compose_video_ready = /** @type {(inputs: Compose_Video_ReadyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ready`)
+};
+
+export const compose_video_ready_duration = /** @type {(inputs: Compose_Video_Ready_DurationInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Ready, ${i?.duration}`)
+};
+
+export const compose_video_rejected_stream_missing = /** @type {(inputs: Compose_Video_Rejected_Stream_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file has no video track.`)
+};
+
+export const compose_video_rejected_too_large = /** @type {(inputs: Compose_Video_Rejected_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The converted video would be larger than ${i?.max}.`)
+};
+
+export const compose_video_rejected_too_long = /** @type {(inputs: Compose_Video_Rejected_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video is longer than ${i?.max}.`)
+};
+
+export const compose_video_rejected_too_short = /** @type {(inputs: Compose_Video_Rejected_Too_ShortInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The video is shorter than ${i?.min}.`)
+};
+
+export const compose_video_rejected_unreadable = /** @type {(inputs: Compose_Video_Rejected_UnreadableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The video couldn't be read. Try exporting it again.`)
+};
+
+export const compose_video_retry = /** @type {(inputs: Compose_Video_RetryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Retry`)
+};
+
+export const compose_video_too_big = /** @type {(inputs: Compose_Video_Too_BigInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.name}: the video is larger than ${i?.max}.`)
+};
+
+export const compose_video_uploading = /** @type {(inputs: Compose_Video_UploadingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Uploading… ${i?.percent}`)
+};
+
+export const compose_video_wait = /** @type {(inputs: Compose_Video_WaitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Wait for the video to finish processing.`)
 };
 
 export const compose_when_title = /** @type {(inputs: Compose_When_TitleInputs) => LocalizedString} */ () => {

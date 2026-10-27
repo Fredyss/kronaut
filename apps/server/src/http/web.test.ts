@@ -58,6 +58,7 @@ describe('web app serving', () => {
     expect(deep.headers.get('content-security-policy')).toContain(
       "img-src 'self' https://media.example.test data:",
     );
+    expect(deep.headers.get('content-security-policy')).toContain('media-src blob:');
     expect(deep.headers.get('cache-control')).toBe('no-cache');
     expect(deep.headers.get('x-content-type-options')).toBe('nosniff');
     expect(deep.headers.get('referrer-policy')).toBe('same-origin');

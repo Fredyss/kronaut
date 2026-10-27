@@ -292,13 +292,20 @@ describe('channel listing', () => {
             text: [{ counting: 'mastodon', max: 1000, urlWeight: 30 }],
             maxLinks: null,
             imageAspect: null,
+            video: null,
           },
         ],
       },
       {
         provider: 'threads',
         postTypes: [
-          { id: 'post', text: [{ counting: 'threads', max: 500 }], maxLinks: 5, imageAspect: null },
+          {
+            id: 'post',
+            text: [{ counting: 'threads', max: 500 }],
+            maxLinks: 5,
+            imageAspect: null,
+            video: null,
+          },
         ],
       },
     ]);
@@ -320,7 +327,7 @@ describe('channel listing', () => {
         aspects: postTypes.map((postType) => postType.imageAspect),
       })),
     ).toEqual([
-      { provider: 'instagram', preview: 'media-grid', aspects: [aspect, aspect] },
+      { provider: 'instagram', preview: 'media-grid', aspects: [aspect, aspect, null] },
       { provider: 'bluesky', preview: 'short-feed', aspects: [null] },
     ]);
   });

@@ -86,7 +86,7 @@ function Composer({
       <ChannelsFieldset
         channels={channels.data}
         failed={channels.isError}
-        filesFor={content.filesFor}
+        mediaFor={content.mediaFor}
         customized={(id) => content.contents.customized.has(id)}
         selected={selected}
         setSelected={setSelected}

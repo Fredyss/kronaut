@@ -134,6 +134,7 @@
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
 /** @typedef {{}} Compose_Channel_UnsupportedInputs */
+/** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
 /** @typedef {{}} Compose_Channels_TitleInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
 /** @typedef {{}} Compose_Connect_ChannelInputs */
@@ -167,6 +168,7 @@
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
+/** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
@@ -184,6 +186,36 @@
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
 /** @typedef {{}} Compose_TitleInputs */
 /** @typedef {{}} Compose_Use_DefaultInputs */
+/** @typedef {{}} Compose_Video_Ai_FailedInputs */
+/** @typedef {{}} Compose_Video_Ai_LabelInputs */
+/** @typedef {{}} Compose_Video_Ai_MarkedInputs */
+/** @typedef {{}} Compose_Video_Ai_SavingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ErrorInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MetadataInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MimeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
+/** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_LimitInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
+/** @typedef {{}} Compose_Video_Preview_CardInputs */
+/** @typedef {{}} Compose_Video_ProcessingInputs */
+/** @typedef {{}} Compose_Video_ProgressInputs */
+/** @typedef {{}} Compose_Video_ReadyInputs */
+/** @typedef {{ duration: NonNullable<unknown> }} Compose_Video_Ready_DurationInputs */
+/** @typedef {{}} Compose_Video_Rejected_Stream_MissingInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LargeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LongInputs */
+/** @typedef {{ min: NonNullable<unknown> }} Compose_Video_Rejected_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
+/** @typedef {{}} Compose_Video_RetryInputs */
+/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
+/** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
+/** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
 /** @typedef {{}} Destination_State_BlockedInputs */
@@ -948,7 +980,7 @@ export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Im
 };
 
 export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Potřebuje alespoň jeden obrázek.`)
+	return /** @type {LocalizedString} */ (`Potřebuje obrázek nebo video.`)
 };
 
 export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
@@ -961,6 +993,10 @@ export const compose_channel_too_many_images = /** @type {(inputs: Compose_Chann
 
 export const compose_channel_unsupported = /** @type {(inputs: Compose_Channel_UnsupportedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zveřejňování v této síti zatím není podporováno.`)
+};
+
+export const compose_channel_video_unsupported = /** @type {(inputs: Compose_Channel_Video_UnsupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video v této síti zatím není podporováno.`)
 };
 
 export const compose_channels_title = /** @type {(inputs: Compose_Channels_TitleInputs) => LocalizedString} */ () => {
@@ -1107,6 +1143,10 @@ export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs
 	return /** @type {LocalizedString} */ (`${i?.network} ${i?.count}/${i?.max}`)
 };
 
+export const compose_media_exclusive = /** @type {(inputs: Compose_Media_ExclusiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek může mít buď obrázky, nebo jedno video, ne obojí.`)
+};
+
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zatím nemáte připojený žádný kanál.`)
 };
@@ -1173,6 +1213,126 @@ export const compose_title = /** @type {(inputs: Compose_TitleInputs) => Localiz
 
 export const compose_use_default = /** @type {(inputs: Compose_Use_DefaultInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Použít obsah ze záložky Všechny kanály`)
+};
+
+export const compose_video_ai_failed = /** @type {(inputs: Compose_Video_Ai_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Označení AI se nepodařilo uložit.`)
+};
+
+export const compose_video_ai_label = /** @type {(inputs: Compose_Video_Ai_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video je vytvořené pomocí AI`)
+};
+
+export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_MarkedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video je v tomto pracovním prostoru označené jako vytvořené pomocí AI a toto označení nejde odstranit.`)
+};
+
+export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ukládá se označení AI…`)
+};
+
+export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.name}: přidat jde jen videa MP4, QuickTime a WebM.`)
+};
+
+export const compose_video_error = /** @type {(inputs: Compose_Video_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video se nepodařilo nahrát.`)
+};
+
+export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Nebo jedno video ve formátu MP4, QuickTime či WebM do ${i?.max}.`)
+};
+
+export const compose_video_issue_aspect = /** @type {(inputs: Compose_Video_Issue_AspectInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Poměr stran videa nevyhovuje kanálu ${i?.channel}.`)
+};
+
+export const compose_video_issue_kind = /** @type {(inputs: Compose_Video_Issue_KindInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} u tohoto druhu příspěvku video nepřijímá.`)
+};
+
+export const compose_video_issue_metadata = /** @type {(inputs: Compose_Video_Issue_MetadataInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Pro ${i?.channel} se nepodařilo zjistit délku ani rozměry videa.`)
+};
+
+export const compose_video_issue_mime = /** @type {(inputs: Compose_Video_Issue_MimeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} nepřijímá formát tohoto videa.`)
+};
+
+export const compose_video_issue_too_large = /** @type {(inputs: Compose_Video_Issue_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Video je větší, než dovoluje ${i?.channel} (${i?.max}).`)
+};
+
+export const compose_video_issue_too_long = /** @type {(inputs: Compose_Video_Issue_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Video je delší, než dovoluje ${i?.channel} (${i?.max}).`)
+};
+
+export const compose_video_issue_too_short = /** @type {(inputs: Compose_Video_Issue_Too_ShortInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Video je kratší, než vyžaduje ${i?.channel} (${i?.min}).`)
+};
+
+export const compose_video_limit = /** @type {(inputs: Compose_Video_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek může obsahovat jen jedno video.`)
+};
+
+export const compose_video_preview = /** @type {(inputs: Compose_Video_PreviewInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Náhled souboru ${i?.name}`)
+};
+
+export const compose_video_preview_card = /** @type {(inputs: Compose_Video_Preview_CardInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Náhled videa`)
+};
+
+export const compose_video_processing = /** @type {(inputs: Compose_Video_ProcessingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zpracovává se…`)
+};
+
+export const compose_video_progress = /** @type {(inputs: Compose_Video_ProgressInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Průběh nahrávání`)
+};
+
+export const compose_video_ready = /** @type {(inputs: Compose_Video_ReadyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Připraveno`)
+};
+
+export const compose_video_ready_duration = /** @type {(inputs: Compose_Video_Ready_DurationInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Připraveno, ${i?.duration}`)
+};
+
+export const compose_video_rejected_stream_missing = /** @type {(inputs: Compose_Video_Rejected_Stream_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor neobsahuje obrazovou stopu.`)
+};
+
+export const compose_video_rejected_too_large = /** @type {(inputs: Compose_Video_Rejected_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Po převodu by video přesáhlo ${i?.max}.`)
+};
+
+export const compose_video_rejected_too_long = /** @type {(inputs: Compose_Video_Rejected_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Video je delší než ${i?.max}.`)
+};
+
+export const compose_video_rejected_too_short = /** @type {(inputs: Compose_Video_Rejected_Too_ShortInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Video je kratší než ${i?.min}.`)
+};
+
+export const compose_video_rejected_unreadable = /** @type {(inputs: Compose_Video_Rejected_UnreadableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video se nepodařilo načíst. Zkuste ho vyexportovat znovu.`)
+};
+
+export const compose_video_retry = /** @type {(inputs: Compose_Video_RetryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zkusit znovu`)
+};
+
+export const compose_video_too_big = /** @type {(inputs: Compose_Video_Too_BigInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.name}: video je větší než ${i?.max}.`)
+};
+
+export const compose_video_uploading = /** @type {(inputs: Compose_Video_UploadingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Nahrává se… ${i?.percent}`)
+};
+
+export const compose_video_wait = /** @type {(inputs: Compose_Video_WaitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Počkejte, až se video zpracuje.`)
 };
 
 export const compose_when_title = /** @type {(inputs: Compose_When_TitleInputs) => LocalizedString} */ () => {

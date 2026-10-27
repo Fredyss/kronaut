@@ -1,16 +1,24 @@
-import { checkText, countText, type TextRules, toPlainText } from '@kronaut/compose/text';
+import {
+  checkText,
+  countText,
+  type TextRules,
+  toPlainText,
+  type ValidationIssue,
+} from '@kronaut/compose/text';
 import { useEffect } from 'react';
 import type { Channel } from '../api.ts';
 import { useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
-import { choiceFor, type ImageFacts } from './choice.ts';
+import { choiceFor, type MediaFacts } from './choice.ts';
 import type { Doc } from './doc.ts';
+import { checkVideo, type VideoMeta, videoIssueLine } from './video-rules.ts';
 
 export interface LimitTarget {
   readonly channel: Channel;
   readonly doc: Doc;
-  readonly files: readonly ImageFacts[];
+  readonly media: MediaFacts;
+  readonly video: VideoMeta | null;
   readonly shown: boolean;
 }
 
@@ -27,6 +35,7 @@ interface Target {
   readonly key: string;
   readonly text: string;
   readonly shown: boolean;
+  readonly video: readonly ValidationIssue[];
 }
 
 interface Entry {
@@ -34,10 +43,11 @@ interface Entry {
   readonly label: string;
   readonly rules: TextRules;
   readonly text: string;
+  readonly video: readonly ValidationIssue[];
 }
 
-function targetFor({ channel, doc, files, shown }: LimitTarget): Target[] {
-  const choice = choiceFor(channel, files);
+function targetFor({ channel, doc, media, video, shown }: LimitTarget): Target[] {
+  const choice = choiceFor(channel, media);
   if (choice.kind !== 'ok') return [];
   const postType = channel.postTypes.find((candidate) => candidate.id === choice.publishType);
   if (postType === undefined) return [];
@@ -45,37 +55,45 @@ function targetFor({ channel, doc, files, shown }: LimitTarget): Target[] {
     text: postType.text,
     ...(postType.maxLinks === null ? {} : { maxLinks: postType.maxLinks }),
   };
-  const key = JSON.stringify([postType.text, postType.maxLinks]);
-  return [{ channel, rules, key, text: toPlainText(doc), shown }];
+  const key = JSON.stringify([postType.text, postType.maxLinks, postType.video]);
+  const issues = video === null ? [] : checkVideo(postType.video, video);
+  return [{ channel, rules, key, text: toPlainText(doc), shown, video: issues }];
 }
 
 interface Group {
   readonly provider: string;
   readonly rules: TextRules;
   readonly text: string;
+  readonly video: readonly ValidationIssue[];
   readonly names: string[];
 }
 
 function entriesFor(targets: readonly Target[], list: (names: string[]) => string): Entry[] {
   const groups = new Map<string, Group>();
   const variants = new Map<string, number>();
-  for (const { channel, rules, key, text } of targets) {
+  for (const { channel, rules, key, text, video } of targets) {
     const id = `${channel.provider} ${key}`;
     const group = groups.get(id);
     if (group !== undefined) {
       group.names.push(channel.displayName);
       continue;
     }
-    groups.set(id, { provider: channel.provider, rules, text, names: [channel.displayName] });
+    groups.set(id, {
+      provider: channel.provider,
+      rules,
+      text,
+      video,
+      names: [channel.displayName],
+    });
     variants.set(channel.provider, (variants.get(channel.provider) ?? 0) + 1);
   }
-  return [...groups].map(([key, { provider, rules, text, names }]) => {
+  return [...groups].map(([key, { provider, rules, text, video, names }]) => {
     const network = providerUi(provider).name();
     const label =
       variants.get(provider) === 1
         ? network
         : m.compose_limit_channel({ channel: list(names), network });
-    return { key, label, rules, text };
+    return { key, label, rules, text, video };
   });
 }
 
@@ -89,8 +107,9 @@ function usage(text: string, rules: TextRules): { readonly count: number; readon
   return worst;
 }
 
-function issueLines(entry: Entry, format: (n: number) => string): string[] {
-  return checkText(entry.rules, [{ text: entry.text }]).map((issue) => {
+function issueLines(entry: Entry, format: (n: number) => string, locale: string): string[] {
+  const video = entry.video.map((issue) => videoIssueLine(issue, entry.label, locale));
+  const text = checkText(entry.rules, [{ text: entry.text }]).map((issue) => {
     const max = issue.limit ?? 0;
     if (issue.code === 'too_many_links') {
       return m.compose_limit_too_many_links({ channel: entry.label, max });
@@ -101,6 +120,7 @@ function issueLines(entry: Entry, format: (n: number) => string): string[] {
       max: format(max),
     });
   });
+  return [...text, ...video];
 }
 
 export default function TextLimits({ targets, issuesId, note, onIssuesChange }: TextLimitsProps) {
@@ -109,7 +129,7 @@ export default function TextLimits({ targets, issuesId, note, onIssuesChange }: 
   const list = (names: string[]) => new Intl.ListFormat(locale).format(names);
   const all = targets.flatMap(targetFor);
   const flagged = all
-    .filter(({ rules, text }) => checkText(rules, [{ text }]).length > 0)
+    .filter(({ rules, text, video }) => video.length > 0 || checkText(rules, [{ text }]).length > 0)
     .map(({ channel }) => channel.id)
     .join(' ');
   const entries = entriesFor(
@@ -117,7 +137,10 @@ export default function TextLimits({ targets, issuesId, note, onIssuesChange }: 
     list,
   );
   const issues = entries.flatMap((entry) =>
-    issueLines(entry, format).map((line, index) => ({ key: `${entry.key}-${index}`, line })),
+    issueLines(entry, format, locale).map((line, index) => ({
+      key: `${entry.key}-${index}`,
+      line,
+    })),
   );
 
   useEffect(

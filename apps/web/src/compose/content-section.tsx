@@ -43,13 +43,21 @@ function tabsFor(state: ContentsState, flagged: readonly string[]): ContentTab[]
   ];
 }
 
-function limitTargets({ contents, tabs, active }: ContentsState): LimitTarget[] {
+function videoOf(state: ContentsState, channelId: string) {
+  const { video } = effective(state.contents, channelId);
+  return video === null ? undefined : state.videos.get(video.id);
+}
+
+function limitTargets(state: ContentsState): LimitTarget[] {
+  const { contents, tabs, active } = state;
   return tabs.map((channel) => {
     const content = effective(contents, channel.id);
+    const phase = videoOf(state, channel.id)?.phase;
     return {
       channel,
       doc: content.doc,
-      files: content.images.map((image) => image.file),
+      media: state.mediaFor(channel.id),
+      video: phase?.kind === 'ready' ? phase.asset : null,
       shown: active === null ? !contents.customized.has(channel.id) : channel.id === active,
     };
   });
@@ -60,7 +68,8 @@ function previewTargets(state: ContentsState): PreviewTarget[] {
     const choice = state.choiceOf(channel);
     if (!shown || choice.kind !== 'ok') return [];
     const { images } = effective(state.contents, channel.id);
-    return [{ channel, doc, images, publishType: choice.publishType }];
+    const video = videoOf(state, channel.id)?.url ?? null;
+    return [{ channel, doc, images, video, publishType: choice.publishType }];
   });
 }
 
@@ -180,7 +189,7 @@ export function ContentSection(props: ContentSectionProps) {
           </Suspense>
         </div>
         {reason === null ? null : <p className="text-destructive text-sm">{reason}</p>}
-        {editing ? <ImagesSection fileId={fileId} images={state.images} pending={pending} /> : null}
+        {editing ? <ImagesSection fileId={fileId} media={state.media} pending={pending} /> : null}
         {previews.length === 0 ? null : (
           <Suspense fallback={null}>
             <Previews targets={previews} />

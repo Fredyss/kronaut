@@ -11,6 +11,7 @@ export interface PickedImage {
 export interface Content {
   readonly doc: Doc;
   readonly images: readonly PickedImage[];
+  readonly video: { readonly id: string } | null;
 }
 
 export interface Contents {
@@ -21,7 +22,7 @@ export interface Contents {
 export type ContentKey = string | null;
 
 export const EMPTY_CONTENTS: Contents = {
-  base: { doc: EMPTY_DOC, images: [] },
+  base: { doc: EMPTY_DOC, images: [], video: null },
   customized: new Map(),
 };
 
@@ -30,6 +31,7 @@ export function customize(contents: Contents, channelId: string): Contents {
   const copy: Content = {
     doc: contents.base.doc,
     images: contents.base.images.map((image) => ({ ...image })),
+    video: contents.base.video,
   };
   return { ...contents, customized: new Map(contents.customized).set(channelId, copy) };
 }

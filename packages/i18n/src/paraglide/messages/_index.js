@@ -136,6 +136,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
 /** @typedef {{}} Compose_Channel_UnsupportedInputs */
+/** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
 /** @typedef {{}} Compose_Channels_TitleInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
 /** @typedef {{}} Compose_Connect_ChannelInputs */
@@ -169,6 +170,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
+/** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
@@ -186,6 +188,36 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
 /** @typedef {{}} Compose_TitleInputs */
 /** @typedef {{}} Compose_Use_DefaultInputs */
+/** @typedef {{}} Compose_Video_Ai_FailedInputs */
+/** @typedef {{}} Compose_Video_Ai_LabelInputs */
+/** @typedef {{}} Compose_Video_Ai_MarkedInputs */
+/** @typedef {{}} Compose_Video_Ai_SavingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ErrorInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MetadataInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MimeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
+/** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_LimitInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
+/** @typedef {{}} Compose_Video_Preview_CardInputs */
+/** @typedef {{}} Compose_Video_ProcessingInputs */
+/** @typedef {{}} Compose_Video_ProgressInputs */
+/** @typedef {{}} Compose_Video_ReadyInputs */
+/** @typedef {{ duration: NonNullable<unknown> }} Compose_Video_Ready_DurationInputs */
+/** @typedef {{}} Compose_Video_Rejected_Stream_MissingInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LargeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LongInputs */
+/** @typedef {{ min: NonNullable<unknown> }} Compose_Video_Rejected_Too_ShortInputs */
+/** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
+/** @typedef {{}} Compose_Video_RetryInputs */
+/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
+/** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
+/** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
 /** @typedef {{}} Destination_State_BlockedInputs */
@@ -2389,7 +2421,7 @@ export const compose_channel_image_type = /** @type {((inputs?: Compose_Channel_
 /**
 * | output |
 * | --- |
-* | "Needs at least one image." |
+* | "Needs an image or a video." |
 *
 * @param {Compose_Channel_Needs_ImageInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -2431,6 +2463,21 @@ export const compose_channel_unsupported = /** @type {((inputs?: Compose_Channel
 	if (locale === "sk") return __sk.compose_channel_unsupported(inputs)
 	if (locale === "cs") return __cs.compose_channel_unsupported(inputs)
 	return __en.compose_channel_unsupported(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Video isn't supported on this network yet." |
+*
+* @param {Compose_Channel_Video_UnsupportedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_channel_video_unsupported = /** @type {((inputs?: Compose_Channel_Video_UnsupportedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Channel_Video_UnsupportedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_channel_video_unsupported(inputs)
+	if (locale === "cs") return __cs.compose_channel_video_unsupported(inputs)
+	return __en.compose_channel_video_unsupported(inputs)
 });
 /**
 * | output |
@@ -2933,6 +2980,21 @@ export const compose_limit_usage = /** @type {((inputs: Compose_Limit_UsageInput
 /**
 * | output |
 * | --- |
+* | "A post can have images or one video, not both." |
+*
+* @param {Compose_Media_ExclusiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_media_exclusive = /** @type {((inputs?: Compose_Media_ExclusiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Media_ExclusiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_media_exclusive(inputs)
+	if (locale === "cs") return __cs.compose_media_exclusive(inputs)
+	return __en.compose_media_exclusive(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "No channels are connected yet." |
 *
 * @param {Compose_No_ChannelsInputs} inputs
@@ -3184,6 +3246,456 @@ export const compose_use_default = /** @type {((inputs?: Compose_Use_DefaultInpu
 	if (locale === "sk") return __sk.compose_use_default(inputs)
 	if (locale === "cs") return __cs.compose_use_default(inputs)
 	return __en.compose_use_default(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The AI label couldn't be saved." |
+*
+* @param {Compose_Video_Ai_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_failed = /** @type {((inputs?: Compose_Video_Ai_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_failed(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_failed(inputs)
+	return __en.compose_video_ai_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is AI-generated" |
+*
+* @param {Compose_Video_Ai_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_label = /** @type {((inputs?: Compose_Video_Ai_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_label(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_label(inputs)
+	return __en.compose_video_ai_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This video is marked as AI-generated in this workspace, and the label can't be removed." |
+*
+* @param {Compose_Video_Ai_MarkedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_marked = /** @type {((inputs?: Compose_Video_Ai_MarkedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_MarkedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_marked(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_marked(inputs)
+	return __en.compose_video_ai_marked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Saving the AI label…" |
+*
+* @param {Compose_Video_Ai_SavingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_saving = /** @type {((inputs?: Compose_Video_Ai_SavingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_SavingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_saving(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_saving(inputs)
+	return __en.compose_video_ai_saving(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{name}: only MP4, QuickTime and WebM videos can be added." |
+*
+* @param {Compose_Video_Bad_TypeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_bad_type = /** @type {((inputs: Compose_Video_Bad_TypeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Bad_TypeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_bad_type(inputs)
+	if (locale === "cs") return __cs.compose_video_bad_type(inputs)
+	return __en.compose_video_bad_type(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video couldn't be uploaded." |
+*
+* @param {Compose_Video_ErrorInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_error = /** @type {((inputs?: Compose_Video_ErrorInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_ErrorInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_error(inputs)
+	if (locale === "cs") return __cs.compose_video_error(inputs)
+	return __en.compose_video_error(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Or one MP4, QuickTime or WebM video up to {max}." |
+*
+* @param {Compose_Video_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_hint = /** @type {((inputs: Compose_Video_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_hint(inputs)
+	if (locale === "cs") return __cs.compose_video_hint(inputs)
+	return __en.compose_video_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video's aspect ratio doesn't fit {channel}." |
+*
+* @param {Compose_Video_Issue_AspectInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_aspect = /** @type {((inputs: Compose_Video_Issue_AspectInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_AspectInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_aspect(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_aspect(inputs)
+	return __en.compose_video_issue_aspect(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} doesn't take a video for this kind of post." |
+*
+* @param {Compose_Video_Issue_KindInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_kind = /** @type {((inputs: Compose_Video_Issue_KindInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_KindInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_kind(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_kind(inputs)
+	return __en.compose_video_issue_kind(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video's length or size couldn't be read for {channel}." |
+*
+* @param {Compose_Video_Issue_MetadataInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_metadata = /** @type {((inputs: Compose_Video_Issue_MetadataInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_MetadataInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_metadata(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_metadata(inputs)
+	return __en.compose_video_issue_metadata(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} doesn't accept this video's format." |
+*
+* @param {Compose_Video_Issue_MimeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_mime = /** @type {((inputs: Compose_Video_Issue_MimeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_MimeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_mime(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_mime(inputs)
+	return __en.compose_video_issue_mime(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is larger than {channel} allows ({max})." |
+*
+* @param {Compose_Video_Issue_Too_LargeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_too_large = /** @type {((inputs: Compose_Video_Issue_Too_LargeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_Too_LargeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_too_large(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_too_large(inputs)
+	return __en.compose_video_issue_too_large(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is longer than {channel} allows ({max})." |
+*
+* @param {Compose_Video_Issue_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_too_long = /** @type {((inputs: Compose_Video_Issue_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_too_long(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_too_long(inputs)
+	return __en.compose_video_issue_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is shorter than {channel} needs ({min})." |
+*
+* @param {Compose_Video_Issue_Too_ShortInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_too_short = /** @type {((inputs: Compose_Video_Issue_Too_ShortInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_Too_ShortInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_too_short(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_too_short(inputs)
+	return __en.compose_video_issue_too_short(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A post can have only one video." |
+*
+* @param {Compose_Video_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_limit = /** @type {((inputs?: Compose_Video_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_limit(inputs)
+	if (locale === "cs") return __cs.compose_video_limit(inputs)
+	return __en.compose_video_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Preview of {name}" |
+*
+* @param {Compose_Video_PreviewInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_preview = /** @type {((inputs: Compose_Video_PreviewInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_PreviewInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_preview(inputs)
+	if (locale === "cs") return __cs.compose_video_preview(inputs)
+	return __en.compose_video_preview(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Video preview" |
+*
+* @param {Compose_Video_Preview_CardInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_preview_card = /** @type {((inputs?: Compose_Video_Preview_CardInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Preview_CardInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_preview_card(inputs)
+	if (locale === "cs") return __cs.compose_video_preview_card(inputs)
+	return __en.compose_video_preview_card(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Processing…" |
+*
+* @param {Compose_Video_ProcessingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_processing = /** @type {((inputs?: Compose_Video_ProcessingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_ProcessingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_processing(inputs)
+	if (locale === "cs") return __cs.compose_video_processing(inputs)
+	return __en.compose_video_processing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Upload progress" |
+*
+* @param {Compose_Video_ProgressInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_progress = /** @type {((inputs?: Compose_Video_ProgressInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_ProgressInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_progress(inputs)
+	if (locale === "cs") return __cs.compose_video_progress(inputs)
+	return __en.compose_video_progress(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Ready" |
+*
+* @param {Compose_Video_ReadyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ready = /** @type {((inputs?: Compose_Video_ReadyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_ReadyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ready(inputs)
+	if (locale === "cs") return __cs.compose_video_ready(inputs)
+	return __en.compose_video_ready(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Ready, {duration}" |
+*
+* @param {Compose_Video_Ready_DurationInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ready_duration = /** @type {((inputs: Compose_Video_Ready_DurationInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ready_DurationInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ready_duration(inputs)
+	if (locale === "cs") return __cs.compose_video_ready_duration(inputs)
+	return __en.compose_video_ready_duration(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The file has no video track." |
+*
+* @param {Compose_Video_Rejected_Stream_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_rejected_stream_missing = /** @type {((inputs?: Compose_Video_Rejected_Stream_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Rejected_Stream_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_rejected_stream_missing(inputs)
+	if (locale === "cs") return __cs.compose_video_rejected_stream_missing(inputs)
+	return __en.compose_video_rejected_stream_missing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The converted video would be larger than {max}." |
+*
+* @param {Compose_Video_Rejected_Too_LargeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_rejected_too_large = /** @type {((inputs: Compose_Video_Rejected_Too_LargeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Rejected_Too_LargeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_rejected_too_large(inputs)
+	if (locale === "cs") return __cs.compose_video_rejected_too_large(inputs)
+	return __en.compose_video_rejected_too_large(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is longer than {max}." |
+*
+* @param {Compose_Video_Rejected_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_rejected_too_long = /** @type {((inputs: Compose_Video_Rejected_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Rejected_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_rejected_too_long(inputs)
+	if (locale === "cs") return __cs.compose_video_rejected_too_long(inputs)
+	return __en.compose_video_rejected_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video is shorter than {min}." |
+*
+* @param {Compose_Video_Rejected_Too_ShortInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_rejected_too_short = /** @type {((inputs: Compose_Video_Rejected_Too_ShortInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Rejected_Too_ShortInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_rejected_too_short(inputs)
+	if (locale === "cs") return __cs.compose_video_rejected_too_short(inputs)
+	return __en.compose_video_rejected_too_short(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video couldn't be read. Try exporting it again." |
+*
+* @param {Compose_Video_Rejected_UnreadableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_rejected_unreadable = /** @type {((inputs?: Compose_Video_Rejected_UnreadableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Rejected_UnreadableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_rejected_unreadable(inputs)
+	if (locale === "cs") return __cs.compose_video_rejected_unreadable(inputs)
+	return __en.compose_video_rejected_unreadable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Retry" |
+*
+* @param {Compose_Video_RetryInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_retry = /** @type {((inputs?: Compose_Video_RetryInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_RetryInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_retry(inputs)
+	if (locale === "cs") return __cs.compose_video_retry(inputs)
+	return __en.compose_video_retry(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{name}: the video is larger than {max}." |
+*
+* @param {Compose_Video_Too_BigInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_too_big = /** @type {((inputs: Compose_Video_Too_BigInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Too_BigInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_too_big(inputs)
+	if (locale === "cs") return __cs.compose_video_too_big(inputs)
+	return __en.compose_video_too_big(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Uploading… {percent}" |
+*
+* @param {Compose_Video_UploadingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_uploading = /** @type {((inputs: Compose_Video_UploadingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_UploadingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_uploading(inputs)
+	if (locale === "cs") return __cs.compose_video_uploading(inputs)
+	return __en.compose_video_uploading(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Wait for the video to finish processing." |
+*
+* @param {Compose_Video_WaitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_wait = /** @type {((inputs?: Compose_Video_WaitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_WaitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_wait(inputs)
+	if (locale === "cs") return __cs.compose_video_wait(inputs)
+	return __en.compose_video_wait(inputs)
 });
 /**
 * | output |

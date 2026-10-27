@@ -675,6 +675,22 @@ export type ChannelsListResponses = {
                     max: number;
                     urlWeight?: number;
                 }>;
+                video: {
+                    aspect: {
+                        max: {
+                            height: number;
+                            width: number;
+                        };
+                        min: {
+                            height: number;
+                            width: number;
+                        };
+                    } | null;
+                    maxBytes: number;
+                    maxDurationMs: number;
+                    mimes: Array<string>;
+                    minDurationMs: number;
+                } | null;
             }>;
             preview: 'short-feed' | 'pro-feed' | 'media-grid' | 'vertical-video' | 'chat' | 'article';
             profileUrl: string | null;
@@ -921,6 +937,50 @@ export type MediaGetResponses = {
 };
 
 export type MediaGetResponse = MediaGetResponses[keyof MediaGetResponses];
+
+export type MediaMarkAiData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/ai-generated';
+};
+
+export type MediaMarkAiErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaMarkAiError = MediaMarkAiErrors[keyof MediaMarkAiErrors];
+
+export type MediaMarkAiResponses = {
+    /**
+     * OK
+     */
+    200: {
+        aiGenerated: boolean;
+        bytes: number | null;
+        duplicateOf: string | null;
+        durationMs: number | null;
+        height: number | null;
+        id: string;
+        kind: 'image' | 'video';
+        mime: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+        sha256: string | null;
+        state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+        width: number | null;
+    };
+};
+
+export type MediaMarkAiResponse = MediaMarkAiResponses[keyof MediaMarkAiResponses];
 
 export type MediaVideoCompleteData = {
     body?: never;
