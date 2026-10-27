@@ -83,7 +83,7 @@ services:
     volumes:
       - data:/data
     networks: [db, egress]
-    mem_limit: 384m
+    mem_limit: 1g
     healthcheck:
       test:
         - CMD

@@ -8,7 +8,7 @@ Replace `example.com` with your own domain throughout.
 
 - A Linux host (amd64 or arm64) with Docker Engine and Docker Compose v2. Run the commands as a user in the `docker` group.
 - A domain on Cloudflare. The free plan is enough, and so is Cloudflare One (Zero Trust) on its free tier.
-- About 1 GB of free RAM: the stack idles under 250 MB and needs headroom for image processing.
+- About 1.5 GB of free RAM: the stack idles under 250 MB, and converting a 1080p video takes about 500 MB on top. The app container is capped at 1 GB.
 - `git`, `openssl` and a POSIX `sh` on the host.
 
 ## 2. Install
