@@ -93,6 +93,7 @@ Checked 2026-10-27 against M4–M8, M16, M26 and M28–M58. "Undocumented" means
 - **Photos.** `POST /v26.0/{page-id}/photos {url | source, caption, alt_text_custom}` returns `{id, post_id}`; `message` is deprecated in favour of `caption`. (M8, M36)
   - Multi-photo: upload each with `published=false`, then `POST /{page-id}/feed {message, attached_media[n]={"media_fbid":"…"}}`. Unused unpublished photos are deleted after about 24 hours. The maximum count is undocumented. (M36)
   - Formats: JPEG, BMP, PNG, GIF and TIFF, at most 10MB; PNGs over 1MB "may appear pixelated". (M36)
+  - Alt text: `alt_text_custom`, an "Accessible alternative description for an image". Its maximum length is undocumented; Kronaut caps it at 1,000 characters, Instagram's documented limit. Whether alt text set on an unpublished photo carries over to the `attached_media` post is undocumented. (M36, checked 2026-10-27)
   - Combining `link` with photos is undocumented: put the URL in the text.
   - Kronaut uploads each photo unpublished as `multipart/form-data` (`source`) and attaches it to the feed post with `attached_media`, even for a single image, then verifies through `published_posts`.
 - **Text limits.** The message length is not documented; Kronaut uses 63,206 UTF-16 units. Mentions are `@[page-id]`; tag offsets count code points. (M35, M50)

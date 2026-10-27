@@ -26,7 +26,7 @@ export const facebookManifest: ProviderManifest<FacebookSettings> = {
         maxCount: 10,
         image: { mimes: ['image/jpeg', 'image/png'], maxBytes: 10_000_000 },
         mixed: false,
-        altText: { supported: false, required: false, maxLength: 0 },
+        altText: { supported: true, required: false, maxLength: 1_000 },
         aiLabel: false,
       },
     },

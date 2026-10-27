@@ -207,8 +207,10 @@ describe('facebook publish: request bodies', () => {
     ]);
   });
 
-  it('uploads three photos in order and omits an empty message', async () => {
-    const { calls } = await run(main('', [png, jpeg, third]), [
+  it('uploads three photos in order with their alt text and omits an empty message', async () => {
+    const described = { ...jpeg, altText: 'A red bike' };
+    const blank = { ...third, altText: '  ' };
+    const { calls } = await run(main('', [png, described, blank]), [
       photo('901'),
       photo('902'),
       photo('903'),
@@ -216,9 +218,11 @@ describe('facebook publish: request bodies', () => {
       permalink(),
     ]);
     expect(parts(calls[1]).source?.headers).toContain('filename="upload.jpg"');
-    expect(calls.slice(0, 3).map(uploadFields)).toEqual(
-      Array.from({ length: 3 }, () => ({ ...signed, published: 'false' })),
-    );
+    expect(calls.slice(0, 3).map(uploadFields)).toEqual([
+      { ...signed, published: 'false' },
+      { ...signed, published: 'false', alt_text_custom: 'A red bike' },
+      { ...signed, published: 'false' },
+    ]);
     expect(form(calls[3])).toEqual({
       'attached_media[0]': attached('901'),
       'attached_media[1]': attached('902'),
