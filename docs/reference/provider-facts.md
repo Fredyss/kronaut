@@ -57,6 +57,15 @@ Instagram section re-verified 2026-10-23 (Business Login guide, OAuth and token 
   - An app that serves only accounts the operator owns or manages needs Standard Access only, with no App Review. Going Live needs a business that has completed Business Verification.
   - There is no delete API under Instagram Login: `DELETE /<IG_MEDIA_ID>` is Facebook Login only.
 
+
+Instagram video facts checked 2026-10-27 (M1, M2, M11, M15).
+- **Reels only.** `media_type=VIDEO` stopped working on 2023-11-09; a single video is a Reel: `POST /<IG_ID>/media {media_type: REELS, video_url, caption, share_to_feed, cover_url | thumb_offset}`. Instagram pulls `video_url`; poll `status_code`, then `media_publish`. Resumable upload is only for Facebook Login for Business apps.
+- `share_to_feed: true` shows the Reel in Feed and the Reels tab.
+- **Limits** (M2): MOV or MP4, moov atom at the front, no edit lists; H.264 or HEVC, progressive, closed GOP, 4:2:0, 23–60 fps, ≤1920 px wide, aspect 0.01:1–10:1 (9:16 recommended), VBR ≤25 Mbps; AAC ≤48 kHz, mono or stereo, 128 kbps; 3 s–15 min; ≤300 MB.
+- **Cover:** `cover_url` (JPEG ≤8 MB, sRGB) or `thumb_offset` in ms; `cover_url` wins. Alt text isn't supported for Reels.
+- **Errors** (M11): `-2/2207003` (download too slow) and `-1/2207053` (unknown upload error; make a new container) are retryable; `352/2207026` (format), `1/2207057` (thumb offset) and `9004/2207052` (URL not fetchable) are permanent.
+- **Carousel:** a video child is `{media_type: VIDEO, video_url, is_carousel_item: true}`; its limits are undocumented.
+
 **Facebook Page** (Facebook Login and the Pages API on `graph.facebook.com`, v26.0)
 
 Checked 2026-10-27 against M4–M8, M16, M26 and M28–M58. "Undocumented" means none of those pages say it.
@@ -110,6 +119,14 @@ Checked 2026-10-27 against M4–M8, M16, M26 and M28–M58. "Undocumented" means
 - **2025–2026 changes.** Nothing changes publishing or tokens. v26.0 deprecates some NPE Page fields; from 2026-10-27 `pretty`, `debug`, `date_format`, root `GET /?ids=` and ETags are gone on all versions. Page insights metrics (impressions, reach) were removed in v25.0. (M53–M58)
 - **Deletion.** `DELETE /{page_post_id}` returns `{success: true}` (M8), but the Page Post reference says only select developers may use it (M50).
 
+
+Facebook Page video facts checked 2026-10-27 (M59–M64).
+- **Reels** (M60, M62): `POST /{page-id}/video_reels upload_phase=start` → `{video_id, upload_url}`; upload to `https://rupload.facebook.com/video-upload/v26.0/{video_id}` with `Authorization: OAuth <page token>`, `offset` and `file_size` and a binary body, or a `file_url` header (pull); poll `GET /{video_id}?fields=status` (`video_status` `uploading|upload_complete|processing|ready|upload_failed|expired|error`, with per-phase detail); then `upload_phase=finish, video_state=PUBLISHED, description`. Resume by re-sending from `bytes_transfered`.
+- **Reel specs** (M60): MP4; H.264, H.265, VP9 or AV1; 9:16, ≥540×960 (1080×1920 recommended); 24–60 fps fixed, closed GOP of 2–5 s; AAC-LC stereo 48 kHz ≥128 kbps; **3–90 s**; maximum size undocumented. **30 API-published Reels per Page per 24 h.**
+- **Reel errors** (M60): `1363040` aspect ratio, `1363127` resolution, `1363128` duration, `1363129` frame rate; upload errors `OffsetInvalidError`, `PartialRequestError`, `ProcessingFailedError`.
+- **Feed video** (M59, M61, M64): Resumable Upload API plus `/{page-id}/videos`; its size, duration and codec limits are undocumented, and M64 calls `graph-video.facebook.com` deprecated while M59 still publishes through it. Kronaut doesn't use it (ADR-0054).
+- **Cover:** `POST /{video_id}/thumbnails {source, is_preferred: true}`, image ≤10 MB (M63). Alt text for video is undocumented.
+
 **Threads** (Threads API on `graph.threads.com`, v1.0)
 
 Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 against T1, T2, T7 and T8. The same day, the caps, the 500-character limit, the image limits and carousel 2–20 were re-checked against T2; the other composer limits were not.
@@ -144,6 +161,14 @@ Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 ag
   - Images JPEG or PNG, ≤8 MB, aspect ratio up to 10:1, width 320–1440 (rescaled, not rejected).
   - Video ≤5 min/1GB.
 - **Verification.** Publish and delete webhooks (2026-04) can confirm `unconfirmed` posts.
+
+
+Threads video facts checked 2026-10-27 (T1, T2, T7, T9).
+- `POST /{user}/threads {media_type: VIDEO, video_url, text, alt_text}`, poll `status`, then `threads_publish`. Pull only.
+- **Limits** (T2): MOV or MP4, moov atom at the front, no edit lists; H.264 or HEVC, progressive, closed GOP, 4:2:0, 23–60 fps, ≤1920 px wide, aspect 0.01:1–10:1, VBR ≤100 Mbps; AAC ≤48 kHz, mono or stereo, 128 kbps; ≤300 s; ≤1 GB.
+- `alt_text` covers images and videos, ≤1,000 characters (T9). No cover parameter.
+- Video errors in `error_message` (T7): `FAILED_DOWNLOADING_VIDEO`, `FAILED_PROCESSING_AUDIO`, `FAILED_PROCESSING_VIDEO`, `INVALID_ASPEC_RATIO`, `INVALID_BIT_RATE`, `INVALID_DURATION`, `INVALID_FRAME_RATE`, `INVALID_AUDIO_CHANNELS`, `INVALID_AUDIO_CHANNEL_LAYOUT`, `UNKNOWN`.
+- Carousels mix images and videos in 2–20 items (T1).
 
 **Bluesky**
 
@@ -210,6 +235,15 @@ Bluesky re-verified 2026-10-23 (specs, guides, lexicons, live AS/PDS metadata an
   - A facet's `index` is `byteStart` (inclusive) and `byteEnd` (exclusive), counted in UTF-8 bytes of `text`.
   - Features: `mention {did}`, `link {uri}` (the full URL, even when the text shortens it), `tag {tag}` (without `#`, ≤64 graphemes).
 
+
+Bluesky video facts checked 2026-10-27 (B3, B7, B18, B19).
+- **Video service** (B18): `com.atproto.server.getServiceAuth {aud: did:web:<PDS host>, lxm: com.atproto.repo.uploadBlob, exp}`; `POST https://video.bsky.app/xrpc/app.bsky.video.uploadVideo?did&name` with the service token and the body; poll `app.bsky.video.getJobStatus` until `jobStatus.blob`; post with `app.bsky.embed.video {video, aspectRatio, alt?}`. An `already_exists` error still carries the blob. Bluesky-hosted accounts need a verified email.
+- **Multipart** (B3, since 2026-08-12): `startUpload {sizeBytes, mimeType, durationMs?, width?, height?}` → `{jobId, partSizeBytes, partCount, expiresAt}`; idempotent `uploadPart` and `finishUpload`; errors `VideoTooLarge`, `VideoTooLong`, `BadAspectRatio`, `DailyLimitExceeded`, `TooManyOpenUploads`, `UploadForbidden`, `ServiceOverloaded`, with undocumented thresholds.
+- **Job states:** `JOB_STATE_CREATED`, `ENCODING`, `ENCODED`, `SCANNING`, `SCANNED`, `UPLOADING`, `UPLOADED`, `COMPLETED`, `FAILED`; `failureCode` `validation_failure`, `encoding_failure`, `pds_upload_failure`, `pds_upload_unsupported_blob_size`, `generic_failure`.
+- **Limits:** `video/mp4` only, ≤300,000,000 bytes (raised 2026-08-11); duration, resolution and codec limits undocumented. `getUploadLimits` returns the daily quota; an unauthenticated call is 401 (B19).
+- **OAuth:** `authCreatePosts` grants the `app.bsky.video.*` methods with `inheritAud`, while the tutorial mints `lxm=com.atproto.repo.uploadBlob` for the PDS. Which `aud`/`lxm` the video service accepts from an OAuth session is undocumented and needs a live test.
+- One embed per post: a video can't be combined with images. `alt` is optional; `captions` takes up to 20 VTT files.
+
 **Mastodon**
 - **Idempotency.** The `Idempotency-Key` header on `POST /api/v1/statuses` is kept for 1h: a repeat with the same key returns the original status (MA1). It needs a re-send to use, so the verifier never relies on it; `verify.mode` = `list_recent_match` (see Publishing below).
 - **Per-instance values.** Limits come from each instance's `/api/v2/instance` (max_characters, max_media_attachments, characters_reserved_per_url, media sizes, description_limit). The app must be registered per instance.
@@ -238,6 +272,12 @@ Mastodon publishing facts checked 2026-10-26 (MA1, MA3, MA7, MA8).
   - **Unverified:** the docs don't say whether a character is a grapheme or a code point. Kronaut counts graphemes (`mastodon` counting strategy).
 - **Recent statuses** (MA7). `GET /api/v1/accounts/:id/statuses`: public for public statuses, or a user token with `read:statuses`; `limit` default 20, max 40; `exclude_reblogs`. The sort order isn't stated; the id cursors imply newest first, which the verifier assumes. 401 only in whitelist mode or for a bad token, 404 for an unknown account.
 - **Rate limits** (MA2). Media uploads 30 per 30 min per account; everything else 300 per 5 min.
+
+
+Mastodon video facts checked 2026-10-27 (MA3, MA5, MA8).
+- `POST /api/v2/media {file, thumbnail, description, focus}`; video is always 202 with `url` null; poll `GET /api/v1/media/:id` (206, 200, 422).
+- Per instance (MA5, from 4.0): `video_size_limit` (example 103,809,024 bytes), `video_frame_rate_limit` (example 120), `video_matrix_limit` (example 8,294,400 px). MA8: MP4, M4V, MOV, WebM up to 99 MB; the server transcodes to H.264. Duration limit undocumented. One video per post.
+- `description` (≤ `description_limit`) applies to video too; `thumbnail` sets a cover.
 
 **LinkedIn** (member posting through "Sign In with LinkedIn using OpenID Connect" and "Share on LinkedIn", `api.linkedin.com/rest`, 202610)
 
@@ -303,6 +343,13 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
   - **Kronaut: one `account` bucket `member_posts_day`, 150 per day, 1 per post.** It models only `POST /rest/posts`: LinkedIn throttles per resource (L11, L24). `initializeUpload` and the image `PUT` (2 calls per image) have their own limits, which are not documented. A 429 on any step still parks the account until 00:00 UTC.
 - **Changelog 2025–2026** (L20). Nothing changes the Images API, the OIDC claims or token lifetimes. Relevant items: member post statistics need `r_member_postAnalytics` (2025-06, not self-serve); a 75% app-quota email (2025-09); Google and Apple sign-in with `enable_extended_login` from 2025-12-02 (2025-11). Page dates: Posts API 2026-05-13, Images API 2026-06-24, OAuth flow 2026-05-15, versioning 2026-10-14.
 - **Out of scope** (from the earlier check, not re-verified): article cards must be supplied by the client; video is 3 s–30 min, ≤500 MB, uploaded in 4 MB parts with ETags (L6).
+
+
+LinkedIn video facts checked 2026-10-27 (L3, L6, L22).
+- `POST /rest/videos?action=initializeUpload {initializeUploadRequest: {owner, fileSizeBytes, uploadCaptions, uploadThumbnail}}` → `{video, uploadToken, uploadInstructions[{firstByte, lastByte, uploadUrl}]}`; `PUT` each 4 MiB part as `application/octet-stream` and keep its `etag`; `POST ?action=finalizeUpload {video, uploadToken, uploadedPartIds}`; post with `content: {media: {id: urn:li:video:…, title}}`.
+- Status `GET /rest/videos/{urn}`: `WAITING_UPLOAD|PROCESSING|AVAILABLE|PROCESSING_FAILED`. Whether a `w_member_social`-only token may read it is undocumented.
+- **Limits:** MP4, 3 s–30 min, 75 KB–500 MB (the `fileSizeBytes` field says 5 GB). Codecs, aspect and frame rate undocumented.
+- Errors: 400 `EXPIRED_UPLOAD_URL`, `MEDIA_ASSET_PROCESSING_FAILED`, `MEDIA_ASSET_WAITING_UPLOAD`, `UPDATING_ASSET_FAILED`. No video in `multiImage`.
 
 **YouTube**
 - **Upload quota.** The upload bucket is 100/day **per project**, so the bucket key is `app:`, not `account:`. Other calls, such as thumbnails, use the 10,000-unit bucket. Both reset at midnight Pacific.
@@ -415,6 +462,12 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
 - M56 https://developers.facebook.com/docs/graph-api/changelog/version22.0
 - M57 https://developers.facebook.com/docs/graph-api/changelog/non-versioned-changes/nvc-2025
 - M58 https://developers.facebook.com/docs/graph-api/changelog/version24.0 (also version23.0, and https://developers.facebook.com/docs/graph-api/changelog/out-of-cycle-changes)
+- M59 https://developers.facebook.com/docs/video-api/guides/publishing
+- M60 https://developers.facebook.com/docs/video-api/guides/reels-publishing
+- M61 https://developers.facebook.com/docs/graph-api/reference/page/videos/
+- M62 https://developers.facebook.com/docs/graph-api/reference/page/video_reels/
+- M63 https://developers.facebook.com/docs/graph-api/reference/video/thumbnails/
+- M64 https://developers.facebook.com/docs/video-api/overview
 - T1 https://developers.facebook.com/docs/threads/posts
 - T2 https://developers.facebook.com/docs/threads/overview
 - T3 https://developers.facebook.com/docs/threads/get-started/get-access-tokens-and-permissions
@@ -423,6 +476,7 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
 - T6 https://developers.facebook.com/docs/threads/threads-profiles
 - T7 https://developers.facebook.com/docs/threads/troubleshooting
 - T8 https://developers.facebook.com/docs/threads/threads-media
+- T9 https://developers.facebook.com/docs/threads/reference/publishing
 - B1 https://bsky.network/docs/rate-limits (docs.bsky.app now 308-redirects to bsky.network)
 - B2 https://atproto.com/specs/oauth
 - B3 https://github.com/bluesky-social/bsky/tree/main/lexicons (canonical for `app.bsky.*`: app/bsky/feed/post, embed/images, embed/gallery, embed/external, embed/video, richtext/facet, video/getUploadLimits, authCreatePosts)
@@ -440,6 +494,8 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
 - B15 https://web.plc.directory/spec/v0.1/did-plc and https://w3c-ccg.github.io/did-method-web/
 - B16 https://datatracker.ietf.org/doc/html/rfc9449 (DPoP, referenced by B2)
 - B17 Live checks on 2026-10-23: a Bluesky-hosted PDS's `/.well-known/oauth-protected-resource`, its unauthenticated `getRecord` miss, and `use_dpop_nonce` responses from bsky.social `/oauth/par`, `/oauth/token` and the PDS
+- B18 https://github.com/bluesky-social/bsky-docs/blob/main/docs/tutorials/video.mdx
+- B19 Live check on 2026-10-27: unauthenticated `GET https://video.bsky.app/xrpc/app.bsky.video.getUploadLimits` returned 401
 - MA1 https://docs.joinmastodon.org/methods/statuses/
 - MA2 https://docs.joinmastodon.org/api/rate-limits/
 - MA3 https://docs.joinmastodon.org/methods/media/

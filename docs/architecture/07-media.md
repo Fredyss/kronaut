@@ -11,6 +11,7 @@
 - **TikTok:**
   - `PULL_FROM_URL` from a **verified domain** (required for photo posts). `FILE_UPLOAD` is not used from servers.
   - The `init` call is the public step. SELF_ONLY posts never return a post id (`verify.mode=none`).
+- **Video** (ADR-0054): chunked upload in 8 MiB parts, at most 300 MB; a background job converts each video with ffmpeg into one H.264/AAC MP4 master that every network publishes unchanged. Range requests are served for video.
 - **Masters and renditions:**
   - Masters are immutable once ready and identified by sha256, which approval hashes reference.
   - Per-provider renditions (resize, transcode, crop in per-mille) are derived and cached.
