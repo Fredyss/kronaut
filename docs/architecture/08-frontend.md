@@ -33,6 +33,7 @@
 - **Autosave:** IndexedDB on every change (1 s debounce) + server revision; a multi-tab conflict banner.
 - **Budgets** (gzipped, CI `size-limit`):
   - shell + calendar ≤ 150 KB
+  - message catalogs (en, sk, cs) lazy, ≤ 15 KB each
   - CSS ≤ 25 KB
   - route chunks ≤ 40 KB
   - editor ≤ 130 KB (preloaded on hover)

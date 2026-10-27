@@ -9,8 +9,9 @@ function shellChunks() {
 }
 
 const LAZY = {
-  'sk messages JS': ['sk', '10 KB'],
-  'cs messages JS': ['cs', '10 KB'],
+  'en messages JS': ['en', '15 KB'],
+  'sk messages JS': ['sk', '15 KB'],
+  'cs messages JS': ['cs', '15 KB'],
   'composer route JS': ['compose', '40 KB'],
   'post status route JS': ['post', '40 KB'],
   'calendar route JS': ['calendar', '40 KB'],

@@ -1,4 +1,4 @@
-import * as en from '@kronaut/i18n/messages/en';
+import type * as en from '@kronaut/i18n/messages/en';
 import { baseLocale, isLocale, type Locale, locales } from '@kronaut/i18n/runtime';
 
 export { baseLocale, isLocale, type Locale, locales };
@@ -16,7 +16,7 @@ export type Messages = {
 
 const messages = (catalog: Catalog): Messages => catalog as Messages;
 
-const english = messages(en);
+const english = messages(await import('@kronaut/i18n/messages/en'));
 const catalogs = new Map<Locale, Messages>([[baseLocale, english]]);
 
 export let m: Messages = english;
