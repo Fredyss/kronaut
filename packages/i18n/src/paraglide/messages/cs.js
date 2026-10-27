@@ -186,8 +186,10 @@
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
 /** @typedef {{}} Compose_TitleInputs */
 /** @typedef {{}} Compose_Use_DefaultInputs */
+/** @typedef {{}} Compose_Video_Ai_FailedInputs */
 /** @typedef {{}} Compose_Video_Ai_LabelInputs */
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
+/** @typedef {{}} Compose_Video_Ai_SavingInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
@@ -1213,12 +1215,20 @@ export const compose_use_default = /** @type {(inputs: Compose_Use_DefaultInputs
 	return /** @type {LocalizedString} */ (`Použít obsah ze záložky Všechny kanály`)
 };
 
+export const compose_video_ai_failed = /** @type {(inputs: Compose_Video_Ai_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Označení AI se nepodařilo uložit.`)
+};
+
 export const compose_video_ai_label = /** @type {(inputs: Compose_Video_Ai_LabelInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Video je vytvořené pomocí AI`)
 };
 
 export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_MarkedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Video je v tomto pracovním prostoru označené jako vytvořené pomocí AI a toto označení nejde odstranit.`)
+};
+
+export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ukládá se označení AI…`)
 };
 
 export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {

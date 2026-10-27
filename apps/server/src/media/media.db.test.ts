@@ -286,7 +286,15 @@ describe('media routes', () => {
   ): RequestContext {
     return {
       requestId: randomUUID(),
-      principal: null,
+      principal: {
+        kind: 'user',
+        userId: tenant.userId,
+        workspaceId: tenant.workspaceId,
+        role: 'owner',
+        canApprove: true,
+        restricted: false,
+        authenticatedAt: NOW,
+      },
       session: null,
       now: NOW,
       logger: pino({ level: 'silent' }),
@@ -379,6 +387,33 @@ describe('media routes', () => {
       params: { workspaceId: encodePublicId('workspace', b.workspaceId), mediaId: asset.id },
     };
     await expectMediaError(mark.handler(foreign, context(b, [])), 'not_found', 404);
+    const audits = await db.withTenant(a.workspaceId, asUser(a), (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select(['action', 'actor_kind', 'actor_id', 'resource_kind'])
+        .where('resource_id', '=', uuidOf(asset))
+        .execute(),
+    );
+    expect(audits).toEqual([
+      {
+        action: 'media.ai_marked',
+        actor_kind: 'user',
+        actor_id: a.userId,
+        resource_kind: 'media_asset',
+      },
+    ]);
+  });
+
+  it('refuses to mark a rejected asset', async () => {
+    const mark = mediaRoutes({ store, clock }).find((bound) => bound.route === mediaMarkAiRoute);
+    if (mark === undefined) throw new Error('route missing');
+    const asset = await fx.ingest(a, webpExtendedFixture(13, 13));
+    await db.withTenant(a.workspaceId, asUser(a), (trx) =>
+      sql`update media_assets set state = 'rejected' where id = ${uuidOf(asset)}`.execute(trx),
+    );
+    const params = { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id };
+    const marking = mark.handler({ params, query: undefined, body: undefined }, context(a, []));
+    await expectMediaError(marking, 'conflict', 409);
   });
 
   it('refuses a scoped read because media has no scope units', async () => {

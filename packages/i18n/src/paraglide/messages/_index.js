@@ -188,8 +188,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
 /** @typedef {{}} Compose_TitleInputs */
 /** @typedef {{}} Compose_Use_DefaultInputs */
+/** @typedef {{}} Compose_Video_Ai_FailedInputs */
 /** @typedef {{}} Compose_Video_Ai_LabelInputs */
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
+/** @typedef {{}} Compose_Video_Ai_SavingInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
@@ -3248,6 +3250,21 @@ export const compose_use_default = /** @type {((inputs?: Compose_Use_DefaultInpu
 /**
 * | output |
 * | --- |
+* | "The AI label couldn't be saved." |
+*
+* @param {Compose_Video_Ai_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_failed = /** @type {((inputs?: Compose_Video_Ai_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_failed(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_failed(inputs)
+	return __en.compose_video_ai_failed(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The video is AI-generated" |
 *
 * @param {Compose_Video_Ai_LabelInputs} inputs
@@ -3274,6 +3291,21 @@ export const compose_video_ai_marked = /** @type {((inputs?: Compose_Video_Ai_Ma
 	if (locale === "sk") return __sk.compose_video_ai_marked(inputs)
 	if (locale === "cs") return __cs.compose_video_ai_marked(inputs)
 	return __en.compose_video_ai_marked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Saving the AI label…" |
+*
+* @param {Compose_Video_Ai_SavingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_ai_saving = /** @type {((inputs?: Compose_Video_Ai_SavingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Ai_SavingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_ai_saving(inputs)
+	if (locale === "cs") return __cs.compose_video_ai_saving(inputs)
+	return __en.compose_video_ai_saving(inputs)
 });
 /**
 * | output |

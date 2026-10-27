@@ -204,6 +204,32 @@ describe('composer video', () => {
     expect(screen.getByText(/the label can't be removed/)).toBeDefined();
   });
 
+  it('keeps a Reel back until a failed AI label is saved', async () => {
+    const server = videoServer();
+    const { mutations } = mount((call, count) =>
+      call.path.endsWith('/ai-generated') && count === 1
+        ? Response.json({ error: { code: 'conflict', message: '' } }, { status: 409 })
+        : server(call, count),
+    );
+    fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Watch' } });
+    pickFiles([mp4()]);
+    await screen.findByText(/^Ready/);
+    fireEvent.click(screen.getByRole('checkbox', { name: 'The video is AI-generated' }));
+    expect(await screen.findByRole('alert')).toBeDefined();
+    fireEvent.click(instagram());
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+    await waitFor(() =>
+      expect(screen.getAllByText("The AI label couldn't be saved.").length).toBeGreaterThan(1),
+    );
+    expect(mutations().some((c) => c.path.endsWith('/posts'))).toBe(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    const box = screen.getByRole('checkbox', { name: 'The video is AI-generated' });
+    await waitFor(() => expect((box as HTMLInputElement).disabled).toBe(true));
+    expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
+    expect(mutations().filter((c) => c.path.endsWith('/ai-generated'))).toHaveLength(2);
+  });
+
   it('restarts a failed upload on Retry', async () => {
     const server = videoServer();
     const { mutations } = mount((call, count) =>

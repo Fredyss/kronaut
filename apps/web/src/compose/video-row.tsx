@@ -97,6 +97,20 @@ export function VideoRow({
         <p id={aiHintId} className="text-muted-foreground text-xs">
           {marked ? m.compose_video_ai_marked() : m.compose_ai_generated_hint()}
         </p>
+        {entry.aiFailed && !marked ? (
+          <div role="alert" className="flex items-center gap-2 text-destructive text-sm">
+            {m.compose_video_ai_failed()}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={disabled}
+              onClick={() => video.setAi(true)}
+            >
+              {m.compose_video_retry()}
+            </Button>
+          </div>
+        ) : null}
       </div>
       <Button type="button" size="sm" variant="ghost" disabled={disabled} onClick={video.remove}>
         {m.compose_image_remove()}

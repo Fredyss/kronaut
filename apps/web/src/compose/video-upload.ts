@@ -65,7 +65,7 @@ function retryable(error: unknown): boolean {
   return status === null || status === 0 || status >= 500;
 }
 
-async function withRetry<T>(api: VideoApi, signal: AbortSignal, call: () => Promise<T>) {
+export async function withRetry<T>(api: VideoApi, signal: AbortSignal, call: () => Promise<T>) {
   for (let attempt = 0; ; attempt++) {
     try {
       return await call();

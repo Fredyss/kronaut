@@ -1,6 +1,5 @@
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import { sql } from 'kysely';
 import * as z from 'zod';
 
 export const REJECTED_REASONS = [
@@ -92,22 +91,6 @@ export async function findMediaAsset(
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', mediaId)
     .where('deleted_at', 'is', null)
-    .executeTakeFirst();
-  return row === undefined ? null : toMediaAssetDto(row);
-}
-
-export async function markAiGenerated(
-  trx: TenantDb,
-  workspaceId: string,
-  mediaId: string,
-): Promise<MediaAssetDto | null> {
-  const row = await trx
-    .updateTable('media_assets')
-    .set({ ai_generated: true, updated_at: sql<Date>`now()` })
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', mediaId)
-    .where('deleted_at', 'is', null)
-    .returning(MEDIA_ASSET_COLUMNS)
     .executeTakeFirst();
   return row === undefined ? null : toMediaAssetDto(row);
 }

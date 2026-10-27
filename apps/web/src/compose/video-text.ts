@@ -61,7 +61,10 @@ export function rejectionText(reason: RejectedReason, locale: string): string {
 
 export function waitProblem(entry: VideoEntry | undefined, locale: string): string | null {
   const phase = entry?.phase ?? { kind: 'processing' };
-  if (phase.kind === 'ready') return null;
+  if (phase.kind === 'ready') {
+    if (entry === undefined || !entry.aiGenerated || phase.asset.aiGenerated) return null;
+    return entry.aiFailed ? m.compose_video_ai_failed() : m.compose_video_ai_saving();
+  }
   if (phase.kind === 'rejected') return rejectionText(phase.reason, locale);
   if (phase.kind === 'error') return m.compose_video_error();
   return m.compose_video_wait();

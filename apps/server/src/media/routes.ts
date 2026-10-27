@@ -4,9 +4,10 @@ import type { MediaStore } from '@kronaut/media';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { findMediaAsset, MediaAssetSchema, markAiGenerated } from './dto.ts';
+import { findMediaAsset, MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { ingestImage, MEDIA_IMAGE_MAX_BYTES, prepareImage } from './ingest.ts';
+import { markAiGenerated } from './mark-ai.ts';
 
 export const MEDIA_UPLOAD_ROUTE_ID = 'media.upload';
 export const MEDIA_UPLOAD_BODY_LIMIT = 12 * 1024 * 1024;
@@ -106,8 +107,7 @@ export function mediaRoutes(deps: MediaRouteDeps): BoundRoute[] {
       const workspaceId = internalId('workspace', params.workspaceId);
       const mediaId = internalId('media', params.mediaId);
       ctx.authorize('media:write', { workspaceId });
-      const asset = await ctx.tenant((trx) => markAiGenerated(trx, workspaceId, mediaId));
-      if (asset === null) throw new MediaError('not_found', 'media asset not found');
+      const asset = await ctx.tenant((trx) => markAiGenerated(trx, ctx, { workspaceId, mediaId }));
       return { body: asset };
     }),
   ];

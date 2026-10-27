@@ -1,7 +1,13 @@
 import { type Client, mediaMarkAi } from '@kronaut/sdk';
 import { useEffect, useState } from 'react';
 import { useApiClient } from '../context.ts';
-import { type RejectedReason, sleep, uploadVideo, type VideoAsset } from './video-upload.ts';
+import {
+  type RejectedReason,
+  sleep,
+  uploadVideo,
+  type VideoAsset,
+  withRetry,
+} from './video-upload.ts';
 
 export type VideoPhase =
   | { readonly kind: 'uploading'; readonly sent: number; readonly total: number }
@@ -14,6 +20,7 @@ export interface VideoEntry {
   readonly file: File;
   readonly url: string;
   readonly aiGenerated: boolean;
+  readonly aiFailed: boolean;
   readonly phase: VideoPhase;
 }
 
@@ -25,6 +32,7 @@ interface Slot {
   ai: boolean;
   mediaId: string | null;
   marking: string | null;
+  marked: string | null;
 }
 
 type Patch = (id: string, change: (entry: VideoEntry) => VideoEntry) => void;
@@ -44,20 +52,29 @@ function markAi(u: Uploads, id: string, slot: Slot) {
   const { mediaId } = slot;
   if (!slot.ai || mediaId === null || slot.marking === mediaId) return;
   slot.marking = mediaId;
-  mediaMarkAi({
-    client: u.client,
-    path: { workspaceId: u.workspaceId, mediaId },
-    headers: { 'Idempotency-Key': crypto.randomUUID() },
-    signal: slot.controller.signal,
-  }).then(
-    ({ data }) =>
+  u.patch(id, (entry) => ({ ...entry, aiFailed: false }));
+  const { signal } = slot.controller;
+  const key = crypto.randomUUID();
+  const api = { client: u.client, workspaceId: u.workspaceId, wait: sleep };
+  withRetry(api, signal, () =>
+    mediaMarkAi({
+      client: u.client,
+      path: { workspaceId: u.workspaceId, mediaId },
+      headers: { 'Idempotency-Key': key },
+      signal,
+    }),
+  ).then(
+    ({ data }) => {
+      slot.marked = data.id;
       u.patch(id, (entry) =>
         entry.phase.kind === 'ready' && entry.phase.asset.id === data.id
           ? withPhase({ kind: 'ready', asset: data })(entry)
           : entry,
-      ),
+      );
+    },
     () => {
       slot.marking = null;
+      if (!signal.aborted) u.patch(id, (entry) => ({ ...entry, aiFailed: true }));
     },
   );
 }
@@ -82,8 +99,14 @@ function start(u: Uploads, id: string, file: File, slot: Slot) {
     },
   ).then(
     (outcome) => {
-      u.patch(id, withPhase(outcome));
-      if (outcome.kind === 'ready') adopt(outcome.asset);
+      if (outcome.kind !== 'ready') {
+        u.patch(id, withPhase(outcome));
+        return;
+      }
+      const asset =
+        slot.marked === outcome.asset.id ? { ...outcome.asset, aiGenerated: true } : outcome.asset;
+      u.patch(id, withPhase({ kind: 'ready', asset }));
+      adopt(asset);
     },
     () => {
       if (!signal.aborted) u.patch(id, withPhase({ kind: 'error' }));
@@ -92,7 +115,7 @@ function start(u: Uploads, id: string, file: File, slot: Slot) {
 }
 
 function newSlot(url: string, ai: boolean): Slot {
-  return { controller: new AbortController(), url, ai, mediaId: null, marking: null };
+  return { controller: new AbortController(), url, ai, mediaId: null, marking: null, marked: null };
 }
 
 export function useVideos(workspaceId: string, inUse: readonly string[]) {
@@ -136,7 +159,7 @@ export function useVideos(workspaceId: string, inUse: readonly string[]) {
     const slot = newSlot(URL.createObjectURL(file), false);
     const phase: VideoPhase = { kind: 'uploading', sent: 0, total: file.size };
     setEntries((current) =>
-      new Map(current).set(id, { file, url: slot.url, aiGenerated: false, phase }),
+      new Map(current).set(id, { file, url: slot.url, aiGenerated: false, aiFailed: false, phase }),
     );
     start(u, id, file, slot);
     return id;

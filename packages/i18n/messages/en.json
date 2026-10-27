@@ -230,6 +230,8 @@
   "compose_video_retry": "Retry",
   "compose_video_ai_label": "The video is AI-generated",
   "compose_video_ai_marked": "This video is marked as AI-generated in this workspace, and the label can't be removed.",
+  "compose_video_ai_failed": "The AI label couldn't be saved.",
+  "compose_video_ai_saving": "Saving the AI label…",
   "compose_video_wait": "Wait for the video to finish processing.",
   "compose_channel_video_unsupported": "Video isn't supported on this network yet.",
   "compose_video_issue_kind": "{channel} doesn't take a video for this kind of post.",
