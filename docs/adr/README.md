@@ -85,6 +85,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0051](0051-per-instance-oauth-apps.md) | Per-instance OAuth apps (Mastodon), extends 0049 |
 | [0052](0052-mvp-scope-cut.md) | MVP scope cut: Phase 1 and Phase 1.1 |
 | [0053](0053-multi-account-channel-connect.md) | One connect can add several channels (supersedes 0049) |
+| [0054](0054-video-pipeline.md) | Video upload, conversion and publishing |
 
 ## Defaults
 
