@@ -109,4 +109,10 @@ jobs:
       - run: docker compose --env-file infra/compose/.env.example -f infra/compose/compose.yaml config --quiet
       - run: docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:v0.11.0@sha256:61862eba1fcf09a484ebcc6feea46f1782532571a34ed51fedf90dd25f925a8d --shell=sh infra/compose/init-secrets.sh infra/compose/postgres-init/10-login-roles.sh
       - run: docker build --platform linux/amd64 -f infra/docker/Dockerfile -t kronaut:ci .
-      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222 image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 kronaut:ci
+      - run: |
+          for attempt in 1 2 3; do
+            docker run --rm -v trivy-cache:/root/.cache/trivy aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222 image --download-db-only && exit 0
+            sleep $((attempt * 20))
+          done
+          exit 1
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/trivy aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222 image --skip-db-update --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 kronaut:ci
