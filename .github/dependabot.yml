@@ -10,6 +10,17 @@ updates:
       npm:
         update-types: [minor, patch]
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      - dependency-name: react
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: react-dom
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
 
   - package-ecosystem: github-actions
     directory: /
@@ -25,6 +36,9 @@ updates:
     directory: /infra/docker
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
     cooldown:
       default-days: 7
     groups:
@@ -35,6 +49,9 @@ updates:
     directory: /infra/compose
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: postgres
+        update-types: ['version-update:semver-major']
     cooldown:
       default-days: 7
     groups:
