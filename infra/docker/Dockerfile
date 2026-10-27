@@ -45,9 +45,10 @@ RUN set -eu; \
     mkdir x264; \
     tar -xzf x264.tar.gz -C x264 --strip-components=1; \
     cd x264; \
-    ./configure --prefix=/opt/x264 --enable-static --disable-cli --enable-pic --bit-depth=8; \
+    ./configure --prefix=/opt/x264 --enable-static --disable-cli --enable-pic --bit-depth=8 --disable-opencl; \
     make -j"$(nproc)"; \
-    make install-lib-static
+    make install-lib-static; \
+    install -D -m 0644 COPYING /opt/ffmpeg/licenses/x264-COPYING
 RUN set -eu; \
     curl -fsSL -o ffmpeg.tar.xz "${FFMPEG_URL}"; \
     echo "${FFMPEG_SHA256}  ffmpeg.tar.xz" | sha256sum -c -; \
@@ -71,7 +72,8 @@ RUN set -eu; \
       --enable-parser=h264,hevc,aac,aac_latm,vp8,vp9,opus,vorbis,mpegaudio,ac3,flac,mjpeg \
       --enable-filter=scale,format,fps,setsar,transpose,hflip,vflip,null,anull,aresample,aformat,crop; \
     make -j"$(nproc)"; \
-    install -D -m 0755 -t /opt/ffmpeg/bin ffmpeg ffprobe
+    install -D -m 0755 -t /opt/ffmpeg/bin ffmpeg ffprobe; \
+    install -D -m 0644 COPYING.GPLv2 /opt/ffmpeg/licenses/FFmpeg-COPYING.GPLv2
 RUN set -eu; \
     for tool in /opt/ffmpeg/bin/*; do \
       extra=$(ldd "$tool" | awk '{ print $1 }' | grep -vE '^(linux-vdso\.so\.1|libc\.so\.6|libm\.so\.6|libpthread\.so\.0|libdl\.so\.2|/lib(64)?/ld-linux[-a-z0-9_]*\.so\.[0-9]+)$' || true); \

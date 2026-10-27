@@ -30,7 +30,8 @@ export function renderNative(components: readonly NativeComponent[]): string {
   const intro = `Native components
 
 The ffmpeg and ffprobe binaries are built unmodified from the sources below and
-run as separate processes; they are not linked into Kronaut.
+run as separate processes; they are not linked into Kronaut. The full licence
+texts ship in the image under /opt/ffmpeg/licenses.
 `;
   const entries = components.map((c) =>
     [
