@@ -280,6 +280,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Notifications_UnreadInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Password_Min_LengthInputs */
 /** @typedef {{}} Password_Too_LongInputs */
+/** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
@@ -4586,6 +4587,21 @@ export const password_too_long = /** @type {((inputs?: Password_Too_LongInputs, 
 	if (locale === "sk") return __sk.password_too_long(inputs)
 	if (locale === "cs") return __cs.password_too_long(inputs)
 	return __en.password_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Text customized for this channel" |
+*
+* @param {Post_CustomizedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_customized = /** @type {((inputs?: Post_CustomizedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_CustomizedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_customized(inputs)
+	if (locale === "cs") return __cs.post_customized(inputs)
+	return __en.post_customized(inputs)
 });
 /**
 * | output |

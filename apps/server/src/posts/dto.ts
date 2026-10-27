@@ -166,6 +166,9 @@ async function loadItems(trx: TenantDb, workspaceId: string, postId: string) {
 async function loadDestinations(trx: TenantDb, workspaceId: string, postId: string) {
   const destinations = await trx
     .selectFrom('post_destinations as d')
+    .innerJoin('social_accounts as a', (join) =>
+      join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
+    )
     .leftJoin('post_variants as v', (join) =>
       join.onRef('v.workspace_id', '=', 'd.workspace_id').onRef('v.id', '=', 'd.variant_id'),
     )
@@ -188,8 +191,9 @@ async function loadDestinations(trx: TenantDb, workspaceId: string, postId: stri
     ])
     .where('d.workspace_id', '=', workspaceId)
     .where('d.post_id', '=', postId)
-    .orderBy('d.created_at')
-    .orderBy('d.id')
+    .orderBy('a.created_at')
+    .orderBy('a.id')
+    .orderBy('d.publish_type')
     .execute();
   return destinations.map((d) => ({
     variantId: d.is_default === false ? d.variant_id : null,
