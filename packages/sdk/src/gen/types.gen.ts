@@ -782,6 +782,7 @@ export type ChannelsDisconnectResponse = ChannelsDisconnectResponses[keyof Chann
 
 export type MediaUploadData = {
     body: {
+        aiGenerated?: boolean;
         dataBase64: string;
         filename?: string;
     };
@@ -809,6 +810,7 @@ export type MediaUploadResponses = {
      * OK
      */
     201: {
+        aiGenerated: boolean;
         bytes: number | null;
         height: number | null;
         id: string;
@@ -846,6 +848,7 @@ export type MediaGetResponses = {
      * OK
      */
     200: {
+        aiGenerated: boolean;
         bytes: number | null;
         height: number | null;
         id: string;

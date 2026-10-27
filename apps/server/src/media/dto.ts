@@ -14,6 +14,7 @@ export const MediaAssetSchema = z.object({
     .regex(/^[0-9a-f]{64}$/)
     .nullable(),
   state: z.enum(['uploading', 'quarantined', 'processing', 'ready', 'rejected']),
+  aiGenerated: z.boolean(),
 });
 
 export type MediaAssetDto = z.output<typeof MediaAssetSchema>;
@@ -27,6 +28,7 @@ export const MEDIA_ASSET_COLUMNS = [
   'height',
   'sha256',
   'state',
+  'ai_generated',
 ] as const;
 
 export interface MediaAssetRow {
@@ -38,6 +40,7 @@ export interface MediaAssetRow {
   readonly height: number | null;
   readonly sha256: Buffer | null;
   readonly state: string;
+  readonly ai_generated: boolean;
 }
 
 export function toMediaAssetDto(row: MediaAssetRow): MediaAssetDto {
@@ -50,6 +53,7 @@ export function toMediaAssetDto(row: MediaAssetRow): MediaAssetDto {
     height: row.height,
     sha256: row.sha256 === null ? null : row.sha256.toString('hex'),
     state: row.state,
+    aiGenerated: row.ai_generated,
   });
 }
 

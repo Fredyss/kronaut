@@ -134,25 +134,23 @@ export function policy(mode: 'none' | 'required') {
   return { workspace: null, brands: [], effective: values };
 }
 
+export const MEDIA_ASSET = {
+  id: MEDIA_ID,
+  kind: 'image',
+  mime: 'image/jpeg',
+  bytes: 4,
+  width: 1,
+  height: 1,
+  sha256: null,
+  state: 'ready',
+  aiGenerated: false,
+};
+
 export function defaultResponse(path: string): Response {
   if (path === '/v1/me') return Response.json(ME);
   if (path === '/v1/workspaces/ws_1/approval-policy') return Response.json(policy('none'));
   if (path === '/v1/workspaces/ws_1/channels') return Response.json({ items: CHANNELS });
-  if (path === '/v1/workspaces/ws_1/media') {
-    return Response.json(
-      {
-        id: MEDIA_ID,
-        kind: 'image',
-        mime: 'image/jpeg',
-        bytes: 4,
-        width: 1,
-        height: 1,
-        sha256: null,
-        state: 'ready',
-      },
-      { status: 201 },
-    );
-  }
+  if (path === '/v1/workspaces/ws_1/media') return Response.json(MEDIA_ASSET, { status: 201 });
   if (path === '/v1/workspaces/ws_1/posts') {
     return Response.json(post('draft', 'draft'), { status: 201 });
   }

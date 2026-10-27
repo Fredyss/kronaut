@@ -5,6 +5,7 @@ export interface PickedImage {
   readonly file: File;
   readonly thumb: string | null;
   readonly altText: string;
+  readonly aiGenerated: boolean;
 }
 
 export interface Content {

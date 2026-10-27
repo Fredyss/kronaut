@@ -10,6 +10,7 @@ export function ImageRow({
   count,
   disabled,
   onAlt,
+  onAi,
   onMove,
   onRemove,
 }: {
@@ -18,10 +19,12 @@ export function ImageRow({
   readonly count: number;
   readonly disabled: boolean;
   readonly onAlt: (value: string) => void;
+  readonly onAi: (value: boolean) => void;
   readonly onMove: (offset: -1 | 1) => void;
   readonly onRemove: () => void;
 }) {
   const altId = useId();
+  const aiHintId = useId();
   const position = index + 1;
   return (
     <li className="flex flex-wrap items-start gap-3 rounded-lg border p-3">
@@ -49,6 +52,20 @@ export function ImageRow({
         />
         <p className="text-muted-foreground text-xs">
           {m.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
+        </p>
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={image.aiGenerated}
+            disabled={disabled}
+            aria-describedby={aiHintId}
+            onChange={(event) => onAi(event.currentTarget.checked)}
+            className="size-4 accent-primary"
+          />
+          {m.compose_ai_generated_label({ position })}
+        </label>
+        <p id={aiHintId} className="text-muted-foreground text-xs">
+          {m.compose_ai_generated_hint()}
         </p>
       </div>
       <div className="flex flex-col gap-1">

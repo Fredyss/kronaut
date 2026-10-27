@@ -64,7 +64,8 @@ export function ImagesSection({ fileId, images: state, pending }: ImagesSectionP
               index={index}
               count={images.length}
               disabled={pending}
-              onAlt={(value) => update(image.id, value)}
+              onAlt={(altText) => update(image.id, { altText })}
+              onAi={(aiGenerated) => update(image.id, { aiGenerated })}
               onMove={(offset) => move(index, offset)}
               onRemove={() => remove(image.id)}
             />

@@ -44,7 +44,14 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
       } else if (accepted.length >= room) {
         found.push(m.compose_images_limit({ count: MAX_IMAGES }));
         break;
-      } else accepted.push({ id: crypto.randomUUID(), file, thumb: null, altText: '' });
+      } else
+        accepted.push({
+          id: crypto.randomUUID(),
+          file,
+          thumb: null,
+          altText: '',
+          aiGenerated: false,
+        });
     }
     setProblems(found);
     if (accepted.length === 0) return;
@@ -55,8 +62,8 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
       });
     }
   };
-  const update = (id: string, altText: string) =>
-    edit((current) => current.map((item) => (item.id === id ? { ...item, altText } : item)));
+  const update = (id: string, patch: Partial<Pick<PickedImage, 'altText' | 'aiGenerated'>>) =>
+    edit((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   const move = (index: number, offset: -1 | 1) => edit((current) => swap(current, index, offset));
   const remove = (id: string) => edit((current) => current.filter((item) => item.id !== id));
   return { images, problems, maxSize, pick, update, move, remove };

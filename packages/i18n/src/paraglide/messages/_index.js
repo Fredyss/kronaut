@@ -127,6 +127,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Compose_Ai_Generated_HintInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
@@ -140,6 +142,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
@@ -2293,6 +2296,36 @@ export const channels_title = /** @type {((inputs?: Channels_TitleInputs, option
 	return __en.channels_title(inputs)
 });
 /**
+* | output |
+* | --- |
+* | "Instagram marks it as made with AI. The other networks have no such label." |
+*
+* @param {Compose_Ai_Generated_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_ai_generated_hint = /** @type {((inputs?: Compose_Ai_Generated_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Ai_Generated_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_ai_generated_hint(inputs)
+	if (locale === "cs") return __cs.compose_ai_generated_hint(inputs)
+	return __en.compose_ai_generated_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Image {position} is AI-generated" |
+*
+* @param {Compose_Ai_Generated_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_ai_generated_label = /** @type {((inputs: Compose_Ai_Generated_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Ai_Generated_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_ai_generated_label(inputs)
+	if (locale === "cs") return __cs.compose_ai_generated_label(inputs)
+	return __en.compose_ai_generated_label(inputs)
+});
+/**
 * | countPlural | output |
 * | --- | --- |
 * | "one" | "Describe the image for people who can't see it. Up to {count} character." |
@@ -2488,6 +2521,21 @@ export const compose_date = /** @type {((inputs?: Compose_DateInputs, options?: 
 	if (locale === "sk") return __sk.compose_date(inputs)
 	if (locale === "cs") return __cs.compose_date(inputs)
 	return __en.compose_date(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Image {position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image {position} is AI-generated” to post it, ..." |
+*
+* @param {Compose_Error_Ai_MarkedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_ai_marked = /** @type {((inputs: Compose_Error_Ai_MarkedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Ai_MarkedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_ai_marked(inputs)
+	if (locale === "cs") return __cs.compose_error_ai_marked(inputs)
+	return __en.compose_error_ai_marked(inputs)
 });
 /**
 * | output |

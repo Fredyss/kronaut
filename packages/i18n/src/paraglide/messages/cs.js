@@ -125,6 +125,8 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Compose_Ai_Generated_HintInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
@@ -138,6 +140,7 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
@@ -916,6 +919,14 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Kanály`)
 };
 
+export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Instagram ho označí jako vytvořený pomocí AI. Ostatní sítě takové označení nemají.`)
+};
+
+export const compose_ai_generated_label = /** @type {(inputs: Compose_Ai_Generated_LabelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obrázek ${i?.position} je vytvořený pomocí AI`)
+};
+
 export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Popište obrázek pro lidi, kteří ho nevidí. Nejvýš ${i?.count} znak.`);
@@ -974,6 +985,10 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 
 export const compose_date = /** @type {(inputs: Compose_DateInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Datum`)
+};
+
+export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obrázek ${i?.position} je v tomto pracovním prostoru už označený jako vytvořený pomocí AI a toto označení zatím nejde odstranit. Pokud ho chcete zveřejnit, zaškrtněte „Obrázek ${i?.position} je vytvořený pomocí AI“, nebo použijte jiný obrázek.`)
 };
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {

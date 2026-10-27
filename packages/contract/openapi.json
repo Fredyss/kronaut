@@ -2370,7 +2370,7 @@
     },
     "/v1/workspaces/{workspaceId}/media": {
       "post": {
-        "description": "Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage.",
+        "description": "Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage. `aiGenerated: true` marks the image as AI-generated; uploading the same image again never clears the mark.",
         "operationId": "media.upload",
         "parameters": [
           {
@@ -2397,6 +2397,9 @@
             "application/json": {
               "schema": {
                 "properties": {
+                  "aiGenerated": {
+                    "type": "boolean"
+                  },
                   "dataBase64": {
                     "contentEncoding": "base64",
                     "format": "base64",
@@ -2428,6 +2431,9 @@
                 "schema": {
                   "additionalProperties": false,
                   "properties": {
+                    "aiGenerated": {
+                      "type": "boolean"
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -2511,7 +2517,8 @@
                     "width",
                     "height",
                     "sha256",
-                    "state"
+                    "state",
+                    "aiGenerated"
                   ],
                   "type": "object"
                 }
@@ -2577,6 +2584,9 @@
                 "schema": {
                   "additionalProperties": false,
                   "properties": {
+                    "aiGenerated": {
+                      "type": "boolean"
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -2660,7 +2670,8 @@
                     "width",
                     "height",
                     "sha256",
-                    "state"
+                    "state",
+                    "aiGenerated"
                   ],
                   "type": "object"
                 }

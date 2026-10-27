@@ -78,10 +78,15 @@ export async function prepareImage(input: PrepareImageInput): Promise<PreparedIm
   };
 }
 
+export interface IngestTarget {
+  readonly workspaceId: string;
+  readonly aiGenerated: boolean;
+}
+
 export async function ingestImage(
   trx: TenantDb,
   store: MediaStore,
-  workspaceId: string,
+  { workspaceId, aiGenerated }: IngestTarget,
   prepared: PreparedImage,
 ): Promise<MediaAssetDto> {
   const { master, image, sha256: digest } = prepared;
@@ -106,6 +111,7 @@ export async function ingestImage(
       width: image.width,
       height: image.height,
       original_name: prepared.originalName,
+      ai_generated: aiGenerated,
       uploaded_by_user_id: sql<string | null>`app_actor_id('user')`,
       uploaded_by_grant_id: sql<string | null>`app_actor_id('grant')`,
     })
@@ -121,10 +127,17 @@ export async function ingestImage(
     .where('storage_key', '=', key)
     .forUpdate()
     .executeTakeFirstOrThrow();
-  if (existing.deleted_at === null) return toMediaAssetDto(existing);
+  if (existing.deleted_at === null && (existing.ai_generated || !aiGenerated)) {
+    return toMediaAssetDto(existing);
+  }
   const restored = await trx
     .updateTable('media_assets')
-    .set({ deleted_at: null, original_purged_at: null, updated_at: sql<Date>`now()` })
+    .set({
+      deleted_at: null,
+      original_purged_at: null,
+      ai_generated: existing.ai_generated || aiGenerated,
+      updated_at: sql<Date>`now()`,
+    })
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', existing.id)
     .returning(MEDIA_ASSET_COLUMNS)

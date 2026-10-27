@@ -28,12 +28,14 @@ export const mediaUploadRoute = defineRoute({
       .regex(/^\P{Cc}*$/u)
       .optional(),
     dataBase64: z.base64().min(1).max(BASE64_MAX_LENGTH),
+    aiGenerated: z.boolean().optional(),
   }),
   response: MediaAssetSchema,
   status: 201,
   idempotency: true,
   summary: 'Upload an image',
-  description: 'Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage.',
+  description:
+    'Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage. `aiGenerated: true` marks the image as AI-generated; uploading the same image again never clears the mark.',
   tags: ['media'],
 });
 
@@ -69,7 +71,10 @@ export function mediaRoutes(deps: MediaRouteDeps): BoundRoute[] {
         bytes: Buffer.from(body.dataBase64, 'base64'),
         ...(body.filename === undefined ? {} : { filename: body.filename }),
       });
-      const asset = await ctx.tenant((trx) => ingestImage(trx, deps.store, workspaceId, prepared));
+      const aiGenerated = body.aiGenerated ?? false;
+      const asset = await ctx.tenant((trx) =>
+        ingestImage(trx, deps.store, { workspaceId, aiGenerated }, prepared),
+      );
       return { status: 201, body: asset };
     }),
     bindRoute(mediaGetRoute, async ({ params }, ctx) => {

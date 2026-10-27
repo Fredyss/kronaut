@@ -218,6 +218,8 @@
       }
     }
   ],
+  "compose_ai_generated_label": "Obrázok {position} je vytvorený pomocou AI",
+  "compose_ai_generated_hint": "Instagram ho označí ako vytvorený pomocou AI. Ostatné siete takéto označenie nemajú.",
   "compose_image_move_up": "Posunúť obrázok {position} vyššie",
   "compose_image_move_down": "Posunúť obrázok {position} nižšie",
   "compose_image_remove": "Odstrániť",
@@ -252,6 +254,7 @@
   "compose_error_empty": "Napíšte text alebo pridajte obrázok.",
   "compose_error_when_missing": "Vyberte dátum a čas.",
   "compose_error_upload": "Obrázok {position} sa nepodarilo nahrať.",
+  "compose_error_ai_marked": "Obrázok {position} je v tomto pracovnom priestore už označený ako vytvorený pomocou AI a toto označenie zatiaľ nejde odstrániť. Ak ho chcete uverejniť, zaškrtnite „Obrázok {position} je vytvorený pomocou AI“, alebo použite iný obrázok.",
   "compose_error_fix": "Príspevok zatiaľ nemožno odoslať. Opravte nasledujúce a skúste to znova:",
   "compose_error_conflict": "Príspevok sa medzitým zmenil. Skúste to znova.",
   "compose_issue_on_channel": "{channel}: {message}",
