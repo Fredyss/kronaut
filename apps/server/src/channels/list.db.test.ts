@@ -327,7 +327,7 @@ describe('channel listing', () => {
         aspects: postTypes.map((postType) => postType.imageAspect),
       })),
     ).toEqual([
-      { provider: 'instagram', preview: 'media-grid', aspects: [aspect, aspect] },
+      { provider: 'instagram', preview: 'media-grid', aspects: [aspect, aspect, null] },
       { provider: 'bluesky', preview: 'short-feed', aspects: [null] },
     ]);
   });

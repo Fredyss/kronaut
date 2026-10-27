@@ -3,12 +3,13 @@ import { type ErrorFacts, fail, type GraphFailure, NotReady } from '../_kit/meta
 
 export const QUOTA_RESET_MS = 60 * 60 * 1000;
 
-const RECREATE_SUBCODES = new Set([2207003, 2207020, 2207052]);
+const RECREATE_SUBCODES = new Set([2207003, 2207020, 2207052, 2207053]);
 const AUTH_EXPIRED_SUBCODES = new Set([2207005, 2207006]);
 export const PERMANENT_SUBCODES: ReadonlyMap<number, string> = new Map([
   [2207050, 'account_restricted'],
   [2207051, 'suspected_spam'],
   [2207010, 'caption_too_long'],
+  [2207026, 'video_format_unsupported'],
 ]);
 const SUBCODE_TEMPORARY = 2207008;
 const SUBCODE_NOT_READY = 2207027;
