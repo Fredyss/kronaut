@@ -30,7 +30,7 @@ Phase 1.1 adds video for every provider, Instagram Reels first (ADR-0052). Image
   - A part is accepted only while the row is `uploading` and unexpired; otherwise it's 409 `upload_closed`.
   - A repeat of the same part replaces it. Parts are files under the asset's staging directory, so no table tracks them.
 - `POST /v1/workspaces/:workspaceId/media/:mediaId/complete` checks that every part is present and that the total equals `bytes`. It then sets the state to `processing` and enqueues a `media_process` job (job key `media:<id>`). Calling it again is a no-op.
-- **Serialization:** a part write and `complete` both lock the asset row (`FOR UPDATE`) for the whole request. A part therefore can't land while `complete` validates, or after it, and the job reads parts that no longer change.
+- **Serialization:** a part body is streamed to a temporary file first, with no transaction open. Only then does the request lock the asset row (`FOR UPDATE`), check that it is `uploading` and unexpired, rename the file into place and commit. `complete` holds the same lock while it validates and changes the state, and the GC re-check takes it before deleting. A slow client therefore holds no connection or lock, a part can't land while `complete` validates or after it, and the job reads parts that no longer change.
 - **Expiry:** a migration replaces `sweep_media_gc` so that `uploading` rows become candidates 24 h after `created_at`, instead of 7 d. The media GC job, re-checking inside `withTenant()` as for every candidate, deletes the row together with the asset's staging directory. No other cleanup path exists.
 
 ### Conversion
