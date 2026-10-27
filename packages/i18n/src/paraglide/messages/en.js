@@ -435,10 +435,10 @@ export const approval_outside_schedule = /** @type {(inputs: Approval_Outside_Sc
 	return /** @type {LocalizedString} */ (`That time is outside the approved window. Pick an approved time or request approval again.`)
 };
 
-export const approval_progress = /** @type {(inputs: Approval_ProgressInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const approval_progress = /** @type {(inputs: Approval_ProgressInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.approved} of ${i?.count} approval`);
 	return /** @type {LocalizedString} */ (`${i?.approved} of ${i?.count} approvals`)
-	
 };
 
 export const approval_reauth_body = /** @type {(inputs: Approval_Reauth_BodyInputs) => LocalizedString} */ () => {
@@ -517,10 +517,10 @@ export const approval_title = /** @type {(inputs: Approval_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Approval`)
 };
 
-export const approval_tolerance = /** @type {(inputs: Approval_ToleranceInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const approval_tolerance = /** @type {(inputs: Approval_ToleranceInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`± ${i?.count} minute`);
 	return /** @type {LocalizedString} */ (`± ${i?.count} minutes`)
-	
 };
 
 export const approval_void_content = /** @type {(inputs: Approval_Void_ContentInputs) => LocalizedString} */ () => {
@@ -583,10 +583,10 @@ export const calendar_load_failed = /** @type {(inputs: Calendar_Load_FailedInpu
 	return /** @type {LocalizedString} */ (`The calendar couldn't be loaded. Try again.`)
 };
 
-export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`+${i?.count} more`);
 	return /** @type {LocalizedString} */ (`+${i?.count} more`)
-	
 };
 
 export const calendar_move_approval = /** @type {(inputs: Calendar_Move_ApprovalInputs) => LocalizedString} */ () => {
@@ -813,10 +813,10 @@ export const channels_error_state_invalid = /** @type {(inputs: Channels_Error_S
 	return /** @type {LocalizedString} */ (`The connection link expired or was already used. Start again.`)
 };
 
-export const channels_error_too_many_accounts = /** @type {(inputs: Channels_Error_Too_Many_AccountsInputs) => LocalizedString} */ (i) => {const maxPlural = registry.plural("en", i?.max, {}, true);
+export const channels_error_too_many_accounts = /** @type {(inputs: Channels_Error_Too_Many_AccountsInputs) => LocalizedString} */ (i) => {
+	const maxPlural = registry.plural("en", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`Too many accounts were shared. Connect again and select at most ${i?.max} account.`);
 	return /** @type {LocalizedString} */ (`Too many accounts were shared. Connect again and select at most ${i?.max} accounts.`)
-	
 };
 
 export const channels_expires = /** @type {(inputs: Channels_ExpiresInputs) => LocalizedString} */ (i) => {
@@ -871,10 +871,10 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Channels`)
 };
 
-export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Describe the image for people who can't see it. Up to ${i?.count} character.`);
 	return /** @type {LocalizedString} */ (`Describe the image for people who can't see it. Up to ${i?.count} characters.`)
-	
 };
 
 export const compose_alt_text_label = /** @type {(inputs: Compose_Alt_Text_LabelInputs) => LocalizedString} */ (i) => {
@@ -893,10 +893,10 @@ export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_N
 	return /** @type {LocalizedString} */ (`Needs at least one image.`)
 };
 
-export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`This network accepts at most ${i?.count} image.`);
 	return /** @type {LocalizedString} */ (`This network accepts at most ${i?.count} images.`)
-	
 };
 
 export const compose_channel_unsupported = /** @type {(inputs: Compose_Channel_UnsupportedInputs) => LocalizedString} */ () => {
@@ -995,16 +995,16 @@ export const compose_images_add = /** @type {(inputs: Compose_Images_AddInputs) 
 	return /** @type {LocalizedString} */ (`Add images`)
 };
 
-export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Up to ${i?.count} image: JPEG, PNG or WebP, at most ${i?.max} each.`);
 	return /** @type {LocalizedString} */ (`Up to ${i?.count} images: JPEG, PNG or WebP, at most ${i?.max} each.`)
-	
 };
 
-export const compose_images_limit = /** @type {(inputs: Compose_Images_LimitInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const compose_images_limit = /** @type {(inputs: Compose_Images_LimitInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} image.`);
 	return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} images.`)
-	
 };
 
 export const compose_images_title = /** @type {(inputs: Compose_Images_TitleInputs) => LocalizedString} */ () => {
@@ -1027,10 +1027,10 @@ export const compose_limit_too_long = /** @type {(inputs: Compose_Limit_Too_Long
 	return /** @type {LocalizedString} */ (`Too long for ${i?.channel} (${i?.count}/${i?.max})`)
 };
 
-export const compose_limit_too_many_links = /** @type {(inputs: Compose_Limit_Too_Many_LinksInputs) => LocalizedString} */ (i) => {const maxPlural = registry.plural("en", i?.max, {}, true);
+export const compose_limit_too_many_links = /** @type {(inputs: Compose_Limit_Too_Many_LinksInputs) => LocalizedString} */ (i) => {
+	const maxPlural = registry.plural("en", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`${i?.channel} allows up to ${i?.max} link`);
 	return /** @type {LocalizedString} */ (`${i?.channel} allows up to ${i?.max} links`)
-	
 };
 
 export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs) => LocalizedString} */ (i) => {
@@ -1209,10 +1209,10 @@ export const home_empty_title = /** @type {(inputs: Home_Empty_TitleInputs) => L
 	return /** @type {LocalizedString} */ (`Nothing scheduled yet`)
 };
 
-export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} item needs action`);
 	return /** @type {LocalizedString} */ (`${i?.count} items need action`)
-	
 };
 
 export const inbox_badge_overflow = /** @type {(inputs: Inbox_Badge_OverflowInputs) => LocalizedString} */ (i) => {
@@ -1287,10 +1287,10 @@ export const inbox_sent_again = /** @type {(inputs: Inbox_Sent_AgainInputs) => L
 	return /** @type {LocalizedString} */ (`It will be sent again shortly.`)
 };
 
-export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {const totalPlural = registry.plural("en", i?.total, {}, true);
+export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {
+	const totalPlural = registry.plural("en", i?.total, {}, true);
 	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} item.`);
 	return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} items.`)
-	
 };
 
 export const issue_alt_text_required = /** @type {(inputs: Issue_Alt_Text_RequiredInputs) => LocalizedString} */ () => {
@@ -1489,10 +1489,10 @@ export const notification_unconfirmed = /** @type {(inputs: Notification_Unconfi
 	return /** @type {LocalizedString} */ (`Not sure it was posted to ${i?.account}`)
 };
 
-export const notifications_button = /** @type {(inputs: Notifications_ButtonInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const notifications_button = /** @type {(inputs: Notifications_ButtonInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Notifications, ${i?.count} unread`);
 	return /** @type {LocalizedString} */ (`Notifications, ${i?.count} unread`)
-	
 };
 
 export const notifications_empty = /** @type {(inputs: Notifications_EmptyInputs) => LocalizedString} */ () => {
@@ -1519,10 +1519,10 @@ export const notifications_unread = /** @type {(inputs: Notifications_UnreadInpu
 	return /** @type {LocalizedString} */ (`Unread`)
 };
 
-export const password_min_length = /** @type {(inputs: Password_Min_LengthInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const password_min_length = /** @type {(inputs: Password_Min_LengthInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Use at least ${i?.count} character.`);
 	return /** @type {LocalizedString} */ (`Use at least ${i?.count} characters.`)
-	
 };
 
 export const password_too_long = /** @type {(inputs: Password_Too_LongInputs) => LocalizedString} */ () => {
@@ -1533,10 +1533,10 @@ export const post_destinations_title = /** @type {(inputs: Post_Destinations_Tit
 	return /** @type {LocalizedString} */ (`Channels`)
 };
 
-export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} image`);
 	return /** @type {LocalizedString} */ (`${i?.count} images`)
-	
 };
 
 export const post_not_found = /** @type {(inputs: Post_Not_FoundInputs) => LocalizedString} */ () => {
@@ -1611,10 +1611,10 @@ export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString
 	return /** @type {LocalizedString} */ (`View post`)
 };
 
-export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post scheduled`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts scheduled`)
-	
 };
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
@@ -1777,10 +1777,10 @@ export const settings_approvals_title = /** @type {(inputs: Settings_Approvals_T
 	return /** @type {LocalizedString} */ (`Approvals`)
 };
 
-export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {const countPlural = registry.plural("en", i?.count, {}, true);
+export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approval`);
 	return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approvals`)
-	
 };
 
 export const settings_brands_title = /** @type {(inputs: Settings_Brands_TitleInputs) => LocalizedString} */ () => {
