@@ -93,6 +93,10 @@
 /** @typedef {{}} Channels_ConnectedInputs */
 /** @typedef {{ names: NonNullable<unknown> }} Channels_Connected_ListInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connected_NamedInputs */
+/** @typedef {{}} Channels_DisconnectInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
+/** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
 /** @typedef {{}} Channels_Error_App_ConfigInputs */
@@ -774,6 +778,22 @@ export const channels_connected_list = /** @type {(inputs: Channels_Connected_Li
 
 export const channels_connected_named = /** @type {(inputs: Channels_Connected_NamedInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Kanál ${i?.name} je připojený.`)
+};
+
+export const channels_disconnect = /** @type {(inputs: Channels_DisconnectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odpojit`)
+};
+
+export const channels_disconnect_body = /** @type {(inputs: Channels_Disconnect_BodyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odpojit ${i?.name}? Příspěvky naplánované do tohoto kanálu se nezveřejní. Později ho můžete znovu připojit.`)
+};
+
+export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconnect_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odpojit kanál`)
+};
+
+export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.name} byl odpojen.`)
 };
 
 export const channels_empty_body = /** @type {(inputs: Channels_Empty_BodyInputs) => LocalizedString} */ () => {

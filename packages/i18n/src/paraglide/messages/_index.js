@@ -95,6 +95,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_ConnectedInputs */
 /** @typedef {{ names: NonNullable<unknown> }} Channels_Connected_ListInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connected_NamedInputs */
+/** @typedef {{}} Channels_DisconnectInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
+/** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
 /** @typedef {{}} Channels_Error_App_ConfigInputs */
@@ -1802,6 +1806,66 @@ export const channels_connected_named = /** @type {((inputs: Channels_Connected_
 	if (locale === "sk") return __sk.channels_connected_named(inputs)
 	if (locale === "cs") return __cs.channels_connected_named(inputs)
 	return __en.channels_connected_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Disconnect" |
+*
+* @param {Channels_DisconnectInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect = /** @type {((inputs?: Channels_DisconnectInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_DisconnectInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect(inputs)
+	if (locale === "cs") return __cs.channels_disconnect(inputs)
+	return __en.channels_disconnect(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later." |
+*
+* @param {Channels_Disconnect_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_body = /** @type {((inputs: Channels_Disconnect_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_body(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_body(inputs)
+	return __en.channels_disconnect_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Disconnect channel" |
+*
+* @param {Channels_Disconnect_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_confirm = /** @type {((inputs?: Channels_Disconnect_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_confirm(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_confirm(inputs)
+	return __en.channels_disconnect_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{name} disconnected." |
+*
+* @param {Channels_DisconnectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnected = /** @type {((inputs: Channels_DisconnectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_DisconnectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnected(inputs)
+	if (locale === "cs") return __cs.channels_disconnected(inputs)
+	return __en.channels_disconnected(inputs)
 });
 /**
 * | output |

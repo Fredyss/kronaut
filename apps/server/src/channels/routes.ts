@@ -4,6 +4,7 @@ import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { bindConnectCallback } from './connect-callback.ts';
 import { bindConnectStart } from './connect-start.ts';
 import { type ChannelRouteDeps, connectsByRedirect, SYSTEM } from './deps.ts';
+import { bindDisconnect } from './disconnect.ts';
 import { channelListRoute, channelProvidersRoute, listChannels, readyProviders } from './list.ts';
 import { bindPublicDocument } from './public-document.ts';
 
@@ -47,5 +48,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindPublicDocument(deps),
     bindList(deps),
     bindConnectable(deps),
+    bindDisconnect(),
   ];
 }

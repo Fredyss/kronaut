@@ -45,6 +45,7 @@ let ownerId: string;
 export let owner: string;
 export let admin: string;
 export let editor: string;
+export let viewer: string;
 export const lines: string[] = [];
 
 async function createUser(label: string): Promise<string> {
@@ -189,6 +190,7 @@ export async function startConnect(
   ownerId = await createUser('owner');
   const adminId = await createUser('admin');
   const editorId = await createUser('editor');
+  const viewerId = await createUser('viewer');
   workspaceId = await db.withActor({ kind: 'user', id: ownerId }, async (trx) => {
     const result = await sql<{ workspace_id: string }>`
       select workspace_id from provision_organization('Org', 'Workspace', 'ws-connect', 'Europe/Bratislava')
@@ -207,6 +209,7 @@ export async function startConnect(
       .values([
         { workspace_id: workspaceId, user_id: adminId, role: 'admin' },
         { workspace_id: workspaceId, user_id: editorId, role: 'editor' },
+        { workspace_id: workspaceId, user_id: viewerId, role: 'viewer' },
       ])
       .execute();
     const { id: grantId } = await trx
@@ -236,6 +239,7 @@ export async function startConnect(
   owner = await login('owner');
   admin = await login('admin');
   editor = await login('editor');
+  viewer = await login('viewer');
 }
 
 export async function stopConnect(): Promise<void> {
