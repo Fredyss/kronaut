@@ -3,15 +3,18 @@ import { readdirSync, readFileSync } from 'node:fs';
 const ASSETS = 'dist/web/assets';
 
 // Only what index.html loads is the shell; chunks shared by lazy routes arrive later and are budgeted apart.
+// The preloaded English catalog is budgeted with the other catalogs.
 function shellChunks() {
   const html = readFileSync('dist/web/index.html', 'utf8');
-  return [...new Set(html.match(/assets\/[^"']+\.js/g) ?? [])].map((path) => `dist/web/${path}`);
+  return [...new Set(html.match(/assets\/[^"']+\.js/g) ?? [])]
+    .filter((path) => !path.startsWith('assets/en-'))
+    .map((path) => `dist/web/${path}`);
 }
 
 const LAZY = {
-  'en messages JS': ['en', '15 KB'],
-  'sk messages JS': ['sk', '15 KB'],
-  'cs messages JS': ['cs', '15 KB'],
+  'en messages JS': ['en', '12 KB'],
+  'sk messages JS': ['sk', '12 KB'],
+  'cs messages JS': ['cs', '12 KB'],
   'composer route JS': ['compose', '40 KB'],
   'post status route JS': ['post', '40 KB'],
   'calendar route JS': ['calendar', '40 KB'],
