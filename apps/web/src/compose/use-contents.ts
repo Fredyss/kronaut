@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Channel } from '../api.ts';
-import { choiceFor } from './choice.ts';
+import { choiceFor, type MediaFacts } from './choice.ts';
 import {
+  type Content,
   type ContentKey,
   type Contents,
   contentOf,
@@ -14,13 +15,27 @@ import {
 } from './contents.ts';
 import type { Doc } from './doc.ts';
 import { useImages } from './use-images.ts';
+import { useMedia } from './use-media.ts';
+import { useVideos } from './use-video.ts';
 
-export function useContents(list: readonly Channel[], selected: ReadonlySet<string>) {
+function videoIds(contents: Contents): string[] {
+  const all: Content[] = [contents.base, ...contents.customized.values()];
+  return [...new Set(all.flatMap((content) => (content.video === null ? [] : [content.video.id])))];
+}
+
+export function useContents(
+  workspaceId: string,
+  list: readonly Channel[],
+  selected: ReadonlySet<string>,
+) {
   const [contents, setContents] = useState<Contents>(EMPTY_CONTENTS);
   const [active, setActive] = useState<ContentKey>(null);
-  const filesFor = (channelId: string) =>
-    effective(contents, channelId).images.map((image) => image.file);
-  const choiceOf = (channel: Channel) => choiceFor(channel, filesFor(channel.id));
+  const videos = useVideos(workspaceId, videoIds(contents));
+  const mediaFor = (channelId: string): MediaFacts => {
+    const content = effective(contents, channelId);
+    return { images: content.images.map((image) => image.file), video: content.video !== null };
+  };
+  const choiceOf = (channel: Channel) => choiceFor(channel, mediaFor(channel.id));
   const tabs = list.filter(
     (channel) =>
       selected.has(channel.id) &&
@@ -30,17 +45,22 @@ export function useContents(list: readonly Channel[], selected: ReadonlySet<stri
   if (shown !== active) setActive(shown);
   const target = shown !== null && contents.customized.has(shown) ? shown : null;
   const content = contentOf(contents, target) ?? contents.base;
+  const edit = (change: (content: Content) => Content) =>
+    setContents((current) => editContent(current, target, change));
 
   const images = useImages({
     images: content.images,
-    edit: (change) =>
-      setContents((current) =>
-        editContent(current, target, (c) => ({ ...c, images: change(c.images) })),
-      ),
+    edit: (change) => edit((c) => ({ ...c, images: change(c.images) })),
     setThumb: (id, thumb) =>
       setContents((current) =>
         editImages(current, (image) => (image.id === id ? { ...image, thumb } : image)),
       ),
+  });
+  const media = useMedia({
+    images,
+    video: content.video?.id ?? null,
+    videos,
+    setVideo: (id) => edit((c) => ({ ...c, video: id === null ? null : { id } })),
   });
 
   return {
@@ -50,12 +70,12 @@ export function useContents(list: readonly Channel[], selected: ReadonlySet<stri
     select: setActive,
     editing: shown === null || target !== null,
     doc: content.doc,
-    setDoc: (doc: Doc) =>
-      setContents((current) => editContent(current, target, (c) => ({ ...c, doc }))),
+    setDoc: (doc: Doc) => edit((c) => ({ ...c, doc })),
     customize: (channelId: string) => setContents((current) => customize(current, channelId)),
     reset: (channelId: string) => setContents((current) => reset(current, channelId)),
-    images,
-    filesFor,
+    media,
+    videos: videos.entries,
+    mediaFor,
     choiceOf,
     unusable: tabs.filter((channel) => choiceOf(channel).kind !== 'ok').map(({ id }) => id),
   };

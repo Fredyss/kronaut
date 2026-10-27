@@ -25,6 +25,7 @@ export interface ComposeImage {
 export interface ComposeContent {
   readonly doc: Doc;
   readonly images: readonly ComposeImage[];
+  readonly video: string | null;
 }
 
 export interface ComposeDestination {
@@ -166,6 +167,8 @@ async function uploadMedia(s: Submitter, input: ComposeInput, targets: readonly 
 type DraftItem = DraftBody['items'][0];
 
 function toItem(content: ComposeContent, ids: ReadonlyMap<string, string>): DraftItem {
+  if (content.video !== null)
+    return { doc: { ...content.doc }, media: [{ mediaId: content.video }] };
   const media = content.images.map((image) => {
     const mediaId = ids.get(image.id);
     if (mediaId === undefined) throw new Error(`image ${image.id} was not uploaded`);

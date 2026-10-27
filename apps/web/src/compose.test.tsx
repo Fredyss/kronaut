@@ -197,7 +197,7 @@ describe('composer', () => {
     const instagram = await screen.findByRole('checkbox', { name: /Ada on Instagram/ });
     expect((instagram as HTMLInputElement).disabled).toBe(true);
     expect(instagram.getAttribute('aria-describedby')).not.toBeNull();
-    expect(screen.getByText('Needs at least one image.')).toBeDefined();
+    expect(screen.getByText('Needs an image or a video.')).toBeDefined();
     expect(
       (screen.getByRole('checkbox', { name: /Ada on Bluesky/ }) as HTMLInputElement).disabled,
     ).toBe(false);

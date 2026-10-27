@@ -13,6 +13,7 @@ export interface PreviewTarget {
   readonly channel: Channel;
   readonly doc: Doc;
   readonly images: readonly PickedImage[];
+  readonly video: string | null;
   readonly publishType: string;
 }
 
@@ -41,6 +42,7 @@ export default function Previews({ targets }: PreviewsProps) {
         channel={target.channel}
         text={toPlainText(target.doc)}
         images={target.images}
+        video={target.video}
         aspect={aspectOf(target)}
       />,
     ];

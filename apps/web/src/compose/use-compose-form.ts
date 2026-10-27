@@ -3,10 +3,10 @@ import { useNavigate } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
 import { type Channel, channelsQuery, errorCode, postKey, postsKey } from '../api.ts';
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient, useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import { choiceFor } from './choice.ts';
-import { type Content, type Contents, effective } from './contents.ts';
+import { type Content, effective } from './contents.ts';
 import { isBlank } from './doc.ts';
 import {
   type ComposeContent,
@@ -15,7 +15,9 @@ import {
   createSubmitter,
   SubmitError,
 } from './submit.ts';
-import { useContents } from './use-contents.ts';
+import { type ContentsState, useContents } from './use-contents.ts';
+import type { VideoRegistry } from './use-video.ts';
+import { waitProblem } from './video-text.ts';
 import { resolveWhen, useWhen } from './when.ts';
 
 function usePublish(workspaceId: string) {
@@ -45,14 +47,12 @@ interface Plan {
   readonly usesDefault: boolean;
 }
 
-function toPlan(list: readonly Channel[], contents: Contents, selected: ReadonlySet<string>): Plan {
+function toPlan(list: readonly Channel[], state: ContentsState, selected: ReadonlySet<string>) {
+  const { contents } = state;
   const plan: Plan = { destinations: [], variants: [], usesDefault: false };
   for (const channel of list) {
     const content = effective(contents, channel.id);
-    const choice = choiceFor(
-      channel,
-      content.images.map((image) => image.file),
-    );
+    const choice = choiceFor(channel, state.mediaFor(channel.id));
     if (choice.kind !== 'ok' || !selected.has(channel.id)) continue;
     const custom = contents.customized.has(channel.id);
     if (custom) plan.variants.push({ channel, content });
@@ -63,7 +63,7 @@ function toPlan(list: readonly Channel[], contents: Contents, selected: Readonly
 }
 
 function isEmpty(content: Content): boolean {
-  return isBlank(content.doc) && content.images.length === 0;
+  return isBlank(content.doc) && content.images.length === 0 && content.video === null;
 }
 
 function emptyProblem(plan: Plan, base: Content): string | null {
@@ -75,7 +75,17 @@ function emptyProblem(plan: Plan, base: Content): string | null {
     : m.compose_error_empty_channel({ channel: empty.channel.displayName });
 }
 
-function toCompose({ doc, images }: Content): ComposeContent {
+function videoProblem(plan: Plan, base: Content, videos: VideoRegistry, locale: string) {
+  const used = [...(plan.usesDefault ? [base] : []), ...plan.variants.map((v) => v.content)];
+  for (const { video } of used) {
+    const problem = video === null ? null : waitProblem(videos.get(video.id), locale);
+    if (problem !== null) return problem;
+  }
+  return null;
+}
+
+function toCompose({ doc, images, video }: Content, videos: VideoRegistry): ComposeContent {
+  const phase = video === null ? undefined : videos.get(video.id)?.phase;
   return {
     doc,
     images: images.map(({ id, file, altText, aiGenerated }) => ({
@@ -84,6 +94,7 @@ function toCompose({ doc, images }: Content): ComposeContent {
       altText,
       aiGenerated,
     })),
+    video: phase?.kind === 'ready' ? phase.asset.id : null,
   };
 }
 
@@ -110,21 +121,24 @@ export function useComposeForm(workspaceId: string, at?: string) {
   const [limitFlags, setLimitFlags] = useState<readonly string[]>([]);
   const pending = run.isPending;
   const list = channels.data ?? [];
-  const content = useContents(list, selected);
+  const content = useContents(workspaceId, list, selected);
+  const { locale } = useLocale();
   const flagged = [...limitFlags, ...content.unusable];
   const blocked = flagged.length > 0;
-  const plan = toPlan(list, content.contents, selected);
+  const plan = toPlan(list, content, selected);
 
   const send = (asRequest: boolean) => {
     if (pending || blocked) return;
     const empty = emptyProblem(plan, content.contents.base);
     if (empty !== null) return setFormError(empty);
+    const waiting = videoProblem(plan, content.contents.base, content.videos, locale);
+    if (waiting !== null) return setFormError(waiting);
     const resolved = resolveWhen(mode, date, time, tz);
     if ('problem' in resolved) return setFormError(resolved.problem);
     setFormError(null);
     run.mutate({
-      content: toCompose(content.contents.base),
-      variants: plan.variants.map((variant) => toCompose(variant.content)),
+      content: toCompose(content.contents.base, content.videos),
+      variants: plan.variants.map((variant) => toCompose(variant.content, content.videos)),
       destinations: plan.destinations,
       when: resolved.when,
       request: asRequest ? { note: approval.note.value } : null,

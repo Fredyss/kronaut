@@ -169,6 +169,16 @@ export function defaultResponse(path: string): Response {
   return Response.json({ error: { code: 'not_found', message: '' } }, { status: 404 });
 }
 
+async function readBody(request: Request): Promise<unknown> {
+  if (request.method === 'GET') return null;
+  const bytes = await request.arrayBuffer();
+  if (bytes.byteLength === 0) return null;
+  if (request.headers.get('content-type')?.includes('json')) {
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  return { bytes: bytes.byteLength };
+}
+
 export function mount(override: Override = () => undefined, url = '/compose') {
   const calls: Call[] = [];
   const client = createApiClient({
@@ -180,7 +190,7 @@ export function mount(override: Override = () => undefined, url = '/compose') {
         method: request.method,
         path,
         key: request.headers.get('Idempotency-Key'),
-        body: request.method === 'GET' ? null : await request.json(),
+        body: await readBody(request),
       };
       calls.push(call);
       const replaced = override(call, calls.filter((c) => c.path === path).length);

@@ -2,6 +2,8 @@ export const MAX_IMAGES = 10;
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 export const MAX_ALT_TEXT = 1000;
 export const IMAGE_TYPES: readonly string[] = ['image/jpeg', 'image/png', 'image/webp'];
+export const VIDEO_TYPES: readonly string[] = ['video/mp4', 'video/quicktime', 'video/webm'];
+export const MAX_VIDEO_BYTES = 300_000_000;
 
 const THUMB_EDGE = 640;
 const CHUNK = 0x8000;

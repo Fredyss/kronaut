@@ -5,7 +5,7 @@ import { useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import { type PublishChoice, providerUi } from '../providers.ts';
 import { statusLabel } from '../routes/channels.tsx';
-import { choiceFor, type ImageFacts } from './choice.ts';
+import { choiceFor, type MediaFacts } from './choice.ts';
 
 export function channelHint(
   channel: Channel,
@@ -25,20 +25,21 @@ export function channelHint(
     }).format(choice.maxBytes / 1_000_000);
     return m.compose_channel_image_too_large({ max });
   }
+  if (choice.kind === 'video_unsupported') return m.compose_channel_video_unsupported();
   if (choice.kind === 'unsupported') return m.compose_channel_unsupported();
   return null;
 }
 
 function ChannelPicker({
   channels,
-  filesFor,
+  mediaFor,
   customized,
   selected,
   disabled,
   toggle,
 }: {
   readonly channels: readonly Channel[];
-  readonly filesFor: (channelId: string) => readonly ImageFacts[];
+  readonly mediaFor: (channelId: string) => MediaFacts;
   readonly customized: (channelId: string) => boolean;
   readonly selected: ReadonlySet<string>;
   readonly disabled: boolean;
@@ -59,7 +60,7 @@ function ChannelPicker({
   return (
     <ul className="flex flex-col gap-2">
       {channels.map((channel) => {
-        const choice = choiceFor(channel, filesFor(channel.id));
+        const choice = choiceFor(channel, mediaFor(channel.id));
         const hint = channelHint(channel, choice, locale);
         const id = `${prefix}-${channel.id}`;
         const hintId = `${id}-hint`;
@@ -98,7 +99,7 @@ function ChannelPicker({
 interface ChannelsFieldsetProps {
   readonly channels: readonly Channel[] | undefined;
   readonly failed: boolean;
-  readonly filesFor: (channelId: string) => readonly ImageFacts[];
+  readonly mediaFor: (channelId: string) => MediaFacts;
   readonly customized: (channelId: string) => boolean;
   readonly selected: ReadonlySet<string>;
   readonly setSelected: Dispatch<SetStateAction<ReadonlySet<string>>>;
@@ -108,7 +109,7 @@ interface ChannelsFieldsetProps {
 export function ChannelsFieldset({
   channels,
   failed,
-  filesFor,
+  mediaFor,
   customized,
   selected,
   setSelected,
@@ -125,7 +126,7 @@ export function ChannelsFieldset({
       {channels === undefined ? null : (
         <ChannelPicker
           channels={channels.filter((channel) => channel.status !== 'disconnected')}
-          filesFor={filesFor}
+          mediaFor={mediaFor}
           customized={customized}
           selected={selected}
           disabled={pending}

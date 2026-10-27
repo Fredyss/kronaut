@@ -11,6 +11,7 @@ export interface CardProps {
   readonly channel: Channel;
   readonly text: string;
   readonly images: readonly PickedImage[];
+  readonly video: string | null;
   readonly aspect: AspectRange | null;
 }
 

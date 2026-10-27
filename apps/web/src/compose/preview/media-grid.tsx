@@ -1,5 +1,6 @@
 import { cn } from '@kronaut/ui';
 import { type SyntheticEvent, useState } from 'react';
+import { m } from '../../i18n.ts';
 import type { PickedImage } from '../contents.ts';
 import { type AspectRange, clampAspect, type Ratio } from './aspect.ts';
 import { Card, type CardProps, Thumb } from './parts.tsx';
@@ -43,10 +44,20 @@ function Dots({ images }: { readonly images: readonly PickedImage[] }) {
   );
 }
 
-export function MediaGrid({ channel, text, images, aspect }: CardProps) {
+export function MediaGrid({ channel, text, images, video, aspect }: CardProps) {
   const [first] = images;
   return (
     <Card channel={channel}>
+      {video === null ? null : (
+        <video
+          src={video}
+          muted
+          playsInline
+          controls
+          aria-label={m.compose_video_preview_card()}
+          className="max-h-96 w-full rounded-md bg-black"
+        />
+      )}
       {first === undefined ? null : <Cover key={first.id} image={first} aspect={aspect} />}
       <Dots images={images} />
       <p className="line-clamp-2 whitespace-pre-wrap break-words text-sm">

@@ -2,17 +2,21 @@ import { buttonVariants } from '@kronaut/ui';
 import type { ChangeEvent } from 'react';
 import { m } from '../i18n.ts';
 import { ImageRow } from './image-row.tsx';
-import { IMAGE_TYPES, MAX_IMAGES } from './media.ts';
-import type { ImagesState } from './use-images.ts';
+import { IMAGE_TYPES, MAX_IMAGES, VIDEO_TYPES } from './media.ts';
+import type { MediaState } from './use-media.ts';
+import { VideoRow } from './video-row.tsx';
 
 interface ImagesSectionProps {
   readonly fileId: string;
-  readonly images: ImagesState;
+  readonly media: MediaState;
   readonly pending: boolean;
 }
 
-export function ImagesSection({ fileId, images: state, pending }: ImagesSectionProps) {
-  const { images, problems, maxSize, pick, update, move, remove } = state;
+const ACCEPT = [...IMAGE_TYPES, ...VIDEO_TYPES].join(',');
+
+export function ImagesSection({ fileId, media, pending }: ImagesSectionProps) {
+  const { problems, pick, video, maxVideoSize } = media;
+  const { images, maxSize, update, move, remove } = media.images;
   const onFiles = (event: ChangeEvent<HTMLInputElement>) => {
     pick([...(event.currentTarget.files ?? [])]);
     event.currentTarget.value = '';
@@ -27,7 +31,7 @@ export function ImagesSection({ fileId, images: state, pending }: ImagesSectionP
         <input
           id={fileId}
           type="file"
-          accept={IMAGE_TYPES.join(',')}
+          accept={ACCEPT}
           multiple
           className="peer sr-only"
           disabled={pending || images.length >= MAX_IMAGES}
@@ -46,7 +50,8 @@ export function ImagesSection({ fileId, images: state, pending }: ImagesSectionP
         </label>
       </div>
       <p className="text-muted-foreground text-xs">
-        {m.compose_images_hint({ count: MAX_IMAGES, max: maxSize })}
+        {m.compose_images_hint({ count: MAX_IMAGES, max: maxSize })}{' '}
+        {m.compose_video_hint({ max: maxVideoSize })}
       </p>
       {problems.length === 0 ? null : (
         <ul role="alert" className="list-disc pl-5 text-destructive text-sm">
@@ -55,6 +60,7 @@ export function ImagesSection({ fileId, images: state, pending }: ImagesSectionP
           ))}
         </ul>
       )}
+      {video === null ? null : <VideoRow video={video} disabled={pending} />}
       {images.length === 0 ? null : (
         <ol className="flex flex-col gap-2">
           {images.map((image, index) => (

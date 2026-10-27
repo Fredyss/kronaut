@@ -23,7 +23,7 @@ function image(id: string, altText = ''): PickedImage {
 
 const BASE: Contents = {
   ...EMPTY_CONTENTS,
-  base: { doc: doc('Hello everyone'), images: [image('a', 'A cat')] },
+  base: { doc: doc('Hello everyone'), images: [image('a', 'A cat')], video: null },
 };
 
 describe('contents', () => {
@@ -38,6 +38,7 @@ describe('contents', () => {
 
   it('edits a customized content without touching the default', () => {
     const next = editContent(customize(BASE, 'acct_bsky'), 'acct_bsky', (content) => ({
+      ...content,
       doc: doc('Hi'),
       images: content.images.map((item) => ({ ...item, altText: 'A small cat' })),
     }));
@@ -45,6 +46,11 @@ describe('contents', () => {
     expect(effective(next, 'acct_bsky').doc).toEqual(doc('Hi'));
     expect(effective(next, 'acct_bsky').images[0]?.altText).toBe('A small cat');
     expect(next.base.images[0]?.altText).toBe('A cat');
+  });
+
+  it('shares the default video with a customized copy', () => {
+    const withVideo = { ...BASE, base: { ...BASE.base, images: [], video: { id: 'v1' } } };
+    expect(effective(customize(withVideo, 'acct_ig'), 'acct_ig').video).toEqual({ id: 'v1' });
   });
 
   it('resets a channel to the default content', () => {

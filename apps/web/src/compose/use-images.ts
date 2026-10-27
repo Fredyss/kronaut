@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import type { PickedImage } from './contents.ts';
@@ -25,14 +24,13 @@ function swap(images: ImageList, index: number, offset: -1 | 1): ImageList {
 
 export function useImages({ images, edit, setThumb }: ImageTarget) {
   const { locale } = useLocale();
-  const [problems, setProblems] = useState<readonly string[]>([]);
   const maxSize = new Intl.NumberFormat(locale, {
     style: 'unit',
     unit: 'megabyte',
     maximumFractionDigits: 0,
   }).format(MAX_IMAGE_BYTES / 1024 / 1024);
 
-  const pick = (files: readonly File[]) => {
+  const pick = (files: readonly File[]): string[] => {
     const found: string[] = [];
     const accepted: PickedImage[] = [];
     const room = MAX_IMAGES - images.length;
@@ -53,20 +51,20 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
           aiGenerated: false,
         });
     }
-    setProblems(found);
-    if (accepted.length === 0) return;
+    if (accepted.length === 0) return found;
     edit((current) => [...current, ...accepted]);
     for (const image of accepted) {
       void thumbnail(image.file).then((thumb) => {
         if (thumb !== null) setThumb(image.id, thumb);
       });
     }
+    return found;
   };
   const update = (id: string, patch: Partial<Pick<PickedImage, 'altText' | 'aiGenerated'>>) =>
     edit((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   const move = (index: number, offset: -1 | 1) => edit((current) => swap(current, index, offset));
   const remove = (id: string) => edit((current) => current.filter((item) => item.id !== id));
-  return { images, problems, maxSize, pick, update, move, remove };
+  return { images, maxSize, pick, update, move, remove };
 }
 
 export type ImagesState = ReturnType<typeof useImages>;
