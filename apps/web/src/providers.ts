@@ -82,6 +82,10 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
   },
 };
 
+export function knownProviders(): readonly string[] {
+  return Object.keys(PROVIDERS);
+}
+
 export function providerUi(id: string): ProviderUi {
   const known = Object.hasOwn(PROVIDERS, id) ? PROVIDERS[id] : undefined;
   return (

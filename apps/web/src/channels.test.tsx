@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { createApiClient } from '@kronaut/sdk';
 import { createMemoryHistory } from '@tanstack/react-router';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App, createApp } from './app.tsx';
 
@@ -100,6 +100,11 @@ describe('channels page', () => {
     expect(screen.getByRole('link', { name: 'Open profile' }).getAttribute('rel')).toBe(
       'noopener noreferrer',
     );
+    fireEvent.click(screen.getByRole('button', { name: 'Add channel' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Connect a channel' });
+    const linkedin = within(dialog).getByRole('button', { name: 'Connect LinkedIn' });
+    expect(linkedin.hasAttribute('disabled')).toBe(true);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Connect Bluesky' }));
     fireEvent.change(await screen.findByLabelText('Your handle (optional)'), {
       target: { value: ' ada.bsky.social ' },
     });
@@ -109,18 +114,22 @@ describe('channels page', () => {
     );
     expect(bodies).toEqual([{ provider: 'bluesky', loginHint: 'ada.bsky.social' }]);
 
+    fireEvent.click(screen.getByRole('button', { name: 'All networks' }));
     fireEvent.click(screen.getByRole('button', { name: 'Connect Instagram' }));
     await screen.findByText(
       'The network returned an unsafe sign-in address, so connecting stopped.',
     );
     expect(bodies.at(-1)).toEqual({ provider: 'instagram' });
     expect(assign).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('connects Threads with no handle field', async () => {
     const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
     const { bodies } = mount('/channels', ['https://threads.com/oauth/authorize?state=x']);
-    fireEvent.click(await screen.findByRole('button', { name: 'Connect Threads' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Add channel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Connect Threads' }));
     await waitFor(() =>
       expect(assign).toHaveBeenCalledWith('https://threads.com/oauth/authorize?state=x'),
     );
@@ -130,7 +139,8 @@ describe('channels page', () => {
   it('connects Facebook and names every connected Page', async () => {
     const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
     const { bodies } = mount('/channels', ['https://www.facebook.com/v26.0/dialog/oauth?state=x']);
-    fireEvent.click(await screen.findByRole('button', { name: 'Connect Facebook' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Add channel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Connect Facebook' }));
     await waitFor(() =>
       expect(assign).toHaveBeenCalledWith('https://www.facebook.com/v26.0/dialog/oauth?state=x'),
     );
@@ -201,6 +211,11 @@ function failure(status: number): Response {
   return Response.json({ error: { code: 'failed', message: '' } }, { status });
 }
 
+async function openMastodon() {
+  fireEvent.click(await screen.findByRole('button', { name: 'Add channel' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Connect Mastodon' }));
+}
+
 async function connectMastodon(server: string) {
   fireEvent.change(await screen.findByLabelText('Your Mastodon server'), {
     target: { value: server },
@@ -212,6 +227,7 @@ describe('mastodon connect', () => {
   it('asks for the server and posts it with the provider', async () => {
     const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
     const { bodies } = mount('/channels', ['https://mastodon.social/oauth/authorize?x=1']);
+    await openMastodon();
     const field = (await screen.findByLabelText('Your Mastodon server')) as HTMLInputElement;
     expect(field.required).toBe(true);
     expect(field.inputMode).toBe('url');
@@ -235,6 +251,7 @@ describe('mastodon connect', () => {
     ['503', () => failure(503), "That server couldn't be reached. Try again later."],
   ])('shows %s under the server field', async (_name, connect, message) => {
     mount('/channels', [], { connect });
+    await openMastodon();
     await connectMastodon('mastodon.example');
     const note = await screen.findByText(message);
     const field = screen.getByLabelText('Your Mastodon server');
@@ -244,6 +261,7 @@ describe('mastodon connect', () => {
 
   it('keeps the generic connect error for anything else', async () => {
     mount('/channels', [], { connect: () => failure(500) });
+    await openMastodon();
     await connectMastodon('mastodon.example');
     await screen.findByText("Connecting the channel didn't work. Try again.");
     expect(screen.getByLabelText('Your Mastodon server').getAttribute('aria-invalid')).toBe(
@@ -251,7 +269,7 @@ describe('mastodon connect', () => {
     );
   });
 
-  it('reconnects with the server from the handle, or focuses the server field', async () => {
+  it('reconnects with the server from the handle, or opens the server form', async () => {
     vi.spyOn(window.location, 'assign').mockImplementation(() => {});
     const mastodon = (id: string, handle: string) => ({
       ...CHANNEL,
@@ -292,8 +310,6 @@ describe('mastodon connect', () => {
     expect(
       await screen.findByText("That server couldn't be reached. Try again later."),
     ).toBeDefined();
-    expect(screen.getByLabelText('Your Mastodon server').getAttribute('aria-invalid')).toBe(
-      'false',
-    );
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

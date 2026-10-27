@@ -82,6 +82,8 @@
 /** @typedef {{}} Channel_Status_DisabledInputs */
 /** @typedef {{}} Channel_Status_DisconnectedInputs */
 /** @typedef {{}} Channel_Status_Needs_ReauthInputs */
+/** @typedef {{}} Channels_AddInputs */
+/** @typedef {{}} Channels_All_NetworksInputs */
 /** @typedef {{}} Channels_Connect_Bad_UrlInputs */
 /** @typedef {{}} Channels_Connect_BodyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connect_ButtonInputs */
@@ -112,6 +114,7 @@
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
+/** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -190,6 +193,7 @@
 /** @typedef {{}} Destination_State_ScheduledInputs */
 /** @typedef {{}} Destination_State_UnconfirmedInputs */
 /** @typedef {{}} Destination_State_VerifyingInputs */
+/** @typedef {{}} Dialog_CloseInputs */
 /** @typedef {{}} DismissInputs */
 /** @typedef {{ workspace: NonNullable<unknown> }} Email_FooterInputs */
 /** @typedef {{ url: NonNullable<unknown> }} Email_ManageInputs */
@@ -736,6 +740,14 @@ export const channel_status_needs_reauth = /** @type {(inputs: Channel_Status_Ne
 	return /** @type {LocalizedString} */ (`Treba znova pripojiť`)
 };
 
+export const channels_add = /** @type {(inputs: Channels_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať kanál`)
+};
+
+export const channels_all_networks = /** @type {(inputs: Channels_All_NetworksInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Všetky siete`)
+};
+
 export const channels_connect_bad_url = /** @type {(inputs: Channels_Connect_Bad_UrlInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Sieť vrátila nebezpečnú prihlasovaciu adresu, preto sa pripájanie zastavilo.`)
 };
@@ -797,7 +809,7 @@ export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedIn
 };
 
 export const channels_empty_body = /** @type {(inputs: Channels_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nižšie pripojte účet a môžete začať publikovať.`)
+	return /** @type {LocalizedString} */ (`Pridajte kanál a môžete začať publikovať.`)
 };
 
 export const channels_empty_title = /** @type {(inputs: Channels_Empty_TitleInputs) => LocalizedString} */ () => {
@@ -858,6 +870,10 @@ export const channels_handle_label = /** @type {(inputs: Channels_Handle_LabelIn
 
 export const channels_handle_placeholder = /** @type {(inputs: Channels_Handle_PlaceholderInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`vasemeno.bsky.social`)
+};
+
+export const channels_not_set_up = /** @type {(inputs: Channels_Not_Set_UpInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nie je nastavené`)
 };
 
 export const channels_open_profile = /** @type {(inputs: Channels_Open_ProfileInputs) => LocalizedString} */ () => {
@@ -1190,6 +1206,10 @@ export const destination_state_unconfirmed = /** @type {(inputs: Destination_Sta
 
 export const destination_state_verifying = /** @type {(inputs: Destination_State_VerifyingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Overuje sa`)
+};
+
+export const dialog_close = /** @type {(inputs: Dialog_CloseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zavrieť`)
 };
 
 export const dismiss = /** @type {(inputs: DismissInputs) => LocalizedString} */ () => {

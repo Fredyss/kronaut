@@ -4,12 +4,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { type Channel, channelsQuery, connectableQuery, errorStatus, meQuery } from '../api.ts';
-import {
-  type ConnectRequest,
-  ConnectSection,
-  connectError,
-  serverFieldId,
-} from '../channels/connect-option.tsx';
+import { AddChannelDialog } from '../channels/add-channel.tsx';
+import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
 import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
 import { SearchToasts } from '../channels/search-toasts.tsx';
 import { useApiClient, useLocale } from '../context.ts';
@@ -164,6 +160,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
   const disconnect = useDisconnect(workspaceId);
   const canDisconnect = DISCONNECT_ROLES.has(role);
   const search = route.useSearch();
+  const [adding, setAdding] = useState<{ readonly initial: string | null } | null>(null);
 
   const fieldPrefix = useId();
   const providers = connectable.data?.map((provider) => provider.id);
@@ -172,8 +169,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
     if (channel.status !== 'needs_reauth') return null;
     const request = reconnectRequest(channel);
     if (request !== null) return () => connect.mutate({ body: request, fromForm: false });
-    const field = serverFieldId(fieldPrefix, channel.provider);
-    return () => document.getElementById(field)?.focus();
+    return () => setAdding({ initial: channel.provider });
   };
   const errorFor = (provider: string): string | null => {
     const attempt = connect.variables;
@@ -186,9 +182,14 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
       {search.connected === undefined && search.error === undefined ? null : (
         <SearchToasts channels={channels.data} />
       )}
-      <header className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl tracking-tight">{m.channels_title()}</h1>
-        <p className="text-muted-foreground text-sm">{m.channels_subtitle()}</p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-semibold text-2xl tracking-tight">{m.channels_title()}</h1>
+          <p className="text-muted-foreground text-sm">{m.channels_subtitle()}</p>
+        </div>
+        {providers === undefined ? null : (
+          <Button onClick={() => setAdding({ initial: null })}>{m.channels_add()}</Button>
+        )}
       </header>
       {channels.isError ? (
         <p role="alert" className="text-destructive text-sm">
@@ -216,13 +217,15 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
           ))}
         </ul>
       )}
-      {providers === undefined ? null : (
-        <ConnectSection
-          providers={providers}
+      {providers === undefined || adding === null ? null : (
+        <AddChannelDialog
+          available={providers}
+          initial={adding.initial}
           pending={connect.isPending}
           connect={(body) => connect.mutate({ body, fromForm: true })}
           errorFor={errorFor}
           fieldPrefix={fieldPrefix}
+          onClose={() => setAdding(null)}
         />
       )}
     </section>
