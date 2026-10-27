@@ -41,7 +41,7 @@ export function masterArgs(
   ].join(',');
   const audio = probe.audio ? ['-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2'] : ['-an'];
   return [
-    ...['-hide_banner', '-nostdin', '-y', '-i', input],
+    ...['-hide_banner', '-nostdin', '-y', '-threads', String(threads), '-i', input],
     ...['-map', '0:v:0', ...(probe.audio ? ['-map', '0:a:0'] : [])],
     ...['-map_metadata', '-1', '-map_chapters', '-1', '-sn', '-dn'],
     ...['-vf', filters],

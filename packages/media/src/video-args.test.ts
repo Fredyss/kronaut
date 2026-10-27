@@ -28,7 +28,7 @@ describe('masterArgs', () => {
       2,
     );
     expect(args).toEqual([
-      ...['-hide_banner', '-nostdin', '-y', '-i', 'in.mov'],
+      ...['-hide_banner', '-nostdin', '-y', '-threads', '2', '-i', 'in.mov'],
       ...['-map', '0:v:0', '-map', '0:a:0'],
       ...['-map_metadata', '-1', '-map_chapters', '-1', '-sn', '-dn'],
       '-vf',
