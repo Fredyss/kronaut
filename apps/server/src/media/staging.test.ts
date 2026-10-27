@@ -1,4 +1,4 @@
-import { mkdtemp, readdir, readFile, rm, stat } from 'node:fs/promises';
+import { mkdtemp, readdir, readFile, rm, stat, utimes } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -52,6 +52,16 @@ describe('staging', () => {
     await staging.remove(KEY);
     await staging.remove(KEY);
     expect(await staging.parts(KEY)).toEqual(new Map());
+  });
+
+  it('sweeps incoming temp files older than the cutoff and counts a missing dir as 0', async () => {
+    expect(await staging.sweepIncoming(3_600_000)).toBe(0);
+    const stale = await staging.receive(new Uint8Array(1));
+    const fresh = await staging.receive(new Uint8Array(1));
+    const past = new Date(Date.now() - 2 * 3_600_000);
+    await utimes(stale, past, past);
+    expect(await staging.sweepIncoming(3_600_000)).toBe(1);
+    expect(await readdir(join(root, '.incoming'))).toEqual([fresh.slice(-32)]);
   });
 
   it.each(['', 'AB'.repeat(32), 'ab'.repeat(31), '../etc', `${KEY}/x`])(

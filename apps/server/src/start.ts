@@ -32,6 +32,7 @@ import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess } from './media/access.ts';
+import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
 import { MEDIA_BODY_LIMITS } from './media/upload-routes.ts';
@@ -187,13 +188,15 @@ async function stopAll(db: Database, state: Running): Promise<void> {
 async function startWorker(boot: Boot): Promise<void> {
   const { config, options, db, clock, providers, keyring, state } = boot;
   const { logger } = options;
+  const store = createLocalStore(join(config.dataDir, 'media'));
+  const staging = stagingIn(config.dataDir);
   const publishing = publishDeps({
     db,
     providers,
     keyring,
     media: createMediaAccess({
       db,
-      store: createLocalStore(join(config.dataDir, 'media')),
+      store,
       signingKey: deriveMediaSigningKey(config.secret),
       mediaBaseUrl: config.mediaUrl,
       clock,
@@ -213,10 +216,11 @@ async function startWorker(boot: Boot): Promise<void> {
     logger: jobLogger(logger),
     noHandleSignals: true,
     taskList: {
-      ...cronTaskList(db, logger, { ...publishing, staging: stagingIn(config.dataDir) }, email),
+      ...cronTaskList(db, logger, { ...publishing, staging }, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
+      [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
     },
     parsedCronItems: cronItems(email !== null),
   });
@@ -303,16 +307,7 @@ export async function startServer(
 
     const providers = createProviderRegistry(manifests, runtimes);
     const keyring = keyringFromEnv(options.env ?? process.env);
-    const boot: Boot = {
-      config,
-      databaseUrl,
-      options,
-      db,
-      clock,
-      providers,
-      keyring,
-      state,
-    };
+    const boot: Boot = { config, databaseUrl, options, db, clock, providers, keyring, state };
 
     if (serves('worker')) await startWorker(boot);
     if (serves('api')) await startApi(boot);

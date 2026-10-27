@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { readdir, readFile, stat, utimes } from 'node:fs/promises';
 import { join } from 'node:path';
 import { encodePublicId } from '@kronaut/core';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
@@ -272,7 +272,7 @@ describe('media gc', () => {
     });
   });
 
-  it('deletes an upload older than 24 h with its staging directory and keeps a 23 h one', async () => {
+  it('deletes an upload older than 24 h with its staging dir, keeps a 23 h one, sweeps stale temp files', async () => {
     const old = (await create(a)).media;
     const young = (await create(b)).media;
     await put(a, old.id, 2, new Uint8Array(TAIL));
@@ -281,7 +281,17 @@ describe('media gc', () => {
     const youngKey = (await row(young.id))?.storage_key ?? '';
     await setColumn(old.id, 'created_at', '25 hours');
     await setColumn(young.id, 'created_at', '23 hours');
-    expect(JSON.parse(await collectMedia(fx.db, { staging }))).toEqual({ expired: 1, skipped: 0 });
+    const stale = await staging.receive(new Uint8Array(1));
+    const fresh = await staging.receive(new Uint8Array(1));
+    const past = new Date(Date.now() - 2 * 3_600_000);
+    await utimes(stale, past, past);
+    expect(JSON.parse(await collectMedia(fx.db, { staging }))).toEqual({
+      expired: 1,
+      skipped: 0,
+      incoming: 1,
+    });
+    expect(await incoming()).toEqual([fresh.slice(-32)]);
+    await staging.discard(fresh);
     expect(await row(old.id)).toBeUndefined();
     await expect(stat(staging.directory(oldKey))).rejects.toMatchObject({ code: 'ENOENT' });
     expect((await row(young.id))?.state).toBe('uploading');

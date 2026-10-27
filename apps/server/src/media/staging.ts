@@ -9,6 +9,7 @@ export interface Staging {
   directory(key: string): string;
   discard(tempPath: string): Promise<void>;
   remove(key: string): Promise<void>;
+  sweepIncoming(olderThanMs: number): Promise<number>;
 }
 
 const FILE_MODE = 0o640;
@@ -19,6 +20,26 @@ const PART_FILE = /^([1-9][0-9]*)\.part$/;
 
 function isErrno(error: unknown, code: string): boolean {
   return error instanceof Error && (error as NodeJS.ErrnoException).code === code;
+}
+
+async function sweepOlderThan(dir: string, olderThanMs: number): Promise<number> {
+  let entries: string[];
+  try {
+    entries = await readdir(dir);
+  } catch (error) {
+    if (isErrno(error, 'ENOENT')) return 0;
+    throw error;
+  }
+  const cutoff = Date.now() - olderThanMs;
+  let removed = 0;
+  for (const entry of entries) {
+    const path = join(dir, entry);
+    const stats = await stat(path).catch(() => null);
+    if (stats === null || !stats.isFile() || stats.mtimeMs >= cutoff) continue;
+    await rm(path, { force: true });
+    removed++;
+  }
+  return removed;
 }
 
 export function stagingIn(dataDir: string): Staging {
@@ -85,5 +106,6 @@ export function createStaging(root: string): Staging {
     async remove(key) {
       await rm(directory(key), { recursive: true, force: true });
     },
+    sweepIncoming: (olderThanMs) => sweepOlderThan(incoming, olderThanMs),
   };
 }

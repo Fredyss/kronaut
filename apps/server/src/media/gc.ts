@@ -3,6 +3,7 @@ import { sql } from 'kysely';
 import type { Staging } from './staging.ts';
 
 export const MEDIA_GC_BATCH = 500;
+export const INCOMING_MAX_AGE_MS = 3_600_000;
 const SYSTEM: Actor = { kind: 'system' };
 
 export interface MediaGcDeps {
@@ -31,7 +32,7 @@ async function expireUpload(db: Database, workspaceId: string, id: string): Prom
 }
 
 export async function collectMedia(db: Database, { staging }: MediaGcDeps): Promise<string> {
-  const counts = { expired: 0, skipped: 0 };
+  const counts = { expired: 0, skipped: 0, incoming: 0 };
   for (const candidate of await db.sweeps.mediaGc(MEDIA_GC_BATCH)) {
     const key = await expireUpload(db, candidate.workspaceId, candidate.id);
     if (key === null) {
@@ -41,5 +42,6 @@ export async function collectMedia(db: Database, { staging }: MediaGcDeps): Prom
     await staging.remove(key);
     counts.expired++;
   }
+  counts.incoming = await staging.sweepIncoming(INCOMING_MAX_AGE_MS);
   return JSON.stringify(counts);
 }
