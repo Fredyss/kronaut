@@ -9,6 +9,8 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   mime_unsupported: () => m.issue_mime_unsupported(),
   file_too_large: () => m.issue_file_too_large(),
   aspect_out_of_range: () => m.issue_aspect_out_of_range(),
+  resolution_too_high: () => m.issue_resolution_too_high(),
+  frame_rate_too_high: () => m.issue_frame_rate_too_high(),
   image_too_wide: () => m.issue_image_too_wide(),
   image_too_narrow: () => m.issue_image_too_narrow(),
   alt_text_too_long: () => m.issue_alt_text_too_long(),

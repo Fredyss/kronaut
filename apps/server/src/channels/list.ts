@@ -45,6 +45,8 @@ const PostTypeRulesSchema = z.object({
       minDurationMs: z.number().int(),
       maxDurationMs: z.number().int(),
       aspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
+      maxFrameRate: z.number().nullable(),
+      maxPixels: z.number().int().nullable(),
     })
     .nullable(),
 });
@@ -107,7 +109,15 @@ function videoRules(video: VideoLimits | undefined) {
       ? null
       : { min: { ...video.minAspect }, max: { ...video.maxAspect } };
   const { mimes, maxBytes, minDurationMs, maxDurationMs } = video;
-  return { mimes: [...mimes], maxBytes, minDurationMs, maxDurationMs, aspect };
+  return {
+    mimes: [...mimes],
+    maxBytes,
+    minDurationMs,
+    maxDurationMs,
+    aspect,
+    maxFrameRate: video.maxFrameRate ?? null,
+    maxPixels: video.maxPixels ?? null,
+  };
 }
 
 function postTypes(

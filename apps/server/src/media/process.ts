@@ -170,8 +170,15 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
     width: out.video.width,
     height: out.video.height,
     durationMs,
+    frameRateMilli: toFrameRateMilli(out.video.frameRate),
     poster: { key: posterKey, ...posterHash },
   } satisfies ProcessedVideo;
+}
+
+function toFrameRateMilli(rate: number | null): number | null {
+  if (rate === null || !Number.isFinite(rate)) return null;
+  const milli = Math.round(rate * 1000);
+  return milli > 0 ? milli : null;
 }
 
 async function settle(

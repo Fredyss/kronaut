@@ -18,6 +18,7 @@ export interface ProcessedVideo {
   readonly width: number;
   readonly height: number;
   readonly durationMs: number;
+  readonly frameRateMilli: number | null;
   readonly poster: { readonly key: string; readonly sha256: Buffer; readonly bytes: number };
 }
 
@@ -88,6 +89,7 @@ async function markReady(trx: TenantDb, job: MediaJob, video: ProcessedVideo): P
       width: video.width,
       height: video.height,
       duration_ms: video.durationMs,
+      frame_rate_milli: video.frameRateMilli,
       updated_at: sql<Date>`now()`,
     })
     .where('workspace_id', '=', job.workspaceId)

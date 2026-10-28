@@ -80,7 +80,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     instance: true,
     maxImageBytes: 16_000_000,
     imageTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'image/avif'],
-    publishType: imagePost(4),
+    publishType: (media) =>
+      media.video ? { kind: 'ok', publishType: 'video' } : imagePost(4)(media),
   },
   threads: {
     name: () => m.provider_threads(),

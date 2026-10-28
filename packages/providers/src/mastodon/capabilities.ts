@@ -29,6 +29,8 @@ const instanceConfiguration = z.looseObject({
           image_size_limit: count,
           image_matrix_limit: count,
           video_size_limit: count,
+          video_frame_rate_limit: count,
+          video_matrix_limit: count,
           description_limit: count,
         })
         .optional()
@@ -46,6 +48,8 @@ export interface InstanceLimits {
   readonly imageSizeLimit?: number;
   readonly imageMatrixLimit?: number;
   readonly videoSizeLimit?: number;
+  readonly videoFrameRateLimit?: number;
+  readonly videoMatrixLimit?: number;
   readonly descriptionLimit?: number;
 }
 
@@ -70,6 +74,8 @@ export function instanceLimits(body: unknown): InstanceLimits {
     imageSizeLimit: media?.image_size_limit,
     imageMatrixLimit: media?.image_matrix_limit,
     videoSizeLimit: media?.video_size_limit,
+    videoFrameRateLimit: media?.video_frame_rate_limit,
+    videoMatrixLimit: media?.video_matrix_limit,
     descriptionLimit: media?.description_limit,
   });
 }

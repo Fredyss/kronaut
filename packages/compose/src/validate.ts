@@ -47,6 +47,8 @@ export type IssueCode =
   | 'aspect_out_of_range'
   | 'duration_too_short'
   | 'duration_too_long'
+  | 'frame_rate_too_high'
+  | 'resolution_too_high'
   | 'alt_text_required'
   | 'alt_text_too_long';
 
@@ -117,6 +119,19 @@ function validateImage(
   validateAspect(media, limits, at, issues);
 }
 
+function validateResolution(
+  media: DraftMedia,
+  maxPixels: number | undefined,
+  at: MediaAt,
+  issues: ValidationIssue[],
+): void {
+  const { width, height } = media;
+  if (maxPixels === undefined || width === undefined || height === undefined) return;
+  const actual = width * height;
+  if (actual > maxPixels)
+    issues.push({ code: 'resolution_too_high', ...at, limit: maxPixels, actual });
+}
+
 function validateVideo(
   media: DraftMedia,
   limits: VideoLimits,
@@ -124,14 +139,15 @@ function validateVideo(
   issues: ValidationIssue[],
 ): void {
   const { width, height, durationMs } = media;
-  const aspectLimited = limits.minAspect !== undefined || limits.maxAspect !== undefined;
-  if (
-    durationMs === undefined ||
-    (aspectLimited && (width === undefined || height === undefined))
-  ) {
+  const shapeLimited =
+    limits.minAspect !== undefined ||
+    limits.maxAspect !== undefined ||
+    limits.maxPixels !== undefined;
+  if (durationMs === undefined || (shapeLimited && (width === undefined || height === undefined))) {
     issues.push({ code: 'media_metadata_missing', ...at });
   }
   validateAspect(media, limits, at, issues);
+  validateResolution(media, limits.maxPixels, at, issues);
   if (durationMs !== undefined) {
     if (durationMs < limits.minDurationMs) {
       issues.push({

@@ -102,6 +102,8 @@ function instance(descriptionLimit?: number): ScriptedExchange {
           image_size_limit: 16_777_216,
           image_matrix_limit: 33_177_600,
           video_size_limit: 103_809_024,
+          video_frame_rate_limit: 120,
+          video_matrix_limit: 8_294_400,
           ...(descriptionLimit === undefined ? {} : { description_limit: descriptionLimit }),
         },
       },
@@ -117,6 +119,7 @@ describe('mastodon provider', () => {
   it('publishes posts through the API and verifies by reading recent statuses', () => {
     expect(mastodonManifest.postTypes.map((type) => [type.id, type.delivery])).toEqual([
       ['post', 'api'],
+      ['video', 'api'],
     ]);
     expect(mastodonManifest.verify).toEqual({ mode: 'list_recent_match', windowMs: 3_600_000 });
   });
@@ -237,6 +240,8 @@ describe('mastodon connect', () => {
           imageSizeLimit: 16_777_216,
           imageMatrixLimit: 33_177_600,
           videoSizeLimit: 103_809_024,
+          videoFrameRateLimit: 120,
+          videoMatrixLimit: 8_294_400,
           descriptionLimit: 1500,
         },
         fetchedAt: TEST_NOW.toString(),

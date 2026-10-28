@@ -1,3 +1,4 @@
+import type { ProviderManifest } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import { codes, comment, FAMILY, GRAM, jpeg, main, mp4, SKY, thread } from './testing.ts';
 import { type DraftMedia, validate } from './validate.ts';
@@ -275,6 +276,67 @@ describe('validate: video', () => {
         actual: 2_000_000_000,
       },
     ]);
+  });
+});
+
+describe('validate: video resolution', () => {
+  const CAPPED = {
+    ...SKY,
+    postTypes: [
+      {
+        id: 'clip',
+        delivery: 'api',
+        steps: [{ id: 'create', effect: 'public' }],
+        text: [{ counting: 'graphemes', max: 500 }],
+        media: {
+          minCount: 0,
+          maxCount: 4,
+          video: {
+            mimes: ['video/mp4'],
+            maxBytes: 100_000_000,
+            minDurationMs: 0,
+            maxDurationMs: 600_000,
+            maxFrameRate: 60,
+            maxPixels: 1920 * 1080,
+          },
+          mixed: false,
+          altText: { supported: true, required: false, maxLength: 1500 },
+          aiLabel: false,
+        },
+      },
+    ],
+  } satisfies ProviderManifest;
+  const clip = (media: DraftMedia) => validate(CAPPED, 'clip', [main('x', [media])]);
+
+  it('passes exactly at the pixel limit and fails one row above', () => {
+    expect(clip(mp4({ width: 1920, height: 1080 }))).toStrictEqual([]);
+    expect(clip(mp4({ width: 1080, height: 1920 }))).toStrictEqual([]);
+    expect(clip(mp4({ width: 1920, height: 1081 }))).toStrictEqual([
+      {
+        code: 'resolution_too_high',
+        itemIndex: 0,
+        mediaIndex: 0,
+        limit: 2_073_600,
+        actual: 2_075_520,
+      },
+    ]);
+  });
+
+  it('flags unknown dimensions under a pixel cap', () => {
+    const noDimensions: DraftMedia = {
+      kind: 'video',
+      mime: 'video/mp4',
+      bytes: 10,
+      durationMs: 5000,
+    };
+    expect(clip(noDimensions)).toStrictEqual([
+      { code: 'media_metadata_missing', itemIndex: 0, mediaIndex: 0 },
+    ]);
+  });
+
+  it('ignores the resolution when the limits set no pixel cap', () => {
+    const huge = mp4({ width: 7680, height: 4320 });
+    expect(validate(SKY, 'gallery', [main('x', [huge])])).toStrictEqual([]);
   });
 });
 

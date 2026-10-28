@@ -20,7 +20,7 @@
   - The video belongs to the content, so a customized copy shares the default's video and its upload. A registry in the compose form holds each upload by a local id.
   - Picking a video starts the upload at once: the create call with an idempotency key, then 8 MiB parts in sequence (each retried up to 3 times on a network error or 5xx), then complete, then a poll every 3 s until the master is ready or rejected. A duplicate master switches to the kept asset. Removing the video or leaving compose aborts it; the server collects expired uploads.
   - The video row shows a muted preview, progress, processing, the duration, or the rejection reason, with Retry on an error, and an alt-text field as images have. The AI label is sent on create, or set later through `media.mark_ai`, and locks once the asset reports it.
-  - A ready master is checked against the destination post type's `video` rules (mime, size, duration, aspect) with the `@kronaut/compose` issue codes. Instagram publishes it as `reel` and Threads as `video`, with the alt text; the other networks show video as not supported yet. Submitting waits until every used video is ready.
+  - A ready master is checked against the destination post type's `video` rules (mime, size, duration, aspect, and the frame rate and pixel count when the network sets them, as Mastodon instances do) with the `@kronaut/compose` issue codes. Instagram publishes it as `reel`, and Threads and Mastodon as `video`, with the alt text; the other networks show video as not supported yet. Submitting waits until every used video is ready.
 - **Platform-mandated UX:**
   - **TikTok:**
     - no default privacy, and interaction toggles default off

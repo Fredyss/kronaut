@@ -2,7 +2,6 @@ import type { MediaRef, PublishItem } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
   egressError,
-  type RecordedRequest,
   type ScriptedExchange,
   scriptedHttp,
   TEST_NOW,
@@ -10,43 +9,28 @@ import {
 } from '../_kit/testing.ts';
 import { idempotencyKey } from './publish-state.ts';
 import { mastodonRuntime } from './runtime.ts';
-import { cat, dog, failureOf, input, main, media, ORIGIN, SENT_AT, TOKEN } from './testing.ts';
+import {
+  cat,
+  dog,
+  failureOf,
+  form,
+  input,
+  main,
+  media,
+  mediaStatus,
+  multipartText,
+  ORIGIN,
+  PUBLISHED,
+  posts,
+  SENT_AT,
+  STATUS_URL,
+  STATUSES,
+  TOKEN,
+  UPLOAD,
+  uploads,
+} from './testing.ts';
 
-const UPLOAD = `${ORIGIN}/api/v2/media`;
-const STATUSES = `${ORIGIN}/api/v1/statuses`;
-const STATUS_URL = `${ORIGIN}/@alice/113000000000000001`;
 const KEY = idempotencyKey('dest-1', 0);
-
-const uploads = (id: string, status = 200): ScriptedExchange => ({
-  method: 'POST',
-  url: UPLOAD,
-  status,
-  json: { id, type: 'image', url: status === 200 ? `${ORIGIN}/media/${id}.png` : null },
-});
-const mediaStatus = (id: string, status: number): ScriptedExchange => ({
-  url: `${ORIGIN}/api/v1/media/${id}`,
-  status,
-  json: status === 422 ? { error: 'Error processing thumbnail for uploaded media' } : { id },
-});
-const posts = (overrides: Partial<ScriptedExchange> = {}): ScriptedExchange => ({
-  method: 'POST',
-  url: STATUSES,
-  json: { id: '113000000000000001', url: STATUS_URL, uri: STATUS_URL },
-  ...overrides,
-});
-
-function form(request: RecordedRequest | undefined): [string, string][] {
-  if (typeof request?.body !== 'string') throw new Error('expected a form body');
-  expect(request.headers['content-type']).toBe('application/x-www-form-urlencoded');
-  return [...new URLSearchParams(request.body)];
-}
-
-function multipartText(request: RecordedRequest | undefined): string {
-  if (!(request?.body instanceof Uint8Array)) throw new Error('expected a multipart body');
-  return new TextDecoder().decode(request.body);
-}
-
-const PUBLISHED = { kind: 'published', remoteId: '113000000000000001', url: STATUS_URL };
 
 describe('mastodon publish', () => {
   it('uploads with the alt text as description, waits for processing, then posts with media ids', async () => {

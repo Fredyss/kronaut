@@ -19,23 +19,38 @@ import {
 
 const LANGUAGE = /^[a-z]{2,3}$/;
 
-const postType = (() => {
-  const post = mastodonManifest.postTypes.find((type) => type.id === 'post');
-  if (post?.async === undefined) throw new Error('mastodon manifest lacks the post type');
-  return { id: post.id, pollAfterMs: post.async.pollIntervalMs };
+const VIDEO_MIME = 'video/mp4';
+const POST_TYPES: ReadonlySet<string> = new Set(['post', 'video']);
+
+const pollAfterMs = (() => {
+  const intervals = new Set(mastodonManifest.postTypes.map((type) => type.async?.pollIntervalMs));
+  const [only] = intervals;
+  if (intervals.size !== 1 || only === undefined)
+    throw new Error('mastodon post types disagree on the poll interval');
+  return only;
 })();
 
 const status = z.looseObject({ id: remoteId, url: z.string().nullish() });
 
+function checkMedia(postType: string, media: PublishItem['media']): void {
+  if (postType === 'video') {
+    if (media.length !== 1) throw permanent('video_required');
+    if (media[0]?.mime !== VIDEO_MIME) throw permanent('media_type_unsupported');
+    return;
+  }
+  if (media.some((ref) => !ref.mime.startsWith('image/')))
+    throw permanent('media_type_unsupported');
+}
+
 export function mainItem(input: Input): PublishItem {
-  if (input.postType !== postType.id) throw permanent('post_type_unsupported');
+  if (!POST_TYPES.has(input.postType)) throw permanent('post_type_unsupported');
   if (input.items.some((item) => item.role !== 'main')) throw permanent('thread_unsupported');
   const [main, ...rest] = input.items;
   if (main === undefined) throw permanent('main_item_missing');
   if (rest.length > 0) throw permanent('main_item_multiple');
-  if (main.text.trim() === '' && main.media.length === 0) throw permanent('text_empty');
-  if (main.media.some((ref) => !ref.mime.startsWith('image/')))
-    throw permanent('media_type_unsupported');
+  if (input.postType === 'post' && main.text.trim() === '' && main.media.length === 0)
+    throw permanent('text_empty');
+  checkMedia(input.postType, main.media);
   return main;
 }
 
@@ -82,7 +97,7 @@ export async function publishStatus(ctx: PublishContext, input: Input): Promise<
   if (state.status !== undefined) return published(state.status);
   await ctx.step('upload_media');
   const uploaded = await uploadMedia(ctx, input, item, state);
-  if (uploaded.kind === 'pending') return { kind: 'pending', pollAfterMs: postType.pollAfterMs };
+  if (uploaded.kind === 'pending') return { kind: 'pending', pollAfterMs };
   await ctx.step('create_status');
   const sent = await save(ctx, {
     ...uploaded.state,

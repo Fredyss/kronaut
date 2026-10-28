@@ -197,9 +197,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Frame_RateInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MetadataInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MimeInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_ResolutionInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
@@ -270,6 +272,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
+/** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
 /** @typedef {{}} Issue_Image_Too_WideInputs */
@@ -280,6 +283,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
+/** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
 /** @typedef {{}} Issue_Too_LargeInputs */
@@ -3386,6 +3390,21 @@ export const compose_video_issue_aspect = /** @type {((inputs: Compose_Video_Iss
 /**
 * | output |
 * | --- |
+* | "The video's frame rate is higher than {channel} allows ({max} fps)." |
+*
+* @param {Compose_Video_Issue_Frame_RateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_frame_rate = /** @type {((inputs: Compose_Video_Issue_Frame_RateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_Frame_RateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_frame_rate(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_frame_rate(inputs)
+	return __en.compose_video_issue_frame_rate(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "{channel} doesn't take a video for this kind of post." |
 *
 * @param {Compose_Video_Issue_KindInputs} inputs
@@ -3427,6 +3446,21 @@ export const compose_video_issue_mime = /** @type {((inputs: Compose_Video_Issue
 	if (locale === "sk") return __sk.compose_video_issue_mime(inputs)
 	if (locale === "cs") return __cs.compose_video_issue_mime(inputs)
 	return __en.compose_video_issue_mime(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video's resolution is higher than {channel} allows." |
+*
+* @param {Compose_Video_Issue_ResolutionInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_issue_resolution = /** @type {((inputs: Compose_Video_Issue_ResolutionInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Issue_ResolutionInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_issue_resolution(inputs)
+	if (locale === "cs") return __cs.compose_video_issue_resolution(inputs)
+	return __en.compose_video_issue_resolution(inputs)
 });
 /**
 * | output |
@@ -4483,6 +4517,21 @@ export const issue_file_too_large = /** @type {((inputs?: Issue_File_Too_LargeIn
 /**
 * | output |
 * | --- |
+* | "The video's frame rate is too high for this network." |
+*
+* @param {Issue_Frame_Rate_Too_HighInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_frame_rate_too_high = /** @type {((inputs?: Issue_Frame_Rate_Too_HighInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Frame_Rate_Too_HighInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_frame_rate_too_high(inputs)
+	if (locale === "cs") return __cs.issue_frame_rate_too_high(inputs)
+	return __en.issue_frame_rate_too_high(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Something went wrong. The technical details say more." |
 *
 * @param {Issue_GenericInputs} inputs
@@ -4629,6 +4678,21 @@ export const issue_provider_unavailable = /** @type {((inputs?: Issue_Provider_U
 	if (locale === "sk") return __sk.issue_provider_unavailable(inputs)
 	if (locale === "cs") return __cs.issue_provider_unavailable(inputs)
 	return __en.issue_provider_unavailable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The video's resolution is too high for this network." |
+*
+* @param {Issue_Resolution_Too_HighInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_resolution_too_high = /** @type {((inputs?: Issue_Resolution_Too_HighInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Resolution_Too_HighInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_resolution_too_high(inputs)
+	if (locale === "cs") return __cs.issue_resolution_too_high(inputs)
+	return __en.issue_resolution_too_high(inputs)
 });
 /**
 * | output |

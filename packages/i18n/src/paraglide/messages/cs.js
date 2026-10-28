@@ -195,9 +195,11 @@
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
+/** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Frame_RateInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MetadataInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_MimeInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_ResolutionInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
@@ -268,6 +270,7 @@
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
+/** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
 /** @typedef {{}} Issue_Image_Too_WideInputs */
@@ -278,6 +281,7 @@
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
+/** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
 /** @typedef {{}} Issue_Too_LargeInputs */
@@ -1252,6 +1256,10 @@ export const compose_video_issue_aspect = /** @type {(inputs: Compose_Video_Issu
 	return /** @type {LocalizedString} */ (`Poměr stran videa nevyhovuje kanálu ${i?.channel}.`)
 };
 
+export const compose_video_issue_frame_rate = /** @type {(inputs: Compose_Video_Issue_Frame_RateInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Snímková frekvence videa je vyšší, než dovoluje ${i?.channel} (${i?.max} fps).`)
+};
+
 export const compose_video_issue_kind = /** @type {(inputs: Compose_Video_Issue_KindInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel} u tohoto druhu příspěvku video nepřijímá.`)
 };
@@ -1262,6 +1270,10 @@ export const compose_video_issue_metadata = /** @type {(inputs: Compose_Video_Is
 
 export const compose_video_issue_mime = /** @type {(inputs: Compose_Video_Issue_MimeInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel} nepřijímá formát tohoto videa.`)
+};
+
+export const compose_video_issue_resolution = /** @type {(inputs: Compose_Video_Issue_ResolutionInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Rozlišení videa je vyšší, než dovoluje ${i?.channel}.`)
 };
 
 export const compose_video_issue_too_large = /** @type {(inputs: Compose_Video_Issue_Too_LargeInputs) => LocalizedString} */ (i) => {
@@ -1552,6 +1564,10 @@ export const issue_file_too_large = /** @type {(inputs: Issue_File_Too_LargeInpu
 	return /** @type {LocalizedString} */ (`Soubor s obrázkem je příliš velký.`)
 };
 
+export const issue_frame_rate_too_high = /** @type {(inputs: Issue_Frame_Rate_Too_HighInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Snímková frekvence videa je pro tuto síť příliš vysoká.`)
+};
+
 export const issue_generic = /** @type {(inputs: Issue_GenericInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Něco se pokazilo. Víc řeknou technické podrobnosti.`)
 };
@@ -1590,6 +1606,10 @@ export const issue_post_type_unavailable = /** @type {(inputs: Issue_Post_Type_U
 
 export const issue_provider_unavailable = /** @type {(inputs: Issue_Provider_UnavailableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tato síť teď na tomto serveru není k dispozici.`)
+};
+
+export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_Too_HighInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Rozlišení videa je pro tuto síť příliš vysoké.`)
 };
 
 export const issue_text_too_long = /** @type {(inputs: Issue_Text_Too_LongInputs) => LocalizedString} */ () => {

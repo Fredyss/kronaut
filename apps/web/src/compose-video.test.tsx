@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { checkVideo, type VideoMeta } from './compose/video-rules.ts';
 import { type Call, channel, jpeg, mount, pickFiles } from './compose-testing.tsx';
 
 vi.mock('./compose/editor.tsx', async () => ({
@@ -31,6 +32,8 @@ const REEL = {
     minDurationMs: 3000,
     maxDurationMs: 90_000,
     aspect: { min: { width: 9, height: 16 }, max: { width: 16, height: 9 } },
+    maxFrameRate: null,
+    maxPixels: null,
   },
 };
 
@@ -45,6 +48,24 @@ const THREADS_VIDEO = {
     minDurationMs: 1,
     maxDurationMs: 300_000,
     aspect: { min: { width: 1, height: 100 }, max: { width: 10, height: 1 } },
+    maxFrameRate: null,
+    maxPixels: null,
+  },
+};
+
+const MASTODON_VIDEO = {
+  id: 'video',
+  text: [{ counting: 'graphemes', max: 500 }],
+  maxLinks: null,
+  imageAspect: null,
+  video: {
+    mimes: ['video/mp4'],
+    maxBytes: 99_000_000,
+    minDurationMs: 1,
+    maxDurationMs: 600_000,
+    aspect: null,
+    maxFrameRate: 30,
+    maxPixels: 2_073_600,
   },
 };
 
@@ -52,6 +73,7 @@ const CHANNELS = [
   channel('acct_bsky', 'bluesky', 'Ada on Bluesky'),
   { ...channel('acct_ig', 'instagram', 'Ada on Instagram'), postTypes: [REEL] },
   { ...channel('acct_th', 'threads', 'Ada on Threads'), postTypes: [THREADS_VIDEO] },
+  { ...channel('acct_md', 'mastodon', 'Ada on Mastodon'), postTypes: [MASTODON_VIDEO] },
 ];
 
 function asset(patch: Record<string, unknown> = {}) {
@@ -63,6 +85,7 @@ function asset(patch: Record<string, unknown> = {}) {
     width: 1080,
     height: 1920,
     durationMs: 12_000,
+    frameRate: 30,
     sha256: null,
     state: 'ready',
     aiGenerated: false,
@@ -157,6 +180,36 @@ describe('composer video', () => {
       items: [{ media: [{ mediaId: VIDEO_ID, altText: 'A cat on a sofa' }] }],
       destinations: [{ accountId: 'acct_th', publishType: 'video' }],
     });
+  });
+
+  it('publishes a video to Mastodon as a video post with its alt text', async () => {
+    const { router, mutations } = await pickVideo();
+    await screen.findByText(/^Ready/);
+    fireEvent.change(screen.getByLabelText('Alt text for the video'), {
+      target: { value: 'A dog in the snow' },
+    });
+    fireEvent.click(screen.getByRole('checkbox', { name: /Ada on Mastodon/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    const create = mutations().find((c) => c.path === '/v1/workspaces/ws_1/posts');
+    expect(create?.body).toMatchObject({
+      items: [{ media: [{ mediaId: VIDEO_ID, altText: 'A dog in the snow' }] }],
+      destinations: [{ accountId: 'acct_md', publishType: 'video' }],
+    });
+  });
+
+  it('flags a video above the Mastodon instance frame rate', async () => {
+    await pickVideo({ frameRate: 60 });
+    await screen.findByText(/^Ready/);
+    fireEvent.click(screen.getByRole('checkbox', { name: /Ada on Mastodon/ }));
+
+    expect(
+      await screen.findByText("The video's frame rate is higher than Mastodon allows (30 fps)."),
+    ).toBeDefined();
+    expect(
+      (screen.getByRole('button', { name: 'Publish now' }) as HTMLButtonElement).disabled,
+    ).toBe(true);
   });
 
   it('shows why a video was rejected and blocks submitting', async () => {
@@ -277,5 +330,30 @@ describe('composer video', () => {
 
     expect(await screen.findByText(/^Ready/)).toBeDefined();
     expect(mutations().filter((c) => c.path.endsWith('/uploads'))).toHaveLength(2);
+  });
+});
+
+describe('video pixel cap', () => {
+  const rules = MASTODON_VIDEO.video;
+  const meta = (patch: Partial<VideoMeta>): VideoMeta => ({
+    mime: 'video/mp4',
+    bytes: 6,
+    width: 1080,
+    height: 1920,
+    durationMs: 12_000,
+    frameRate: 30,
+    ...patch,
+  });
+
+  it('flags a master over the pixel limit', () => {
+    expect(checkVideo(rules, meta({ width: 1920, height: 1081 }))).toEqual([
+      { code: 'resolution_too_high', limit: 2_073_600, actual: 2_075_520 },
+    ]);
+  });
+
+  it('needs the dimensions under a pixel limit and passes an unknown frame rate', () => {
+    expect(checkVideo(rules, meta({ width: null, frameRate: null }))).toEqual([
+      { code: 'media_metadata_missing' },
+    ]);
   });
 });

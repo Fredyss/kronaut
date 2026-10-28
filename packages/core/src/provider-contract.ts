@@ -58,6 +58,8 @@ export interface VideoLimits {
   readonly maxDurationMs: number;
   readonly minAspect?: Ratio;
   readonly maxAspect?: Ratio;
+  readonly maxFrameRate?: number;
+  readonly maxPixels?: number;
 }
 
 export interface MediaLimits {
