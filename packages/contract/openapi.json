@@ -2115,6 +2115,24 @@
                                           "minimum": -9007199254740991,
                                           "type": "integer"
                                         },
+                                        "maxFrameRate": {
+                                          "type": [
+                                            "number",
+                                            "null"
+                                          ]
+                                        },
+                                        "maxPixels": {
+                                          "anyOf": [
+                                            {
+                                              "maximum": 9007199254740991,
+                                              "minimum": -9007199254740991,
+                                              "type": "integer"
+                                            },
+                                            {
+                                              "type": "null"
+                                            }
+                                          ]
+                                        },
                                         "mimes": {
                                           "items": {
                                             "type": "string"
@@ -2132,7 +2150,9 @@
                                         "maxBytes",
                                         "minDurationMs",
                                         "maxDurationMs",
-                                        "aspect"
+                                        "aspect",
+                                        "maxFrameRate",
+                                        "maxPixels"
                                       ],
                                       "type": "object"
                                     },
@@ -2568,6 +2588,17 @@
                         }
                       ]
                     },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "height": {
                       "anyOf": [
                         {
@@ -2657,6 +2688,7 @@
                     "width",
                     "height",
                     "durationMs",
+                    "frameRate",
                     "sha256",
                     "state",
                     "aiGenerated",
@@ -2814,6 +2846,17 @@
                             }
                           ]
                         },
+                        "frameRate": {
+                          "anyOf": [
+                            {
+                              "exclusiveMinimum": 0,
+                              "type": "number"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "height": {
                           "anyOf": [
                             {
@@ -2903,6 +2946,7 @@
                         "width",
                         "height",
                         "durationMs",
+                        "frameRate",
                         "sha256",
                         "state",
                         "aiGenerated",
@@ -3030,6 +3074,17 @@
                         }
                       ]
                     },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "height": {
                       "anyOf": [
                         {
@@ -3119,6 +3174,7 @@
                     "width",
                     "height",
                     "durationMs",
+                    "frameRate",
                     "sha256",
                     "state",
                     "aiGenerated",
@@ -3238,6 +3294,17 @@
                         }
                       ]
                     },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "height": {
                       "anyOf": [
                         {
@@ -3327,6 +3394,7 @@
                     "width",
                     "height",
                     "durationMs",
+                    "frameRate",
                     "sha256",
                     "state",
                     "aiGenerated",
@@ -3446,6 +3514,17 @@
                         }
                       ]
                     },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "height": {
                       "anyOf": [
                         {
@@ -3535,6 +3614,7 @@
                     "width",
                     "height",
                     "durationMs",
+                    "frameRate",
                     "sha256",
                     "state",
                     "aiGenerated",

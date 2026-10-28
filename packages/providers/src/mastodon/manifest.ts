@@ -6,6 +6,12 @@ export const mastodonSettings = z.object({});
 export type MastodonSettings = z.infer<typeof mastodonSettings>;
 
 const FIVE_MINUTES_PER_HOUR = 12;
+const STEPS = [
+  { id: 'upload_media', effect: 'private' },
+  { id: 'create_status', effect: 'public' },
+] as const;
+const TEXT = [{ counting: 'mastodon', max: 500, urlWeight: 23 }] as const;
+const ASYNC = { pollIntervalMs: 5_000, giveUpAfterMs: 15 * 60 * 1000 } as const;
 
 export const mastodonManifest: ProviderManifest<MastodonSettings> = {
   id: 'mastodon',
@@ -16,11 +22,8 @@ export const mastodonManifest: ProviderManifest<MastodonSettings> = {
     {
       id: 'post',
       delivery: 'api',
-      steps: [
-        { id: 'upload_media', effect: 'private' },
-        { id: 'create_status', effect: 'public' },
-      ],
-      text: [{ counting: 'mastodon', max: 500, urlWeight: 23 }],
+      steps: STEPS,
+      text: TEXT,
       media: {
         minCount: 0,
         maxCount: 4,
@@ -39,7 +42,29 @@ export const mastodonManifest: ProviderManifest<MastodonSettings> = {
         altText: { supported: true, required: false, maxLength: 1_500 },
         aiLabel: false,
       },
-      async: { pollIntervalMs: 5_000, giveUpAfterMs: 15 * 60 * 1000 },
+      async: ASYNC,
+    },
+    {
+      id: 'video',
+      delivery: 'api',
+      steps: STEPS,
+      text: TEXT,
+      media: {
+        minCount: 1,
+        maxCount: 1,
+        video: {
+          mimes: ['video/mp4'],
+          maxBytes: 103_809_024,
+          minDurationMs: 1,
+          maxDurationMs: 900_000,
+          maxFrameRate: 120,
+          maxPixels: 8_294_400,
+        },
+        mixed: false,
+        altText: { supported: true, required: false, maxLength: 1_500 },
+        aiLabel: false,
+      },
+      async: ASYNC,
     },
   ],
   settings: mastodonSettings,

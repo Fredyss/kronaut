@@ -15,6 +15,7 @@ const ALL = [
   '0005_membership_email_muted',
   '0006_provider_app_redirect_uri',
   '0007_video_upload',
+  '0008_media_frame_rate',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -148,7 +149,7 @@ describe('migrate', () => {
       url,
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
-    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
@@ -399,6 +400,37 @@ describe('migrate', () => {
                 has_function_privilege('public', 'sweep_media_gc(integer)', 'execute') as anyone`,
       ),
     ).toEqual([{ app: true, anyone: false }]);
+  });
+
+  it('adds a validated frame rate column that only a video may carry', async () => {
+    const url = await freshDatabase('frame_rate');
+    await migrate({ connectionString: url });
+    const w = '01900000-0000-7000-8000-0000000008b1';
+    const video = '01900000-0000-7000-8000-0000000008d1';
+    const image = '01900000-0000-7000-8000-0000000008d2';
+    await query(
+      url,
+      `insert into organizations (id, name) values ('01900000-0000-7000-8000-0000000008a1', 'O');
+       insert into workspaces (id, organization_id, name, slug, timezone)
+         values ('${w}', '01900000-0000-7000-8000-0000000008a1', 'W', 'w', 'UTC');
+       insert into media_assets (workspace_id, id, kind, state, storage_key, frame_rate_milli)
+         values ('${w}', '${video}', 'video', 'processing', repeat('a', 64), 29970);
+       insert into media_assets (workspace_id, id, kind, state, storage_key)
+         values ('${w}', '${image}', 'image', 'processing', repeat('b', 64));`,
+    );
+    await expect(
+      query(url, `update media_assets set frame_rate_milli = 30000 where id = '${image}'`),
+    ).rejects.toThrow(/ck_media_assets_frame_rate/);
+    await expect(
+      query(url, `update media_assets set frame_rate_milli = 0 where id = '${video}'`),
+    ).rejects.toThrow(/ck_media_assets_frame_rate/);
+    expect(
+      await query(
+        url,
+        `select convalidated from pg_constraint
+          where conrelid = 'public.media_assets'::regclass and conname = 'ck_media_assets_frame_rate'`,
+      ),
+    ).toEqual([{ convalidated: true }]);
   });
 
   it('upgrades a database that recorded only v1 and still passes the privilege script', async () => {

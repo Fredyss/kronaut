@@ -417,6 +417,7 @@ export interface MediaAssets {
   deleted_at: Timestamp | null;
   duplicate_of_id: string | null;
   duration_ms: number | null;
+  frame_rate_milli: number | null;
   height: number | null;
   id: Generated<string>;
   in_library: Generated<boolean>;

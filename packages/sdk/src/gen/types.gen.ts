@@ -688,6 +688,8 @@ export type ChannelsListResponses = {
                     } | null;
                     maxBytes: number;
                     maxDurationMs: number;
+                    maxFrameRate: number | null;
+                    maxPixels: number | null;
                     mimes: Array<string>;
                     minDurationMs: number;
                 } | null;
@@ -830,6 +832,7 @@ export type MediaUploadResponses = {
         bytes: number | null;
         duplicateOf: string | null;
         durationMs: number | null;
+        frameRate: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';
@@ -881,6 +884,7 @@ export type MediaVideoUploadResponses = {
             bytes: number | null;
             duplicateOf: string | null;
             durationMs: number | null;
+            frameRate: number | null;
             height: number | null;
             id: string;
             kind: 'image' | 'video';
@@ -925,6 +929,7 @@ export type MediaGetResponses = {
         bytes: number | null;
         duplicateOf: string | null;
         durationMs: number | null;
+        frameRate: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';
@@ -969,6 +974,7 @@ export type MediaMarkAiResponses = {
         bytes: number | null;
         duplicateOf: string | null;
         durationMs: number | null;
+        frameRate: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';
@@ -1013,6 +1019,7 @@ export type MediaVideoCompleteResponses = {
         bytes: number | null;
         duplicateOf: string | null;
         durationMs: number | null;
+        frameRate: number | null;
         height: number | null;
         id: string;
         kind: 'image' | 'video';

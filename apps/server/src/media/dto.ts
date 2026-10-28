@@ -21,6 +21,7 @@ export const MediaAssetSchema = z.object({
   width: z.number().int().positive().nullable(),
   height: z.number().int().positive().nullable(),
   durationMs: z.number().int().nonnegative().nullable(),
+  frameRate: z.number().positive().nullable(),
   sha256: z
     .string()
     .regex(/^[0-9a-f]{64}$/)
@@ -41,6 +42,7 @@ export const MEDIA_ASSET_COLUMNS = [
   'width',
   'height',
   'duration_ms',
+  'frame_rate_milli',
   'sha256',
   'state',
   'ai_generated',
@@ -56,6 +58,7 @@ export interface MediaAssetRow {
   readonly width: number | null;
   readonly height: number | null;
   readonly duration_ms: number | null;
+  readonly frame_rate_milli: number | null;
   readonly sha256: Buffer | null;
   readonly state: string;
   readonly ai_generated: boolean;
@@ -72,6 +75,7 @@ export function toMediaAssetDto(row: MediaAssetRow): MediaAssetDto {
     width: row.width,
     height: row.height,
     durationMs: row.duration_ms,
+    frameRate: row.frame_rate_milli === null ? null : row.frame_rate_milli / 1000,
     sha256: row.sha256 === null ? null : row.sha256.toString('hex'),
     state: row.state,
     aiGenerated: row.ai_generated,

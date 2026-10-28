@@ -275,10 +275,11 @@ Mastodon publishing facts checked 2026-10-26 (MA1, MA3, MA7, MA8).
 - **Rate limits** (MA2). Media uploads 30 per 30 min per account; everything else 300 per 5 min.
 
 
-Mastodon video facts checked 2026-10-27 (MA3, MA5, MA8).
+Mastodon video facts checked 2026-10-27 and re-checked 2026-10-28 (MA3, MA5, MA8).
 - `POST /api/v2/media {file, thumbnail, description, focus}`; video is always 202 with `url` null; poll `GET /api/v1/media/:id` (206, 200, 422).
-- Per instance (MA5, from 4.0): `video_size_limit` (example 103,809,024 bytes), `video_frame_rate_limit` (example 120), `video_matrix_limit` (example 8,294,400 px). MA8: MP4, M4V, MOV, WebM up to 99 MB; the server transcodes to H.264. Duration limit undocumented. One video per post.
+- Per instance (MA5, from 4.0): `video_size_limit` (example 103,809,024 bytes), `video_frame_rate_limit` (example 120), `video_matrix_limit` (example 8,294,400 px). MA8: MP4, M4V, MOV, WebM up to 99 MB; the server transcodes to H.264 MP4 at up to 1,300 kbps and 120 fps. Duration limit undocumented. One video per post; mixing a video with images is undocumented.
 - `description` (≤ `description_limit`) applies to video too; `thumbnail` sets a cover.
+- Kronaut publishes one master MP4 as the `video` post type. Its limits come from the instance: `video_size_limit`, `video_frame_rate_limit` and `video_matrix_limit`, with the MA5 examples as fallbacks. The duration cap is the pipeline's 15 min. Compose checks all three limits; the server preflight checks size and pixels, because the frozen snapshot carries no frame rate. Kronaut sets no `thumbnail`.
 
 **LinkedIn** (member posting through "Sign In with LinkedIn using OpenID Connect" and "Share on LinkedIn", `api.linkedin.com/rest`, 202610)
 

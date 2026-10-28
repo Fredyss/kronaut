@@ -13,6 +13,7 @@ import type { BoundRoute, RequestContext } from '../http/types.ts';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaJob } from '../jobs.ts';
 import { asUser, type MediaDb, NOW, startMediaDb, type Tenant, uuidOf } from './db-testing.ts';
+import { findMediaAsset } from './dto.ts';
 import { type MediaProcessDeps, runMediaProcess } from './process.ts';
 import { createStaging, type Staging } from './staging.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
@@ -49,6 +50,7 @@ interface Row {
   width: number | null;
   height: number | null;
   duration_ms: number | null;
+  frame_rate_milli: number | null;
   source_sha256: Buffer | null;
   ai_generated: boolean;
   deleted_at: Date | null;
@@ -199,6 +201,11 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
     expect(Number(ready.bytes)).toBeGreaterThan(0);
     expect(ready.duration_ms).toBeGreaterThan(3900);
     expect(ready.duration_ms).toBeLessThan(4200);
+    expect(ready.frame_rate_milli).toBe(30_000);
+    const dto = await fx.db.withTenant(a.workspaceId, asUser(a), (trx) =>
+      findMediaAsset(trx, a.workspaceId, job.id),
+    );
+    expect(dto).toMatchObject({ kind: 'video', durationMs: ready.duration_ms, frameRate: 30 });
     expect(ready.source_sha256).toEqual(createHash('sha256').update(data).digest());
     expect(await fx.store.has(ready.storage_key)).toBe(true);
     const renditions = await asOwner<{ purpose: string; mime: string; storage_key: string }[]>(

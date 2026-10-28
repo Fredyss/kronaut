@@ -11,6 +11,7 @@ export interface VideoMeta {
   readonly width: number | null;
   readonly height: number | null;
   readonly durationMs: number | null;
+  readonly frameRate: number | null;
 }
 
 type Aspect = NonNullable<VideoRules['aspect']>;
@@ -32,7 +33,8 @@ function shapeIssues(rules: VideoRules, video: VideoMeta): ValidationIssue[] {
   const { width, height, durationMs } = video;
   const { aspect } = rules;
   const issues: ValidationIssue[] = [];
-  if (durationMs === null || (aspect !== null && (width === null || height === null))) {
+  const needsSize = aspect !== null || rules.maxPixels !== null;
+  if (durationMs === null || (needsSize && (width === null || height === null))) {
     issues.push({ code: 'media_metadata_missing' });
   }
   if (aspect !== null && width !== null && height !== null && outside(width, height, aspect)) {
@@ -47,9 +49,22 @@ function shapeIssues(rules: VideoRules, video: VideoMeta): ValidationIssue[] {
   return issues;
 }
 
+function capIssues(rules: VideoRules, { width, height, frameRate }: VideoMeta): ValidationIssue[] {
+  const { maxFrameRate, maxPixels } = rules;
+  const issues: ValidationIssue[] = [];
+  if (maxFrameRate !== null && frameRate !== null && frameRate > maxFrameRate) {
+    issues.push({ code: 'frame_rate_too_high', limit: maxFrameRate, actual: frameRate });
+  }
+  const pixels = width === null || height === null ? null : width * height;
+  if (maxPixels !== null && pixels !== null && pixels > maxPixels) {
+    issues.push({ code: 'resolution_too_high', limit: maxPixels, actual: pixels });
+  }
+  return issues;
+}
+
 export function checkVideo(rules: VideoRules | null, video: VideoMeta): ValidationIssue[] {
   if (rules === null) return [{ code: 'media_kind_unsupported' }];
-  return [...fileIssues(rules, video), ...shapeIssues(rules, video)];
+  return [...fileIssues(rules, video), ...shapeIssues(rules, video), ...capIssues(rules, video)];
 }
 
 export function videoIssueLine(issue: ValidationIssue, channel: string, locale: string): string {
@@ -65,6 +80,13 @@ export function videoIssueLine(issue: ValidationIssue, channel: string, locale: 
       return m.compose_video_issue_too_short({ channel, min: formatDuration(limit, locale) });
     case 'duration_too_long':
       return m.compose_video_issue_too_long({ channel, max: formatDuration(limit, locale) });
+    case 'frame_rate_too_high':
+      return m.compose_video_issue_frame_rate({
+        channel,
+        max: new Intl.NumberFormat(locale).format(limit),
+      });
+    case 'resolution_too_high':
+      return m.compose_video_issue_resolution({ channel });
     case 'media_metadata_missing':
       return m.compose_video_issue_metadata({ channel });
     default:

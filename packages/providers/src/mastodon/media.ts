@@ -20,6 +20,7 @@ const EXTENSIONS: Readonly<Record<string, string>> = {
   'image/heif': 'heif',
   'image/webp': 'webp',
   'image/avif': 'avif',
+  'video/mp4': 'mp4',
 };
 
 const attachment = z.looseObject({ id: remoteId });
