@@ -8,7 +8,7 @@ import { importArchive } from './backup/import.ts';
 import { spawnPgTools } from './backup/pg-tools.ts';
 import { listBackupNames, removeStaleWorkDirs, runBackup, writeStatus } from './backup/run.ts';
 import { parseDailyTime, runSchedule } from './backup/schedule.ts';
-import { keyring, stderrLogger } from './context.ts';
+import { keyring, messages, stderrLogger } from './context.ts';
 import { UsageError } from './errors.ts';
 
 function mediaDir(): string {
@@ -33,7 +33,7 @@ export async function exportCommand(args: readonly string[]): Promise<void> {
     allowPositionals: false,
     options: { out: { type: 'string' } },
   });
-  if (values.out === undefined) throw new UsageError('--out is required');
+  if (values.out === undefined) throw new UsageError((m) => m.option_required({ option: '--out' }));
   const result = await exportArchive(
     exportDeps(requireEnv(process.env, 'KRONAUT_BACKUP_RECIPIENT')),
     values.out,
@@ -49,8 +49,10 @@ export async function importCommand(args: readonly string[]): Promise<void> {
     options: { identity: { type: 'string' } },
   });
   const [file, ...extra] = positionals;
-  if (file === undefined || extra.length > 0) throw new UsageError('expected one archive file');
-  if (values.identity === undefined) throw new UsageError('--identity is required');
+  if (file === undefined || extra.length > 0)
+    throw new UsageError((m) => m.expected_one_archive({}));
+  if (values.identity === undefined)
+    throw new UsageError((m) => m.option_required({ option: '--identity' }));
   const { epoch } = await importArchive(
     {
       migrationUrl: requireEnv(process.env, 'KRONAUT_MIGRATION_DATABASE_URL'),
@@ -62,10 +64,7 @@ export async function importCommand(args: readonly string[]): Promise<void> {
     file,
     values.identity,
   );
-  process.stdout.write(
-    `restore epoch ${epoch}; publishing is paused in restore quarantine\n` +
-      'run `kronaut migrate`, review the quarantined posts, then run `kronaut release`\n',
-  );
+  process.stdout.write(`${messages.import_done({ epoch })}\n${messages.import_next({})}\n`);
 }
 
 async function sleep(ms: number, signal: AbortSignal): Promise<void> {
@@ -109,7 +108,7 @@ async function scheduleCommand(dir: string): Promise<void> {
 export async function backupCommand(args: readonly string[]): Promise<void> {
   const [mode, ...rest] = args;
   if (mode !== 'run' && mode !== 'schedule') {
-    throw new UsageError('expected `backup run` or `backup schedule`');
+    throw new UsageError((m) => m.backup_mode({}));
   }
   const { values } = parseArgs({
     args: rest,
@@ -117,7 +116,7 @@ export async function backupCommand(args: readonly string[]): Promise<void> {
     allowPositionals: false,
     options: { dir: { type: 'string' } },
   });
-  if (values.dir === undefined) throw new UsageError('--dir is required');
+  if (values.dir === undefined) throw new UsageError((m) => m.option_required({ option: '--dir' }));
   if (mode === 'run') {
     const path = await runBackup(
       exportDeps(requireEnv(process.env, 'KRONAUT_BACKUP_RECIPIENT')),

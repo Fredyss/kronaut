@@ -9,7 +9,7 @@ import { Decrypter } from 'age-encryption';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import tar from 'tar-stream';
-import { CommandError } from '../errors.ts';
+import { type CliText, CommandError } from '../errors.ts';
 import {
   type ArchiveEntry,
   ArchiveError,
@@ -42,7 +42,7 @@ async function loadIdentity(identityFile: string): Promise<Decrypter> {
   try {
     text = await readFile(identityFile, 'utf8');
   } catch {
-    throw new CommandError('cannot read the identity file');
+    throw new CommandError((m) => m.identity_unreadable({}));
   }
   const decrypter = new Decrypter();
   let count = 0;
@@ -52,11 +52,11 @@ async function loadIdentity(identityFile: string): Promise<Decrypter> {
     try {
       decrypter.addIdentity(trimmed);
     } catch {
-      throw new CommandError('the identity file holds an invalid age identity');
+      throw new CommandError((m) => m.identity_invalid({}));
     }
     count += 1;
   }
-  if (count === 0) throw new CommandError('the identity file holds no age identity');
+  if (count === 0) throw new CommandError((m) => m.identity_empty({}));
   return decrypter;
 }
 
@@ -66,7 +66,7 @@ async function drain(stream: Readable): Promise<void> {
 
 async function readSmall(stream: Entry): Promise<Buffer> {
   if ((stream.header.size ?? 0) > MANIFEST_MAX_BYTES) {
-    throw new ArchiveError('manifest.json is too large');
+    throw new ArchiveError((m) => m.manifest_too_large({}));
   }
   const chunks: Buffer[] = [];
   for await (const chunk of stream) chunks.push(chunk as Buffer);
@@ -84,7 +84,7 @@ async function walkArchive(archive: FileHandle, decrypter: Decrypter, visit: Vis
       ),
     )) as WebReadableStream<Uint8Array>;
   } catch {
-    throw new CommandError('cannot decrypt the archive: wrong identity or not an age file');
+    throw new CommandError((m) => m.archive_undecryptable({}));
   }
   const source = Readable.fromWeb(plaintext);
   const extract = tar.extract();
@@ -101,7 +101,7 @@ async function walkArchive(archive: FileHandle, decrypter: Decrypter, visit: Vis
   } catch (error) {
     source.destroy();
     if (error instanceof CommandError) throw error;
-    throw new CommandError('the archive is corrupt or truncated');
+    throw new CommandError((m) => m.archive_corrupt({}));
   }
   order.finish();
 }
@@ -120,7 +120,7 @@ async function scanArchive(
       bytes += stream.header.size ?? 0;
     }
   });
-  if (manifest === undefined) throw new ArchiveError('archive is missing manifest.json');
+  if (manifest === undefined) throw new ArchiveError((m) => m.archive_missing_manifest({}));
   return { manifest, files, bytes };
 }
 
@@ -130,13 +130,16 @@ function checkManifest(
 ): void {
   const { manifest } = scanned;
   if (manifest.media.files !== scanned.files || manifest.media.bytes !== scanned.bytes) {
-    throw new ArchiveError('the media entries do not match the manifest');
+    throw new ArchiveError((m) => m.archive_media_mismatch({}));
   }
   const available = new Set(keyring.versions());
   const missing = manifest.kek_versions.filter((version) => !available.has(version));
   if (missing.length > 0) {
-    throw new CommandError(
-      `the keyring lacks KEK version ${missing.join(', ')}; set KRONAUT_KEK_<n> for each before importing`,
+    throw new CommandError((m, locale) =>
+      m.keyring_missing({
+        count: missing.length,
+        versions: new Intl.ListFormat(locale).format(missing.map(String)),
+      }),
     );
   }
 }
@@ -163,14 +166,14 @@ async function checkTarget(deps: ImportDeps): Promise<void> {
       return result.rows[0]?.n ?? 0;
     }),
   );
-  if (tables > 0) throw new CommandError('the target database is not empty');
+  if (tables > 0) throw new CommandError((m) => m.target_db_not_empty({}));
   let entries: string[] = [];
   try {
     entries = await readdir(deps.mediaDir);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
   }
-  if (entries.length > 0) throw new CommandError('the target media directory is not empty');
+  if (entries.length > 0) throw new CommandError((m) => m.target_media_not_empty({}));
 }
 
 async function openArchive(file: string): Promise<{ archive: FileHandle; stats: Stats }> {
@@ -178,12 +181,12 @@ async function openArchive(file: string): Promise<{ archive: FileHandle; stats: 
   try {
     archive = await open(file, 'r');
   } catch {
-    throw new CommandError('cannot open the archive file');
+    throw new CommandError((m) => m.archive_unopenable({}));
   }
   const stats = await archive.stat();
   if (!stats.isFile()) {
     await archive.close();
-    throw new CommandError('the archive is not a regular file');
+    throw new CommandError((m) => m.archive_not_file({}));
   }
   return { archive, stats };
 }
@@ -195,7 +198,7 @@ async function requireUnchanged(archive: FileHandle, before: Stats): Promise<voi
     after.mtimeMs !== before.mtimeMs ||
     after.ctimeMs !== before.ctimeMs
   ) {
-    throw new CommandError('the archive changed while it was being imported');
+    throw new CommandError((m) => m.archive_changed({}));
   }
 }
 
@@ -206,7 +209,7 @@ async function readEpoch(migrationUrl: string): Promise<number> {
         restore_epoch: number;
       }>`select restore_epoch from instance_state`.execute(trx);
       const row = result.rows[0];
-      if (row === undefined) throw new CommandError('the restored database has no instance state');
+      if (row === undefined) throw new CommandError((m) => m.restored_no_state({}));
       return row.restore_epoch;
     }),
   );
@@ -257,12 +260,14 @@ export async function importArchive(
       });
     } catch (error) {
       if (epoch === undefined) throw error;
-      const reason = error instanceof CommandError ? error.message : 'an unexpected error';
-      throw new CommandError(
-        `the database is restored and quarantined (restore epoch ${epoch}), but copying media failed: ${reason}`,
+      const restored = epoch;
+      const reason: CliText =
+        error instanceof CommandError ? error.text : (m) => m.unexpected_error({});
+      throw new CommandError((m, locale) =>
+        m.media_copy_failed({ epoch: restored, reason: reason(m, locale) }),
       );
     }
-    if (epoch === undefined) throw new ArchiveError('archive is missing db.dump');
+    if (epoch === undefined) throw new ArchiveError((m) => m.archive_missing_dump({}));
     deps.logger.info(
       {
         restore_epoch: epoch,

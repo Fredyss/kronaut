@@ -1,6 +1,6 @@
 import { isStorageKey } from '@kronaut/media';
 import * as z from 'zod';
-import { CommandError } from '../errors.ts';
+import { type CliText, CommandError } from '../errors.ts';
 
 export const ARCHIVE_FORMAT = 1;
 export const MANIFEST_NAME = 'manifest.json';
@@ -28,21 +28,21 @@ export interface EntryHeader {
 }
 
 export class ArchiveError extends CommandError {
-  constructor(message: string) {
-    super(message);
+  constructor(text: CliText) {
+    super(text);
     this.name = 'ArchiveError';
   }
 }
 
 export function classifyEntry(header: EntryHeader): ArchiveEntry {
-  if (header.type !== 'file') throw new ArchiveError('archive holds a non-regular entry');
+  if (header.type !== 'file') throw new ArchiveError((m) => m.archive_non_regular({}));
   if (header.name === MANIFEST_NAME) return { kind: 'manifest' };
   if (header.name === DUMP_NAME) return { kind: 'dump' };
   if (header.name.startsWith(MEDIA_PREFIX)) {
     const key = header.name.slice(MEDIA_PREFIX.length);
     if (isStorageKey(key)) return { kind: 'media', key };
   }
-  throw new ArchiveError('archive holds an entry outside the whitelist');
+  throw new ArchiveError((m) => m.archive_outside_whitelist({}));
 }
 
 export interface EntryOrder {
@@ -55,9 +55,9 @@ export function entryOrder(): EntryOrder {
   const keys = new Set<string>();
   return {
     next(entry) {
-      if (stage === 'done') throw new ArchiveError('manifest.json must be the last entry');
+      if (stage === 'done') throw new ArchiveError((m) => m.archive_manifest_last({}));
       if (stage === 'dump') {
-        if (entry.kind !== 'dump') throw new ArchiveError('db.dump must be the first entry');
+        if (entry.kind !== 'dump') throw new ArchiveError((m) => m.archive_dump_first({}));
         stage = 'body';
         return;
       }
@@ -65,12 +65,12 @@ export function entryOrder(): EntryOrder {
         stage = 'done';
         return;
       }
-      if (entry.kind !== 'media') throw new ArchiveError('archive repeats db.dump');
-      if (keys.has(entry.key)) throw new ArchiveError('archive repeats a media entry');
+      if (entry.kind !== 'media') throw new ArchiveError((m) => m.archive_repeats_dump({}));
+      if (keys.has(entry.key)) throw new ArchiveError((m) => m.archive_repeats_media({}));
       keys.add(entry.key);
     },
     finish() {
-      if (stage !== 'done') throw new ArchiveError('archive is missing db.dump or manifest.json');
+      if (stage !== 'done') throw new ArchiveError((m) => m.archive_incomplete({}));
     },
   };
 }
@@ -80,9 +80,10 @@ export function parseManifest(bytes: Uint8Array): Manifest {
   try {
     raw = JSON.parse(Buffer.from(bytes).toString('utf8'));
   } catch {
-    throw new ArchiveError('manifest.json is not valid JSON');
+    throw new ArchiveError((m) => m.manifest_invalid_json({}));
   }
   const parsed = manifestSchema.safeParse(raw);
-  if (!parsed.success) throw new ArchiveError('manifest.json is not a format 1 manifest');
+  if (!parsed.success)
+    throw new ArchiveError((m) => m.manifest_wrong_format({ format: ARCHIVE_FORMAT }));
   return parsed.data;
 }

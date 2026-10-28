@@ -40,7 +40,7 @@ export interface ScheduleDeps {
 type Outcome = 'ok' | 'failed' | 'skipped';
 
 function parseTimeZone(value: string): string {
-  const fail = new UsageError('KRONAUT_BACKUP_TIMEZONE must be an IANA time zone');
+  const fail = new UsageError((m) => m.timezone_invalid({ option: 'KRONAUT_BACKUP_TIMEZONE' }));
   if (!IANA_TZ.test(value)) throw fail;
   try {
     return Temporal.Now.zonedDateTimeISO(value).timeZoneId;
@@ -51,7 +51,7 @@ function parseTimeZone(value: string): string {
 
 export function parseDailyTime(time: string | undefined, timeZone: string | undefined): DailyTime {
   const match = HH_MM.exec(time ?? DEFAULT_TIME);
-  if (match === null) throw new UsageError('KRONAUT_BACKUP_TIME must be HH:MM (24-hour)');
+  if (match === null) throw new UsageError((m) => m.backup_time_invalid({}));
   return {
     time: new Temporal.PlainTime(Number(match[1]), Number(match[2])),
     timeZone: parseTimeZone(timeZone ?? DEFAULT_TIMEZONE),

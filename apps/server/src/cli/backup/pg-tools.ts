@@ -32,14 +32,14 @@ export function splitConnection(connection: string): { dbname: string; password?
   try {
     url = new URL(connection);
   } catch {
-    throw new CommandError('the database URL is not a valid postgres:// URL');
+    throw new CommandError((m) => m.db_url_invalid({}));
   }
   if (url.password === '') return { dbname: url.toString() };
   let password: string;
   try {
     password = decodeURIComponent(url.password);
   } catch {
-    throw new CommandError('the database URL has a malformed password');
+    throw new CommandError((m) => m.db_url_password({}));
   }
   url.password = '';
   return { dbname: url.toString(), password };
@@ -91,11 +91,15 @@ function spawnTool(
   });
   const exit = new Promise<void>((resolve, reject) => {
     child.once('error', (error: NodeJS.ErrnoException) => {
-      reject(error.code === 'ENOENT' ? new CommandError(`${tool} was not found on PATH`) : error);
+      reject(error.code === 'ENOENT' ? new CommandError((m) => m.tool_missing({ tool })) : error);
     });
     child.once('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new CommandError(`${tool} failed${errorLine(tool, Buffer.concat(stderr))}`));
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      const detail = errorLine(tool, Buffer.concat(stderr));
+      reject(new CommandError((m) => `${m.tool_failed({ tool })}${detail}`));
     });
   });
   return { child, exit };
@@ -112,7 +116,7 @@ async function settle(
 }
 
 async function write(sink: Writable, chunk: Uint8Array | string): Promise<void> {
-  const stopped = () => new CommandError('psql stopped reading');
+  const stopped = () => new CommandError((m) => m.tool_stopped_reading({ tool: 'psql' }));
   if (sink.destroyed || sink.writableEnded) throw stopped();
   if (sink.write(chunk)) return;
   await new Promise<void>((resolve, reject) => {
@@ -198,8 +202,10 @@ export async function requireMajor(pg: PgTools, tool: PgTool): Promise<void> {
   const match = /\(PostgreSQL\) (\d+)/.exec(await pg.version(tool));
   const major = match?.[1] === undefined ? undefined : Number(match[1]);
   if (major !== PG_MAJOR) {
-    throw new CommandError(
-      `${tool} must be PostgreSQL ${PG_MAJOR}, found ${major ?? 'an unknown version'}`,
+    throw new CommandError((m) =>
+      major === undefined
+        ? m.tool_version_unknown({ tool, major: PG_MAJOR })
+        : m.tool_version({ tool, major: PG_MAJOR, found: major }),
     );
   }
 }

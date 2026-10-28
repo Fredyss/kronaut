@@ -101,7 +101,7 @@ function harness(options: {
     runBackup: async (recipient) => {
       expect(recipient).toBe(RECIPIENT);
       runs.push(now.toString());
-      if (options.fail === true) throw new CommandError('pg_dump failed: connection refused');
+      if (options.fail === true) throw new CommandError(() => 'pg_dump failed: connection refused');
       return `/backup/kronaut-${runs.length}.age`;
     },
     writeStatus: async (status) => {

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "usage_title": "použitie:",
+  "usage_app_secret_stdin": "tajný kľúč aplikácie na stdin",
+  "usage_client_secret_stdin": "tajný kľúč klienta na stdin",
+  "config_error": "chyba v konfigurácii",
+  "unexpected_error": "neočakávaná chyba",
+  "unknown_command": "neznámy príkaz",
+  "unknown_user_command": "neznámy podpríkaz príkazu user",
+  "unknown_provider_app_command": "neznámy podpríkaz príkazu provider-app",
+  "unknown_key_command": "neznámy podpríkaz príkazu provider-app key",
+  "wrong_argument_count": "nesprávny počet argumentov",
+  "option_required": "zadajte {option}",
+  "owner_options_required": "zadajte --email, --name aj --workspace",
+  "option_empty": "hodnota {option} nesmie byť prázdna",
+  "option_too_long": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "hodnota {option} môže mať najviac {count} znak",
+        "countPlural=few": "hodnota {option} môže mať najviac {count} znaky",
+        "countPlural=many": "hodnota {option} môže mať najviac {count} znaku",
+        "countPlural=*": "hodnota {option} môže mať najviac {count} znakov"
+      }
+    }
+  ],
+  "timezone_invalid": "{option} musí byť časové pásmo IANA",
+  "expected_one_email": "zadajte práve jeden e-mail",
+  "email_invalid": "--email musí byť e-mailová adresa",
+  "slug_underivable": "z názvu pracovného priestoru sa nedá odvodiť slug; zadajte --slug",
+  "slug_invalid": "--slug musí zodpovedať vzoru {pattern}",
+  "user_email_taken": "používateľ s týmto e-mailom už existuje",
+  "workspace_slug_taken": "pracovný priestor s týmto slugom už existuje; zadajte iný --slug",
+  "user_not_found": "žiadny aktívny používateľ nemá tento e-mail",
+  "secret_stdin_tty": "pošlite tajný kľúč aplikácie rúrou na stdin",
+  "secret_stdin_empty": "tajný kľúč aplikácie na stdin je prázdny",
+  "secret_stdin_lines": "tajný kľúč aplikácie na stdin musí byť na jednom riadku",
+  "expected_one_provider": "zadajte práve jednu sieť",
+  "bluesky_client_id": "bluesky nepoužíva --client-id",
+  "provider_unsupported": "zaregistrovať sa dá len bluesky, facebook, instagram, linkedin alebo threads",
+  "provider_app_exists": "aplikácia pre {provider} je už zaregistrovaná: {id}",
+  "provider_app_not_found": "žiadna aplikácia siete nemá toto id",
+  "key_not_found": "táto aplikácia nemá kľúč s týmto kid",
+  "key_not_next": "aktivovať sa dá len kľúč v stave next; tento je v stave {status}",
+  "key_active": "aktívny kľúč sa nedá zmazať; najprv aktivujte kľúč v stave next",
+  "key_recently_retired": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "kľúč {kid} bol vyradený pred menej ako {count} minútou; pripojenia kanálov začaté pred výmenou kľúča ho ešte môžu potrebovať",
+        "countPlural=many": "kľúč {kid} bol vyradený pred menej ako {count} minúty; pripojenia kanálov začaté pred výmenou kľúča ho ešte môžu potrebovať",
+        "countPlural=*": "kľúč {kid} bol vyradený pred menej ako {count} minútami; pripojenia kanálov začaté pred výmenou kľúča ho ešte môžu potrebovať"
+      }
+    }
+  ],
+  "key_in_use": "kľúč {kid} ešte podpisuje prístupové údaje pripojených kanálov; pred zmazaním kľúča ich musíte znova pripojiť alebo odpojiť",
+  "expected_one_archive": "zadajte práve jeden súbor archívu",
+  "backup_mode": "očakáva sa `backup run` alebo `backup schedule`",
+  "backup_time_invalid": "KRONAUT_BACKUP_TIME musí mať tvar HH:MM (24-hodinový čas)",
+  "import_done": "epocha obnovy {epoch}; uverejňovanie je pozastavené v karanténe po obnove",
+  "import_next": "spustite `kronaut migrate`, skontrolujte príspevky v karanténe a potom spustite `kronaut release`",
+  "db_url_invalid": "URL databázy nie je platná adresa postgres://",
+  "db_url_password": "URL databázy obsahuje poškodené heslo",
+  "tool_missing": "{tool} sa v PATH nenašiel",
+  "tool_failed": "{tool} zlyhal",
+  "tool_stopped_reading": "{tool} prestal čítať vstup",
+  "tool_version": "{tool} musí byť PostgreSQL {major}, nájdená verzia je {found}",
+  "tool_version_unknown": "{tool} musí byť PostgreSQL {major}, verziu sa nepodarilo zistiť",
+  "output_exists": "výstupný súbor už existuje",
+  "partial_exists": "existuje súbor .partial z predchádzajúceho exportu; najprv ho odstráňte",
+  "no_schema": "databáza neobsahuje schému Kronautu",
+  "no_migrations": "databáza nemá žiadne migrácie",
+  "never_started": "inštancia sa ešte nikdy nespustila; spustite raz server a potom exportujte",
+  "identity_unreadable": "súbor s identitou sa nedá prečítať",
+  "identity_invalid": "súbor s identitou obsahuje neplatnú identitu age",
+  "identity_empty": "súbor s identitou neobsahuje žiadnu identitu age",
+  "archive_undecryptable": "archív sa nedá dešifrovať: nesprávna identita alebo nejde o súbor age",
+  "archive_corrupt": "archív je poškodený alebo neúplný",
+  "archive_unopenable": "súbor archívu sa nedá otvoriť",
+  "archive_not_file": "archív nie je bežný súbor",
+  "archive_changed": "archív sa počas importu zmenil",
+  "archive_non_regular": "archív obsahuje položku, ktorá nie je bežný súbor",
+  "archive_outside_whitelist": "archív obsahuje nepovolenú položku",
+  "archive_dump_first": "db.dump musí byť prvou položkou archívu",
+  "archive_manifest_last": "manifest.json musí byť poslednou položkou archívu",
+  "archive_repeats_dump": "db.dump sa v archíve opakuje",
+  "archive_repeats_media": "mediálny súbor sa v archíve opakuje",
+  "archive_incomplete": "v archíve chýba db.dump alebo manifest.json",
+  "archive_missing_dump": "v archíve chýba db.dump",
+  "archive_missing_manifest": "v archíve chýba manifest.json",
+  "archive_media_mismatch": "mediálne súbory v archíve nezodpovedajú manifestu",
+  "manifest_too_large": "manifest.json je príliš veľký",
+  "manifest_invalid_json": "manifest.json nie je platný JSON",
+  "manifest_wrong_format": "manifest.json nie je manifest formátu {format}",
+  "keyring_missing": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "v sade kľúčov chýba verzia KEK {versions}; pred importom nastavte KRONAUT_KEK_<n>",
+        "countPlural=*": "v sade kľúčov chýbajú verzie KEK {versions}; pred importom nastavte KRONAUT_KEK_<n> pre každú z nich"
+      }
+    }
+  ],
+  "target_db_not_empty": "cieľová databáza nie je prázdna",
+  "target_media_not_empty": "cieľový priečinok médií nie je prázdny",
+  "restored_no_state": "obnovená databáza nemá stav inštancie",
+  "media_copy_failed": "databáza je obnovená a v karanténe (epocha obnovy {epoch}), ale kopírovanie médií zlyhalo: {reason}"
+}

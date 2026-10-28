@@ -12,7 +12,7 @@ packages/
   compose/                text counters, serializers, validate()            browser-safe
   contract/               defineRoute registry → openapi.json
   sdk/                    generated client (web, public API, MCP)
-  i18n/                   message catalog (en/sk/cs) and compiled Paraglide modules; browser-safe; shared by web and server
+  i18n/                   message catalogs (en/sk/cs: the app, and the CLI apart) and compiled Paraglide modules; browser-safe; shared by web and server
   db/                     Kysely types, migrations/, tenant-scoped repos, withTenant()
     schema/v1.sql         normative v1 schema; migrations are tested against it
   credentials/            token vault; only the worker and the connect flow may import it

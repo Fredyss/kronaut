@@ -31,12 +31,13 @@ async function createCommand(rest: string[]): Promise<void> {
       slug: { type: 'string' },
     },
   });
-  if (values.owner !== true) throw new UsageError('--owner is required');
+  if (values.owner !== true) throw new UsageError((m) => m.option_required({ option: '--owner' }));
   const { email, name, workspace, timezone } = values;
   if (email === undefined || name === undefined || workspace === undefined) {
-    throw new UsageError('--email, --name and --workspace are required');
+    throw new UsageError((m) => m.owner_options_required({}));
   }
-  if (timezone === undefined) throw new UsageError('--timezone is required');
+  if (timezone === undefined)
+    throw new UsageError((m) => m.option_required({ option: '--timezone' }));
   const created = await withUserDeps((deps) =>
     createOwner(deps, { email, name, workspace, timezone, slug: values.slug }),
   );
@@ -51,7 +52,8 @@ async function resetPasswordCommand(rest: string[]): Promise<void> {
     options: {},
   });
   const [email, ...extra] = positionals;
-  if (email === undefined || extra.length > 0) throw new UsageError('expected one email');
+  if (email === undefined || extra.length > 0)
+    throw new UsageError((m) => m.expected_one_email({}));
   const issued = await withUserDeps((deps) => resetPassword(deps, email));
   process.stdout.write(`${issued.link}\n`);
 }
@@ -66,5 +68,5 @@ export async function userCommand(args: readonly string[]): Promise<void> {
     await resetPasswordCommand(rest);
     return;
   }
-  throw new UsageError('unknown user command');
+  throw new UsageError((m) => m.unknown_user_command({}));
 }

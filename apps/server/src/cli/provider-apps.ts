@@ -11,12 +11,6 @@ const CLI: Actor = { kind: 'cli' };
 const BLUESKY = 'bluesky';
 const BLUESKY_METADATA_PATH = '/oauth/bluesky/oauth-client-metadata.json';
 export type SecretAppProvider = 'facebook' | 'instagram' | 'linkedin' | 'threads';
-const ARTICLE: Readonly<Record<SecretAppProvider, string>> = {
-  facebook: 'a',
-  instagram: 'an',
-  linkedin: 'a',
-  threads: 'a',
-};
 
 export interface ProviderAppCommandDeps {
   readonly db: Database;
@@ -50,7 +44,8 @@ export async function registerBluesky(
       .where('instance_host', '=', '')
       .executeTakeFirst();
     if (existing !== undefined) {
-      throw new CommandError(`a bluesky app is already registered: ${existing.id}`);
+      const id = existing.id;
+      throw new CommandError((m) => m.provider_app_exists({ provider: BLUESKY, id }));
     }
     const row = await trx
       .insertInto('provider_apps')
@@ -81,9 +76,8 @@ export async function registerSecretApp(
       .where('status', '=', 'active')
       .executeTakeFirst();
     if (existing !== undefined) {
-      throw new CommandError(
-        `${ARTICLE[provider]} ${provider} app is already registered: ${existing.id}`,
-      );
+      const id = existing.id;
+      throw new CommandError((m) => m.provider_app_exists({ provider, id }));
     }
     const row = await trx
       .insertInto('provider_apps')
@@ -111,7 +105,7 @@ export async function createKey(
       .select('provider')
       .where('id', '=', appId)
       .executeTakeFirst();
-    if (app === undefined) throw new CommandError('no provider app has this id');
+    if (app === undefined) throw new CommandError((m) => m.provider_app_not_found({}));
     const key = createSigningKey(deps.keyring, appId, app.provider);
     await trx
       .insertInto('provider_app_keys')
@@ -141,9 +135,10 @@ export async function activateKey(
       .where('kid', '=', kid)
       .forUpdate()
       .executeTakeFirst();
-    if (key === undefined) throw new CommandError('no key with this kid for this app');
-    if (key.status !== 'next') {
-      throw new CommandError(`only a next key can be activated; this one is ${key.status}`);
+    if (key === undefined) throw new CommandError((m) => m.key_not_found({}));
+    const status = key.status;
+    if (status !== 'next') {
+      throw new CommandError((m) => m.key_not_next({ status }));
     }
     await trx
       .updateTable('provider_app_keys')
@@ -180,22 +175,17 @@ export async function deleteKey(
         .where('kid', '=', kid)
         .forUpdate()
         .executeTakeFirst();
-      if (key === undefined) throw new CommandError('no key with this kid for this app');
-      if (key.status === 'active') {
-        throw new CommandError('an active key cannot be deleted; activate a next key first');
-      }
+      if (key === undefined) throw new CommandError((m) => m.key_not_found({}));
+      if (key.status === 'active') throw new CommandError((m) => m.key_active({}));
       if (key.status === 'retiring' && key.recent) {
-        throw new CommandError(
-          `key ${kid} was retired less than ${STATE_TTL_SECONDS / 60} minutes ago; connects started before the rotation may still need it`,
-        );
+        const count = STATE_TTL_SECONDS / 60;
+        throw new CommandError((m) => m.key_recently_retired({ kid, count }));
       }
       await trx.deleteFrom('provider_app_keys').where('id', '=', key.id).execute();
     });
   } catch (err) {
     if (foreignKeyViolation(err)) {
-      throw new CommandError(
-        `key ${kid} still signs for connected credentials; they must reconnect or be disconnected before it can be deleted`,
-      );
+      throw new CommandError((m) => m.key_in_use({ kid }));
     }
     throw err;
   }
