@@ -16,7 +16,12 @@ const CLIENT_ID = '1234567890123456';
 const SECRET = 'facebook-secret-canary-7c1a';
 const REDIRECT_URI = 'https://kronaut.example.org/v1/oauth/facebook/callback';
 const GRAPH = 'https://graph.facebook.com/v26.0';
-const SCOPES = ['pages_show_list', 'pages_manage_posts', 'pages_read_engagement'];
+const SCOPES = [
+  'pages_show_list',
+  'pages_manage_posts',
+  'pages_read_engagement',
+  'pages_manage_engagement',
+];
 const EXPIRES_AT = 1_798_000_000;
 const NEXT = `${GRAPH}/me/accounts?access_token=user-long-1&limit=100&after=CURSOR`;
 
@@ -117,7 +122,7 @@ describe('facebook connect', () => {
       redirect_uri: REDIRECT_URI,
       state: 'state-1',
       response_type: 'code',
-      scope: 'pages_show_list,pages_manage_posts,pages_read_engagement',
+      scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement',
       auth_type: 'rerequest',
     });
     expect(started.pending).toEqual({});
@@ -188,6 +193,7 @@ describe('facebook connect', () => {
         grantedScopes: SCOPES,
         accessExpiresAt: Temporal.Instant.fromEpochMilliseconds(EXPIRES_AT * 1000),
         credentials: { accessToken: 'page-token-101' },
+        capabilities: { comments: true },
       },
       {
         providerAccountId: '103',
@@ -195,6 +201,7 @@ describe('facebook connect', () => {
         displayName: 'Page 103',
         grantedScopes: ['pages_show_list'],
         credentials: { accessToken: 'page-token-103' },
+        capabilities: { comments: false },
       },
     ]);
     for (const account of connected)

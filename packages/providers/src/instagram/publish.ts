@@ -1,5 +1,7 @@
 import type { PublishContext, PublishOutcome, VerifyOutcome } from '@kronaut/core';
+import { commentOf, hasComment } from '../_kit/items.ts';
 import { type ContainerApi, publishContainers, verifyContainer } from '../_kit/meta-container.ts';
+import { publishComment } from './comment.ts';
 import {
   containerStatus,
   retryableStatus,
@@ -26,9 +28,12 @@ const api: ContainerApi<Input> = {
 };
 
 export async function publishMedia(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
+  const comment = commentOf(input);
+  if (comment !== undefined) return publishComment(ctx, input, comment);
   return publishContainers(api, ctx, input, checkInput(input));
 }
 
 export async function verifyMedia(ctx: PublishContext, input: Input): Promise<VerifyOutcome> {
+  if (hasComment(input)) return { kind: 'inconclusive' };
   return verifyContainer(api, ctx, input);
 }

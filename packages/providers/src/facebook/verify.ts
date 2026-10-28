@@ -1,6 +1,7 @@
 import { isProviderFailure, type PublishContext, type VerifyOutcome } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { hasComment } from '../_kit/items.ts';
 import { graphInstant } from '../_kit/meta-recover.ts';
 import { graphCall } from './graph.ts';
 import { facebookManifest } from './manifest.ts';
@@ -63,6 +64,7 @@ function decide(
 }
 
 export async function verifyPost(ctx: PublishContext, input: Input): Promise<VerifyOutcome> {
+  if (hasComment(input)) return { kind: 'inconclusive' };
   if (input.postType === 'reel') return verifyReel(ctx, input);
   const sentAt = publishState.safeParse(input.state).data?.sentAt;
   const item = input.items.find((candidate) => candidate.role === 'main');

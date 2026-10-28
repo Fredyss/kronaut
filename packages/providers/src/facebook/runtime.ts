@@ -7,11 +7,13 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { commentCapabilities } from '../_kit/meta-comment.ts';
 import { permanent } from '../_kit/meta-graph.ts';
 import type { FacebookSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
   appSecret,
+  ENGAGEMENT_SCOPE,
   exchangeCode,
   inspectPageToken,
   listPages,
@@ -65,6 +67,7 @@ async function connectedPage(
     displayName: page.name,
     ...(page.username === undefined || page.username === '' ? {} : { handle: page.username }),
     ...(profileUrl === undefined ? {} : { profileUrl }),
+    capabilities: commentCapabilities(token.scopes, ENGAGEMENT_SCOPE),
   };
 }
 

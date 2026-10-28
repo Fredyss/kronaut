@@ -10,6 +10,8 @@ Instagram section re-verified 2026-10-23 (Business Login guide, OAuth and token 
   - Unified Login is a different flow: the Facebook Login for Business dialog (`www.facebook.com/dialog/oauth` with `config_id`), the Meta app id and secret, a Business Integration System User token (expiry set per configuration), `graph.facebook.com`, `instagram_*` permissions, and account ids from `GET /me/assigned_instagram_accounts`. The app must be owned by a business portfolio, and so must each client account. Instagram User tokens don't carry over: every client reconnects once.
 - **Login.** Business Login for Instagram needs no linked Facebook Page. Scopes: `instagram_business_basic,instagram_business_content_publish` (the old `business_*` values stopped working 2025-01-27).
   - Authorize: the host differs between pages: `www.instagram.com/oauth/authorize` in the guide, `api.instagram.com/oauth/authorize` in the reference.
+- **First comment** (M66), checked 2026-10-28. `POST /<IG_MEDIA_ID>/comments?message=…` creates a comment and returns `{id}`. With Instagram Login the host is `graph.instagram.com` and the permissions are `instagram_business_basic` and `instagram_business_manage_comments`. Comments on live video aren't supported. M66 gives no length, hashtag or mention limits for a comment.
+  - Kronaut: the first comment goes on image, carousel and reel posts. It is checked against the post type's caption limits, Kronaut's own choice since the comment limits are undocumented. New connections request `instagram_business_manage_comments`; only accounts whose granted permissions include it get the comment. A comment whose create call is ambiguous is not matched against the media's comments, so it ends `unconfirmed`.
   - Params: `client_id` (the Instagram app id, not the Meta app id), `redirect_uri` (must exactly match a dashboard entry, which may have gained a trailing slash), `response_type=code`, `scope` (comma-separated or URL-encoded space-separated) and an optional `state`, which is echoed back on the redirect.
   - `force_reauth=true` makes the user enter Instagram credentials even when logged in; Meta recommends it (2025-06-14). `enable_fb_login` (default `true`) was deprecated 2025-06-14 and re-added 2026-02-06. Don't depend on it.
   - Success: `?code=…#_`. The `#_` is not part of the code; it is a fragment, so a server never receives it, but strip it if present. The code is single-use and lives 1 h.
@@ -92,6 +94,8 @@ Checked 2026-10-27 against M4–M8, M16, M26 and M28–M58. "Undocumented" means
 - **Permissions.** Publishing text, link, photo and multi-photo posts needs a Page token from someone with the `CREATE_CONTENT` task, plus `pages_manage_posts`, `pages_read_engagement` and `pages_show_list` (each depends on the next). (M35, M36, M46)
   - Reading `/{page-id}/feed` also needs `pages_read_user_content`. `business_management` isn't needed to publish. (M34, M35)
   - The Posts guide lists more (`pages_manage_engagement`, `pages_read_user_engagement`, and the `MANAGE` and `MODERATE` tasks). (M8)
+- **First comment** (M67), checked 2026-10-28. `POST /{object-id}/comments` "publish[es] new comments to any object"; the publishing list includes PagePost, Photo, Post and Video. One of `message`, `attachment_id`, `attachment_share_url`, `attachment_url` or `source` is required. The caller needs a Page token from someone with the `MODERATE` task, or `pages_manage_engagement`. The response is `{id}`. M67 gives no length limit.
+  - Kronaut: the first comment is text-only `message`, on both feed posts and reels (a reel is a Video object), commenting as the Page with its Page token. It is checked against the post type's text limits, Kronaut's own choice. New connections request `pages_manage_engagement`; only Pages whose `debug_token` scopes include it get the comment. An ambiguous create is not matched against the object's comments, so it ends `unconfirmed`.
   - Get Started lists `pages_manage_read_engagement`, which isn't a real permission. (M33)
 - **Review and access.** Every Page permission needs App Review before live use. Standard Access needs no review but works only for people with a role on the app; Advanced Access needs App Review for each permission plus Business Verification. Apps in Development mode can request any permission from people with a role on the app; Business apps have no app modes. (M6, M29)
   - So a self-hoster posting to Pages they manage, logged in as an app admin, developer or tester, needs no review. Serving anyone else needs Advanced Access, and FLfB adds Ongoing Review. (M6, M29, M37)
@@ -319,6 +323,8 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
 - **OIDC discovery** (L14, L15). The live `https://www.linkedin.com/oauth/.well-known/openid-configuration` has `issuer` `https://www.linkedin.com/oauth`; **L14 documents `iss` as `https://www.linkedin.com`**, so validate against the live document. `subject_types_supported: ["pairwise"]`, RS256, JWKS at `https://www.linkedin.com/oauth/openid/jwks`, scopes `openid profile email`.
 - **Scopes** (L2, L3, L10, L14, L16–L18). Self-serve: `profile` and `email` (OpenID Connect product) and `w_member_social` (Share on LinkedIn). `openid` is required for the ID token; L16's table omits it. **Kronaut requests `openid profile w_member_social`.**
   - `r_member_social` is restricted to approved users (L3, L10, L17). `r_liteprofile` and `r_basicprofile` are restricted too (L18).
+- **First comment** (L2, L26), checked 2026-10-28. Comments go through `POST /rest/socialActions/{shareUrn|ugcPostUrn}/comments` with `actor`, `object` and `message.text`. The Comments API lists `w_member_social_feed` to "post, comment, and react" for a member, a Community Management permission that needs app review (L7). Share on LinkedIn's `w_member_social` is described only as "required to create a LinkedIn post" (L2).
+  - Kronaut: no first comment on LinkedIn for now, since the self-serve products don't grant comment access. Revisit once a vetted Community Management app is available.
 - **Token lifetime and refresh** (L1, L11–L13, L19).
   - Access tokens last 60 days. **Self-serve apps get no refresh tokens**: programmatic refresh is for approved MDP partners (L1, L12). Where it exists, the refresh token lives 365 days from first consent and refreshing doesn't extend it; L1's samples (`expires_in: 86400`, `refresh_token_expires_in: 525600`) contradict its own text.
   - Re-authorization before expiry is the documented "refresh" for self-serve apps: the consent screen is skipped while the member is logged in and the token is still valid. Whether the new token's 60 days restart is implied, not stated.
@@ -490,6 +496,8 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - M63 https://developers.facebook.com/docs/graph-api/reference/video/thumbnails/
 - M64 https://developers.facebook.com/docs/video-api/overview
 - M65 https://developers.facebook.com/docs/graph-api/reference/video/
+- M66 https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media/comments
+- M67 https://developers.facebook.com/docs/graph-api/reference/object/comments
 - T1 https://developers.facebook.com/docs/threads/posts
 - T2 https://developers.facebook.com/docs/threads/overview
 - T3 https://developers.facebook.com/docs/threads/get-started/get-access-tokens-and-permissions
@@ -552,6 +560,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - L23 https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/multiimage-post-api
 - L24 https://learn.microsoft.com/en-us/linkedin/shared/api-guide/concepts/rate-limits
 - L25 https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/migration-faq (last updated 2023)
+- L26 https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/comments-api
 - Y1 https://developers.google.com/youtube/v3/determine_quota_cost
 - Y2 https://developers.google.com/youtube/v3/docs/videos/insert
 - Y3 https://developers.google.com/youtube/v3/revision_history

@@ -107,7 +107,8 @@ describe('instagram connect', () => {
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
       response_type: 'code',
-      scope: 'instagram_business_basic,instagram_business_content_publish',
+      scope:
+        'instagram_business_basic,instagram_business_content_publish,instagram_business_manage_comments',
       state: 'state-1',
       force_reauth: 'true',
     });
@@ -164,6 +165,7 @@ describe('instagram connect', () => {
       handle: 'alice.example',
       displayName: 'Alice',
       profileUrl: 'https://www.instagram.com/alice.example/',
+      capabilities: { comments: false },
       grantedScopes: SCOPES,
       accessExpiresAt: undefined,
       credentials: {
