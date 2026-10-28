@@ -32,7 +32,7 @@
 | `retry_wait` | `transient_error`, `rate_limited`, `interrupted_safe`, `provider_processing`, `absent_verified`, `auth_refreshed` |
 | `verifying` | `ambiguous_response`, `interrupted_after_send`, `provider_processing`, `late_finalize` |
 | `unconfirmed` | `ambiguous_response`, `interrupted_after_send`, `verify_inconclusive`, `verify_window_elapsed` |
-| `failed` | `permanent_error`, `attempts_exhausted`, `late_window_exceeded`, `media_processing_timeout`, `rate_limit_beyond_deadline`, `async_give_up` |
+| `failed` | `permanent_error`, `attempts_exhausted`, `late_window_exceeded`, `media_processing_timeout`, `rate_limit_beyond_deadline`, `async_give_up`, `thread_incomplete` |
 | `blocked` | `account_needs_reauth`, `account_disconnected`, `account_disabled`, `app_credentials_invalid`, `policy_denied`, `entitlement_exceeded`, `refresh_token_lost`, `restore_quarantine`, `account_out_of_scope` |
 | `canceled` | `user_canceled`, `workspace_deleted`, `account_purged`, `skipped_manual` |
 
@@ -202,7 +202,7 @@ A post's destinations settle independently; there is no "partially published" de
 | all `failed` | `completed_failed` |
 | otherwise | `completed_partial` |
 
-The trigger locks the post row before counting, so concurrent finalizes cannot leave a stale summary; writers lock the post before the destination. `settle_seq` increments each time the summary enters a `completed_*` value from any other, and each increment emits one `post.completed` with `{published, failed, canceled}` counts.
+The trigger locks the post row before counting, so concurrent finalizes cannot leave a stale summary; writers lock the post before the destination. `settle_seq` increments each time the summary enters a `completed_*` value from any other, and each increment emits one `post.completed` with `{published, failed, incomplete, canceled}` counts; `incomplete` is the subset of `failed` with reason `thread_incomplete`.
 
 ## Audit
 
@@ -221,7 +221,7 @@ Events are written in the transaction that makes the change. Each event writes o
 | Event | Written when | `data` | `sequence` | `dedupe_key` |
 |---|---|---|---|---|
 | `destination.published` / `failed` / `unconfirmed` / `blocked` / `awaiting_manual` | a worker transition into that state (with its audit row) | `destination_id`, `post_id`, `post_version`, `social_account_id`, `provider`, `state`, `reason`, `remote_id`, `remote_url`, `attempt_id` | destination version after the transition | `destination.<id>.<version>` |
-| `post.completed` | `posts.settle_seq` advanced: checked after every worker transition and in every post route that changes destinations | `post_id`, `summary`, `published`, `failed`, `canceled` counts | `settle_seq` | `post.completed.<postId>.<settle_seq>` |
+| `post.completed` | `posts.settle_seq` advanced: checked after every worker transition and in every post route that changes destinations | `post_id`, `summary`, `published`, `failed`, `incomplete`, `canceled` counts | `settle_seq` | `post.completed.<postId>.<settle_seq>` |
 | `channel.needs_reauth` | `flagAccount` flips the account to `needs_reauth` | `social_account_id`, `provider`, `reason` | — | `channel.needs_reauth.<accountId>.<status_changed_at>` |
 | `channel.expiring` | the credential refresh cron opens an `auth_expiring` incident (see Token refresh) | `social_account_id`, `provider`, `expires_at` (RFC 3339 UTC) | — | `channel.expiring.<accountId>.<incident id>` |
 | `channel.reconnected` | the OAuth connect callback (ADR-0053) sets a `needs_reauth` account back to `active` | `social_account_id`, `provider` | — | `channel.reconnected.<accountId>.<status_changed_at>` |
