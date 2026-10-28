@@ -123,6 +123,7 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.publishDueSweep]: MINUTE_MS,
   [CRON_TASKS.publishLeaseReaper]: MINUTE_MS,
   [CRON_TASKS.publishReconcile]: 10 * MINUTE_MS,
+  [CRON_TASKS.tzRecompute]: 60 * MINUTE_MS,
 };
 
 function registeredItems(email: boolean): CronItem[] {
