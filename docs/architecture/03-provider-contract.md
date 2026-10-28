@@ -23,7 +23,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
     - `delivery api | reminder | unsupported`
     - `steps[{id, effect none|private|public}]`
     - async give-up limits
-  - Thread and first-comment support.
+  - Thread and first-comment support: optional `thread {maxItems, media}` and `comment {text, steps}` ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)).
 - **Settings:** a Zod schema with defaults.
 - **Cost:** `cost{model, perPost{usd, linkUsd, asOf, sourceUrl}}`.
 - **Verification:** `verify.mode`, one of `idempotency_key | deterministic_id | status_by_ref | list_recent_match | none`.

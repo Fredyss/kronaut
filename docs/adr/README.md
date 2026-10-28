@@ -86,6 +86,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0052](0052-mvp-scope-cut.md) | MVP scope cut: Phase 1 and Phase 1.1 |
 | [0053](0053-multi-account-channel-connect.md) | One connect can add several channels (supersedes 0049) |
 | [0054](0054-video-pipeline.md) | Video upload, conversion and publishing |
+| [0055](0055-reply-chains-and-first-comment.md) | Reply chains and first comment, published one item at a time |
 
 ## Defaults
 
