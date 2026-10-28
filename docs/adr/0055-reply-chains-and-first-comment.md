@@ -56,17 +56,18 @@ The `thread` items reuse the post type's `steps` and `text`. A post type without
 
 ### Engine
 
-- A claim runs the items in position order, skipping confirmed ones, within one attempt and one lease.
+- **One item per claim.** A claim publishes exactly one item: the lowest-position item that isn't `confirmed` or `skipped`. It goes through the existing single-destination flow (write-ahead, verify, refresh, lease and plan) as one attempt.
+- **Between items:** when an item is confirmed and pending items remain, the destination goes `publishing → retry_wait/chain_next` with `run_at = now`, and the job is re-queued at once. The next claim publishes the next item. `chain_next` is exempt from the deadline, like everything after the main item.
 - Each item gets its own write-ahead (`send_started_at` and `publish_attempts.item_position`) and its own settle.
 - Each item takes one unit from the rate buckets.
 - The deadline (`deadline_at`, `late_window_exceeded`, `rate_limit_beyond_deadline`) gates only the `main` item. Once the main item is confirmed, the deadline checks are skipped for every later item, at claim and in retry planning, and the rest of the chain is sent even past the deadline.
 - Retries are bounded per item, not per chain: confirming an item resets the destination's `attempt_count` to 0, and the claim of the next item is counted. So each item gets the usual `MAX_ATTEMPTS` (6) sends. The async give-up clock likewise starts from the current item's own attempts.
-- When the `main` item is confirmed, the destination gets its `remote_id`, `remote_url` and `published_at` at once. It stays `publishing` until the last item settles.
+- When the `main` item is confirmed, the destination gets its `remote_id`, `remote_url` and `published_at` at once. Later items never overwrite them. The destination becomes `published` only when the last item is confirmed.
 - An item's outcome maps to the destination as follows:
 
 | Item outcome | Item | Destination |
 |---|---|---|
-| `published` | `confirmed` | the next item runs; after the last, `published` |
+| `published` | `confirmed` | `retry_wait/chain_next` (`run_at = now`) while items remain; after the last, `published` |
 | `pending` | stays `sending` | `retry_wait` or `verifying/provider_processing` as for a single post; the claim resumes at this item |
 | `transient`, `rate_limited`, `auth_*` before the item's public step | back to `pending` | `retry_wait` or `blocked` as for a single post, but with no deadline once the main item is confirmed; resumes at this item |
 | `ambiguous` after the item's public step | `unconfirmed` while verifying | `verifying` for this item; if still unconfirmed, the destination goes to `unconfirmed` and the chain stops |

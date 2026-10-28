@@ -179,7 +179,7 @@ Phase 0 rules:
 
 ## Reply chains
 
-The engine publishes a destination's items one at a time, in position order, one `publish` call each ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)). Every `destination_item` has its own state:
+The engine publishes a destination's items one at a time, in position order, one claim and one `publish` call each, with `retry_wait/chain_next` between items ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)). Every `destination_item` has its own state:
 
 - `pending | sending | confirmed | unconfirmed | failed | skipped`
 - Resume continues from the last confirmed item and never re-sends a confirmed part.
