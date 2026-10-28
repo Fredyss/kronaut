@@ -412,6 +412,7 @@ export interface Locations {
 
 export interface MediaAssets {
   ai_generated: Generated<boolean>;
+  ai_locked: Generated<boolean>;
   alt_text: string | null;
   bytes: Int8 | null;
   created_at: Generated<Timestamp>;

@@ -15,6 +15,10 @@
   - The flag is sticky for agent-generated media.
   - Compose sets it per image as `aiGenerated` on the upload. The flag lives on the deduplicated `media_assets` row, so an upload can set it but never clear it; clearing belongs to the media library.
   - Of the shipped networks only Instagram takes it (`is_ai_generated` on the single image or carousel parent). Threads, Facebook Pages, Bluesky, Mastodon and LinkedIn have no such field (checked 2026-10-27).
+- **Media library** (`/media`):
+  - A grid of thumbnails, newest first, with an All / Images / Videos filter, loaded in pages.
+  - The asset panel shows the preview, type, size, dimensions, duration and upload date. It edits the default alt text, clears the AI label where allowed, and lists the posts that use the asset, with links.
+  - Delete is offered only for an unused asset; for a used one the panel shows how many posts use it.
 - **Video ([ADR-0054](../adr/0054-video-pipeline.md)):**
   - A post content carries images or one video, never both; the media picker refuses the mix, other types and files over 300 MB.
   - The video belongs to the content, so a customized copy shares the default's video and its upload. A registry in the compose form holds each upload by a local id.

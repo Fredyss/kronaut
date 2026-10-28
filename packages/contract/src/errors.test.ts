@@ -18,6 +18,7 @@ describe('status table', () => {
     ['version_conflict', 409],
     ['not_editable', 409],
     ['destination_live', 409],
+    ['media_in_use', 409],
     ['idempotency_key_reused', 409],
     ['idempotency_key_required', 428],
     ['payload_too_large', 413],

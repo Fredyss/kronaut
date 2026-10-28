@@ -4,10 +4,13 @@ import type { MediaStore } from '@kronaut/media';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { findMediaAsset, MediaAssetSchema } from './dto.ts';
+import type { MediaSigner } from './access.ts';
+import { MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { ingestImage, MEDIA_IMAGE_MAX_BYTES, prepareImage } from './ingest.ts';
+import { auditMedia } from './library-edit.ts';
 import { markAiGenerated } from './mark-ai.ts';
+import { findLibraryAsset, LibraryAssetSchema } from './preview.ts';
 
 export const MEDIA_UPLOAD_ROUTE_ID = 'media.upload';
 export const MEDIA_UPLOAD_BODY_LIMIT = 12 * 1024 * 1024;
@@ -48,7 +51,7 @@ export const mediaGetRoute = defineRoute({
   auth: ['session', 'grant'],
   action: 'media:read',
   params: z.object({ workspaceId: z.string(), mediaId: z.string() }),
-  response: MediaAssetSchema,
+  response: LibraryAssetSchema,
   summary: 'Get a media asset',
   tags: ['media'],
 });
@@ -62,12 +65,14 @@ export const mediaMarkAiRoute = defineRoute({
   params: z.object({ workspaceId: z.string(), mediaId: z.string() }),
   response: MediaAssetSchema,
   summary: 'Mark a media asset as AI-generated',
-  description: 'The mark is sticky: it is never removed once set.',
+  description:
+    'An upload or an API key never removes the mark. Only a member can clear it, in the media library, and never for media that an API key or agent uploaded or marked.',
   tags: ['media'],
 });
 
 export interface MediaRouteDeps {
   readonly store: MediaStore;
+  readonly signer: MediaSigner;
   readonly clock: () => Temporal.Instant;
 }
 
@@ -87,9 +92,14 @@ export function mediaRoutes(deps: MediaRouteDeps): BoundRoute[] {
         ...(body.filename === undefined ? {} : { filename: body.filename }),
       });
       const aiGenerated = body.aiGenerated ?? false;
-      const asset = await ctx.tenant((trx) =>
-        ingestImage(trx, deps.store, { workspaceId, aiGenerated }, prepared),
-      );
+      const asset = await ctx.tenant(async (trx) => {
+        const ingested = await ingestImage(trx, deps.store, { workspaceId, aiGenerated }, prepared);
+        if (aiGenerated && ctx.principal?.kind === 'grant') {
+          const target = { workspaceId, mediaId: internalId('media', ingested.id) };
+          await auditMedia(trx, ctx, target, 'media.ai_marked');
+        }
+        return ingested;
+      });
       return { status: 201, body: asset };
     }),
     bindRoute(mediaGetRoute, async ({ params }, ctx) => {
@@ -99,8 +109,9 @@ export function mediaRoutes(deps: MediaRouteDeps): BoundRoute[] {
       if (ctx.authorize('media:read', { workspaceId }).kind === 'allow_scoped') {
         throw new MediaError('forbidden', 'media is not available to restricted principals');
       }
-      const asset = await ctx.tenant((trx) => findMediaAsset(trx, workspaceId, mediaId));
-      if (asset === null) throw new MediaError('not_found', 'media asset not found');
+      const asset = await ctx.tenant((trx) =>
+        findLibraryAsset(trx, deps.signer, workspaceId, mediaId),
+      );
       return { body: asset };
     }),
     bindRoute(mediaMarkAiRoute, async ({ params }, ctx) => {

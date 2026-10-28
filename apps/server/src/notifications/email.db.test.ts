@@ -11,7 +11,7 @@ import { type RawBuilder, sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronItems, cronTaskList } from '../cron.ts';
-import { createStaging } from '../media/staging.ts';
+import { idleMediaGc } from '../media/db-testing.ts';
 import {
   type PublishFixture,
   SEED_TEXT,
@@ -402,14 +402,7 @@ describe('notification email registration', () => {
     expect(emailDeps({ ...urls, smtp: null }, fixture.db, silent)).toBeNull();
     expect(cronItems(false).map((item) => item.task)).not.toContain(CRON_TASKS.notificationEmail);
     expect(
-      Object.keys(
-        cronTaskList(
-          fixture.db,
-          silent,
-          { ...fixture.deps, staging: createStaging('/nonexistent') },
-          null,
-        ),
-      ),
+      Object.keys(cronTaskList(fixture.db, silent, { ...fixture.deps, ...idleMediaGc() }, null)),
     ).not.toContain(CRON_TASKS.notificationEmail);
   });
 
@@ -418,12 +411,7 @@ describe('notification email registration', () => {
       cronItems(true).find((item) => item.task === CRON_TASKS.notificationEmail),
     ).toMatchObject({ options: { backfillPeriod: 0, maxAttempts: 1 } });
     await insert({ kind: 'channel.expiring' });
-    const tasks = cronTaskList(
-      fixture.db,
-      silent,
-      { ...fixture.deps, staging: createStaging('/nonexistent') },
-      deps(),
-    );
+    const tasks = cronTaskList(fixture.db, silent, { ...fixture.deps, ...idleMediaGc() }, deps());
     await tasks[CRON_TASKS.notificationEmail]?.({}, {} as JobHelpers);
     const last = await fixture.owner.withActor(SYSTEM, (trx) =>
       trx

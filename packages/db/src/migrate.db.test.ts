@@ -3,7 +3,8 @@ import { join } from 'node:path';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { loadMigrations, migrate } from './migrate.ts';
+import { migrate } from './migrate.ts';
+import { createDatabaseIn, query, recordThrough } from './migrate-testing.ts';
 
 const TEST_DIR = join(import.meta.dirname, '..', 'test');
 const LOCK_KEY = 0x6b726f6e617574n.toString();
@@ -17,6 +18,7 @@ const ALL = [
   '0007_video_upload',
   '0008_media_frame_rate',
   '0009_reply_chains',
+  '0010_media_ai_locked',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -29,30 +31,8 @@ afterAll(async () => {
   await container.stop();
 });
 
-async function freshDatabase(name: string): Promise<string> {
-  const admin = new pg.Client({ connectionString: container.getConnectionUri() });
-  await admin.connect();
-  try {
-    await admin.query(`create database ${admin.escapeIdentifier(name)}`);
-  } finally {
-    await admin.end();
-  }
-  const url = new URL(container.getConnectionUri());
-  url.pathname = `/${name}`;
-  return url.toString();
-}
-
-async function query<T extends pg.QueryResultRow>(
-  connectionString: string,
-  text: string,
-): Promise<T[]> {
-  const client = new pg.Client({ connectionString });
-  await client.connect();
-  try {
-    return (await client.query<T>(text)).rows;
-  } finally {
-    await client.end();
-  }
+function freshDatabase(name: string): Promise<string> {
+  return createDatabaseIn(container, name);
 }
 
 function withoutPsqlMetaCommands(script: string): string {
@@ -111,29 +91,6 @@ async function expectEmailMutedSchema(url: string): Promise<void> {
   expect(row).toEqual({ type: 'text[]', fallback: "'{}'::text[]", valid: true });
 }
 
-async function recordThrough(url: string, last: number): Promise<void> {
-  const migrations = (await loadMigrations()).filter((migration) => migration.version <= last);
-  const client = new pg.Client({ connectionString: url });
-  await client.connect();
-  try {
-    await client.query(`create schema kronaut_meta;
-      create table kronaut_meta.migrations (
-        version integer primary key, name text not null, sha256 text not null,
-        applied_at timestamptz not null default now())`);
-    for (const migration of migrations) {
-      if (migration.transactional) await client.query('begin');
-      await client.query(migration.sql);
-      await client.query(
-        'insert into kronaut_meta.migrations (version, name, sha256) values ($1, $2, $3)',
-        [migration.version, migration.name, migration.sha256],
-      );
-      if (migration.transactional) await client.query('commit');
-    }
-  } finally {
-    await client.end();
-  }
-}
-
 describe('migrate', () => {
   it('applies every migration once and is a no-op afterwards', async () => {
     const url = await freshDatabase('applied_once');
@@ -150,7 +107,7 @@ describe('migrate', () => {
       url,
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
-    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);
   });

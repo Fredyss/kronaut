@@ -128,6 +128,12 @@ const inboxRoute = createRoute({
   component: lazyRouteComponent(() => import('./routes/inbox.tsx'), 'InboxPage'),
 });
 
+const mediaRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/media',
+  component: lazyRouteComponent(() => import('./routes/media.tsx'), 'MediaPage'),
+});
+
 const settingsRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/settings',
@@ -183,6 +189,7 @@ const routeTree = rootRoute.addChildren([
     channelsRoute,
     composeRoute,
     inboxRoute,
+    mediaRoute,
     postRoute,
     settingsRoute.addChildren([
       settingsIndexRoute,

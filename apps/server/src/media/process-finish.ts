@@ -1,7 +1,9 @@
 import { createHash } from 'node:crypto';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
+import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { MediaJob } from '../jobs.ts';
+import { lockStorageKeys } from './key-lock.ts';
 
 export type RejectedReason =
   | 'video_stream_missing'
@@ -23,12 +25,12 @@ export interface ProcessedVideo {
 }
 
 const SYSTEM: Actor = { kind: 'system' };
-const POSTER_TRANSFORM = createHash('sha256').update('poster:thumb_768:v1').digest();
+export const POSTER_TRANSFORM = createHash('sha256').update('poster:thumb_768:v1').digest();
 
 function lockProcessing(trx: TenantDb, job: MediaJob) {
   return trx
     .selectFrom('media_assets')
-    .select(['ai_generated', 'deleted_at'])
+    .select(['ai_generated', 'ai_locked', 'deleted_at'])
     .where('workspace_id', '=', job.workspaceId)
     .where('id', '=', job.id)
     .where('state', '=', 'processing')
@@ -40,11 +42,11 @@ async function keepDuplicate(
   trx: TenantDb,
   job: MediaJob,
   key: string,
-  aiGenerated: boolean,
+  incoming: { readonly ai_generated: boolean; readonly ai_locked: boolean },
 ): Promise<boolean> {
   const existing = await trx
     .selectFrom('media_assets')
-    .select(['id', 'ai_generated'])
+    .select(['id', 'ai_generated', 'ai_locked'])
     .where('workspace_id', '=', job.workspaceId)
     .where('storage_key', '=', key)
     .where('id', '<>', job.id)
@@ -56,7 +58,8 @@ async function keepDuplicate(
     .set({
       deleted_at: null,
       original_purged_at: null,
-      ai_generated: existing.ai_generated || aiGenerated,
+      ai_generated: existing.ai_generated || incoming.ai_generated,
+      ai_locked: existing.ai_locked || incoming.ai_locked,
       updated_at: sql<Date>`now()`,
     })
     .where('workspace_id', '=', job.workspaceId)
@@ -111,15 +114,27 @@ async function markReady(trx: TenantDb, job: MediaJob, video: ProcessedVideo): P
     .execute();
 }
 
+export class StoredObjectMissing extends Error {
+  constructor() {
+    super('a converted video object vanished before its row was written; the job retries');
+    this.name = 'StoredObjectMissing';
+  }
+}
+
 export function finishMedia(
   db: Database,
+  store: MediaStore,
   job: MediaJob,
   video: ProcessedVideo,
 ): Promise<'ready' | 'duplicate' | 'skipped'> {
   return db.withTenant(job.workspaceId, SYSTEM, async (trx) => {
+    // The media GC removes an object only under this lock, so a present object stays until commit.
+    const keys = [video.key, video.poster.key];
+    await lockStorageKeys(trx, keys);
+    for (const key of keys) if (!(await store.has(key))) throw new StoredObjectMissing();
     const row = await lockProcessing(trx, job);
     if (row === undefined || row.deleted_at !== null) return 'skipped';
-    if (await keepDuplicate(trx, job, video.key, row.ai_generated)) return 'duplicate';
+    if (await keepDuplicate(trx, job, video.key, row)) return 'duplicate';
     await markReady(trx, job, video);
     return 'ready';
   });

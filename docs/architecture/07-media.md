@@ -21,4 +21,13 @@
   - renditions 7 d after last use
   - unfinished uploads 24 h after they started, staged parts included
   - Thumbnails at 256/768 px AVIF/WebP are kept for the library.
+  - Deleted assets: the job re-checks inside `withTenant()` that no `item_media` or `destination_media` row references the asset, then removes the original, its renditions and the row. A re-upload of the same file within the 30 days revives the soft-deleted row instead.
+- **Library** (Phase 1.1):
+  - Lists the workspace's assets with `in_library`, not deleted and not `uploading`, newest first (keyset on the uuidv7 `id`), filterable by `kind`.
+  - Editing sets the asset's default `alt_text`. Alt text already copied into a post's `item_media` doesn't change.
+  - Usage lists the posts whose items or destinations reference the asset.
+  - Delete is soft (`deleted_at = now()`) and refused with 409 `media_in_use` while any `item_media` or `destination_media` row references the asset. The GC purges it 30 days later.
+  - The AI label can be cleared only by a member in a session, never by an API key or agent. A grant setting or confirming the label (upload, mark, or a duplicate of the asset) sets `media_assets.ai_locked`, and a locked label can't be cleared: agent-generated media stay labelled.
+  - Usage shows post text, so it needs `posts:read` as well as `media:read`.
+  - Edit, clear and delete touch only library assets (ready or processing, not a duplicate); anything else is 404.
 - **SaaS:** R2 + a Cloudflare Worker with the identical HMAC scheme. Uploads go direct from the browser via presigned multipart PUT.

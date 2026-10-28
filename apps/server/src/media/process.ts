@@ -17,6 +17,7 @@ import type { Task } from 'graphile-worker';
 import type { Logger } from 'pino';
 import * as z from 'zod';
 import type { MediaJob } from '../jobs.ts';
+import { removeIfUnreferenced } from './key-lock.ts';
 import {
   finishMedia,
   type ProcessedVideo,
@@ -188,7 +189,13 @@ async function settle(
   final: boolean,
 ): Promise<{ outcome: MediaProcessOutcome; reason?: RejectedReason | 'video_duplicate' }> {
   try {
-    const outcome = await finishMedia(deps.db, job, await convert(deps, job, key, final));
+    const video = await convert(deps, job, key, final);
+    const outcome = await finishMedia(deps.db, deps.store, job, video);
+    if (outcome !== 'ready') {
+      for (const stored of [video.key, video.poster.key]) {
+        await removeIfUnreferenced(deps.db, deps.store, job.workspaceId, stored);
+      }
+    }
     return outcome === 'duplicate' ? { outcome, reason: 'video_duplicate' } : { outcome };
   } catch (error) {
     if (!(error instanceof VideoRejected)) throw error;

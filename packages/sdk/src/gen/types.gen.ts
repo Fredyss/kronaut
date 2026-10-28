@@ -808,6 +808,58 @@ export type ChannelsDisconnectResponses = {
 
 export type ChannelsDisconnectResponse = ChannelsDisconnectResponses[keyof ChannelsDisconnectResponses];
 
+export type MediaListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        kind?: 'image' | 'video';
+        cursor?: string;
+        limit?: string;
+    };
+    url: '/v1/workspaces/{workspaceId}/media';
+};
+
+export type MediaListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaListError = MediaListErrors[keyof MediaListErrors];
+
+export type MediaListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            aiGenerated: boolean;
+            altText: string | null;
+            bytes: number | null;
+            createdAt: string;
+            duplicateOf: string | null;
+            durationMs: number | null;
+            frameRate: number | null;
+            height: number | null;
+            id: string;
+            kind: 'image' | 'video';
+            mime: string | null;
+            previewUrl: string | null;
+            rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+            sha256: string | null;
+            state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+            usageCount: number;
+            width: number | null;
+        }>;
+        nextCursor: string | null;
+    };
+};
+
+export type MediaListResponse = MediaListResponses[keyof MediaListResponses];
+
 export type MediaUploadData = {
     body: {
         aiGenerated?: boolean;
@@ -839,7 +891,9 @@ export type MediaUploadResponses = {
      */
     201: {
         aiGenerated: boolean;
+        altText: string | null;
         bytes: number | null;
+        createdAt: string;
         duplicateOf: string | null;
         durationMs: number | null;
         frameRate: number | null;
@@ -891,7 +945,9 @@ export type MediaVideoUploadResponses = {
         expiresAt: string;
         media: {
             aiGenerated: boolean;
+            altText: string | null;
             bytes: number | null;
+            createdAt: string;
             duplicateOf: string | null;
             durationMs: number | null;
             frameRate: number | null;
@@ -910,6 +966,37 @@ export type MediaVideoUploadResponses = {
 };
 
 export type MediaVideoUploadResponse = MediaVideoUploadResponses[keyof MediaVideoUploadResponses];
+
+export type MediaDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}';
+};
+
+export type MediaDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaDeleteError = MediaDeleteErrors[keyof MediaDeleteErrors];
+
+export type MediaDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type MediaDeleteResponse = MediaDeleteResponses[keyof MediaDeleteResponses];
 
 export type MediaGetData = {
     body?: never;
@@ -936,7 +1023,9 @@ export type MediaGetResponses = {
      */
     200: {
         aiGenerated: boolean;
+        altText: string | null;
         bytes: number | null;
+        createdAt: string;
         duplicateOf: string | null;
         durationMs: number | null;
         frameRate: number | null;
@@ -944,6 +1033,7 @@ export type MediaGetResponses = {
         id: string;
         kind: 'image' | 'video';
         mime: string | null;
+        previewUrl: string | null;
         rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
         sha256: string | null;
         state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
@@ -952,6 +1042,104 @@ export type MediaGetResponses = {
 };
 
 export type MediaGetResponse = MediaGetResponses[keyof MediaGetResponses];
+
+export type MediaUpdateData = {
+    body: {
+        altText?: string | null;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}';
+};
+
+export type MediaUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaUpdateError = MediaUpdateErrors[keyof MediaUpdateErrors];
+
+export type MediaUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        aiGenerated: boolean;
+        altText: string | null;
+        bytes: number | null;
+        createdAt: string;
+        duplicateOf: string | null;
+        durationMs: number | null;
+        frameRate: number | null;
+        height: number | null;
+        id: string;
+        kind: 'image' | 'video';
+        mime: string | null;
+        previewUrl: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+        sha256: string | null;
+        state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+        width: number | null;
+    };
+};
+
+export type MediaUpdateResponse = MediaUpdateResponses[keyof MediaUpdateResponses];
+
+export type MediaClearAiData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/ai-generated';
+};
+
+export type MediaClearAiErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaClearAiError = MediaClearAiErrors[keyof MediaClearAiErrors];
+
+export type MediaClearAiResponses = {
+    /**
+     * OK
+     */
+    200: {
+        aiGenerated: boolean;
+        altText: string | null;
+        bytes: number | null;
+        createdAt: string;
+        duplicateOf: string | null;
+        durationMs: number | null;
+        frameRate: number | null;
+        height: number | null;
+        id: string;
+        kind: 'image' | 'video';
+        mime: string | null;
+        previewUrl: string | null;
+        rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+        sha256: string | null;
+        state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+        width: number | null;
+    };
+};
+
+export type MediaClearAiResponse = MediaClearAiResponses[keyof MediaClearAiResponses];
 
 export type MediaMarkAiData = {
     body?: never;
@@ -981,7 +1169,9 @@ export type MediaMarkAiResponses = {
      */
     200: {
         aiGenerated: boolean;
+        altText: string | null;
         bytes: number | null;
+        createdAt: string;
         duplicateOf: string | null;
         durationMs: number | null;
         frameRate: number | null;
@@ -1026,7 +1216,9 @@ export type MediaVideoCompleteResponses = {
      */
     200: {
         aiGenerated: boolean;
+        altText: string | null;
         bytes: number | null;
+        createdAt: string;
         duplicateOf: string | null;
         durationMs: number | null;
         frameRate: number | null;
@@ -1074,6 +1266,42 @@ export type MediaVideoPartResponses = {
 };
 
 export type MediaVideoPartResponse = MediaVideoPartResponses[keyof MediaVideoPartResponses];
+
+export type MediaUsageData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        mediaId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/usage';
+};
+
+export type MediaUsageErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaUsageError = MediaUsageErrors[keyof MediaUsageErrors];
+
+export type MediaUsageResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            excerpt: string;
+            postId: string;
+            publishSummary: 'draft' | 'in_review' | 'scheduled' | 'in_progress' | 'needs_action' | 'completed_all' | 'completed_partial' | 'completed_failed' | 'canceled';
+            scheduledAt: string | null;
+            title: string | null;
+        }>;
+    };
+};
+
+export type MediaUsageResponse = MediaUsageResponses[keyof MediaUsageResponses];
 
 export type DestinationsNeedsActionData = {
     body?: never;

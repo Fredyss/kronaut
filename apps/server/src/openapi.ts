@@ -38,6 +38,7 @@ export function renderOpenApi(): string {
   const routes = apiRoutes({
     http,
     store: createLocalStore('/nonexistent'),
+    signer: { sign: () => 'http://localhost/' },
     staging: createStaging('/nonexistent'),
     keyring: createKeyring(new Map([[1, randomBytes(32)]])),
     providers: createProviderRegistry([], []),

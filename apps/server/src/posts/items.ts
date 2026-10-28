@@ -81,6 +81,8 @@ async function resolveMedia(
           .where('workspace_id', '=', workspaceId)
           .where('id', 'in', known)
           .where('deleted_at', 'is', null)
+          // Waits out a concurrent library delete, which holds FOR UPDATE until it commits.
+          .forKeyShare()
           .execute();
   const byId = new Map(rows.map((row) => [row.id, row]));
   const media: { assetId: string; altText: string | null }[] = [];

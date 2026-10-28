@@ -622,5 +622,68 @@
   "calendar_new_post_at": "Vytvořit příspěvek: {when}",
   "theme_system": "Vzhled: podle systému",
   "theme_light": "Vzhled: světlý",
-  "theme_dark": "Vzhled: tmavý"
+  "theme_dark": "Vzhled: tmavý",
+  "nav_media": "Média",
+  "media_title": "Knihovna médií",
+  "media_subtitle": "Obrázky a videa nahraná do tohoto pracovního prostoru.",
+  "media_filter_label": "Zobrazit",
+  "media_filter_all": "Vše",
+  "media_filter_images": "Obrázky",
+  "media_filter_videos": "Videa",
+  "media_load_more": "Načíst další",
+  "media_empty_title": "Zatím tu nejsou žádná média",
+  "media_empty_body": "Obrázky a videa, která přidáte do příspěvků, se objeví tady.",
+  "media_empty_filtered": "Tohoto druhu tu zatím nic není.",
+  "media_kind_image": "Obrázek",
+  "media_kind_video": "Video",
+  "media_open_image": "Obrázek nahraný {date}",
+  "media_open_video": "Video nahrané {date}",
+  "media_state_processing": "Zpracovává se",
+  "media_state_rejected": "Odmítnuto",
+  "media_type": "Typ",
+  "media_size": "Velikost",
+  "media_dimensions": "Rozměry",
+  "media_dimensions_value": "{width} × {height} px",
+  "media_duration": "Délka",
+  "media_uploaded": "Nahráno",
+  "media_alt_label": "Alternativní text",
+  "media_alt_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Nové příspěvky začnou s tímto popisem. Příspěvky, které soubor už používají, si nechají ten svůj. Nejvýš {count} znak.",
+        "countPlural=few": "Nové příspěvky začnou s tímto popisem. Příspěvky, které soubor už používají, si nechají ten svůj. Nejvýš {count} znaky.",
+        "countPlural=many": "Nové příspěvky začnou s tímto popisem. Příspěvky, které soubor už používají, si nechají ten svůj. Nejvýš {count} znaku.",
+        "countPlural=*": "Nové příspěvky začnou s tímto popisem. Příspěvky, které soubor už používají, si nechají ten svůj. Nejvýš {count} znaků."
+      }
+    }
+  ],
+  "media_alt_save": "Uložit alternativní text",
+  "media_alt_saved": "Alternativní text je uložený.",
+  "media_ai_badge": "Vytvořeno pomocí AI",
+  "media_ai_remove": "Odebrat označení AI",
+  "media_ai_removed": "Označení AI je odebrané.",
+  "media_ai_locked": "Označení zůstává: soubor nahrál nebo označil API klíč či agent.",
+  "media_usage_title": "Použito v",
+  "media_usage_none": "Tento soubor nepoužívá žádný příspěvek.",
+  "media_usage_untitled": "Příspěvek bez názvu",
+  "media_usage_scheduled": "Naplánováno na {when}",
+  "media_delete": "Smazat",
+  "media_delete_body": "Smazat tento soubor? Z knihovny zmizí hned a jeho data se vymažou po 30 dnech.",
+  "media_delete_confirm": "Smazat soubor",
+  "media_deleted": "Soubor je smazaný.",
+  "media_in_use": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Použito v {count} příspěvku",
+        "countPlural=few": "Použito v {count} příspěvcích",
+        "countPlural=many": "Použito v {count} příspěvku",
+        "countPlural=*": "Použito v {count} příspěvcích"
+      }
+    }
+  ],
+  "media_in_use_error": "Soubor ještě používá některý příspěvek, proto ho nejde smazat."
 }

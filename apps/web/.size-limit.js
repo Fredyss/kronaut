@@ -19,6 +19,7 @@ const LAZY = {
   'post status route JS': ['post', '40 KB'],
   'calendar route JS': ['calendar', '40 KB'],
   'inbox route JS': ['inbox', '40 KB'],
+  'media library route JS': ['media', '40 KB'],
   'settings layout JS': ['settings-layout', '40 KB'],
   'account settings route JS': ['settings-account', '40 KB'],
   'approval settings route JS': ['settings-approvals', '40 KB'],

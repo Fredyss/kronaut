@@ -31,7 +31,7 @@ import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
 import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
-import { createMediaAccess } from './media/access.ts';
+import { createMediaAccess, createMediaSigner } from './media/access.ts';
 import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
@@ -216,7 +216,7 @@ async function startWorker(boot: Boot): Promise<void> {
     logger: jobLogger(logger),
     noHandleSignals: true,
     taskList: {
-      ...cronTaskList(db, logger, { ...publishing, staging }, email),
+      ...cronTaskList(db, logger, { ...publishing, staging, store }, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
@@ -262,7 +262,13 @@ async function startApi(boot: Boot): Promise<void> {
   };
   const store = createLocalStore(join(config.dataDir, 'media'));
   const staging = stagingIn(config.dataDir);
-  const api = createHttpApp(deps, apiRoutes({ http: deps, store, staging, keyring, providers }));
+  const signer = createMediaSigner({
+    signingKey: deriveMediaSigningKey(config.secret),
+    mediaBaseUrl: config.mediaUrl,
+    clock,
+  });
+  const routes = apiRoutes({ http: deps, store, signer, staging, keyring, providers });
+  const api = createHttpApp(deps, routes);
   state.http = await listen(api.fetch, config.port);
 }
 

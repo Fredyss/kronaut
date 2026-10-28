@@ -285,8 +285,14 @@ describe('media gc', () => {
     const fresh = await staging.receive(new Uint8Array(1));
     const past = new Date(Date.now() - 2 * 3_600_000);
     await utimes(stale, past, past);
-    expect(JSON.parse(await collectMedia(fx.db, { staging }))).toEqual({
+    expect(
+      JSON.parse(
+        await collectMedia(fx.db, { staging, store: fx.store, logger: pino({ level: 'silent' }) }),
+      ),
+    ).toEqual({
       expired: 1,
+      purged: 0,
+      orphaned: 0,
       skipped: 0,
       incoming: 1,
     });

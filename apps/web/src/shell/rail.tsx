@@ -3,14 +3,14 @@ import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import { m } from '../i18n.ts';
 import { InboxBadge } from '../inbox/nav-link.tsx';
-import { CalendarIcon, ChannelsIcon, InboxIcon, SettingsIcon } from './icons.tsx';
+import { CalendarIcon, ChannelsIcon, InboxIcon, MediaIcon, SettingsIcon } from './icons.tsx';
 
 const ITEM =
   'flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-1.5 text-center font-medium text-[11px] text-muted-foreground leading-tight hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 md:w-full md:flex-none';
 const ACTIVE = { className: 'bg-accent text-foreground' } as const;
 
 interface RailLinkProps {
-  readonly to: '/' | '/inbox' | '/channels' | '/settings';
+  readonly to: '/' | '/inbox' | '/media' | '/channels' | '/settings';
   readonly label: string;
   readonly icon: ReactNode;
   readonly badge?: ReactNode;
@@ -52,6 +52,7 @@ export function Rail({ workspaceId }: { readonly workspaceId: string | undefined
         icon={<InboxIcon />}
         badge={workspaceId === undefined ? null : <InboxBadge workspaceId={workspaceId} />}
       />
+      <RailLink to="/media" label={m.nav_media()} icon={<MediaIcon />} />
       <RailLink to="/channels" label={m.nav_channels()} icon={<ChannelsIcon />} />
       <RailLink
         to="/settings"

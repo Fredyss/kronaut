@@ -590,5 +590,64 @@
   "calendar_new_post_at": "Create post: {when}",
   "theme_system": "Theme: system",
   "theme_light": "Theme: light",
-  "theme_dark": "Theme: dark"
+  "theme_dark": "Theme: dark",
+  "nav_media": "Media",
+  "media_title": "Media library",
+  "media_subtitle": "Images and videos uploaded to this workspace.",
+  "media_filter_label": "Show",
+  "media_filter_all": "All",
+  "media_filter_images": "Images",
+  "media_filter_videos": "Videos",
+  "media_load_more": "Load more",
+  "media_empty_title": "No media yet",
+  "media_empty_body": "Images and videos you add to posts appear here.",
+  "media_empty_filtered": "Nothing of this kind yet.",
+  "media_kind_image": "Image",
+  "media_kind_video": "Video",
+  "media_open_image": "Image uploaded {date}",
+  "media_open_video": "Video uploaded {date}",
+  "media_state_processing": "Processing",
+  "media_state_rejected": "Rejected",
+  "media_type": "Type",
+  "media_size": "Size",
+  "media_dimensions": "Dimensions",
+  "media_dimensions_value": "{width} × {height} px",
+  "media_duration": "Duration",
+  "media_uploaded": "Uploaded",
+  "media_alt_label": "Alt text",
+  "media_alt_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "New posts start with this description. Posts that already use the file keep their own. Up to {count} character.",
+        "countPlural=*": "New posts start with this description. Posts that already use the file keep their own. Up to {count} characters."
+      }
+    }
+  ],
+  "media_alt_save": "Save alt text",
+  "media_alt_saved": "Alt text saved.",
+  "media_ai_badge": "AI-generated",
+  "media_ai_remove": "Remove AI label",
+  "media_ai_removed": "AI label removed.",
+  "media_ai_locked": "The label stays: an API key or agent uploaded or labelled this file.",
+  "media_usage_title": "Used in",
+  "media_usage_none": "No post uses this file.",
+  "media_usage_untitled": "Untitled post",
+  "media_usage_scheduled": "Scheduled for {when}",
+  "media_delete": "Delete",
+  "media_delete_body": "Delete this file? It leaves the library now, and its data is erased after 30 days.",
+  "media_delete_confirm": "Delete file",
+  "media_deleted": "File deleted.",
+  "media_in_use": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Used in {count} post",
+        "countPlural=*": "Used in {count} posts"
+      }
+    }
+  ],
+  "media_in_use_error": "A post still uses this file, so it can't be deleted."
 }

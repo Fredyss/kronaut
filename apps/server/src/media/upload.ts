@@ -5,7 +5,7 @@ import type { RequestContext } from '../http/types.ts';
 import { enqueueMediaProcess } from '../jobs.ts';
 import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
 import { MediaError } from './errors.ts';
-import { originalName } from './ingest.ts';
+import { grantAiLock, originalName } from './ingest.ts';
 import type { Staging } from './staging.ts';
 
 export const VIDEO_MAX_BYTES = 300 * 1000 * 1000;
@@ -78,6 +78,7 @@ export async function createVideoUpload(
       bytes: input.bytes,
       original_name: name,
       ai_generated: input.aiGenerated ?? false,
+      ai_locked: grantAiLock(input.aiGenerated ?? false),
       upload_expires_at: sql<Date>`now() + make_interval(hours => ${UPLOAD_TTL_HOURS})`,
       uploaded_by_user_id: sql<string | null>`app_actor_id('user')`,
       uploaded_by_grant_id: sql<string | null>`app_actor_id('grant')`,

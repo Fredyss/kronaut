@@ -31,7 +31,7 @@ function mount(path: string) {
   render(<App router={router} queryClient={queryClient} client={client} />);
 }
 
-const ITEMS = ['Calendar', 'Needs action', 'Channels', 'Settings'];
+const ITEMS = ['Calendar', 'Needs action', 'Media', 'Channels', 'Settings'];
 
 describe('icon rail', () => {
   it.each([
