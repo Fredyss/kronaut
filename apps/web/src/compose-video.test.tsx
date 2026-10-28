@@ -69,11 +69,28 @@ const MASTODON_VIDEO = {
   },
 };
 
+const LINKEDIN_VIDEO = {
+  id: 'video',
+  text: [{ counting: 'utf16', max: 3000 }],
+  maxLinks: null,
+  imageAspect: null,
+  video: {
+    mimes: ['video/mp4'],
+    maxBytes: 500_000_000,
+    minDurationMs: 3000,
+    maxDurationMs: 1_800_000,
+    aspect: null,
+    maxFrameRate: null,
+    maxPixels: null,
+  },
+};
+
 const CHANNELS = [
   channel('acct_bsky', 'bluesky', 'Ada on Bluesky'),
   { ...channel('acct_ig', 'instagram', 'Ada on Instagram'), postTypes: [REEL] },
   { ...channel('acct_th', 'threads', 'Ada on Threads'), postTypes: [THREADS_VIDEO] },
   { ...channel('acct_md', 'mastodon', 'Ada on Mastodon'), postTypes: [MASTODON_VIDEO] },
+  { ...channel('acct_li', 'linkedin', 'Ada on LinkedIn'), postTypes: [LINKEDIN_VIDEO] },
 ];
 
 function asset(patch: Record<string, unknown> = {}) {
@@ -182,20 +199,23 @@ describe('composer video', () => {
     });
   });
 
-  it('publishes a video to Mastodon as a video post with its alt text', async () => {
+  it.each([
+    ['Mastodon', 'acct_md'],
+    ['LinkedIn', 'acct_li'],
+  ])('publishes a video to %s as a video post with its alt text', async (network, accountId) => {
     const { router, mutations } = await pickVideo();
     await screen.findByText(/^Ready/);
     fireEvent.change(screen.getByLabelText('Alt text for the video'), {
       target: { value: 'A dog in the snow' },
     });
-    fireEvent.click(screen.getByRole('checkbox', { name: /Ada on Mastodon/ }));
+    fireEvent.click(screen.getByRole('checkbox', { name: new RegExp(`Ada on ${network}`) }));
     fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
     const create = mutations().find((c) => c.path === '/v1/workspaces/ws_1/posts');
     expect(create?.body).toMatchObject({
       items: [{ media: [{ mediaId: VIDEO_ID, altText: 'A dog in the snow' }] }],
-      destinations: [{ accountId: 'acct_md', publishType: 'video' }],
+      destinations: [{ accountId, publishType: 'video' }],
     });
   });
 

@@ -7,8 +7,10 @@ import {
 } from '@kronaut/core';
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
-import { isSuccess, linkedinFailure } from './errors.ts';
+import { permanent } from '../_kit/meta-graph.ts';
+import { failureFromBody, isSuccess, linkedinFailure, readBody } from './errors.ts';
 import { escapeLittleText } from './escape.ts';
+import { videoAsync } from './manifest.ts';
 import {
   checkInput,
   type Input,
@@ -18,6 +20,7 @@ import {
   stateOf,
 } from './publish-input.ts';
 import { type Member, restPost, uploadTarget } from './rest.ts';
+import { uploadVideo, videoReady } from './video.ts';
 
 const INIT_UPLOAD_PATH = '/rest/images?action=initializeUpload';
 const POSTS_PATH = '/rest/posts';
@@ -66,14 +69,21 @@ async function uploadImages(
   return state;
 }
 
-function imageEntry(ref: MediaRef, state: State): ImageEntry {
-  const id = state.images?.[ref.id];
-  if (id === undefined) throw new Error('image missing after upload');
+function mediaEntry(ref: MediaRef, id: string): ImageEntry {
   const altText = ref.altText ?? '';
   return altText.trim() === '' ? { id } : { id, altText };
 }
 
+function imageEntry(ref: MediaRef, state: State): ImageEntry {
+  const id = state.images?.[ref.id];
+  if (id === undefined) throw new Error('image missing after upload');
+  return mediaEntry(ref, id);
+}
+
 function contentOf(item: PublishItem, state: State): Record<string, unknown> {
+  const [clip] = item.media;
+  if (state.video !== undefined && clip !== undefined)
+    return { content: { media: mediaEntry(clip, state.video) } };
   const images = item.media.map((ref) => imageEntry(ref, state));
   const [single] = images;
   if (single === undefined) return {};
@@ -98,19 +108,61 @@ export function postBody(author: string, item: PublishItem, state: State): unkno
   };
 }
 
-export async function publishPost(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
-  const item = checkInput(input);
-  const member = memberOf(input);
-  let state = stateOf(input.state);
-  if (item.media.length > 0) state = await uploadImages(ctx, member, item, state);
+interface Draft {
+  readonly member: Member;
+  readonly item: PublishItem;
+  readonly state: State;
+}
+
+function checkVideoRejection(status: number, text: string): void {
+  if (status !== 400) return;
+  if (text.includes('MEDIA_ASSET_WAITING_UPLOAD'))
+    throw new ProviderFailure({ kind: 'transient', detail: 'video_not_ready' });
+  if (text.includes('MEDIA_ASSET_PROCESSING_FAILED')) throw permanent('video_processing_failed');
+}
+
+async function createPost(
+  ctx: PublishContext,
+  { member, item, state }: Draft,
+  video: boolean,
+): Promise<PublishOutcome> {
   await ctx.step('create_post');
   const sent: State = { ...state, sentAt: ctx.now().toString({ smallestUnit: 'millisecond' }) };
   await ctx.checkpoint(sent);
   const json = postBody(member.author, item, sent);
   const response = await restPost(ctx, 'public', member, { path: POSTS_PATH, json });
-  if (!isSuccess(response.status)) throw await linkedinFailure(response, 'public', ctx.now());
+  if (!isSuccess(response.status)) {
+    const text = await readBody(response);
+    if (video) checkVideoRejection(response.status, text);
+    throw failureFromBody(response.status, text, { effect: 'public', now: ctx.now() });
+  }
   const urn = response.headers.get('x-restli-id') ?? '';
   if (!POST_URN.test(urn))
     throw new ProviderFailure({ kind: 'ambiguous', detail: 'post_urn_missing' });
   return { kind: 'published', remoteId: urn, url: `${POST_URL}${urn}` };
+}
+
+async function publishVideo(ctx: PublishContext, draft: Draft): Promise<PublishOutcome> {
+  const { member, item } = draft;
+  const [ref] = item.media;
+  if (ref === undefined) throw new Error('video missing after input check');
+  let { state } = draft;
+  if (state.video === undefined) {
+    await ctx.step('upload_video');
+    state = await uploadVideo(ctx, member, ref, state);
+    await ctx.checkpoint(state);
+  }
+  if (state.video === undefined) throw new Error('video missing after upload');
+  if ((await videoReady(ctx, member, state.video)) === 'processing')
+    return { kind: 'pending', pollAfterMs: videoAsync.pollIntervalMs };
+  return createPost(ctx, { member, item, state }, true);
+}
+
+export async function publishPost(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
+  const item = checkInput(input);
+  const member = memberOf(input);
+  const state = stateOf(input.state);
+  if (input.postType === 'video') return publishVideo(ctx, { member, item, state });
+  const uploaded = item.media.length > 0 ? await uploadImages(ctx, member, item, state) : state;
+  return createPost(ctx, { member, item, state: uploaded }, false);
 }

@@ -344,14 +344,16 @@ Checked 2026-10-27 against L1–L5 and L8–L25. Scope: a member's personal prof
   - Daily limits reset at midnight UTC: member **150** and application **100,000** requests per day (L2). L24 says "Standard rate limits are not published", which contradicts L2; the real per-endpoint values show in the Developer Portal Analytics tab after the first call. An email alert goes out at 75% of the app quota only, 1–2 h late (L24).
   - **Kronaut: one `account` bucket `member_posts_day`, 150 per day, 1 per post.** It models only `POST /rest/posts`: LinkedIn throttles per resource (L11, L24). `initializeUpload` and the image `PUT` (2 calls per image) have their own limits, which are not documented. A 429 on any step still parks the account until 00:00 UTC.
 - **Changelog 2025–2026** (L20). Nothing changes the Images API, the OIDC claims or token lifetimes. Relevant items: member post statistics need `r_member_postAnalytics` (2025-06, not self-serve); a 75% app-quota email (2025-09); Google and Apple sign-in with `enable_extended_login` from 2025-12-02 (2025-11). Page dates: Posts API 2026-05-13, Images API 2026-06-24, OAuth flow 2026-05-15, versioning 2026-10-14.
-- **Out of scope** (from the earlier check, not re-verified): article cards must be supplied by the client; video is 3 s–30 min, ≤500 MB, uploaded in 4 MB parts with ETags (L6).
+- **Out of scope:** article cards must be supplied by the client (L3).
 
 
-LinkedIn video facts checked 2026-10-27 (L3, L6, L22).
+LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - `POST /rest/videos?action=initializeUpload {initializeUploadRequest: {owner, fileSizeBytes, uploadCaptions, uploadThumbnail}}` → `{video, uploadToken, uploadInstructions[{firstByte, lastByte, uploadUrl}]}`; `PUT` each 4 MiB part as `application/octet-stream` and keep its `etag`; `POST ?action=finalizeUpload {video, uploadToken, uploadedPartIds}`; post with `content: {media: {id: urn:li:video:…, title}}`.
-- Status `GET /rest/videos/{urn}`: `WAITING_UPLOAD|PROCESSING|AVAILABLE|PROCESSING_FAILED`. Whether a `w_member_social`-only token may read it is undocumented.
+- Status `GET /rest/videos/{urn}`: `WAITING_UPLOAD|PROCESSING|AVAILABLE|PROCESSING_FAILED`. Whether a `w_member_social`-only token may read it is undocumented. A member owner is allowed ("the caller needs to match the video owner"). Upload URLs expire together, typically 30 days after init; an expired URL gives 401. The `PUT` sample sends `Content-Type: application/octet-stream` and returns the part id in `etag`.
 - **Limits:** MP4, 3 s–30 min, 75 KB–500 MB (the `fileSizeBytes` field says 5 GB). Codecs, aspect and frame rate undocumented.
 - Errors: 400 `EXPIRED_UPLOAD_URL`, `MEDIA_ASSET_PROCESSING_FAILED`, `MEDIA_ASSET_WAITING_UPLOAD`, `UPDATING_ASSET_FAILED`. No video in `multiImage`.
+- The post may reference a video that is still processing: `lifecycleState` can come back `PUBLISH_REQUESTED`, which is "published asynchronously once the processing has successfully completed", or `PUBLISH_FAILED` (L3, L22). `content.media.altText` covers "image or video" (L22); `title` is optional.
+- Kronaut publishes one master MP4 as the `video` post type: init, 4 MiB parts, finalize, then a status read while it is `PROCESSING` (polled every 30 s for up to 30 min). If the status read is refused (401 or 403), it posts anyway and relies on `PUBLISH_REQUESTED`. Upload URLs are never stored; a crash before finalize starts a new upload. Captions, thumbnail and title aren't sent. The 75 KB minimum file size isn't checked.
 
 **YouTube**
 - **Upload quota.** The upload bucket is 100/day **per project**, so the bucket key is `app:`, not `account:`. Other calls, such as thumbnails, use the 10,000-unit bucket. Both reset at midnight Pacific.

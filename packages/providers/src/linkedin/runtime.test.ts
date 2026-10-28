@@ -186,7 +186,7 @@ describe('linkedin connect', () => {
 
 describe('linkedin contract', () => {
   it('publishes through the API and conforms to the provider contract', () => {
-    expect(linkedinManifest.postTypes.map((type) => type.delivery)).toEqual(['api']);
+    expect(linkedinManifest.postTypes.map((type) => type.delivery)).toEqual(['api', 'api']);
     expect(linkedinManifest.verify.mode).toBe('none');
     expect(conformanceProblems(linkedinManifest, linkedinRuntime)).toEqual([]);
   });

@@ -6,7 +6,6 @@ import {
 } from '@kronaut/core';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { tryJson } from '../_kit/http.ts';
 
 const DUPLICATE = /duplicate/i;
 const ERROR_CODE = /^[A-Z][A-Z_]{0,63}$/;
@@ -69,14 +68,39 @@ function unexplained(
   return permanent('unexpected_status', detail);
 }
 
+function parsedEnvelope(text: string): Envelope | undefined {
+  try {
+    return envelope.safeParse(JSON.parse(text)).data;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function readBody(response: ProviderHttpResponse): Promise<string> {
+  try {
+    return await response.text();
+  } catch {
+    return '';
+  }
+}
+
+export function failureFromBody(
+  status: number,
+  text: string,
+  context: { readonly effect: StepEffect; readonly now: Temporal.Instant },
+): ProviderFailure {
+  const body = parsedEnvelope(text);
+  return new ProviderFailure(
+    rejection(status, body, context.now) ?? unexplained(status, body, context.effect),
+  );
+}
+
 export async function linkedinFailure(
   response: ProviderHttpResponse,
   effect: StepEffect,
   now: Temporal.Instant,
 ): Promise<ProviderFailure> {
-  const { status } = response;
-  const body = envelope.safeParse(await tryJson(response)).data;
-  return new ProviderFailure(rejection(status, body, now) ?? unexplained(status, body, effect));
+  return failureFromBody(response.status, await readBody(response), { effect, now });
 }
 
 export function isSuccess(status: number): boolean {

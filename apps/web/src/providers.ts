@@ -71,7 +71,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     instance: false,
     maxImageBytes: 8_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
-    publishType: imagePost(20),
+    publishType: (media) =>
+      media.video ? { kind: 'ok', publishType: 'video' } : imagePost(20)(media),
   },
   mastodon: {
     name: () => m.provider_mastodon(),

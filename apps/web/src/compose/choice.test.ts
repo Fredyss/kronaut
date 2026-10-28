@@ -80,6 +80,10 @@ describe('linkedin publish choice', () => {
     expect(choiceFor(linkedin, images(20))).toEqual({ kind: 'ok', publishType: 'post' });
     expect(choiceFor(linkedin, images(21))).toEqual({ kind: 'too_many_images', max: 20 });
   });
+
+  it('publishes a video as a video post', () => {
+    expect(choiceFor(linkedin, VIDEO)).toEqual({ kind: 'ok', publishType: 'video' });
+  });
 });
 
 describe('video publish choice', () => {
