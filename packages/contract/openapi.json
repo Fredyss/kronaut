@@ -11371,6 +11371,345 @@
           "grant"
         ]
       }
+    },
+    "/v1/workspaces/{workspaceId}/system": {
+      "get": {
+        "description": "Instance-wide, for owners and admins only; never an API key. slo holds the publishing SLOs for the last 24 hours (day) and 7 days (week): onTimePct excludes provider 5xx, and a percentage is null when the window is empty. cron is the last run per task; stale means no run, or a start older than twice the task's interval, and detail is set only for a failed run. incidents are the open provider app incidents plus those resolved in the last 7 days, newest first, at most 50. apiVersions are the pinned provider API versions: warn at 90 days or fewer before the sunset, critical at 30 or fewer or after it.",
+        "operationId": "system.status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "apiVersions": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "daysLeft": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": -9007199254740991,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "level": {
+                            "enum": [
+                              "ok",
+                              "warn",
+                              "critical"
+                            ],
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "sunsetOn": {
+                            "anyOf": [
+                              {
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "version": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "version",
+                          "sunsetOn",
+                          "daysLeft",
+                          "level"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "cron": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "detail": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "finishedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "outcome": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "ok",
+                                  "error"
+                                ],
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "stale": {
+                            "type": "boolean"
+                          },
+                          "startedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "task": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "task",
+                          "startedAt",
+                          "finishedAt",
+                          "outcome",
+                          "detail",
+                          "stale"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "incidents": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "detailCode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "lastSeenAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "occurrences": {
+                            "maximum": 9007199254740991,
+                            "minimum": -9007199254740991,
+                            "type": "integer"
+                          },
+                          "openedAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "resolvedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "kind",
+                          "openedAt",
+                          "lastSeenAt",
+                          "occurrences",
+                          "resolvedAt",
+                          "detailCode"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "slo": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "day": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "autoTotal": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer"
+                            },
+                            "duplicates": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer"
+                            },
+                            "onTimePct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "unconfirmedPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "autoTotal",
+                            "onTimePct",
+                            "duplicates",
+                            "unconfirmedPct"
+                          ],
+                          "type": "object"
+                        },
+                        "targets": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "duplicates": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer"
+                            },
+                            "onTimePct": {
+                              "type": "number"
+                            },
+                            "unconfirmedPct": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "onTimePct",
+                            "duplicates",
+                            "unconfirmedPct"
+                          ],
+                          "type": "object"
+                        },
+                        "week": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "autoTotal": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer"
+                            },
+                            "duplicates": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer"
+                            },
+                            "onTimePct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "unconfirmedPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "autoTotal",
+                            "onTimePct",
+                            "duplicates",
+                            "unconfirmedPct"
+                          ],
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "targets",
+                        "day",
+                        "week"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "slo",
+                    "cron",
+                    "incidents",
+                    "apiVersions"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Read the instance status",
+        "tags": [
+          "system"
+        ],
+        "x-kronaut-action": "instance:read",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
     }
   }
 }

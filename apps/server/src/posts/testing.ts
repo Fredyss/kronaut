@@ -16,6 +16,7 @@ import { reauthRoutes } from '../auth/reauth.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { SESSION_COOKIE } from '../auth/session.ts';
 import { saveCredential } from '../credential-store.ts';
+import { cronTasks } from '../cron.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
 import { installJobQueue } from '../job-queue.ts';
@@ -29,6 +30,7 @@ import {
   type FixtureUrls,
   fakeProvider,
 } from '../publish/testing.ts';
+import { systemStatusRoutes } from '../system/routes.ts';
 import type { PostDto } from './dto.ts';
 import { postRoutes } from './routes.ts';
 
@@ -212,6 +214,7 @@ export async function startPosts(
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
     ...notificationRoutes(),
+    ...systemStatusRoutes({ providers, cronTasks: cronTasks(true) }),
   ]);
 
   ownerId = await createUser('owner');

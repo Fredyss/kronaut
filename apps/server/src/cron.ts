@@ -9,9 +9,11 @@ import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
+import { checkApiVersionSunsets } from './system/sunset.ts';
 
 export const CRON_TASKS = {
   accountCapabilitiesRefresh: 'account_capabilities_refresh',
+  apiVersionSunset: 'api_version_sunset',
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
   credentialRetention: 'credential_retention',
@@ -23,17 +25,26 @@ export const CRON_TASKS = {
   publishReconcile: 'publish_reconcile',
 } as const;
 
+export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
+
 const SYSTEM: Actor = { kind: 'system' };
 const DAY_MS = 86_400_000;
 const AUDIT_BATCH = 10_000;
 const AUDIT_MAX_BATCHES = 100;
 const DETAIL_MAX = 500;
+const MINUTE_MS = 60_000;
 
 const CRON_ITEMS: readonly CronItem[] = [
   {
     task: CRON_TASKS.accountCapabilitiesRefresh,
     identifier: CRON_TASKS.accountCapabilitiesRefresh,
     match: '37 4 * * *',
+    options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
+  {
+    task: CRON_TASKS.apiVersionSunset,
+    identifier: CRON_TASKS.apiVersionSunset,
+    match: '7 5 * * *',
     options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
   },
   {
@@ -92,10 +103,30 @@ const CRON_ITEMS: readonly CronItem[] = [
   },
 ];
 
+export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
+  [CRON_TASKS.accountCapabilitiesRefresh]: DAY_MS,
+  [CRON_TASKS.apiVersionSunset]: DAY_MS,
+  [CRON_TASKS.auditMaintenance]: DAY_MS,
+  [CRON_TASKS.credentialRefresh]: 5 * MINUTE_MS,
+  [CRON_TASKS.credentialRetention]: DAY_MS,
+  [CRON_TASKS.mediaGc]: 60 * MINUTE_MS,
+  [CRON_TASKS.notificationEmail]: MINUTE_MS,
+  [CRON_TASKS.notificationRetention]: DAY_MS,
+  [CRON_TASKS.publishDueSweep]: MINUTE_MS,
+  [CRON_TASKS.publishLeaseReaper]: MINUTE_MS,
+  [CRON_TASKS.publishReconcile]: 10 * MINUTE_MS,
+};
+
+function registeredItems(email: boolean): CronItem[] {
+  return CRON_ITEMS.filter((item) => email || item.task !== CRON_TASKS.notificationEmail);
+}
+
 export function cronItems(email: boolean): ParsedCronItem[] {
-  return parseCronItems(
-    CRON_ITEMS.filter((item) => email || item.task !== CRON_TASKS.notificationEmail),
-  );
+  return parseCronItems(registeredItems(email));
+}
+
+export function cronTasks(email: boolean): CronTask[] {
+  return registeredItems(email).map((item) => item.task as CronTask);
 }
 
 export async function recordCronRun(
@@ -176,6 +207,11 @@ export function cronTaskList(
     [CRON_TASKS.accountCapabilitiesRefresh]: async () => {
       await recordCronRun(db, CRON_TASKS.accountCapabilitiesRefresh, () =>
         refreshCapabilities(sweeps),
+      );
+    },
+    [CRON_TASKS.apiVersionSunset]: async () => {
+      await recordCronRun(db, CRON_TASKS.apiVersionSunset, async () =>
+        checkApiVersionSunsets(sweeps.providers, logger, sweeps.now()),
       );
     },
     [CRON_TASKS.auditMaintenance]: async () => {

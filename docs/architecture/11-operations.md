@@ -98,6 +98,24 @@
   - **0 duplicates**: any duplicate is a P1.
   - Unconfirmed destinations stay below 0.5%.
   - The admin page shows all three, computed from `publish_attempts`.
+  - A duplicate is an auto destination with two `ok` publish attempts for the same `item_position`. That is a lower bound: a send the provider never confirmed cannot be counted.
+- **Jobs admin page** (`/settings/system`)
+  - **Who can see it:** workspace owners and admins on a self-hosted instance, through the action `instance:read`. A grant, an API key or MCP can never get it. It is session-only.
+    - The page is instance-wide, so in `MODE=saas` (Phase 3) the entitlements module turns it off; hosted operators use OTel and the status page.
+  - **SLOs**, over the last 24 h and the last 7 days, from `slo_publish_stats` (aggregates only, never ids):
+    - on-time %, with provider 5xx excluded;
+    - duplicates;
+    - unconfirmed %.
+    - Each value turns red when it misses its target.
+  - **Cron:** the last `cron_runs` row per task, with its start, duration and outcome. The detail is shown only for a failed run.
+    - A task whose last run is older than twice its interval counts as stale.
+  - **Incidents:** open `provider_app_incidents`, plus those resolved in the last 7 days, with provider, kind, first and last seen, and occurrences.
+  - **Provider API versions:** each manifest's pinned `apiVersion` with its `sunsetOn`.
+    - It warns at ≤ 90 days and is critical at ≤ 30 days or after the sunset.
+- **API version sunset alarm**
+  - The daily `api_version_sunset` cron task checks every manifest's `apiVersion.sunsetOn`.
+  - A version ≤ 90 days from its sunset is logged at warn level, ≤ 30 days or past it at error level. The run's detail lists them.
+  - The fix is always a release that bumps the version, so the alarm targets the operator who has to upgrade, and the maintainers through the page.
 - **Health**
   - `/healthz` reports the process; `/readyz` reports the DB and `worker_heartbeats`.
   - Cron health stays out of `/readyz`: a failed maintenance run does not stop the API from serving requests, and a red probe would take the whole instance out of rotation. A failed run is logged at error level, and the admin page shows the last `cron_runs` row per task.

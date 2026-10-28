@@ -649,5 +649,70 @@
       }
     }
   ],
-  "media_in_use_error": "A post still uses this file, so it can't be deleted."
+  "media_in_use_error": "A post still uses this file, so it can't be deleted.",
+  "settings_system_title": "System",
+  "system_slo_title": "Publishing goals",
+  "system_slo_day": "Last 24 hours",
+  "system_slo_week": "Last 7 days",
+  "system_slo_on_time": "Published on time",
+  "system_slo_duplicates": "Published twice",
+  "system_slo_unconfirmed": "Unconfirmed",
+  "system_slo_total": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} automatic post",
+        "countPlural=*": "{count} automatic posts"
+      }
+    }
+  ],
+  "system_no_data": "No data",
+  "system_target_met": "On target",
+  "system_target_missed": "Missed",
+  "system_cron_title": "Background jobs",
+  "system_ok": "OK",
+  "system_cron_failed": "Failed",
+  "system_cron_running": "Running",
+  "system_cron_stale": "Overdue",
+  "system_cron_never": "Never ran",
+  "system_cron_last_run": "Last started {when}",
+  "system_cron_duration": "Took {duration}",
+  "system_incidents_title": "Network incidents",
+  "system_incidents_empty": "No incidents in the last 7 days.",
+  "system_incident_open": "Open",
+  "system_incident_resolved": "Resolved {when}",
+  "system_incident_seen": "First seen {first}, last seen {last}",
+  "system_incident_occurrences": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} occurrence",
+        "countPlural=*": "{count} occurrences"
+      }
+    }
+  ],
+  "system_incident_app_credentials_invalid": "App credentials rejected",
+  "system_incident_app_suspended": "App suspended",
+  "system_incident_tier_not_enrolled": "API access level missing",
+  "system_incident_rate_limited_app": "App hit its rate limit",
+  "system_incident_provider_outage": "Network outage",
+  "system_api_title": "Network API versions",
+  "system_api_version": "Version {version}",
+  "system_api_no_sunset": "No end date announced",
+  "system_api_sunset": "Support ends {date}",
+  "system_api_days_left": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} day left",
+        "countPlural=*": "{count} days left"
+      }
+    }
+  ],
+  "system_api_ended": "Support has ended",
+  "system_api_warn": "Upgrade soon",
+  "system_api_critical": "Upgrade now"
 }

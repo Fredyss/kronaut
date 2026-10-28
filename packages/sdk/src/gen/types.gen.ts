@@ -2666,3 +2666,74 @@ export type PostsUnscheduleResponses = {
 };
 
 export type PostsUnscheduleResponse = PostsUnscheduleResponses[keyof PostsUnscheduleResponses];
+
+export type SystemStatusData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/system';
+};
+
+export type SystemStatusErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SystemStatusError = SystemStatusErrors[keyof SystemStatusErrors];
+
+export type SystemStatusResponses = {
+    /**
+     * OK
+     */
+    200: {
+        apiVersions: Array<{
+            daysLeft: number | null;
+            level: 'ok' | 'warn' | 'critical';
+            provider: string;
+            sunsetOn: string | null;
+            version: string;
+        }>;
+        cron: Array<{
+            detail: string | null;
+            finishedAt: string | null;
+            outcome: 'ok' | 'error' | null;
+            stale: boolean;
+            startedAt: string | null;
+            task: string;
+        }>;
+        incidents: Array<{
+            detailCode: string | null;
+            kind: string;
+            lastSeenAt: string;
+            occurrences: number;
+            openedAt: string;
+            provider: string;
+            resolvedAt: string | null;
+        }>;
+        slo: {
+            day: {
+                autoTotal: number;
+                duplicates: number;
+                onTimePct: number | null;
+                unconfirmedPct: number | null;
+            };
+            targets: {
+                duplicates: number;
+                onTimePct: number;
+                unconfirmedPct: number;
+            };
+            week: {
+                autoTotal: number;
+                duplicates: number;
+                onTimePct: number | null;
+                unconfirmedPct: number | null;
+            };
+        };
+    };
+};
+
+export type SystemStatusResponse = SystemStatusResponses[keyof SystemStatusResponses];

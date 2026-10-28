@@ -396,7 +396,7 @@ SELECT set_config('app.workspace_id', '', false);
 SELECT pg_temp.must('auth: create user', auth_create_user('n@x', 'n@x', 'N', 'h', 'sk') IS NOT NULL);
 
 SELECT pg_temp.must_fail('slo: window over 31 days', $$SELECT * FROM slo_publish_stats(now() - interval '40 days', now())$$, '22023');
-SELECT pg_temp.must('slo: aggregates', (SELECT auto_total >= 0 FROM slo_publish_stats(now() - interval '1 day', now())));
+SELECT pg_temp.must('slo: aggregates', (SELECT auto_total >= 0 AND duplicates >= 0 FROM slo_publish_stats(now() - interval '1 day', now())));
 SELECT pg_temp.must('retention: expired session purged',
   (SELECT affected FROM purge_instance_retention(100) WHERE relation = 'sessions') = 1);
 SELECT pg_temp.must('audit: partitions exist two months ahead and the default partition is empty',

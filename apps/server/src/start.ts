@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { createServer, type Server } from 'node:http';
+import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
-import { getRequestListener } from '@hono/node-server';
 import { keyringFromEnv } from '@kronaut/credentials';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
 import { createHttpClient, type HttpClient } from '@kronaut/egress';
@@ -11,7 +10,6 @@ import { createLocalStore, deriveMediaSigningKey } from '@kronaut/media';
 import { manifests } from '@kronaut/providers/manifests';
 import { runtimes } from '@kronaut/providers/runtime';
 import { type Runner, run } from 'graphile-worker';
-import type { Hono } from 'hono';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
@@ -23,11 +21,12 @@ import {
   type ServerConfig,
   type ServerRole,
 } from './config.ts';
-import { cronItems, cronTaskList } from './cron.ts';
+import { cronItems, cronTaskList, cronTasks } from './cron.ts';
 import { type Heartbeat, startHeartbeat, workerAlive } from './heartbeat.ts';
 import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/access.ts';
 import { apiRoutes } from './http/api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
+import { drain, listen } from './http/listen.ts';
 import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
@@ -48,7 +47,6 @@ const APP_VERSION = (
 ).version;
 
 const SYSTEM: Actor = { kind: 'system' };
-const DRAIN_MS = 10_000;
 
 export interface StartOptions {
   readonly logger: Logger;
@@ -61,33 +59,7 @@ export interface StartedServer {
   stop(): Promise<void>;
 }
 
-type Fetch = Hono['fetch'];
 type Clock = () => Temporal.Instant;
-
-function listen(fetch: Fetch, port: number): Promise<Server> {
-  return new Promise((resolve, reject) => {
-    const server = createServer(getRequestListener(fetch));
-    server.once('error', reject);
-    server.listen(port, () => {
-      server.off('error', reject);
-      resolve(server);
-    });
-  });
-}
-
-// close() keeps serving a keep-alive socket that was mid-request for as long as its client reuses it
-function drain(server: Server): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const force = setTimeout(() => server.closeAllConnections(), DRAIN_MS);
-    force.unref();
-    server.close((err) => {
-      clearTimeout(force);
-      if (err) reject(err);
-      else resolve();
-    });
-    server.closeIdleConnections();
-  });
-}
 
 function started(http: Server | null, stop: () => Promise<void>): StartedServer {
   let stopping: Promise<void> | null = null;
@@ -267,7 +239,15 @@ async function startApi(boot: Boot): Promise<void> {
     mediaBaseUrl: config.mediaUrl,
     clock,
   });
-  const routes = apiRoutes({ http: deps, store, signer, staging, keyring, providers });
+  const routes = apiRoutes({
+    http: deps,
+    store,
+    signer,
+    staging,
+    keyring,
+    providers,
+    cronTasks: cronTasks(config.smtp !== null),
+  });
   const api = createHttpApp(deps, routes);
   state.http = await listen(api.fetch, config.port);
 }
