@@ -77,6 +77,11 @@ The `thread` items reuse the post type's `steps` and `text`. A post type without
 - `thread_incomplete` is a new `failed` reason. The migration inserts `('failed','thread_incomplete')`, and `('retry_wait','chain_next')` for the hop between items, into `destination_state_reasons`, which the destinations' reason foreign key checks. There is still no partially published destination state; the per-item states carry the detail.
 - **Post summary.** `trg_publish_summary` keeps counting a `thread_incomplete` destination as `failed`: the post needs the user's attention, so `completed_failed` or `completed_partial` is right. The `post.completed` payload gains an `incomplete` count, the subset of `failed` that has a live main post, so consumers can tell a live but incomplete post from one that never went out.
 - Send again resumes a `thread_incomplete` destination from its first unconfirmed item. A `sending` or `unconfirmed` item still needs `acknowledgeDuplicate`, as today.
+- **Cancel on a live chain** is allowed and stops the chain; it never maps to `thread_incomplete`, because the user chose to stop.
+  - A destination waiting in `retry_wait` (`chain_next` included) goes to `canceled/user_canceled` at once.
+  - While an item is publishing, the cancel is a request, as today. If the item's public step hasn't started, the item isn't sent. If it has, that item settles as usual (`confirmed`, or `verifying` and then `unconfirmed`), and the next claim's write-ahead refuses, so no further item is sent.
+  - The destination ends `canceled/user_canceled`. It keeps the main post's `remote_id`, `remote_url` and `published_at`, and its `pending` items become `skipped`. `canceled` is terminal, so send again doesn't apply.
+  - The post summary counts it as canceled, and `post.completed` doesn't count it in `incomplete`. Consumers tell a live canceled chain apart by its `remote_url`.
 - The `destination.failed` webhook and notification fire once. The payload names the failed item's position and includes the main post's link.
 
 ### Networks without chain support

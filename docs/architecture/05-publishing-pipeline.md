@@ -185,6 +185,7 @@ The engine publishes a destination's items one at a time, in position order, one
 - Resume continues from the last confirmed item and never re-sends a confirmed part.
 - An unconfirmed middle item stops the chain and moves the destination to `unconfirmed`.
 - A later item that fails permanently moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
+- A cancel after the main item is live stops the chain: the destination ends `canceled/user_canceled` and keeps the main post's link, its pending items become `skipped`, and an item already past its public step settles first.
 
 ## Partial success
 
