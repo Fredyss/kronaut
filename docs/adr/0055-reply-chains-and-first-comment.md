@@ -79,8 +79,9 @@ The `thread` items reuse the post type's `steps` and `text`. A post type without
 - Send again resumes a `thread_incomplete` destination from its first unconfirmed item. A `sending` or `unconfirmed` item still needs `acknowledgeDuplicate`, as today.
 - **Cancel on a live chain** is allowed and stops the chain; it never maps to `thread_incomplete`, because the user chose to stop.
   - A destination waiting in `retry_wait` (`chain_next` included) goes to `canceled/user_canceled` at once.
-  - While an item is publishing, the cancel is a request, as today. If the item's public step hasn't started, the item isn't sent. If it has, that item settles as usual (`confirmed`, or `verifying` and then `unconfirmed`), and the next claim's write-ahead refuses, so no further item is sent.
-  - The destination ends `canceled/user_canceled`. It keeps the main post's `remote_id`, `remote_url` and `published_at`, and its `pending` items become `skipped`. `canceled` is terminal, so send again doesn't apply.
+  - While an item is publishing, the cancel is a request, as today. If the item's public step hasn't started, the item isn't sent and the destination goes to `canceled/user_canceled`.
+  - If the item's public step has started, that item settles as usual. If it is confirmed, directly or after `verifying`, the next claim's write-ahead refuses, so no further item is sent, and the destination goes to `canceled/user_canceled`. If it ends `unconfirmed`, the destination goes to `unconfirmed` like any unconfirmed middle item, and its later items stay `pending` until the user resolves it. Resolving it is a separate action, such as cancel (`unconfirmed → canceled`) or `acknowledgeDuplicate`.
+  - A destination that ends `canceled/user_canceled` keeps the main post's `remote_id`, `remote_url` and `published_at`, and its `pending` items become `skipped`. `canceled` is terminal, so send again doesn't apply.
   - The post summary counts it as canceled, and `post.completed` doesn't count it in `incomplete`. Consumers tell a live canceled chain apart by its `remote_url`.
 - The `destination.failed` webhook and notification fire once. The payload names the failed item's position and includes the main post's link.
 
