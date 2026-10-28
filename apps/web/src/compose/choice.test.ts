@@ -63,6 +63,10 @@ describe('facebook publish choice', () => {
     expect(choiceFor(facebook, images(10))).toEqual({ kind: 'ok', publishType: 'post' });
     expect(choiceFor(facebook, images(11))).toEqual({ kind: 'too_many_images', max: 10 });
   });
+
+  it('publishes a video as a Reel', () => {
+    expect(choiceFor(facebook, VIDEO)).toEqual({ kind: 'ok', publishType: 'reel' });
+  });
 });
 
 describe('linkedin publish choice', () => {
@@ -96,6 +100,7 @@ describe('video publish choice', () => {
   });
 
   it('marks video as unsupported on the other networks', () => {
-    expect(choiceFor(facebook, VIDEO)).toEqual({ kind: 'video_unsupported' });
+    const bluesky: Channel = { ...threads, id: 'acct_bsky', provider: 'bluesky' };
+    expect(choiceFor(bluesky, VIDEO)).toEqual({ kind: 'video_unsupported' });
   });
 });
