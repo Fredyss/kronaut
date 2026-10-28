@@ -53,7 +53,7 @@ export function apiRoutes({
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
     ...notificationRoutes(),
-    ...systemStatusRoutes({ providers, cronTasks }),
+    ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({
       db: http.db,
       keys: http.keys,

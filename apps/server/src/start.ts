@@ -227,6 +227,7 @@ async function startApi(boot: Boot): Promise<void> {
     logger,
     clock,
     publicBaseUrl: config.publicUrl.origin,
+    instanceAdmins: config.instanceAdmins,
     readiness: async () => !state.stopping && (await workerAlive(db)),
     routeBodyLimits: MEDIA_BODY_LIMITS,
     ...(access === null ? {} : { access }),

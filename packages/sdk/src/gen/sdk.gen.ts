@@ -802,7 +802,7 @@ export const postsUnschedule = <ThrowOnError extends boolean = true>(options: Op
 /**
  * Read the instance status
  *
- * Instance-wide, for owners and admins only; never an API key. slo holds the publishing SLOs for the last 24 hours (day) and 7 days (week): onTimePct excludes provider 5xx, and a percentage is null when the window is empty. cron is the last run per task; stale means no run, or a start older than twice the task's interval, and detail is set only for a failed run. incidents are the open provider app incidents plus those resolved in the last 7 days, newest first, at most 50. apiVersions are the pinned provider API versions: warn at 90 days or fewer before the sunset, critical at 30 or fewer or after it.
+ * Instance-wide: only for a session whose email is listed in KRONAUT_INSTANCE_ADMINS and who is an owner or admin of the workspace; never an API key. slo holds the publishing SLOs for the last 24 hours (day) and 7 days (week): onTimePct excludes provider 5xx, and a percentage is null when the window is empty. cron is the last run per task; stale means no run, or a start older than twice the task's interval, and detail is set only for a failed run. incidents are the open provider app incidents plus those resolved in the last 7 days, newest first, at most 50. apiVersions are the pinned provider API versions: warn at 90 days or fewer before the sunset, critical at 30 or fewer or after it.
  */
 export const systemStatus = <ThrowOnError extends boolean = true>(options: Options<SystemStatusData, ThrowOnError>): RequestResult<SystemStatusResponses, SystemStatusErrors, ThrowOnError> => (options.client ?? client).get<SystemStatusResponses, SystemStatusErrors, ThrowOnError>({
     security: [{

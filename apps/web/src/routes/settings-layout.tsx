@@ -19,8 +19,8 @@ const ACTIVE = { className: 'border-primary font-medium text-foreground md:bg-ac
 
 export function SettingsLayout() {
   const client = useApiClient();
-  const role = useQuery(meQuery(client)).data?.workspaces[0]?.role;
-  const sections = canReadSystem(role) ? [...SECTIONS, SYSTEM_SECTION] : SECTIONS;
+  const me = useQuery(meQuery(client)).data;
+  const sections = canReadSystem(me) ? [...SECTIONS, SYSTEM_SECTION] : SECTIONS;
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 md:flex-row md:gap-10 md:p-6">
       <div className="flex flex-col gap-4 md:w-48 md:shrink-0">

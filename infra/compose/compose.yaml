@@ -20,6 +20,7 @@ x-instance-env: &instance-env
   KRONAUT_SECRET_FILE: /run/secrets/kronaut_secret
   KRONAUT_DATA_DIR: /data
   KRONAUT_LOG_LEVEL: ${KRONAUT_LOG_LEVEL:-info}
+  KRONAUT_INSTANCE_ADMINS: ${KRONAUT_INSTANCE_ADMINS:-}
   TZ: ${TZ:-UTC}
 
 services:

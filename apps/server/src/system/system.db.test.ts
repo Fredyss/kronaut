@@ -7,10 +7,13 @@ import { CRON_TASKS } from '../cron.ts';
 import {
   accountA,
   accountB,
+  CLI,
   call,
   create,
+  createUser,
   doc,
   grantAuth,
+  login,
   owner,
   ownerAuth,
   SYSTEM,
@@ -118,6 +121,18 @@ describe('system.status', () => {
     expect(body.apiVersions).toEqual([expect.objectContaining({ provider: FAKE_PROVIDER })]);
     expect((await call('GET', 'system', editor.auth)).status).toBe(403);
     expect((await call('GET', 'system', grantAuth)).status).toBe(401);
+  });
+
+  it('refuses an admin whose email is not in KRONAUT_INSTANCE_ADMINS', async () => {
+    const id = await createUser('admin');
+    await owner.withActor(CLI, (trx) =>
+      trx
+        .insertInto('memberships')
+        .values({ workspace_id: workspaceId, user_id: id, role: 'admin', can_approve: false })
+        .execute(),
+    );
+    const admin = await login('admin');
+    expect((await call('GET', 'system', admin)).status).toBe(403);
   });
 
   it('counts two ok attempts at one position as a duplicate, not two positions', async () => {

@@ -41,6 +41,7 @@ export interface ServerConfig {
   readonly workerId: string;
   readonly webDir: string | null;
   readonly smtp: SmtpConfig | null;
+  readonly instanceAdmins: readonly string[];
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -207,6 +208,17 @@ function parseSmtp(env: Env, readFile: ReadFile): SmtpConfig | null {
   return { host, port, user, password, from, tls };
 }
 
+function parseInstanceAdmins(value: string | undefined): string[] {
+  const emails = (value ?? '')
+    .split(',')
+    .map((email) => email.trim().normalize('NFC').toLowerCase())
+    .filter((email) => email !== '');
+  if (!emails.every(isMailAddress)) {
+    throw new ConfigError('KRONAUT_INSTANCE_ADMINS', 'must be a comma-separated list of emails');
+  }
+  return emails;
+}
+
 function parseWebDir(value: string | undefined): string | null {
   return value === undefined ? null : resolve(value);
 }
@@ -245,5 +257,6 @@ export function loadServerConfig(
     workerId: parseWorkerId(envValue(env, 'KRONAUT_WORKER_ID', readFile), role),
     webDir: parseWebDir(envValue(env, 'KRONAUT_WEB_DIR', readFile)),
     smtp: parseSmtp(env, readFile),
+    instanceAdmins: parseInstanceAdmins(envValue(env, 'KRONAUT_INSTANCE_ADMINS', readFile)),
   };
 }

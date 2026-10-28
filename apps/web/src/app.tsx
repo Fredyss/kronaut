@@ -170,7 +170,7 @@ const systemSettingsRoute = createRoute({
   path: 'system',
   beforeLoad: async ({ context }) => {
     const me = await context.queryClient.ensureQueryData(meQuery(context.client));
-    if (!canReadSystem(me.workspaces[0]?.role)) {
+    if (!canReadSystem(me)) {
       throw redirect({ to: '/settings/account', replace: true });
     }
   },

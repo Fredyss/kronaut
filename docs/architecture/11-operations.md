@@ -100,7 +100,9 @@
   - The admin page shows all three, computed from `publish_attempts`.
   - A duplicate is an auto destination with two `ok` publish attempts for the same `item_position`. That is a lower bound: a send the provider never confirmed cannot be counted.
 - **Jobs admin page** (`/settings/system`)
-  - **Who can see it:** workspace owners and admins on a self-hosted instance, through the action `instance:read`. A grant, an API key or MCP can never get it. It is session-only.
+  - **Who can see it:** a signed-in user whose email is listed in `KRONAUT_INSTANCE_ADMINS` (comma-separated) and who is an owner or admin of the workspace (action `instance:read`).
+    - Unset means nobody, so the page is off by default. A workspace owner on a shared instance never sees other tenants' data unless the operator lists them.
+    - A grant, an API key or MCP can never get it. It is session-only. `GET /v1/me` reports `instanceAdmin`, so the UI shows the tab only then.
     - The page is instance-wide, so in `MODE=saas` (Phase 3) the entitlements module turns it off; hosted operators use OTel and the status page.
   - **SLOs**, over the last 24 h and the last 7 days, from `slo_publish_stats` (aggregates only, never ids):
     - on-time %, with provider 5xx excluded;

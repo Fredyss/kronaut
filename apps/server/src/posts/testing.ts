@@ -214,7 +214,11 @@ export async function startPosts(
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
     ...notificationRoutes(),
-    ...systemStatusRoutes({ providers, cronTasks: cronTasks(true) }),
+    ...systemStatusRoutes({
+      providers,
+      cronTasks: cronTasks(true),
+      instanceAdmins: ['owner@example.test'],
+    }),
   ]);
 
   ownerId = await createUser('owner');

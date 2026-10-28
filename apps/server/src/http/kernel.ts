@@ -44,6 +44,7 @@ export interface HttpDeps {
   readonly routeBodyLimits?: Readonly<Record<string, number>>;
   readonly access?: AccessGate;
   readonly web?: WebApp;
+  readonly instanceAdmins?: readonly string[];
 }
 
 const REQUEST_ID = /^[A-Za-z0-9-]{8,64}$/;

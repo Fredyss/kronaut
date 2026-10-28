@@ -261,6 +261,7 @@ export type AuthMeResponses = {
      * OK
      */
     200: {
+        instanceAdmin: boolean;
         user: {
             displayName: string | null;
             email: string | null;
