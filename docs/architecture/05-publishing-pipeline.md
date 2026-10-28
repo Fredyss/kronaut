@@ -177,13 +177,14 @@ Phase 0 rules:
 
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
 
-## Threads
+## Reply chains
 
-Every `destination_item` has its own state:
+The engine publishes a destination's items one at a time, in position order, one `publish` call each ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)). Every `destination_item` has its own state:
 
 - `pending | sending | confirmed | unconfirmed | failed | skipped`
 - Resume continues from the last confirmed item and never re-sends a confirmed part.
 - An unconfirmed middle item stops the chain and moves the destination to `unconfirmed`.
+- A later item that fails permanently moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
 
 ## Partial success
 
