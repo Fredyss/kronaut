@@ -191,6 +191,7 @@ The engine publishes a destination's items one at a time, in position order, one
 - Once `main` is confirmed, neither the claim's late check nor `deadline_at` in retry planning (publish, verify, reaper) applies: the rest of the chain runs past the deadline.
 - Any `failed` outcome on a later item, including `attempts_exhausted` and a claim-time failure such as `preflight_invalid`, marks that item `failed` and gives `failed/thread_incomplete`; the items after it stay `pending`. The `destination.failed` payload then carries `failed_item_position`. Everything else plans as for a single post.
 - A destination with a `confirmed` item is live. Unschedule, and an edit that would thaw or remove it, answer 409 `destination_live`, so progress is never discarded and main is never re-sent; cancel still stops the rest of the chain. Marking it published by hand turns its open items `skipped` and keeps the main post's `published_at`.
+- A cancel after the main item is live stops the chain: the destination ends `canceled/user_canceled` and keeps the main post's link, its pending items become `skipped`, and an item already past its public step settles first.
 
 ## Partial success
 
