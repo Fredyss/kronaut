@@ -17,7 +17,7 @@ import { createHttpApp, deriveHttpKeys } from './kernel.ts';
 import { bindRoute } from './types.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
-const NOW = Temporal.Instant.from('2026-10-21T12:00:00Z');
+const NOW = Temporal.Now.instant();
 const BASE = 'https://kronaut.example.test';
 const EMAIL = 'kernel@example.test';
 const PASSWORD = 'correct horse battery';
