@@ -85,13 +85,13 @@ describe('linkedin publish choice', () => {
 describe('video publish choice', () => {
   const instagram: Channel = { ...threads, id: 'acct_ig', provider: 'instagram' };
 
-  it('publishes a video to Instagram as a Reel', () => {
+  it('publishes a video to Instagram as a Reel and to Threads as a video', () => {
     expect(choiceFor(instagram, VIDEO)).toEqual({ kind: 'ok', publishType: 'reel' });
     expect(choiceFor(instagram, images(0))).toEqual({ kind: 'needs_image' });
+    expect(choiceFor(threads, VIDEO)).toEqual({ kind: 'ok', publishType: 'video' });
   });
 
   it('marks video as unsupported on the other networks', () => {
-    expect(choiceFor(threads, VIDEO)).toEqual({ kind: 'video_unsupported' });
     expect(choiceFor(facebook, VIDEO)).toEqual({ kind: 'video_unsupported' });
   });
 });

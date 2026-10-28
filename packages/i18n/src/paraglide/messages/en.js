@@ -190,6 +190,7 @@
 /** @typedef {{}} Compose_Video_Ai_LabelInputs */
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Ai_SavingInputs */
+/** @typedef {{}} Compose_Video_Alt_LabelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
@@ -1211,6 +1212,10 @@ export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_Mark
 
 export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Saving the AI label…`)
+};
+
+export const compose_video_alt_label = /** @type {(inputs: Compose_Video_Alt_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Alt text for the video`)
 };
 
 export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {

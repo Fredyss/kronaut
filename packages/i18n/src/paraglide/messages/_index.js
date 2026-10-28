@@ -192,6 +192,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Video_Ai_LabelInputs */
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Ai_SavingInputs */
+/** @typedef {{}} Compose_Video_Alt_LabelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
@@ -3306,6 +3307,21 @@ export const compose_video_ai_saving = /** @type {((inputs?: Compose_Video_Ai_Sa
 	if (locale === "sk") return __sk.compose_video_ai_saving(inputs)
 	if (locale === "cs") return __cs.compose_video_ai_saving(inputs)
 	return __en.compose_video_ai_saving(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Alt text for the video" |
+*
+* @param {Compose_Video_Alt_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_alt_label = /** @type {((inputs?: Compose_Video_Alt_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_Alt_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_alt_label(inputs)
+	if (locale === "cs") return __cs.compose_video_alt_label(inputs)
+	return __en.compose_video_alt_label(inputs)
 });
 /**
 * | output |

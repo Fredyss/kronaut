@@ -25,7 +25,7 @@ export interface ComposeImage {
 export interface ComposeContent {
   readonly doc: Doc;
   readonly images: readonly ComposeImage[];
-  readonly video: string | null;
+  readonly video: { readonly id: string; readonly altText: string } | null;
 }
 
 export interface ComposeDestination {
@@ -166,14 +166,18 @@ async function uploadMedia(s: Submitter, input: ComposeInput, targets: readonly 
 
 type DraftItem = DraftBody['items'][0];
 
+function withAlt(mediaId: string, alt: string) {
+  const altText = alt.trim().normalize('NFC');
+  return altText === '' ? { mediaId } : { mediaId, altText };
+}
+
 function toItem(content: ComposeContent, ids: ReadonlyMap<string, string>): DraftItem {
-  if (content.video !== null)
-    return { doc: { ...content.doc }, media: [{ mediaId: content.video }] };
+  const { video } = content;
+  if (video !== null) return { doc: { ...content.doc }, media: [withAlt(video.id, video.altText)] };
   const media = content.images.map((image) => {
     const mediaId = ids.get(image.id);
     if (mediaId === undefined) throw new Error(`image ${image.id} was not uploaded`);
-    const altText = image.altText.trim().normalize('NFC');
-    return altText === '' ? { mediaId } : { mediaId, altText };
+    return withAlt(mediaId, image.altText);
   });
   return { doc: { ...content.doc }, media };
 }

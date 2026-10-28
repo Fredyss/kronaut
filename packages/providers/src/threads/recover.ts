@@ -24,7 +24,7 @@ export function recover(
   const main = input.items.find((item) => item.role === 'main');
   const text = main?.text ?? '';
   const count = main?.media.length ?? 0;
-  const mediaType = mediaTypeOf(count);
+  const mediaType = mediaTypeOf(input.postType, count);
   return findRecent(ctx, graph, input, {
     path: `${input.credentials.userId}/threads`,
     fields: POST_FIELDS,

@@ -49,8 +49,14 @@ describe('contents', () => {
   });
 
   it('shares the default video with a customized copy', () => {
-    const withVideo = { ...BASE, base: { ...BASE.base, images: [], video: { id: 'v1' } } };
-    expect(effective(customize(withVideo, 'acct_ig'), 'acct_ig').video).toEqual({ id: 'v1' });
+    const withVideo = {
+      ...BASE,
+      base: { ...BASE.base, images: [], video: { id: 'v1', altText: '' } },
+    };
+    expect(effective(customize(withVideo, 'acct_ig'), 'acct_ig').video).toEqual({
+      id: 'v1',
+      altText: '',
+    });
   });
 
   it('resets a channel to the default content', () => {

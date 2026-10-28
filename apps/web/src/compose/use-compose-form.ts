@@ -94,7 +94,10 @@ function toCompose({ doc, images, video }: Content, videos: VideoRegistry): Comp
       altText,
       aiGenerated,
     })),
-    video: phase?.kind === 'ready' ? phase.asset.id : null,
+    video:
+      video !== null && phase?.kind === 'ready'
+        ? { id: phase.asset.id, altText: video.altText }
+        : null,
   };
 }
 

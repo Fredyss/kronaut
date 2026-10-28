@@ -11,19 +11,29 @@ export interface VideoSlot {
   readonly entry: VideoEntry;
   readonly remove: () => void;
   readonly setAi: (aiGenerated: boolean) => void;
+  readonly altText: string;
+  readonly setAlt: (altText: string) => void;
   readonly retry: () => void;
 }
 
 interface MediaTarget {
   readonly images: ImagesState;
   readonly video: string | null;
+  readonly videoAlt: string;
   readonly videos: VideosState;
   readonly setVideo: (id: string | null) => void;
+  readonly setVideoAlt: (altText: string) => void;
 }
 
 const isVideo = (file: File) => file.type.startsWith('video/');
 
-function slotFor({ video, videos, setVideo }: MediaTarget): VideoSlot | null {
+function slotFor({
+  video,
+  videoAlt,
+  videos,
+  setVideo,
+  setVideoAlt,
+}: MediaTarget): VideoSlot | null {
   const entry = video === null ? undefined : videos.entries.get(video);
   if (video === null || entry === undefined) return null;
   return {
@@ -31,6 +41,8 @@ function slotFor({ video, videos, setVideo }: MediaTarget): VideoSlot | null {
     entry,
     remove: () => setVideo(null),
     setAi: (aiGenerated) => videos.setAi(video, aiGenerated),
+    altText: videoAlt,
+    setAlt: setVideoAlt,
     retry: () => videos.retry(video),
   };
 }

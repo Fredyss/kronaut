@@ -59,8 +59,11 @@ export function useContents(
   const media = useMedia({
     images,
     video: content.video?.id ?? null,
+    videoAlt: content.video?.altText ?? '',
     videos,
-    setVideo: (id) => edit((c) => ({ ...c, video: id === null ? null : { id } })),
+    setVideo: (id) => edit((c) => ({ ...c, video: id === null ? null : { id, altText: '' } })),
+    setVideoAlt: (altText) =>
+      edit((c) => (c.video === null ? c : { ...c, video: { ...c.video, altText } })),
   });
 
   return {
