@@ -92,7 +92,7 @@ describe('validate: text', () => {
     ]);
     expect(issues).toStrictEqual([
       { code: 'text_too_long', itemIndex: 1, counting: 'graphemes', limit: 300, actual: 301 },
-      { code: 'text_too_long', itemIndex: 2, counting: 'graphemes', limit: 300, actual: 302 },
+      { code: 'text_too_long', itemIndex: 2, counting: 'graphemes', limit: 200, actual: 302 },
     ]);
   });
 
@@ -102,6 +102,37 @@ describe('validate: text', () => {
     );
     expect(validate(GRAM, 'carousel', [main('a'.repeat(2201), [jpeg(), jpeg()])])).toStrictEqual([
       { code: 'text_too_long', itemIndex: 0, counting: 'utf16', limit: 2200, actual: 2201 },
+    ]);
+  });
+});
+
+describe('validate: sent items only', () => {
+  it('checks the comment against its own text rules', () => {
+    expect(validate(SKY, 'post', [main(), comment('b'.repeat(200))])).toStrictEqual([]);
+    expect(validate(SKY, 'post', [main(), comment('b'.repeat(201))])).toStrictEqual([
+      { code: 'text_too_long', itemIndex: 1, counting: 'graphemes', limit: 200, actual: 201 },
+    ]);
+  });
+
+  it('checks thread media against the thread rules', () => {
+    const png = jpeg({ mime: 'image/png' });
+    expect(validate(SKY, 'post', [main('x', [png])])).toStrictEqual([]);
+    expect(validate(SKY, 'post', [main(), thread('t', [png])])).toStrictEqual([
+      { code: 'mime_unsupported', itemIndex: 1, mediaIndex: 0 },
+    ]);
+  });
+
+  it('ignores replies and comments the post type will skip', () => {
+    const long = 'x'.repeat(5000);
+    const items = [main(), thread(long, [jpeg({ mime: 'image/gif' })]), comment(long)];
+    expect(validate(SKY, 'gallery', items)).toStrictEqual([]);
+  });
+
+  it('ignores replies past the thread limit', () => {
+    const items = [main(), thread(), thread(), thread(), thread('x'.repeat(301)), comment()];
+    expect(validate(SKY, 'post', items)).toStrictEqual([]);
+    expect(validate(SKY, 'post', items.with(3, thread('x'.repeat(301))))).toStrictEqual([
+      { code: 'text_too_long', itemIndex: 3, counting: 'graphemes', limit: 300, actual: 301 },
     ]);
   });
 });

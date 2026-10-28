@@ -125,6 +125,8 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Compose_Add_CommentInputs */
+/** @typedef {{}} Compose_Add_ReplyInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -137,6 +139,8 @@
 /** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
 /** @typedef {{}} Compose_Channels_TitleInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
+/** @typedef {{}} Compose_Comment_LabelInputs */
+/** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
@@ -163,16 +167,24 @@
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_Issue_Comment_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Limit_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
+/** @typedef {{}} Compose_Remove_CommentInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
+/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_LongInputs */
+/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
@@ -957,6 +969,14 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Kanály`)
 };
 
+export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přidat první komentář`)
+};
+
+export const compose_add_reply = /** @type {(inputs: Compose_Add_ReplyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přidat odpověď`)
+};
+
 export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Instagram ho označí jako vytvořený pomocí AI. Ostatní sítě takové označení nemají.`)
 };
@@ -1011,6 +1031,14 @@ export const compose_channels_title = /** @type {(inputs: Compose_Channels_Title
 
 export const compose_check_content = /** @type {(inputs: Compose_Check_ContentInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Zkontrolujte obsah pro ${i?.channels}.`)
+};
+
+export const compose_comment_label = /** @type {(inputs: Compose_Comment_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`První komentář`)
+};
+
+export const compose_comment_too_long = /** @type {(inputs: Compose_Comment_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`První komentář je pro ${i?.channel} příliš dlouhý (${i?.count}/${i?.max})`)
 };
 
 export const compose_connect_channel = /** @type {(inputs: Compose_Connect_ChannelInputs) => LocalizedString} */ () => {
@@ -1125,8 +1153,16 @@ export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => L
 	return /** @type {LocalizedString} */ (`Používá obsah ze záložky Všechny kanály.`)
 };
 
+export const compose_issue_comment_empty = /** @type {(inputs: Compose_Issue_Comment_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`První komentář je prázdný.`)
+};
+
 export const compose_issue_on_channel = /** @type {(inputs: Compose_Issue_On_ChannelInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.message}`)
+};
+
+export const compose_issue_reply_empty = /** @type {(inputs: Compose_Issue_Reply_EmptyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odpověď ${i?.position} je prázdná.`)
 };
 
 export const compose_limit_channel = /** @type {(inputs: Compose_Limit_ChannelInputs) => LocalizedString} */ (i) => {
@@ -1149,6 +1185,10 @@ export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs
 	return /** @type {LocalizedString} */ (`${i?.network} ${i?.count}/${i?.max}`)
 };
 
+export const compose_main_only = /** @type {(inputs: Compose_Main_OnlyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} zveřejní jen hlavní příspěvek.`)
+};
+
 export const compose_media_exclusive = /** @type {(inputs: Compose_Media_ExclusiveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Příspěvek může mít buď obrázky, nebo jedno video, ne obojí.`)
 };
@@ -1167,6 +1207,26 @@ export const compose_publish_now = /** @type {(inputs: Compose_Publish_NowInputs
 
 export const compose_publishing = /** @type {(inputs: Compose_PublishingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zveřejňuje se…`)
+};
+
+export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odebrat první komentář`)
+};
+
+export const compose_remove_reply = /** @type {(inputs: Compose_Remove_ReplyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odebrat odpověď ${i?.position}`)
+};
+
+export const compose_reply_label = /** @type {(inputs: Compose_Reply_LabelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odpověď ${i?.position}`)
+};
+
+export const compose_reply_too_long = /** @type {(inputs: Compose_Reply_Too_LongInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odpověď ${i?.position} je pro ${i?.channel} příliš dlouhá (${i?.count}/${i?.max})`)
+};
+
+export const compose_reply_too_many_links = /** @type {(inputs: Compose_Reply_Too_Many_LinksInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odpověď ${i?.position} obsahuje víc odkazů, než ${i?.channel} povoluje (${i?.max})`)
 };
 
 export const compose_request_approval = /** @type {(inputs: Compose_Request_ApprovalInputs) => LocalizedString} */ () => {

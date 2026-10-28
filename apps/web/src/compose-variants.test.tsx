@@ -65,8 +65,8 @@ describe('composer variants', () => {
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
     expect(created(mutations)).toEqual({
-      items: [{ doc: doc('x'.repeat(301)), media: [] }],
-      variants: [{ items: [{ doc: doc('Short'), media: [] }] }],
+      items: [{ role: 'main', doc: doc('x'.repeat(301)), media: [] }],
+      variants: [{ items: [{ role: 'main', doc: doc('Short'), media: [] }] }],
       destinations: [
         { accountId: 'acct_bsky', publishType: 'post', variant: 0 },
         { accountId: 'acct_masto', publishType: 'post' },
@@ -110,7 +110,7 @@ describe('composer variants', () => {
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
     expect(created(mutations)).toEqual({
-      items: [{ doc: doc('Hello'), media: [] }],
+      items: [{ role: 'main', doc: doc('Hello'), media: [] }],
       destinations: [
         { accountId: 'acct_bsky', publishType: 'post' },
         { accountId: 'acct_masto', publishType: 'post' },
@@ -134,10 +134,18 @@ describe('composer variants', () => {
     await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
     expect(mutations().filter((c) => c.path.endsWith('/media'))).toHaveLength(1);
     expect(created(mutations)).toEqual({
-      items: [{ doc: doc('Hello'), media: [{ mediaId: MEDIA_ID, altText: 'A cat' }] }],
+      items: [
+        { role: 'main', doc: doc('Hello'), media: [{ mediaId: MEDIA_ID, altText: 'A cat' }] },
+      ],
       variants: [
         {
-          items: [{ doc: doc('Hello'), media: [{ mediaId: MEDIA_ID, altText: 'A Mastodon cat' }] }],
+          items: [
+            {
+              role: 'main',
+              doc: doc('Hello'),
+              media: [{ mediaId: MEDIA_ID, altText: 'A Mastodon cat' }],
+            },
+          ],
         },
       ],
       destinations: [

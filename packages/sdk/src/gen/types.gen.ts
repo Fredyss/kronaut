@@ -658,6 +658,13 @@ export type ChannelsListResponses = {
             id: string;
             lastErrorCode: string | null;
             postTypes: Array<{
+                comment: {
+                    text: Array<{
+                        counting: 'x-weighted' | 'mastodon' | 'threads' | 'graphemes' | 'utf16' | 'utf8-bytes';
+                        max: number;
+                        urlWeight?: number;
+                    }>;
+                } | null;
                 id: string;
                 imageAspect: {
                     max: {
@@ -675,6 +682,9 @@ export type ChannelsListResponses = {
                     max: number;
                     urlWeight?: number;
                 }>;
+                thread: {
+                    maxItems: number;
+                } | null;
                 video: {
                     aspect: {
                         max: {

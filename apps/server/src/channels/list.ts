@@ -27,15 +27,15 @@ const TEXT_COUNTINGS = [
 
 const RatioSchema = z.object({ width: z.number().int(), height: z.number().int() });
 
+const TextLimitSchema = z.object({
+  counting: z.enum(TEXT_COUNTINGS),
+  max: z.number().int(),
+  urlWeight: z.number().int().optional(),
+});
+
 const PostTypeRulesSchema = z.object({
   id: z.string(),
-  text: z.array(
-    z.object({
-      counting: z.enum(TEXT_COUNTINGS),
-      max: z.number().int(),
-      urlWeight: z.number().int().optional(),
-    }),
-  ),
+  text: z.array(TextLimitSchema),
   maxLinks: z.number().int().nullable(),
   imageAspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
   video: z
@@ -49,6 +49,8 @@ const PostTypeRulesSchema = z.object({
       maxPixels: z.number().int().nullable(),
     })
     .nullable(),
+  thread: z.object({ maxItems: z.number().int() }).nullable(),
+  comment: z.object({ text: z.array(TextLimitSchema) }).nullable(),
 });
 
 export const ChannelSchema = z.object({
@@ -136,6 +138,8 @@ function postTypes(
         maxLinks: postType.maxLinks ?? null,
         imageAspect: imageAspect(postType.media.image),
         video: videoRules(postType.media.video),
+        thread: postType.thread === undefined ? null : { maxItems: postType.thread.maxItems },
+        comment: postType.comment === undefined ? null : { text: [...postType.comment.text] },
       },
     ];
   });

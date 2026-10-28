@@ -1,4 +1,6 @@
 import { m } from '../i18n.ts';
+import type { Content } from './contents.ts';
+import { isBlank } from './doc.ts';
 
 const ISSUES: Readonly<Record<string, () => string>> = {
   text_too_long: () => m.issue_text_too_long(),
@@ -34,4 +36,10 @@ const DESTINATION_PATH = /(?:^|\.)destinations\.(\d+)(?:\.|$)/;
 export function destinationIndex(path: string): number | null {
   const match = DESTINATION_PATH.exec(path);
   return match?.[1] === undefined ? null : Number(match[1]);
+}
+
+export function blankItemProblem({ replies, comment }: Content): string | null {
+  const blank = replies.findIndex((reply) => isBlank(reply.doc));
+  if (blank !== -1) return m.compose_issue_reply_empty({ position: blank + 1 });
+  return comment !== null && isBlank(comment.doc) ? m.compose_issue_comment_empty() : null;
 }

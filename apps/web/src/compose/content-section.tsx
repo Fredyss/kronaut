@@ -7,6 +7,8 @@ import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
 import { effective } from './contents.ts';
 import { ImagesSection } from './images-section.tsx';
+import { itemDocs } from './items.ts';
+import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
 import { loadEditor, loadPreview, loadTextLimits } from './load.ts';
 import type { PreviewTarget } from './preview/preview.tsx';
 import type { LimitTarget } from './text-limits.tsx';
@@ -59,6 +61,7 @@ function limitTargets(state: ContentsState): LimitTarget[] {
       media: state.mediaFor(channel.id),
       video: phase?.kind === 'ready' ? phase.asset : null,
       shown: active === null ? !contents.customized.has(channel.id) : channel.id === active,
+      items: itemDocs(content),
     };
   });
 }
@@ -132,6 +135,7 @@ export function ContentSection(props: ContentSectionProps) {
   const reason =
     channel === undefined ? null : channelHint(channel, state.choiceOf(channel), locale);
   const previews = previewTargets(state);
+  const targets = limitTargets(state);
   return (
     <div className="flex flex-col gap-4">
       {showTabs ? (
@@ -156,13 +160,7 @@ export function ContentSection(props: ContentSectionProps) {
             />
           ) : null}
           {editing || channel === undefined ? (
-            <Suspense
-              fallback={
-                <div className="min-h-40 rounded-md border px-3 py-2 text-muted-foreground text-sm">
-                  {m.loading()}
-                </div>
-              }
-            >
+            <Suspense fallback={<EditorFallback />}>
               <PostEditor
                 key={active ?? ''}
                 id={editorId}
@@ -181,7 +179,7 @@ export function ContentSection(props: ContentSectionProps) {
           )}
           <Suspense fallback={null}>
             <TextLimits
-              targets={limitTargets(state)}
+              targets={targets}
               issuesId={limitsId}
               note={checkNote(tabs, active, locale)}
               onIssuesChange={onIssuesChange}
@@ -190,6 +188,8 @@ export function ContentSection(props: ContentSectionProps) {
         </div>
         {reason === null ? null : <p className="text-destructive text-sm">{reason}</p>}
         {editing ? <ImagesSection fileId={fileId} media={state.media} pending={pending} /> : null}
+        {editing ? <ItemsSection state={state} targets={targets} pending={pending} /> : null}
+        <MainOnlyNotes state={state} />
         {previews.length === 0 ? null : (
           <Suspense fallback={null}>
             <Previews targets={previews} />

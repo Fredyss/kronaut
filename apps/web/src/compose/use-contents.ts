@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import type { Channel } from '../api.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
 import {
@@ -14,13 +14,41 @@ import {
   reset,
 } from './contents.ts';
 import type { Doc } from './doc.ts';
+import { itemSupport, itemsState, postTypeFor } from './items.ts';
 import { useImages } from './use-images.ts';
 import { useMedia } from './use-media.ts';
-import { useVideos } from './use-video.ts';
+import { useVideos, type VideosState } from './use-video.ts';
 
 function videoIds(contents: Contents): string[] {
   const all: Content[] = [contents.base, ...contents.customized.values()];
   return [...new Set(all.flatMap((content) => (content.video === null ? [] : [content.video.id])))];
+}
+
+type Edit = (change: (content: Content) => Content) => void;
+
+function useContentMedia(
+  content: Content,
+  edit: Edit,
+  setContents: Dispatch<SetStateAction<Contents>>,
+  videos: VideosState,
+) {
+  const images = useImages({
+    images: content.images,
+    edit: (change) => edit((c) => ({ ...c, images: change(c.images) })),
+    setThumb: (id, thumb) =>
+      setContents((current) =>
+        editImages(current, (image) => (image.id === id ? { ...image, thumb } : image)),
+      ),
+  });
+  return useMedia({
+    images,
+    video: content.video?.id ?? null,
+    videoAlt: content.video?.altText ?? '',
+    videos,
+    setVideo: (id) => edit((c) => ({ ...c, video: id === null ? null : { id, altText: '' } })),
+    setVideoAlt: (altText) =>
+      edit((c) => (c.video === null ? c : { ...c, video: { ...c.video, altText } })),
+  });
 }
 
 export function useContents(
@@ -45,26 +73,13 @@ export function useContents(
   if (shown !== active) setActive(shown);
   const target = shown !== null && contents.customized.has(shown) ? shown : null;
   const content = contentOf(contents, target) ?? contents.base;
-  const edit = (change: (content: Content) => Content) =>
-    setContents((current) => editContent(current, target, change));
+  const edit: Edit = (change) => setContents((current) => editContent(current, target, change));
 
-  const images = useImages({
-    images: content.images,
-    edit: (change) => edit((c) => ({ ...c, images: change(c.images) })),
-    setThumb: (id, thumb) =>
-      setContents((current) =>
-        editImages(current, (image) => (image.id === id ? { ...image, thumb } : image)),
-      ),
-  });
-  const media = useMedia({
-    images,
-    video: content.video?.id ?? null,
-    videoAlt: content.video?.altText ?? '',
-    videos,
-    setVideo: (id) => edit((c) => ({ ...c, video: id === null ? null : { id, altText: '' } })),
-    setVideoAlt: (altText) =>
-      edit((c) => (c.video === null ? c : { ...c, video: { ...c.video, altText } })),
-  });
+  const media = useContentMedia(content, edit, setContents, videos);
+  const scope = list.filter((channel) =>
+    target === null ? selected.has(channel.id) : channel.id === target,
+  );
+  const support = itemSupport(scope.map((channel) => postTypeFor(channel, mediaFor(channel.id))));
 
   return {
     contents,
@@ -77,6 +92,7 @@ export function useContents(
     customize: (channelId: string) => setContents((current) => customize(current, channelId)),
     reset: (channelId: string) => setContents((current) => reset(current, channelId)),
     media,
+    items: itemsState(content, edit, support),
     videos: videos.entries,
     mediaFor,
     choiceOf,

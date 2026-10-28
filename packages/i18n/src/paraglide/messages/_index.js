@@ -127,6 +127,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Compose_Add_CommentInputs */
+/** @typedef {{}} Compose_Add_ReplyInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -139,6 +141,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
 /** @typedef {{}} Compose_Channels_TitleInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
+/** @typedef {{}} Compose_Comment_LabelInputs */
+/** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
@@ -165,16 +169,24 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_Issue_Comment_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Limit_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
+/** @typedef {{}} Compose_Remove_CommentInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
+/** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
+/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_LongInputs */
+/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
@@ -2336,6 +2348,36 @@ export const channels_title = /** @type {((inputs?: Channels_TitleInputs, option
 /**
 * | output |
 * | --- |
+* | "Add first comment" |
+*
+* @param {Compose_Add_CommentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_add_comment = /** @type {((inputs?: Compose_Add_CommentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Add_CommentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_add_comment(inputs)
+	if (locale === "cs") return __cs.compose_add_comment(inputs)
+	return __en.compose_add_comment(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add reply" |
+*
+* @param {Compose_Add_ReplyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_add_reply = /** @type {((inputs?: Compose_Add_ReplyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Add_ReplyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_add_reply(inputs)
+	if (locale === "cs") return __cs.compose_add_reply(inputs)
+	return __en.compose_add_reply(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Instagram marks it as made with AI. The other networks have no such label." |
 *
 * @param {Compose_Ai_Generated_HintInputs} inputs
@@ -2514,6 +2556,36 @@ export const compose_check_content = /** @type {((inputs: Compose_Check_ContentI
 	if (locale === "sk") return __sk.compose_check_content(inputs)
 	if (locale === "cs") return __cs.compose_check_content(inputs)
 	return __en.compose_check_content(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "First comment" |
+*
+* @param {Compose_Comment_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_comment_label = /** @type {((inputs?: Compose_Comment_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Comment_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_comment_label(inputs)
+	if (locale === "cs") return __cs.compose_comment_label(inputs)
+	return __en.compose_comment_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The first comment is too long for {channel} ({count}/{max})" |
+*
+* @param {Compose_Comment_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_comment_too_long = /** @type {((inputs: Compose_Comment_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Comment_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_comment_too_long(inputs)
+	if (locale === "cs") return __cs.compose_comment_too_long(inputs)
+	return __en.compose_comment_too_long(inputs)
 });
 /**
 * | output |
@@ -2910,6 +2982,21 @@ export const compose_inherits = /** @type {((inputs?: Compose_InheritsInputs, op
 /**
 * | output |
 * | --- |
+* | "The first comment is empty." |
+*
+* @param {Compose_Issue_Comment_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_issue_comment_empty = /** @type {((inputs?: Compose_Issue_Comment_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Issue_Comment_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_issue_comment_empty(inputs)
+	if (locale === "cs") return __cs.compose_issue_comment_empty(inputs)
+	return __en.compose_issue_comment_empty(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "{channel}: {message}" |
 *
 * @param {Compose_Issue_On_ChannelInputs} inputs
@@ -2921,6 +3008,21 @@ export const compose_issue_on_channel = /** @type {((inputs: Compose_Issue_On_Ch
 	if (locale === "sk") return __sk.compose_issue_on_channel(inputs)
 	if (locale === "cs") return __cs.compose_issue_on_channel(inputs)
 	return __en.compose_issue_on_channel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reply {position} is empty." |
+*
+* @param {Compose_Issue_Reply_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_issue_reply_empty = /** @type {((inputs: Compose_Issue_Reply_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Issue_Reply_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_issue_reply_empty(inputs)
+	if (locale === "cs") return __cs.compose_issue_reply_empty(inputs)
+	return __en.compose_issue_reply_empty(inputs)
 });
 /**
 * | output |
@@ -2982,6 +3084,21 @@ export const compose_limit_usage = /** @type {((inputs: Compose_Limit_UsageInput
 	if (locale === "sk") return __sk.compose_limit_usage(inputs)
 	if (locale === "cs") return __cs.compose_limit_usage(inputs)
 	return __en.compose_limit_usage(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} will publish the main post only." |
+*
+* @param {Compose_Main_OnlyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_main_only = /** @type {((inputs: Compose_Main_OnlyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Main_OnlyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_main_only(inputs)
+	if (locale === "cs") return __cs.compose_main_only(inputs)
+	return __en.compose_main_only(inputs)
 });
 /**
 * | output |
@@ -3057,6 +3174,81 @@ export const compose_publishing = /** @type {((inputs?: Compose_PublishingInputs
 	if (locale === "sk") return __sk.compose_publishing(inputs)
 	if (locale === "cs") return __cs.compose_publishing(inputs)
 	return __en.compose_publishing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Remove first comment" |
+*
+* @param {Compose_Remove_CommentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_remove_comment = /** @type {((inputs?: Compose_Remove_CommentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Remove_CommentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_remove_comment(inputs)
+	if (locale === "cs") return __cs.compose_remove_comment(inputs)
+	return __en.compose_remove_comment(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Remove reply {position}" |
+*
+* @param {Compose_Remove_ReplyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_remove_reply = /** @type {((inputs: Compose_Remove_ReplyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Remove_ReplyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_remove_reply(inputs)
+	if (locale === "cs") return __cs.compose_remove_reply(inputs)
+	return __en.compose_remove_reply(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reply {position}" |
+*
+* @param {Compose_Reply_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_reply_label = /** @type {((inputs: Compose_Reply_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Reply_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_reply_label(inputs)
+	if (locale === "cs") return __cs.compose_reply_label(inputs)
+	return __en.compose_reply_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reply {position} is too long for {channel} ({count}/{max})" |
+*
+* @param {Compose_Reply_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_reply_too_long = /** @type {((inputs: Compose_Reply_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Reply_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_reply_too_long(inputs)
+	if (locale === "cs") return __cs.compose_reply_too_long(inputs)
+	return __en.compose_reply_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reply {position} has more links than {channel} allows ({max})" |
+*
+* @param {Compose_Reply_Too_Many_LinksInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_reply_too_many_links = /** @type {((inputs: Compose_Reply_Too_Many_LinksInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Reply_Too_Many_LinksInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_reply_too_many_links(inputs)
+	if (locale === "cs") return __cs.compose_reply_too_many_links(inputs)
+	return __en.compose_reply_too_many_links(inputs)
 });
 /**
 * | output |
