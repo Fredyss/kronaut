@@ -1,6 +1,6 @@
 # ADR-0055: Reply chains and first comment
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-28
 - **Deciders:** Frederik Schlentc
 - **Area:** Publishing, providers, editor
