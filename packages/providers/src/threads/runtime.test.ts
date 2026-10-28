@@ -22,7 +22,7 @@ const SECRET = 'threads-secret-canary-4b2d';
 const REDIRECT_URI = 'https://kronaut.example.org/v1/oauth/threads/callback';
 const TOKEN_URL = 'https://graph.threads.com/oauth/access_token';
 const USER_ID = '1234567';
-const SCOPES = ['threads_basic', 'threads_content_publish'];
+const SCOPES = ['threads_basic', 'threads_content_publish', 'threads_manage_replies'];
 const LONG_LIVED_S = 5_184_000;
 
 const app: ProviderApp = {
@@ -105,7 +105,7 @@ function stored(ageHours: number): ThreadsCredentials {
 const refreshUrl = /^https:\/\/graph\.threads\.com\/refresh_access_token\?/;
 
 describe('threads connect', () => {
-  it('builds the authorize URL on threads.com with both scopes and the state', async () => {
+  it('builds the authorize URL on threads.com with all scopes and the state', async () => {
     const http = scriptedHttp([]);
     const started = await threadsRuntime.connectStart(testBaseContext(http), {
       app,
@@ -118,7 +118,7 @@ describe('threads connect', () => {
     expect(Object.fromEntries(url.searchParams)).toEqual({
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
-      scope: 'threads_basic,threads_content_publish',
+      scope: 'threads_basic,threads_content_publish,threads_manage_replies',
       response_type: 'code',
       state: 'state-1',
     });
@@ -162,6 +162,7 @@ describe('threads connect', () => {
       handle: '@alice.example',
       displayName: 'Alice',
       profileUrl: 'https://www.threads.com/@alice.example',
+      capabilities: { replies: true },
       grantedScopes: SCOPES,
       accessExpiresAt: undefined,
       credentials: {

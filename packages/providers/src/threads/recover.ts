@@ -21,9 +21,11 @@ export function recover(
   input: Input,
   sentAt: string | undefined,
 ): Promise<Recovered | undefined> {
-  const main = input.items.find((item) => item.role === 'main');
-  const text = main?.text ?? '';
-  const count = main?.media.length ?? 0;
+  const [item] = input.items;
+  // The recent-threads list isn't documented to hold replies, so a reply can't be matched there; undefined keeps verify inconclusive instead of a wrong absent.
+  if (item === undefined || item.role !== 'main') return Promise.resolve(undefined);
+  const { text } = item;
+  const count = item.media.length;
   const mediaType = mediaTypeOf(input.postType, count);
   return findRecent(ctx, graph, input, {
     path: `${input.credentials.userId}/threads`,

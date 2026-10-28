@@ -1,5 +1,6 @@
 import type { ProviderManifest } from '@kronaut/core';
 import * as z from 'zod';
+import { REPLY_THREAD } from '../_kit/items.ts';
 
 export const blueskySettings = z.object({});
 export type BlueskySettings = z.infer<typeof blueskySettings>;
@@ -29,6 +30,7 @@ export const blueskyManifest: ProviderManifest<BlueskySettings> = {
         altText: { supported: true, required: false, maxLength: 2_000 },
         aiLabel: false,
       },
+      thread: REPLY_THREAD,
     },
   ],
   settings: blueskySettings,

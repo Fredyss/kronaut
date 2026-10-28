@@ -7,7 +7,11 @@ export const AUTHORIZE_URL = 'https://threads.com/oauth/authorize';
 export const GRAPH_ORIGIN = 'https://graph.threads.com';
 const TOKEN_PATH = '/oauth/access_token';
 export const GRAPH_VERSION = 'v1.0';
-export const SCOPES = ['threads_basic', 'threads_content_publish'] as const;
+export const SCOPES = [
+  'threads_basic',
+  'threads_content_publish',
+  'threads_manage_replies',
+] as const;
 export const PROFILE_FIELDS = 'id,username,name,threads_profile_picture_url';
 
 const shortLivedToken = z.looseObject({ access_token: z.string().min(1) });

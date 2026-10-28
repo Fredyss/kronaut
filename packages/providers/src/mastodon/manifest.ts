@@ -1,5 +1,6 @@
 import type { ProviderManifest } from '@kronaut/core';
 import * as z from 'zod';
+import { REPLY_THREAD } from '../_kit/items.ts';
 import { accountPostType } from './limits.ts';
 
 export const mastodonSettings = z.object({});
@@ -43,6 +44,7 @@ export const mastodonManifest: ProviderManifest<MastodonSettings> = {
         aiLabel: false,
       },
       async: ASYNC,
+      thread: REPLY_THREAD,
     },
     {
       id: 'video',
@@ -65,6 +67,7 @@ export const mastodonManifest: ProviderManifest<MastodonSettings> = {
         aiLabel: false,
       },
       async: ASYNC,
+      thread: REPLY_THREAD,
     },
   ],
   settings: mastodonSettings,

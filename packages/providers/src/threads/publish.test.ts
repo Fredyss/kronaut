@@ -132,7 +132,7 @@ describe('threads publish: containers', () => {
     });
     expect(
       await reject([main('x'), { position: 1, role: 'thread', text: 'y', media: [] }]),
-    ).toEqual({ kind: 'permanent', code: 'thread_unsupported' });
+    ).toEqual({ kind: 'permanent', code: 'item_multiple' });
   });
 });
 

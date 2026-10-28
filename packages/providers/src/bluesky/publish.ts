@@ -1,27 +1,28 @@
 import {
-  isProviderFailure,
   type MediaRef,
   type ProviderError,
   ProviderFailure,
   type PublishContext,
-  type PublishInput,
-  type PublishItem,
   type PublishOutcome,
   type StepEffect,
-  type VerifyOutcome,
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { unexpectedResponse } from '../_kit/failure.ts';
-import { readJson, retryAfter, send, tryJson } from '../_kit/http.ts';
+import { retryAfter } from '../_kit/http.ts';
 import { errorCode, type ResourceClient, type ResourceReply, resourceClient } from './dpop.ts';
-import { buildFacets, type Facet, facetSchema, graphemeCount, utf8Length } from './facets.ts';
+import { buildFacets, type Facet, facetSchema } from './facets.ts';
 import { permanent } from './identity.ts';
-import { type BlueskySettings, blueskyManifest } from './manifest.ts';
-import type { BlueskyCredentials } from './runtime.ts';
+import {
+  type CheckedItem,
+  checkItem,
+  type Input,
+  POST_COLLECTION,
+  postUrl,
+  spec,
+} from './publish-input.ts';
 import { TID_PATTERN, tid } from './tid.ts';
 
-const POST_COLLECTION = 'app.bsky.feed.post';
 const XRPC_ERROR = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
 const RATE_LIMIT_FALLBACK_MS = 60_000;
 
@@ -33,7 +34,7 @@ const blobRef = z.object({
 });
 type BlobRef = z.infer<typeof blobRef>;
 
-const publishState = z.object({
+export const publishState = z.object({
   rkey: z.string().regex(TID_PATTERN).optional(),
   createdAt: z.string().min(1).optional(),
   facets: z.array(facetSchema).optional(),
@@ -41,13 +42,10 @@ const publishState = z.object({
 });
 
 const uploadResponse = z.looseObject({ blob: blobRef });
-const createResponse = z.looseObject({ uri: z.string().startsWith('at://') });
-const recordResponse = z.looseObject({
-  uri: z.string(),
-  value: z.looseObject({ text: z.string(), createdAt: z.string() }),
+const createResponse = z.looseObject({
+  uri: z.string().startsWith('at://'),
+  cid: z.string().min(1),
 });
-
-type Input = PublishInput<BlueskyCredentials, BlueskySettings>;
 
 type Frozen = {
   readonly rkey: string;
@@ -55,41 +53,6 @@ type Frozen = {
   readonly facets?: readonly Facet[];
   readonly blobs: Readonly<Record<string, BlobRef>>;
 };
-
-const spec = (() => {
-  const post = blueskyManifest.postTypes.find((type) => type.id === 'post');
-  if (post?.media.image === undefined) throw new Error('bluesky manifest lacks the post type');
-  return { post, image: post.media.image };
-})();
-
-function limitOf(counting: 'graphemes' | 'utf8-bytes'): number {
-  const limit = spec.post.text.find((entry) => entry.counting === counting);
-  if (limit === undefined) throw new Error(`bluesky manifest lacks a ${counting} limit`);
-  return limit.max;
-}
-
-function checkMedia(media: readonly MediaRef[]): void {
-  if (media.length > spec.post.media.maxCount) throw permanent('too_many_images');
-  for (const ref of media) {
-    if (ref.mime.startsWith('video/') || ref.durationMs !== undefined)
-      throw permanent('video_unsupported');
-    if (!spec.image.mimes.includes(ref.mime)) throw permanent('media_type_unsupported');
-    if (ref.bytes > spec.image.maxBytes) throw permanent('image_too_large');
-  }
-}
-
-function mainItem(input: Input): PublishItem {
-  if (input.postType !== spec.post.id) throw permanent('post_type_unsupported');
-  if (input.items.some((item) => item.role !== 'main')) throw permanent('thread_unsupported');
-  const [main, ...rest] = input.items;
-  if (main === undefined) throw permanent('main_item_missing');
-  if (rest.length > 0) throw permanent('main_item_multiple');
-  if (main.text === '' && main.media.length === 0) throw permanent('text_empty');
-  if (graphemeCount(main.text) > limitOf('graphemes')) throw permanent('text_too_long');
-  if (utf8Length(main.text) > limitOf('utf8-bytes')) throw permanent('text_too_many_bytes');
-  checkMedia(main.media);
-  return main;
-}
 
 function isoMillis(now: Temporal.Instant): string {
   return now.toString({ smallestUnit: 'millisecond' });
@@ -99,10 +62,6 @@ function parseState(state: unknown): z.infer<typeof publishState> {
   const parsed = publishState.safeParse(state);
   if (!parsed.success) throw permanent('state_invalid');
   return parsed.data;
-}
-
-function postUrl(did: string, rkey: string): string {
-  return `https://bsky.app/profile/${did}/post/${rkey}`;
 }
 
 function rateLimitScope(policy: string | null): 'account' | 'instance' {
@@ -189,7 +148,7 @@ function aspectRatio(
   return { width, height };
 }
 
-function postRecord(item: PublishItem, frozen: Frozen): Record<string, unknown> {
+function postRecord({ item, reply }: CheckedItem, frozen: Frozen): Record<string, unknown> {
   const images = item.media.map((ref) => {
     const image = frozen.blobs[ref.id];
     if (image === undefined) throw new Error('blob missing after upload');
@@ -206,11 +165,13 @@ function postRecord(item: PublishItem, frozen: Frozen): Record<string, unknown> 
     createdAt: frozen.createdAt,
     ...(frozen.facets === undefined || frozen.facets.length === 0 ? {} : { facets: frozen.facets }),
     ...(images.length === 0 ? {} : { embed: { $type: 'app.bsky.embed.images', images } }),
+    ...(reply === undefined ? {} : { reply }),
   };
 }
 
 export async function publishPost(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
-  const item = mainItem(input);
+  const checked = checkItem(input);
+  const { item } = checked;
   const { credentials } = input;
   let frozen = await freeze(ctx, input.state);
   const pds = resourceClient(ctx, {
@@ -240,37 +201,14 @@ export async function publishPost(ctx: PublishContext, input: Input): Promise<Pu
       repo: credentials.did,
       collection: POST_COLLECTION,
       rkey: frozen.rkey,
-      record: postRecord(item, frozen),
+      record: postRecord(checked, frozen),
     }),
   });
-  const { uri } = successBody(reply, createResponse, 'public', ctx.now());
-  return { kind: 'published', remoteId: uri, url: postUrl(credentials.did, frozen.rkey) };
-}
-
-export async function verifyPost(ctx: PublishContext, input: Input): Promise<VerifyOutcome> {
-  const { rkey, createdAt } = publishState.safeParse(input.state).data ?? {};
-  const text = input.items.find((item) => item.role === 'main')?.text;
-  if (rkey === undefined || createdAt === undefined || text === undefined)
-    return { kind: 'inconclusive' };
-  const { did, pds } = input.credentials;
-  const expected = `at://${did}/${POST_COLLECTION}/${rkey}`;
-  const query = new URLSearchParams({ repo: did, collection: POST_COLLECTION, rkey });
-  try {
-    const response = await send(ctx, 'none', `${pds}/xrpc/com.atproto.repo.getRecord?${query}`, {
-      headers: { accept: 'application/json' },
-    });
-    if (response.status === 200) {
-      const { uri, value } = await readJson(response, recordResponse, 'none');
-      if (uri !== expected || value.createdAt !== createdAt || value.text !== text)
-        return { kind: 'inconclusive' };
-      return { kind: 'found', remoteId: uri, url: postUrl(did, rkey) };
-    }
-    if (response.status === 400) {
-      if (errorCode(await tryJson(response)) === 'RecordNotFound') return { kind: 'absent' };
-    }
-    return { kind: 'inconclusive' };
-  } catch (error) {
-    if (isProviderFailure(error)) return { kind: 'inconclusive' };
-    throw error;
-  }
+  const { uri, cid } = successBody(reply, createResponse, 'public', ctx.now());
+  return {
+    kind: 'published',
+    remoteId: uri,
+    url: postUrl(credentials.did, frozen.rkey),
+    anchor: { cid },
+  };
 }

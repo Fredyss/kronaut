@@ -8,6 +8,7 @@ import {
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { graphGet, longLivedToken, permanent } from '../_kit/meta-graph.ts';
+import { accountCapabilities } from './capabilities.ts';
 import type { ThreadsSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
@@ -113,6 +114,7 @@ export const threadsRuntime: ProviderRuntime<ThreadsCredentials, ThreadsSettings
         handle: `@${me.username}`,
         displayName: name === '' ? me.username : name,
         profileUrl: `https://www.threads.com/@${encodeURIComponent(me.username)}`,
+        capabilities: accountCapabilities(credentials.scopes),
       },
     ];
   },

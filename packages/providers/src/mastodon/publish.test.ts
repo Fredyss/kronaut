@@ -130,11 +130,11 @@ describe('mastodon publish', () => {
     expect(idempotencyKey('dest-1', 1)).not.toBe(KEY);
   });
 
-  it('refuses threads, empty posts and video', async () => {
+  it('refuses several items, empty posts and video', async () => {
     const reply: PublishItem = { position: 1, role: 'thread', text: 'Reply', media: [] };
     const video = { ...cat, mime: 'video/mp4' };
     for (const [items, code] of [
-      [[main('Root'), reply], 'thread_unsupported'],
+      [[main('Root'), reply], 'item_multiple'],
       [[main('  ')], 'text_empty'],
       [[main('Clip', [video])], 'media_type_unsupported'],
     ] as const) {

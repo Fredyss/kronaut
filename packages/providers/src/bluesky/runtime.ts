@@ -13,7 +13,8 @@ import {
   successBody,
   tokenResponse,
 } from './oauth.ts';
-import { publishPost, verifyPost } from './publish.ts';
+import { publishPost } from './publish.ts';
+import { verifyPost } from './verify.ts';
 
 export { type BlueskyCredentials, blueskyCredentials } from './credentials.ts';
 

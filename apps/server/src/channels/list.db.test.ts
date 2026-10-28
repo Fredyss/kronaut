@@ -293,7 +293,7 @@ describe('channel listing', () => {
             maxLinks: null,
             imageAspect: null,
             video: null,
-            thread: null,
+            thread: { maxItems: 24 },
             comment: null,
           },
           {
@@ -310,7 +310,7 @@ describe('channel listing', () => {
               maxFrameRate: 120,
               maxPixels: 8_294_400,
             },
-            thread: null,
+            thread: { maxItems: 24 },
             comment: null,
           },
         ],
