@@ -319,7 +319,7 @@ describe('facebook connect', () => {
 
 describe('facebook publishing', () => {
   it('publishes through the API and conforms to the provider contract', () => {
-    expect(facebookManifest.postTypes.map((type) => type.delivery)).toEqual(['api']);
+    expect(facebookManifest.postTypes.map((type) => type.delivery)).toEqual(['api', 'api']);
     expect(conformanceProblems(facebookManifest, facebookRuntime)).toEqual([]);
   });
 });

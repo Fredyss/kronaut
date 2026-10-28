@@ -49,7 +49,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     instance: false,
     maxImageBytes: 10_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
-    publishType: imagePost(10),
+    publishType: (media) =>
+      media.video ? { kind: 'ok', publishType: 'reel' } : imagePost(10)(media),
   },
   instagram: {
     name: () => m.provider_instagram(),

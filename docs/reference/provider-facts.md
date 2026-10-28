@@ -121,12 +121,22 @@ Checked 2026-10-27 against M4–M8, M16, M26 and M28–M58. "Undocumented" means
 - **Deletion.** `DELETE /{page_post_id}` returns `{success: true}` (M8), but the Page Post reference says only select developers may use it (M50).
 
 
-Facebook Page video facts checked 2026-10-27 (M59–M64).
+Facebook Page video facts checked 2026-10-27 (M59–M64); the Reels facts were re-checked 2026-10-28 (M60, M62, M65).
 - **Reels** (M60, M62): `POST /{page-id}/video_reels upload_phase=start` → `{video_id, upload_url}`; upload to `https://rupload.facebook.com/video-upload/v26.0/{video_id}` with `Authorization: OAuth <page token>`, `offset` and `file_size` and a binary body, or a `file_url` header (pull); poll `GET /{video_id}?fields=status` (`video_status` `uploading|upload_complete|processing|ready|upload_failed|expired|error`, with per-phase detail); then `upload_phase=finish, video_state=PUBLISHED, description`. Resume by re-sending from `bytes_transfered`.
 - **Reel specs** (M60): MP4; H.264, H.265, VP9 or AV1; 9:16, ≥540×960 (1080×1920 recommended); 24–60 fps fixed, closed GOP of 2–5 s; AAC-LC stereo 48 kHz ≥128 kbps; **3–90 s**; maximum size undocumented. **30 API-published Reels per Page per 24 h.**
 - **Reel errors** (M60): `1363040` aspect ratio, `1363127` resolution, `1363128` duration, `1363129` frame rate; upload errors `OffsetInvalidError`, `PartialRequestError`, `ProcessingFailedError`.
 - **Feed video** (M59, M61, M64): Resumable Upload API plus `/{page-id}/videos`; its size, duration and codec limits are undocumented, and M64 calls `graph-video.facebook.com` deprecated while M59 still publishes through it. Kronaut doesn't use it (ADR-0054).
 - **Cover:** `POST /{video_id}/thumbnails {source, is_preferred: true}`, image ≤10 MB (M63). Alt text for video is undocumented.
+- **Reels details** (M60, M62, M65):
+  - Permissions are the photo-post set: `pages_show_list`, `pages_read_engagement` and `pages_manage_posts`, with a Page token from someone with `CREATE_CONTENT`.
+  - `start` returns `{video_id, upload_url}`. The upload returns `{success: true}`. `file_url` takes an http(s) URL; a file blocked by robots.txt for Facebook's user agent, or an fbcdn URL, is rejected.
+  - Status JSON: `status.video_status` plus `uploading_phase {status, bytes_transfered}`, `processing_phase {status, error}` and `publishing_phase {status, publish_status, publish_time, error}`. Phase `status` is `not_started|in_progress|completed|error`; examples also show `complete`. `publish_status` is `draft|published|scheduled|error`.
+  - `finish` takes `video_id`, `video_state` (`DRAFT|PUBLISHED|SCHEDULED`), `description`, `title`, `scheduled_publish_time` (10 min to 29 days ahead) and `is_ai_generated`. The guide shows `{success: true}`; the reference also lists `post_id` and `message`. Publishing finishes after the call, behind copyright checks that "can take a couple of minutes".
+  - `GET /{page-id}/video_reels` is not supported. The Video node documents no `permalink_url` or `post_id`, so the video id is the only documented handle.
+  - Reels published as a Page story are capped at 60 s. Description length and file size are undocumented. Errors also include `6000` (upload problem, try another file).
+- Kronaut publishes one master MP4 as the `reel` post type: exactly 9:16, at least 540×960, 3–90 s, at most 60 fps, within the 300 MB upload cap. It starts the upload, has Facebook pull the signed media URL with `file_url`, and waits for `uploading_phase` to complete before `finish` with `video_state=PUBLISHED`. It then polls the status every 30 s for up to 20 min until `publish_status` is `published`. The remote id is the video id, and the link is `https://www.facebook.com/{video_id}`. `is_ai_generated` follows the media's AI flag; no title, cover or schedule is sent.
+- The 30 Reels per Page per day cap isn't pre-checked: Kronaut's rate buckets cover every post type, so a Reels-only bucket would also cap photo posts. Facebook's rejection goes through the normal error mapping.
+- Error mapping: `1363040`, `1363127`, `1363128`, `1363129` and `6000` are permanent with their own codes, whether they arrive as `code` or `error_subcode`, and also after the public step. A pull upload that fails with `OffsetInvalidError`, `PartialRequestError` or `ProcessingFailedError` in its body is transient. Neither the envelope for the 13630xx codes nor the rupload error body is documented, so both are matched loosely.
 
 **Threads** (Threads API on `graph.threads.com`, v1.0)
 
@@ -472,6 +482,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - M62 https://developers.facebook.com/docs/graph-api/reference/page/video_reels/
 - M63 https://developers.facebook.com/docs/graph-api/reference/video/thumbnails/
 - M64 https://developers.facebook.com/docs/video-api/overview
+- M65 https://developers.facebook.com/docs/graph-api/reference/video/
 - T1 https://developers.facebook.com/docs/threads/posts
 - T2 https://developers.facebook.com/docs/threads/overview
 - T3 https://developers.facebook.com/docs/threads/get-started/get-access-tokens-and-permissions

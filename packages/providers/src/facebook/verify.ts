@@ -6,6 +6,7 @@ import { graphCall } from './graph.ts';
 import { facebookManifest } from './manifest.ts';
 import { postId, postUrl } from './publish.ts';
 import { type Input, pageOf, publishState, readUrl } from './publish-input.ts';
+import { verifyReel } from './reel.ts';
 
 const CLOCK_SKEW = Temporal.Duration.from({ minutes: 2 });
 const WINDOW = Temporal.Duration.from({ milliseconds: facebookManifest.verify.windowMs });
@@ -62,6 +63,7 @@ function decide(
 }
 
 export async function verifyPost(ctx: PublishContext, input: Input): Promise<VerifyOutcome> {
+  if (input.postType === 'reel') return verifyReel(ctx, input);
   const sentAt = publishState.safeParse(input.state).data?.sentAt;
   const item = input.items.find((candidate) => candidate.role === 'main');
   if (sentAt === undefined || item === undefined) return { kind: 'inconclusive' };

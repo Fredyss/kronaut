@@ -21,6 +21,7 @@ import {
   type State,
   signedFields,
 } from './publish-input.ts';
+import { publishReel } from './reel.ts';
 
 const PHOTO_REUSE = Temporal.Duration.from({ hours: 20 });
 const EXTENSIONS: Readonly<Record<string, string>> = { 'image/jpeg': 'jpg', 'image/png': 'png' };
@@ -103,6 +104,7 @@ async function permalinkOf(ctx: PublishContext, page: PageAuth, id: string): Pro
 }
 
 export async function publishPost(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
+  if (input.postType === 'reel') return publishReel(ctx, input);
   const { item } = checkInput(input);
   const page = pageOf(input);
   let state = parseState(input.state);

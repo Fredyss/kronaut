@@ -21,6 +21,7 @@ import {
   SCOPES,
 } from './oauth.ts';
 import { publishPost } from './publish.ts';
+import { pollReel } from './reel.ts';
 import { verifyPost } from './verify.ts';
 
 const CREATE_CONTENT = 'CREATE_CONTENT';
@@ -106,5 +107,6 @@ export const facebookRuntime: ProviderRuntime<FacebookCredentials, FacebookSetti
   },
 
   publish: publishPost,
+  poll: pollReel,
   verify: verifyPost,
 };
