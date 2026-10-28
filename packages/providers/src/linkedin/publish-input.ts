@@ -1,4 +1,4 @@
-import type { PublishInput, PublishItem } from '@kronaut/core';
+import type { MediaRef, PublishInput, PublishItem } from '@kronaut/core';
 import * as z from 'zod';
 import { permanent } from '../_kit/meta-graph.ts';
 import { checkImageFile, planOf } from '../_kit/meta-input.ts';
@@ -11,8 +11,11 @@ export type Input = PublishInput<LinkedinCredentials, LinkedinSettings>;
 
 export const imageUrn = z.string().regex(/^urn:li:image:[A-Za-z0-9_-]{1,128}$/);
 
+export const videoUrn = z.string().regex(/^urn:li:video:[A-Za-z0-9_-]{1,128}$/);
+
 const linkedinState = z.object({
   images: z.record(z.string(), imageUrn).optional(),
+  video: videoUrn.optional(),
   sentAt: z.iso.datetime().optional(),
 });
 export type State = z.infer<typeof linkedinState>;
@@ -29,9 +32,19 @@ export function memberOf(input: Input): Member {
   return { author: authorUrn(sub.data), token: input.credentials.accessToken };
 }
 
+function checkVideo(media: readonly MediaRef[]): void {
+  const [ref, ...rest] = media;
+  if (ref === undefined || rest.length > 0) throw permanent('video_required');
+  if (ref.mime !== 'video/mp4') throw permanent('media_type_unsupported');
+}
+
 export function checkInput(input: Input): PublishItem {
   const { item, spec } = planOf(linkedinManifest, input);
   const { media } = item;
+  if (spec.id === 'video') {
+    checkVideo(media);
+    return item;
+  }
   if (media.length === 0 && item.text.trim() === '') throw permanent('text_empty');
   const limits = spec.media;
   if (media.length > limits.maxCount) throw permanent('too_many_images');

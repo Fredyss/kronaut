@@ -1,78 +1,28 @@
-import {
-  isProviderFailure,
-  type MediaRef,
-  type ProviderState,
-  type PublishInput,
-  type PublishItem,
-  type PublishOutcome,
-} from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
+import { egressError, type ScriptedExchange } from '../_kit/testing.ts';
 import {
-  egressError,
-  type RecordedRequest,
-  type ScriptedExchange,
-  scriptedHttp,
-  testPublishContext,
-} from '../_kit/testing.ts';
-import type { LinkedinSettings } from './manifest.ts';
-import { type LinkedinCredentials, linkedinRuntime } from './runtime.ts';
+  AUTHOR,
+  json,
+  main,
+  POSTS,
+  post,
+  REST_HEADERS,
+  ref,
+  run,
+  SENT_AT,
+  SHARE,
+  TOKEN,
+} from './testing.ts';
 
-const SUB = 'aB3_x-9Q';
-const AUTHOR = `urn:li:person:${SUB}`;
-const TOKEN = 'linkedin-member-canary-3f9a';
 const INIT = 'https://api.linkedin.com/rest/images?action=initializeUpload';
-const POSTS = 'https://api.linkedin.com/rest/posts';
 const UPLOAD = (n: number) => `https://www.linkedin.com/dms-uploads/sp/upload-${n}?ca=vector`;
-const SHARE = 'urn:li:share:7123456789012345678';
 const UGC = 'urn:li:ugcPost:7123456789012345679';
-const SENT_AT = '2026-10-21T12:00:00.000Z';
-const REST_HEADERS = {
-  Authorization: `Bearer ${TOKEN}`,
-  'Linkedin-Version': '202610',
-  'X-Restli-Protocol-Version': '2.0.0',
-  'Content-Type': 'application/json',
-};
 const DISTRIBUTION = {
   feedDistribution: 'MAIN_FEED',
   targetEntities: [],
   thirdPartyDistributionChannels: [],
 };
-
-const ref = (id: string, extra: Partial<MediaRef> = {}): MediaRef => ({
-  id,
-  sha256: 'a'.repeat(64),
-  mime: 'image/png',
-  bytes: 3,
-  aiGenerated: false,
-  ...extra,
-});
-const media = {
-  m1: { url: 'https://media.example.org/m1', bytes: new Uint8Array([1, 2, 3]) },
-  m2: { url: 'https://media.example.org/m2', bytes: new Uint8Array([4]) },
-  m3: { url: 'https://media.example.org/m3', bytes: new Uint8Array([5]) },
-};
-
-function main(text: string, refs: readonly MediaRef[] = []): PublishItem {
-  return { position: 0, role: 'main', text, media: refs };
-}
-
-function input(
-  item: PublishItem,
-  state: ProviderState = {},
-): PublishInput<LinkedinCredentials, LinkedinSettings> {
-  return {
-    destinationId: 'dest-1',
-    attemptNo: 1,
-    postType: 'post',
-    account: { providerAccountId: SUB },
-    credentials: { accessToken: TOKEN },
-    app: { clientId: '86abcdef123xyz', clientSecret: 's', publicBaseUrl: 'https://k.example.org' },
-    settings: {},
-    items: [item],
-    state,
-  };
-}
 
 const init = (n: number, extra: Partial<ScriptedExchange> = {}): ScriptedExchange => ({
   method: 'POST',
@@ -86,36 +36,6 @@ const put = (n: number, extra: Partial<ScriptedExchange> = {}): ScriptedExchange
   status: 201,
   ...extra,
 });
-const post = (extra: Partial<ScriptedExchange> = {}): ScriptedExchange => ({
-  method: 'POST',
-  url: POSTS,
-  status: 201,
-  headers: { 'x-restli-id': SHARE },
-  ...extra,
-});
-
-function json(request: RecordedRequest | undefined): unknown {
-  if (typeof request?.body !== 'string') throw new Error('expected a JSON body');
-  return JSON.parse(request.body);
-}
-
-async function run(
-  item: PublishItem,
-  exchanges: readonly ScriptedExchange[],
-  state: ProviderState = {},
-) {
-  const http = scriptedHttp(exchanges);
-  const context = testPublishContext(http, media);
-  const outcome = await linkedinRuntime.publish(context.ctx, input(item, state)).then(
-    (result: PublishOutcome) => ({ result, error: undefined }),
-    (error: unknown) => {
-      if (isProviderFailure(error)) return { result: undefined, error: error.error };
-      throw error;
-    },
-  );
-  http.assertDone();
-  return { ...outcome, calls: http.calls, ...context };
-}
 
 describe('linkedin publish: request bodies', () => {
   it('posts escaped text-only commentary with the versioned Rest.li headers', async () => {
@@ -199,7 +119,7 @@ describe('linkedin publish: request bodies', () => {
     const { calls, checkpoints } = await run(
       main('Znova', [ref('m1'), ref('m2')]),
       [init(2), put(2), post()],
-      { images: { m1: 'urn:li:image:EARLIER' } },
+      { state: { images: { m1: 'urn:li:image:EARLIER' } } },
     );
     expect(json(calls[2])).toMatchObject({
       content: {

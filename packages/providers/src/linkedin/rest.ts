@@ -12,6 +12,26 @@ export interface Member {
   readonly token: string;
 }
 
+function restHeaders(member: Member): Record<string, string> {
+  return {
+    Authorization: `Bearer ${member.token}`,
+    'Linkedin-Version': linkedinManifest.apiVersion.version,
+    'X-Restli-Protocol-Version': RESTLI_PROTOCOL,
+  };
+}
+
+export function restGet(
+  ctx: PublishContext,
+  effect: StepEffect,
+  member: Member,
+  path: string,
+): Promise<ProviderHttpResponse> {
+  return send(ctx, effect, new URL(path, API_ORIGIN), {
+    method: 'GET',
+    headers: restHeaders(member),
+  });
+}
+
 export function restPost(
   ctx: PublishContext,
   effect: StepEffect,
@@ -20,12 +40,7 @@ export function restPost(
 ): Promise<ProviderHttpResponse> {
   return send(ctx, effect, new URL(request.path, API_ORIGIN), {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${member.token}`,
-      'Linkedin-Version': linkedinManifest.apiVersion.version,
-      'X-Restli-Protocol-Version': RESTLI_PROTOCOL,
-      'Content-Type': 'application/json',
-    },
+    headers: { ...restHeaders(member), 'Content-Type': 'application/json' },
     body: JSON.stringify(request.json),
   });
 }
