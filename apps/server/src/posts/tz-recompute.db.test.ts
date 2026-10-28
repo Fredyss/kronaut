@@ -104,4 +104,32 @@ describe('tz_recompute', () => {
     expect(await recomputeTimes(db, logger)).toContain('checked 0, moved 0');
     expect((await destinationOf(post)).version).toBe(after.version);
   });
+
+  it('recomputes the rest of the batch when one row cannot be resolved', async () => {
+    const good = await destinationOf(await scheduled(await create(ownerAuth, draft())));
+    const bad = await destinationOf(await scheduled(await create(ownerAuth, draft(accountB))));
+    await resolvedByOldTzdb(good.id);
+    await resolvedByOldTzdb(bad.id);
+    await owner.withActor(SYSTEM, (trx) =>
+      sql`update post_destinations set scheduled_tz = 'Mars/Olympus' where id = ${bad.id}`.execute(
+        trx,
+      ),
+    );
+
+    await expect(recomputeTimes(db, logger)).rejects.toThrow('checked 2, moved 1, failed 1');
+
+    const fixed = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('post_destinations')
+        .select(['id', 'scheduled_at', 'tzdb_version'])
+        .where('id', 'in', [good.id, bad.id])
+        .execute(),
+    );
+    const byId = new Map(fixed.map((row) => [row.id, row]));
+    expect(byId.get(good.id)).toMatchObject({
+      tzdb_version: process.versions.tz,
+      scheduled_at: good.scheduled_at,
+    });
+    expect(byId.get(bad.id)?.tzdb_version).toBe(OLD_TZDB);
+  });
 });

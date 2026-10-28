@@ -16,6 +16,13 @@ interface Counts {
   failed: number;
 }
 
+interface Run {
+  readonly db: Database;
+  readonly logger: Logger;
+  readonly tzdb: string;
+  readonly counts: Counts;
+}
+
 function instant(date: Date): Temporal.Instant {
   return Temporal.Instant.fromEpochMilliseconds(date.getTime());
 }
@@ -24,7 +31,7 @@ function toDate(at: Temporal.Instant): Date {
   return new Date(at.epochMilliseconds);
 }
 
-function lockStale(trx: TenantDb, workspaceId: string, tzdb: string, batch: number) {
+function lockStale(trx: TenantDb, workspaceId: string, tzdb: string, after: string | null) {
   return trx
     .selectFrom('post_destinations')
     .select(['id', 'version', 'scheduled_local', 'scheduled_tz', 'scheduled_at', 'deadline_at'])
@@ -46,8 +53,9 @@ function lockStale(trx: TenantDb, workspaceId: string, tzdb: string, batch: numb
         ),
       ),
     )
+    .$if(after !== null, (qb) => qb.where('id', '>', after as string))
     .orderBy('id')
-    .limit(batch)
+    .limit(BATCH)
     .forUpdate()
     .skipLocked()
     .execute();
@@ -90,24 +98,39 @@ async function recomputeRow(
   return true;
 }
 
-async function recomputeWorkspace(
-  db: Database,
+// One row the new tzdata cannot resolve must not roll back, and so block, the rest of its batch.
+async function recomputeIsolated(
+  trx: TenantDb,
   workspaceId: string,
-  tzdb: string,
-  counts: Counts,
+  row: StaleRow,
+  run: Run,
 ): Promise<void> {
+  await sql`savepoint tz_row`.execute(trx);
+  try {
+    if (await recomputeRow(trx, workspaceId, row, run.tzdb)) run.counts.moved++;
+    await sql`release savepoint tz_row`.execute(trx);
+  } catch (err) {
+    await sql`rollback to savepoint tz_row`.execute(trx);
+    run.counts.failed++;
+    run.logger.error(
+      { err, task: TASK, workspaceId, destinationId: row.id },
+      'tz recompute failed for a destination',
+    );
+  }
+}
+
+async function recomputeWorkspace(run: Run, workspaceId: string): Promise<void> {
+  let after: string | null = null;
   for (;;) {
-    const batch = await db.withTenant(workspaceId, SYSTEM, async (trx) => {
-      const rows = await lockStale(trx, workspaceId, tzdb, BATCH);
-      let moved = 0;
-      for (const row of rows) {
-        if (await recomputeRow(trx, workspaceId, row, tzdb)) moved++;
-      }
-      return { checked: rows.length, moved };
+    const cursor = after;
+    const rows = await run.db.withTenant(workspaceId, SYSTEM, async (trx) => {
+      const stale = await lockStale(trx, workspaceId, run.tzdb, cursor);
+      for (const row of stale) await recomputeIsolated(trx, workspaceId, row, run);
+      return stale;
     });
-    counts.checked += batch.checked;
-    counts.moved += batch.moved;
-    if (batch.checked < BATCH) return;
+    run.counts.checked += rows.length;
+    after = rows.at(-1)?.id ?? null;
+    if (rows.length < BATCH) return;
   }
 }
 
@@ -118,12 +141,13 @@ export async function recomputeTimes(
 ): Promise<string> {
   if (tzdb === undefined) return 'skipped';
   const counts: Counts = { checked: 0, moved: 0, failed: 0 };
+  const run: Run = { db, logger, tzdb, counts };
   let after: string | null = null;
   for (;;) {
     const page = await db.sweeps.workspaces(after, WORKSPACE_PAGE);
     for (const workspaceId of page) {
       try {
-        await recomputeWorkspace(db, workspaceId, tzdb, counts);
+        await recomputeWorkspace(run, workspaceId);
       } catch (err) {
         counts.failed++;
         logger.error({ err, task: TASK, workspaceId }, 'tz recompute failed for a workspace');
@@ -136,6 +160,6 @@ export async function recomputeTimes(
     logger.warn({ task: TASK, moved: counts.moved, tzdb }, 'tzdata update moved scheduled posts');
   }
   const detail = `tzdb ${tzdb}: checked ${counts.checked}, moved ${counts.moved}`;
-  if (counts.failed > 0) throw new Error(`${detail}, failed in ${counts.failed} workspaces`);
+  if (counts.failed > 0) throw new Error(`${detail}, failed ${counts.failed}`);
   return detail;
 }
