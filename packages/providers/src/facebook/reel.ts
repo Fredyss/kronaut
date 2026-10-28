@@ -1,14 +1,16 @@
 import {
   isProviderFailure,
   type MediaRef,
+  ProviderFailure,
   type PublishContext,
   type PublishOutcome,
   type VerifyOutcome,
 } from '@kronaut/core';
 import * as z from 'zod';
+import { readJson, send } from '../_kit/http.ts';
 import { graphId } from '../_kit/meta-container-state.ts';
 import { permanent } from '../_kit/meta-graph.ts';
-import { graphCall } from './graph.ts';
+import { graphBodyFailure, graphCall } from './graph.ts';
 import { reelPolling } from './manifest.ts';
 import { GRAPH_VERSION, graphUrl } from './oauth.ts';
 import {
@@ -25,6 +27,7 @@ import {
 const RUPLOAD_ORIGIN = 'https://rupload.facebook.com';
 const FORM = 'application/x-www-form-urlencoded';
 const FAILED_STATUSES = new Set(['error', 'upload_failed', 'expired']);
+const UPLOAD_RETRY_ERRORS = ['OffsetInvalidError', 'PartialRequestError', 'ProcessingFailedError'];
 
 const started = z.looseObject({ video_id: graphId });
 const accepted = z.looseObject({ success: z.literal(true) });
@@ -75,11 +78,28 @@ async function pullUpload(
   const init = {
     method: 'POST',
     headers: {
+      accept: 'application/json',
       Authorization: `OAuth ${page.token}`,
       file_url: await ctx.media.signedUrl(upload.ref.id),
     },
   };
-  await graphCall(ctx, 'private', { url, init }, accepted);
+  const response = await send(ctx, 'private', url, init);
+  if (response.status === 200) {
+    await readJson(response, accepted, 'private');
+    return;
+  }
+  const text = await response.text().catch(() => '');
+  const retry = UPLOAD_RETRY_ERRORS.find((type) => text.includes(type));
+  if (retry !== undefined) throw new ProviderFailure({ kind: 'transient', detail: retry });
+  throw graphBodyFailure(ctx, response, { body: parseBody(text), effect: 'private' });
+}
+
+function parseBody(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
 }
 
 async function readStatus(

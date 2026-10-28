@@ -270,6 +270,42 @@ describe('facebook reel: publish', () => {
     expect(error).toEqual({ kind: 'ambiguous', detail: 'http_500' });
     expect(checkpoints.at(-1)).toEqual({ ...uploaded, sentAt: SENT_AT });
   });
+
+  it.each([
+    [{ code: 100, error_subcode: 1363129 }, 'frame_rate_unsupported', '100/1363129'],
+    [{ code: 1363040 }, 'aspect_ratio_unsupported', '1363040'],
+    [{ code: 6000 }, 'video_upload_failed', '6000'],
+  ])('fails a finish rejected with %j permanently', async (graphError, code, detail) => {
+    const { error } = await publish(
+      [status({}), finished({ status: 400, json: { error: { message: 'm', ...graphError } } })],
+      { state: uploaded },
+    );
+    expect(error).toEqual({ kind: 'permanent', code, detail });
+  });
+
+  it('retries a pull upload that failed mid-transfer', async () => {
+    const { error, checkpoints } = await publish(
+      [
+        {
+          method: 'POST',
+          url: RUPLOAD,
+          status: 400,
+          text: '{"debug_info":{"type":"PartialRequestError"}}',
+        },
+      ],
+      { state: { video: VIDEO_ID } },
+    );
+    expect(error).toEqual({ kind: 'transient', detail: 'PartialRequestError' });
+    expect(checkpoints).toHaveLength(0);
+  });
+
+  it('fails a pull upload with a Graph error permanently', async () => {
+    const { error } = await publish(
+      [{ method: 'POST', url: RUPLOAD, status: 400, json: { error: { message: 'm', code: 100 } } }],
+      { state: { video: VIDEO_ID } },
+    );
+    expect(error).toEqual({ kind: 'permanent', code: 'invalid_parameter', detail: '100' });
+  });
 });
 
 describe('facebook reel: poll', () => {

@@ -136,6 +136,7 @@ Facebook Page video facts checked 2026-10-27 (M59–M64); the Reels facts were r
   - Reels published as a Page story are capped at 60 s. Description length and file size are undocumented. Errors also include `6000` (upload problem, try another file).
 - Kronaut publishes one master MP4 as the `reel` post type: exactly 9:16, at least 540×960, 3–90 s, at most 60 fps, within the 300 MB upload cap. It starts the upload, has Facebook pull the signed media URL with `file_url`, and waits for `uploading_phase` to complete before `finish` with `video_state=PUBLISHED`. It then polls the status every 30 s for up to 20 min until `publish_status` is `published`. The remote id is the video id, and the link is `https://www.facebook.com/{video_id}`. `is_ai_generated` follows the media's AI flag; no title, cover or schedule is sent.
 - The 30 Reels per Page per day cap isn't pre-checked: Kronaut's rate buckets cover every post type, so a Reels-only bucket would also cap photo posts. Facebook's rejection goes through the normal error mapping.
+- Error mapping: `1363040`, `1363127`, `1363128`, `1363129` and `6000` are permanent with their own codes, whether they arrive as `code` or `error_subcode`, and also after the public step. A pull upload that fails with `OffsetInvalidError`, `PartialRequestError` or `ProcessingFailedError` in its body is transient. Neither the envelope for the 13630xx codes nor the rupload error body is documented, so both are matched loosely.
 
 **Threads** (Threads API on `graph.threads.com`, v1.0)
 

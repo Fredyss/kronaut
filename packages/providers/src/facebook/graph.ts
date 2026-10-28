@@ -30,6 +30,13 @@ const PERMANENT_CODES: ReadonlyMap<number, string> = new Map([
   [324, 'invalid_image'],
   [1609005, 'link_error'],
 ]);
+const REEL_CODES: ReadonlyMap<number, string> = new Map([
+  [1363040, 'aspect_ratio_unsupported'],
+  [1363127, 'resolution_unsupported'],
+  [1363128, 'duration_unsupported'],
+  [1363129, 'frame_rate_unsupported'],
+  [6000, 'video_upload_failed'],
+]);
 const TRANSIENT_CODES = new Set([1, 2]);
 const TOKEN_INVALID = 190;
 const SUBCODES_EXPIRED = new Set([463, 467]);
@@ -95,11 +102,17 @@ function knownError(
     };
   if (code === undefined) return undefined;
   if (code === 506) return { kind: 'duplicate' };
+  const permanent = permanentCode(code, codes.subcode);
+  if (permanent === undefined) return undefined;
   const detail = graphErrorDetail(codes);
-  const permanent = code >= 200 && code <= 299 ? 'permission_missing' : PERMANENT_CODES.get(code);
-  return permanent === undefined
-    ? undefined
-    : { kind: 'permanent', code: permanent, ...(detail === undefined ? {} : { detail }) };
+  return { kind: 'permanent', code: permanent, ...(detail === undefined ? {} : { detail }) };
+}
+
+function permanentCode(code: number, subcode: number | undefined): string | undefined {
+  const reel =
+    (subcode === undefined ? undefined : REEL_CODES.get(subcode)) ?? REEL_CODES.get(code);
+  if (reel !== undefined) return reel;
+  return code >= 200 && code <= 299 ? 'permission_missing' : PERMANENT_CODES.get(code);
 }
 
 export async function graphFailure(
@@ -107,13 +120,22 @@ export async function graphFailure(
   response: ProviderHttpResponse,
   effect: StepEffect,
 ): Promise<ProviderFailure> {
+  const body = response.status >= 500 ? undefined : await tryJson(response);
+  return graphBodyFailure(ctx, response, { body, effect });
+}
+
+export function graphBodyFailure(
+  ctx: BaseContext,
+  response: ProviderHttpResponse,
+  read: { readonly body: unknown; readonly effect: StepEffect },
+): ProviderFailure {
+  const { body, effect } = read;
   const isPublic = effect === 'public';
   if (response.status >= 500)
     return new ProviderFailure({
       kind: isPublic ? 'ambiguous' : 'transient',
       detail: `http_${response.status}`,
     });
-  const body = await tryJson(response);
   const codes = graphErrorCodes(body);
   const known = knownError(ctx, response, codes, body);
   if (known !== undefined) return new ProviderFailure(known);
