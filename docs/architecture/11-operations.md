@@ -37,7 +37,7 @@
   - Add a public Instagram professional account as an Instagram Tester.
   - `echo -n "$SECRET" | kronaut provider-app register instagram --client-id <instagram app id>` runs as `kronaut_operator` with the KEKs. It reads the Instagram app secret from stdin (never argv or env), seals it and prints the app id. It refuses while an active Instagram app is registered.
 - **Threads app setup (ADR-0053)**: Threads API on `graph.threads.com`. Text, single-image and carousel (2–20 images) posts; no video yet.
-  - Add the Threads use case ("Access the Threads API") to the same Meta app, with `threads_basic` and `threads_content_publish`. Meta's docs only describe picking the use case when the app is created; if the dashboard doesn't offer it on the existing app, create a separate app for it.
+  - Add the Threads use case ("Access the Threads API") to the same Meta app, with `threads_basic`, `threads_content_publish` and `threads_manage_replies` (reply chains). Meta's docs only describe picking the use case when the app is created; if the dashboard doesn't offer it on the existing app, create a separate app for it.
   - In the use case's settings, add the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/threads/callback` (it must match exactly), plus a deauthorize callback URL and a data deletion requests URL.
   - Use the **Threads app ID and Threads app secret** from the app's settings, not the Meta or Instagram ones.
   - Add each Threads account as a Threads Tester (App roles > Roles > Add People). The account accepts the invite under Account Settings > Website permissions in Threads. Testers need no App Review.

@@ -1,6 +1,7 @@
 import type { PublishContext, PublishItem, PublishOutcome } from '@kronaut/core';
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
+import { itemPath } from '../_kit/items.ts';
 import { permanent } from './api.ts';
 import { httpsUrl } from './connect.ts';
 import { mastodonManifest } from './manifest.ts';
@@ -42,20 +43,29 @@ function checkMedia(postType: string, media: PublishItem['media']): void {
     throw permanent('media_type_unsupported');
 }
 
-export function mainItem(input: Input): PublishItem {
-  if (!POST_TYPES.has(input.postType)) throw permanent('post_type_unsupported');
-  if (input.items.some((item) => item.role !== 'main')) throw permanent('thread_unsupported');
-  const [main, ...rest] = input.items;
-  if (main === undefined) throw permanent('main_item_missing');
-  if (rest.length > 0) throw permanent('main_item_multiple');
-  if (input.postType === 'post' && main.text.trim() === '' && main.media.length === 0)
-    throw permanent('text_empty');
-  checkMedia(input.postType, main.media);
-  return main;
+interface CheckedItem {
+  readonly item: PublishItem;
+  readonly inReplyTo?: string;
 }
 
-function statusForm(item: PublishItem, state: State): string {
+function checkItem(input: Input): CheckedItem {
+  if (!POST_TYPES.has(input.postType)) throw permanent('post_type_unsupported');
+  const path = itemPath(input);
+  const { item } = path;
+  if (path.kind === 'reply') {
+    if (item.text.trim() === '') throw permanent('text_empty');
+    if (!remoteId.safeParse(path.parent.remoteId).success) throw permanent('reply_parent_missing');
+    return { item, inReplyTo: path.parent.remoteId };
+  }
+  if (input.postType === 'post' && item.text.trim() === '' && item.media.length === 0)
+    throw permanent('text_empty');
+  checkMedia(input.postType, item.media);
+  return { item };
+}
+
+function statusForm({ item, inReplyTo }: CheckedItem, state: State): string {
   const form = new URLSearchParams({ status: item.text, visibility: 'public' });
+  if (inReplyTo !== undefined) form.set('in_reply_to_id', inReplyTo);
   for (const id of mediaIds(item, state)) form.append('media_ids[]', id);
   const language = item.language?.split('-')[0]?.toLowerCase();
   if (language !== undefined && LANGUAGE.test(language)) form.set('language', language);
@@ -65,7 +75,7 @@ function statusForm(item: PublishItem, state: State): string {
 async function createStatus(
   ctx: PublishContext,
   input: Input,
-  item: PublishItem,
+  checked: CheckedItem,
   state: State,
 ): Promise<NonNullable<State['status']>> {
   const response = await send(ctx, 'public', endpoint(input, '/api/v1/statuses'), {
@@ -73,9 +83,9 @@ async function createStatus(
     headers: {
       ...authorized(input),
       'content-type': 'application/x-www-form-urlencoded',
-      'idempotency-key': idempotencyKey(input.destinationId, item.position),
+      'idempotency-key': idempotencyKey(input.destinationId, checked.item.position),
     },
-    body: statusForm(item, state),
+    body: statusForm(checked, state),
   });
   if (response.status !== 200) throw failureOf(ctx, response, 'public', 'status_invalid');
   const { id, url } = await readJson(response, status, 'public');
@@ -92,7 +102,8 @@ function published(posted: NonNullable<State['status']>): PublishOutcome {
 }
 
 export async function publishStatus(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
-  const item = mainItem(input);
+  const checked = checkItem(input);
+  const { item } = checked;
   const state = parseState(input.state);
   if (state.status !== undefined) return published(state.status);
   await ctx.step('upload_media');
@@ -103,7 +114,7 @@ export async function publishStatus(ctx: PublishContext, input: Input): Promise<
     ...uploaded.state,
     sentAt: ctx.now().toString({ smallestUnit: 'millisecond' }),
   });
-  const posted = await createStatus(ctx, input, item, sent);
+  const posted = await createStatus(ctx, input, checked, sent);
   await save(ctx, { ...sent, status: posted });
   return published(posted);
 }

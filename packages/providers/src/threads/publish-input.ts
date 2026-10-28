@@ -1,7 +1,9 @@
 import type { MediaRef, PublishInput } from '@kronaut/core';
-import type { Plan } from '../_kit/meta-container-state.ts';
+import { itemPath } from '../_kit/items.ts';
+import { graphId, type Plan } from '../_kit/meta-container-state.ts';
 import { permanent } from '../_kit/meta-graph.ts';
-import { checkImageFile, checkVideoFile, planOf } from '../_kit/meta-input.ts';
+import { checkImageFile, checkVideoFile } from '../_kit/meta-input.ts';
+import { REPLIES_SCOPE } from './capabilities.ts';
 import { type ThreadsSettings, threadsManifest } from './manifest.ts';
 import type { ThreadsCredentials } from './runtime.ts';
 
@@ -26,9 +28,24 @@ function checkVideo(plan: Plan, media: readonly MediaRef[]): void {
     throw permanent('alt_text_too_long');
 }
 
+export function replyToId(input: Input): string | undefined {
+  const path = itemPath(input);
+  if (path.kind === 'main') return undefined;
+  if (!graphId.safeParse(path.parent.remoteId).success) throw permanent('reply_parent_missing');
+  return path.parent.remoteId;
+}
+
 export function checkInput(input: Input): Plan {
-  const plan = planOf(threadsManifest, input);
-  const { item } = plan;
+  const spec = threadsManifest.postTypes.find((type) => type.id === input.postType);
+  if (spec === undefined) throw permanent('post_type_unsupported');
+  const { item } = itemPath(input);
+  const plan = { spec, item };
+  if (replyToId(input) !== undefined) {
+    if (item.text.trim() === '') throw permanent('text_empty');
+    if (!input.credentials.scopes.includes(REPLIES_SCOPE))
+      throw permanent('replies_permission_missing');
+    return plan;
+  }
   if (plan.spec.id === 'video') {
     checkVideo(plan, item.media);
     return plan;

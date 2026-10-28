@@ -201,6 +201,7 @@ describe('bluesky publish', () => {
       kind: 'published',
       remoteId: AT_URI,
       url: `https://bsky.app/profile/${DID}/post/${rkey}`,
+      anchor: { cid: 'bafyreicid' },
     });
   });
 
@@ -291,6 +292,12 @@ describe('bluesky publish', () => {
       kind: 'found',
       remoteId: AT_URI,
       url: `https://bsky.app/profile/${DID}/post/${RKEY}`,
+      anchor: { cid: 'c' },
+    });
+    expect(await run({ json: { uri: AT_URI, value: ours } })).toEqual({
+      kind: 'found',
+      remoteId: AT_URI,
+      url: `https://bsky.app/profile/${DID}/post/${RKEY}`,
     });
     expect(
       await run({ json: { uri: AT_URI, cid: 'c', value: { ...ours, text: 'someone else' } } }),
@@ -323,7 +330,7 @@ describe('bluesky publish', () => {
       await reject([main('hi'), { position: 1, role: 'thread', text: 'more', media: [] }]),
     ).toEqual({
       kind: 'permanent',
-      code: 'thread_unsupported',
+      code: 'item_multiple',
     });
     expect(await reject([main('hi', [{ ...jpeg, mime: 'image/gif' }])])).toEqual({
       kind: 'permanent',

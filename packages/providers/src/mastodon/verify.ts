@@ -33,6 +33,7 @@ const statuses = z.array(
     url: z.string().nullish(),
     content: z.string().nullish(),
     media_attachments: z.array(z.looseObject({ id: z.string() })).nullish(),
+    in_reply_to_id: z.string().nullish(),
   }),
 );
 type Status = z.infer<typeof statuses>[number];
@@ -75,7 +76,13 @@ function sameSet(a: readonly string[], b: readonly string[]): boolean {
   return left.size === a.length && a.length === b.length && b.every((id) => left.has(id));
 }
 
-function matcher(item: PublishItem, input: Input): (status: Status) => boolean {
+function sameParent(item: PublishItem, input: Input): (status: Status) => boolean {
+  if (item.role !== 'thread') return () => true;
+  const parent = input.chain?.at(-1)?.remoteId;
+  return (status) => parent !== undefined && status.in_reply_to_id === parent;
+}
+
+function contentMatcher(item: PublishItem, input: Input): (status: Status) => boolean {
   const state = publishState.safeParse(input.state).data;
   if (item.media.length > 0) {
     const expected = item.media.map((ref) => state?.media?.[ref.id]?.id ?? '');
@@ -87,6 +94,12 @@ function matcher(item: PublishItem, input: Input): (status: Status) => boolean {
   }
   const text = comparable(item.text);
   return (status) => comparable(plainContent(status.content ?? '')) === text;
+}
+
+function matcher(item: PublishItem, input: Input): (status: Status) => boolean {
+  const parent = sameParent(item, input);
+  const content = contentMatcher(item, input);
+  return (status) => parent(status) && content(status);
 }
 
 async function recent(ctx: PublishContext, input: Input): Promise<Status[] | undefined> {
@@ -128,9 +141,10 @@ export async function verifyStatus(ctx: PublishContext, input: Input): Promise<V
     const { id, url } = state.status;
     return { kind: 'found', remoteId: id, ...(url === undefined ? {} : { url }) };
   }
-  const item = input.items.find((candidate) => candidate.role === 'main');
+  const [item, ...rest] = input.items;
   const sentAt = state?.sentAt === undefined ? undefined : instantOf(state.sentAt);
-  if (item === undefined || sentAt === undefined) return { kind: 'inconclusive' };
+  if (item === undefined || rest.length > 0 || item.role === 'comment' || sentAt === undefined)
+    return { kind: 'inconclusive' };
   if (Temporal.Instant.compare(ctx.now(), sentAt.add(WINDOW)) > 0) return { kind: 'inconclusive' };
   try {
     const list = await recent(ctx, input);

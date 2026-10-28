@@ -152,7 +152,7 @@ Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 ag
 - **Long-lived token** (T4). `GET https://graph.threads.com/access_token?grant_type=th_exchange_token&client_secret=…&access_token=<short-lived>`, server-side only. Response `{access_token, token_type, expires_in}`; valid 60 days. An expired short-lived token can't be exchanged.
 - **Refresh** (T4). `GET https://graph.threads.com/refresh_access_token?grant_type=th_refresh_token&access_token=…`, no secret. The token must be at least 24 h old and unexpired, and the user must have granted `threads_basic`. It returns a new `access_token` valid 60 days from the refresh, same shape. A token not refreshed within its 60 days can't be refreshed any more.
 - **Profile** (T6). `GET /v1.0/me?fields=id,username,name,threads_profile_picture_url` (also `threads_biography`, `is_verified`) needs `threads_basic`. `id` is a string in the sample.
-- **Scopes requested:** `threads_basic,threads_content_publish`.
+- **Scopes requested:** `threads_basic,threads_content_publish,threads_manage_replies` (the last since 2026-10-28, for reply chains).
 - **Testers** (T5). Without App Review, only Threads Testers (App roles > Roles > Add People) can grant permissions; each accepts under Account Settings > Website permissions. The docs describe adding the Threads use case when the app is created, not on an existing app.
 - **Publishing** (T1, T8). Permissions `threads_basic` and `threads_content_publish`.
   - Create a container: `POST /{threads-user-id}/threads` with `media_type` `TEXT`, `IMAGE`, `VIDEO` or `CAROUSEL`. `text` is required for `TEXT` and optional otherwise; `image_url` and `video_url` must be publicly reachable (Kronaut sends a signed media URL). Carousel items carry `is_carousel_item=true`; the carousel container takes `children`, the comma-separated item container ids. The response is `{id}`; ids are kept as strings.
@@ -162,6 +162,9 @@ Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 ag
   - Kronaut: `ERROR` fails permanently with the `error_message`, except `UNKNOWN`, which drops the container and creates a new one, as `EXPIRED` does. Verification reads the status: `PUBLISHED` is matched against the recent-posts list on text, `media_type` and the carousel's children count; `FINISHED` more than 2 minutes after the send is `absent`.
   - The error response format is not documented; T1 only names the code `THREADS_API__LINK_LIMIT_EXCEEDED`, so Kronaut looks for that string anywhere in the error body.
 - **Caps.** 250 posts/24h (a carousel counts as one), 1,000 replies/24h, 100 deletes/24h, enforced at `threads_publish`. Usage is at `threads_publishing_limit` (`quota_usage`, `config.quota_total`, `config.quota_duration`); Kronaut doesn't read it yet and relies on its local `publishes_day` bucket.
+- **Replies** (T10), checked 2026-10-28. A reply is a container like any post: `POST /me/threads` with `media_type`, `text` and `reply_to_id` (the id of the post or reply being answered), then `threads_publish` with `creation_id`, returning the reply's media `id`. `reply_to_id` needs the `threads_manage_replies` permission. Replying into a thread is allowed when you own its root post. T10 names no limit on chain length; replies count against the 1,000 replies/24h cap.
+  - Kronaut: reply chains are text-only (`TEXT`), each reply answers the previous item, and chains are capped at 24 replies, Kronaut's own cap. New connections request `threads_manage_replies`; an account connected without it publishes the main post only until it reconnects. Replies take a unit from the same per-account bucket as posts, which is stricter than Threads' separate reply cap.
+  - Verification: the recent-posts list isn't documented to include replies, so a reply whose container reads `PUBLISHED` after an ambiguous publish is inconclusive and ends `unconfirmed`. `ERROR`, `EXPIRED` and an unpublished `FINISHED` container still prove it absent.
 - **Composer limits.**
   - 500 characters, with emoji counted as UTF-8 bytes. Kronaut's `threads` counting: per grapheme cluster of the NFC text, a cluster containing an `Extended_Pictographic` or Regional Indicator code point, U+FE0F (emoji presentation) or U+20E3 (keycap) counts as the UTF-8 byte length of the whole cluster, any other cluster as 1 (😀 = 4, 🇸🇰 = 8, 1️⃣ = 7, a ZWJ family = 25, `čaká` = 4). It errs towards over-counting.
   - **≤5 unique links** in `text` (T1). Since 2025-12-22, more fail at container creation with `THREADS_API__LINK_LIMIT_EXCEEDED`; Kronaut maps it to `permanent` `too_many_links`.
@@ -232,6 +235,8 @@ Bluesky re-verified 2026-10-23 (specs, guides, lexicons, live AS/PDS metadata an
   - Freezing the record (including `createdAt`) and the rkey before the public step gives `verify.mode` = `deterministic_id`. `getRecord` needs no auth, returns 200 when found and 400 `{"error":"RecordNotFound"}` when absent.
   - Not in the docs or lexicons, and unverified: a duplicate rkey returns 500 `InternalServerError`, so treat that response as ambiguous and never retry it as a fresh create; `putRecord` with an identical record is a 200 no-op.
   - Leave `validate` unset or true.
+- **Replies** (B3, B4, B11), checked 2026-10-28. A reply record sets `reply: {root, parent}`, both `com.atproto.repo.strongRef` `{uri, cid}` and both required. `root` is the thread's first post; `parent` is the post being answered. `createRecord` always returns `uri` and `cid`; `getRecord` returns `uri` and `value`, with `cid` optional. The docs name no limit on thread length.
+  - Kronaut keeps each item's `cid` as its anchor, sends every reply with `root` = the main post and `parent` = the previous item, keeps reply chains text-only, and caps them at 24 replies, Kronaut's own cap. A verified item without a `cid` in `getRecord` gives no anchor, so the next reply fails permanently instead of guessing.
 - **Rate limits.**
   - Writes: 5,000 points/h and 35,000/day per account (create 3, update 2, delete 1).
   - All PDS requests: 3,000 per 5 min **per IP**, so every account of an install on the same PDS shares it. Responses carry `ratelimit-limit`, `-remaining`, `-reset` and `-policy` (`3000;w=300`); over the limit is 429.
@@ -283,6 +288,8 @@ Mastodon publishing facts checked 2026-10-26 (MA1, MA3, MA7, MA8).
   - **Unverified:** the docs don't say whether a character is a grapheme or a code point. Kronaut counts graphemes (`mastodon` counting strategy).
 - **Recent statuses** (MA7). `GET /api/v1/accounts/:id/statuses`: public for public statuses, or a user token with `read:statuses`; `limit` default 20, max 40; `exclude_reblogs`. The sort order isn't stated; the id cursors imply newest first, which the verifier assumes. 401 only in whitelist mode or for a bad token, 404 for an unknown account.
 - **Rate limits** (MA2). Media uploads 30 per 30 min per account; everything else 300 per 5 min.
+- **Replies** (MA1), checked 2026-10-28. `in_reply_to_id` is the "ID of the status being replied to". MA1 doesn't say how visibility relates to the parent, whether replying to your own status is restricted, or what a missing parent returns; `Idempotency-Key` keys are kept for up to 1 hour.
+  - Kronaut: each reply sets `in_reply_to_id` to the previous item's status id, uses the same `public` visibility as the main post and its own idempotency key per position, keeps reply chains text-only, and caps them at 24 replies, Kronaut's own cap.
 
 
 Mastodon video facts checked 2026-10-27 and re-checked 2026-10-28 (MA3, MA5, MA8).
@@ -492,6 +499,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - T7 https://developers.facebook.com/docs/threads/troubleshooting
 - T8 https://developers.facebook.com/docs/threads/threads-media
 - T9 https://developers.facebook.com/docs/threads/reference/publishing
+- T10 https://developers.facebook.com/documentation/threads/retrieve-and-manage-replies/create-replies
 - B1 https://bsky.network/docs/rate-limits (docs.bsky.app now 308-redirects to bsky.network)
 - B2 https://atproto.com/specs/oauth
 - B3 https://github.com/bluesky-social/bsky/tree/main/lexicons (canonical for `app.bsky.*`: app/bsky/feed/post, embed/images, embed/gallery, embed/external, embed/video, richtext/facet, video/getUploadLimits, authCreatePosts)

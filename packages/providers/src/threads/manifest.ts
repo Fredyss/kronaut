@@ -1,5 +1,7 @@
 import type { ProviderManifest } from '@kronaut/core';
 import * as z from 'zod';
+import { REPLY_THREAD } from '../_kit/items.ts';
+import { accountPostType } from './capabilities.ts';
 
 export const threadsSettings = z.object({});
 export type ThreadsSettings = z.infer<typeof threadsSettings>;
@@ -39,6 +41,7 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
         aiLabel: false,
       },
       async: ASYNC,
+      thread: REPLY_THREAD,
     },
     {
       id: 'video',
@@ -62,6 +65,7 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
         aiLabel: false,
       },
       async: ASYNC,
+      thread: REPLY_THREAD,
     },
   ],
   settings: threadsSettings,
@@ -80,4 +84,5 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
   preview: 'short-feed',
   capabilities: { analytics: false, delete: false },
   egressHosts: ['threads.com', 'graph.threads.com'],
+  accountPostType,
 };
