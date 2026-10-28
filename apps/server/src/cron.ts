@@ -7,6 +7,7 @@ import { purgeDisconnectedCredentials } from './channels/retention.ts';
 import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
+import { recomputeTimes } from './posts/tz-recompute.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
 import { checkApiVersionSunsets } from './system/sunset.ts';
@@ -23,6 +24,7 @@ export const CRON_TASKS = {
   publishDueSweep: 'publish_due_sweep',
   publishLeaseReaper: 'publish_lease_reaper',
   publishReconcile: 'publish_reconcile',
+  tzRecompute: 'tz_recompute',
 } as const;
 
 export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
@@ -99,6 +101,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     task: CRON_TASKS.publishReconcile,
     identifier: CRON_TASKS.publishReconcile,
     match: '*/10 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
+    task: CRON_TASKS.tzRecompute,
+    identifier: CRON_TASKS.tzRecompute,
+    match: '7 * * * *',
     options: { backfillPeriod: 0, maxAttempts: 1 },
   },
 ];
@@ -241,6 +249,9 @@ export function cronTaskList(
     },
     [CRON_TASKS.publishReconcile]: async () => {
       await recordCronRun(db, CRON_TASKS.publishReconcile, () => reconcile(sweeps));
+    },
+    [CRON_TASKS.tzRecompute]: async () => {
+      await recordCronRun(db, CRON_TASKS.tzRecompute, () => recomputeTimes(db, logger));
     },
   };
 }
