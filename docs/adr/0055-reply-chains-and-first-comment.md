@@ -59,7 +59,8 @@ The `thread` items reuse the post type's `steps` and `text`. A post type without
 - A claim runs the items in position order, skipping confirmed ones, within one attempt and one lease.
 - Each item gets its own write-ahead (`send_started_at` and `publish_attempts.item_position`) and its own settle.
 - Each item takes one unit from the rate buckets.
-- The deadline (`deadline_at`, `late_window_exceeded`) gates only the start of the `main` item. Once the main post is live, the rest of the chain is sent even past the deadline.
+- The deadline (`deadline_at`, `late_window_exceeded`, `rate_limit_beyond_deadline`) gates only the `main` item. Once the main item is confirmed, the deadline checks are skipped for every later item, at claim and in retry planning, and the rest of the chain is sent even past the deadline.
+- Retries are bounded per item, not per chain: confirming an item resets the destination's `attempt_count` to 0, and the claim of the next item is counted. So each item gets the usual `MAX_ATTEMPTS` (6) sends. The async give-up clock likewise starts from the current item's own attempts.
 - When the `main` item is confirmed, the destination gets its `remote_id`, `remote_url` and `published_at` at once. It stays `publishing` until the last item settles.
 - An item's outcome maps to the destination as follows:
 
@@ -67,12 +68,13 @@ The `thread` items reuse the post type's `steps` and `text`. A post type without
 |---|---|---|
 | `published` | `confirmed` | the next item runs; after the last, `published` |
 | `pending` | stays `sending` | `retry_wait` or `verifying/provider_processing` as for a single post; the claim resumes at this item |
-| `transient`, `rate_limited`, `auth_*` before the item's public step | back to `pending` | the same planning as a single post; resumes at this item |
+| `transient`, `rate_limited`, `auth_*` before the item's public step | back to `pending` | `retry_wait` or `blocked` as for a single post, but with no deadline once the main item is confirmed; resumes at this item |
 | `ambiguous` after the item's public step | `unconfirmed` while verifying | `verifying` for this item; if still unconfirmed, the destination goes to `unconfirmed` and the chain stops |
 | `permanent` on the `main` item | `failed` | `failed/permanent_error`, as today |
-| `permanent`, or attempts exhausted, on a later item | `failed`; the later items stay `pending` | **`failed/thread_incomplete`**, keeping the main post's `remote_id`, `remote_url` and `published_at` |
+| any outcome that would fail the destination, on a later item (`permanent`, attempts exhausted, async give-up, or a claim-time check such as a changed account capability) | `failed`; the later items stay `pending` | **`failed/thread_incomplete`**, keeping the main post's `remote_id`, `remote_url` and `published_at` |
 
-- `thread_incomplete` is a new `failed` reason, added by migration. There is still no partially published destination state; the per-item states carry the detail.
+- `thread_incomplete` is a new `failed` reason. The migration inserts `('failed','thread_incomplete')`, and `('retry_wait','chain_next')` for the hop between items, into `destination_state_reasons`, which the destinations' reason foreign key checks. There is still no partially published destination state; the per-item states carry the detail.
+- **Post summary.** `trg_publish_summary` keeps counting a `thread_incomplete` destination as `failed`: the post needs the user's attention, so `completed_failed` or `completed_partial` is right. The `post.completed` payload gains an `incomplete` count, the subset of `failed` that has a live main post, so consumers can tell a live but incomplete post from one that never went out.
 - Send again resumes a `thread_incomplete` destination from its first unconfirmed item. A `sending` or `unconfirmed` item still needs `acknowledgeDuplicate`, as today.
 - The `destination.failed` webhook and notification fire once. The payload names the failed item's position and includes the main post's link.
 

@@ -184,7 +184,7 @@ The engine publishes a destination's items one at a time, in position order, one
 - `pending | sending | confirmed | unconfirmed | failed | skipped`
 - Resume continues from the last confirmed item and never re-sends a confirmed part.
 - An unconfirmed middle item stops the chain and moves the destination to `unconfirmed`.
-- A later item that fails permanently moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
+- A later item that fails moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
 - Each claim sends one item, with `publish_attempts.item_position` set and only that item marked `sending` at its write-ahead. `input.items` holds that item, `input.chain` the confirmed items before it (`{position, role, remoteId, anchor}`), and `input.state` the destination's `provider_state`. A `comment` item takes its step effects from `comment.steps`.
 - A confirmed item records its `remote_id`, `remote_url`, `anchor`, `reply_to_remote_id` (the previous confirmed item's remote id; null for `main`) and the destination's `provider_state`, which is then reset to `{}`. Confirming `main` sets the destination's `remote_id`, `remote_url` and `published_at`; later items never overwrite them.
 - While items are left, the destination goes to `retry_wait/chain_next` with `run_at = now` and `attempt_count = 0`, and is enqueued at once; the next claim is counted, so each item gets at most 6 sends. A `pending` item's give-up clock starts at that item's latest counted attempt. After the last item it goes to `published`. A late confirmation on an `unconfirmed` destination confirms the item and leaves the destination `unconfirmed`, since `unconfirmed → retry_wait` is not a transition.
@@ -208,7 +208,7 @@ A post's destinations settle independently; there is no "partially published" de
 | all `failed` | `completed_failed` |
 | otherwise | `completed_partial` |
 
-The trigger locks the post row before counting, so concurrent finalizes cannot leave a stale summary; writers lock the post before the destination. `settle_seq` increments each time the summary enters a `completed_*` value from any other, and each increment emits one `post.completed` with `{published, failed, canceled}` counts.
+The trigger locks the post row before counting, so concurrent finalizes cannot leave a stale summary; writers lock the post before the destination. `settle_seq` increments each time the summary enters a `completed_*` value from any other, and each increment emits one `post.completed` with `{published, failed, incomplete, canceled}` counts; `incomplete` is the subset of `failed` with reason `thread_incomplete`.
 
 ## Audit
 
@@ -227,7 +227,7 @@ Events are written in the transaction that makes the change. Each event writes o
 | Event | Written when | `data` | `sequence` | `dedupe_key` |
 |---|---|---|---|---|
 | `destination.published` / `failed` / `unconfirmed` / `blocked` / `awaiting_manual` | a worker transition into that state (with its audit row) | `destination_id`, `post_id`, `post_version`, `social_account_id`, `provider`, `state`, `reason`, `remote_id`, `remote_url`, `attempt_id`; `failed_item_position` (integer) on `failed/thread_incomplete` | destination version after the transition | `destination.<id>.<version>` |
-| `post.completed` | `posts.settle_seq` advanced: checked after every worker transition and in every post route that changes destinations | `post_id`, `summary`, `published`, `failed`, `canceled` counts | `settle_seq` | `post.completed.<postId>.<settle_seq>` |
+| `post.completed` | `posts.settle_seq` advanced: checked after every worker transition and in every post route that changes destinations | `post_id`, `summary`, `published`, `failed`, `incomplete`, `canceled` counts | `settle_seq` | `post.completed.<postId>.<settle_seq>` |
 | `channel.needs_reauth` | `flagAccount` flips the account to `needs_reauth` | `social_account_id`, `provider`, `reason` | — | `channel.needs_reauth.<accountId>.<status_changed_at>` |
 | `channel.expiring` | the credential refresh cron opens an `auth_expiring` incident (see Token refresh) | `social_account_id`, `provider`, `expires_at` (RFC 3339 UTC) | — | `channel.expiring.<accountId>.<incident id>` |
 | `channel.reconnected` | the OAuth connect callback (ADR-0053) sets a `needs_reauth` account back to `active` | `social_account_id`, `provider` | — | `channel.reconnected.<accountId>.<status_changed_at>` |
