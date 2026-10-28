@@ -11,8 +11,11 @@ import {
 } from '@kronaut/media';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
+import { createMediaSigner } from './access.ts';
 import type { MediaAssetDto } from './dto.ts';
+import type { MediaGcDeps } from './gc.ts';
 import { ingestImage, prepareImage } from './ingest.ts';
+import { createStaging } from './staging.ts';
 
 export interface Tenant {
   readonly userId: string;
@@ -37,6 +40,16 @@ export interface MediaDb {
 const SYSTEM: Actor = { kind: 'system' };
 export const NOW = Temporal.Instant.from('2026-10-21T12:00:00Z');
 export const clock = () => NOW;
+export const MEDIA_BASE = 'https://media.example.test';
+export const signer = createMediaSigner({
+  signingKey: new Uint8Array(32).fill(7),
+  mediaBaseUrl: new URL(MEDIA_BASE),
+  clock,
+});
+
+export function idleMediaGc(): MediaGcDeps {
+  return { staging: createStaging('/nonexistent'), store: createLocalStore('/nonexistent') };
+}
 
 export function asUser(tenant: Tenant): Actor {
   return { kind: 'user', id: tenant.userId };

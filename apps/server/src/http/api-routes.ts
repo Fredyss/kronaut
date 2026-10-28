@@ -7,6 +7,8 @@ import { reauthRoutes } from '../auth/reauth.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { channelRoutes } from '../channels/routes.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
+import type { MediaSigner } from '../media/access.ts';
+import { libraryRoutes } from '../media/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
 import type { Staging } from '../media/staging.ts';
 import { uploadRoutes } from '../media/upload-routes.ts';
@@ -20,6 +22,7 @@ import type { BoundRoute } from './types.ts';
 export interface ApiRouteDeps {
   readonly http: HttpDeps;
   readonly store: MediaStore;
+  readonly signer: MediaSigner;
   readonly staging: Staging;
   readonly keyring: Keyring;
   readonly providers: ProviderRegistry;
@@ -28,6 +31,7 @@ export interface ApiRouteDeps {
 export function apiRoutes({
   http,
   store,
+  signer,
   staging,
   keyring,
   providers,
@@ -38,7 +42,8 @@ export function apiRoutes({
     ...reauthRoutes(http),
     ...profileRoutes(http),
     ...passwordChangeRoutes(http),
-    ...mediaRoutes({ store, clock: http.clock }),
+    ...mediaRoutes({ store, signer, clock: http.clock }),
+    ...libraryRoutes({ signer }),
     ...uploadRoutes({ staging }),
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),

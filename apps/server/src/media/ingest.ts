@@ -4,6 +4,7 @@ import { type MediaStore, ReencodeError, reencodeImage, storageKey } from '@kron
 import { sql } from 'kysely';
 import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
 import { MediaError } from './errors.ts';
+import { lockStorageKeys } from './key-lock.ts';
 import { type ImageFormat, type SniffedImage, sniffImage } from './sniff.ts';
 
 export const MEDIA_IMAGE_MAX_BYTES = 8 * 1024 * 1024;
@@ -78,6 +79,10 @@ export async function prepareImage(input: PrepareImageInput): Promise<PreparedIm
   };
 }
 
+export function grantAiLock(aiGenerated: boolean) {
+  return sql<boolean>`(${aiGenerated} AND app_actor_id('grant') IS NOT NULL)`;
+}
+
 export interface IngestTarget {
   readonly workspaceId: string;
   readonly aiGenerated: boolean;
@@ -91,6 +96,7 @@ export async function ingestImage(
 ): Promise<MediaAssetDto> {
   const { master, image, sha256: digest } = prepared;
   const key = storageKey(workspaceId, digest);
+  await lockStorageKeys(trx, [key]);
 
   const stored = await store.put(key, master);
   if (!stored.sha256.equals(digest) || stored.bytes !== master.byteLength) {
@@ -112,6 +118,7 @@ export async function ingestImage(
       height: image.height,
       original_name: prepared.originalName,
       ai_generated: aiGenerated,
+      ai_locked: grantAiLock(aiGenerated),
       uploaded_by_user_id: sql<string | null>`app_actor_id('user')`,
       uploaded_by_grant_id: sql<string | null>`app_actor_id('grant')`,
     })
@@ -127,15 +134,14 @@ export async function ingestImage(
     .where('storage_key', '=', key)
     .forUpdate()
     .executeTakeFirstOrThrow();
-  if (existing.deleted_at === null && (existing.ai_generated || !aiGenerated)) {
-    return toMediaAssetDto(existing);
-  }
+  if (existing.deleted_at === null && !aiGenerated) return toMediaAssetDto(existing);
   const restored = await trx
     .updateTable('media_assets')
     .set({
       deleted_at: null,
       original_purged_at: null,
       ai_generated: existing.ai_generated || aiGenerated,
+      ai_locked: sql<boolean>`ai_locked OR ${grantAiLock(aiGenerated)}`,
       updated_at: sql<Date>`now()`,
     })
     .where('workspace_id', '=', workspaceId)

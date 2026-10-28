@@ -153,7 +153,6 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
   if ((await stat(master)).size > VIDEO_MAX_BYTES) throw new VideoRejected('video_too_large');
   const hashed = await hashFile(master);
   const masterKey = storageKey(job.workspaceId, hashed.sha256);
-  await storeVerified(deps.store, masterKey, createReadStream(master), hashed);
   const durationMs = out.durationMs;
   const poster = await tool(() => extractPoster(master, durationMs, deps.tools), final);
   const posterHash = {
@@ -161,8 +160,11 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
     bytes: poster.byteLength,
   };
   const posterKey = storageKey(job.workspaceId, posterHash.sha256);
-  await storeVerified(deps.store, posterKey, poster, posterHash);
-  return {
+  const persist = async () => {
+    await storeVerified(deps.store, masterKey, createReadStream(master), hashed);
+    await storeVerified(deps.store, posterKey, poster, posterHash);
+  };
+  const video = {
     key: masterKey,
     sha256: hashed.sha256,
     sourceSha256,
@@ -173,6 +175,7 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
     frameRateMilli: toFrameRateMilli(out.video.frameRate),
     poster: { key: posterKey, ...posterHash },
   } satisfies ProcessedVideo;
+  return { video, persist };
 }
 
 function toFrameRateMilli(rate: number | null): number | null {
@@ -188,7 +191,8 @@ async function settle(
   final: boolean,
 ): Promise<{ outcome: MediaProcessOutcome; reason?: RejectedReason | 'video_duplicate' }> {
   try {
-    const outcome = await finishMedia(deps.db, job, await convert(deps, job, key, final));
+    const { video, persist } = await convert(deps, job, key, final);
+    const outcome = await finishMedia(deps.db, job, video, persist);
     return outcome === 'duplicate' ? { outcome, reason: 'video_duplicate' } : { outcome };
   } catch (error) {
     if (!(error instanceof VideoRejected)) throw error;

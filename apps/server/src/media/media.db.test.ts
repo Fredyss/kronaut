@@ -11,9 +11,11 @@ import type { RequestContext } from '../http/types.ts';
 import {
   asUser,
   clock,
+  MEDIA_BASE,
   type MediaDb,
   masterOf,
   NOW,
+  signer,
   startMediaDb,
   type Tenant,
   uuidOf,
@@ -124,6 +126,8 @@ describe('ingestImage', () => {
       sha256: sha256(master).toString('hex'),
       state: 'ready',
       aiGenerated: false,
+      altText: null,
+      createdAt: expect.any(String),
       rejectedReason: null,
       duplicateOf: null,
     });
@@ -313,7 +317,7 @@ describe('media routes', () => {
   }
 
   it('exposes the upload and read routes with the agreed shape', () => {
-    const [upload, get] = mediaRoutes({ store, clock });
+    const [upload, get] = mediaRoutes({ store, signer, clock });
     expect(MEDIA_UPLOAD_BODY_LIMIT).toBe(12 * 1024 * 1024);
     expect(upload?.route).toBe(mediaUploadRoute);
     expect(get?.route).toBe(mediaGetRoute);
@@ -329,7 +333,7 @@ describe('media routes', () => {
   });
 
   it('uploads through the handler and reads the asset back', async () => {
-    const [upload, get] = mediaRoutes({ store, clock });
+    const [upload, get] = mediaRoutes({ store, signer, clock });
     if (upload === undefined || get === undefined) throw new Error('routes missing');
     const calls: [Action, Resource][] = [];
     const ctx = context(a, calls);
@@ -357,7 +361,10 @@ describe('media routes', () => {
       },
       ctx,
     );
-    expect(fetched.body).toEqual(dto);
+    expect(fetched.body).toEqual({
+      ...dto,
+      previewUrl: expect.stringContaining(`${MEDIA_BASE}/m/`),
+    });
     expect(calls).toEqual([
       ['media:write', { workspaceId: a.workspaceId }],
       ['media:read', { workspaceId: a.workspaceId }],
@@ -374,7 +381,9 @@ describe('media routes', () => {
   });
 
   it('marks an asset AI-generated, keeps the mark, and hides other workspaces', async () => {
-    const mark = mediaRoutes({ store, clock }).find((bound) => bound.route === mediaMarkAiRoute);
+    const mark = mediaRoutes({ store, signer, clock }).find(
+      (bound) => bound.route === mediaMarkAiRoute,
+    );
     if (mark === undefined) throw new Error('route missing');
     const asset = await fx.ingest(a, webpExtendedFixture(11, 11));
     const params = { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id };
@@ -407,7 +416,9 @@ describe('media routes', () => {
   });
 
   it('refuses to mark a rejected asset', async () => {
-    const mark = mediaRoutes({ store, clock }).find((bound) => bound.route === mediaMarkAiRoute);
+    const mark = mediaRoutes({ store, signer, clock }).find(
+      (bound) => bound.route === mediaMarkAiRoute,
+    );
     if (mark === undefined) throw new Error('route missing');
     const asset = await fx.ingest(a, webpExtendedFixture(13, 13));
     await db.withTenant(a.workspaceId, asUser(a), (trx) =>
@@ -419,7 +430,7 @@ describe('media routes', () => {
   });
 
   it('refuses a scoped read because media has no scope units', async () => {
-    const [, get] = mediaRoutes({ store, clock });
+    const [, get] = mediaRoutes({ store, signer, clock });
     if (get === undefined) throw new Error('routes missing');
     const asset = await ingest(a, pngFixture({ width: 4, height: 9 }));
     const scope = { brandIds: [randomUUID()], locationIds: [], socialAccountIds: [] };
@@ -435,7 +446,7 @@ describe('media routes', () => {
   });
 
   it('only accepts prefixed public ids and answers 404 for anything else', async () => {
-    const [upload, get] = mediaRoutes({ store, clock });
+    const [upload, get] = mediaRoutes({ store, signer, clock });
     if (upload === undefined || get === undefined) throw new Error('routes missing');
     const asset = await ingest(a, pngFixture({ width: 4, height: 9 }));
     const ws = encodePublicId('workspace', a.workspaceId);
@@ -447,7 +458,10 @@ describe('media routes', () => {
       );
       return { calls, result };
     };
-    expect((await read(ws, asset.id).result).body).toEqual(asset);
+    expect((await read(ws, asset.id).result).body).toEqual({
+      ...asset,
+      previewUrl: expect.stringContaining(`${MEDIA_BASE}/m/`),
+    });
     for (const [workspaceId, mediaId] of [
       [a.workspaceId, asset.id],
       [ws, uuidOf(asset)],

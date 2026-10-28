@@ -11,6 +11,8 @@ export const REJECTED_REASONS = [
   'video_duplicate',
 ] as const;
 
+export const ALT_TEXT_MAX = 1500;
+
 const MEDIA_ID = /^media_[0-9a-hjkmnp-tv-z]{26}$/;
 
 export const MediaAssetSchema = z.object({
@@ -28,6 +30,11 @@ export const MediaAssetSchema = z.object({
     .nullable(),
   state: z.enum(['uploading', 'quarantined', 'processing', 'ready', 'rejected']),
   aiGenerated: z.boolean(),
+  altText: z
+    .string()
+    .refine((text) => [...text].length <= ALT_TEXT_MAX)
+    .nullable(),
+  createdAt: z.iso.datetime(),
   rejectedReason: z.enum(REJECTED_REASONS).nullable(),
   duplicateOf: z.string().regex(MEDIA_ID).nullable(),
 });
@@ -46,6 +53,8 @@ export const MEDIA_ASSET_COLUMNS = [
   'sha256',
   'state',
   'ai_generated',
+  'alt_text',
+  'created_at',
   'rejected_reason',
   'duplicate_of_id',
 ] as const;
@@ -62,6 +71,8 @@ export interface MediaAssetRow {
   readonly sha256: Buffer | null;
   readonly state: string;
   readonly ai_generated: boolean;
+  readonly alt_text: string | null;
+  readonly created_at: Date;
   readonly rejected_reason: string | null;
   readonly duplicate_of_id: string | null;
 }
@@ -79,6 +90,8 @@ export function toMediaAssetDto(row: MediaAssetRow): MediaAssetDto {
     sha256: row.sha256 === null ? null : row.sha256.toString('hex'),
     state: row.state,
     aiGenerated: row.ai_generated,
+    altText: row.alt_text,
+    createdAt: row.created_at.toISOString(),
     rejectedReason: row.rejected_reason,
     duplicateOf: row.duplicate_of_id === null ? null : encodePublicId('media', row.duplicate_of_id),
   });

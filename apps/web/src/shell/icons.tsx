@@ -1,4 +1,5 @@
 import { Icon } from '../icon.tsx';
+import { KindIcon } from '../media/kind-icon.tsx';
 
 const SIZE = 'size-5';
 
@@ -37,4 +38,8 @@ export function SettingsIcon() {
       <circle cx="9" cy="17" r="2" />
     </Icon>
   );
+}
+
+export function MediaIcon() {
+  return <KindIcon kind="image" className={SIZE} />;
 }

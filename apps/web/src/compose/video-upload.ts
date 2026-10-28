@@ -9,7 +9,7 @@ import {
 } from '@kronaut/sdk';
 import { errorStatus } from '../api.ts';
 
-export type VideoAsset = MediaGetResponse;
+export type VideoAsset = Omit<MediaGetResponse, 'previewUrl'>;
 export type RejectedReason = NonNullable<VideoAsset['rejectedReason']>;
 
 const POLL_MS = 3000;

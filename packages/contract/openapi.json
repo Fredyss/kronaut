@@ -2561,6 +2561,284 @@
       }
     },
     "/v1/workspaces/{workspaceId}/media": {
+      "get": {
+        "description": "The workspace's library assets that are ready or processing, not deleted and not a duplicate, newest first, optionally of one kind (image or video). limit 1–100, default 50; pass nextCursor as cursor for the next page. usageCount is the number of posts that use the asset; previewUrl is a signed URL of the image, or of a video's poster, valid for an hour.",
+        "operationId": "media.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "enum": [
+                "image",
+                "video"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "aiGenerated": {
+                            "type": "boolean"
+                          },
+                          "altText": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "bytes": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "duplicateOf": {
+                            "anyOf": [
+                              {
+                                "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "durationMs": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "frameRate": {
+                            "anyOf": [
+                              {
+                                "exclusiveMinimum": 0,
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "height": {
+                            "anyOf": [
+                              {
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "id": {
+                            "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                            "type": "string"
+                          },
+                          "kind": {
+                            "enum": [
+                              "image",
+                              "video"
+                            ],
+                            "type": "string"
+                          },
+                          "mime": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "previewUrl": {
+                            "anyOf": [
+                              {
+                                "format": "uri",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "rejectedReason": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "video_stream_missing",
+                                  "video_too_short",
+                                  "video_too_long",
+                                  "video_unreadable",
+                                  "video_too_large",
+                                  "video_duplicate"
+                                ],
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "sha256": {
+                            "anyOf": [
+                              {
+                                "pattern": "^[0-9a-f]{64}$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "state": {
+                            "enum": [
+                              "uploading",
+                              "quarantined",
+                              "processing",
+                              "ready",
+                              "rejected"
+                            ],
+                            "type": "string"
+                          },
+                          "usageCount": {
+                            "maximum": 9007199254740991,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "width": {
+                            "anyOf": [
+                              {
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "mime",
+                          "bytes",
+                          "width",
+                          "height",
+                          "durationMs",
+                          "frameRate",
+                          "sha256",
+                          "state",
+                          "aiGenerated",
+                          "altText",
+                          "createdAt",
+                          "rejectedReason",
+                          "duplicateOf",
+                          "previewUrl",
+                          "usageCount"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "List the media library",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
       "post": {
         "description": "Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage. `aiGenerated: true` marks the image as AI-generated; uploading the same image again never clears the mark.",
         "operationId": "media.upload",
@@ -2626,6 +2904,12 @@
                     "aiGenerated": {
                       "type": "boolean"
                     },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -2637,6 +2921,11 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
                     },
                     "duplicateOf": {
                       "anyOf": [
@@ -2765,6 +3054,8 @@
                     "sha256",
                     "state",
                     "aiGenerated",
+                    "altText",
+                    "createdAt",
                     "rejectedReason",
                     "duplicateOf"
                   ],
@@ -2884,6 +3175,12 @@
                         "aiGenerated": {
                           "type": "boolean"
                         },
+                        "altText": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "bytes": {
                           "anyOf": [
                             {
@@ -2895,6 +3192,11 @@
                               "type": "null"
                             }
                           ]
+                        },
+                        "createdAt": {
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
                         },
                         "duplicateOf": {
                           "anyOf": [
@@ -3023,6 +3325,8 @@
                         "sha256",
                         "state",
                         "aiGenerated",
+                        "altText",
+                        "createdAt",
                         "rejectedReason",
                         "duplicateOf"
                       ],
@@ -3082,6 +3386,66 @@
       }
     },
     "/v1/workspaces/{workspaceId}/media/{mediaId}": {
+      "delete": {
+        "description": "Refused with 409 media_in_use while any post uses the asset. The files are removed 30 days later.",
+        "operationId": "media.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Delete a media asset",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
       "get": {
         "operationId": "media.get",
         "parameters": [
@@ -3112,6 +3476,12 @@
                     "aiGenerated": {
                       "type": "boolean"
                     },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -3123,6 +3493,11 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
                     },
                     "duplicateOf": {
                       "anyOf": [
@@ -3185,6 +3560,17 @@
                       "type": [
                         "string",
                         "null"
+                      ]
+                    },
+                    "previewUrl": {
+                      "anyOf": [
+                        {
+                          "format": "uri",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
                       ]
                     },
                     "rejectedReason": {
@@ -3251,8 +3637,11 @@
                     "sha256",
                     "state",
                     "aiGenerated",
+                    "altText",
+                    "createdAt",
                     "rejectedReason",
-                    "duplicateOf"
+                    "duplicateOf",
+                    "previewUrl"
                   ],
                   "type": "object"
                 }
@@ -3288,11 +3677,516 @@
           "session",
           "grant"
         ]
+      },
+      "patch": {
+        "description": "Sets the default alt text (trimmed, at most 1500 characters; empty or null clears it). Alt text already copied into a post doesn't change.",
+        "operationId": "media.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "altText": {
+                    "anyOf": [
+                      {
+                        "maxLength": 6000,
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aiGenerated": {
+                      "type": "boolean"
+                    },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bytes": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "duplicateOf": {
+                      "anyOf": [
+                        {
+                          "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "durationMs": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "height": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "image",
+                        "video"
+                      ],
+                      "type": "string"
+                    },
+                    "mime": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previewUrl": {
+                      "anyOf": [
+                        {
+                          "format": "uri",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rejectedReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "video_stream_missing",
+                            "video_too_short",
+                            "video_too_long",
+                            "video_unreadable",
+                            "video_too_large",
+                            "video_duplicate"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sha256": {
+                      "anyOf": [
+                        {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "uploading",
+                        "quarantined",
+                        "processing",
+                        "ready",
+                        "rejected"
+                      ],
+                      "type": "string"
+                    },
+                    "width": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "mime",
+                    "bytes",
+                    "width",
+                    "height",
+                    "durationMs",
+                    "frameRate",
+                    "sha256",
+                    "state",
+                    "aiGenerated",
+                    "altText",
+                    "createdAt",
+                    "rejectedReason",
+                    "duplicateOf",
+                    "previewUrl"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Update a media asset",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:write",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
       }
     },
     "/v1/workspaces/{workspaceId}/media/{mediaId}/ai-generated": {
+      "delete": {
+        "description": "Members only. Refused with 409 when the asset is not marked, or when an API key or agent uploaded or marked it.",
+        "operationId": "media.clear_ai",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "aiGenerated": {
+                      "type": "boolean"
+                    },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bytes": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "duplicateOf": {
+                      "anyOf": [
+                        {
+                          "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "durationMs": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "frameRate": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "height": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "image",
+                        "video"
+                      ],
+                      "type": "string"
+                    },
+                    "mime": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previewUrl": {
+                      "anyOf": [
+                        {
+                          "format": "uri",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rejectedReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "video_stream_missing",
+                            "video_too_short",
+                            "video_too_long",
+                            "video_unreadable",
+                            "video_too_large",
+                            "video_duplicate"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sha256": {
+                      "anyOf": [
+                        {
+                          "pattern": "^[0-9a-f]{64}$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "uploading",
+                        "quarantined",
+                        "processing",
+                        "ready",
+                        "rejected"
+                      ],
+                      "type": "string"
+                    },
+                    "width": {
+                      "anyOf": [
+                        {
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "mime",
+                    "bytes",
+                    "width",
+                    "height",
+                    "durationMs",
+                    "frameRate",
+                    "sha256",
+                    "state",
+                    "aiGenerated",
+                    "altText",
+                    "createdAt",
+                    "rejectedReason",
+                    "duplicateOf",
+                    "previewUrl"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Remove the AI-generated mark",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
       "post": {
-        "description": "The mark is sticky: it is never removed once set.",
+        "description": "An upload or an API key never removes the mark. Only a member can clear it, in the media library, and never for media that an API key or agent uploaded or marked.",
         "operationId": "media.mark_ai",
         "parameters": [
           {
@@ -3332,6 +4226,12 @@
                     "aiGenerated": {
                       "type": "boolean"
                     },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -3343,6 +4243,11 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
                     },
                     "duplicateOf": {
                       "anyOf": [
@@ -3471,6 +4376,8 @@
                     "sha256",
                     "state",
                     "aiGenerated",
+                    "altText",
+                    "createdAt",
                     "rejectedReason",
                     "duplicateOf"
                   ],
@@ -3552,6 +4459,12 @@
                     "aiGenerated": {
                       "type": "boolean"
                     },
+                    "altText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
                     "bytes": {
                       "anyOf": [
                         {
@@ -3563,6 +4476,11 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
                     },
                     "duplicateOf": {
                       "anyOf": [
@@ -3691,6 +4609,8 @@
                     "sha256",
                     "state",
                     "aiGenerated",
+                    "altText",
+                    "createdAt",
                     "rejectedReason",
                     "duplicateOf"
                   ],
@@ -3824,6 +4744,129 @@
           "media"
         ],
         "x-kronaut-action": "media:write",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/media/{mediaId}/usage": {
+      "get": {
+        "description": "At most 50 posts, newest first. Needs posts:read as well; refused for a scoped caller.",
+        "operationId": "media.usage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "excerpt": {
+                            "type": "string"
+                          },
+                          "postId": {
+                            "type": "string"
+                          },
+                          "publishSummary": {
+                            "enum": [
+                              "draft",
+                              "in_review",
+                              "scheduled",
+                              "in_progress",
+                              "needs_action",
+                              "completed_all",
+                              "completed_partial",
+                              "completed_failed",
+                              "canceled"
+                            ],
+                            "type": "string"
+                          },
+                          "scheduledAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "title": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "postId",
+                          "title",
+                          "excerpt",
+                          "publishSummary",
+                          "scheduledAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "List the posts that use a media asset",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:read",
         "x-kronaut-auth": [
           "session",
           "grant"

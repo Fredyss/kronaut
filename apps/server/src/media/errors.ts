@@ -6,6 +6,7 @@ export type MediaErrorCode = Extract<
   | 'conflict'
   | 'forbidden'
   | 'invalid_request'
+  | 'media_in_use'
   | 'not_found'
   | 'payload_too_large'
   | 'unsupported_media_type'

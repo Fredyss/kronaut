@@ -11,8 +11,35 @@ export interface MediaAccessDeps {
   readonly clock: () => Temporal.Instant;
 }
 
-export function createMediaAccess(deps: MediaAccessDeps): MediaAccess {
+export type MediaSignerDeps = Pick<MediaAccessDeps, 'signingKey' | 'mediaBaseUrl' | 'clock'>;
+
+export interface MediaSigner {
+  sign(storageKey: string, ttlSeconds: number): string;
+}
+
+function assertTtl(ttlSeconds: number): void {
+  if (
+    !Number.isSafeInteger(ttlSeconds) ||
+    ttlSeconds < 1 ||
+    ttlSeconds > MEDIA_URL_MAX_TTL_SECONDS
+  ) {
+    throw new RangeError(`ttlSeconds must be an integer from 1 to ${MEDIA_URL_MAX_TTL_SECONDS}`);
+  }
+}
+
+export function createMediaSigner(deps: MediaSignerDeps): MediaSigner {
   const origin = deps.mediaBaseUrl.origin;
+  return {
+    sign(storageKey, ttlSeconds) {
+      assertTtl(ttlSeconds);
+      const nowSeconds = Math.floor(deps.clock().epochMilliseconds / 1000);
+      return `${origin}${signMediaPath(deps.signingKey, storageKey, nowSeconds + ttlSeconds)}`;
+    },
+  };
+}
+
+export function createMediaAccess(deps: MediaAccessDeps): MediaAccess {
+  const signer = createMediaSigner(deps);
 
   async function readyKey(workspaceId: string, assetId: string): Promise<string> {
     const row = await deps.db.withTenant(workspaceId, { kind: 'system' }, (trx) =>
@@ -32,18 +59,8 @@ export function createMediaAccess(deps: MediaAccessDeps): MediaAccess {
 
   return {
     async signedUrl(workspaceId, assetId, ttlSeconds) {
-      if (
-        !Number.isSafeInteger(ttlSeconds) ||
-        ttlSeconds < 1 ||
-        ttlSeconds > MEDIA_URL_MAX_TTL_SECONDS
-      ) {
-        throw new RangeError(
-          `ttlSeconds must be an integer from 1 to ${MEDIA_URL_MAX_TTL_SECONDS}`,
-        );
-      }
-      const key = await readyKey(workspaceId, assetId);
-      const nowSeconds = Math.floor(deps.clock().epochMilliseconds / 1000);
-      return `${origin}${signMediaPath(deps.signingKey, key, nowSeconds + ttlSeconds)}`;
+      assertTtl(ttlSeconds);
+      return signer.sign(await readyKey(workspaceId, assetId), ttlSeconds);
     },
 
     async read(workspaceId, assetId) {

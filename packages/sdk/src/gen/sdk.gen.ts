@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client/index.ts';
-import type { ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses } from './types.gen.ts';
+import type { ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -306,6 +306,21 @@ export const channelsDisconnect = <ThrowOnError extends boolean = true>(options:
 });
 
 /**
+ * List the media library
+ *
+ * The workspace's library assets that are ready or processing, not deleted and not a duplicate, newest first, optionally of one kind (image or video). limit 1–100, default 50; pass nextCursor as cursor for the next page. usageCount is the number of posts that use the asset; previewUrl is a signed URL of the image, or of a video's poster, valid for an hour.
+ */
+export const mediaList = <ThrowOnError extends boolean = true>(options: Options<MediaListData, ThrowOnError>): RequestResult<MediaListResponses, MediaListErrors, ThrowOnError> => (options.client ?? client).get<MediaListResponses, MediaListErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media',
+    ...options
+});
+
+/**
  * Upload an image
  *
  * Accepts JPEG, PNG or WebP up to 8 MiB; metadata is stripped before storage. `aiGenerated: true` marks the image as AI-generated; uploading the same image again never clears the mark.
@@ -344,6 +359,21 @@ export const mediaVideoUpload = <ThrowOnError extends boolean = true>(options: O
 });
 
 /**
+ * Delete a media asset
+ *
+ * Refused with 409 media_in_use while any post uses the asset. The files are removed 30 days later.
+ */
+export const mediaDelete = <ThrowOnError extends boolean = true>(options: Options<MediaDeleteData, ThrowOnError>): RequestResult<MediaDeleteResponses, MediaDeleteErrors, ThrowOnError> => (options.client ?? client).delete<MediaDeleteResponses, MediaDeleteErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}',
+    ...options
+});
+
+/**
  * Get a media asset
  */
 export const mediaGet = <ThrowOnError extends boolean = true>(options: Options<MediaGetData, ThrowOnError>): RequestResult<MediaGetResponses, MediaGetErrors, ThrowOnError> => (options.client ?? client).get<MediaGetResponses, MediaGetErrors, ThrowOnError>({
@@ -357,9 +387,43 @@ export const mediaGet = <ThrowOnError extends boolean = true>(options: Options<M
 });
 
 /**
+ * Update a media asset
+ *
+ * Sets the default alt text (trimmed, at most 1500 characters; empty or null clears it). Alt text already copied into a post doesn't change.
+ */
+export const mediaUpdate = <ThrowOnError extends boolean = true>(options: Options<MediaUpdateData, ThrowOnError>): RequestResult<MediaUpdateResponses, MediaUpdateErrors, ThrowOnError> => (options.client ?? client).patch<MediaUpdateResponses, MediaUpdateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove the AI-generated mark
+ *
+ * Members only. Refused with 409 when the asset is not marked, or when an API key or agent uploaded or marked it.
+ */
+export const mediaClearAi = <ThrowOnError extends boolean = true>(options: Options<MediaClearAiData, ThrowOnError>): RequestResult<MediaClearAiResponses, MediaClearAiErrors, ThrowOnError> => (options.client ?? client).delete<MediaClearAiResponses, MediaClearAiErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/ai-generated',
+    ...options
+});
+
+/**
  * Mark a media asset as AI-generated
  *
- * The mark is sticky: it is never removed once set.
+ * An upload or an API key never removes the mark. Only a member can clear it, in the media library, and never for media that an API key or agent uploaded or marked.
  */
 export const mediaMarkAi = <ThrowOnError extends boolean = true>(options: Options<MediaMarkAiData, ThrowOnError>): RequestResult<MediaMarkAiResponses, MediaMarkAiErrors, ThrowOnError> => (options.client ?? client).post<MediaMarkAiResponses, MediaMarkAiErrors, ThrowOnError>({
     security: [{
@@ -404,6 +468,21 @@ export const mediaVideoPart = <ThrowOnError extends boolean = true>(options: Opt
         'Content-Type': 'application/octet-stream',
         ...options.headers
     }
+});
+
+/**
+ * List the posts that use a media asset
+ *
+ * At most 50 posts, newest first. Needs posts:read as well; refused for a scoped caller.
+ */
+export const mediaUsage = <ThrowOnError extends boolean = true>(options: Options<MediaUsageData, ThrowOnError>): RequestResult<MediaUsageResponses, MediaUsageErrors, ThrowOnError> => (options.client ?? client).get<MediaUsageResponses, MediaUsageErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/media/{mediaId}/usage',
+    ...options
 });
 
 /**

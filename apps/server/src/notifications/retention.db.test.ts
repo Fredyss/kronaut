@@ -6,7 +6,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronTaskList } from '../cron.ts';
-import { createStaging } from '../media/staging.ts';
+import { idleMediaGc } from '../media/db-testing.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
 import { NOTIFICATION_RETENTION_DAYS, purgeNotifications } from './retention.ts';
 
@@ -76,7 +76,7 @@ describe('notification retention', () => {
     await insert(otherWorkspaceId, otherUserId, drop);
     const tasks = cronTaskList(fixture.db, pino({ level: 'silent' }), {
       ...fixture.deps,
-      staging: createStaging('/nonexistent'),
+      ...idleMediaGc(),
     });
 
     await tasks[CRON_TASKS.notificationRetention]?.({}, {} as JobHelpers);
