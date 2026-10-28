@@ -88,7 +88,7 @@ describe('publish job', () => {
       state_reason: 'attempts_exhausted',
       attempt_count: 6,
     });
-    expect((await items(tired))[0]?.state).toBe('skipped');
+    expect((await items(tired))[0]?.state).toBe('pending');
   });
 
   it('fails a rate limit that resets past the deadline', async () => {

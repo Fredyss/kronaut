@@ -1,9 +1,9 @@
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
-import { HttpError, type IssueDetail } from '../http/errors.ts';
+import type { IssueDetail } from '../http/errors.ts';
 import type { PlacedDestination, ResolvedDestination } from './destinations.ts';
 import type { Resolving } from './issues.ts';
-import { ItemsInput, insertItem, type ResolvedItem, resolveItem } from './items.ts';
+import { ItemsInput, insertItems, type ResolvedItem, resolveItems } from './items.ts';
 import type { PostRef } from './locks.ts';
 
 export const VariantsInput = z.array(z.object({ items: ItemsInput })).max(50);
@@ -37,39 +37,38 @@ export async function resolveVariants(
   resolving: Resolving,
   list: VariantsBody,
   destinations: readonly VariantPointer[],
-): Promise<ResolvedItem[]> {
-  const resolved: (ResolvedItem | null)[] = [];
+): Promise<(readonly ResolvedItem[])[]> {
+  const resolved: (readonly ResolvedItem[])[] = [];
   for (const [index, variant] of list.entries()) {
-    const [first] = variant.items;
-    if (first === undefined) throw new HttpError('invalid_request', 'A variant needs one item.');
-    resolved.push(await resolveItem(resolving, first, `body.variants.${index}.items.0`));
+    const items = await resolveItems(resolving, variant.items, `body.variants.${index}.items`);
+    if (items !== null) resolved.push(items);
   }
   checkReferences(resolving.details, list.length, destinations);
-  return resolved.filter((item) => item !== null);
+  return resolved;
 }
 
 export async function insertVariant(
   trx: TenantDb,
   post: PostRef,
   isDefault: boolean,
-  item: ResolvedItem,
+  items: readonly ResolvedItem[],
 ): Promise<string> {
   const { id } = await trx
     .insertInto('post_variants')
     .values({ workspace_id: post.workspaceId, post_id: post.postId, is_default: isDefault })
     .returning('id')
     .executeTakeFirstOrThrow();
-  await insertItem(trx, { ...post, variantId: id }, item);
+  await insertItems(trx, { ...post, variantId: id }, items);
   return id;
 }
 
 export async function insertVariants(
   trx: TenantDb,
   post: PostRef,
-  items: readonly ResolvedItem[],
+  variants: readonly (readonly ResolvedItem[])[],
 ): Promise<string[]> {
   const ids: string[] = [];
-  for (const item of items) ids.push(await insertVariant(trx, post, false, item));
+  for (const items of variants) ids.push(await insertVariant(trx, post, false, items));
   return ids;
 }
 

@@ -16,6 +16,7 @@ const ALL = [
   '0006_provider_app_redirect_uri',
   '0007_video_upload',
   '0008_media_frame_rate',
+  '0009_reply_chains',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -149,7 +150,7 @@ describe('migrate', () => {
       url,
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
-    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
@@ -431,6 +432,44 @@ describe('migrate', () => {
           where conrelid = 'public.media_assets'::regclass and conname = 'ck_media_assets_frame_rate'`,
       ),
     ).toEqual([{ convalidated: true }]);
+  });
+
+  it('adds the reply chain reasons, the item anchor and validated item position checks', async () => {
+    const url = await freshDatabase('reply_chains');
+    await migrate({ connectionString: url });
+    expect(
+      await query(
+        url,
+        `select state, code from destination_state_reasons
+          where code in ('chain_next', 'thread_incomplete') order by code`,
+      ),
+    ).toEqual([
+      { state: 'retry_wait', code: 'chain_next' },
+      { state: 'failed', code: 'thread_incomplete' },
+    ]);
+    expect(
+      await query(
+        url,
+        `select table_name, data_type from information_schema.columns
+          where table_name in ('destination_items', 'publish_attempts') and column_name = 'anchor'
+          order by table_name`,
+      ),
+    ).toEqual([
+      { table_name: 'destination_items', data_type: 'jsonb' },
+      { table_name: 'publish_attempts', data_type: 'jsonb' },
+    ]);
+    expect(
+      await query(
+        url,
+        `select conname, convalidated from pg_constraint
+          where conrelid = 'public.destination_items'::regclass
+            and conname in ('ck_destination_items_position', 'ck_destination_items_main')
+          order by conname`,
+      ),
+    ).toEqual([
+      { conname: 'ck_destination_items_main', convalidated: true },
+      { conname: 'ck_destination_items_position', convalidated: true },
+    ]);
   });
 
   it('upgrades a database that recorded only v1 and still passes the privilege script', async () => {

@@ -13,6 +13,7 @@ const REASONS = {
   media_processing_timeout: 'reason_media_processing_timeout',
   rate_limit_beyond_deadline: 'reason_rate_limit_beyond_deadline',
   async_give_up: 'reason_async_give_up',
+  thread_incomplete: 'reason_thread_incomplete',
   account_needs_reauth: 'reason_account_needs_reauth',
   account_disconnected: 'reason_account_disconnected',
   account_disabled: 'reason_account_disabled',

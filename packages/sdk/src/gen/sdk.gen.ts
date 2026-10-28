@@ -628,7 +628,7 @@ export const destinationsCancel = <ThrowOnError extends boolean = true>(options:
 /**
  * Mark a destination published
  *
- * Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Its items stay as they are.
+ * Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Parts not confirmed live are marked skipped, and a main post already live keeps its publish time.
  */
 export const destinationsMarkPublished = <ThrowOnError extends boolean = true>(options: Options<DestinationsMarkPublishedData, ThrowOnError>): RequestResult<DestinationsMarkPublishedResponses, DestinationsMarkPublishedErrors, ThrowOnError> => (options.client ?? client).post<DestinationsMarkPublishedResponses, DestinationsMarkPublishedErrors, ThrowOnError>({
     security: [{

@@ -268,6 +268,16 @@ export function accountPostType(
   return manifest.accountPostType(postType, capabilities);
 }
 
+export const MAX_ITEMS = 25;
+
+export function itemRolesValid(roles: readonly ItemRole[]): boolean {
+  if (roles.length === 0 || roles[0] !== 'main') return false;
+  const rest = roles.slice(1);
+  const comment = rest.indexOf('comment');
+  if (comment !== -1 && comment !== rest.length - 1) return false;
+  return rest.every((role, index) => role === 'thread' || index === comment);
+}
+
 export function validate(
   manifest: ProviderManifest,
   postTypeId: string,
@@ -284,7 +294,7 @@ export function validate(
   if (items.length === 0) {
     return [{ code: 'no_items' }];
   }
-  if (items[0]?.role !== 'main' || items.slice(1).some((item) => item.role === 'main')) {
+  if (!itemRolesValid(items.map((item) => item.role))) {
     return [{ code: 'invalid_item_roles' }];
   }
   const issues = checkText(postType, items);

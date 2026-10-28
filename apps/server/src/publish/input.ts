@@ -16,6 +16,7 @@ import {
   type ResolvedDestination,
   resolveDestination,
 } from '../snapshot.ts';
+import type { CurrentInput } from './chain.ts';
 import type { PublishDeps } from './task.ts';
 
 export interface InputAccount {
@@ -55,6 +56,7 @@ export interface InputParts {
   readonly publishType: string;
   readonly account: InputAccount;
   readonly ready: Ready;
+  readonly current: CurrentInput;
   readonly state: unknown;
 }
 
@@ -104,7 +106,6 @@ export async function prepareInput(
     message,
   });
   const items = publishItems(resolved);
-  if (items.length > 1) return fail('thread_unsupported');
   const { acked } = options;
   if (acked !== null) {
     const issue = validate(
@@ -145,7 +146,7 @@ export async function prepareInput(
 }
 
 export function publishInput(parts: InputParts): PublishInput<unknown, unknown> {
-  const { account, ready } = parts;
+  const { account, ready, current } = parts;
   return {
     destinationId: parts.destinationId,
     attemptNo: parts.attemptNo,
@@ -157,7 +158,8 @@ export function publishInput(parts: InputParts): PublishInput<unknown, unknown> 
     credentials: ready.credentials,
     app: ready.app,
     settings: ready.settings,
-    items: ready.items,
+    items: [current.item],
+    ...(current.chain.length === 0 ? {} : { chain: current.chain }),
     state: providerState(parts.state),
   };
 }

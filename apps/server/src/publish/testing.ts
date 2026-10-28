@@ -10,9 +10,10 @@ import { saveCredential } from '../credential-store.ts';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaAccess } from '../media-access.ts';
 import { createProviderRegistry } from '../providers.ts';
-import { contentHashInput, parseSnapshot, resolveDestination } from '../snapshot.ts';
+import { contentHashInput, resolveDestination } from '../snapshot.ts';
 import { type PublishDeps, publishDeps } from './task.ts';
 import { FAKE_PROVIDER, type FakeProvider, fakeProvider } from './testing-fake.ts';
+import { type SeedItem, seedSnapshot } from './testing-seed.ts';
 
 export {
   FAKE_PROVIDER,
@@ -20,6 +21,7 @@ export {
   type FakeAuthConfig,
   type FakeBehaviour,
   type FakeCall,
+  type FakeChainConfig,
   type FakeHook,
   type FakePoll,
   type FakeProvider,
@@ -32,7 +34,7 @@ export {
   fakeVerifyDefaults,
 } from './testing-fake.ts';
 
-export const SEED_TEXT = 'Ahoj svet';
+export { SEED_TEXT } from './testing-seed.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const CLI: Actor = { kind: 'cli' };
@@ -53,6 +55,7 @@ export interface SeedOptions {
   readonly attemptCount?: number;
   readonly provider?: string;
   readonly media?: readonly unknown[];
+  readonly items?: readonly SeedItem[];
 }
 
 export interface SeedCredential {
@@ -102,10 +105,6 @@ export async function startPublishFixture(
   let appId = '';
   let ownerUserId = '';
   let workspaceId = '';
-
-  function doc(text: string) {
-    return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] };
-  }
 
   async function createUser(label: string): Promise<string> {
     return await db.withActor(SYSTEM, async (trx) => {
@@ -169,37 +168,7 @@ export async function startPublishFixture(
         .values({ workspace_id: workspaceId, post_id: post.id, is_default: true })
         .returning('id')
         .executeTakeFirstOrThrow();
-      const snapshot = parseSnapshot({
-        v: 1,
-        postId: post.id,
-        postVersion: 1,
-        variants: [
-          {
-            id: variant.id,
-            isDefault: true,
-            contentLanguage: null,
-            items: [
-              {
-                position: 0,
-                role: 'main',
-                doc: doc(options.text ?? SEED_TEXT),
-                docSchemaV: 1,
-                media: options.media ?? [],
-              },
-            ],
-          },
-        ],
-        destinations: [
-          {
-            socialAccountId: accountId,
-            provider: options.provider ?? FAKE_PROVIDER,
-            publishType: 'post',
-            variantId: variant.id,
-            deliveryMode,
-            settings: {},
-          },
-        ],
-      });
+      const snapshot = seedSnapshot({ postId: post.id, variantId: variant.id, accountId }, options);
       const resolved = resolveDestination(snapshot, {
         socialAccountId: accountId,
         publishType: 'post',

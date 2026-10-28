@@ -53,6 +53,7 @@ const REASONS_BY_STATE = {
     'provider_processing',
     'absent_verified',
     'auth_refreshed',
+    'chain_next',
   ],
   verifying: [
     'ambiguous_response',
@@ -73,6 +74,7 @@ const REASONS_BY_STATE = {
     'media_processing_timeout',
     'rate_limit_beyond_deadline',
     'async_give_up',
+    'thread_incomplete',
   ],
   blocked: [
     'account_needs_reauth',

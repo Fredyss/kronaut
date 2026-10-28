@@ -372,6 +372,7 @@
 /** @typedef {{}} Reason_Rate_Limit_Beyond_DeadlineInputs */
 /** @typedef {{}} Reason_Refresh_Token_LostInputs */
 /** @typedef {{}} Reason_Restore_QuarantineInputs */
+/** @typedef {{}} Reason_Thread_IncompleteInputs */
 /** @typedef {{}} Reason_Verify_InconclusiveInputs */
 /** @typedef {{}} Reason_Verify_Window_ElapsedInputs */
 /** @typedef {{}} Reset_ConfirmInputs */
@@ -1986,6 +1987,10 @@ export const reason_refresh_token_lost = /** @type {(inputs: Reason_Refresh_Toke
 
 export const reason_restore_quarantine = /** @type {(inputs: Reason_Restore_QuarantineInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Po obnovení ze zálohy byl pozdržen. Před odesláním ho zkontrolujte.`)
+};
+
+export const reason_thread_incomplete = /** @type {(inputs: Reason_Thread_IncompleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Hlavní příspěvek je zveřejněný, jenže navazující odpověď nebo komentář se nepodařilo odeslat.`)
 };
 
 export const reason_verify_inconclusive = /** @type {(inputs: Reason_Verify_InconclusiveInputs) => LocalizedString} */ () => {

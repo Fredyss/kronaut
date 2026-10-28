@@ -4805,6 +4805,14 @@
                           },
                           "maxItems": 35,
                           "type": "array"
+                        },
+                        "role": {
+                          "enum": [
+                            "main",
+                            "thread",
+                            "comment"
+                          ],
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -4812,7 +4820,7 @@
                       ],
                       "type": "object"
                     },
-                    "maxItems": 1,
+                    "maxItems": 25,
                     "minItems": 1,
                     "type": "array"
                   },
@@ -4858,6 +4866,14 @@
                                 },
                                 "maxItems": 35,
                                 "type": "array"
+                              },
+                              "role": {
+                                "enum": [
+                                  "main",
+                                  "thread",
+                                  "comment"
+                                ],
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -4865,7 +4881,7 @@
                             ],
                             "type": "object"
                           },
-                          "maxItems": 1,
+                          "maxItems": 25,
                           "minItems": 1,
                           "type": "array"
                         }
@@ -5801,6 +5817,14 @@
                           },
                           "maxItems": 35,
                           "type": "array"
+                        },
+                        "role": {
+                          "enum": [
+                            "main",
+                            "thread",
+                            "comment"
+                          ],
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -5808,7 +5832,7 @@
                       ],
                       "type": "object"
                     },
-                    "maxItems": 1,
+                    "maxItems": 25,
                     "minItems": 1,
                     "type": "array"
                   },
@@ -5861,6 +5885,14 @@
                                 },
                                 "maxItems": 35,
                                 "type": "array"
+                              },
+                              "role": {
+                                "enum": [
+                                  "main",
+                                  "thread",
+                                  "comment"
+                                ],
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -5868,7 +5900,7 @@
                             ],
                             "type": "object"
                           },
-                          "maxItems": 1,
+                          "maxItems": 25,
                           "minItems": 1,
                           "type": "array"
                         }
@@ -7889,7 +7921,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts/{postId}/destinations/{destinationId}/mark-published": {
       "post": {
-        "description": "Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Its items stay as they are.",
+        "description": "Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Parts not confirmed live are marked skipped, and a main post already live keeps its publish time.",
         "operationId": "destinations.mark_published",
         "parameters": [
           {

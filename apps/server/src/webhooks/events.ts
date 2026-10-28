@@ -36,6 +36,7 @@ export interface DestinationEventData {
   readonly remote_id: string | null;
   readonly remote_url: string | null;
   readonly attempt_id: string | null;
+  readonly failed_item_position?: number;
 }
 
 export interface PostCompletedData {

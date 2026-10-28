@@ -51,6 +51,7 @@ function fromOutcome(outcome: PublishOutcome): RunResult {
     kind: 'published',
     remoteId: outcome.remoteId,
     ...(outcome.url === undefined ? {} : { url: outcome.url }),
+    ...(outcome.anchor === undefined ? {} : { anchor: outcome.anchor }),
   };
 }
 

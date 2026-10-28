@@ -7,7 +7,7 @@ import type { PostRouteDeps } from './deps.ts';
 import { DestinationsInput, insertDestinations, resolveDestinations } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { unprocessable } from './issues.ts';
-import { ItemsInput, resolveItem } from './items.ts';
+import { ItemsInput, resolveItems } from './items.ts';
 import { pathId } from './params.ts';
 import {
   insertVariant,
@@ -52,8 +52,6 @@ export function createRoutes(deps: PostRouteDeps): BoundRoute[] {
     bindRoute(postCreateRoute, async ({ params, body }, ctx) => {
       const workspaceId = pathId('workspace', params.workspaceId);
       const author = authorOf(ctx.principal);
-      const [first] = body.items;
-      if (first === undefined) throw new HttpError('invalid_request', 'A post needs one item.');
       const post = await ctx.tenant(async (trx) => {
         const details: IssueDetail[] = [];
         const resolving = { trx, workspaceId, details };
@@ -64,9 +62,9 @@ export function createRoutes(deps: PostRouteDeps): BoundRoute[] {
           listed,
         );
         ctx.authorize('posts:draft', { workspaceId, units });
-        const item = await resolveItem(resolving, first, 'body.items.0');
+        const items = await resolveItems(resolving, body.items, 'body.items');
         const variants = await resolveVariants(resolving, body.variants ?? [], listed);
-        if (item === null || details.length > 0) throw unprocessable(details);
+        if (items === null || details.length > 0) throw unprocessable(details);
         const { id: postId } = await trx
           .insertInto('posts')
           .values({
@@ -78,7 +76,7 @@ export function createRoutes(deps: PostRouteDeps): BoundRoute[] {
           .returning('id')
           .executeTakeFirstOrThrow();
         const ref = { workspaceId, postId };
-        const defaultId = await insertVariant(trx, ref, true, item);
+        const defaultId = await insertVariant(trx, ref, true, items);
         const variantIds = await insertVariants(trx, ref, variants);
         await insertDestinations(trx, ref, place(destinations, defaultId, variantIds));
         return await readPost(trx, workspaceId, postId);

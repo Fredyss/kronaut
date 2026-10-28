@@ -2,6 +2,7 @@ import type { SweepRow, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { enqueuePublish, enqueueVerify, ensurePublishJob, ensureVerifyJob } from '../jobs.ts';
+import { currentLaterItem, failedReason, failLaterItem } from './chain-step.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import { firstCheckAt, retry } from './plan.ts';
 import type { PublishDeps } from './task.ts';
@@ -157,30 +158,49 @@ async function reap(
       .execute();
   }
 
-  const items = trx
-    .updateTable('destination_items')
-    .where('workspace_id', '=', workspaceId)
-    .where('destination_id', '=', id);
   if (dest.cancel_requested_at !== null) {
     await transition(trx, ref, {
       state: 'canceled',
       reason: 'user_canceled',
       set: { lease_until: null },
     });
-    await items.set({ state: 'skipped' }).where('state', '=', 'pending').execute();
+    await trx
+      .updateTable('destination_items')
+      .where('workspace_id', '=', workspaceId)
+      .where('destination_id', '=', id)
+      .set({ state: 'skipped' })
+      .where('state', '=', 'pending')
+      .execute();
     await auditTransition(trx, ref, { state: 'canceled', reason: 'user_canceled' }, attemptId);
     return 'canceled';
   }
 
-  const planned = retry('interrupted_safe', 'interrupted', {
+  return await reapUnsent(deps, trx, { ref, dest }, attemptId);
+}
+
+async function reapUnsent(
+  deps: SweepDeps,
+  trx: TenantDb,
+  { ref, dest }: Locked,
+  attemptId: string,
+): Promise<'retry' | 'failed'> {
+  const { workspaceId, id } = ref;
+  const later = await currentLaterItem(trx, { workspaceId, id });
+  const deadline =
+    dest.deadline_at === null || later !== undefined ? null : dest.deadline_at.getTime();
+  const retried = retry('interrupted_safe', 'interrupted', {
     afterPublic: false,
     attemptCount: dest.attempt_count,
-    deadlineAt: Temporal.Instant.fromEpochMilliseconds(dest.deadline_at.getTime()),
+    deadlineAt: deadline === null ? null : Temporal.Instant.fromEpochMilliseconds(deadline),
     now: deps.now(),
     random: deps.randomInt,
     asyncElapsedMs: null,
     asyncGiveUpAfterMs: null,
   });
+  const planned =
+    retried.state === 'failed'
+      ? { ...retried, reason: failedReason(retried.reason, later) }
+      : retried;
   await transition(trx, ref, {
     state: planned.state,
     reason: planned.reason,
@@ -193,8 +213,17 @@ async function reap(
     await enqueuePublish(trx, { workspaceId, id }, planned.runAt);
     return 'retry';
   }
-  await items.set({ state: 'failed' }).where('state', '=', 'sending').execute();
-  await items.set({ state: 'skipped' }).where('state', '=', 'pending').execute();
+  if (later === undefined) {
+    await trx
+      .updateTable('destination_items')
+      .set({ state: 'failed' })
+      .where('workspace_id', '=', workspaceId)
+      .where('destination_id', '=', id)
+      .where('state', '=', 'sending')
+      .execute();
+  } else {
+    await failLaterItem(trx, { workspaceId, id }, later);
+  }
   await auditTransition(trx, ref, planned, attemptId);
   return 'failed';
 }

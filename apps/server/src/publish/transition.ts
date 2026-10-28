@@ -54,6 +54,23 @@ export async function transition(
   if (result.numUpdatedRows !== 1n) throw new Error('destination changed under its lock');
 }
 
+async function failedItemPosition(
+  trx: TenantDb,
+  ref: DestinationRef,
+  reason: StateReason | null,
+): Promise<{ failed_item_position?: number }> {
+  if (reason !== 'thread_incomplete') return {};
+  const row = await trx
+    .selectFrom('destination_items')
+    .select('position')
+    .where('workspace_id', '=', ref.workspaceId)
+    .where('destination_id', '=', ref.id)
+    .where('state', '=', 'failed')
+    .orderBy('position')
+    .executeTakeFirst();
+  return row === undefined ? {} : { failed_item_position: row.position };
+}
+
 export async function auditTransition(
   trx: TenantDb,
   ref: DestinationRef,
@@ -97,6 +114,7 @@ export async function auditTransition(
       remote_id: row.remote_id,
       remote_url: row.remote_url,
       attempt_id: attemptId,
+      ...(await failedItemPosition(trx, ref, reason)),
     });
     await writeWebhookEvent(trx, event);
     await notifyFor(trx, event);

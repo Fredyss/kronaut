@@ -14,7 +14,13 @@ import {
   scheduled,
 } from '../posts/testing.ts';
 
-export type Needed = 'failed' | 'blocked' | 'unconfirmed' | 'awaiting_manual' | 'published';
+export type Needed =
+  | 'failed'
+  | 'blocked'
+  | 'unconfirmed'
+  | 'awaiting_manual'
+  | 'published'
+  | 'chain_next';
 
 const STEPS: Record<Needed, readonly string[]> = {
   failed: [`state = 'failed', state_reason = 'permanent_error'`],
@@ -26,6 +32,12 @@ const STEPS: Record<Needed, readonly string[]> = {
     `state = 'verifying', state_reason = 'ambiguous_response', lease_until = null,
      claimed_attempt_id = null`,
     `state = 'unconfirmed', state_reason = 'ambiguous_response'`,
+  ],
+  chain_next: [
+    `state = 'publishing', state_reason = null, lease_until = now() + interval '2 minutes',
+     claimed_attempt_id = gen_random_uuid()`,
+    `state = 'retry_wait', state_reason = 'chain_next', lease_until = null,
+     run_at = now() + interval '1 hour'`,
   ],
   published: [
     `state = 'publishing', state_reason = null, lease_until = now() + interval '2 minutes',

@@ -1,6 +1,9 @@
 import type { Temporal } from 'temporal-polyfill';
 import type * as z from 'zod';
+import type { MediaLimits } from './media-limits.ts';
 import type { RateLimitScope } from './provider-error.ts';
+
+export type { ImageLimits, MediaLimits, Ratio, VideoLimits } from './media-limits.ts';
 
 export type StepEffect = 'none' | 'private' | 'public';
 export type VerifyMode =
@@ -31,49 +34,10 @@ export type PreviewArchetype = (typeof PREVIEW_ARCHETYPES)[number];
 export type CredentialKind = 'oauth' | 'page_token' | 'app_password' | 'bot_token';
 export type ItemRole = 'main' | 'thread' | 'comment';
 
-export interface Ratio {
-  readonly width: number;
-  readonly height: number;
-}
-
 export interface TextLimit {
   readonly counting: TextCounting;
   readonly max: number;
   readonly urlWeight?: number;
-}
-
-export interface ImageLimits {
-  readonly mimes: readonly string[];
-  readonly maxBytes: number;
-  readonly minWidth?: number;
-  readonly maxWidth?: number;
-  readonly minAspect?: Ratio;
-  readonly maxAspect?: Ratio;
-}
-
-export interface VideoLimits {
-  readonly mimes: readonly string[];
-  readonly maxBytes: number;
-  readonly minDurationMs: number;
-  readonly maxDurationMs: number;
-  readonly minAspect?: Ratio;
-  readonly maxAspect?: Ratio;
-  readonly maxFrameRate?: number;
-  readonly maxPixels?: number;
-}
-
-export interface MediaLimits {
-  readonly minCount: number;
-  readonly maxCount: number;
-  readonly image?: ImageLimits;
-  readonly video?: VideoLimits;
-  readonly mixed: boolean;
-  readonly altText: {
-    readonly supported: boolean;
-    readonly required: boolean;
-    readonly maxLength: number;
-  };
-  readonly aiLabel: boolean;
 }
 
 export interface PostStep {
@@ -94,6 +58,8 @@ export interface PostTypeSpec {
   readonly maxLinks?: number;
   readonly media: MediaLimits;
   readonly async?: AsyncLimits;
+  readonly thread?: { readonly maxItems: number; readonly media: MediaLimits };
+  readonly comment?: { readonly text: readonly TextLimit[]; readonly steps: readonly PostStep[] };
 }
 
 export interface RateLimitSpec {
@@ -216,6 +182,15 @@ export interface PublishItem {
 
 export type ProviderState = Readonly<Record<string, unknown>>;
 
+export type ItemAnchor = Readonly<Record<string, string>>;
+
+export interface ChainLink {
+  readonly position: number;
+  readonly role: ItemRole;
+  readonly remoteId: string;
+  readonly anchor?: ItemAnchor;
+}
+
 export interface PublishContext extends BaseContext {
   readonly media: {
     signedUrl(mediaId: string): Promise<string>;
@@ -239,15 +214,26 @@ export interface PublishInput<C, S> {
   readonly app: ProviderApp;
   readonly settings: S;
   readonly items: readonly PublishItem[];
+  readonly chain?: readonly ChainLink[];
   readonly state: ProviderState;
 }
 
 export type PublishOutcome =
-  | { readonly kind: 'published'; readonly remoteId: string; readonly url?: string }
+  | {
+      readonly kind: 'published';
+      readonly remoteId: string;
+      readonly url?: string;
+      readonly anchor?: ItemAnchor;
+    }
   | { readonly kind: 'pending'; readonly pollAfterMs: number };
 
 export type VerifyOutcome =
-  | { readonly kind: 'found'; readonly remoteId: string; readonly url?: string }
+  | {
+      readonly kind: 'found';
+      readonly remoteId: string;
+      readonly url?: string;
+      readonly anchor?: ItemAnchor;
+    }
   | { readonly kind: 'absent' }
   | { readonly kind: 'inconclusive' };
 

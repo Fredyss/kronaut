@@ -293,6 +293,7 @@ export interface DeletionReceipts {
 }
 
 export interface DestinationItems {
+  anchor: Json | null;
   confirmed_at: Timestamp | null;
   destination_id: string;
   position: number;
@@ -643,6 +644,7 @@ export interface ProviderApps {
 }
 
 export interface PublishAttempts {
+  anchor: Json | null;
   attempt_no: number;
   counted: Generated<boolean>;
   created_at: Generated<Timestamp>;

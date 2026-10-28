@@ -1,4 +1,4 @@
-import type { ProviderState, PublishContext } from '@kronaut/core';
+import type { ItemAnchor, ProviderState, PublishContext } from '@kronaut/core';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import { sql } from 'kysely';
 import { createBaseContext, PROVIDER_EGRESS } from '../providers.ts';
@@ -45,6 +45,19 @@ function verifyContext(deps: PublishDeps, run: VerifyRun, call: Call): PublishCo
   };
 }
 
+function found(outcome: {
+  readonly remoteId: string;
+  readonly url?: string;
+  readonly anchor?: ItemAnchor;
+}): Probed {
+  return {
+    kind: 'found',
+    remoteId: outcome.remoteId,
+    ...(outcome.url === undefined ? {} : { url: outcome.url }),
+    ...(outcome.anchor === undefined ? {} : { anchor: outcome.anchor }),
+  };
+}
+
 export async function probe(deps: PublishDeps, run: VerifyRun): Promise<Probed> {
   if (run.target.kind === 'skip') return run.target.probed;
   const { call } = run.target;
@@ -54,21 +67,13 @@ export async function probe(deps: PublishDeps, run: VerifyRun): Promise<Probed> 
     if (run.poll && runtime.poll !== undefined) {
       const outcome = await runtime.poll(ctx, call.input);
       return outcome.kind === 'published'
-        ? {
-            kind: 'found',
-            remoteId: outcome.remoteId,
-            ...(outcome.url === undefined ? {} : { url: outcome.url }),
-          }
+        ? found(outcome)
         : { kind: 'pending', pollAfterMs: outcome.pollAfterMs };
     }
     if (runtime.verify === undefined) return inconclusive('verify_unsupported');
     const outcome = await runtime.verify(ctx, call.input);
     if (outcome.kind !== 'found') return { kind: outcome.kind };
-    return {
-      kind: 'found',
-      remoteId: outcome.remoteId,
-      ...(outcome.url === undefined ? {} : { url: outcome.url }),
-    };
+    return found(outcome);
   } catch (err) {
     const fields = errorFields(toProviderFailure(err, 'none').error);
     return inconclusive(fields.errorCode, fields.errorMessage);

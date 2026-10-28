@@ -1,5 +1,12 @@
-import { canonicalizeDoc, DOC_SCHEMA_V, DocError, type DocJson } from '@kronaut/compose';
-import { decodePublicId } from '@kronaut/core';
+import {
+  canonicalizeDoc,
+  DOC_SCHEMA_V,
+  DocError,
+  type DocJson,
+  itemRolesValid,
+  MAX_ITEMS,
+} from '@kronaut/compose';
+import { decodePublicId, type ItemRole } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
@@ -9,6 +16,7 @@ import type { PostRef } from './locks.ts';
 const DOC_MAX_BYTES = 65536;
 
 const ItemInput = z.object({
+  role: z.enum(['main', 'thread', 'comment']).optional(),
   doc: z.record(z.string(), z.unknown()),
   media: z
     .array(z.object({ mediaId: z.string(), altText: z.string().max(1500).nullable().optional() }))
@@ -16,11 +24,13 @@ const ItemInput = z.object({
     .optional(),
 });
 
-export const ItemsInput = z.array(ItemInput).length(1);
+export const ItemsInput = z.array(ItemInput).min(1).max(MAX_ITEMS);
 
 type ItemBody = z.output<typeof ItemInput>;
+type ItemsBody = z.output<typeof ItemsInput>;
 
 export interface ResolvedItem {
+  readonly role: ItemRole;
   readonly doc: DocJson;
   readonly media: readonly { readonly assetId: string; readonly altText: string | null }[];
 }
@@ -85,20 +95,49 @@ async function resolveMedia(
   return media;
 }
 
-export async function resolveItem(
-  resolving: Resolving,
-  item: ItemBody,
-  path: string,
-): Promise<ResolvedItem | null> {
-  const doc = await resolveDoc(resolving, item, path);
-  const media = await resolveMedia(resolving, item, path);
-  return doc === null ? null : { doc, media };
+function roleAt(item: ItemBody, index: number): ItemRole {
+  return item.role ?? (index === 0 ? 'main' : 'thread');
 }
 
-export async function insertItem(
+function checkRoles({ details }: Resolving, items: ItemsBody, path: string): void {
+  const roles = items.map(roleAt);
+  if (!itemRolesValid(roles)) details.push({ path, code: 'invalid_item_roles' });
+  roles.forEach((role, index) => {
+    if (role === 'comment' && (items[index]?.media?.length ?? 0) > 0) {
+      details.push({ path: `${path}.${index}.media`, code: 'media_not_allowed' });
+    }
+  });
+}
+
+export async function resolveItems(
+  resolving: Resolving,
+  items: ItemsBody,
+  path: string,
+): Promise<ResolvedItem[] | null> {
+  checkRoles(resolving, items, path);
+  const resolved: ResolvedItem[] = [];
+  for (const [index, item] of items.entries()) {
+    const at = `${path}.${index}`;
+    const doc = await resolveDoc(resolving, item, at);
+    const media = await resolveMedia(resolving, item, at);
+    if (doc !== null) resolved.push({ role: roleAt(item, index), doc, media });
+  }
+  return resolved.length === items.length ? resolved : null;
+}
+
+export async function insertItems(
+  trx: TenantDb,
+  ref: VariantRef,
+  items: readonly ResolvedItem[],
+): Promise<void> {
+  for (const [position, item] of items.entries()) await insertItem(trx, ref, item, position);
+}
+
+async function insertItem(
   trx: TenantDb,
   { workspaceId, postId, variantId }: VariantRef,
   item: ResolvedItem,
+  position: number,
 ): Promise<void> {
   const { id } = await trx
     .insertInto('variant_items')
@@ -106,8 +145,8 @@ export async function insertItem(
       workspace_id: workspaceId,
       post_id: postId,
       variant_id: variantId,
-      position: 0,
-      role: 'main',
+      position,
+      role: item.role,
       doc: JSON.stringify(item.doc),
       doc_schema_v: DOC_SCHEMA_V,
     })

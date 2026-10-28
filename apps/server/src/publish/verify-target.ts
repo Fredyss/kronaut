@@ -1,5 +1,6 @@
 import type { PostTypeSpec } from '@kronaut/core';
 import type { ProviderEntry } from '../providers.ts';
+import { currentInput, selectItems, stepsFor } from './chain.ts';
 import { prepareInput, publishInput, readResolved } from './input.ts';
 import type { openCheck, VerifyScope } from './verify-lookup.ts';
 import {
@@ -79,14 +80,19 @@ export async function runTarget(
   if (prepared.kind === 'fail') {
     return skip(inconclusive(prepared.code, prepared.message ?? undefined));
   }
+  const current = currentInput(await selectItems(trx, job), prepared.items);
+  if (current === undefined) return skip(inconclusive('item_missing'));
   const input = publishInput({
     destinationId: job.id,
     attemptNo: scope.attempt.attempt_no,
     publishType: dest.publish_type,
     account: scope.account,
     ready: prepared,
+    current,
     state: dest.provider_state,
   });
-  const steps = new Map(postType.steps.map((step) => [step.id, step.effect]));
+  const steps = new Map(
+    stepsFor(postType, current.item.role).map((step) => [step.id, step.effect]),
+  );
   return { kind: 'run', run: { ...base, target: { kind: 'call', call: { entry, steps, input } } } };
 }

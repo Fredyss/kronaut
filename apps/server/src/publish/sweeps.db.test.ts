@@ -230,7 +230,7 @@ describe('publish sweeps', () => {
         correlation_id: attemptId,
       },
     ]);
-    expect((await items(seeded))[0]?.state).toBe('skipped');
+    expect((await items(seeded))[0]?.state).toBe('pending');
     expect(await queuedRunAt(seeded)).toBeUndefined();
   });
 

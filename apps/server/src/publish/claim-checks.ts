@@ -3,6 +3,7 @@ import type { DestinationState, StateReason } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { ProviderEntry } from '../providers.ts';
 import { contentHashInput, type ResolvedDestination } from '../snapshot.ts';
+import { currentLaterItem, failedReason, failLaterItem } from './chain-step.ts';
 import type { ClaimResult, ClaimScope } from './claim.ts';
 import { prepareInput, type Ready, readResolved } from './input.ts';
 import { authorizeScheduler } from './principal.ts';
@@ -48,11 +49,16 @@ export interface Inputs {
 async function settle(
   scope: ClaimScope,
   state: DestinationState,
-  reason: StateReason | null,
+  planned: StateReason | null,
   set: DestinationUpdate = {},
 ): Promise<ClaimResult> {
-  await transition(scope.trx, scope.ref, { state, reason, set });
-  await auditTransition(scope.trx, scope.ref, { state, reason }, null);
+  const { trx, job, dest } = scope;
+  const later =
+    state === 'failed' && dest.main_confirmed ? await currentLaterItem(trx, job) : undefined;
+  const reason = failedReason(planned, later);
+  await transition(trx, scope.ref, { state, reason, set });
+  if (later !== undefined) await failLaterItem(trx, job, later);
+  await auditTransition(trx, scope.ref, { state, reason }, null);
   return { kind: 'settled', state };
 }
 
@@ -66,7 +72,7 @@ function fail(scope: ClaimScope, code: string, message: string | null = null) {
 export async function checkAccess(scope: ClaimScope): Promise<ClaimResult | Access> {
   const { deps, trx, job, post, dest } = scope;
   if (dest.delivery_mode === 'reminder') return settle(scope, 'awaiting_manual', null);
-  if (dest.late) return settle(scope, 'failed', 'late_window_exceeded');
+  if (dest.late && !dest.main_confirmed) return settle(scope, 'failed', 'late_window_exceeded');
 
   const account = await selectAccount(trx, job.workspaceId, dest.social_account_id);
   const accountBlock = ACCOUNT_BLOCKS[account.status];

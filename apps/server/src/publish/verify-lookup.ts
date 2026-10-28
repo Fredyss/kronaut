@@ -6,6 +6,7 @@ import type { Temporal } from 'temporal-polyfill';
 import type { DestinationJob } from '../jobs.ts';
 import { PROVIDER_EGRESS } from '../providers.ts';
 import { applyPlan, type PlanContext } from './apply.ts';
+import { currentItem, selectItems } from './chain.ts';
 import { lockPost } from './lock.ts';
 import { unconfirmedIfBlocked } from './plan.ts';
 import type { PublishDeps } from './task.ts';
@@ -38,6 +39,11 @@ function selectVerifying(trx: TenantDb, job: DestinationJob) {
       'claimed_attempt_id',
       'provider_state',
       sql<boolean>`run_at is null or run_at <= now()`.as('due'),
+      sql<boolean>`exists (
+        select 1 from destination_items i
+         where i.workspace_id = post_destinations.workspace_id
+           and i.destination_id = post_destinations.id
+           and i.position = 0 and i.state = 'confirmed')`.as('main_confirmed'),
       sql<boolean>`instance_paused()`.as('paused'),
     ])
     .where('workspace_id', '=', job.workspaceId)
@@ -53,7 +59,7 @@ interface Verifying {
   readonly dest: VerifyRow;
   readonly claimedAttemptId: string;
   readonly postVersion: number;
-  readonly deadlineAt: Temporal.Instant;
+  readonly deadlineAt: Temporal.Instant | null;
 }
 
 function selectAttempt(trx: TenantDb, workspaceId: string, attemptId: string) {
@@ -67,6 +73,7 @@ function selectAttempt(trx: TenantDb, workspaceId: string, attemptId: string) {
       'retry_after',
       'remote_id',
       'remote_url',
+      'anchor',
       'public_send_at',
       'started_at',
       'finished_at',
@@ -123,7 +130,7 @@ async function lockVerifying(trx: TenantDb, job: DestinationJob): Promise<Verify
     dest,
     claimedAttemptId,
     postVersion,
-    deadlineAt: instant(dest.deadline_at),
+    deadlineAt: dest.main_confirmed ? null : instant(dest.deadline_at),
   };
 }
 
@@ -192,6 +199,7 @@ export async function openCheck(scope: VerifyScope) {
     .where('destination_id', '=', job.id)
     .executeTakeFirst();
   const verifyAttemptId = randomUUID();
+  const current = currentItem(await selectItems(trx, job));
   await trx
     .insertInto('publish_attempts')
     .values({
@@ -203,6 +211,7 @@ export async function openCheck(scope: VerifyScope) {
       worker_id: deps.workerId,
       post_version: scope.postVersion,
       counted: false,
+      item_position: current?.position ?? null,
     })
     .execute();
   const checks = await trx

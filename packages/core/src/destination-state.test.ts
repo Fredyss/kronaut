@@ -57,6 +57,7 @@ const EXPECTED_REASONS: Readonly<Partial<Record<DestinationState, readonly strin
     'provider_processing',
     'absent_verified',
     'auth_refreshed',
+    'chain_next',
   ],
   verifying: [
     'ambiguous_response',
@@ -77,6 +78,7 @@ const EXPECTED_REASONS: Readonly<Partial<Record<DestinationState, readonly strin
     'media_processing_timeout',
     'rate_limit_beyond_deadline',
     'async_give_up',
+    'thread_incomplete',
   ],
   blocked: [
     'account_needs_reauth',
@@ -190,9 +192,9 @@ describe('STATE_REASONS', () => {
     expect(STATE_REASONS[state as DestinationState]).toEqual(reasons);
   });
 
-  it('has 36 reasons in total', () => {
+  it('has 38 reasons in total', () => {
     const total = Object.values(STATE_REASONS).reduce((sum, reasons) => sum + reasons.length, 0);
-    expect(total).toBe(36);
+    expect(total).toBe(38);
   });
 
   it('has unique, snake_case reasons within each state', () => {

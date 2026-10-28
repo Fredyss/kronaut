@@ -24,7 +24,7 @@ export const markPublishedRoute = defineRoute({
   idempotency: true,
   summary: 'Mark a destination published',
   description:
-    'Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Its items stay as they are.',
+    'Records that an unconfirmed or awaiting-manual destination is live, as a manual resolution. Parts not confirmed live are marked skipped, and a main post already live keeps its publish time.',
   tags: ['destinations'],
 });
 
@@ -46,8 +46,15 @@ export function markPublishedRoutes(): BoundRoute[] {
         await transition(trx, destinationRef(workspaceId, postId, row, row.frozen_post_version), {
           state: 'published',
           reason: null,
-          set: { resolution: 'manual', published_at: sql<Date>`now()` },
+          set: { resolution: 'manual', published_at: sql<Date>`coalesce(published_at, now())` },
         });
+        await trx
+          .updateTable('destination_items')
+          .set({ state: 'skipped' })
+          .where('workspace_id', '=', workspaceId)
+          .where('destination_id', '=', row.id)
+          .where('state', 'in', ['pending', 'sending', 'unconfirmed'])
+          .execute();
         await auditResolution(trx, ctx, target, {
           action: 'destination.marked_published',
           row,

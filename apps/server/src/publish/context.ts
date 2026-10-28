@@ -1,6 +1,7 @@
 import type { ProviderState, PublishContext, StepEffect } from '@kronaut/core';
 import { sql } from 'kysely';
 import { createBaseContext } from '../providers.ts';
+import { stepsFor } from './chain.ts';
 import type { Claimed } from './claim.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';
@@ -56,6 +57,7 @@ async function writeAhead(deps: PublishDeps, claimed: Claimed): Promise<Refusal 
         .set({ state: 'sending', send_started_at: sql<Date>`now()` })
         .where('workspace_id', '=', workspaceId)
         .where('destination_id', '=', id)
+        .where('position', '=', claimed.position)
         .where('state', 'in', ['pending', 'sending'])
         .execute();
       return null;
@@ -138,7 +140,7 @@ export function createRunContext(
       read: (mediaId) => deps.media.read(workspaceId, mediaId),
     },
     async step(stepId) {
-      const spec = claimed.postType.steps.find((step) => step.id === stepId);
+      const spec = stepsFor(claimed.postType, claimed.role).find((step) => step.id === stepId);
       if (spec === undefined) throw new Error(`unknown step ${stepId}`);
       if (effect !== 'public') effect = spec.effect;
       if (spec.effect !== 'public') return;
