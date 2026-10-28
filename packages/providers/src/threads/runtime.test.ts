@@ -324,7 +324,7 @@ describe('threads refresh', () => {
 
 describe('threads publishing', () => {
   it('is schedulable and conforms to the provider contract', () => {
-    expect(threadsManifest.postTypes.map((type) => type.delivery)).toEqual(['api']);
+    expect(threadsManifest.postTypes.map((type) => type.delivery)).toEqual(['api', 'api']);
     expect(conformanceProblems(threadsManifest, threadsRuntime)).toEqual([]);
   });
 });

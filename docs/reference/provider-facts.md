@@ -145,9 +145,9 @@ Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 ag
 - **Scopes requested:** `threads_basic,threads_content_publish`.
 - **Testers** (T5). Without App Review, only Threads Testers (App roles > Roles > Add People) can grant permissions; each accepts under Account Settings > Website permissions. The docs describe adding the Threads use case when the app is created, not on an existing app.
 - **Publishing** (T1, T8). Permissions `threads_basic` and `threads_content_publish`.
-  - Create a container: `POST /{threads-user-id}/threads` with `media_type` `TEXT`, `IMAGE` or `CAROUSEL` (`VIDEO` is out of scope). `text` is required for `TEXT` and optional otherwise; `image_url` must be publicly reachable (Kronaut sends a signed media URL). Carousel items carry `is_carousel_item=true`; the carousel container takes `children`, the comma-separated item container ids. The response is `{id}`; ids are kept as strings.
+  - Create a container: `POST /{threads-user-id}/threads` with `media_type` `TEXT`, `IMAGE`, `VIDEO` or `CAROUSEL`. `text` is required for `TEXT` and optional otherwise; `image_url` and `video_url` must be publicly reachable (Kronaut sends a signed media URL). Carousel items carry `is_carousel_item=true`; the carousel container takes `children`, the comma-separated item container ids. The response is `{id}`; ids are kept as strings.
   - Publish: `POST /{threads-user-id}/threads_publish` with `creation_id`, returning `{id}` (for a carousel, the album id). The docs recommend waiting about 30 s after creating a container, so Kronaut returns `pending` for 30 s before its first status read.
-  - Read one post: `GET /{media-id}?fields=id,permalink,timestamp`. List own posts: `GET /{threads-user-id}/threads?fields=id,permalink,text,timestamp,media_type,children&limit=…`. Response `media_type` is `TEXT_POST`, `IMAGE` or `CAROUSEL_ALBUM`. `permalink` can be missing (e.g. copyright-flagged media): the post still counts as published, without a URL.
+  - Read one post: `GET /{media-id}?fields=id,permalink,timestamp`. List own posts: `GET /{threads-user-id}/threads?fields=id,permalink,text,timestamp,media_type,children&limit=…`. Response `media_type` is `TEXT_POST`, `IMAGE`, `VIDEO`, `CAROUSEL_ALBUM`, `AUDIO` or `REPOST_FACADE` (T8). `permalink` can be missing (e.g. copyright-flagged media): the post still counts as published, without a URL.
 - **Container status** (T7). `GET /{container-id}?fields=status,error_message`. `status` is `IN_PROGRESS`, `FINISHED`, `PUBLISHED`, `ERROR` or `EXPIRED` (not published within 24 h). `error_message` values are `UNKNOWN` plus video-only codes (`FAILED_DOWNLOADING_VIDEO`, `INVALID_ASPEC_RATIO`, …). Poll once a minute for at most 5 minutes.
   - Kronaut: `ERROR` fails permanently with the `error_message`, except `UNKNOWN`, which drops the container and creates a new one, as `EXPIRED` does. Verification reads the status: `PUBLISHED` is matched against the recent-posts list on text, `media_type` and the carousel's children count; `FINISHED` more than 2 minutes after the send is `absent`.
   - The error response format is not documented; T1 only names the code `THREADS_API__LINK_LIMIT_EXCEEDED`, so Kronaut looks for that string anywhere in the error body.
@@ -164,9 +164,9 @@ Auth facts verified 2026-10-26 (T3–T6). Publishing facts checked 2026-10-26 ag
 - **Verification.** Publish and delete webhooks (2026-04) can confirm `unconfirmed` posts.
 
 
-Threads video facts checked 2026-10-27 (T1, T2, T7, T9).
-- `POST /{user}/threads {media_type: VIDEO, video_url, text, alt_text}`, poll `status`, then `threads_publish`. Pull only.
-- **Limits** (T2): MOV or MP4, moov atom at the front, no edit lists; H.264 or HEVC, progressive, closed GOP, 4:2:0, 23–60 fps, ≤1920 px wide, aspect 0.01:1–10:1, VBR ≤100 Mbps; AAC ≤48 kHz, mono or stereo, 128 kbps; ≤300 s; ≤1 GB.
+Threads video facts checked 2026-10-27 and re-checked 2026-10-28 (T1, T2, T7, T8, T9).
+- `POST /{user}/threads {media_type: VIDEO, video_url, text, alt_text}`, poll `status`, then `threads_publish`. Pull only. Kronaut publishes one video as the `video` post type, with the same 5-minute polling window as images; carousels with video are out of scope (ADR-0054).
+- **Limits** (T2): MOV or MP4, moov atom at the front, no edit lists; H.264 or HEVC, progressive, closed GOP, 4:2:0, 23–60 fps, ≤1920 px wide, aspect 0.01:1–10:1, VBR ≤100 Mbps; AAC ≤48 kHz, mono or stereo, 128 kbps; longer than 0 s and ≤300 s; ≤1 GB.
 - `alt_text` covers images and videos, ≤1,000 characters (T9). No cover parameter.
 - Video errors in `error_message` (T7): `FAILED_DOWNLOADING_VIDEO`, `FAILED_PROCESSING_AUDIO`, `FAILED_PROCESSING_VIDEO`, `INVALID_ASPEC_RATIO`, `INVALID_BIT_RATE`, `INVALID_DURATION`, `INVALID_FRAME_RATE`, `INVALID_AUDIO_CHANNELS`, `INVALID_AUDIO_CHANNEL_LAYOUT`, `UNKNOWN`.
 - Carousels mix images and videos in 2–20 items (T1).

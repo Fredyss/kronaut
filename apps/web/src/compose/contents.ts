@@ -11,7 +11,7 @@ export interface PickedImage {
 export interface Content {
   readonly doc: Doc;
   readonly images: readonly PickedImage[];
-  readonly video: { readonly id: string } | null;
+  readonly video: { readonly id: string; readonly altText: string } | null;
 }
 
 export interface Contents {

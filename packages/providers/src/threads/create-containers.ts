@@ -47,6 +47,18 @@ async function createChildren(
   return state;
 }
 
+async function videoForm(ctx: PublishContext, { item }: Plan): Promise<Record<string, string>> {
+  const [ref] = item.media;
+  if (ref === undefined) throw new Error('threads video has no media');
+  const alt = ref.altText ?? '';
+  return {
+    media_type: 'VIDEO',
+    video_url: await ctx.media.signedUrl(ref.id),
+    ...textField(item.text),
+    ...(alt === '' ? {} : { alt_text: alt }),
+  };
+}
+
 export async function createContainers(
   ctx: PublishContext,
   input: Input,
@@ -58,7 +70,8 @@ export async function createContainers(
   let state = initial;
   let form: Record<string, string>;
   const [first] = item.media;
-  if (first === undefined) form = { media_type: 'TEXT', text: item.text };
+  if (plan.spec.id === 'video') form = await videoForm(ctx, plan);
+  else if (first === undefined) form = { media_type: 'TEXT', text: item.text };
   else if (item.media.length === 1)
     form = {
       media_type: 'IMAGE',

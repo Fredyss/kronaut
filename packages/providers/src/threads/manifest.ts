@@ -6,6 +6,12 @@ export type ThreadsSettings = z.infer<typeof threadsSettings>;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const POSTS_PER_DAY = 250;
+const STEPS = [
+  { id: 'create_container', effect: 'private' },
+  { id: 'publish_container', effect: 'public' },
+] as const;
+const TEXT = [{ counting: 'threads', max: 500 }] as const;
+const ASYNC = { pollIntervalMs: 60_000, giveUpAfterMs: 5 * 60_000 } as const;
 
 export const threadsManifest: ProviderManifest<ThreadsSettings> = {
   id: 'threads',
@@ -21,11 +27,8 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
     {
       id: 'post',
       delivery: 'api',
-      steps: [
-        { id: 'create_container', effect: 'private' },
-        { id: 'publish_container', effect: 'public' },
-      ],
-      text: [{ counting: 'threads', max: 500 }],
+      steps: STEPS,
+      text: TEXT,
       maxLinks: 5,
       media: {
         minCount: 0,
@@ -35,7 +38,30 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
         altText: { supported: false, required: false, maxLength: 0 },
         aiLabel: false,
       },
-      async: { pollIntervalMs: 60_000, giveUpAfterMs: 5 * 60_000 },
+      async: ASYNC,
+    },
+    {
+      id: 'video',
+      delivery: 'api',
+      steps: STEPS,
+      text: TEXT,
+      maxLinks: 5,
+      media: {
+        minCount: 1,
+        maxCount: 1,
+        video: {
+          mimes: ['video/mp4'],
+          maxBytes: 1_000_000_000,
+          minDurationMs: 1,
+          maxDurationMs: 300_000,
+          minAspect: { width: 1, height: 100 },
+          maxAspect: { width: 10, height: 1 },
+        },
+        mixed: false,
+        altText: { supported: true, required: false, maxLength: 1000 },
+        aiLabel: false,
+      },
+      async: ASYNC,
     },
   ],
   settings: threadsSettings,

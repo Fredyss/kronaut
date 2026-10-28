@@ -243,6 +243,7 @@
   "compose_video_error": "Video sa nepodarilo nahrať.",
   "compose_video_retry": "Skúsiť znova",
   "compose_video_ai_label": "Video je vytvorené pomocou AI",
+  "compose_video_alt_label": "Alternatívny text k videu",
   "compose_video_ai_marked": "Video je v tomto pracovnom priestore označené ako vytvorené pomocou AI a toto označenie sa nedá odstrániť.",
   "compose_video_ai_failed": "Označenie AI sa nepodarilo uložiť.",
   "compose_video_ai_saving": "Ukladá sa označenie AI…",

@@ -34,9 +34,24 @@ const REEL = {
   },
 };
 
+const THREADS_VIDEO = {
+  id: 'video',
+  text: [{ counting: 'threads', max: 500 }],
+  maxLinks: 5,
+  imageAspect: null,
+  video: {
+    mimes: ['video/mp4'],
+    maxBytes: 1_000_000_000,
+    minDurationMs: 1,
+    maxDurationMs: 300_000,
+    aspect: { min: { width: 1, height: 100 }, max: { width: 10, height: 1 } },
+  },
+};
+
 const CHANNELS = [
   channel('acct_bsky', 'bluesky', 'Ada on Bluesky'),
   { ...channel('acct_ig', 'instagram', 'Ada on Instagram'), postTypes: [REEL] },
+  { ...channel('acct_th', 'threads', 'Ada on Threads'), postTypes: [THREADS_VIDEO] },
 ];
 
 function asset(patch: Record<string, unknown> = {}) {
@@ -123,6 +138,24 @@ describe('composer video', () => {
     expect(create?.body).toMatchObject({
       items: [{ media: [{ mediaId: VIDEO_ID }] }],
       destinations: [{ accountId: 'acct_ig', publishType: 'reel' }],
+    });
+    expect(create?.body).not.toHaveProperty(['items', 0, 'media', 0, 'altText']);
+  });
+
+  it('publishes a video to Threads with its trimmed alt text', async () => {
+    const { router, mutations } = await pickVideo();
+    await screen.findByText(/^Ready/);
+    fireEvent.change(screen.getByLabelText('Alt text for the video'), {
+      target: { value: '  A cat on a sofa  ' },
+    });
+    fireEvent.click(screen.getByRole('checkbox', { name: /Ada on Threads/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    const create = mutations().find((c) => c.path === '/v1/workspaces/ws_1/posts');
+    expect(create?.body).toMatchObject({
+      items: [{ media: [{ mediaId: VIDEO_ID, altText: 'A cat on a sofa' }] }],
+      destinations: [{ accountId: 'acct_th', publishType: 'video' }],
     });
   });
 

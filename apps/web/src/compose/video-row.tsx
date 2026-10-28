@@ -1,7 +1,8 @@
-import { Button } from '@kronaut/ui';
+import { Button, Label } from '@kronaut/ui';
 import { useId } from 'react';
 import { useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
+import { MAX_ALT_TEXT } from './media.ts';
 import type { VideoSlot } from './use-media.ts';
 import { isMarked, type VideoPhase } from './use-video.ts';
 import { formatDuration, rejectionText } from './video-text.ts';
@@ -68,6 +69,7 @@ export function VideoRow({
   readonly video: VideoSlot;
   readonly disabled: boolean;
 }) {
+  const altId = useId();
   const aiHintId = useId();
   const { entry } = video;
   const marked = isMarked(entry);
@@ -83,6 +85,19 @@ export function VideoRow({
       <div className="flex min-w-48 flex-1 flex-col gap-2">
         <p className="break-all font-medium text-sm">{entry.file.name}</p>
         <PhaseStatus phase={entry.phase} disabled={disabled} onRetry={video.retry} />
+        <Label htmlFor={altId}>{m.compose_video_alt_label()}</Label>
+        <textarea
+          id={altId}
+          value={video.altText}
+          maxLength={MAX_ALT_TEXT}
+          disabled={disabled}
+          rows={2}
+          onChange={(event) => video.setAlt(event.currentTarget.value)}
+          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring"
+        />
+        <p className="text-muted-foreground text-xs">
+          {m.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
+        </p>
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"

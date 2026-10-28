@@ -306,6 +306,19 @@ describe('channel listing', () => {
             imageAspect: null,
             video: null,
           },
+          {
+            id: 'video',
+            text: [{ counting: 'threads', max: 500 }],
+            maxLinks: 5,
+            imageAspect: null,
+            video: {
+              mimes: ['video/mp4'],
+              maxBytes: 1_000_000_000,
+              minDurationMs: 1,
+              maxDurationMs: 300_000,
+              aspect: { min: { width: 1, height: 100 }, max: { width: 10, height: 1 } },
+            },
+          },
         ],
       },
     ]);
