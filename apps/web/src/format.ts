@@ -16,3 +16,21 @@ export function useWallFormat() {
   const format = new Intl.DateTimeFormat(locale, { ...STYLE, timeZone: 'UTC' });
   return (local: string) => format.format(new Date(`${local}Z`));
 }
+
+export function useDateFormat() {
+  const { locale } = useLocale();
+  const format = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' });
+  return (date: string) => format.format(new Date(`${date}T00:00:00Z`));
+}
+
+export function usePercentFormat() {
+  const { locale } = useLocale();
+  const format = new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 2 });
+  return (pct: number) => format.format(pct / 100);
+}
+
+export function useNumberFormat() {
+  const { locale } = useLocale();
+  const format = new Intl.NumberFormat(locale);
+  return (value: number) => format.format(value);
+}

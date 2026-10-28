@@ -96,6 +96,7 @@ docker compose ps
   ```
 
   It prints a one-time link (`<KRONAUT_PUBLIC_URL>/reset-password#token=…`) that is valid for 15 minutes; open it to set your password. `kronaut user reset-password <email>` issues a new one.
+- **Instance health page (optional):** put your email in `KRONAUT_INSTANCE_ADMINS` in `.env` and restart. Settings → System then shows the publishing SLOs, background jobs, provider incidents and API version sunsets. It is off while the variable is empty.
 
 ## 5. Provider apps
 

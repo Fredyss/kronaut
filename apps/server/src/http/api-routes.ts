@@ -6,6 +6,7 @@ import { profileRoutes } from '../auth/profile.ts';
 import { reauthRoutes } from '../auth/reauth.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { channelRoutes } from '../channels/routes.ts';
+import type { CronTask } from '../cron.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
 import type { MediaSigner } from '../media/access.ts';
 import { libraryRoutes } from '../media/library-routes.ts';
@@ -15,6 +16,7 @@ import { uploadRoutes } from '../media/upload-routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
+import { systemStatusRoutes } from '../system/routes.ts';
 import type { HttpDeps } from './kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import type { BoundRoute } from './types.ts';
@@ -26,6 +28,7 @@ export interface ApiRouteDeps {
   readonly staging: Staging;
   readonly keyring: Keyring;
   readonly providers: ProviderRegistry;
+  readonly cronTasks: readonly CronTask[];
 }
 
 export function apiRoutes({
@@ -35,6 +38,7 @@ export function apiRoutes({
   staging,
   keyring,
   providers,
+  cronTasks,
 }: ApiRouteDeps): BoundRoute[] {
   return [
     ...systemRoutes(http),
@@ -49,6 +53,7 @@ export function apiRoutes({
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
     ...notificationRoutes(),
+    ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({
       db: http.db,
       keys: http.keys,

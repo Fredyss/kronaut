@@ -6,6 +6,7 @@ import { HttpError } from '../http/errors.ts';
 import type { HttpDeps } from '../http/kernel.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { checkPassword, hashPassword, verifyPassword } from '../password.ts';
+import { isInstanceAdmin } from '../system/instance-admins.ts';
 import { recordEvent, requireSession } from './events.ts';
 import { readUser, SESSION_INVALID, UserSchema } from './profile.ts';
 import { passwordBinding, RESET_TOKEN_MAX_LENGTH, verifyResetToken } from './reset-token.ts';
@@ -93,6 +94,7 @@ export const meRoute = defineRoute({
   action: SELF_ACTION,
   response: z.object({
     user: UserSchema,
+    instanceAdmin: z.boolean(),
     workspaces: z.array(
       z.object({ id: z.string(), name: z.string(), role: z.string(), canApprove: z.boolean() }),
     ),
@@ -101,7 +103,7 @@ export const meRoute = defineRoute({
   tags: ['auth'],
 });
 
-export type AuthDeps = Pick<HttpDeps, 'db' | 'keys'>;
+export type AuthDeps = Pick<HttpDeps, 'db' | 'keys' | 'instanceAdmins'>;
 
 function bindLogin(deps: AuthDeps) {
   return bindRoute(loginRoute, async ({ body }, ctx) => {
@@ -208,6 +210,7 @@ function bindMe(deps: AuthDeps) {
     return {
       body: {
         user,
+        instanceAdmin: isInstanceAdmin(deps.instanceAdmins, user.email),
         workspaces: sorted.map((w) => ({
           id: encodePublicId('workspace', w.workspace_id),
           name: w.name,

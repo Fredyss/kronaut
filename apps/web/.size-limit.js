@@ -13,8 +13,8 @@ function shellChunks() {
 
 const LAZY = {
   'en messages JS': ['en', '12 KB'],
-  'sk messages JS': ['sk', '12 KB'],
-  'cs messages JS': ['cs', '12 KB'],
+  'sk messages JS': ['sk', '13 KB'],
+  'cs messages JS': ['cs', '13 KB'],
   'composer route JS': ['compose', '40 KB'],
   'post status route JS': ['post', '40 KB'],
   'calendar route JS': ['calendar', '40 KB'],
@@ -24,6 +24,7 @@ const LAZY = {
   'account settings route JS': ['settings-account', '40 KB'],
   'approval settings route JS': ['settings-approvals', '40 KB'],
   'notification settings route JS': ['settings-notifications', '40 KB'],
+  'system settings route JS': ['settings-system', '40 KB'],
   'notifications panel JS': ['panel', '10 KB'],
   'editor JS': ['editor', '130 KB'],
   'text limits JS': ['text-limits', '5 KB'],

@@ -1,5 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link, Outlet } from '@tanstack/react-router';
+import { meQuery } from '../api.ts';
+import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
+import { canReadSystem } from '../system/status.ts';
 
 const SECTIONS = [
   { to: '/settings/account', label: () => m.settings_account_title() },
@@ -7,11 +11,16 @@ const SECTIONS = [
   { to: '/settings/notifications', label: () => m.notifications_title() },
 ] as const;
 
+const SYSTEM_SECTION = { to: '/settings/system', label: () => m.settings_system_title() } as const;
+
 const SECTION =
   '-mb-px block whitespace-nowrap border-transparent border-b-2 px-3 py-2 text-muted-foreground text-sm hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring md:mb-0 md:rounded-r-md md:border-b-0 md:border-l-2';
 const ACTIVE = { className: 'border-primary font-medium text-foreground md:bg-accent' } as const;
 
 export function SettingsLayout() {
+  const client = useApiClient();
+  const me = useQuery(meQuery(client)).data;
+  const sections = canReadSystem(me) ? [...SECTIONS, SYSTEM_SECTION] : SECTIONS;
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 md:flex-row md:gap-10 md:p-6">
       <div className="flex flex-col gap-4 md:w-48 md:shrink-0">
@@ -21,7 +30,7 @@ export function SettingsLayout() {
           className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
         >
           <ul className="flex border-b md:flex-col md:gap-1 md:border-b-0">
-            {SECTIONS.map((section) => (
+            {sections.map((section) => (
               <li key={section.to}>
                 <Link to={section.to} className={SECTION} activeProps={ACTIVE}>
                   {section.label()}

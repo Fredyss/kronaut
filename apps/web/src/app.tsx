@@ -8,30 +8,20 @@ import {
   lazyRouteComponent,
   Outlet,
   type RouterHistory,
-  RouterProvider,
   redirect,
 } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
 import { isUnauthenticated, ME_KEY, meQuery } from './api.ts';
 import { calendarSearch } from './calendar-search.ts';
 import { composeSearch } from './compose-search.ts';
-import { ApiClientContext, LocaleContext } from './context.ts';
-import {
-  applyLocale,
-  baseLocale,
-  browserLanguages,
-  isLoaded,
-  type Locale,
-  loadLocale,
-  m,
-  pickLocale,
-} from './i18n.ts';
-import { useLocaleChoice } from './locale-choice.ts';
+import { ApiClientContext } from './context.ts';
+import { browserLanguages, loadLocale, m, pickLocale } from './i18n.ts';
+import { LocaleRoot } from './locale-root.tsx';
 import { ChannelsPage, type ChannelsSearch } from './routes/channels.tsx';
 import { LoginPage, type LoginSearch } from './routes/login.tsx';
 import { NotFoundPage } from './routes/not-found.tsx';
 import { ResetPasswordPage } from './routes/reset-password.tsx';
 import { AppShell } from './routes/shell.tsx';
+import { canReadSystem } from './system/status.ts';
 
 export interface RouterContext {
   readonly queryClient: QueryClient;
@@ -175,6 +165,18 @@ const notificationSettingsRoute = createRoute({
   ),
 });
 
+const systemSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'system',
+  beforeLoad: async ({ context }) => {
+    const me = await context.queryClient.ensureQueryData(meQuery(context.client));
+    if (!canReadSystem(me)) {
+      throw redirect({ to: '/settings/account', replace: true });
+    }
+  },
+  component: lazyRouteComponent(() => import('./routes/settings-system.tsx'), 'SystemSettingsPage'),
+});
+
 const postRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/posts/$postId',
@@ -196,6 +198,7 @@ const routeTree = rootRoute.addChildren([
       accountSettingsRoute,
       approvalSettingsRoute,
       notificationSettingsRoute,
+      systemSettingsRoute,
     ]),
   ]),
 ]);
@@ -253,37 +256,6 @@ interface AppProps {
   readonly router: AppRouter;
   readonly queryClient: QueryClient;
   readonly client: Client;
-}
-
-function LocaleRoot({ router, client }: Omit<AppProps, 'queryClient'>) {
-  const { wanted, choose } = useLocaleChoice(client);
-  const [locale, setLocale] = useState<Locale | null>(null);
-  if (locale !== wanted && isLoaded(wanted)) setLocale(wanted);
-  useEffect(() => {
-    if (isLoaded(wanted)) return;
-    let live = true;
-    loadLocale(wanted).then(
-      () => {
-        if (live) setLocale(wanted);
-      },
-      () => {
-        if (live) setLocale((current) => current ?? baseLocale);
-      },
-    );
-    return () => {
-      live = false;
-    };
-  }, [wanted]);
-  useEffect(() => {
-    if (locale !== null) document.documentElement.lang = locale;
-  }, [locale]);
-  if (locale === null) return null;
-  applyLocale(locale);
-  return (
-    <LocaleContext value={{ locale, choose }}>
-      <RouterProvider key={locale} router={router} />
-    </LocaleContext>
-  );
 }
 
 export function App({ router, queryClient, client }: AppProps) {

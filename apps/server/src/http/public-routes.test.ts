@@ -58,6 +58,7 @@ const routes: BoundRoute[] = [
     http: deps,
     store: createLocalStore('/nonexistent'),
     signer: { sign: () => 'http://localhost/' },
+    cronTasks: [],
     staging: createStaging('/nonexistent'),
     keyring: createKeyring(new Map([[1, randomBytes(32)]])),
     providers: createProviderRegistry([], []),

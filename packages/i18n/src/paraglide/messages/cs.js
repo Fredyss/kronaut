@@ -476,9 +476,47 @@
 /** @typedef {{}} Settings_SaveInputs */
 /** @typedef {{}} Settings_SavedInputs */
 /** @typedef {{}} Settings_SavingInputs */
+/** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_TitleInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} System_Api_CriticalInputs */
+/** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
+/** @typedef {{}} System_Api_EndedInputs */
+/** @typedef {{}} System_Api_No_SunsetInputs */
+/** @typedef {{ date: NonNullable<unknown> }} System_Api_SunsetInputs */
+/** @typedef {{}} System_Api_TitleInputs */
+/** @typedef {{ version: NonNullable<unknown> }} System_Api_VersionInputs */
+/** @typedef {{}} System_Api_WarnInputs */
+/** @typedef {{ duration: NonNullable<unknown> }} System_Cron_DurationInputs */
+/** @typedef {{}} System_Cron_FailedInputs */
+/** @typedef {{ when: NonNullable<unknown> }} System_Cron_Last_RunInputs */
+/** @typedef {{}} System_Cron_NeverInputs */
+/** @typedef {{}} System_Cron_RunningInputs */
+/** @typedef {{}} System_Cron_StaleInputs */
+/** @typedef {{}} System_Cron_TitleInputs */
+/** @typedef {{}} System_Incident_App_Credentials_InvalidInputs */
+/** @typedef {{}} System_Incident_App_SuspendedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} System_Incident_OccurrencesInputs */
+/** @typedef {{}} System_Incident_OpenInputs */
+/** @typedef {{}} System_Incident_Provider_OutageInputs */
+/** @typedef {{}} System_Incident_Rate_Limited_AppInputs */
+/** @typedef {{ when: NonNullable<unknown> }} System_Incident_ResolvedInputs */
+/** @typedef {{ first: NonNullable<unknown>, last: NonNullable<unknown> }} System_Incident_SeenInputs */
+/** @typedef {{}} System_Incident_Tier_Not_EnrolledInputs */
+/** @typedef {{}} System_Incidents_EmptyInputs */
+/** @typedef {{}} System_Incidents_TitleInputs */
+/** @typedef {{}} System_No_DataInputs */
+/** @typedef {{}} System_OkInputs */
+/** @typedef {{}} System_Slo_DayInputs */
+/** @typedef {{}} System_Slo_DuplicatesInputs */
+/** @typedef {{}} System_Slo_On_TimeInputs */
+/** @typedef {{}} System_Slo_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} System_Slo_TotalInputs */
+/** @typedef {{}} System_Slo_UnconfirmedInputs */
+/** @typedef {{}} System_Slo_WeekInputs */
+/** @typedef {{}} System_Target_MetInputs */
+/** @typedef {{}} System_Target_MissedInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
@@ -2470,6 +2508,10 @@ export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => Loc
 	return /** @type {LocalizedString} */ (`Ukládá se…`)
 };
 
+export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Systém`)
+};
+
 export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vzhled`)
 };
@@ -2480,6 +2522,166 @@ export const settings_title = /** @type {(inputs: Settings_TitleInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Povolený posun po schválení (v minutách)`)
+};
+
+export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aktualizujte hned`)
+};
+
+export const system_api_days_left = /** @type {(inputs: System_Api_Days_LeftInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Zbývá ${i?.count} den`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Zbývají ${i?.count} dny`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Zbývá ${i?.count} dne`);
+	return /** @type {LocalizedString} */ (`Zbývá ${i?.count} dní`)
+};
+
+export const system_api_ended = /** @type {(inputs: System_Api_EndedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Podpora už skončila`)
+};
+
+export const system_api_no_sunset = /** @type {(inputs: System_Api_No_SunsetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Konec podpory zatím není oznámen`)
+};
+
+export const system_api_sunset = /** @type {(inputs: System_Api_SunsetInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Podpora končí ${i?.date}`)
+};
+
+export const system_api_title = /** @type {(inputs: System_Api_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Verze API sítí`)
+};
+
+export const system_api_version = /** @type {(inputs: System_Api_VersionInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Verze ${i?.version}`)
+};
+
+export const system_api_warn = /** @type {(inputs: System_Api_WarnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Brzy aktualizujte`)
+};
+
+export const system_cron_duration = /** @type {(inputs: System_Cron_DurationInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Trvala ${i?.duration}`)
+};
+
+export const system_cron_failed = /** @type {(inputs: System_Cron_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Selhala`)
+};
+
+export const system_cron_last_run = /** @type {(inputs: System_Cron_Last_RunInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Naposledy spuštěna ${i?.when}`)
+};
+
+export const system_cron_never = /** @type {(inputs: System_Cron_NeverInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ještě neběžela`)
+};
+
+export const system_cron_running = /** @type {(inputs: System_Cron_RunningInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Běží`)
+};
+
+export const system_cron_stale = /** @type {(inputs: System_Cron_StaleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Má zpoždění`)
+};
+
+export const system_cron_title = /** @type {(inputs: System_Cron_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Úlohy na pozadí`)
+};
+
+export const system_incident_app_credentials_invalid = /** @type {(inputs: System_Incident_App_Credentials_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Síť odmítla přihlašovací údaje aplikace`)
+};
+
+export const system_incident_app_suspended = /** @type {(inputs: System_Incident_App_SuspendedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aplikace je pozastavená`)
+};
+
+export const system_incident_occurrences = /** @type {(inputs: System_Incident_OccurrencesInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} výskyt`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} výskyty`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} výskytu`);
+	return /** @type {LocalizedString} */ (`${i?.count} výskytů`)
+};
+
+export const system_incident_open = /** @type {(inputs: System_Incident_OpenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Otevřený`)
+};
+
+export const system_incident_provider_outage = /** @type {(inputs: System_Incident_Provider_OutageInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Výpadek sítě`)
+};
+
+export const system_incident_rate_limited_app = /** @type {(inputs: System_Incident_Rate_Limited_AppInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aplikace narazila na limit požadavků`)
+};
+
+export const system_incident_resolved = /** @type {(inputs: System_Incident_ResolvedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vyřešen ${i?.when}`)
+};
+
+export const system_incident_seen = /** @type {(inputs: System_Incident_SeenInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Poprvé ${i?.first}, naposledy ${i?.last}`)
+};
+
+export const system_incident_tier_not_enrolled = /** @type {(inputs: System_Incident_Tier_Not_EnrolledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Chybí úroveň přístupu k API`)
+};
+
+export const system_incidents_empty = /** @type {(inputs: System_Incidents_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Za posledních 7 dní nedošlo k žádnému incidentu.`)
+};
+
+export const system_incidents_title = /** @type {(inputs: System_Incidents_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Incidenty sítí`)
+};
+
+export const system_no_data = /** @type {(inputs: System_No_DataInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bez údajů`)
+};
+
+export const system_ok = /** @type {(inputs: System_OkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`V pořádku`)
+};
+
+export const system_slo_day = /** @type {(inputs: System_Slo_DayInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posledních 24 hodin`)
+};
+
+export const system_slo_duplicates = /** @type {(inputs: System_Slo_DuplicatesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zveřejněno dvakrát`)
+};
+
+export const system_slo_on_time = /** @type {(inputs: System_Slo_On_TimeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zveřejněno včas`)
+};
+
+export const system_slo_title = /** @type {(inputs: System_Slo_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cíle zveřejňování`)
+};
+
+export const system_slo_total = /** @type {(inputs: System_Slo_TotalInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} automatický příspěvek`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} automatické příspěvky`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} automatického příspěvku`);
+	return /** @type {LocalizedString} */ (`${i?.count} automatických příspěvků`)
+};
+
+export const system_slo_unconfirmed = /** @type {(inputs: System_Slo_UnconfirmedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nepotvrzené`)
+};
+
+export const system_slo_week = /** @type {(inputs: System_Slo_WeekInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posledních 7 dní`)
+};
+
+export const system_target_met = /** @type {(inputs: System_Target_MetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Splněno`)
+};
+
+export const system_target_missed = /** @type {(inputs: System_Target_MissedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nesplněno`)
 };
 
 export const technical_details = /** @type {(inputs: Technical_DetailsInputs) => LocalizedString} */ () => {

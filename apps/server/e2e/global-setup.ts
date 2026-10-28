@@ -57,6 +57,7 @@ function config(
     workerId: 'e2e-api',
     webDir: WEB_DIR,
     smtp: null,
+    instanceAdmins: [],
   };
 }
 

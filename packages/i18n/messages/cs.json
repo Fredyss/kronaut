@@ -685,5 +685,76 @@
       }
     }
   ],
-  "media_in_use_error": "Soubor ještě používá některý příspěvek, proto ho nejde smazat."
+  "media_in_use_error": "Soubor ještě používá některý příspěvek, proto ho nejde smazat.",
+  "settings_system_title": "Systém",
+  "system_slo_title": "Cíle zveřejňování",
+  "system_slo_day": "Posledních 24 hodin",
+  "system_slo_week": "Posledních 7 dní",
+  "system_slo_on_time": "Zveřejněno včas",
+  "system_slo_duplicates": "Zveřejněno dvakrát",
+  "system_slo_unconfirmed": "Nepotvrzené",
+  "system_slo_total": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} automatický příspěvek",
+        "countPlural=few": "{count} automatické příspěvky",
+        "countPlural=many": "{count} automatického příspěvku",
+        "countPlural=*": "{count} automatických příspěvků"
+      }
+    }
+  ],
+  "system_no_data": "Bez údajů",
+  "system_target_met": "Splněno",
+  "system_target_missed": "Nesplněno",
+  "system_cron_title": "Úlohy na pozadí",
+  "system_ok": "V pořádku",
+  "system_cron_failed": "Selhala",
+  "system_cron_running": "Běží",
+  "system_cron_stale": "Má zpoždění",
+  "system_cron_never": "Ještě neběžela",
+  "system_cron_last_run": "Naposledy spuštěna {when}",
+  "system_cron_duration": "Trvala {duration}",
+  "system_incidents_title": "Incidenty sítí",
+  "system_incidents_empty": "Za posledních 7 dní nedošlo k žádnému incidentu.",
+  "system_incident_open": "Otevřený",
+  "system_incident_resolved": "Vyřešen {when}",
+  "system_incident_seen": "Poprvé {first}, naposledy {last}",
+  "system_incident_occurrences": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} výskyt",
+        "countPlural=few": "{count} výskyty",
+        "countPlural=many": "{count} výskytu",
+        "countPlural=*": "{count} výskytů"
+      }
+    }
+  ],
+  "system_incident_app_credentials_invalid": "Síť odmítla přihlašovací údaje aplikace",
+  "system_incident_app_suspended": "Aplikace je pozastavená",
+  "system_incident_tier_not_enrolled": "Chybí úroveň přístupu k API",
+  "system_incident_rate_limited_app": "Aplikace narazila na limit požadavků",
+  "system_incident_provider_outage": "Výpadek sítě",
+  "system_api_title": "Verze API sítí",
+  "system_api_version": "Verze {version}",
+  "system_api_no_sunset": "Konec podpory zatím není oznámen",
+  "system_api_sunset": "Podpora končí {date}",
+  "system_api_days_left": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Zbývá {count} den",
+        "countPlural=few": "Zbývají {count} dny",
+        "countPlural=many": "Zbývá {count} dne",
+        "countPlural=*": "Zbývá {count} dní"
+      }
+    }
+  ],
+  "system_api_ended": "Podpora už skončila",
+  "system_api_warn": "Brzy aktualizujte",
+  "system_api_critical": "Aktualizujte hned"
 }

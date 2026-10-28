@@ -57,6 +57,7 @@ function config(role: ServerRole, workerId: string, instanceId = INSTANCE_ID): S
     workerId,
     webDir: null,
     smtp: null,
+    instanceAdmins: [],
   };
 }
 

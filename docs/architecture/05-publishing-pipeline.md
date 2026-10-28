@@ -277,6 +277,7 @@ The approval events are written in the transaction that opens or decides the req
 | media GC | daily |
 | retention purge | daily |
 | audit partition maintenance (ADR-0045) | daily |
+| API version sunset alarm (`api_version_sunset`, see [Operations](11-operations.md)) | daily |
 | backups | nightly |
 
 Every run is recorded in `cron_runs`, and `worker_heartbeats` feed `/readyz`.

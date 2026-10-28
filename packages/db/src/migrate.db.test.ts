@@ -19,6 +19,7 @@ const ALL = [
   '0008_media_frame_rate',
   '0009_reply_chains',
   '0010_media_ai_locked',
+  '0011_slo_duplicates',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -107,7 +108,7 @@ describe('migrate', () => {
       url,
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
-    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(rows.map((row) => row.version)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);
   });

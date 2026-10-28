@@ -85,6 +85,7 @@ describe('session self routes', () => {
     expect(me.status).toBe(200);
     expect(await me.json()).toEqual({
       user: { id: encodePublicId('user', userId), displayName: 'Self', email: EMAIL, locale: 'en' },
+      instanceAdmin: false,
       workspaces: [
         {
           id: encodePublicId('workspace', workspaceId),

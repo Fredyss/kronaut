@@ -36,6 +36,7 @@ export const NEVER_GRANTABLE_ACTIONS = [
   'settings:write',
   'billing:manage',
   'posts:unpublish',
+  'instance:read',
 ] as const;
 
 export const WORKSPACE_ACTIONS = [...GRANTABLE_SCOPES, ...NEVER_GRANTABLE_ACTIONS] as const;
