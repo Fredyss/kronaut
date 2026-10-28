@@ -2,6 +2,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { applyPlan, toDate } from './apply.ts';
+import { jsonb } from './chain.ts';
 import type { Claimed } from './claim.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import { type Plan, plan, type RunResult } from './plan.ts';
@@ -25,29 +26,34 @@ interface LockedRow {
   readonly claimed_attempt_id: string | null;
 }
 
+function attemptsOf(trx: TenantDb, claimed: Claimed) {
+  const { workspaceId, id } = claimed.job;
+  return trx
+    .selectFrom('publish_attempts')
+    .select('started_at')
+    .where('workspace_id', '=', workspaceId)
+    .where('destination_id', '=', id)
+    .where((eb) =>
+      claimed.position === 0
+        ? eb.or([eb('item_position', '=', 0), eb('item_position', 'is', null)])
+        : eb('item_position', '=', claimed.position),
+    );
+}
+
 async function asyncElapsedMs(
   trx: TenantDb,
   claimed: Claimed,
   now: Temporal.Instant,
 ): Promise<number | null> {
-  const { workspaceId, id } = claimed.job;
-  const row = await trx
-    .selectFrom('publish_attempts')
-    .select((eb) => eb.fn.min('started_at').as('started_at'))
-    .where('workspace_id', '=', workspaceId)
-    .where('destination_id', '=', id)
-    .where('attempt_no', '>=', (eb) =>
-      eb
-        .selectFrom('publish_attempts')
-        .select((inner) => inner.fn.max('attempt_no').as('n'))
-        .where('workspace_id', '=', workspaceId)
-        .where('destination_id', '=', id)
-        .where('counted', '=', true),
-    )
+  const counted = await attemptsOf(trx, claimed)
+    .where('counted', '=', true)
+    .orderBy('attempt_no', 'desc')
+    .limit(1)
     .executeTakeFirst();
-  const startedAt = row?.started_at;
-  if (startedAt === null || startedAt === undefined) return null;
-  return now.epochMilliseconds - new Date(startedAt).getTime();
+  const row =
+    counted ?? (await attemptsOf(trx, claimed).orderBy('attempt_no').limit(1).executeTakeFirst());
+  if (row === undefined) return null;
+  return now.epochMilliseconds - new Date(row.started_at).getTime();
 }
 
 function honourCancel(planned: Plan): Plan {
@@ -97,6 +103,7 @@ async function recordAttempt(trx: TenantDb, claimed: Claimed, planned: Plan): Pr
       retry_after: planned.retryAfter === undefined ? null : toDate(planned.retryAfter),
       remote_id: planned.remoteId ?? null,
       remote_url: planned.remoteUrl ?? null,
+      anchor: planned.anchor === undefined ? null : jsonb(planned.anchor),
     })
     .where('workspace_id', '=', claimed.job.workspaceId)
     .where('id', '=', claimed.attemptId)

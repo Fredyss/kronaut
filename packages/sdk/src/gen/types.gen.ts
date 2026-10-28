@@ -1341,8 +1341,19 @@ export type PostsCreateData = {
             };
             variant?: number | null;
         }>;
-        items: [
-            {
+        items: Array<{
+            doc: {
+                [key: string]: unknown;
+            };
+            media?: Array<{
+                altText?: string | null;
+                mediaId: string;
+            }>;
+            role?: 'main' | 'thread' | 'comment';
+        }>;
+        title?: string;
+        variants?: Array<{
+            items: Array<{
                 doc: {
                     [key: string]: unknown;
                 };
@@ -1350,21 +1361,8 @@ export type PostsCreateData = {
                     altText?: string | null;
                     mediaId: string;
                 }>;
-            }
-        ];
-        title?: string;
-        variants?: Array<{
-            items: [
-                {
-                    doc: {
-                        [key: string]: unknown;
-                    };
-                    media?: Array<{
-                        altText?: string | null;
-                        mediaId: string;
-                    }>;
-                }
-            ];
+                role?: 'main' | 'thread' | 'comment';
+            }>;
         }>;
     };
     headers: {
@@ -1543,8 +1541,19 @@ export type PostsUpdateData = {
             variant?: number | null;
         }>;
         expectedVersion: number;
-        items?: [
-            {
+        items?: Array<{
+            doc: {
+                [key: string]: unknown;
+            };
+            media?: Array<{
+                altText?: string | null;
+                mediaId: string;
+            }>;
+            role?: 'main' | 'thread' | 'comment';
+        }>;
+        title?: string | null;
+        variants?: Array<{
+            items: Array<{
                 doc: {
                     [key: string]: unknown;
                 };
@@ -1552,21 +1561,8 @@ export type PostsUpdateData = {
                     altText?: string | null;
                     mediaId: string;
                 }>;
-            }
-        ];
-        title?: string | null;
-        variants?: Array<{
-            items: [
-                {
-                    doc: {
-                        [key: string]: unknown;
-                    };
-                    media?: Array<{
-                        altText?: string | null;
-                        mediaId: string;
-                    }>;
-                }
-            ];
+                role?: 'main' | 'thread' | 'comment';
+            }>;
         }>;
     };
     headers: {

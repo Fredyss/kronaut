@@ -30,6 +30,8 @@ type SendBehaviour = Exclude<FakeBehaviour, { kind: 'pending' }>;
 function record(log: FakeCall[], input: PublishInput<unknown, unknown>, events: string[]): void {
   log.push({
     attemptNo: input.attemptNo,
+    positions: input.items.map((item) => item.position),
+    chain: input.chain ?? [],
     state: input.state,
     credentials: input.credentials,
     events,
@@ -79,6 +81,7 @@ async function send(
     kind: 'published',
     remoteId: behaviour.remoteId ?? `fake:${input.destinationId}`,
     ...(behaviour.url === undefined ? {} : { url: behaviour.url }),
+    ...(behaviour.anchor === undefined ? {} : { anchor: behaviour.anchor }),
   };
 }
 

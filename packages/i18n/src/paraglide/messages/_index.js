@@ -374,6 +374,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Reason_Rate_Limit_Beyond_DeadlineInputs */
 /** @typedef {{}} Reason_Refresh_Token_LostInputs */
 /** @typedef {{}} Reason_Restore_QuarantineInputs */
+/** @typedef {{}} Reason_Thread_IncompleteInputs */
 /** @typedef {{}} Reason_Verify_InconclusiveInputs */
 /** @typedef {{}} Reason_Verify_Window_ElapsedInputs */
 /** @typedef {{}} Reset_ConfirmInputs */
@@ -6047,6 +6048,21 @@ export const reason_restore_quarantine = /** @type {((inputs?: Reason_Restore_Qu
 	if (locale === "sk") return __sk.reason_restore_quarantine(inputs)
 	if (locale === "cs") return __cs.reason_restore_quarantine(inputs)
 	return __en.reason_restore_quarantine(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The main post is live, but a reply or comment after it failed." |
+*
+* @param {Reason_Thread_IncompleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const reason_thread_incomplete = /** @type {((inputs?: Reason_Thread_IncompleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Reason_Thread_IncompleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.reason_thread_incomplete(inputs)
+	if (locale === "cs") return __cs.reason_thread_incomplete(inputs)
+	return __en.reason_thread_incomplete(inputs)
 });
 /**
 * | output |

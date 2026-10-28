@@ -22,7 +22,7 @@ Runs against testcontainers Postgres, MSW provider fixtures and a fault-injectin
 | `edit_during_publishing` | 409 |
 | `edit_after_approval` | — |
 | `cancel_before_public_step`, `cancel_after_public_step` | — |
-| `thread_crash_after_part_3` | — |
+| `thread_crash_after_part_3` | the interrupted item is verified, the rest sent once; no item re-sent |
 | `ig_container_expired` | — |
 | `worker_down_3h` | late vs past-deadline |
 | `job_row_deleted` | — |

@@ -7,7 +7,7 @@ import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.t
 import { dequeuePublish } from '../jobs.ts';
 import { transition } from '../publish/finalize.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';
-import { discardPublishProgress } from './destinations.ts';
+import { discardPublishProgress, refuseLive } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { UNFROZEN } from './freeze.ts';
 import {
@@ -58,6 +58,11 @@ export async function unscheduleLocked(
   if (targets.length === 0) {
     throw new HttpError('conflict', 'The post has no scheduled destination.');
   }
+  await refuseLive(
+    trx,
+    workspaceId,
+    targets.map((row) => row.id),
+  );
   await bumpPost(trx, workspaceId, postId, {
     schedule_mode: 'unscheduled',
     schedule_local: null,

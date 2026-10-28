@@ -1,7 +1,10 @@
 import type {
   Account,
+  ChainLink,
   ClientSigningKey,
   IssuedCredentials,
+  ItemAnchor,
+  PostTypeSpec,
   ProviderError,
   ProviderManifest,
   ProviderRuntime,
@@ -30,6 +33,7 @@ export type FakeBehaviour =
       readonly kind: 'publish';
       readonly remoteId?: string;
       readonly url?: string;
+      readonly anchor?: ItemAnchor;
       readonly checkpoint?: ProviderState;
       readonly beforePublic?: FakeHook;
       readonly afterPublic?: FakeHook;
@@ -62,6 +66,8 @@ export interface FakeVerifyConfig {
   readonly poll: boolean;
 }
 
+export type FakeChainConfig = Pick<PostTypeSpec, 'thread' | 'comment'>;
+
 export interface FakeAuthConfig {
   readonly refresh: RefreshKind;
   readonly warnLeadMs: number;
@@ -81,6 +87,8 @@ export interface FakeRefreshCall {
 
 export interface FakeCall {
   readonly attemptNo: number;
+  readonly positions: readonly number[];
+  readonly chain: readonly ChainLink[];
   readonly state: ProviderState;
   readonly credentials: unknown;
   readonly events: string[];
@@ -96,6 +104,7 @@ export interface FakeProvider {
   scriptVerify(...behaviours: FakeVerify[]): void;
   scriptPoll(...behaviours: FakePoll[]): void;
   configure(config: FakeVerifyConfig): void;
+  configureChain(chain: FakeChainConfig): void;
   scriptRefresh(...behaviours: FakeRefresh[]): void;
   configureAuth(config: FakeAuthConfig): void;
 }
@@ -153,8 +162,12 @@ export function fakeProvider(): FakeProvider {
   };
   let config = fakeVerifyDefaults;
   let auth: FakeAuthConfig = fakeManifest.auth;
+  let chain: FakeChainConfig = {};
   const manifest: ProviderManifest = {
     ...fakeManifest,
+    get postTypes() {
+      return fakeManifest.postTypes.map((postType) => ({ ...postType, ...chain }));
+    },
     get auth() {
       return { kind: fakeManifest.auth.kind, refresh: auth.refresh, warnLeadMs: auth.warnLeadMs };
     },
@@ -186,6 +199,9 @@ export function fakeProvider(): FakeProvider {
     },
     scriptPoll: (...behaviours) => {
       q.pollQueue.push(...behaviours);
+    },
+    configureChain: (next) => {
+      chain = next;
     },
     configure: (next) => {
       config = next;

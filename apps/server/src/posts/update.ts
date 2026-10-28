@@ -15,7 +15,7 @@ import {
 } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { type Resolving, unprocessable } from './issues.ts';
-import { ItemsInput, insertItem, type ResolvedItem, resolveItem } from './items.ts';
+import { ItemsInput, insertItems, type ResolvedItem, resolveItems } from './items.ts';
 import { bumpPost, checkVersion, lockCurrent, type PostRef } from './locks.ts';
 import { pathId } from './params.ts';
 import { postUnits } from './units.ts';
@@ -56,8 +56,8 @@ type UpdateBody = z.output<typeof postUpdateRoute.body>;
 
 interface Change {
   readonly body: UpdateBody;
-  readonly item: ResolvedItem | undefined;
-  readonly variants: readonly ResolvedItem[];
+  readonly items: readonly ResolvedItem[] | undefined;
+  readonly variants: readonly (readonly ResolvedItem[])[];
   readonly existing: readonly ExistingDestination[];
   readonly resolved: { readonly destinations: readonly ResolvedDestination[] } | undefined;
 }
@@ -100,18 +100,18 @@ function voidReason(body: UpdateBody, hadVariants: boolean): VoidReason | null {
 async function applyChange(
   trx: TenantDb,
   post: PostRef,
-  { body, item, variants, existing, resolved }: Change,
+  { body, items, variants, existing, resolved }: Change,
 ): Promise<void> {
   const { workspaceId, postId } = post;
   const variantId = await defaultVariant(trx, workspaceId, postId);
   const hadVariants = await hasVariants(trx, post);
-  if (item !== undefined) {
+  if (items !== undefined) {
     await trx
       .deleteFrom('variant_items')
       .where('workspace_id', '=', workspaceId)
       .where('variant_id', '=', variantId)
       .execute();
-    await insertItem(trx, { ...post, variantId }, item);
+    await insertItems(trx, { ...post, variantId }, items);
   }
   if (resolved !== undefined) {
     const variantIds = await insertVariants(trx, post, variants);
@@ -132,7 +132,10 @@ async function applyChange(
   await recordPostSettlement(trx, workspaceId, postId);
 }
 
-async function variantsOf(resolving: Resolving, body: UpdateBody): Promise<ResolvedItem[]> {
+async function variantsOf(
+  resolving: Resolving,
+  body: UpdateBody,
+): Promise<(readonly ResolvedItem[])[]> {
   if (body.destinations !== undefined) {
     return await resolveVariants(resolving, body.variants ?? [], body.destinations);
   }
@@ -159,13 +162,14 @@ export function updateRoutes(deps: PostRouteDeps): BoundRoute[] {
         ctx.authorize('posts:draft', { workspaceId, postId, units });
         checkVersion(locked, body.expectedVersion);
         const existing = await editableDestinations(trx, workspaceId, postId);
-        const [first] = body.items ?? [];
-        const item =
-          first === undefined ? undefined : await resolveItem(resolving, first, 'body.items.0');
+        const items =
+          body.items === undefined
+            ? undefined
+            : await resolveItems(resolving, body.items, 'body.items');
         const variants = await variantsOf(resolving, body);
-        if (item === null || details.length > 0) throw unprocessable(details);
+        if (items === null || details.length > 0) throw unprocessable(details);
 
-        const change = { body, item, variants, existing, resolved };
+        const change = { body, items, variants, existing, resolved };
         await applyChange(trx, { workspaceId, postId }, change);
         return await readPost(trx, workspaceId, postId);
       });

@@ -1,11 +1,16 @@
-import type { PublishInput, VerifyMode } from '@kronaut/core';
+import type { ItemAnchor, PublishInput, VerifyMode } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import type { ProviderEntry } from '../providers.ts';
 import type { PlanContext } from './apply.ts';
 import type { DestinationRef } from './transition.ts';
 
 export type Probed =
-  | { readonly kind: 'found'; readonly remoteId: string; readonly url?: string }
+  | {
+      readonly kind: 'found';
+      readonly remoteId: string;
+      readonly url?: string;
+      readonly anchor?: ItemAnchor;
+    }
   | { readonly kind: 'absent' }
   | { readonly kind: 'pending'; readonly pollAfterMs: number }
   | {
@@ -25,7 +30,7 @@ export interface VerifyRun {
   readonly context: PlanContext;
   readonly claimedAttemptId: string;
   readonly attemptCount: number;
-  readonly deadlineAt: Temporal.Instant;
+  readonly deadlineAt: Temporal.Instant | null;
   readonly mode: VerifyMode | null;
   readonly poll: boolean;
   readonly checks: number;

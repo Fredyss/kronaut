@@ -24,7 +24,7 @@
 - queued = scheduled ∧ `run_at ≤ now`
 - needs action = unconfirmed ∪ failed ∪ blocked ∪ awaiting_manual
 
-**`state_reason` codes** (FK to `destination_state_reasons`; the seed rows in `packages/db/schema/v1.sql` are the list):
+**`state_reason` codes** (FK to `destination_state_reasons`; the seed rows in `packages/db/schema/v1.sql`, plus migration `0009_reply_chains`, are the list):
 
 | State | Reasons |
 |---|---|
@@ -67,7 +67,7 @@
      | `validate()` errors not in `preflight_acked_codes` | `failed/permanent_error`, `last_error_code = 'preflight_invalid'` |
      | all pass | CAS to `publishing` |
    - A claim that reaches `publishing` inserts a `publish_attempts` row and increments `attempt_count`. A re-claim after `retry_wait/provider_processing` is recorded with `counted = false` and does not increment it. A lease the reaper expired still counts, so a post that keeps crashing workers runs out of attempts.
-   - On the first claim, every publish item gets a `destination_items` row (`rendered_text`, `rendered_sha256`); finalize marks it `confirmed` with its remote id, and a `sending` item becomes `failed` when the destination fails or blocks and `unconfirmed` when it ends `unconfirmed`. A later claim resets every item that is not `confirmed` to `pending`.
+   - On the first claim, every publish item gets a `destination_items` row (`rendered_text`, `rendered_sha256`). A `thread` item on a post type without `thread`, or past its `thread.maxItems`, and a `comment` item on a post type without `comment`, are frozen as `skipped`. Each claim sends one item: the lowest position that is not `confirmed` or `skipped` (see [Reply chains](#reply-chains)). Finalize marks it `confirmed` with its remote id, and a `sending` item becomes `failed` when the destination fails or blocks and `unconfirmed` when it ends `unconfirmed`. A later claim, and send again, reset `sending`, `unconfirmed` and `failed` items to `pending`; `skipped` stays.
 3. **Write-ahead (ADR-0008):** commit `publish_attempts.public_send_at` **before** any step whose effect is `public`. One transaction fences it: it locks the post, then the destination `WHERE state = 'publishing' AND claimed_attempt_id = $me AND lease_until > now() AND cancel_requested_at IS NULL`, and sets `public_send_at` **only if that matched one row**. On zero rows no marker is written, the step is **not sent**, and the worker re-reads the destination:
    - `cancel_requested_at` set (still `publishing` with my attempt) → finalize `canceled/user_canceled` (allowed, since `public_send_at` is unset). Finalize also re-reads `cancel_requested_at`: a run that ends in `retry_wait`, `failed` or `blocked` without a `public_send_at` becomes `canceled/user_canceled` (side effects still apply);
    - still `publishing` with my attempt but the lease expired → return; the reaper finds no marker and moves it to `retry_wait/interrupted_safe`;
@@ -184,7 +184,13 @@ The engine publishes a destination's items one at a time, in position order, one
 - `pending | sending | confirmed | unconfirmed | failed | skipped`
 - Resume continues from the last confirmed item and never re-sends a confirmed part.
 - An unconfirmed middle item stops the chain and moves the destination to `unconfirmed`.
-- A later item that fails permanently moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
+- A later item that fails moves the destination to `failed/thread_incomplete`; it keeps the main post's link, and send again resumes from the first unconfirmed item.
+- Each claim sends one item, with `publish_attempts.item_position` set and only that item marked `sending` at its write-ahead. `input.items` holds that item, `input.chain` the confirmed items before it (`{position, role, remoteId, anchor}`), and `input.state` the destination's `provider_state`. A `comment` item takes its step effects from `comment.steps`.
+- A confirmed item records its `remote_id`, `remote_url`, `anchor`, `reply_to_remote_id` (the previous confirmed item's remote id; null for `main`) and the destination's `provider_state`, which is then reset to `{}`. Confirming `main` sets the destination's `remote_id`, `remote_url` and `published_at`; later items never overwrite them.
+- While items are left, the destination goes to `retry_wait/chain_next` with `run_at = now` and `attempt_count = 0`, and is enqueued at once; the next claim is counted, so each item gets at most 6 sends. A `pending` item's give-up clock starts at that item's latest counted attempt. After the last item it goes to `published`. A late confirmation on an `unconfirmed` destination confirms the item and leaves the destination `unconfirmed`, since `unconfirmed → retry_wait` is not a transition.
+- Once `main` is confirmed, neither the claim's late check nor `deadline_at` in retry planning (publish, verify, reaper) applies: the rest of the chain runs past the deadline.
+- Any `failed` outcome on a later item, including `attempts_exhausted` and a claim-time failure such as `preflight_invalid`, marks that item `failed` and gives `failed/thread_incomplete`; the items after it stay `pending`. The `destination.failed` payload then carries `failed_item_position`. Everything else plans as for a single post.
+- A destination with a `confirmed` item is live. Unschedule, and an edit that would thaw or remove it, answer 409 `destination_live`, so progress is never discarded and main is never re-sent; cancel still stops the rest of the chain. Marking it published by hand turns its open items `skipped` and keeps the main post's `published_at`.
 - A cancel after the main item is live stops the chain. An item already past its public step settles first. If that item ends `unconfirmed`, the destination goes to `unconfirmed` and its later items stay `pending` until the user resolves it. Otherwise the destination ends `canceled/user_canceled`, keeps the main post's link, and its pending items become `skipped`.
 
 ## Partial success
@@ -221,7 +227,7 @@ Events are written in the transaction that makes the change. Each event writes o
 
 | Event | Written when | `data` | `sequence` | `dedupe_key` |
 |---|---|---|---|---|
-| `destination.published` / `failed` / `unconfirmed` / `blocked` / `awaiting_manual` | a worker transition into that state (with its audit row) | `destination_id`, `post_id`, `post_version`, `social_account_id`, `provider`, `state`, `reason`, `remote_id`, `remote_url`, `attempt_id` | destination version after the transition | `destination.<id>.<version>` |
+| `destination.published` / `failed` / `unconfirmed` / `blocked` / `awaiting_manual` | a worker transition into that state (with its audit row) | `destination_id`, `post_id`, `post_version`, `social_account_id`, `provider`, `state`, `reason`, `remote_id`, `remote_url`, `attempt_id`; `failed_item_position` (integer) on `failed/thread_incomplete` | destination version after the transition | `destination.<id>.<version>` |
 | `post.completed` | `posts.settle_seq` advanced: checked after every worker transition and in every post route that changes destinations | `post_id`, `summary`, `published`, `failed`, `incomplete`, `canceled` counts | `settle_seq` | `post.completed.<postId>.<settle_seq>` |
 | `channel.needs_reauth` | `flagAccount` flips the account to `needs_reauth` | `social_account_id`, `provider`, `reason` | — | `channel.needs_reauth.<accountId>.<status_changed_at>` |
 | `channel.expiring` | the credential refresh cron opens an `auth_expiring` incident (see Token refresh) | `social_account_id`, `provider`, `expires_at` (RFC 3339 UTC) | — | `channel.expiring.<accountId>.<incident id>` |

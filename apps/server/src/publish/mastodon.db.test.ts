@@ -113,6 +113,18 @@ async function mastodonAccount(app: string, capabilities: unknown = {}): Promise
   return id;
 }
 
+async function mainItemState(seeded: Seeded) {
+  const item = await owner.withActor(SYSTEM, (trx) =>
+    trx
+      .selectFrom('destination_items')
+      .select('provider_state')
+      .where('destination_id', '=', seeded.destinationId)
+      .where('position', '=', 0)
+      .executeTakeFirstOrThrow(),
+  );
+  return item.provider_state;
+}
+
 function destination(seeded: Seeded) {
   return owner.withActor(SYSTEM, (trx) =>
     trx
@@ -195,7 +207,11 @@ describe('mastodon publishing end to end', () => {
       state: 'published',
       remote_id: '113000000000000001',
       remote_url: `${ORIGIN}/@alice/113000000000000001`,
-      provider_state: { media: expect.any(Object), status: { id: '113000000000000001' } },
+      provider_state: {},
+    });
+    expect(await mainItemState(seeded)).toMatchObject({
+      media: expect.any(Object),
+      status: { id: '113000000000000001' },
     });
     const post = calls.find((call) => call.url.endsWith('/api/v1/statuses'));
     expect(post?.headers['idempotency-key']).toMatch(/^[A-Za-z0-9_-]{43}$/);

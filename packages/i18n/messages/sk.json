@@ -438,6 +438,7 @@
   "reason_media_processing_timeout": "Sieť spracúvala obrázky príliš dlho.",
   "reason_rate_limit_beyond_deadline": "Obmedzenie siete trvalo dlhšie, než sa dalo čakať.",
   "reason_async_give_up": "Sieť uverejňovanie nedokončila.",
+  "reason_thread_incomplete": "Hlavný príspevok je už uverejnený, no odpoveď alebo komentár pod ním zlyhali.",
   "reason_account_needs_reauth": "Kanál treba znova pripojiť.",
   "reason_account_disconnected": "Kanál je odpojený.",
   "reason_account_disabled": "Kanál je vypnutý.",

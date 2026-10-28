@@ -36,6 +36,7 @@ export interface DestinationEventData {
   readonly remote_id: string | null;
   readonly remote_url: string | null;
   readonly attempt_id: string | null;
+  readonly failed_item_position?: number;
 }
 
 export interface PostCompletedData {
@@ -43,6 +44,7 @@ export interface PostCompletedData {
   readonly summary: CompletedSummary;
   readonly published: number;
   readonly failed: number;
+  readonly incomplete: number;
   readonly canceled: number;
 }
 
@@ -277,6 +279,9 @@ export async function recordPostSettlement(
     .select([
       sql<number>`count(*) filter (where state = 'published')::integer`.as('published'),
       sql<number>`count(*) filter (where state = 'failed')::integer`.as('failed'),
+      sql<number>`count(*) filter (where state = 'failed' and state_reason = 'thread_incomplete')::integer`.as(
+        'incomplete',
+      ),
       sql<number>`count(*) filter (where state = 'canceled')::integer`.as('canceled'),
     ])
     .where('workspace_id', '=', workspaceId)
@@ -289,6 +294,7 @@ export async function recordPostSettlement(
       summary: post.publish_summary,
       published: counts.published,
       failed: counts.failed,
+      incomplete: counts.incomplete,
       canceled: counts.canceled,
     }),
   );

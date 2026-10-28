@@ -25,6 +25,8 @@ describe('validate: structure', () => {
     ['a comment comes first', [comment()]],
     ['a later item is also main', [main(), main()]],
     ['main appears after a thread', [main(), thread(), main()]],
+    ['a thread follows the comment', [main(), comment(), thread()]],
+    ['there are two comments', [main(), thread(), comment(), comment()]],
   ])('reports invalid roles when %s and stops', (_label, items) => {
     const withTooLongText = items.map((item) => ({ ...item, text: 'x'.repeat(400) }));
     expect(validate(SKY, 'post', withTooLongText)).toStrictEqual([{ code: 'invalid_item_roles' }]);
@@ -32,6 +34,7 @@ describe('validate: structure', () => {
 
   it('accepts main followed by threads and comments', () => {
     expect(validate(SKY, 'post', [main(), thread(), thread(), comment()])).toStrictEqual([]);
+    expect(validate(SKY, 'post', [main(), comment()])).toStrictEqual([]);
     expect(validate(SKY, 'post', [main()])).toStrictEqual([]);
   });
 

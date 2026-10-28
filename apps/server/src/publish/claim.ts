@@ -1,11 +1,19 @@
-import { createHash, randomUUID } from 'node:crypto';
-import type { DestinationState, PostTypeSpec, PublishInput, PublishItem } from '@kronaut/core';
+import { randomUUID } from 'node:crypto';
+import type {
+  DestinationState,
+  ItemRole,
+  PostTypeSpec,
+  PublishInput,
+  PublishItem,
+} from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { type DestinationJob, enqueuePublish } from '../jobs.ts';
 import type { ProviderEntry } from '../providers.ts';
+import { currentInput, selectItems } from './chain.ts';
 import { type ClaimAccount, checkAccess, checkContent, type Inputs } from './claim-checks.ts';
+import { resetItems } from './claim-items.ts';
 import { publishInput } from './input.ts';
 import { type LockedPost, lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';
@@ -25,10 +33,12 @@ export interface Claimed {
   readonly attemptId: string;
   readonly attemptNo: number;
   readonly attemptCount: number;
-  readonly deadlineAt: Temporal.Instant;
+  readonly deadlineAt: Temporal.Instant | null;
   readonly afterRefresh: boolean;
   readonly entry: ProviderEntry;
   readonly postType: PostTypeSpec;
+  readonly position: number;
+  readonly role: ItemRole;
   readonly items: readonly PublishItem[];
   readonly input: PublishInput<unknown, unknown>;
 }
@@ -62,6 +72,11 @@ function selectClaimable(trx: TenantDb, job: DestinationJob) {
       'provider_state',
       sql<boolean>`run_at <= now()`.as('due'),
       sql<boolean>`deadline_at < now()`.as('late'),
+      sql<boolean>`exists (
+        select 1 from destination_items i
+         where i.workspace_id = post_destinations.workspace_id
+           and i.destination_id = post_destinations.id
+           and i.position = 0 and i.state = 'confirmed')`.as('main_confirmed'),
       sql<boolean>`instance_paused()`.as('paused'),
     ])
     .where('workspace_id', '=', job.workspaceId)
@@ -84,10 +99,6 @@ export interface ClaimScope extends Claimable {
   readonly trx: TenantDb;
   readonly job: DestinationJob;
   readonly ref: DestinationRef;
-}
-
-function sha256(text: string): Buffer {
-  return createHash('sha256').update(text, 'utf8').digest();
 }
 
 function isBusy(err: unknown): boolean {
@@ -146,6 +157,7 @@ async function insertAttempt(
   scope: ClaimScope,
   attemptId: string,
   counted: boolean,
+  position: number,
 ): Promise<number> {
   const { deps, trx, job } = scope;
   const last = await trx
@@ -166,45 +178,10 @@ async function insertAttempt(
       worker_id: deps.workerId,
       post_version: scope.postVersion,
       counted,
+      item_position: position,
     })
     .execute();
   return attemptNo;
-}
-
-async function resetItems(scope: ClaimScope, items: readonly PublishItem[]): Promise<void> {
-  const { trx, job } = scope;
-  const existingItem = await trx
-    .selectFrom('destination_items')
-    .select('position')
-    .where('workspace_id', '=', job.workspaceId)
-    .where('destination_id', '=', job.id)
-    .executeTakeFirst();
-  if (existingItem !== undefined) {
-    await trx
-      .updateTable('destination_items')
-      .set({ state: 'pending' })
-      .where('workspace_id', '=', job.workspaceId)
-      .where('destination_id', '=', job.id)
-      .where('state', 'in', ['sending', 'unconfirmed', 'failed', 'skipped'])
-      .execute();
-  } else {
-    await trx
-      .insertInto('destination_items')
-      .values(
-        items.map((item) => {
-          const text = item.text.normalize('NFC');
-          return {
-            workspace_id: job.workspaceId,
-            destination_id: job.id,
-            position: item.position,
-            role: item.role,
-            rendered_text: text,
-            rendered_sha256: sha256(text),
-          };
-        }),
-      )
-      .execute();
-  }
 }
 
 async function claimAttempt(
@@ -219,8 +196,10 @@ async function claimAttempt(
   const attemptId = randomUUID();
   const cas = await casClaim(scope, attemptId, counted);
   if (cas === undefined) return NOOP;
-  const attemptNo = await insertAttempt(scope, attemptId, counted);
-  await resetItems(scope, items);
+  await resetItems(scope.trx, job, items, postType);
+  const current = currentInput(await selectItems(scope.trx, job), items);
+  if (current === undefined) throw new Error('a claimed destination has no item left to send');
+  const attemptNo = await insertAttempt(scope, attemptId, counted, current.item.position);
 
   return {
     kind: 'claimed',
@@ -234,17 +213,20 @@ async function claimAttempt(
       attemptId,
       attemptNo,
       attemptCount: cas.attempt_count,
-      deadlineAt: instant(scope.deadlineAt),
+      deadlineAt: dest.main_confirmed ? null : instant(scope.deadlineAt),
       afterRefresh: dest.state === 'retry_wait' && dest.state_reason === 'auth_refreshed',
       entry,
       postType,
-      items,
+      position: current.item.position,
+      role: current.item.role,
+      items: [current.item],
       input: publishInput({
         destinationId: job.id,
         attemptNo,
         publishType: dest.publish_type,
         account,
         ready: prepared,
+        current,
         state: dest.provider_state,
       }),
     },

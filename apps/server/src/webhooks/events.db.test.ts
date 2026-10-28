@@ -156,6 +156,7 @@ describe('webhook events', () => {
           summary: 'completed_all',
           published: 1,
           failed: 0,
+          incomplete: 0,
           canceled: 0,
         },
       },

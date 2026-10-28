@@ -2,6 +2,7 @@ import { decodePublicId, type ScopeUnit } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { HttpError } from '../http/errors.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { UNFROZEN } from './freeze.ts';
 import type { Resolving } from './issues.ts';
@@ -129,12 +130,31 @@ export type ProgressReset = (
   destinationIds: readonly string[],
 ) => Promise<void>;
 
+export async function refuseLive(
+  trx: TenantDb,
+  workspaceId: string,
+  destinationIds: readonly string[],
+): Promise<void> {
+  if (destinationIds.length === 0) return;
+  const live = await trx
+    .selectFrom('destination_items')
+    .select('destination_id')
+    .where('workspace_id', '=', workspaceId)
+    .where('destination_id', 'in', destinationIds)
+    .where('state', '=', 'confirmed')
+    .executeTakeFirst();
+  if (live !== undefined) {
+    throw new HttpError('destination_live', 'Part of this destination is already live.');
+  }
+}
+
 export async function discardPublishProgress(
   trx: TenantDb,
   workspaceId: string,
   destinationIds: readonly string[],
 ): Promise<void> {
   if (destinationIds.length === 0) return;
+  await refuseLive(trx, workspaceId, destinationIds);
   await trx
     .deleteFrom('destination_items')
     .where('workspace_id', '=', workspaceId)
@@ -153,7 +173,7 @@ export async function restartPublishProgress(
     .set({ state: 'pending' })
     .where('workspace_id', '=', workspaceId)
     .where('destination_id', 'in', destinationIds)
-    .where('state', '<>', 'confirmed')
+    .where('state', 'not in', ['confirmed', 'skipped'])
     .execute();
 }
 
@@ -194,6 +214,8 @@ export async function replaceDestinations(
   const removed = existing
     .filter((d) => !wanted.has(pairKey(d.social_account_id, d.publish_type)))
     .map((d) => d.id);
+  const frozen = existing.filter((d) => d.frozen_post_version !== null).map((d) => d.id);
+  await refuseLive(trx, workspaceId, [...removed, ...frozen]);
   if (removed.length > 0) {
     await trx
       .deleteFrom('post_destinations')

@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { type DestinationJob, enqueueVerify } from '../jobs.ts';
 import { applyPlan, toDate } from './apply.ts';
+import { jsonb } from './chain.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';
 import { attemptOutcome, settlement } from './verify-decision.ts';
@@ -25,6 +26,7 @@ async function finishCheck(trx: TenantDb, run: VerifyRun, probed: Probed): Promi
       error_message: failed?.errorMessage ?? null,
       remote_id: found?.remoteId ?? null,
       remote_url: found?.url ?? null,
+      anchor: found?.anchor === undefined ? null : jsonb(found.anchor),
     })
     .where('workspace_id', '=', run.ref.workspaceId)
     .where('id', '=', run.context.attemptId)

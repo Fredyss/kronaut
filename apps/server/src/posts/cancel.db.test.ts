@@ -139,7 +139,14 @@ describe('scheduling', () => {
     );
     expect(written.map((row) => row.type)).toEqual(['destination.published', 'post.completed']);
     expect(written[1]?.payload).toMatchObject({
-      data: { post_id: postId, summary: 'completed_all', published: 1, failed: 0, canceled: 1 },
+      data: {
+        post_id: postId,
+        summary: 'completed_all',
+        published: 1,
+        failed: 0,
+        incomplete: 0,
+        canceled: 1,
+      },
     });
     for (const row of written) expect(row.text).not.toContain(text);
   });

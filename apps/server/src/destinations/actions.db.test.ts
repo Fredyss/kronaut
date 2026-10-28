@@ -1,14 +1,18 @@
 import { createHash } from 'node:crypto';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
+import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
+  accountA,
+  call,
   errorOf,
   grantAuth,
   inMinutes,
   insertGrant,
   jobRunAt,
   owner,
+  ownerAuth,
   SYSTEM,
   startPosts,
   stopPosts,
@@ -29,7 +33,10 @@ afterAll(async () => {
   await test?.stop();
 });
 
-function seedItems(target: InState, states: readonly ('confirmed' | 'failed' | 'sending')[]) {
+function seedItems(
+  target: InState,
+  states: readonly ('confirmed' | 'failed' | 'sending' | 'pending')[],
+) {
   return owner.withActor(SYSTEM, (trx) =>
     trx
       .insertInto('destination_items')
@@ -42,7 +49,7 @@ function seedItems(target: InState, states: readonly ('confirmed' | 'failed' | '
           state,
           rendered_text: `part ${position}`,
           rendered_sha256: createHash('sha256').update(`part ${position}`).digest(),
-          send_started_at: new Date(),
+          send_started_at: state === 'pending' ? null : new Date(),
           remote_id: state === 'confirmed' ? `r-${position}` : null,
         })),
       )
@@ -225,5 +232,63 @@ describe('authorization', () => {
     const unconfirmed = await postIn('unconfirmed');
     expect((await act(unconfirmed, 'mark-published', {}, grantAuth)).status).toBe(401);
     expect((await destinationRow(unconfirmed.destinationId)).state).toBe('unconfirmed');
+  });
+});
+
+describe('a destination with a live part', () => {
+  function setDestination(target: InState, assignments: ReturnType<typeof sql>) {
+    return owner.withActor(SYSTEM, (trx) =>
+      sql`update post_destinations set ${assignments} where id = ${target.destinationId}`.execute(
+        trx,
+      ),
+    );
+  }
+
+  it('refuses to unschedule a chain whose main post is live', async () => {
+    const target = await postIn('chain_next');
+    await seedItems(target, ['confirmed', 'pending']);
+    const response = await call('POST', `posts/${target.post.id}/unschedule`, ownerAuth, {
+      expectedVersion: target.post.version,
+    });
+    expect(response.status).toBe(409);
+    expect((await errorOf(response)).code).toBe('destination_live');
+    expect((await destinationRow(target.destinationId)).state).toBe('retry_wait');
+    expect((await itemsOf(target)).map((item) => item.state)).toEqual(['confirmed', 'pending']);
+  });
+
+  it('cancels an incomplete chain but refuses to thaw it on edit', async () => {
+    const target = await postIn('failed');
+    await setDestination(target, sql`state_reason = 'thread_incomplete'`);
+    await seedItems(target, ['confirmed', 'failed', 'pending']);
+    const canceled = await ok(await act(target, 'cancel'));
+    expect(canceled.destinations[0]?.state).toBe('canceled');
+    expect((await itemsOf(target)).map((item) => item.state)).toEqual([
+      'confirmed',
+      'failed',
+      'skipped',
+    ]);
+    const edit = await call('PATCH', `posts/${target.post.id}`, ownerAuth, {
+      expectedVersion: canceled.version,
+      destinations: [{ accountId: accountA, publishType: 'post' }],
+    });
+    expect(edit.status).toBe(409);
+    expect((await errorOf(edit)).code).toBe('destination_live');
+    expect((await destinationRow(target.destinationId)).state).toBe('canceled');
+    expect(await itemsOf(target)).toHaveLength(3);
+  });
+
+  it('marks a chain published by hand, skipping open parts and keeping the main publish time', async () => {
+    const target = await postIn('unconfirmed');
+    await setDestination(target, sql`published_at = '2026-10-01T08:00:00Z'`);
+    await seedItems(target, ['confirmed', 'sending', 'pending']);
+    await ok(await act(target, 'mark-published'));
+    expect((await itemsOf(target)).map((item) => item.state)).toEqual([
+      'confirmed',
+      'skipped',
+      'skipped',
+    ]);
+    expect((await destinationRow(target.destinationId)).published_at).toEqual(
+      new Date('2026-10-01T08:00:00Z'),
+    );
   });
 });

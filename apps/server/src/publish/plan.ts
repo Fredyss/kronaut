@@ -1,4 +1,4 @@
-import type { DestinationState, ProviderError, StateReason } from '@kronaut/core';
+import type { DestinationState, ItemAnchor, ProviderError, StateReason } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { backoffMs, type RandomInt } from './backoff.ts';
 import type { RefreshOutcome } from './refresh.ts';
@@ -23,7 +23,12 @@ export type AttemptOutcome =
   | 'verify_inconclusive';
 
 export type RunResult =
-  | { readonly kind: 'published'; readonly remoteId: string; readonly url?: string }
+  | {
+      readonly kind: 'published';
+      readonly remoteId: string;
+      readonly url?: string;
+      readonly anchor?: ItemAnchor;
+    }
   | { readonly kind: 'pending'; readonly pollAfterMs: number }
   | {
       readonly kind: 'failure';
@@ -45,6 +50,7 @@ export interface Plan {
   readonly runAt?: Temporal.Instant;
   readonly remoteId?: string;
   readonly remoteUrl?: string;
+  readonly anchor?: ItemAnchor;
   readonly retryAfter?: Temporal.Instant;
   readonly errorCode?: string;
   readonly errorMessage?: string;
@@ -56,7 +62,7 @@ export interface Plan {
 export interface PlanFacts {
   readonly afterPublic: boolean;
   readonly attemptCount: number;
-  readonly deadlineAt: Temporal.Instant;
+  readonly deadlineAt: Temporal.Instant | null;
   readonly now: Temporal.Instant;
   readonly random: RandomInt;
   readonly asyncElapsedMs: number | null;
@@ -89,7 +95,12 @@ export function retry(
   if (facts.attemptCount >= MAX_ATTEMPTS) {
     return { state: 'failed', reason: 'attempts_exhausted', outcome, ...after };
   }
-  if (retryAfter !== undefined && Temporal.Instant.compare(retryAfter, facts.deadlineAt) > 0) {
+  const { deadlineAt } = facts;
+  if (
+    retryAfter !== undefined &&
+    deadlineAt !== null &&
+    Temporal.Instant.compare(retryAfter, deadlineAt) > 0
+  ) {
     return { state: 'failed', reason: 'rate_limit_beyond_deadline', outcome, ...after };
   }
   let runAt = immediate
@@ -98,7 +109,7 @@ export function retry(
   if (retryAfter !== undefined && Temporal.Instant.compare(retryAfter, runAt) > 0) {
     runAt = retryAfter;
   }
-  if (Temporal.Instant.compare(runAt, facts.deadlineAt) > 0) {
+  if (deadlineAt !== null && Temporal.Instant.compare(runAt, deadlineAt) > 0) {
     return { state: 'failed', reason: 'late_window_exceeded', outcome, ...after };
   }
   return { state: 'retry_wait', reason, outcome, runAt, ...after };
@@ -221,6 +232,7 @@ export function plan(result: RunResult, facts: PlanFacts): Plan {
         outcome: 'ok',
         remoteId: result.remoteId,
         ...(result.url === undefined ? {} : { remoteUrl: result.url }),
+        ...(result.anchor === undefined ? {} : { anchor: result.anchor }),
       };
     case 'canceled':
       return facts.afterPublic

@@ -1,6 +1,7 @@
 import type { VerifyMode } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { backoffMs, type RandomInt } from './backoff.ts';
+import { anchorOf } from './chain.ts';
 import { type AttemptOutcome, type Plan, type PlanFacts, plan, retry } from './plan.ts';
 import { instant, type Probed, type VerifyRun } from './verify-run.ts';
 
@@ -17,6 +18,7 @@ export interface RecordedAttempt {
   readonly retry_after: Date | null;
   readonly remote_id: string | null;
   readonly remote_url: string | null;
+  readonly anchor: unknown;
 }
 
 export type Settlement =
@@ -24,16 +26,17 @@ export type Settlement =
   | { readonly kind: 'recheck'; readonly next: Temporal.Instant };
 
 function recordedPublished(attempt: RecordedAttempt, facts: PlanFacts): Plan | undefined {
-  return attempt.remote_id === null
-    ? undefined
-    : plan(
-        {
-          kind: 'published',
-          remoteId: attempt.remote_id,
-          ...(attempt.remote_url === null ? {} : { url: attempt.remote_url }),
-        },
-        facts,
-      );
+  if (attempt.remote_id === null) return undefined;
+  const anchor = anchorOf(attempt.anchor);
+  return plan(
+    {
+      kind: 'published',
+      remoteId: attempt.remote_id,
+      ...(attempt.remote_url === null ? {} : { url: attempt.remote_url }),
+      ...(anchor === undefined ? {} : { anchor }),
+    },
+    facts,
+  );
 }
 
 function recordedDuplicate(attempt: RecordedAttempt, facts: PlanFacts): Plan | undefined {
@@ -102,6 +105,7 @@ export function settlement(
         outcome: 'verify_found',
         remoteId: probed.remoteId,
         ...(probed.url === undefined ? {} : { remoteUrl: probed.url }),
+        ...(probed.anchor === undefined ? {} : { anchor: probed.anchor }),
         ...(run.poll ? {} : { resolution: 'verified' as const }),
       },
     };

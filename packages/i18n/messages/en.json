@@ -414,6 +414,7 @@
   "reason_media_processing_timeout": "The network took too long to process the media.",
   "reason_rate_limit_beyond_deadline": "The network's rate limit lasted past the deadline.",
   "reason_async_give_up": "The network never finished publishing it.",
+  "reason_thread_incomplete": "The main post is live, but a reply or comment after it failed.",
   "reason_account_needs_reauth": "The channel needs reconnecting.",
   "reason_account_disconnected": "The channel is disconnected.",
   "reason_account_disabled": "The channel is disabled.",
