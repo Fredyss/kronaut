@@ -7,7 +7,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PostSummary } from './api.ts';
 import { App, createApp } from './app.tsx';
 import { byDay, byHour } from './calendar/entries.ts';
-import { type MovablePost, slotLocal } from './calendar/move.ts';
+import { dayDelta, instantOf, type MovablePost, movedLocal, slotLocal } from './calendar/move.ts';
+import { visibleRange } from './calendar/time.ts';
 
 const clock = vi.hoisted(() => ({ now: '2026-10-01T10:00:00Z' }));
 
@@ -201,5 +202,47 @@ describe('dropping into the current hour', () => {
     } finally {
       clock.now = '2026-10-01T10:00:00Z';
     }
+  });
+});
+
+describe('DST changes in Europe/Bratislava', () => {
+  const TZ = 'Europe/Bratislava';
+
+  it('keeps the wall time when a post moves by whole days across either change', () => {
+    const spring = post('2027-03-27T09:30:00', []) as MovablePost;
+    const springDays = dayDelta('2027-03-27', '2027-03-29');
+    expect(springDays).toBe(2);
+    const springLocal = movedLocal(spring, springDays);
+    expect(springLocal).toBe('2027-03-29T09:30:00');
+    expect(instantOf({ scheduleLocal: springLocal, scheduleTz: TZ })).toBe('2027-03-29T07:30:00Z');
+    const autumn = post('2026-10-24T09:30:00', []) as MovablePost;
+    const autumnLocal = movedLocal(autumn, dayDelta('2026-10-24', '2026-10-26'));
+    expect(autumnLocal).toBe('2026-10-26T09:30:00');
+    expect(instantOf({ scheduleLocal: autumnLocal, scheduleTz: TZ })).toBe('2026-10-26T08:30:00Z');
+  });
+
+  it('resolves a drop into the lost spring hour forward', () => {
+    const moving = post('2027-03-27T02:15:00', []) as MovablePost;
+    const local = slotLocal(moving, '2027-03-27T01:15:00Z', '2027-03-28T02', TZ);
+    expect(local).toBe('2027-03-28T03:15:00');
+    const at = instantOf({ scheduleLocal: local ?? '', scheduleTz: TZ });
+    expect(Temporal.Instant.compare(at, '2027-03-28T01:00:00Z')).toBeGreaterThanOrEqual(0);
+  });
+
+  it('bounds the DST weeks and days by local midnight', () => {
+    expect(visibleRange('week', Temporal.PlainDate.from('2027-03-28'), 1, TZ)).toMatchObject({
+      from: '2027-03-21T23:00:00Z',
+      to: '2027-03-28T22:00:00Z',
+    });
+    expect(visibleRange('week', Temporal.PlainDate.from('2026-10-25'), 1, TZ)).toMatchObject({
+      from: '2026-10-18T22:00:00Z',
+      to: '2026-10-25T23:00:00Z',
+    });
+    const hours = (date: string) => {
+      const { from, to } = visibleRange('day', Temporal.PlainDate.from(date), 1, TZ);
+      return Temporal.Instant.from(from).until(to, { largestUnit: 'hour' }).hours;
+    };
+    expect(hours('2027-03-28')).toBe(23);
+    expect(hours('2026-10-25')).toBe(25);
   });
 });

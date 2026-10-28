@@ -114,13 +114,26 @@ describe('scheduling', () => {
     });
   });
 
-  it('moves a local time in a DST gap forward', async () => {
+  it('dst_gap_bratislava: moves a local time in a DST gap forward', async () => {
     const post = await scheduled(await create(ownerAuth, draft()), '2027-03-28T02:30');
     expect(post.scheduleLocal).toBe('2027-03-28T03:30:00');
-    expect(await destinationOf(post)).toMatchObject({
+    const row = await destinationOf(post);
+    expect(row).toMatchObject({
       tz_resolution: 'gap_forward',
       scheduled_local: '2027-03-28 03:30:00',
     });
+    expect(row.scheduled_at?.toISOString()).toBe('2027-03-28T01:30:00.000Z');
+  });
+
+  it('dst_overlap: resolves a repeated local time to the earlier offset', async () => {
+    const post = await scheduled(await create(ownerAuth, draft()), '2027-10-31T02:30');
+    expect(post.scheduleLocal).toBe('2027-10-31T02:30:00');
+    const row = await destinationOf(post);
+    expect(row).toMatchObject({
+      tz_resolution: 'overlap_earlier',
+      scheduled_local: '2027-10-31 02:30:00',
+    });
+    expect(row.scheduled_at?.toISOString()).toBe('2027-10-31T00:30:00.000Z');
   });
 
   it('refuses a past time and a grant without approval', async () => {

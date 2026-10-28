@@ -270,6 +270,7 @@ The approval events are written in the transaction that opens or decides the req
 | due sweep (first `sweep_quarantine_destinations` → `blocked/restore_quarantine`, logged at error; then `sweep_due_destinations`, re-enqueued with `job_key_mode='preserve_run_at'`, so it never pulls a busy-account retry forward) | 1 min |
 | lease reaper | 1 min |
 | refresh sweep | 5 min |
+| tz recompute after a tzdata update (`tz_recompute`, see [Time](#time)) | 1 h |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
 | analytics pulls | staggered |
@@ -285,5 +286,9 @@ Every run is recorded in `cron_runs`, and `worker_heartbeats` feed `/readyz`.
 
 - Store wall time + IANA tz + derived UTC + `tzdb_version`.
 - DST gap → move forward; overlap → earlier offset (`tz_resolution` recorded).
+- **tzdata updates**: the wall time is the truth, the UTC instant is derived.
+  - The hourly `tz_recompute` cron task walks `sweep_workspaces`. Inside `withTenant()` it re-resolves every `scheduled` destination whose `tzdb_version` differs from the running process's `process.versions.tz`.
+  - It applies the same gap and overlap rules, and moves `scheduled_at`, `run_at` and `deadline_at` by the same delta. It then stamps `tz_resolution` and the new `tzdb_version`, and re-enqueues the publish job at the new instant.
+  - Rows that are already sending or verifying are never touched. The approval stays valid, because it binds the wall time and zone (ADR-0011).
 - The UI always shows the resolved instant and zone.
 - Recurring = RRULE + tz, expanded from **local wall time** (never +7×24 h); only the next occurrence is materialised.
