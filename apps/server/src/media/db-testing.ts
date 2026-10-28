@@ -10,6 +10,7 @@ import {
   reencodeImage,
 } from '@kronaut/media';
 import { sql } from 'kysely';
+import pino from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { createMediaSigner } from './access.ts';
 import type { MediaAssetDto } from './dto.ts';
@@ -48,7 +49,11 @@ export const signer = createMediaSigner({
 });
 
 export function idleMediaGc(): MediaGcDeps {
-  return { staging: createStaging('/nonexistent'), store: createLocalStore('/nonexistent') };
+  return {
+    staging: createStaging('/nonexistent'),
+    store: createLocalStore('/nonexistent'),
+    logger: pino({ level: 'silent' }),
+  };
 }
 
 export function asUser(tenant: Tenant): Actor {

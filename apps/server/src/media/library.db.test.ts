@@ -23,6 +23,7 @@ import {
 } from './db-testing.ts';
 import { collectMedia } from './gc.ts';
 import { ingestImage, prepareImage } from './ingest.ts';
+import { removeIfUnreferenced } from './key-lock.ts';
 import {
   libraryRoutes,
   mediaClearAiRoute,
@@ -30,6 +31,7 @@ import {
   mediaListRoute,
   mediaUsageRoute,
 } from './library-routes.ts';
+import { finishMedia, StoredObjectMissing } from './process-finish.ts';
 import { mediaMarkAiRoute, mediaRoutes } from './routes.ts';
 import { createStaging } from './staging.ts';
 import { expectMediaError, jpegFixture, pngFixture } from './testing.ts';
@@ -174,6 +176,17 @@ async function setColumn(asset: { id: string }, column: string, value: unknown) 
   );
 }
 
+async function keyOf(asset: { id: string }): Promise<string> {
+  const row = await tenant((trx) =>
+    trx
+      .selectFrom('media_assets')
+      .select('storage_key')
+      .where('id', '=', uuidOf(asset))
+      .executeTakeFirstOrThrow(),
+  );
+  return row.storage_key;
+}
+
 async function auditActions(asset: { id: string }): Promise<string[]> {
   const rows = await tenant((trx) =>
     trx
@@ -286,21 +299,16 @@ describe('media library', () => {
         })
         .execute(),
     );
-    const oldKey = await tenant(async (trx) => {
-      const row = await trx
-        .selectFrom('media_assets')
-        .select('storage_key')
-        .where('id', '=', uuidOf(old))
-        .executeTakeFirstOrThrow();
-      return row.storage_key;
-    });
+    const oldKey = await keyOf(old);
     await setColumn(old, 'deleted_at', sql`now() - interval '31 days'`);
     await setColumn(used, 'deleted_at', sql`now() - interval '31 days'`);
     await setColumn(recent, 'deleted_at', sql`now() - interval '29 days'`);
 
     const staging = createStaging(join(fx.root, '.staging'));
-    const summary = JSON.parse(await collectMedia(fx.db, { staging, store: fx.store }));
-    expect(summary).toEqual({ expired: 0, purged: 1, skipped: 1, incoming: 0 });
+    const summary = JSON.parse(
+      await collectMedia(fx.db, { staging, store: fx.store, logger: pino({ level: 'silent' }) }),
+    );
+    expect(summary).toEqual({ expired: 0, purged: 1, skipped: 1, orphaned: 0, incoming: 0 });
 
     const left = await tenant((trx) =>
       trx
@@ -312,5 +320,47 @@ describe('media library', () => {
     expect(left.map((row) => row.id).sort()).toEqual([uuidOf(recent), uuidOf(used)].sort());
     expect(await fx.store.has(oldKey)).toBe(false);
     expect(await fx.store.has(thumbKey)).toBe(false);
+  });
+
+  it('keeps an object whose key a re-upload references again before the delete', async () => {
+    const bytes = pngFixture({ width: 14, height: 14 });
+    const first = await fx.ingest(a, bytes);
+    const key = await keyOf(first);
+    await tenant((trx) => trx.deleteFrom('media_assets').where('id', '=', uuidOf(first)).execute());
+    await fx.ingest(a, bytes);
+    expect(await removeIfUnreferenced(fx.db, fx.store, a.workspaceId, key)).toBe(false);
+    expect(await fx.store.has(key)).toBe(true);
+  });
+
+  it('retries the video finish when a written object is gone under the key lock', async () => {
+    const id = await tenant(async (trx) => {
+      const row = await trx
+        .insertInto('media_assets')
+        .values({
+          workspace_id: a.workspaceId,
+          kind: 'video',
+          state: 'processing',
+          storage_key: randomBytes(32).toString('hex'),
+        })
+        .returning('id')
+        .executeTakeFirstOrThrow();
+      return row.id;
+    });
+    const hash = randomBytes(32);
+    const video = {
+      key: storageKey(a.workspaceId, hash),
+      sha256: hash,
+      sourceSha256: hash,
+      bytes: 10,
+      width: 16,
+      height: 9,
+      durationMs: 4000,
+      frameRateMilli: null,
+      poster: { key: storageKey(a.workspaceId, randomBytes(32)), sha256: hash, bytes: 3 },
+    };
+    const job = { workspaceId: a.workspaceId, id };
+    await expect(finishMedia(fx.db, fx.store, job, video)).rejects.toBeInstanceOf(
+      StoredObjectMissing,
+    );
   });
 });

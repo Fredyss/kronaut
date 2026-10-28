@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
+import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { MediaJob } from '../jobs.ts';
 import { lockStorageKeys } from './key-lock.ts';
@@ -113,18 +114,26 @@ async function markReady(trx: TenantDb, job: MediaJob, video: ProcessedVideo): P
     .execute();
 }
 
+export class StoredObjectMissing extends Error {
+  constructor() {
+    super('a converted video object vanished before its row was written; the job retries');
+    this.name = 'StoredObjectMissing';
+  }
+}
+
 export function finishMedia(
   db: Database,
+  store: MediaStore,
   job: MediaJob,
   video: ProcessedVideo,
-  persist: () => Promise<void>,
 ): Promise<'ready' | 'duplicate' | 'skipped'> {
   return db.withTenant(job.workspaceId, SYSTEM, async (trx) => {
-    // The media GC takes the same lock before it removes an object under one of these keys.
-    await lockStorageKeys(trx, [video.key, video.poster.key]);
+    // The media GC removes an object only under this lock, so a present object stays until commit.
+    const keys = [video.key, video.poster.key];
+    await lockStorageKeys(trx, keys);
+    for (const key of keys) if (!(await store.has(key))) throw new StoredObjectMissing();
     const row = await lockProcessing(trx, job);
     if (row === undefined || row.deleted_at !== null) return 'skipped';
-    await persist();
     if (await keepDuplicate(trx, job, video.key, row)) return 'duplicate';
     await markReady(trx, job, video);
     return 'ready';

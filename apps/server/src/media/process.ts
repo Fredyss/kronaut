@@ -17,6 +17,7 @@ import type { Task } from 'graphile-worker';
 import type { Logger } from 'pino';
 import * as z from 'zod';
 import type { MediaJob } from '../jobs.ts';
+import { removeIfUnreferenced } from './key-lock.ts';
 import {
   finishMedia,
   type ProcessedVideo,
@@ -153,6 +154,7 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
   if ((await stat(master)).size > VIDEO_MAX_BYTES) throw new VideoRejected('video_too_large');
   const hashed = await hashFile(master);
   const masterKey = storageKey(job.workspaceId, hashed.sha256);
+  await storeVerified(deps.store, masterKey, createReadStream(master), hashed);
   const durationMs = out.durationMs;
   const poster = await tool(() => extractPoster(master, durationMs, deps.tools), final);
   const posterHash = {
@@ -160,11 +162,8 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
     bytes: poster.byteLength,
   };
   const posterKey = storageKey(job.workspaceId, posterHash.sha256);
-  const persist = async () => {
-    await storeVerified(deps.store, masterKey, createReadStream(master), hashed);
-    await storeVerified(deps.store, posterKey, poster, posterHash);
-  };
-  const video = {
+  await storeVerified(deps.store, posterKey, poster, posterHash);
+  return {
     key: masterKey,
     sha256: hashed.sha256,
     sourceSha256,
@@ -175,7 +174,6 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
     frameRateMilli: toFrameRateMilli(out.video.frameRate),
     poster: { key: posterKey, ...posterHash },
   } satisfies ProcessedVideo;
-  return { video, persist };
 }
 
 function toFrameRateMilli(rate: number | null): number | null {
@@ -191,8 +189,13 @@ async function settle(
   final: boolean,
 ): Promise<{ outcome: MediaProcessOutcome; reason?: RejectedReason | 'video_duplicate' }> {
   try {
-    const { video, persist } = await convert(deps, job, key, final);
-    const outcome = await finishMedia(deps.db, job, video, persist);
+    const video = await convert(deps, job, key, final);
+    const outcome = await finishMedia(deps.db, deps.store, job, video);
+    if (outcome !== 'ready') {
+      for (const stored of [video.key, video.poster.key]) {
+        await removeIfUnreferenced(deps.db, deps.store, job.workspaceId, stored);
+      }
+    }
     return outcome === 'duplicate' ? { outcome, reason: 'video_duplicate' } : { outcome };
   } catch (error) {
     if (!(error instanceof VideoRejected)) throw error;
