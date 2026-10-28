@@ -33,6 +33,7 @@
   - **Rotation:** `key create`, then wait for metadata caches to pick up the new key, then `key activate`; the old key becomes `retiring` and keeps signing refreshes for the sessions bound to it. `key delete <app-id> <kid>` removes a `next` or `retiring` key, and the database refuses while any credential is still bound to it. Bound sessions end when their users reconnect or are disconnected.
 - **Instagram app setup (ADR-0053)**: Instagram Login on `graph.instagram.com`.
   - Create a Business-type Meta app and add the Instagram use case with "API setup with Instagram login".
+  - Give the use case the `instagram_business_basic`, `instagram_business_content_publish` and `instagram_business_manage_comments` (first comment) permissions.
   - Register the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/instagram/callback` and set a data-deletion instructions URL in the dashboard.
   - Add a public Instagram professional account as an Instagram Tester.
   - `echo -n "$SECRET" | kronaut provider-app register instagram --client-id <instagram app id>` runs as `kronaut_operator` with the KEKs. It reads the Instagram app secret from stdin (never argv or env), seals it and prints the app id. It refuses while an active Instagram app is registered.
@@ -44,7 +45,7 @@
   - `echo -n "$SECRET" | kronaut provider-app register threads --client-id <threads app id>` works like the Instagram command: the Threads app secret comes from stdin, is sealed, and the app id is printed. It refuses while an active Threads app is registered.
   - Tokens last 60 days. The `credential_refresh` job renews each one in its last 7 days.
 - **Facebook app setup (ADR-0053)**: Facebook Login and the Pages API on `graph.facebook.com` (v26.0). Pages can publish text posts (links go in the text) and posts with 1–10 JPEG or PNG images. Video and alt text aren't supported yet.
-  - Add Facebook Login (or Facebook Login for Business) to the Meta app, with `pages_show_list`, `pages_manage_posts` and `pages_read_engagement`.
+  - Add Facebook Login (or Facebook Login for Business) to the Meta app, with `pages_show_list`, `pages_manage_posts`, `pages_read_engagement` and `pages_manage_engagement` (first comment).
   - Set the Valid OAuth Redirect URI to `<KRONAUT_PUBLIC_URL>/v1/oauth/facebook/callback` (Strict Mode: it must match exactly).
   - In Development mode, people with a role on the app can connect the Pages they manage without App Review. Anyone else needs Advanced Access (App Review plus Business Verification).
   - `echo -n "$SECRET" | kronaut provider-app register facebook --client-id <meta app id>` works like the Instagram command: the Meta app secret comes from stdin, is sealed, and the app id is printed. It refuses while an active Facebook app is registered.

@@ -21,7 +21,8 @@ export const TOKEN_URL = 'https://api.instagram.com/oauth/access_token';
 export const GRAPH_ORIGIN = 'https://graph.instagram.com';
 export const GRAPH_VERSION = 'v26.0';
 export const PUBLISH_SCOPE = 'instagram_business_content_publish';
-export const SCOPES = ['instagram_business_basic', PUBLISH_SCOPE] as const;
+export const COMMENTS_SCOPE = 'instagram_business_manage_comments';
+export const SCOPES = ['instagram_business_basic', PUBLISH_SCOPE, COMMENTS_SCOPE] as const;
 export const PROFILE_FIELDS = 'user_id,username,name,account_type,profile_picture_url';
 
 const igId = z

@@ -6,9 +6,11 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { commentCapabilities } from '../_kit/meta-comment.ts';
 import type { InstagramSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
+  COMMENTS_SCOPE,
   exchangeCode,
   GRAPH_VERSION,
   graphGet,
@@ -120,6 +122,7 @@ export const instagramRuntime: ProviderRuntime<InstagramCredentials, InstagramSe
         handle: me.username,
         displayName: name === undefined || name === '' ? me.username : name,
         profileUrl: `https://www.instagram.com/${encodeURIComponent(me.username)}/`,
+        capabilities: commentCapabilities(exchanged.permissions, COMMENTS_SCOPE),
       },
     ];
   },

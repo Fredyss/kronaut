@@ -1,5 +1,6 @@
 import type { MediaLimits, ProviderManifest, TextLimit } from '@kronaut/core';
 import * as z from 'zod';
+import { commentPostType, firstComment } from '../_kit/meta-comment.ts';
 
 export const instagramSettings = z.object({});
 export type InstagramSettings = z.infer<typeof instagramSettings>;
@@ -7,6 +8,7 @@ export type InstagramSettings = z.infer<typeof instagramSettings>;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const caption: readonly TextLimit[] = [{ counting: 'utf16', max: 2_200 }];
+const comment = firstComment(caption);
 
 function jpegs(minCount: number, maxCount: number): MediaLimits {
   return {
@@ -65,6 +67,7 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
       text: caption,
       media: jpegs(1, 1),
       async: containerPolling,
+      comment,
     },
     {
       id: 'carousel',
@@ -77,6 +80,7 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
       text: caption,
       media: jpegs(2, 20),
       async: containerPolling,
+      comment,
     },
     {
       id: 'reel',
@@ -88,6 +92,7 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
       text: caption,
       media: reel,
       async: reelPolling,
+      comment,
     },
   ],
   settings: instagramSettings,
@@ -113,4 +118,5 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
   preview: 'media-grid',
   capabilities: { analytics: false, delete: false },
   egressHosts: ['api.instagram.com', 'graph.instagram.com'],
+  accountPostType: commentPostType,
 };

@@ -78,6 +78,10 @@ describe('instagram reel', () => {
         aiLabel: true,
       },
       async: { pollIntervalMs: 60_000, giveUpAfterMs: 1_200_000 },
+      comment: {
+        text: [{ counting: 'utf16', max: 2_200 }],
+        steps: [{ id: 'create_comment', effect: 'public' }],
+      },
     });
   });
 

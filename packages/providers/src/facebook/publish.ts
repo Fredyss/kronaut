@@ -7,8 +7,10 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { commentOf } from '../_kit/items.ts';
 import { graphId } from '../_kit/meta-container-state.ts';
 import { multipart } from '../_kit/multipart.ts';
+import { publishComment } from './comment.ts';
 import { graphCall } from './graph.ts';
 import { graphUrl } from './oauth.ts';
 import {
@@ -104,6 +106,8 @@ async function permalinkOf(ctx: PublishContext, page: PageAuth, id: string): Pro
 }
 
 export async function publishPost(ctx: PublishContext, input: Input): Promise<PublishOutcome> {
+  const comment = commentOf(input);
+  if (comment !== undefined) return publishComment(ctx, input, comment);
   if (input.postType === 'reel') return publishReel(ctx, input);
   const { item } = checkInput(input);
   const page = pageOf(input);

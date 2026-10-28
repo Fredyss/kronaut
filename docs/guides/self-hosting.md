@@ -117,7 +117,7 @@ Kronaut connects Facebook Pages, not personal profiles. One login can add severa
 - **In the Meta app:**
   - Add Facebook Login (or Facebook Login for Business).
   - Set the Valid OAuth Redirect URI to `https://kronaut.example.com/v1/oauth/facebook/callback`, using your own host. It must match exactly.
-  - Request the `pages_show_list`, `pages_manage_posts` and `pages_read_engagement` permissions.
+  - Request the `pages_show_list`, `pages_manage_posts`, `pages_read_engagement` and `pages_manage_engagement` permissions.
   - Register the app with its Meta app ID and app secret, using the `register facebook` command above.
 - **Access:**
   - In Development mode, anyone with a role on the app (admin, developer or tester) can connect the Pages they manage. That needs no App Review.

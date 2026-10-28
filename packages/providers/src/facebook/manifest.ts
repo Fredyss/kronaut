@@ -1,5 +1,6 @@
 import type { ProviderManifest } from '@kronaut/core';
 import * as z from 'zod';
+import { commentPostType, firstComment } from '../_kit/meta-comment.ts';
 
 export const facebookSettings = z.object({});
 export type FacebookSettings = z.infer<typeof facebookSettings>;
@@ -7,6 +8,7 @@ export type FacebookSettings = z.infer<typeof facebookSettings>;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PAGE_CALLS_PER_DAY = 4_800;
 const POST_TEXT = [{ counting: 'utf16', max: 63_206 }] as const;
+const comment = firstComment(POST_TEXT);
 
 export const reelPolling = { pollIntervalMs: 30_000, giveUpAfterMs: 20 * 60_000 };
 
@@ -32,6 +34,7 @@ export const facebookManifest: ProviderManifest<FacebookSettings> = {
         altText: { supported: true, required: false, maxLength: 1_000 },
         aiLabel: false,
       },
+      comment,
     },
     {
       id: 'reel',
@@ -58,6 +61,7 @@ export const facebookManifest: ProviderManifest<FacebookSettings> = {
         aiLabel: true,
       },
       async: reelPolling,
+      comment,
     },
   ],
   settings: facebookSettings,
@@ -76,4 +80,5 @@ export const facebookManifest: ProviderManifest<FacebookSettings> = {
   preview: 'pro-feed',
   capabilities: { analytics: false, delete: false },
   egressHosts: ['www.facebook.com', 'graph.facebook.com', 'rupload.facebook.com'],
+  accountPostType: commentPostType,
 };
