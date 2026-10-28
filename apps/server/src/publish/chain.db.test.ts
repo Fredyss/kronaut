@@ -377,6 +377,15 @@ describe('reply chains', () => {
     expect(event.payload).toMatchObject({
       data: { reason: 'thread_incomplete', remote_id: 'r0', failed_item_position: 2 },
     });
+    const completed = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('webhook_events')
+        .select('payload')
+        .where('subject_id', '=', seeded.postId)
+        .where('type', '=', 'post.completed')
+        .executeTakeFirstOrThrow(),
+    );
+    expect(completed.payload).toMatchObject({ data: { failed: 1, incomplete: 1 } });
 
     await owner.withActor(SYSTEM, async (trx) => {
       await restartPublishProgress(trx, workspaceId, [seeded.destinationId]);
