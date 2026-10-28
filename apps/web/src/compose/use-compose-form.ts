@@ -8,6 +8,7 @@ import { m } from '../i18n.ts';
 import { choiceFor } from './choice.ts';
 import { type Content, effective } from './contents.ts';
 import { isBlank } from './doc.ts';
+import { blankItemProblem } from './issues.ts';
 import {
   type ComposeContent,
   type ComposeDestination,
@@ -66,28 +67,38 @@ function isEmpty(content: Content): boolean {
   return isBlank(content.doc) && content.images.length === 0 && content.video === null;
 }
 
+function usedContents(plan: Plan, base: Content): Content[] {
+  return [...(plan.usesDefault ? [base] : []), ...plan.variants.map((v) => v.content)];
+}
+
 function emptyProblem(plan: Plan, base: Content): string | null {
   if (plan.destinations.length === 0) return m.compose_error_no_channel();
   if (plan.usesDefault && isEmpty(base)) return m.compose_error_empty();
   const empty = plan.variants.find(({ content }) => isEmpty(content));
-  return empty === undefined
-    ? null
-    : m.compose_error_empty_channel({ channel: empty.channel.displayName });
+  if (empty !== undefined)
+    return m.compose_error_empty_channel({ channel: empty.channel.displayName });
+  for (const content of usedContents(plan, base)) {
+    const problem = blankItemProblem(content);
+    if (problem !== null) return problem;
+  }
+  return null;
 }
 
 function videoProblem(plan: Plan, base: Content, videos: VideoRegistry, locale: string) {
-  const used = [...(plan.usesDefault ? [base] : []), ...plan.variants.map((v) => v.content)];
-  for (const { video } of used) {
+  for (const { video } of usedContents(plan, base)) {
     const problem = video === null ? null : waitProblem(videos.get(video.id), locale);
     if (problem !== null) return problem;
   }
   return null;
 }
 
-function toCompose({ doc, images, video }: Content, videos: VideoRegistry): ComposeContent {
+function toCompose(content: Content, videos: VideoRegistry): ComposeContent {
+  const { doc, images, video, replies, comment } = content;
   const phase = video === null ? undefined : videos.get(video.id)?.phase;
   return {
     doc,
+    replies: replies.map((reply) => ({ doc: reply.doc })),
+    comment,
     images: images.map(({ id, file, altText, aiGenerated }) => ({
       id,
       file,

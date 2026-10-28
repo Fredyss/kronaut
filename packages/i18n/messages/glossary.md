@@ -22,6 +22,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | calendar | kalendár | kalendář | The week, month and list views of scheduled posts. |
 | drafts | koncepty | koncepty | The list of posts with no scheduled time; plural of "draft". |
 | time zone | časové pásmo | časové pásmo | An IANA zone such as Europe/Bratislava; never "zóna". |
+| reply | odpoveď | odpověď | A later item of a reply chain, published under the main post. |
+| first comment | prvý komentár | první komentář | A comment the channel posts under its own post. |
 
 ## Style
 

@@ -31,6 +31,7 @@ async function fillIn() {
 const CREATE_BODY = {
   items: [
     {
+      role: 'main',
       doc: {
         type: 'doc',
         content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] }],

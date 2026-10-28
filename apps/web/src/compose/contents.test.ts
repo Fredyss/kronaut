@@ -23,7 +23,13 @@ function image(id: string, altText = ''): PickedImage {
 
 const BASE: Contents = {
   ...EMPTY_CONTENTS,
-  base: { doc: doc('Hello everyone'), images: [image('a', 'A cat')], video: null },
+  base: {
+    doc: doc('Hello everyone'),
+    images: [image('a', 'A cat')],
+    video: null,
+    replies: [{ id: 'r1', doc: doc('More soon') }],
+    comment: { doc: doc('Link in here') },
+  },
 };
 
 describe('contents', () => {
@@ -34,6 +40,17 @@ describe('contents', () => {
     expect(copy?.images).toEqual(BASE.base.images);
     expect(copy?.images[0]).not.toBe(BASE.base.images[0]);
     expect(copy?.images[0]?.file).toBe(BASE.base.images[0]?.file);
+  });
+
+  it('customizes a channel with a copy of the replies and the first comment', () => {
+    const next = customize(BASE, 'acct_bsky');
+    const copy = effective(next, 'acct_bsky');
+    expect(copy.replies).toEqual(BASE.base.replies);
+    expect(copy.replies).not.toBe(BASE.base.replies);
+    expect(copy.comment).toEqual(BASE.base.comment);
+    const edited = editContent(next, 'acct_bsky', (c) => ({ ...c, replies: [], comment: null }));
+    expect(edited.base.replies).toEqual([{ id: 'r1', doc: doc('More soon') }]);
+    expect(edited.base.comment).toEqual({ doc: doc('Link in here') });
   });
 
   it('edits a customized content without touching the default', () => {

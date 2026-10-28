@@ -13,6 +13,7 @@ import { approvalBody } from '../approvals/queries.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { distinctImages } from './contents.ts';
 import type { Doc } from './doc.ts';
+import { type DraftBody, draftBody } from './draft-body.ts';
 import { toBase64 } from './media.ts';
 
 export interface ComposeImage {
@@ -26,6 +27,8 @@ export interface ComposeContent {
   readonly doc: Doc;
   readonly images: readonly ComposeImage[];
   readonly video: { readonly id: string; readonly altText: string } | null;
+  readonly replies: readonly { readonly doc: Doc }[];
+  readonly comment: { readonly doc: Doc } | null;
 }
 
 export interface ComposeDestination {
@@ -96,8 +99,6 @@ function isAmbiguous(error: unknown): boolean {
 
 export type Submit = (input: ComposeInput) => Promise<Post>;
 
-type DraftBody = PostsCreateData['body'];
-
 interface NextDraft {
   readonly body: DraftBody;
   readonly fingerprint: string;
@@ -162,35 +163,6 @@ async function uploadMedia(s: Submitter, input: ComposeInput, targets: readonly 
     ids.set(image.id, await upload(s, image, { index, variant }, targets));
   }
   return ids;
-}
-
-type DraftItem = DraftBody['items'][0];
-
-function withAlt(mediaId: string, alt: string) {
-  const altText = alt.trim().normalize('NFC');
-  return altText === '' ? { mediaId } : { mediaId, altText };
-}
-
-function toItem(content: ComposeContent, ids: ReadonlyMap<string, string>): DraftItem {
-  const { video } = content;
-  if (video !== null) return { doc: { ...content.doc }, media: [withAlt(video.id, video.altText)] };
-  const media = content.images.map((image) => {
-    const mediaId = ids.get(image.id);
-    if (mediaId === undefined) throw new Error(`image ${image.id} was not uploaded`);
-    return withAlt(mediaId, image.altText);
-  });
-  return { doc: { ...content.doc }, media };
-}
-
-function draftBody(input: ComposeInput, ids: ReadonlyMap<string, string>): DraftBody {
-  const variants = input.variants.map((v) => ({ items: [toItem(v, ids)] satisfies [DraftItem] }));
-  return {
-    items: [toItem(input.content, ids)],
-    ...(variants.length === 0 ? {} : { variants }),
-    destinations: input.destinations.map(({ accountId, publishType, variant }) =>
-      variant === null ? { accountId, publishType } : { accountId, publishType, variant },
-    ),
-  };
 }
 
 async function ensureDraft(

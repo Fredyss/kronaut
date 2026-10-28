@@ -8,10 +8,17 @@ export interface PickedImage {
   readonly aiGenerated: boolean;
 }
 
+export interface Reply {
+  readonly id: string;
+  readonly doc: Doc;
+}
+
 export interface Content {
   readonly doc: Doc;
   readonly images: readonly PickedImage[];
   readonly video: { readonly id: string; readonly altText: string } | null;
+  readonly replies: readonly Reply[];
+  readonly comment: { readonly doc: Doc } | null;
 }
 
 export interface Contents {
@@ -22,7 +29,7 @@ export interface Contents {
 export type ContentKey = string | null;
 
 export const EMPTY_CONTENTS: Contents = {
-  base: { doc: EMPTY_DOC, images: [], video: null },
+  base: { doc: EMPTY_DOC, images: [], video: null, replies: [], comment: null },
   customized: new Map(),
 };
 
@@ -32,6 +39,8 @@ export function customize(contents: Contents, channelId: string): Contents {
     doc: contents.base.doc,
     images: contents.base.images.map((image) => ({ ...image })),
     video: contents.base.video,
+    replies: contents.base.replies.map((reply) => ({ ...reply })),
+    comment: contents.base.comment,
   };
   return { ...contents, customized: new Map(contents.customized).set(channelId, copy) };
 }

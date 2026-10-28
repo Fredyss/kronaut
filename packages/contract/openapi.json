@@ -1937,6 +1937,56 @@
                             "items": {
                               "additionalProperties": false,
                               "properties": {
+                                "comment": {
+                                  "anyOf": [
+                                    {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "text": {
+                                          "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "counting": {
+                                                "enum": [
+                                                  "x-weighted",
+                                                  "mastodon",
+                                                  "threads",
+                                                  "graphemes",
+                                                  "utf16",
+                                                  "utf8-bytes"
+                                                ],
+                                                "type": "string"
+                                              },
+                                              "max": {
+                                                "maximum": 9007199254740991,
+                                                "minimum": -9007199254740991,
+                                                "type": "integer"
+                                              },
+                                              "urlWeight": {
+                                                "maximum": 9007199254740991,
+                                                "minimum": -9007199254740991,
+                                                "type": "integer"
+                                              }
+                                            },
+                                            "required": [
+                                              "counting",
+                                              "max"
+                                            ],
+                                            "type": "object"
+                                          },
+                                          "type": "array"
+                                        }
+                                      },
+                                      "required": [
+                                        "text"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "id": {
                                   "type": "string"
                                 },
@@ -2042,6 +2092,27 @@
                                     "type": "object"
                                   },
                                   "type": "array"
+                                },
+                                "thread": {
+                                  "anyOf": [
+                                    {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "maxItems": {
+                                          "maximum": 9007199254740991,
+                                          "minimum": -9007199254740991,
+                                          "type": "integer"
+                                        }
+                                      },
+                                      "required": [
+                                        "maxItems"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
                                 },
                                 "video": {
                                   "anyOf": [
@@ -2167,7 +2238,9 @@
                                 "text",
                                 "maxLinks",
                                 "imageAspect",
-                                "video"
+                                "video",
+                                "thread",
+                                "comment"
                               ],
                               "type": "object"
                             },

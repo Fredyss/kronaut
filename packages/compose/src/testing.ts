@@ -38,6 +38,18 @@ export const SKY = {
         altText: { supported: true, required: false, maxLength: 2000 },
         aiLabel: false,
       },
+      thread: {
+        maxItems: 3,
+        media: {
+          minCount: 0,
+          maxCount: 4,
+          image: { mimes: ['image/jpeg'], maxBytes: 1_000_000 },
+          mixed: false,
+          altText: { supported: true, required: false, maxLength: 2000 },
+          aiLabel: false,
+        },
+      },
+      comment: { text: [{ counting: 'graphemes', max: 200 }], steps: STEPS },
     },
     {
       id: 'gallery',
