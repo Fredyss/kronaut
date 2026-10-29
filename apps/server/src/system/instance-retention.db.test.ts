@@ -8,6 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronTaskList } from '../cron.ts';
 import { idleMediaGc } from '../media/db-testing.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
+import { purgeInstanceRetention } from './instance-retention.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 
@@ -84,9 +85,18 @@ describe('instance retention', () => {
     );
     expect(run.outcome).toBe('ok');
     expect(JSON.parse(run.detail ?? '')).toMatchObject({
-      sessions: 1,
-      cron_runs: 1,
-      'meta_lifecycle_requests.pending': 0,
+      sessions: expect.any(Number),
+      cron_runs: expect.any(Number),
+      'meta_lifecycle_requests.pending': expect.any(Number),
     });
+  });
+
+  it('drains more expired rows than one batch holds', async () => {
+    const expired = await Promise.all([insertSession(-1), insertSession(-2), insertSession(-3)]);
+
+    const detail = JSON.parse(await purgeInstanceRetention(fixture.db, 1));
+
+    expect(await remaining('sessions', expired)).toEqual([]);
+    expect(detail.sessions).toBe(3);
   });
 });

@@ -276,7 +276,7 @@ The approval events are written in the transaction that opens or decides the req
 | analytics pulls | staggered |
 | account capabilities refresh (`account_capabilities_refresh`: Mastodon `/api/v2/instance`, once per host, for accounts whose limits are over 24 h old; a failing server keeps the old values) | daily |
 | media GC | daily |
-| retention purge | daily |
+| tenant-table retention purge (`notification_retention`, `credential_retention`: per workspace via `sweep_workspaces`) | daily |
 | instance retention (`instance_retention`: `purge_instance_retention` on the global tables in batches of 10,000, up to 100 batches a run) | daily |
 | audit partition maintenance (ADR-0045) | daily |
 | API version sunset alarm (`api_version_sunset`, see [Operations](11-operations.md)) | daily |
