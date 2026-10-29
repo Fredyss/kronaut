@@ -1,4 +1,9 @@
-import { type AccountMetrics, encodePublicId, isProviderFailure } from '@kronaut/core';
+import {
+  type AccountMetrics,
+  encodePublicId,
+  isProviderFailure,
+  type ProviderError,
+} from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { createBaseContext, type ProviderEntry } from '../providers.ts';
@@ -12,7 +17,7 @@ import {
   utcDay,
   utcDayOf,
 } from './source.ts';
-import { MAX_ATTEMPTS, storedValue } from './store.ts';
+import { MAX_ATTEMPTS, resumeAt, storedValue } from './store.ts';
 
 const MAX_CHANNELS = 50;
 const SYSTEM: Actor = { kind: 'system' };
@@ -69,7 +74,17 @@ async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef
     .onConflict((oc) =>
       oc
         .columns(['workspace_id', 'social_account_id'])
-        .doUpdateSet({ checked_on: day, attempts: 0 }),
+        .doUpdateSet({ checked_on: day, attempts: 0, retry_after: null }),
+    )
+    .execute();
+}
+
+async function deferRead(trx: TenantDb, { workspaceId, accountId }: ChannelRef, until: Date) {
+  await trx
+    .insertInto('account_metric_pulls')
+    .values({ workspace_id: workspaceId, social_account_id: accountId, retry_after: until })
+    .onConflict((oc) =>
+      oc.columns(['workspace_id', 'social_account_id']).doUpdateSet({ retry_after: until }),
     )
     .execute();
 }
@@ -110,6 +125,9 @@ async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChann
       .where((eb) =>
         eb.or([eb('m.checked_on', 'is', null), eb('m.checked_on', '<', utcDay(run.observedAt))]),
       )
+      .where((eb) =>
+        eb.or([eb('m.retry_after', 'is', null), eb('m.retry_after', '<=', run.observedAt)]),
+      )
       .orderBy('m.checked_on', (ob) => ob.asc().nullsFirst())
       .orderBy('a.id')
       .limit(MAX_CHANNELS)
@@ -138,7 +156,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
   const ctx = createBaseContext(channel.entry, deps.logger, new AbortController().signal, deps.now);
   run.counts.followerChecks++;
   let metrics: AccountMetrics | null = null;
-  let transient = false;
+  let failure: ProviderError | null = null;
   try {
     metrics = await read(ctx, channel.source);
   } catch (err) {
@@ -151,12 +169,15 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
       },
       'the follower count could not be read',
     );
-    if (err.error.kind === 'rate_limited') return;
-    transient = err.error.kind === 'transient';
+    failure = err.error;
   }
-  const readAt = utcDayOf(deps.now());
+  const now = deps.now();
+  const readAt = utcDayOf(now);
   await deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
-    if (transient) return await countAttempt(trx, channel, readAt.day);
+    if (failure?.kind === 'rate_limited') {
+      return await deferRead(trx, channel, resumeAt(now, failure));
+    }
+    if (failure?.kind === 'transient') return await countAttempt(trx, channel, readAt.day);
     if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }

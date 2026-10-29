@@ -305,7 +305,11 @@ describe('analytics pulls', () => {
     followerError = { kind: 'rate_limited', scope: 'app', resetAt: day.add({ hours: 73 }) };
     await pullAt(day.add({ hours: 72 }));
     await pullAt(day.add({ hours: 72, minutes: 15 }));
+    expect(calls()).toBe(6);
     followerError = null;
+    await pullAt(day.add({ hours: 73 }));
+    expect(calls()).toBe(7);
+    await pullAt(day.add({ hours: 73, minutes: 15 }));
     expect(calls()).toBe(7);
   });
 

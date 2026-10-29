@@ -63,6 +63,7 @@ CREATE TABLE account_metric_pulls (
   social_account_id uuid NOT NULL,
   checked_on date,
   attempts smallint NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+  retry_after timestamptz,
   PRIMARY KEY (workspace_id, social_account_id),
   FOREIGN KEY (workspace_id, social_account_id) REFERENCES social_accounts ON DELETE CASCADE
 );

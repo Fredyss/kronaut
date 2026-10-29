@@ -48,7 +48,7 @@
 | Rate + inbound | `rate_buckets` (logged), `inbound_events` (provider webhooks, deduped) |
 | Outbound | `webhook_endpoints` (secret + `previous_secret`), `webhook_events`, `webhook_deliveries`, `notifications` |
 | Audit (ADR-0015) | `audit_events` (monthly partitions, insert-only; `maintain_audit_partitions`, ADR-0045), `audit_seals` |
-| Analytics (Phase 2) | `post_metric_snapshots` (per destination and metric: `value` bigint or NULL, `observed_at`, provider + API version), `account_daily_metrics` (per channel, UTC day and metric), `destination_metric_pulls` (`next_pull_at`, step, attempts), `account_metric_pulls` (`checked_on`). Written only when a value changes; NULL means missing, never 0 (ADR-0037) |
+| Analytics (Phase 2) | `post_metric_snapshots` (per destination and metric: `value` bigint or NULL, `observed_at`, provider + API version), `account_daily_metrics` (per channel, UTC day and metric), `destination_metric_pulls` (`next_pull_at`, step, attempts), `account_metric_pulls` (`checked_on`, attempts, `retry_after`). Written only when a value changes; NULL means missing, never 0 (ADR-0037) |
 
 **DB-enforced invariants** (triggers or constraints, each covered by a CI test):
 

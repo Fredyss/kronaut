@@ -212,7 +212,7 @@ export async function settlePull(
   return next.at === null ? 'done' : 'advance';
 }
 
-function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
+export function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
   if (error?.kind !== 'rate_limited') return new Date(now.add({ hours: 1 }).epochMilliseconds);
   const floor = now.add({ minutes: 15 });
   const ceiling = now.add({ hours: MAX_DEFER_HOURS });

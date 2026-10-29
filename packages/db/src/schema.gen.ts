@@ -111,6 +111,7 @@ export interface AccountGroups {
 export interface AccountMetricPulls {
   attempts: Generated<number>;
   checked_on: string | null;
+  retry_after: Timestamp | null;
   social_account_id: string;
   workspace_id: string;
 }
