@@ -50,7 +50,8 @@ RUN set -eu; \
     make install-lib-static; \
     install -D -m 0644 COPYING /opt/ffmpeg/licenses/x264-COPYING
 RUN set -eu; \
-    curl -fsSL -o ffmpeg.tar.xz "${FFMPEG_URL}"; \
+    curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_URL}" \
+      || curl -fsSL --retry 3 --retry-all-errors -o ffmpeg.tar.xz "https://deb.debian.org/debian/pool/main/f/ffmpeg/ffmpeg_${FFMPEG_VERSION}.orig.tar.xz"; \
     echo "${FFMPEG_SHA256}  ffmpeg.tar.xz" | sha256sum -c -; \
     mkdir ffmpeg; \
     tar -xJf ffmpeg.tar.xz -C ffmpeg --strip-components=1; \

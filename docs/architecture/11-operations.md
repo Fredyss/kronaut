@@ -1,7 +1,7 @@
 # Operations
 
 - **Self-host setup:** step by step in the [self-hosting guide](../guides/self-hosting.md) (compose stack, secrets, Cloudflare Tunnel and Access).
-- **FFmpeg and x264 pins (ADR-0054):** to bump them, change the `ARG`s of the `ffmpeg` stage in `infra/docker/Dockerfile` (FFmpeg release tarball from ffmpeg.org, x264 commit on its `stable` branch, each with a sha256 you computed) and the same values in `tools/licenses/native.ts`; a test fails if the two differ.
+- **FFmpeg and x264 pins (ADR-0054):** to bump them, change the `ARG`s of the `ffmpeg` stage in `infra/docker/Dockerfile` (FFmpeg release tarball from ffmpeg.org, x264 commit on its `stable` branch, each with a sha256 you computed) and the same values in `tools/licenses/native.ts`; a test fails if the two differ. If ffmpeg.org is unreachable, the build falls back to Debian's byte-identical `ffmpeg_<version>.orig.tar.xz` from deb.debian.org; its URL follows `FFMPEG_VERSION` and the same sha256 applies. The fallback is best effort: Debian's pool keeps only the current version of each release line, so it 404s once Debian moves past the pin.
 - **CLI language:** `kronaut` speaks English, Slovak or Czech.
   - It picks the first of `LC_ALL`, `LC_MESSAGES` and `LANG` that is set and non-empty, and uses its language part (`sk_SK.UTF-8` → `sk`). Anything else, `C` or `POSIX` included, gives English. The compose `cli` service passes the host's `LC_ALL`, `LC_MESSAGES` and `LANG` through.
   - Translated: the usage text, errors, prompts and confirmations. Never translated: command and flag names, ids, key ids, file paths, machine-readable output and the pino logs.
