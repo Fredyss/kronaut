@@ -45,5 +45,5 @@ export function subjectHmac(key: Uint8Array, userId: string): Buffer {
 }
 
 export function newConfirmationCode(): string {
-  return [...randomBytes(CODE_LENGTH)].map((byte) => BASE32[byte % BASE32.length]).join('');
+  return [...randomBytes(CODE_LENGTH)].map((byte) => BASE32[byte >>> 3]).join('');
 }
