@@ -1,4 +1,10 @@
-import { type Client, seriesGet, seriesStop } from '@kronaut/sdk';
+import {
+  type Client,
+  type SeriesStopResponse,
+  seriesGet,
+  seriesResume,
+  seriesStop,
+} from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
@@ -21,14 +27,17 @@ function seriesQuery(client: Client, path: SeriesScope) {
   });
 }
 
-function useStop(path: SeriesScope) {
+type Series = SeriesStopResponse;
+type SeriesCall = typeof seriesStop | typeof seriesResume;
+
+function useSeriesAction(path: SeriesScope, call: SeriesCall) {
   const client = useApiClient();
   const queryClient = useQueryClient();
   const keyed = useRef<Keyed | null>(null);
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (): Promise<Series> => {
       keyed.current = keyFor(keyed.current, path.seriesId);
-      return (await seriesStop({ client, path, headers: idempotency(keyed.current) })).data;
+      return (await call({ client, path, headers: idempotency(keyed.current) })).data;
     },
     onSuccess: (series) => {
       keyed.current = null;
@@ -78,12 +87,17 @@ function StopConfirm({
   );
 }
 
+function stateOf(series: Series): string {
+  return series.stateReason === 'advance_failed' ? 'failed' : series.state;
+}
+
 export function SeriesSection(scope: SeriesScope) {
   const client = useApiClient();
   const series = useQuery(seriesQuery(client, scope)).data;
   const ruleText = useRuleText();
   const wall = useWallFormat();
-  const stop = useStop(scope);
+  const stop = useSeriesAction(scope, seriesStop);
+  const resume = useSeriesAction(scope, seriesResume);
   const [confirming, setConfirming] = useState(false);
   if (series === undefined) return null;
   const live = series.state === 'active' || series.state === 'paused';
@@ -99,7 +113,7 @@ export function SeriesSection(scope: SeriesScope) {
         </p>
       ) : null}
       {series.state === 'active' ? null : (
-        <p className="text-muted-foreground">{m.series_state({ state: series.state })}</p>
+        <p className="text-muted-foreground">{m.series_state({ state: stateOf(series) })}</p>
       )}
       {!live ? null : confirming ? (
         <StopConfirm
@@ -108,7 +122,12 @@ export function SeriesSection(scope: SeriesScope) {
           onClose={() => setConfirming(false)}
         />
       ) : (
-        <div>
+        <div className="flex flex-wrap gap-2">
+          {series.state === 'paused' ? (
+            <Button size="sm" disabled={resume.isPending} onClick={() => resume.mutate()}>
+              {m.series_resume()}
+            </Button>
+          ) : null}
           <Button size="sm" variant="outline" onClick={() => setConfirming(true)}>
             {m.series_stop()}
           </Button>

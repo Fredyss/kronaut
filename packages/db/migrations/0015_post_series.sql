@@ -7,7 +7,7 @@ CREATE TABLE post_series (
   owner_user_id uuid REFERENCES users,
   owner_grant_id uuid,
   state text NOT NULL DEFAULT 'active' CHECK (state IN ('active','paused','ended','stopped')),
-  state_reason text CHECK (state_reason IN ('owner_lost','count_reached','until_passed')),
+  state_reason text CHECK (state_reason IN ('owner_lost','advance_failed','count_reached','until_passed','occurrences_deleted')),
   occurrences integer NOT NULL DEFAULT 1 CHECK (occurrences >= 1),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),

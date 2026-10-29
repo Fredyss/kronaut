@@ -3,6 +3,8 @@ import { Temporal } from 'temporal-polyfill';
 import { type Repeat, WEEKDAYS, type Weekday } from '../series/rule-text.ts';
 import { issueMessage } from './issues.ts';
 
+export const REPEAT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin', 'editor']);
+
 export type Freq = Repeat['freq'] | 'none';
 export type End = 'never' | 'until' | 'count';
 

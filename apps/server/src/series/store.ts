@@ -52,8 +52,6 @@ export function intendedTime(post: Occurrence) {
   return resolveLocal(plainOf(post.schedule_local), post.schedule_tz);
 }
 
-// The earliest destination time once scheduled; the post's wall time while it is a draft; and the
-// rule's own instant when a person has cleared both.
 export async function occurrenceInstant(
   trx: TenantDb,
   workspaceId: string,

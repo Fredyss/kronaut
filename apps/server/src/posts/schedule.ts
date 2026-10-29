@@ -253,7 +253,8 @@ export function scheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
         };
         await scheduleLocked(trx, run, rows);
         if (body.mode === 'instant' && body.repeat !== undefined) {
-          await startSeries(trx, ctx, { workspaceId, postId, body, repeat: body.repeat });
+          const resource = { workspaceId, postId, units };
+          await startSeries(trx, ctx, { resource, body, repeat: body.repeat });
         }
         return await readPost(trx, workspaceId, postId);
       });

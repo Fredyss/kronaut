@@ -27,7 +27,8 @@ const ENDS: readonly [End, () => string][] = [
 function Days({ repeat, pending }: RepeatProps) {
   const weekday = useWeekdayFormat();
   return (
-    <div className="flex flex-wrap gap-3">
+    <fieldset className="flex flex-wrap gap-3">
+      <legend className="sr-only">{m.repeat_weekly()}</legend>
       {WEEKDAYS.map((day, index) => (
         <label key={day} className="flex items-center gap-1">
           <input
@@ -40,7 +41,7 @@ function Days({ repeat, pending }: RepeatProps) {
           {weekday(index + 1)}
         </label>
       ))}
-    </div>
+    </fieldset>
   );
 }
 

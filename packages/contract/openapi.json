@@ -12189,8 +12189,10 @@
                         {
                           "enum": [
                             "owner_lost",
+                            "advance_failed",
                             "count_reached",
-                            "until_passed"
+                            "until_passed",
+                            "occurrences_deleted"
                           ],
                           "type": "string"
                         },
@@ -12243,6 +12245,198 @@
           "posts"
         ],
         "x-kronaut-action": "posts:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/series/{seriesId}/resume": {
+      "post": {
+        "description": "Sets a paused series active again, with the caller as its new owner: later occurrences are scheduled or submitted in their name. An active series is returned unchanged; an ended or stopped one is a conflict.",
+        "operationId": "series.resume",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "seriesId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dtstartLocal": {
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?)$",
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "nextLocal": {
+                      "anyOf": [
+                        {
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?)$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "occurrences": {
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991,
+                      "type": "integer"
+                    },
+                    "rule": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "byDay": {
+                          "items": {
+                            "enum": [
+                              "mo",
+                              "tu",
+                              "we",
+                              "th",
+                              "fr",
+                              "sa",
+                              "su"
+                            ],
+                            "type": "string"
+                          },
+                          "maxItems": 7,
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "byMonthDay": {
+                          "maximum": 31,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "count": {
+                          "maximum": 500,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "freq": {
+                          "enum": [
+                            "daily",
+                            "weekly",
+                            "monthly"
+                          ],
+                          "type": "string"
+                        },
+                        "interval": {
+                          "maximum": 99,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "until": {
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "freq"
+                      ],
+                      "type": "object"
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "paused",
+                        "ended",
+                        "stopped"
+                      ],
+                      "type": "string"
+                    },
+                    "stateReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "owner_lost",
+                            "advance_failed",
+                            "count_reached",
+                            "until_passed",
+                            "occurrences_deleted"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "timezone": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "rule",
+                    "timezone",
+                    "dtstartLocal",
+                    "state",
+                    "stateReason",
+                    "occurrences",
+                    "nextLocal"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Resume a paused recurring series",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:schedule",
         "x-kronaut-auth": [
           "session",
           "grant"
@@ -12379,8 +12573,10 @@
                         {
                           "enum": [
                             "owner_lost",
+                            "advance_failed",
                             "count_reached",
-                            "until_passed"
+                            "until_passed",
+                            "occurrences_deleted"
                           ],
                           "type": "string"
                         },

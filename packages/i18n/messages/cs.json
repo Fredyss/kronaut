@@ -829,6 +829,7 @@
   "series_next": "Další: {when} ({tz})",
   "series_stop": "Zastavit sérii",
   "series_stop_body": "Zastavit tuto sérii? Již vytvořené příspěvky zůstanou, jak jsou.",
+  "series_resume": "Obnovit sérii",
   "series_state": [
     {
       "declarations": ["input state"],
@@ -836,6 +837,7 @@
       "match": {
         "state=paused": "Pozastaveno: vlastník série už nemůže plánovat.",
         "state=ended": "Série skončila.",
+        "state=failed": "Pozastaveno: příspěvek se nepodařilo naplánovat.",
         "state=*": "Série byla zastavena."
       }
     }

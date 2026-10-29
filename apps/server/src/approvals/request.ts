@@ -181,8 +181,7 @@ export function requestRoutes(deps: PostRouteDeps): BoundRoute[] {
         });
         if (body.repeat !== undefined && body.schedule !== undefined) {
           await startSeries(trx, ctx, {
-            workspaceId,
-            postId,
+            resource: { workspaceId, postId, units },
             body: body.schedule,
             repeat: body.repeat,
           });

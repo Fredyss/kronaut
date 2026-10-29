@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { encodePublicId } from '@kronaut/core';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
@@ -11,7 +12,7 @@ import { type SeriesRow, seriesRows } from './store.ts';
 
 const TASK = 'series_advance';
 const WORKSPACE_PAGE = 1000;
-const BATCH = 100;
+const BATCH = 20;
 const SYSTEM: Actor = { kind: 'system' };
 
 export interface AdvanceDeps {
@@ -40,13 +41,45 @@ function lockActive(trx: TenantDb, workspaceId: string, after: string | null) {
     .execute();
 }
 
-async function pause(trx: TenantDb, workspaceId: string, row: SeriesRow): Promise<void> {
+type PauseReason = 'owner_lost' | 'advance_failed';
+
+// A client error repeats on every tick until someone changes the occurrence, so retrying only fails the run again.
+function pauseReason(err: unknown): PauseReason | null {
+  if (err instanceof OwnerLost) return 'owner_lost';
+  if (err instanceof HttpError && err.status >= 400 && err.status < 500) return 'advance_failed';
+  return null;
+}
+
+function errorCode(err: unknown): string {
+  if (err instanceof OwnerLost) return 'owner_lost';
+  return err instanceof HttpError ? err.code : 'error';
+}
+
+async function pause(trx: TenantDb, workspaceId: string, row: SeriesRow, err: unknown) {
+  const reason = pauseReason(err);
+  if (reason === null) return false;
   await trx
     .updateTable('post_series')
-    .set({ state: 'paused', state_reason: 'owner_lost', updated_at: sql<Date>`now()` })
+    .set({ state: 'paused', state_reason: reason, updated_at: sql<Date>`now()` })
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', row.id)
     .execute();
+  await trx
+    .insertInto('audit_events')
+    .values({
+      workspace_id: workspaceId,
+      actor_kind: 'system',
+      surface: 'worker',
+      action: 'series.paused',
+      resource_kind: 'post_series',
+      resource_id: row.id,
+      outcome: 'ok',
+      error_code: errorCode(err),
+      args_summary: JSON.stringify({ reason }),
+      correlation_id: randomUUID(),
+    })
+    .execute();
+  return true;
 }
 
 // One series that cannot advance must not roll back, and so block, the rest of its batch.
@@ -61,21 +94,20 @@ async function advanceIsolated(
     const env = { providers: run.deps.providers, now: run.now, workspaceId };
     run.counts[await stepSeries(trx, env, row)]++;
     await sql`release savepoint series_row`.execute(trx);
+    await actAs(trx, SYSTEM);
   } catch (err) {
     await sql`rollback to savepoint series_row`.execute(trx);
-    if (err instanceof OwnerLost) {
-      await pause(trx, workspaceId, row);
+    await actAs(trx, SYSTEM);
+    const series = encodePublicId('series', row.id);
+    const log = { task: TASK, series, code: errorCode(err) };
+    if (await pause(trx, workspaceId, row, err)) {
       run.counts.paused++;
+      run.deps.logger.warn(log, 'a series was paused');
     } else {
       run.counts.failed++;
-      const code = err instanceof HttpError ? err.code : 'error';
-      run.deps.logger.error(
-        { task: TASK, series: encodePublicId('series', row.id), code },
-        'a series could not advance',
-      );
+      run.deps.logger.error(log, 'a series could not advance');
     }
   }
-  await actAs(trx, SYSTEM);
 }
 
 async function advanceWorkspace(run: Run, workspaceId: string): Promise<void> {

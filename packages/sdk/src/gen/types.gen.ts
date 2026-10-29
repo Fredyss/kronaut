@@ -2911,12 +2911,59 @@ export type SeriesGetResponses = {
             until?: string;
         };
         state: 'active' | 'paused' | 'ended' | 'stopped';
-        stateReason: 'owner_lost' | 'count_reached' | 'until_passed' | null;
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
         timezone: string;
     };
 };
 
 export type SeriesGetResponse = SeriesGetResponses[keyof SeriesGetResponses];
+
+export type SeriesResumeData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        seriesId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/series/{seriesId}/resume';
+};
+
+export type SeriesResumeErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SeriesResumeError = SeriesResumeErrors[keyof SeriesResumeErrors];
+
+export type SeriesResumeResponses = {
+    /**
+     * OK
+     */
+    200: {
+        dtstartLocal: string;
+        id: string;
+        nextLocal: string | null;
+        occurrences: number;
+        rule: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
+        state: 'active' | 'paused' | 'ended' | 'stopped';
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
+        timezone: string;
+    };
+};
+
+export type SeriesResumeResponse = SeriesResumeResponses[keyof SeriesResumeResponses];
 
 export type SeriesStopData = {
     body?: never;
@@ -2958,7 +3005,7 @@ export type SeriesStopResponses = {
             until?: string;
         };
         state: 'active' | 'paused' | 'ended' | 'stopped';
-        stateReason: 'owner_lost' | 'count_reached' | 'until_passed' | null;
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
         timezone: string;
     };
 };

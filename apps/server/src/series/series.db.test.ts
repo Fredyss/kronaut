@@ -3,7 +3,14 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { addMember, decided, openRequestOf, requested, setPolicy } from '../approvals/testing.ts';
+import {
+  addMember,
+  decided,
+  openRequestOf,
+  requestCall,
+  requested,
+  setPolicy,
+} from '../approvals/testing.ts';
 import type { PostDto } from '../posts/dto.ts';
 import {
   type Auth,
@@ -11,6 +18,7 @@ import {
   call,
   create,
   db,
+  doc,
   draft,
   errorOf,
   internal,
@@ -25,6 +33,7 @@ import {
   stopPosts,
   TZ,
 } from '../posts/testing.ts';
+import { FAKE_TEXT_MAX } from '../publish/testing-fake.ts';
 import { advanceSeries } from './advance.ts';
 
 const logger = pino({ level: 'silent' });
@@ -94,6 +103,22 @@ async function repeating(local: string, repeat: object, auth: Auth = ownerAuth) 
   return (await response.json()) as PostDto;
 }
 
+async function postOf(id: string): Promise<PostDto> {
+  return (await (await call('GET', `posts/${id}`, ownerAuth)).json()) as PostDto;
+}
+
+function requestsOn(postId: string) {
+  return owner.withActor(SYSTEM, (trx) =>
+    trx
+      .selectFrom('approval_requests')
+      .select(['state', 'void_reason'])
+      .where('post_id', '=', postId)
+      .orderBy('created_at')
+      .orderBy('id')
+      .execute(),
+  );
+}
+
 async function seriesOf(post: PostDto): Promise<SeriesDto> {
   const response = await call('GET', `series/${post.seriesId}`, ownerAuth);
   expect(response.status).toBe(200);
@@ -137,6 +162,30 @@ describe('creating a series', () => {
     expect((await errorOf(bad)).details).toEqual([{ path: 'body.repeat', code: 'invalid_repeat' }]);
     const asap = await scheduleCall(post, { mode: 'asap', repeat: { freq: 'daily' } });
     expect(asap.status).toBe(400);
+  });
+
+  it('refuses repeat from someone who may only submit', async () => {
+    await setPolicy({ mode: 'required', allow_self_approval: true });
+    const contributor = await addMember('series-contributor', false);
+    await owner.withActor(CLI, (trx) =>
+      trx
+        .updateTable('memberships')
+        .set({ role: 'contributor' })
+        .where('user_id', '=', contributor.id)
+        .execute(),
+    );
+    const post = await create(contributor.auth, draft());
+    const schedule = { scheduleLocal: '2027-01-05T09:00', scheduleTz: TZ };
+    const response = await requestCall(
+      post,
+      { schedule, repeat: { freq: 'daily' } },
+      contributor.auth,
+    );
+    expect(response.status).toBe(403);
+    expect((await errorOf(response)).details).toEqual([
+      { path: 'body.repeat', code: 'repeat_needs_schedule' },
+    ]);
+    expect(await requestsOn(internal(post.id))).toEqual([]);
   });
 });
 
@@ -250,6 +299,86 @@ describe('advancing a series', () => {
     expect(second).toMatchObject({ schedule_local: '2027-01-17 11:00:00', state: 'draft' });
   });
 
+  it('asks again when the approved content changed', async () => {
+    await setPolicy({ mode: 'required', allow_self_approval: true });
+    at('2027-01-04T06:00:00Z');
+    const created = await create(ownerAuth, draft());
+    const schedule = { scheduleLocal: '2027-01-10T11:00', scheduleTz: TZ };
+    const post = await requested(created, { schedule, repeat: { freq: 'daily' } });
+    await reauth();
+    await decided(await openRequestOf(post), 'approve', ownerAuth);
+    const approved = await postOf(post.id);
+    const edit = await call('PATCH', `posts/${post.id}`, ownerAuth, {
+      expectedVersion: approved.version,
+      items: [{ doc: doc('Changed after approval') }],
+    });
+    expect(edit.status).toBe(200);
+    await advance();
+    expect(await requestsOn(internal(post.id))).toEqual([
+      { state: 'approved', void_reason: null },
+      { state: 'open', void_reason: null },
+    ]);
+    expect((await occurrences(post))[0]).toMatchObject({ state: 'draft' });
+  });
+
+  it('voids a request still open when its time passes, and moves on', async () => {
+    await setPolicy({ mode: 'required', allow_self_approval: true });
+    at('2027-01-04T06:00:00Z');
+    const created = await create(ownerAuth, draft());
+    const schedule = { scheduleLocal: '2027-01-11T11:00', scheduleTz: TZ };
+    const post = await requested(created, { schedule, repeat: { freq: 'daily' } });
+    at('2027-01-11T10:00:00Z');
+    await advance();
+    expect(await requestsOn(internal(post.id))).toEqual([
+      { state: 'voided', void_reason: 'schedule_changed' },
+    ]);
+    const [, second] = await occurrences(post);
+    expect(second).toMatchObject({ schedule_local: '2027-01-12 11:00:00', state: 'draft' });
+  });
+
+  it('pauses when an occurrence keeps failing for a reason only a person can fix', async () => {
+    at('2027-01-04T06:00:00Z');
+    const post = await repeating('2027-01-06T09:00', { freq: 'daily' });
+    at('2027-01-06T08:00:00Z');
+    await advance();
+    const [, second] = await occurrences(post);
+    const clone = await postOf(encodePublicId('post', second?.id ?? ''));
+    const edit = await call('PATCH', `posts/${clone.id}`, ownerAuth, {
+      expectedVersion: clone.version,
+      items: [{ doc: doc('x'.repeat(FAKE_TEXT_MAX + 1)) }],
+    });
+    expect(edit.status).toBe(200);
+    await advance();
+    expect(await seriesOf(post)).toMatchObject({ state: 'paused', stateReason: 'advance_failed' });
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select(['action', 'actor_kind', 'error_code'])
+        .where('resource_id', '=', decodePublicId('series', post.seriesId ?? ''))
+        .execute(),
+    );
+    expect(audit).toEqual([
+      { action: 'series.paused', actor_kind: 'system', error_code: 'preflight_failed' },
+    ]);
+  });
+
+  it('ends once its only occurrence is deleted', async () => {
+    at('2027-01-04T06:00:00Z');
+    const post = await repeating('2027-01-13T09:00', { freq: 'daily' });
+    await owner.withActor(CLI, (trx) =>
+      trx
+        .updateTable('posts')
+        .set({ deleted_at: new Date(now.epochMilliseconds) })
+        .where('id', '=', internal(post.id))
+        .execute(),
+    );
+    await advance();
+    expect(await seriesOf(post)).toMatchObject({
+      state: 'ended',
+      stateReason: 'occurrences_deleted',
+    });
+  });
+
   it('ends after COUNT occurrences', async () => {
     at('2027-01-04T06:00:00Z');
     const post = await repeating('2027-01-07T09:00', { freq: 'daily', count: 2 });
@@ -299,6 +428,31 @@ describe('advancing a series', () => {
     await advance();
     expect(await occurrences(post)).toHaveLength(1);
     expect(await seriesOf(post)).toMatchObject({ state: 'paused', stateReason: 'owner_lost' });
+    const resume = () => call('POST', `series/${post.seriesId}/resume`, ownerAuth);
+    expect(await (await resume()).json()).toMatchObject({ state: 'active', stateReason: null });
+    expect((await resume()).status).toBe(200);
+    await advance();
+    const [, second] = await occurrences(post);
+    expect(second).toMatchObject({
+      created_by_user_id: ownerId,
+      schedule_local: '2027-01-10 09:00:00',
+    });
+    await call('POST', `series/${post.seriesId}/stop`, ownerAuth);
+    expect((await resume()).status).toBe(409);
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select('action')
+        .where('resource_id', '=', decodePublicId('series', post.seriesId ?? ''))
+        .orderBy('occurred_at')
+        .orderBy('id')
+        .execute(),
+    );
+    expect(audit.map((a) => a.action)).toEqual([
+      'series.paused',
+      'series.resumed',
+      'series.stopped',
+    ]);
   });
 
   it('keeps 09:00 local time across the spring-forward change', async () => {

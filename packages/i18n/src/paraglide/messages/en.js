@@ -463,6 +463,7 @@
 /** @typedef {{}} Reset_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{}} Series_ResumeInputs */
 /** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
 /** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
 /** @typedef {{}} Series_StopInputs */
@@ -2453,6 +2454,10 @@ export const series_next = /** @type {(inputs: Series_NextInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`Next: ${i?.when} (${i?.tz})`)
 };
 
+export const series_resume = /** @type {(inputs: Series_ResumeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Resume series`)
+};
+
 export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Every day`);
@@ -2466,6 +2471,7 @@ export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedSt
 export const series_state = /** @type {(inputs: Series_StateInputs) => LocalizedString} */ (i) => {
 	if (i?.state === "paused") return /** @type {LocalizedString} */ (`Paused: its owner can no longer schedule posts.`);
 	if (i?.state === "ended") return /** @type {LocalizedString} */ (`The series has ended.`);
+	if (i?.state === "failed") return /** @type {LocalizedString} */ (`Paused: a post couldn't be scheduled.`);
 	return /** @type {LocalizedString} */ (`The series was stopped.`)
 };
 

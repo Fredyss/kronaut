@@ -463,6 +463,7 @@
 /** @typedef {{}} Reset_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{}} Series_ResumeInputs */
 /** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
 /** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
 /** @typedef {{}} Series_StopInputs */
@@ -2489,6 +2490,10 @@ export const series_next = /** @type {(inputs: Series_NextInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`Další: ${i?.when} (${i?.tz})`)
 };
 
+export const series_resume = /** @type {(inputs: Series_ResumeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Obnovit sérii`)
+};
+
 export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("cs", i?.count, {}, true);
 	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Každý den`);
@@ -2505,6 +2510,7 @@ export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedSt
 export const series_state = /** @type {(inputs: Series_StateInputs) => LocalizedString} */ (i) => {
 	if (i?.state === "paused") return /** @type {LocalizedString} */ (`Pozastaveno: vlastník série už nemůže plánovat.`);
 	if (i?.state === "ended") return /** @type {LocalizedString} */ (`Série skončila.`);
+	if (i?.state === "failed") return /** @type {LocalizedString} */ (`Pozastaveno: příspěvek se nepodařilo naplánovat.`);
 	return /** @type {LocalizedString} */ (`Série byla zastavena.`)
 };
 

@@ -1,19 +1,22 @@
-import { formatRule, type Principal, RuleError } from '@kronaut/core';
+import { formatRule, type Principal, type Resource, RuleError } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
+import type { RequestContext } from '../http/types.ts';
 import { resolveLocal } from '../posts/freeze.ts';
 import { unprocessable } from '../posts/issues.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 
 export interface SeriesStart {
-  readonly workspaceId: string;
-  readonly postId: string;
+  readonly resource: Resource & { readonly postId: string };
   readonly body: { readonly scheduleLocal: string; readonly scheduleTz: string };
   readonly repeat: RepeatBody;
 }
 
 const INVALID = [{ path: 'body.repeat', code: 'invalid_repeat' }];
+const NEEDS_SCHEDULE = [{ path: 'body.repeat', code: 'repeat_needs_schedule' }];
+
+type SeriesActor = Pick<RequestContext, 'principal' | 'authorize'>;
 
 export function seriesOwner(principal: Principal | null) {
   if (principal?.kind === 'user') return { owner_user_id: principal.userId };
@@ -33,11 +36,25 @@ function ruleText(repeat: RepeatBody, start: Temporal.PlainDateTime): string {
   }
 }
 
+// The job schedules each occurrence as the owner, so an owner who may only submit would stall it.
+function authorizeRepeat(ctx: SeriesActor, resource: Resource): void {
+  try {
+    ctx.authorize('posts:schedule', resource, { approval: 'approved' });
+  } catch (err) {
+    if (!(err instanceof HttpError) || err.code !== 'forbidden') throw err;
+    throw new HttpError('forbidden', 'Repeating a post needs permission to schedule it.', {
+      details: NEEDS_SCHEDULE,
+    });
+  }
+}
+
 export async function startSeries(
   trx: TenantDb,
-  ctx: { readonly principal: Principal | null },
-  { workspaceId, postId, body, repeat }: SeriesStart,
+  ctx: SeriesActor,
+  { resource, body, repeat }: SeriesStart,
 ): Promise<string> {
+  authorizeRepeat(ctx, resource);
+  const { workspaceId, postId } = resource;
   const start = Temporal.PlainDateTime.from(body.scheduleLocal);
   const rrule = ruleText(repeat, start);
   const post = await trx

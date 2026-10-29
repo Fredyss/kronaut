@@ -11,6 +11,7 @@ import { auditActor } from '../posts/audit.ts';
 import { pathId } from '../posts/params.ts';
 import { postUnits } from '../posts/units.ts';
 import { RepeatInput, repeatOf } from './repeat.ts';
+import { seriesOwner } from './start.ts';
 import {
   latestOccurrence,
   occurrenceInstant,
@@ -31,7 +32,9 @@ export const SeriesSchema = z.object({
   timezone: z.string(),
   dtstartLocal: LocalTime,
   state: z.enum(['active', 'paused', 'ended', 'stopped']),
-  stateReason: z.enum(['owner_lost', 'count_reached', 'until_passed']).nullable(),
+  stateReason: z
+    .enum(['owner_lost', 'advance_failed', 'count_reached', 'until_passed', 'occurrences_deleted'])
+    .nullable(),
   occurrences: z.number().int().positive(),
   nextLocal: LocalTime.nullable(),
 });
@@ -62,6 +65,21 @@ export const seriesStopRoute = defineRoute({
   summary: 'Stop a recurring series',
   description:
     'Ends the series: no further occurrence is created. Occurrences that already exist stay as they are.',
+  tags: ['posts'],
+});
+
+export const seriesResumeRoute = defineRoute({
+  id: 'series.resume',
+  method: 'POST',
+  path: `${PATH}/resume`,
+  auth: ['session', 'grant'],
+  action: 'posts:schedule',
+  params: SeriesParams,
+  response: SeriesSchema,
+  idempotency: true,
+  summary: 'Resume a paused recurring series',
+  description:
+    'Sets a paused series active again, with the caller as its new owner: later occurrences are scheduled or submitted in their name. An active series is returned unchanged; an ended or stopped one is a conflict.',
   tags: ['posts'],
 });
 
@@ -121,21 +139,35 @@ async function findSeries(trx: TenantDb, workspaceId: string, seriesId: string, 
   return { row, resource };
 }
 
-async function stop(trx: TenantDb, ctx: RequestContext, workspaceId: string, row: SeriesRow) {
-  if (row.state === 'stopped' || row.state === 'ended') return row;
-  const stopped = await trx
+type Change = { readonly state: 'stopped' } | { readonly state: 'active'; readonly owner: Owner };
+type Owner = ReturnType<typeof seriesOwner>;
+
+interface Target {
+  readonly workspaceId: string;
+  readonly row: SeriesRow;
+}
+
+async function change(
+  trx: TenantDb,
+  ctx: RequestContext,
+  { workspaceId, row }: Target,
+  to: Change,
+) {
+  const owner =
+    to.state === 'active' ? { owner_user_id: null, owner_grant_id: null, ...to.owner } : {};
+  const changed = await trx
     .updateTable('post_series')
-    .set({ state: 'stopped', state_reason: null, updated_at: sql<Date>`now()` })
+    .set({ state: to.state, state_reason: null, ...owner, updated_at: sql<Date>`now()` })
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', row.id)
-    .returning(['state', 'state_reason'])
+    .returning(['state', 'state_reason', 'owner_user_id', 'owner_grant_id'])
     .executeTakeFirstOrThrow();
   await trx
     .insertInto('audit_events')
     .values({
       workspace_id: workspaceId,
       ...(await auditActor(trx, workspaceId, ctx.principal)),
-      action: 'series.stopped',
+      action: to.state === 'active' ? 'series.resumed' : 'series.stopped',
       resource_kind: 'post_series',
       resource_id: row.id,
       outcome: 'ok',
@@ -144,7 +176,36 @@ async function stop(trx: TenantDb, ctx: RequestContext, workspaceId: string, row
       request_id: ctx.requestId,
     })
     .execute();
-  return { ...row, ...stopped };
+  return { ...row, ...changed };
+}
+
+async function stop(trx: TenantDb, ctx: RequestContext, target: Target) {
+  const { row } = target;
+  if (row.state === 'stopped' || row.state === 'ended') return row;
+  return await change(trx, ctx, target, { state: 'stopped' });
+}
+
+async function resume(trx: TenantDb, ctx: RequestContext, target: Target) {
+  const { row } = target;
+  if (row.state === 'active') return row;
+  if (row.state !== 'paused') throw new HttpError('conflict', 'Only a paused series can resume.');
+  return await change(trx, ctx, target, { state: 'active', owner: seriesOwner(ctx.principal) });
+}
+
+type Transition = (trx: TenantDb, ctx: RequestContext, target: Target) => Promise<SeriesRow>;
+
+async function transition(
+  ctx: RequestContext,
+  params: z.infer<typeof SeriesParams>,
+  apply: Transition,
+) {
+  const workspaceId = pathId('workspace', params.workspaceId);
+  const seriesId = pathId('series', params.seriesId);
+  return await ctx.tenant(async (trx) => {
+    const { row, resource } = await findSeries(trx, workspaceId, seriesId, true);
+    ctx.authorize('posts:schedule', resource, { approval: 'approved' });
+    return await seriesDto(trx, workspaceId, await apply(trx, ctx, { workspaceId, row }), ctx.now);
+  });
 }
 
 export function seriesRoutes(): BoundRoute[] {
@@ -160,14 +221,10 @@ export function seriesRoutes(): BoundRoute[] {
       return { body };
     }),
     bindRoute(seriesStopRoute, async ({ params }, ctx) => {
-      const workspaceId = pathId('workspace', params.workspaceId);
-      const seriesId = pathId('series', params.seriesId);
-      const body = await ctx.tenant(async (trx) => {
-        const { row, resource } = await findSeries(trx, workspaceId, seriesId, true);
-        ctx.authorize('posts:schedule', resource, { approval: 'approved' });
-        return await seriesDto(trx, workspaceId, await stop(trx, ctx, workspaceId, row), ctx.now);
-      });
-      return { body };
+      return { body: await transition(ctx, params, stop) };
+    }),
+    bindRoute(seriesResumeRoute, async ({ params }, ctx) => {
+      return { body: await transition(ctx, params, resume) };
     }),
   ];
 }

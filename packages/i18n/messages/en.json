@@ -782,6 +782,7 @@
   "series_next": "Next: {when} ({tz})",
   "series_stop": "Stop series",
   "series_stop_body": "Stop this series? Posts already created stay as they are.",
+  "series_resume": "Resume series",
   "series_state": [
     {
       "declarations": ["input state"],
@@ -789,6 +790,7 @@
       "match": {
         "state=paused": "Paused: its owner can no longer schedule posts.",
         "state=ended": "The series has ended.",
+        "state=failed": "Paused: a post couldn't be scheduled.",
         "state=*": "The series was stopped."
       }
     }

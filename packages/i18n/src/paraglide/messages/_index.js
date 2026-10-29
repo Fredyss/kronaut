@@ -465,6 +465,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Reset_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{}} Series_ResumeInputs */
 /** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
 /** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
 /** @typedef {{}} Series_StopInputs */
@@ -7541,6 +7542,21 @@ export const series_next = /** @type {((inputs: Series_NextInputs, options?: { l
 	return __en.series_next(inputs)
 });
 /**
+* | output |
+* | --- |
+* | "Resume series" |
+*
+* @param {Series_ResumeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_resume = /** @type {((inputs?: Series_ResumeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_ResumeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_resume(inputs)
+	if (locale === "cs") return __cs.series_resume(inputs)
+	return __en.series_resume(inputs)
+});
+/**
 * | freq | countPlural | output |
 * | --- | --- | --- |
 * | "daily" | "one" | "Every day" |
@@ -7565,6 +7581,7 @@ export const series_rule = /** @type {((inputs: Series_RuleInputs, options?: { l
 * | --- | --- |
 * | "paused" | "Paused: its owner can no longer schedule posts." |
 * | "ended" | "The series has ended." |
+* | "failed" | "Paused: a post couldn't be scheduled." |
 * | * | "The series was stopped." |
 *
 * @param {Series_StateInputs} inputs
