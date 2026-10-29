@@ -1,12 +1,17 @@
 import { Input, Label } from '@kronaut/ui';
-import { useId } from 'react';
+import { lazy, Suspense, useId } from 'react';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { issueMessage } from './issues.ts';
 import type { QueueChoice, QueueEntry } from './queue-choice.ts';
+import type { RepeatControl } from './repeat.ts';
 import type { Mode, WhenState } from './when.ts';
 
 export const NOTE_MAX = 2000;
+
+const RepeatFields = lazy(() =>
+  import('./repeat-fieldset.tsx').then((module) => ({ default: module.RepeatFields })),
+);
 
 export interface NoteState {
   readonly value: string;
@@ -20,6 +25,7 @@ interface WhenFieldsetProps {
   readonly pending: boolean;
   readonly note?: NoteState | undefined;
   readonly queue?: QueueChoice | undefined;
+  readonly repeat?: RepeatControl | undefined;
 }
 
 function NoteField({ note, pending }: { readonly note: NoteState; readonly pending: boolean }) {
@@ -93,7 +99,8 @@ function QueueLines({ queue, all }: { readonly queue: QueueChoice; readonly all:
   );
 }
 
-export function WhenFieldset({ when, dateId, timeId, pending, note, queue }: WhenFieldsetProps) {
+export function WhenFieldset(props: WhenFieldsetProps) {
+  const { when, dateId, timeId, pending, note, queue, repeat } = props;
   const { mode, date, setDate, time, setTime, tz } = when;
   return (
     <fieldset className="flex flex-col gap-3">
@@ -137,6 +144,11 @@ export function WhenFieldset({ when, dateId, timeId, pending, note, queue }: Whe
           </div>
           <span className="pb-2 text-muted-foreground text-sm">{m.compose_time_zone({ tz })}</span>
         </div>
+      ) : null}
+      {mode === 'instant' && repeat !== undefined ? (
+        <Suspense fallback={null}>
+          <RepeatFields control={repeat} pending={pending} />
+        </Suspense>
       ) : null}
       {note === undefined ? null : <NoteField note={note} pending={pending} />}
     </fieldset>

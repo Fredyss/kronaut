@@ -291,6 +291,7 @@
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
 /** @typedef {{}} Issue_Image_Too_WideInputs */
 /** @typedef {{}} Issue_In_PastInputs */
+/** @typedef {{}} Issue_Invalid_RepeatInputs */
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
@@ -441,6 +442,16 @@
 /** @typedef {{}} Reason_Thread_IncompleteInputs */
 /** @typedef {{}} Reason_Verify_InconclusiveInputs */
 /** @typedef {{}} Reason_Verify_Window_ElapsedInputs */
+/** @typedef {{}} Repeat_AfterInputs */
+/** @typedef {{}} Repeat_DailyInputs */
+/** @typedef {{}} Repeat_EndsInputs */
+/** @typedef {{}} Repeat_EveryInputs */
+/** @typedef {{}} Repeat_LabelInputs */
+/** @typedef {{}} Repeat_MonthlyInputs */
+/** @typedef {{}} Repeat_NeverInputs */
+/** @typedef {{}} Repeat_OnInputs */
+/** @typedef {{}} Repeat_WarningInputs */
+/** @typedef {{}} Repeat_WeeklyInputs */
 /** @typedef {{}} Reset_ConfirmInputs */
 /** @typedef {{}} Reset_Invalid_LinkInputs */
 /** @typedef {{}} Reset_MismatchInputs */
@@ -450,6 +461,13 @@
 /** @typedef {{}} Reset_SubmittingInputs */
 /** @typedef {{}} Reset_SubtitleInputs */
 /** @typedef {{}} Reset_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
+/** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
+/** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
+/** @typedef {{}} Series_StopInputs */
+/** @typedef {{}} Series_Stop_BodyInputs */
+/** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
@@ -1731,6 +1749,10 @@ export const issue_in_past = /** @type {(inputs: Issue_In_PastInputs) => Localiz
 	return /** @type {LocalizedString} */ (`That time has already passed. Pick a later one.`)
 };
 
+export const issue_invalid_repeat = /** @type {(inputs: Issue_Invalid_RepeatInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`These repeat settings aren't supported.`)
+};
+
 export const issue_invalid_time_zone = /** @type {(inputs: Issue_Invalid_Time_ZoneInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The time zone isn't recognised.`)
 };
@@ -2345,6 +2367,46 @@ export const reason_verify_window_elapsed = /** @type {(inputs: Reason_Verify_Wi
 	return /** @type {LocalizedString} */ (`Checking took too long. It may be live.`)
 };
 
+export const repeat_after = /** @type {(inputs: Repeat_AfterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`After a number of posts`)
+};
+
+export const repeat_daily = /** @type {(inputs: Repeat_DailyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Daily`)
+};
+
+export const repeat_ends = /** @type {(inputs: Repeat_EndsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ends`)
+};
+
+export const repeat_every = /** @type {(inputs: Repeat_EveryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Every`)
+};
+
+export const repeat_label = /** @type {(inputs: Repeat_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Repeat`)
+};
+
+export const repeat_monthly = /** @type {(inputs: Repeat_MonthlyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Monthly`)
+};
+
+export const repeat_never = /** @type {(inputs: Repeat_NeverInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Never`)
+};
+
+export const repeat_on = /** @type {(inputs: Repeat_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`On a date`)
+};
+
+export const repeat_warning = /** @type {(inputs: Repeat_WarningInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Some networks reject the same text repeated within a week. Vary the text.`)
+};
+
+export const repeat_weekly = /** @type {(inputs: Repeat_WeeklyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Weekly`)
+};
+
 export const reset_confirm = /** @type {(inputs: Reset_ConfirmInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Repeat the password`)
 };
@@ -2379,6 +2441,44 @@ export const reset_subtitle = /** @type {(inputs: Reset_SubtitleInputs) => Local
 
 export const reset_title = /** @type {(inputs: Reset_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Set your password`)
+};
+
+export const series_count = /** @type {(inputs: Series_CountInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Ends after ${i?.count} post`);
+	return /** @type {LocalizedString} */ (`Ends after ${i?.count} posts`)
+};
+
+export const series_next = /** @type {(inputs: Series_NextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Next: ${i?.when} (${i?.tz})`)
+};
+
+export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Every day`);
+	if (i?.freq === "weekly" && countPlural === "one") return /** @type {LocalizedString} */ (`Every week on ${i?.days}`);
+	if (i?.freq === "daily") return /** @type {LocalizedString} */ (`Every ${i?.count} days`);
+	if (i?.freq === "weekly") return /** @type {LocalizedString} */ (`Every ${i?.count} weeks on ${i?.days}`);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Every month on day ${i?.day}`);
+	return /** @type {LocalizedString} */ (`Every ${i?.count} months on day ${i?.day}`)
+};
+
+export const series_state = /** @type {(inputs: Series_StateInputs) => LocalizedString} */ (i) => {
+	if (i?.state === "paused") return /** @type {LocalizedString} */ (`Paused: its owner can no longer schedule posts.`);
+	if (i?.state === "ended") return /** @type {LocalizedString} */ (`The series has ended.`);
+	return /** @type {LocalizedString} */ (`The series was stopped.`)
+};
+
+export const series_stop = /** @type {(inputs: Series_StopInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stop series`)
+};
+
+export const series_stop_body = /** @type {(inputs: Series_Stop_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stop this series? Posts already created stay as they are.`)
+};
+
+export const series_until = /** @type {(inputs: Series_UntilInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Ends on ${i?.date}`)
 };
 
 export const settings_account_title = /** @type {(inputs: Settings_Account_TitleInputs) => LocalizedString} */ () => {

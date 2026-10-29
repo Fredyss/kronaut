@@ -14,4 +14,5 @@ export * from './destination-state.ts';
 export * from './ids.ts';
 export * from './provider-contract.ts';
 export * from './provider-error.ts';
+export * from './recurrence.ts';
 export { ROLES, type Role, roleAllows } from './roles.ts';

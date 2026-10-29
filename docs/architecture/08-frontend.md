@@ -7,6 +7,7 @@
   - Media is checked in a Web Worker (`createImageBitmap`, mediabunny) *before* upload.
   - Schedule stays disabled until everything is valid, and each error comes with a fix action.
   - "Add to queue" sits next to ASAP and a fixed time. It shows each selected channel's next free slot, and is disabled with the reason when a channel has no slots. Each channel's queue is edited from the channel list.
+  - "Repeat" sits under a fixed time: presets only (daily, weekly on days, monthly on a day, every N, end never/on a date/after N). The post page shows the series, its next time and a stop action.
 - **Previews** are React components per archetype (short-feed, pro-feed, media-grid, vertical-video, chat, article):
   - They use real truncation cutoffs and crop overlays.
   - Golden tests per network keep preview == published.

@@ -291,6 +291,7 @@
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
 /** @typedef {{}} Issue_Image_Too_WideInputs */
 /** @typedef {{}} Issue_In_PastInputs */
+/** @typedef {{}} Issue_Invalid_RepeatInputs */
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
@@ -441,6 +442,16 @@
 /** @typedef {{}} Reason_Thread_IncompleteInputs */
 /** @typedef {{}} Reason_Verify_InconclusiveInputs */
 /** @typedef {{}} Reason_Verify_Window_ElapsedInputs */
+/** @typedef {{}} Repeat_AfterInputs */
+/** @typedef {{}} Repeat_DailyInputs */
+/** @typedef {{}} Repeat_EndsInputs */
+/** @typedef {{}} Repeat_EveryInputs */
+/** @typedef {{}} Repeat_LabelInputs */
+/** @typedef {{}} Repeat_MonthlyInputs */
+/** @typedef {{}} Repeat_NeverInputs */
+/** @typedef {{}} Repeat_OnInputs */
+/** @typedef {{}} Repeat_WarningInputs */
+/** @typedef {{}} Repeat_WeeklyInputs */
 /** @typedef {{}} Reset_ConfirmInputs */
 /** @typedef {{}} Reset_Invalid_LinkInputs */
 /** @typedef {{}} Reset_MismatchInputs */
@@ -450,6 +461,13 @@
 /** @typedef {{}} Reset_SubmittingInputs */
 /** @typedef {{}} Reset_SubtitleInputs */
 /** @typedef {{}} Reset_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
+/** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
+/** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
+/** @typedef {{}} Series_StopInputs */
+/** @typedef {{}} Series_Stop_BodyInputs */
+/** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
@@ -1753,6 +1771,10 @@ export const issue_in_past = /** @type {(inputs: Issue_In_PastInputs) => Localiz
 	return /** @type {LocalizedString} */ (`Zvolený čas už uplynul. Vyberte neskorší.`)
 };
 
+export const issue_invalid_repeat = /** @type {(inputs: Issue_Invalid_RepeatInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Toto nastavenie opakovania nie je podporované.`)
+};
+
 export const issue_invalid_time_zone = /** @type {(inputs: Issue_Invalid_Time_ZoneInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Časové pásmo sa nepodarilo rozpoznať.`)
 };
@@ -2381,6 +2403,46 @@ export const reason_verify_window_elapsed = /** @type {(inputs: Reason_Verify_Wi
 	return /** @type {LocalizedString} */ (`Overovanie trvalo príliš dlho. Príspevok už možno je uverejnený.`)
 };
 
+export const repeat_after = /** @type {(inputs: Repeat_AfterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Po počte príspevkov`)
+};
+
+export const repeat_daily = /** @type {(inputs: Repeat_DailyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Každý deň`)
+};
+
+export const repeat_ends = /** @type {(inputs: Repeat_EndsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Koniec`)
+};
+
+export const repeat_every = /** @type {(inputs: Repeat_EveryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Interval`)
+};
+
+export const repeat_label = /** @type {(inputs: Repeat_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Opakovanie`)
+};
+
+export const repeat_monthly = /** @type {(inputs: Repeat_MonthlyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Každý mesiac`)
+};
+
+export const repeat_never = /** @type {(inputs: Repeat_NeverInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nikdy`)
+};
+
+export const repeat_on = /** @type {(inputs: Repeat_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`K dátumu`)
+};
+
+export const repeat_warning = /** @type {(inputs: Repeat_WarningInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Niektoré siete odmietnu rovnaký text zopakovaný do týždňa. Text obmieňajte.`)
+};
+
+export const repeat_weekly = /** @type {(inputs: Repeat_WeeklyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Každý týždeň`)
+};
+
 export const reset_confirm = /** @type {(inputs: Reset_ConfirmInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zopakujte heslo`)
 };
@@ -2415,6 +2477,47 @@ export const reset_subtitle = /** @type {(inputs: Reset_SubtitleInputs) => Local
 
 export const reset_title = /** @type {(inputs: Reset_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Nastavte si heslo`)
+};
+
+export const series_count = /** @type {(inputs: Series_CountInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Končí po ${i?.count} príspevku`);
+	return /** @type {LocalizedString} */ (`Končí po ${i?.count} príspevkoch`)
+};
+
+export const series_next = /** @type {(inputs: Series_NextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Ďalší: ${i?.when} (${i?.tz})`)
+};
+
+export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Každý deň`);
+	if (i?.freq === "daily" && countPlural === "few") return /** @type {LocalizedString} */ (`Každé ${i?.count} dni`);
+	if (i?.freq === "weekly" && countPlural === "one") return /** @type {LocalizedString} */ (`Každý týždeň: ${i?.days}`);
+	if (i?.freq === "weekly" && countPlural === "few") return /** @type {LocalizedString} */ (`Každé ${i?.count} týždne: ${i?.days}`);
+	if (i?.freq === "daily") return /** @type {LocalizedString} */ (`Každých ${i?.count} dní`);
+	if (i?.freq === "weekly") return /** @type {LocalizedString} */ (`Každých ${i?.count} týždňov: ${i?.days}`);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Každý mesiac, ${i?.day}. deň`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Každé ${i?.count} mesiace, ${i?.day}. deň`);
+	return /** @type {LocalizedString} */ (`Každých ${i?.count} mesiacov, ${i?.day}. deň`)
+};
+
+export const series_state = /** @type {(inputs: Series_StateInputs) => LocalizedString} */ (i) => {
+	if (i?.state === "paused") return /** @type {LocalizedString} */ (`Pozastavená: vlastník série už nemôže plánovať.`);
+	if (i?.state === "ended") return /** @type {LocalizedString} */ (`Séria skončila.`);
+	return /** @type {LocalizedString} */ (`Séria bola zastavená.`)
+};
+
+export const series_stop = /** @type {(inputs: Series_StopInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zastaviť sériu`)
+};
+
+export const series_stop_body = /** @type {(inputs: Series_Stop_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zastaviť túto sériu? Už vytvorené príspevky zostanú, ako sú.`)
+};
+
+export const series_until = /** @type {(inputs: Series_UntilInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Končí ${i?.date}`)
 };
 
 export const settings_account_title = /** @type {(inputs: Settings_Account_TitleInputs) => LocalizedString} */ () => {

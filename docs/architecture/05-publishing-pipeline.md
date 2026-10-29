@@ -271,6 +271,7 @@ The approval events are written in the transaction that opens or decides the req
 | lease reaper | 1 min |
 | refresh sweep | 5 min |
 | tz recompute after a tzdata update (`tz_recompute`, see [Time](#time)) | 1 h |
+| series advance (`series_advance`, see [Recurring posts](#recurring-posts)) | 5 min |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
 | analytics pulls | staggered |
@@ -308,4 +309,23 @@ A channel's queue is a weekly timetable: weekday + local wall time in one IANA z
   - No slots → `422 queue_empty`; none free in 8 weeks → `422 queue_full`. Both name the channel.
 - **Gaps stay.** Deleting, cancelling or rescheduling a queued post never moves the others; the next "add to queue" fills the gap. A queued destination is an ordinary scheduled destination afterwards (reschedule, `tz_recompute` and approval binding apply as usual).
 - **API:** `GET /v1/workspaces/:id/channels/:channelId/queue` returns the zone, the slots and the next 3 free instants (`channels:read`); `PUT` replaces the timetable as a whole (`settings:write`) and writes the audit event `channel.queue_updated`.
+
+## Recurring posts
+
+A series repeats a post on a rule in local wall time. Each occurrence is an ordinary post (`origin = 'recurrence'`, `series_id` set) that goes through preflight, approval and publishing like any other; only the next occurrence exists at any time.
+
+- **Rule:** a preset subset of RRULE, stored as text with its start (`dtstart_local` + `timezone`):
+  - `FREQ=DAILY`, `FREQ=WEEKLY;BYDAY=…` or `FREQ=MONTHLY;BYMONTHDAY=n`, each with an optional `INTERVAL` and at most one of `COUNT` and `UNTIL`.
+  - It is expanded with Temporal from local wall time: never by adding 24 h or 7×24 h. A gap moves forward and an overlap takes the earlier offset, as for any schedule. A month without day `n` is skipped (RFC 5545).
+  - The UI offers presets only: daily, weekly on chosen days, monthly on a day, every N, ending never, on a date or after N times. The API takes the same subset.
+- **Start:** a series is created by scheduling a post at a fixed time with `repeat` (`instant` mode only), or by requesting approval for it with a schedule and `repeat`. That post is occurrence 1, and its time is the start. An upcoming occurrence is a draft post in `instant` mode with its planned time; editing that time moves only that occurrence.
+- **Owner:** the series acts as the user or API key that created it. Every step re-runs `authorize()` for that owner. If the owner can no longer schedule or submit, the series pauses with `owner_lost`.
+- **Advancing:** the `series_advance` cron task runs every 5 minutes over `sweep_workspaces` and moves each active series one step:
+  - **The latest occurrence's time has passed**, whatever its state: clone it into the next occurrence at the next rule instant. It copies variants, items, media and destination settings, but no revisions, approvals or publish state. Edits made to an upcoming occurrence carry forward this way.
+  - **The next occurrence is a draft and approval is required:** open an approval request as the owner, bound to the occurrence's time.
+  - **No approval is needed, or the request was approved:** schedule it at that time as the owner.
+  - **A request is open:** wait. A draft whose time passes without approval stays a draft (missed), and the next occurrence follows.
+  - **Ending:** the series ends after `COUNT` occurrences or past `UNTIL`.
+- **Stopping:** `POST …/series/:seriesId/stop` (`posts:schedule`) ends the series. Already-materialised occurrences are left as they are. Deleting or cancelling one occurrence doesn't stop the series.
+- **Duplicate text:** some providers reject identical text on the same account. The composer warns when a series repeats unchanged content more often than every 7 days.
 

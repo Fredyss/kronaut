@@ -293,6 +293,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
 /** @typedef {{}} Issue_Image_Too_WideInputs */
 /** @typedef {{}} Issue_In_PastInputs */
+/** @typedef {{}} Issue_Invalid_RepeatInputs */
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
@@ -443,6 +444,16 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Reason_Thread_IncompleteInputs */
 /** @typedef {{}} Reason_Verify_InconclusiveInputs */
 /** @typedef {{}} Reason_Verify_Window_ElapsedInputs */
+/** @typedef {{}} Repeat_AfterInputs */
+/** @typedef {{}} Repeat_DailyInputs */
+/** @typedef {{}} Repeat_EndsInputs */
+/** @typedef {{}} Repeat_EveryInputs */
+/** @typedef {{}} Repeat_LabelInputs */
+/** @typedef {{}} Repeat_MonthlyInputs */
+/** @typedef {{}} Repeat_NeverInputs */
+/** @typedef {{}} Repeat_OnInputs */
+/** @typedef {{}} Repeat_WarningInputs */
+/** @typedef {{}} Repeat_WeeklyInputs */
 /** @typedef {{}} Reset_ConfirmInputs */
 /** @typedef {{}} Reset_Invalid_LinkInputs */
 /** @typedef {{}} Reset_MismatchInputs */
@@ -452,6 +463,13 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Reset_SubmittingInputs */
 /** @typedef {{}} Reset_SubtitleInputs */
 /** @typedef {{}} Reset_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Series_CountInputs */
+/** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Series_NextInputs */
+/** @typedef {{ freq: NonNullable<unknown>, count: NonNullable<unknown>, days: NonNullable<unknown>, day: NonNullable<unknown> }} Series_RuleInputs */
+/** @typedef {{ state: NonNullable<unknown> }} Series_StateInputs */
+/** @typedef {{}} Series_StopInputs */
+/** @typedef {{}} Series_Stop_BodyInputs */
+/** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
@@ -4937,6 +4955,21 @@ export const issue_in_past = /** @type {((inputs?: Issue_In_PastInputs, options?
 /**
 * | output |
 * | --- |
+* | "These repeat settings aren't supported." |
+*
+* @param {Issue_Invalid_RepeatInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_invalid_repeat = /** @type {((inputs?: Issue_Invalid_RepeatInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Invalid_RepeatInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_invalid_repeat(inputs)
+	if (locale === "cs") return __cs.issue_invalid_repeat(inputs)
+	return __en.issue_invalid_repeat(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The time zone isn't recognised." |
 *
 * @param {Issue_Invalid_Time_ZoneInputs} inputs
@@ -7194,6 +7227,156 @@ export const reason_verify_window_elapsed = /** @type {((inputs?: Reason_Verify_
 /**
 * | output |
 * | --- |
+* | "After a number of posts" |
+*
+* @param {Repeat_AfterInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_after = /** @type {((inputs?: Repeat_AfterInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_AfterInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_after(inputs)
+	if (locale === "cs") return __cs.repeat_after(inputs)
+	return __en.repeat_after(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Daily" |
+*
+* @param {Repeat_DailyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_daily = /** @type {((inputs?: Repeat_DailyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_DailyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_daily(inputs)
+	if (locale === "cs") return __cs.repeat_daily(inputs)
+	return __en.repeat_daily(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Ends" |
+*
+* @param {Repeat_EndsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_ends = /** @type {((inputs?: Repeat_EndsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_EndsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_ends(inputs)
+	if (locale === "cs") return __cs.repeat_ends(inputs)
+	return __en.repeat_ends(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Every" |
+*
+* @param {Repeat_EveryInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_every = /** @type {((inputs?: Repeat_EveryInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_EveryInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_every(inputs)
+	if (locale === "cs") return __cs.repeat_every(inputs)
+	return __en.repeat_every(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Repeat" |
+*
+* @param {Repeat_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_label = /** @type {((inputs?: Repeat_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_label(inputs)
+	if (locale === "cs") return __cs.repeat_label(inputs)
+	return __en.repeat_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Monthly" |
+*
+* @param {Repeat_MonthlyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_monthly = /** @type {((inputs?: Repeat_MonthlyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_MonthlyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_monthly(inputs)
+	if (locale === "cs") return __cs.repeat_monthly(inputs)
+	return __en.repeat_monthly(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Never" |
+*
+* @param {Repeat_NeverInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_never = /** @type {((inputs?: Repeat_NeverInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_NeverInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_never(inputs)
+	if (locale === "cs") return __cs.repeat_never(inputs)
+	return __en.repeat_never(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "On a date" |
+*
+* @param {Repeat_OnInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_on = /** @type {((inputs?: Repeat_OnInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_OnInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_on(inputs)
+	if (locale === "cs") return __cs.repeat_on(inputs)
+	return __en.repeat_on(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Some networks reject the same text repeated within a week. Vary the text." |
+*
+* @param {Repeat_WarningInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_warning = /** @type {((inputs?: Repeat_WarningInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_WarningInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_warning(inputs)
+	if (locale === "cs") return __cs.repeat_warning(inputs)
+	return __en.repeat_warning(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Weekly" |
+*
+* @param {Repeat_WeeklyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const repeat_weekly = /** @type {((inputs?: Repeat_WeeklyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Repeat_WeeklyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.repeat_weekly(inputs)
+	if (locale === "cs") return __cs.repeat_weekly(inputs)
+	return __en.repeat_weekly(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Repeat the password" |
 *
 * @param {Reset_ConfirmInputs} inputs
@@ -7325,6 +7508,119 @@ export const reset_title = /** @type {((inputs?: Reset_TitleInputs, options?: { 
 	if (locale === "sk") return __sk.reset_title(inputs)
 	if (locale === "cs") return __cs.reset_title(inputs)
 	return __en.reset_title(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "Ends after {count} post" |
+* | * | "Ends after {count} posts" |
+*
+* @param {Series_CountInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_count = /** @type {((inputs: Series_CountInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_CountInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_count(inputs)
+	if (locale === "cs") return __cs.series_count(inputs)
+	return __en.series_count(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Next: {when} ({tz})" |
+*
+* @param {Series_NextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_next = /** @type {((inputs: Series_NextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_NextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_next(inputs)
+	if (locale === "cs") return __cs.series_next(inputs)
+	return __en.series_next(inputs)
+});
+/**
+* | freq | countPlural | output |
+* | --- | --- | --- |
+* | "daily" | "one" | "Every day" |
+* | "daily" | * | "Every {count} days" |
+* | "weekly" | "one" | "Every week on {days}" |
+* | "weekly" | * | "Every {count} weeks on {days}" |
+* | * | "one" | "Every month on day {day}" |
+* | * | * | "Every {count} months on day {day}" |
+*
+* @param {Series_RuleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_rule = /** @type {((inputs: Series_RuleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_RuleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_rule(inputs)
+	if (locale === "cs") return __cs.series_rule(inputs)
+	return __en.series_rule(inputs)
+});
+/**
+* | state | output |
+* | --- | --- |
+* | "paused" | "Paused: its owner can no longer schedule posts." |
+* | "ended" | "The series has ended." |
+* | * | "The series was stopped." |
+*
+* @param {Series_StateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_state = /** @type {((inputs: Series_StateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_StateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_state(inputs)
+	if (locale === "cs") return __cs.series_state(inputs)
+	return __en.series_state(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Stop series" |
+*
+* @param {Series_StopInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_stop = /** @type {((inputs?: Series_StopInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_StopInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_stop(inputs)
+	if (locale === "cs") return __cs.series_stop(inputs)
+	return __en.series_stop(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Stop this series? Posts already created stay as they are." |
+*
+* @param {Series_Stop_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_stop_body = /** @type {((inputs?: Series_Stop_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_Stop_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_stop_body(inputs)
+	if (locale === "cs") return __cs.series_stop_body(inputs)
+	return __en.series_stop_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Ends on {date}" |
+*
+* @param {Series_UntilInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const series_until = /** @type {((inputs: Series_UntilInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Series_UntilInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.series_until(inputs)
+	if (locale === "cs") return __cs.series_until(inputs)
+	return __en.series_until(inputs)
 });
 /**
 * | output |

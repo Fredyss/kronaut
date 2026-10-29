@@ -6,7 +6,14 @@ import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.t
 import type { PostRouteDeps } from '../posts/deps.ts';
 import { PostSchema, readPost } from '../posts/dto.ts';
 import type { Frozen, Schedule } from '../posts/freeze.ts';
-import { bumpPost, checkVersion, lockCurrent, lockDestinations } from '../posts/locks.ts';
+import { unprocessable } from '../posts/issues.ts';
+import {
+  bumpPost,
+  type CurrentPost,
+  checkVersion,
+  lockCurrent,
+  lockDestinations,
+} from '../posts/locks.ts';
 import { PostParams, pathId } from '../posts/params.ts';
 import { InstantFields, ScheduleCommon } from '../posts/schedule.ts';
 import {
@@ -17,6 +24,9 @@ import {
   scheduleOf,
 } from '../posts/targets.ts';
 import { postUnits } from '../posts/units.ts';
+import type { ProviderRegistry } from '../providers.ts';
+import { RepeatInput } from '../series/repeat.ts';
+import { startSeries } from '../series/start.ts';
 import { postApprovalRequestedEvent } from '../webhooks/events.ts';
 import { announce } from './locked.ts';
 import { type EffectivePolicy, effectivePolicy, policySnapshot } from './policy.ts';
@@ -34,12 +44,13 @@ export const requestApprovalRoute = defineRoute({
     ...ScheduleCommon,
     note: z.string().max(NOTE_MAX).optional(),
     schedule: z.strictObject(InstantFields).optional(),
+    repeat: RepeatInput.optional(),
   }),
   response: PostSchema,
   idempotency: true,
   summary: 'Request approval for a post',
   description:
-    'Freezes every draft destination for review and opens an approval request; the destinations stay drafts. With a schedule, the approval binds that local time within the policy tolerance.',
+    'Freezes every draft destination for review and opens an approval request; the destinations stay drafts. With a schedule, the approval binds that local time within the policy tolerance. With repeat (only together with a schedule; 422 invalid_repeat otherwise) the post becomes occurrence 1 of a series, and the series schedules it as the requester once the request is approved.',
   tags: ['approvals'],
 });
 
@@ -53,14 +64,25 @@ interface Opening {
   readonly note: string | null;
 }
 
-function requester(ctx: RequestContext) {
+export interface RequestOpening {
+  readonly providers: ProviderRegistry;
+  readonly workspaceId: string;
+  readonly locked: CurrentPost;
+  readonly schedule: { readonly scheduleLocal: string; readonly scheduleTz: string } | undefined;
+  readonly note: string | undefined;
+  readonly acknowledgedCodes?: readonly string[] | undefined;
+}
+
+type Requester = Pick<RequestContext, 'principal' | 'now'>;
+
+function requester(ctx: Requester) {
   const principal = ctx.principal;
   if (principal?.kind === 'user') return { requested_by_user_id: principal.userId };
   if (principal?.kind === 'grant') return { requested_by_grant_id: principal.grantId };
   throw new HttpError('internal', 'No user or API key is bound to this request.');
 }
 
-async function insertRequest(trx: TenantDb, ctx: RequestContext, o: Opening): Promise<string> {
+async function insertRequest(trx: TenantDb, ctx: Requester, o: Opening): Promise<string> {
   const { workspaceId, postId, policy, schedule } = o;
   const revision = await trx
     .selectFrom('post_revisions')
@@ -104,6 +126,38 @@ async function insertRequest(trx: TenantDb, ctx: RequestContext, o: Opening): Pr
   return id;
 }
 
+// The caller has locked the post and authorized posts:submit for it.
+export async function openApprovalRequest(
+  trx: TenantDb,
+  ctx: Requester,
+  opening: RequestOpening,
+): Promise<string> {
+  const { workspaceId, locked } = opening;
+  const postId = locked.id;
+  const rows = await lockDestinations(trx, workspaceId, postId);
+  const targets = draftTargets(rows, {});
+  await refuseOpenRequest(trx, workspaceId, postId, 'The post is already waiting for approval.');
+  const spec =
+    opening.schedule === undefined ? null : { mode: 'instant' as const, ...opening.schedule };
+  const schedule = spec === null ? null : await scheduleOf(trx, workspaceId, spec, ctx.now);
+  const set = schedule === null ? {} : postSchedule('instant', schedule);
+  const version = await bumpPost(trx, workspaceId, postId, set);
+  const scope = {
+    providers: opening.providers,
+    workspaceId,
+    locked,
+    body: { acknowledgedCodes: opening.acknowledgedCodes },
+    reason: 'submit' as const,
+  };
+  const frozen = await freezeTargets(trx, scope, version, targets);
+  const policy = await effectivePolicy(trx, workspaceId, locked.brand_id);
+  const note = opening.note?.normalize('NFC') ?? null;
+  const request = { workspaceId, postId, version, frozen, schedule, policy, note };
+  const requestId = await insertRequest(trx, ctx, request);
+  await announce(trx, postApprovalRequestedEvent(workspaceId, { postId, requestId }));
+  return requestId;
+}
+
 export function requestRoutes(deps: PostRouteDeps): BoundRoute[] {
   return [
     bindRoute(requestApprovalRoute, async ({ params, body }, ctx) => {
@@ -114,32 +168,25 @@ export function requestRoutes(deps: PostRouteDeps): BoundRoute[] {
         const units = await postUnits(trx, workspaceId, locked);
         ctx.authorize('posts:submit', { workspaceId, postId, units });
         checkVersion(locked, body.expectedVersion);
-        const rows = await lockDestinations(trx, workspaceId, postId);
-        const targets = draftTargets(rows, {});
-        await refuseOpenRequest(
-          trx,
-          workspaceId,
-          postId,
-          'The post is already waiting for approval.',
-        );
-        const spec =
-          body.schedule === undefined ? null : { mode: 'instant' as const, ...body.schedule };
-        const schedule = spec === null ? null : await scheduleOf(trx, workspaceId, spec, ctx.now);
-        const set = schedule === null ? {} : postSchedule('instant', schedule);
-        const version = await bumpPost(trx, workspaceId, postId, set);
-        const scope = {
+        if (body.repeat !== undefined && body.schedule === undefined) {
+          throw unprocessable([{ path: 'body.repeat', code: 'invalid_repeat' }]);
+        }
+        await openApprovalRequest(trx, ctx, {
           providers: deps.providers,
           workspaceId,
           locked,
-          body,
-          reason: 'submit' as const,
-        };
-        const frozen = await freezeTargets(trx, scope, version, targets);
-        const policy = await effectivePolicy(trx, workspaceId, locked.brand_id);
-        const note = body.note?.normalize('NFC') ?? null;
-        const opening = { workspaceId, postId, version, frozen, schedule, policy, note };
-        const requestId = await insertRequest(trx, ctx, opening);
-        await announce(trx, postApprovalRequestedEvent(workspaceId, { postId, requestId }));
+          schedule: body.schedule,
+          note: body.note,
+          acknowledgedCodes: body.acknowledgedCodes,
+        });
+        if (body.repeat !== undefined && body.schedule !== undefined) {
+          await startSeries(trx, ctx, {
+            workspaceId,
+            postId,
+            body: body.schedule,
+            repeat: body.repeat,
+          });
+        }
         return await readPost(trx, workspaceId, postId);
       });
       return { body: post };

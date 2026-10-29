@@ -59,6 +59,7 @@ function Composer({
     selected,
     setSelected,
     when,
+    repeat,
     formError,
     blocked,
     flagged,
@@ -101,6 +102,7 @@ function Composer({
         pending={pending}
         note={approval.request ? approval.note : undefined}
         queue={approval.request ? undefined : queue}
+        repeat={repeat}
       />
 
       {formError === null ? null : (

@@ -593,10 +593,26 @@ export interface Posts {
   schedule_local: string | null;
   schedule_mode: Generated<string>;
   schedule_tz: string | null;
+  series_id: string | null;
   settle_seq: Generated<number>;
   title: string | null;
   updated_at: Generated<Timestamp>;
   version: Generated<number>;
+  workspace_id: string;
+}
+
+export interface PostSeries {
+  created_at: Generated<Timestamp>;
+  dtstart_local: string;
+  id: Generated<string>;
+  occurrences: Generated<number>;
+  owner_grant_id: string | null;
+  owner_user_id: string | null;
+  rrule: string;
+  state: Generated<string>;
+  state_reason: string | null;
+  timezone: string;
+  updated_at: Generated<Timestamp>;
   workspace_id: string;
 }
 
@@ -933,6 +949,7 @@ export interface DB {
   organizations: Organizations;
   post_destinations: PostDestinations;
   post_revisions: PostRevisions;
+  post_series: PostSeries;
   post_variants: PostVariants;
   posts: Posts;
   provider_app_incidents: ProviderAppIncidents;
