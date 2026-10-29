@@ -34,6 +34,7 @@ ARG X264_URL=https://code.videolan.org/videolan/x264/-/archive/${X264_COMMIT}/x2
 ARG X264_SHA256=cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9
 ARG FFMPEG_VERSION=9.0.2
 ARG FFMPEG_URL=https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz
+ARG FFMPEG_MIRROR_URL=https://deb.debian.org/debian/pool/main/f/ffmpeg/ffmpeg_${FFMPEG_VERSION}.orig.tar.xz
 ARG FFMPEG_SHA256=8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl gcc libc6-dev make nasm pkgconf xz-utils \
@@ -50,7 +51,8 @@ RUN set -eu; \
     make install-lib-static; \
     install -D -m 0644 COPYING /opt/ffmpeg/licenses/x264-COPYING
 RUN set -eu; \
-    curl -fsSL -o ffmpeg.tar.xz "${FFMPEG_URL}"; \
+    curl -fsSL --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_URL}" \
+      || curl -fsSL --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_MIRROR_URL}"; \
     echo "${FFMPEG_SHA256}  ffmpeg.tar.xz" | sha256sum -c -; \
     mkdir ffmpeg; \
     tar -xJf ffmpeg.tar.xz -C ffmpeg --strip-components=1; \
