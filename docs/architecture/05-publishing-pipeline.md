@@ -272,6 +272,7 @@ The approval events are written in the transaction that opens or decides the req
 | refresh sweep | 5 min |
 | tz recompute after a tzdata update (`tz_recompute`, see [Time](#time)) | 1 h |
 | series advance (`series_advance`, see [Recurring posts](#recurring-posts)) | 5 min |
+| evergreen fill (`evergreen_fill`, see [Evergreen posts](#evergreen-posts)) | 1 h |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
 | analytics pulls | staggered |
@@ -303,7 +304,7 @@ A channel's queue is a weekly timetable: weekday + local wall time in one IANA z
 - **Add to queue** is a third mode of `POST …/posts/:postId/schedule` (`mode: 'queue'`), so approvals, preflight and freezing are unchanged.
   - Each draft destination gets the next free slot of **its own** channel, so one post can land at different times on different channels. The post is stored with `schedule_mode = 'local_per_destination'`; `schedule_local`/`schedule_tz` hold the earliest destination's time.
   - Destinations of the same post on the same channel share that channel's slot.
-  - **Free** means no other destination of that channel is `scheduled`, `publishing`, `retry_wait`, `verifying`, `published`, `unconfirmed` or `awaiting_manual` at exactly that instant. A post scheduled by hand at a slot's time takes the slot.
+  - **Free** means no other destination of that channel is `scheduled`, `publishing`, `retry_wait`, `verifying`, `published`, `unconfirmed` or `awaiting_manual` at exactly that instant, and no draft evergreen copy is waiting for it (see [Evergreen posts](#evergreen-posts)). A post scheduled by hand at a slot's time takes the slot.
   - Slot times are expanded from local wall time for the next 8 weeks, with the same DST rules as any schedule (gap → forward, overlap → earlier offset). A slot less than 5 minutes ahead is skipped.
   - Concurrent "add to queue" calls on one channel are serialised with a transaction-scoped advisory lock per channel, taken in channel-id order after the destination locks.
   - No slots → `422 queue_empty`; none free in 8 weeks → `422 queue_full`. Both name the channel.
@@ -329,3 +330,17 @@ A series repeats a post on a rule in local wall time. Each occurrence is an ordi
 - **Stopping:** `POST …/series/:seriesId/stop` (`posts:schedule`) ends the series. Already-materialised occurrences are left as they are. Deleting or cancelling one occurrence doesn't stop the series.
 - **Duplicate text:** some providers reject identical text on the same account. The composer warns when a series repeats unchanged content more often than every 7 days.
 
+## Evergreen posts
+
+Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with proven content, so the queue doesn't run dry.
+
+- **Pool:** any post can be marked evergreen (`evergreen_posts`) by someone who may schedule. That person (or API key) is its owner, re-authorized on every use, as for a series. Marking and unmarking write `evergreen.marked` / `evergreen.unmarked`. Unmarking takes it out of the pool and leaves its copies alone.
+- **Filling:** the hourly `evergreen_fill` cron task walks `sweep_workspaces`. For each connected channel with queue slots, it looks at the free slots more than 5 minutes and at most 24 hours ahead, so anything queued by hand always comes first. Disconnected and disabled channels are skipped.
+  - Each free slot gets one pool post that has a destination on that channel that isn't canceled.
+  - **Eligible:** within the last 30 days on that channel, the pool post wasn't scheduled or published there, and no copy of it had a slot there, even a draft copy that missed its slot. Nothing of it is still pending there either: its own destination or a copy in flight, or a copy whose slot is still ahead. Among the eligible posts, the one least recently used on that channel goes first, then the oldest.
+  - **The copy:** a new draft post (`origin = 'duplicate'`) with that channel's destinations only, cloned from the pool post: variants, items, media and settings, but no revisions, approvals or publish state. It's recorded in `evergreen_runs`.
+  - **Approval:** when it's needed, the task opens a request as the owner, bound to the slot. Otherwise it schedules the copy at the slot right away, as the owner.
+    - While its slot is ahead, a draft copy holds the slot against "add to queue". Each fill schedules copies whose request was approved in the meantime.
+    - A copy whose slot passes without approval stays a draft. Its open request is voided, and a later slot gets another post.
+  - **Locking:** per-channel queue locks, as in "add to queue", so a manual queue claim and the fill never take the same slot.
+- **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (`preflight_failed`, `unprocessable` or `invalid_request`), is taken out of the **whole** pool with a reason, even if only one channel failed; re-marking puts it back. Other errors, conflicts included, are retried on the next run.

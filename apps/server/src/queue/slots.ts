@@ -32,6 +32,7 @@ export interface QueueRef {
   readonly accountId: string;
   readonly now: Temporal.Instant;
   readonly postId: string | null;
+  readonly until?: Temporal.Instant;
 }
 
 export interface QueueTarget {
@@ -71,6 +72,7 @@ export function candidates(
   timezone: string,
   slots: readonly QueueSlot[],
   now: Temporal.Instant,
+  until?: Temporal.Instant,
 ): Schedule[] {
   const today = now.toZonedDateTimeISO(timezone).toPlainDate();
   const earliest = now.add({ minutes: LEAD_MINUTES });
@@ -82,6 +84,7 @@ export function candidates(
       const schedule = resolveLocal(date.toPlainDateTime(slot.time), timezone);
       const key = schedule.at.epochNanoseconds;
       if (Temporal.Instant.compare(schedule.at, earliest) < 0 || seen.has(key)) continue;
+      if (until !== undefined && Temporal.Instant.compare(schedule.at, until) > 0) continue;
       seen.set(key, schedule);
     }
   }
@@ -92,6 +95,35 @@ function toDate(instant: Temporal.Instant): Date {
   return new Date(instant.epochMilliseconds);
 }
 
+// A copy waiting for approval is still a draft, but the evergreen fill bound it to its slot.
+async function heldByCopies(trx: TenantDb, ref: QueueRef, window: readonly [Date, Date]) {
+  let query = trx
+    .selectFrom('evergreen_runs as r')
+    .innerJoin('posts as c', (join) =>
+      join.onRef('c.workspace_id', '=', 'r.workspace_id').onRef('c.id', '=', 'r.copy_post_id'),
+    )
+    .select('r.slot_at')
+    .where('r.workspace_id', '=', ref.workspaceId)
+    .where('r.social_account_id', '=', ref.accountId)
+    .where('r.slot_at', '>=', window[0])
+    .where('r.slot_at', '<=', window[1])
+    .where('c.deleted_at', 'is', null)
+    .where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom('post_destinations as d')
+          .select('d.id')
+          .whereRef('d.workspace_id', '=', 'c.workspace_id')
+          .whereRef('d.post_id', '=', 'c.id')
+          .where('d.social_account_id', '=', ref.accountId)
+          .where('d.state', '=', 'draft'),
+      ),
+    );
+  if (ref.postId !== null) query = query.where('c.id', '<>', ref.postId);
+  const rows = await query.execute();
+  return rows.map(({ slot_at }) => slot_at.getTime());
+}
+
 async function occupied(
   trx: TenantDb,
   ref: QueueRef,
@@ -100,17 +132,19 @@ async function occupied(
   const first = list[0];
   const last = list.at(-1);
   if (first === undefined || last === undefined) return new Set();
+  const window = [toDate(first.at), toDate(last.at)] as const;
   let query = trx
     .selectFrom('post_destinations')
     .select('scheduled_at')
     .where('workspace_id', '=', ref.workspaceId)
     .where('social_account_id', '=', ref.accountId)
     .where('state', 'in', OCCUPYING)
-    .where('scheduled_at', '>=', toDate(first.at))
-    .where('scheduled_at', '<=', toDate(last.at));
+    .where('scheduled_at', '>=', window[0])
+    .where('scheduled_at', '<=', window[1]);
   if (ref.postId !== null) query = query.where('post_id', '<>', ref.postId);
   const rows = await query.execute();
-  return new Set(rows.flatMap(({ scheduled_at }) => scheduled_at?.getTime() ?? []));
+  const scheduled = rows.flatMap(({ scheduled_at }) => scheduled_at?.getTime() ?? []);
+  return new Set([...scheduled, ...(await heldByCopies(trx, ref, window))]);
 }
 
 export interface FreeSlots {
@@ -121,7 +155,7 @@ export interface FreeSlots {
 export async function freeSlots(trx: TenantDb, ref: QueueRef, limit: number): Promise<FreeSlots> {
   const timetable = await loadTimetable(trx, ref.workspaceId, ref.accountId);
   if (timetable.timezone === null) return { timetable, free: [] };
-  const all = candidates(timetable.timezone, timetable.slots, ref.now);
+  const all = candidates(timetable.timezone, timetable.slots, ref.now, ref.until);
   const taken = await occupied(trx, ref, all);
   const free = all.filter((s) => !taken.has(s.at.epochMilliseconds)).slice(0, limit);
   return { timetable, free };

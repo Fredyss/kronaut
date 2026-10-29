@@ -121,6 +121,7 @@ function QueueForm({ initial, ...props }: EditorProps & { readonly initial: Queu
           </option>
         ))}
       </select>
+      <p className="text-muted-foreground">{m.queue_evergreen()}</p>
       <ul className="flex flex-col gap-2">
         {rows.map((row) => (
           <SlotRow key={row.key} row={row} set={update(row.key)} />

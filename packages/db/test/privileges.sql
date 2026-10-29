@@ -98,6 +98,21 @@ SELECT pg_temp.must('TEN-04 post_series: tenant policy, app may only read, inser
   AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
          FROM pg_class c, aclexplode(c.relacl) a
         WHERE c.oid = 'post_series'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 evergreen_posts: tenant policy, app may only read, insert and update',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'evergreen_posts'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'evergreen_posts'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'evergreen_posts'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 evergreen_runs: tenant policy, app may read and insert, and update only the copy',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'evergreen_runs'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'evergreen_runs'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'evergreen_runs'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT'
+  AND (SELECT string_agg(x.privilege_type || '(' || att.attname || ')', ',' ORDER BY att.attname)
+         FROM pg_attribute att, aclexplode(att.attacl) x
+        WHERE att.attrelid = 'evergreen_runs'::regclass AND x.grantee = 'kronaut_app'::regrole) = 'UPDATE(copy_post_id)');
 
 -- TEN-05: the SECURITY DEFINER allowlist, pinned search_path, and EXECUTE per role.
 CREATE TEMP TABLE expected_definer (fn text, app boolean, operator boolean);

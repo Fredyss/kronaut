@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { refreshCapabilities } from './channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './channels/retention.ts';
+import { fillEvergreen } from './evergreen/fill.ts';
 import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
@@ -20,6 +21,7 @@ export const CRON_TASKS = {
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
   credentialRetention: 'credential_retention',
+  evergreenFill: 'evergreen_fill',
   instanceRetention: 'instance_retention',
   mediaGc: 'media_gc',
   notificationEmail: 'notification_email',
@@ -70,6 +72,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     identifier: CRON_TASKS.credentialRetention,
     match: '51 3 * * *',
     options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
+  {
+    task: CRON_TASKS.evergreenFill,
+    identifier: CRON_TASKS.evergreenFill,
+    match: '41 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
   },
   {
     task: CRON_TASKS.instanceRetention,
@@ -133,6 +141,7 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.auditMaintenance]: DAY_MS,
   [CRON_TASKS.credentialRefresh]: 5 * MINUTE_MS,
   [CRON_TASKS.credentialRetention]: DAY_MS,
+  [CRON_TASKS.evergreenFill]: 60 * MINUTE_MS,
   [CRON_TASKS.instanceRetention]: DAY_MS,
   [CRON_TASKS.mediaGc]: 60 * MINUTE_MS,
   [CRON_TASKS.notificationEmail]: MINUTE_MS,
@@ -253,6 +262,9 @@ export function cronTaskList(
       await recordCronRun(db, CRON_TASKS.credentialRetention, () =>
         purgeDisconnectedCredentials(db),
       );
+    },
+    [CRON_TASKS.evergreenFill]: async () => {
+      await recordCronRun(db, CRON_TASKS.evergreenFill, () => fillEvergreen(sweeps));
     },
     [CRON_TASKS.instanceRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.instanceRetention, () => purgeInstanceRetention(db));

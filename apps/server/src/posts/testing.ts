@@ -18,6 +18,7 @@ import { SESSION_COOKIE } from '../auth/session.ts';
 import { saveCredential } from '../credential-store.ts';
 import { cronTasks } from '../cron.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
+import { evergreenRoutes } from '../evergreen/routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaAccess } from '../media-access.ts';
@@ -218,6 +219,7 @@ export async function startPosts(
     ...approvalRoutes({ providers }),
     ...queueRoutes(),
     ...seriesRoutes(),
+    ...evergreenRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({
       providers,

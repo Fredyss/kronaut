@@ -8,6 +8,7 @@ import { authRoutes } from '../auth/routes.ts';
 import { channelRoutes } from '../channels/routes.ts';
 import type { CronTask } from '../cron.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
+import { evergreenRoutes } from '../evergreen/routes.ts';
 import type { MediaSigner } from '../media/access.ts';
 import { libraryRoutes } from '../media/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
@@ -57,6 +58,7 @@ export function apiRoutes({
     ...approvalRoutes({ providers }),
     ...queueRoutes(),
     ...seriesRoutes(),
+    ...evergreenRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({

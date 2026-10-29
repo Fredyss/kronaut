@@ -77,6 +77,7 @@
   "queue_zone": "Time zone",
   "queue_add": "Add time",
   "queue_saved": "Queue saved.",
+  "queue_evergreen": "Free slots are filled from evergreen posts 24 h ahead.",
   "channels_disconnect_body": "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later.",
   "channels_disconnect_confirm": "Disconnect channel",
   "channels_disconnected": "{name} disconnected.",
@@ -436,5 +437,18 @@
         "state=*": "The series was stopped."
       }
     }
-  ]
+  ],
+  "evergreen_label": "Evergreen",
+  "evergreen_reason": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=owner_lost": "Removed: its owner can no longer schedule posts.",
+        "reason=*": "Removed: a copy couldn't be created."
+      }
+    }
+  ],
+  "evergreen_copies": "Recent copies",
+  "evergreen_copy": "{channel}, {when}"
 }

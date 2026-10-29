@@ -1,17 +1,27 @@
-import { type Action, authorize, type Decision, type Resource } from '@kronaut/core';
+import {
+  type Action,
+  authorize,
+  type Decision,
+  type Principal,
+  type Resource,
+} from '@kronaut/core';
 import { type Actor, actorSetting, type TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
 import { schedulerPrincipal } from '../publish/principal.ts';
-import type { SeriesRow } from './store.ts';
 
 export class OwnerLost extends Error {
   constructor() {
-    super('the series owner may no longer schedule or submit');
+    super('the owner may no longer schedule or submit');
     this.name = 'OwnerLost';
   }
+}
+
+export interface Owned {
+  readonly owner_user_id: string | null;
+  readonly owner_grant_id: string | null;
 }
 
 export interface OwnerActing extends Pick<RequestContext, 'principal' | 'now' | 'authorize'> {
@@ -19,16 +29,22 @@ export interface OwnerActing extends Pick<RequestContext, 'principal' | 'now' | 
   decide(action: Action, resource: Resource, approval: 'exempt' | 'approved' | 'missing'): Decision;
 }
 
-export function ownerActor(row: SeriesRow): Actor {
+export function ownerColumns(principal: Principal | null) {
+  if (principal?.kind === 'user') return { owner_user_id: principal.userId };
+  if (principal?.kind === 'grant') return { owner_grant_id: principal.grantId };
+  throw new HttpError('internal', 'No user or API key is bound to this request.');
+}
+
+export function ownerActor(row: Owned): Actor {
   if (row.owner_user_id !== null) return { kind: 'user', id: row.owner_user_id };
   if (row.owner_grant_id !== null) return { kind: 'grant', id: row.owner_grant_id };
-  throw new Error('a series has exactly one owner');
+  throw new Error('an owned row has exactly one owner');
 }
 
 export async function ownerActing(
   trx: TenantDb,
   workspaceId: string,
-  row: SeriesRow,
+  row: Owned,
   now: Temporal.Instant,
 ): Promise<OwnerActing> {
   const scheduler = { userId: row.owner_user_id, grantId: row.owner_grant_id };

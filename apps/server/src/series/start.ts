@@ -1,10 +1,11 @@
-import { formatRule, type Principal, type Resource, RuleError } from '@kronaut/core';
+import { formatRule, type Resource, RuleError } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
 import { resolveLocal } from '../posts/freeze.ts';
 import { unprocessable } from '../posts/issues.ts';
+import { ownerColumns } from '../posts/owner.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 
 export interface SeriesStart {
@@ -17,12 +18,6 @@ const INVALID = [{ path: 'body.repeat', code: 'invalid_repeat' }];
 const NEEDS_SCHEDULE = [{ path: 'body.repeat', code: 'repeat_needs_schedule' }];
 
 type SeriesActor = Pick<RequestContext, 'principal' | 'authorize'>;
-
-export function seriesOwner(principal: Principal | null) {
-  if (principal?.kind === 'user') return { owner_user_id: principal.userId };
-  if (principal?.kind === 'grant') return { owner_grant_id: principal.grantId };
-  throw new HttpError('internal', 'No user or API key is bound to this request.');
-}
 
 function ruleText(repeat: RepeatBody, start: Temporal.PlainDateTime): string {
   if (repeat.until !== undefined && repeat.until < start.toPlainDate().toString()) {
@@ -73,7 +68,7 @@ export async function startSeries(
       rrule,
       dtstart_local: start.toString(),
       timezone: resolveLocal(start, body.scheduleTz).tz,
-      ...seriesOwner(ctx.principal),
+      ...ownerColumns(ctx.principal),
     })
     .returning('id')
     .executeTakeFirstOrThrow();

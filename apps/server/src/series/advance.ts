@@ -1,26 +1,19 @@
 import { randomUUID } from 'node:crypto';
 import { encodePublicId } from '@kronaut/core';
-import type { Actor, Database, TenantDb } from '@kronaut/db';
+import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
-import type { ProviderRegistry } from '../providers.ts';
-import { actAs, OwnerLost } from './owner.ts';
+import { actAs, OwnerLost } from '../posts/owner.ts';
+import { type JobDeps, sweepCron } from '../workspace-sweep.ts';
 import { type StepOutcome, stepSeries } from './step.ts';
 import { type SeriesRow, seriesRows } from './store.ts';
 
 const TASK = 'series_advance';
-const WORKSPACE_PAGE = 1000;
 const BATCH = 20;
 const SYSTEM: Actor = { kind: 'system' };
 
-export interface AdvanceDeps {
-  readonly db: Database;
-  readonly logger: Logger;
-  readonly providers: ProviderRegistry;
-  readonly now: () => Temporal.Instant;
-}
+export type AdvanceDeps = JobDeps;
 
 type Counts = Record<StepOutcome | 'checked' | 'paused' | 'failed', number>;
 
@@ -137,21 +130,5 @@ export async function advanceSeries(deps: AdvanceDeps): Promise<string> {
     failed: 0,
   };
   const run: Run = { deps, now: deps.now(), counts };
-  let after: string | null = null;
-  for (;;) {
-    const page = await deps.db.sweeps.workspaces(after, WORKSPACE_PAGE);
-    for (const workspaceId of page) {
-      try {
-        await advanceWorkspace(run, workspaceId);
-      } catch {
-        counts.failed++;
-        deps.logger.error({ task: TASK }, 'series advance failed for a workspace');
-      }
-    }
-    after = page.at(-1) ?? null;
-    if (page.length < WORKSPACE_PAGE) break;
-  }
-  const detail = JSON.stringify(counts);
-  if (counts.failed > 0) throw new Error(detail);
-  return detail;
+  return await sweepCron(deps, TASK, counts, (workspaceId) => advanceWorkspace(run, workspaceId));
 }

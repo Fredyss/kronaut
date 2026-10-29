@@ -1,19 +1,24 @@
-import { nextOccurrence, occurrenceAt, type RulePosition, type ScopeUnit } from '@kronaut/core';
+import { nextOccurrence, occurrenceAt, type RulePosition } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { closeRequest } from '../approvals/locked.ts';
-import { openApprovalRequest } from '../approvals/request.ts';
-import { HttpError } from '../http/errors.ts';
+import { clonePost } from '../posts/clone.ts';
 import { plainLocal } from '../posts/dto.ts';
 import { resolveLocal } from '../posts/freeze.ts';
-import { type CurrentPost, lockCurrent, lockDestinations } from '../posts/locks.ts';
-import { authorizeSchedule, scheduleLocked } from '../posts/schedule.ts';
+import { lockCurrent } from '../posts/locks.ts';
+import { actAs, ownerActing } from '../posts/owner.ts';
+import {
+  type LocalAt,
+  needsRequest,
+  newestRequest,
+  type OwnerEnv,
+  type OwnerTurn,
+  requestAsOwner,
+  scheduleAsOwner,
+  scheduleOrRequest,
+} from '../posts/owner-schedule.ts';
 import { postUnits } from '../posts/units.ts';
-import type { ProviderRegistry } from '../providers.ts';
-import { approvalStatus } from '../publish/principal.ts';
-import { cloneOccurrence } from './clone.ts';
-import { actAs, type OwnerActing, ownerActing } from './owner.ts';
 import {
   latestOccurrence,
   type Occurrence,
@@ -24,18 +29,10 @@ import {
 
 export type StepOutcome = 'idle' | 'cloned' | 'requested' | 'scheduled' | 'ended';
 
-export interface StepEnv {
-  readonly providers: ProviderRegistry;
-  readonly now: Temporal.Instant;
-  readonly workspaceId: string;
-}
+export type StepEnv = OwnerEnv;
 
-interface Turn {
-  readonly env: StepEnv;
+interface Turn extends OwnerTurn {
   readonly row: SeriesRow;
-  readonly acting: OwnerActing;
-  readonly locked: CurrentPost;
-  readonly units: readonly ScopeUnit[];
   readonly latest: Occurrence;
 }
 
@@ -82,10 +79,18 @@ async function advancePast(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
     await closeRequest(trx, env.workspaceId, { postId: turn.latest.id }, voided);
   }
   if (next === null) return await end(trx, env, row, endReason(row, position));
-  await cloneOccurrence(
+  await clonePost(
     trx,
     { providers: env.providers, acting: turn.acting },
-    { workspaceId: env.workspaceId, series: row, sourceId: turn.latest.id, local: next },
+    {
+      workspaceId: env.workspaceId,
+      sourceId: turn.latest.id,
+      origin: 'recurrence',
+      owner: row,
+      local: next,
+      timezone: row.timezone,
+      seriesId: row.id,
+    },
   );
   await trx
     .updateTable('post_series')
@@ -96,88 +101,24 @@ async function advancePast(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
   return 'cloned';
 }
 
-async function newestRequest(trx: TenantDb, workspaceId: string, postId: string) {
-  return await trx
-    .selectFrom('approval_requests')
-    .select(['id', 'state'])
-    .where('workspace_id', '=', workspaceId)
-    .where('post_id', '=', postId)
-    .orderBy('created_at', 'desc')
-    .orderBy('id', 'desc')
-    .limit(1)
-    .executeTakeFirst();
-}
-
-function intendedSchedule(latest: Occurrence) {
+function intendedSchedule(latest: Occurrence): LocalAt | null {
   const scheduleLocal = plainLocal(latest.schedule_local);
   const scheduleTz = latest.schedule_tz;
   return scheduleLocal === null || scheduleTz === null ? null : { scheduleLocal, scheduleTz };
 }
 
-async function schedule(
-  trx: TenantDb,
-  turn: Turn,
-  at: { scheduleLocal: string; scheduleTz: string },
-) {
-  const { env, locked, units, acting } = turn;
-  const { workspaceId } = env;
-  const auth = await authorizeSchedule(trx, acting, { workspaceId, locked, units });
-  const rows = await lockDestinations(trx, workspaceId, locked.id);
-  const body = { mode: 'instant' as const, expectedVersion: locked.version, ...at };
-  const run = { providers: env.providers, now: env.now, workspaceId, locked, auth, body };
-  await scheduleLocked(trx, run, rows);
-  return 'scheduled' as const;
-}
-
-async function request(
-  trx: TenantDb,
-  turn: Turn,
-  at: { scheduleLocal: string; scheduleTz: string },
-) {
-  const { env, locked, units, acting } = turn;
-  acting.authorize('posts:submit', { workspaceId: env.workspaceId, postId: locked.id, units });
-  await openApprovalRequest(trx, acting, {
-    providers: env.providers,
-    workspaceId: env.workspaceId,
-    locked,
-    schedule: at,
-    note: undefined,
-  });
-  return 'requested' as const;
-}
-
-// An approval covers the content and time it was given for (ADR-0011); after an edit the owner asks again.
-async function scheduleApproved(
-  trx: TenantDb,
-  turn: Turn,
-  at: { scheduleLocal: string; scheduleTz: string },
-): Promise<StepOutcome> {
-  await sql`savepoint series_schedule`.execute(trx);
-  try {
-    const outcome = await schedule(trx, turn, at);
-    await sql`release savepoint series_schedule`.execute(trx);
-    return outcome;
-  } catch (err) {
-    if (!(err instanceof HttpError) || err.code !== 'approval_required') throw err;
-    await sql`rollback to savepoint series_schedule`.execute(trx);
-    return await request(trx, turn, at);
-  }
-}
-
 // A request someone rejected, withdrew or voided is theirs to follow up; the job asks only once.
 async function settleDraft(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
-  const { env, locked, units, acting, latest } = turn;
+  const { env, locked, latest } = turn;
   const at = intendedSchedule(latest);
   if (latest.publish_summary !== 'draft' || at === null) return 'idle';
   const newest = await newestRequest(trx, env.workspaceId, locked.id);
-  if (newest?.state === 'approved') return await scheduleApproved(trx, turn, at);
-  const approval = await approvalStatus(trx, env.workspaceId, locked, null);
-  const resource = { workspaceId: env.workspaceId, postId: locked.id, units };
-  const decision = acting.decide('posts:schedule', resource, approval);
-  const needsRequest = decision.kind === 'require_approval' || latest.agent_dirty;
-  if (!needsRequest) return await schedule(trx, turn, at);
+  if (newest?.state === 'approved') return await scheduleOrRequest(trx, turn, at);
+  if (!(await needsRequest(trx, turn, latest.agent_dirty))) {
+    return await scheduleAsOwner(trx, turn, at);
+  }
   if (newest !== undefined) return 'idle';
-  return await request(trx, turn, at);
+  return await requestAsOwner(trx, turn, at);
 }
 
 export async function stepSeries(
