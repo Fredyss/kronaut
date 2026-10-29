@@ -77,3 +77,15 @@ export async function needsRequest(
   const decision = acting.decide('posts:schedule', resource, approval);
   return decision.kind === 'require_approval' || agentDirty;
 }
+
+export async function newestRequest(trx: TenantDb, workspaceId: string, postId: string) {
+  return await trx
+    .selectFrom('approval_requests')
+    .select(['id', 'state'])
+    .where('workspace_id', '=', workspaceId)
+    .where('post_id', '=', postId)
+    .orderBy('created_at', 'desc')
+    .orderBy('id', 'desc')
+    .limit(1)
+    .executeTakeFirst();
+}

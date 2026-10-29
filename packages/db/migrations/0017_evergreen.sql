@@ -10,6 +10,7 @@ CREATE TABLE evergreen_posts (
   PRIMARY KEY (workspace_id, post_id),
   FOREIGN KEY (workspace_id, post_id) REFERENCES posts ON DELETE CASCADE,
   CHECK (num_nonnulls(owner_user_id, owner_grant_id) = 1),
+  CHECK ((state = 'active') = (state_reason IS NULL)),
   FOREIGN KEY (workspace_id, owner_grant_id) REFERENCES access_grants
 );
 

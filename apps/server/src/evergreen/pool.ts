@@ -28,8 +28,13 @@ export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<
     .select('d.social_account_id')
     .distinct()
     .where('e.workspace_id', '=', workspaceId)
+    .innerJoin('social_accounts as a', (join) =>
+      join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
+    )
     .where('e.state', '=', 'active')
     .where('p.deleted_at', 'is', null)
+    .where('d.state', '<>', 'canceled')
+    .where('a.status', '=', 'active')
     .where((eb) =>
       eb.exists(
         eb
@@ -93,7 +98,17 @@ function onChannel(accountId: string) {
   return sql<boolean>`exists (
     select 1 from post_destinations d
      where d.workspace_id = e.workspace_id and d.post_id = e.post_id
-       and d.social_account_id = ${accountId})`;
+       and d.social_account_id = ${accountId} and d.state <> 'canceled')`;
+}
+
+// The pool post's own destination counts like a copy: recent or upcoming, and in flight.
+function ownRecent(accountId: string, since: Date) {
+  return sql<boolean>`exists (
+    select 1 from post_destinations d
+     where d.workspace_id = e.workspace_id and d.post_id = e.post_id
+       and d.social_account_id = ${accountId}
+       and (d.state = any(${IN_FLIGHT}) or (d.state <> 'canceled'
+            and (d.scheduled_at > ${since} or d.published_at > ${since}))))`;
 }
 
 export function eligiblePool(trx: TenantDb, scope: ChannelScope, limit: number) {
@@ -111,6 +126,7 @@ export function eligiblePool(trx: TenantDb, scope: ChannelScope, limit: number) 
     .where('p.deleted_at', 'is', null)
     .where(onChannel(accountId))
     .where(sql<boolean>`not ${usedSince(accountId, since)}`)
+    .where(sql<boolean>`not ${ownRecent(accountId, since)}`)
     .where(sql<boolean>`not ${pendingCopy(accountId, toDate(scope.now))}`)
     .orderBy(sql`last_used nulls first`)
     .orderBy('p.created_at')

@@ -4,12 +4,13 @@ import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
-import type { Schedule } from '../posts/freeze.ts';
-import { actAs, OwnerLost } from '../posts/owner.ts';
+import { actAs, type Owned, OwnerLost } from '../posts/owner.ts';
+import type { OwnerEnv } from '../posts/owner-schedule.ts';
 import { freeSlots, lockQueues } from '../queue/slots.ts';
 import { type JobDeps, sweepCron } from '../workspace-sweep.ts';
 import { fillSlot } from './copy.ts';
-import { claimedSlots, eligiblePool, type PoolRow, poolChannels, untilOf } from './pool.ts';
+import { type ChannelScope, claimedSlots, eligiblePool, poolChannels, untilOf } from './pool.ts';
+import { settleCopy, voidMissed, waitingCopies } from './revisit.ts';
 
 const TASK = 'evergreen_fill';
 const MAX_SLOTS = 100;
@@ -18,7 +19,7 @@ const SYSTEM: Actor = { kind: 'system' };
 export type FillDeps = JobDeps;
 
 type Counts = Record<
-  'channels' | 'slots' | 'scheduled' | 'requested' | 'removed' | 'failed',
+  'channels' | 'slots' | 'scheduled' | 'requested' | 'voided' | 'removed' | 'failed',
   number
 >;
 
@@ -42,7 +43,7 @@ function removeReason(err: unknown): RemoveReason | null {
   return null;
 }
 
-async function remove(trx: TenantDb, channel: Channel, pool: PoolRow, err: unknown) {
+async function remove(trx: TenantDb, channel: Channel, pool: { post_id: string }, err: unknown) {
   const reason = removeReason(err);
   if (reason === null) return false;
   const { workspaceId } = channel;
@@ -71,13 +72,21 @@ async function remove(trx: TenantDb, channel: Channel, pool: PoolRow, err: unkno
   return true;
 }
 
+type Outcome = 'scheduled' | 'requested' | 'idle';
+
+interface Work {
+  readonly pool: Owned & { readonly post_id: string };
+  act(env: OwnerEnv): Promise<Outcome>;
+}
+
 // One pool post that cannot be copied must not roll back, and so block, the other slots.
-async function fillIsolated(trx: TenantDb, run: Run, channel: Channel, pair: [Schedule, PoolRow]) {
-  const [slot, pool] = pair;
+async function isolated(trx: TenantDb, run: Run, channel: Channel, work: Work) {
+  const { pool } = work;
   const env = { providers: run.deps.providers, now: run.now, workspaceId: channel.workspaceId };
   await sql`savepoint evergreen_slot`.execute(trx);
   try {
-    run.counts[await fillSlot(trx, { env, accountId: channel.accountId, slot, pool })]++;
+    const outcome = await work.act(env);
+    if (outcome !== 'idle') run.counts[outcome]++;
     await sql`release savepoint evergreen_slot`.execute(trx);
     await actAs(trx, SYSTEM);
   } catch (err) {
@@ -98,9 +107,17 @@ async function fillIsolated(trx: TenantDb, run: Run, channel: Channel, pair: [Sc
   }
 }
 
+async function settleWaiting(trx: TenantDb, run: Run, channel: Channel, scope: ChannelScope) {
+  run.counts.voided += await voidMissed(trx, scope);
+  for (const copy of await waitingCopies(trx, scope)) {
+    await isolated(trx, run, channel, { pool: copy, act: (env) => settleCopy(trx, env, copy) });
+  }
+}
+
 async function fillChannel(trx: TenantDb, run: Run, channel: Channel): Promise<void> {
   await lockQueues(trx, [channel.accountId]);
   const scope = { ...channel, now: run.now };
+  await settleWaiting(trx, run, channel, scope);
   const ref = { ...scope, postId: null, until: untilOf(run.now) };
   const { free } = await freeSlots(trx, ref, MAX_SLOTS);
   const claimed = await claimedSlots(trx, scope, free);
@@ -110,7 +127,10 @@ async function fillChannel(trx: TenantDb, run: Run, channel: Channel): Promise<v
   run.counts.slots += open.length;
   for (const [index, row] of pool.entries()) {
     const slot = open[index];
-    if (slot !== undefined) await fillIsolated(trx, run, channel, [slot, row]);
+    if (slot === undefined) continue;
+    const { accountId } = channel;
+    const act = (env: OwnerEnv) => fillSlot(trx, { env, accountId, slot, pool: row });
+    await isolated(trx, run, channel, { pool: row, act });
   }
 }
 
@@ -140,6 +160,7 @@ export async function fillEvergreen(deps: FillDeps): Promise<string> {
     slots: 0,
     scheduled: 0,
     requested: 0,
+    voided: 0,
     removed: 0,
     failed: 0,
   };

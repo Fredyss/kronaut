@@ -3,7 +3,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { addMember, setPolicy } from '../approvals/testing.ts';
+import { addMember, decided, openRequestOf, setPolicy } from '../approvals/testing.ts';
 import type { PostDto } from '../posts/dto.ts';
 import {
   type Auth,
@@ -19,6 +19,7 @@ import {
   internal,
   owner,
   ownerAuth,
+  ownerId,
   providers,
   SYSTEM,
   scheduleCall,
@@ -98,7 +99,7 @@ function copiesOf(post: PostDto) {
   );
 }
 
-async function usedBefore(post: PostDto, channel: string, days: number, copy?: PostDto) {
+async function ran(post: PostDto, channel: string, at: Temporal.Instant, copy?: PostDto) {
   await owner.withActor(CLI, (trx) =>
     trx
       .insertInto('evergreen_runs')
@@ -107,8 +108,22 @@ async function usedBefore(post: PostDto, channel: string, days: number, copy?: P
         evergreen_post_id: internal(post.id),
         social_account_id: decodePublicId('socialAccount', channel) ?? '',
         copy_post_id: copy === undefined ? null : internal(copy.id),
-        slot_at: new Date(NOW.subtract({ hours: days * 24 }).epochMilliseconds),
+        slot_at: new Date(at.epochMilliseconds),
       })
+      .execute(),
+  );
+}
+
+function usedBefore(post: PostDto, channel: string, days: number, copy?: PostDto) {
+  return ran(post, channel, NOW.subtract({ hours: days * 24 }), copy);
+}
+
+async function reauth(): Promise<void> {
+  await owner.withActor(CLI, (trx) =>
+    trx
+      .updateTable('sessions')
+      .set({ reauthenticated_at: new Date(NOW.epochMilliseconds) })
+      .where('user_id', '=', ownerId)
       .execute(),
   );
 }
@@ -310,5 +325,64 @@ describe('filling free queue slots', () => {
     const post = await pooled(channel);
     await fill();
     expect(await copiesOf(post)).toEqual([]);
+  });
+
+  it('schedules an approved copy at its slot on the next fill', async () => {
+    await setPolicy({ mode: 'required', allow_self_approval: true });
+    const channel = await channelWith('eg-approved', [[1, '17:00']]);
+    const post = await pooled(channel);
+    await fill();
+    const [copy] = await copiesOf(post);
+    const path = `posts/${encodePublicId('post', copy?.id ?? '')}`;
+    const pending = (await (await call('GET', path, ownerAuth)).json()) as PostDto;
+    await reauth();
+    await decided(await openRequestOf(pending), 'approve', ownerAuth);
+    await fill();
+    expect(await copiesOf(post)).toEqual([
+      expect.objectContaining({ state: 'scheduled', scheduled_local: '2027-01-04 17:00:00' }),
+    ]);
+  });
+
+  it('keeps a slot held by a copy waiting for approval from add to queue', async () => {
+    const channel = await channelWith('eg-held', [
+      [1, '12:00'],
+      [1, '17:00'],
+    ]);
+    const post = await pooled(channel);
+    const slot = Temporal.Instant.from('2027-01-04T11:00:00Z');
+    await ran(post, channel, slot, await create(ownerAuth, draft(channel)));
+    const queued = await scheduleCall(await create(ownerAuth, draft(channel)), { mode: 'queue' });
+    expect(((await queued.json()) as PostDto).destinations[0]?.scheduledAt).toBe(
+      '2027-01-04T16:00:00.000Z',
+    );
+  });
+
+  it('skips a disconnected channel', async () => {
+    const channel = await channelWith('eg-gone', [[1, '17:00']]);
+    await owner.withActor(CLI, (trx) =>
+      trx
+        .updateTable('social_accounts')
+        .set({ status: 'disconnected' })
+        .where('id', '=', accountId(channel))
+        .execute(),
+    );
+    const post = await pooled(channel);
+    await fill();
+    expect(await copiesOf(post)).toEqual([]);
+  });
+
+  it('counts the own scheduled destination of a pool post like a copy', async () => {
+    const channel = await channelWith('eg-own', [[1, '17:00']]);
+    const own = await pooled(channel, 'Scheduled itself');
+    const other = await pooled(channel, 'Free to reuse');
+    const response = await scheduleCall(own, {
+      mode: 'instant',
+      scheduleLocal: '2027-01-06T10:00',
+      scheduleTz: TZ,
+    });
+    expect(response.status).toBe(200);
+    await fill();
+    expect(await copiesOf(own)).toEqual([]);
+    expect(await copiesOf(other)).toHaveLength(1);
   });
 });
