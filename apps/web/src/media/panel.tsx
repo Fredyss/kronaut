@@ -1,6 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { trapTab } from '../approvals/password-dialog.tsx';
+import { m as mediaText } from '../i18n/media.ts';
 import { m } from '../i18n.ts';
 import { Icon } from '../icon.tsx';
 import { kindLabel } from './format.ts';
@@ -21,10 +22,10 @@ function DeleteSection({ asset, actions }: { asset: LibraryAsset; actions: Asset
     return (
       <div className="flex flex-wrap items-center gap-3">
         <Button size="sm" variant="outline" disabled>
-          {m.media_delete()}
+          {mediaText.media_delete()}
         </Button>
         <span className="text-muted-foreground text-sm">
-          {m.media_in_use({ count: asset.usageCount })}
+          {mediaText.media_in_use({ count: asset.usageCount })}
         </span>
       </div>
     );
@@ -37,13 +38,13 @@ function DeleteSection({ asset, actions }: { asset: LibraryAsset; actions: Asset
         className="self-start"
         onClick={() => setConfirming(true)}
       >
-        {m.media_delete()}
+        {mediaText.media_delete()}
       </Button>
     );
   }
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-destructive/40 p-3 text-sm">
-      <p>{m.media_delete_body()}</p>
+      <p>{mediaText.media_delete_body()}</p>
       <div className="flex flex-wrap gap-2">
         <Button
           size="sm"
@@ -51,7 +52,7 @@ function DeleteSection({ asset, actions }: { asset: LibraryAsset; actions: Asset
           disabled={actions.remove.isPending}
           onClick={() => actions.remove.mutate()}
         >
-          {m.media_delete_confirm()}
+          {mediaText.media_delete_confirm()}
         </Button>
         <Button size="sm" variant="ghost" onClick={() => setConfirming(false)}>
           {m.inbox_cancel()}

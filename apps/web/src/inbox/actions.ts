@@ -20,7 +20,8 @@ import {
 } from '../api.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { useApiClient } from '../context.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { m as inboxText } from '../i18n/inbox.ts';
+import { apiErrorMessage } from '../i18n.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 
 export type ResolveKind = 'mark' | 'send' | 'cancel';
@@ -44,9 +45,9 @@ export function actionsFor(state: NeedsActionItem['state']): readonly ResolveKin
 }
 
 const DONE: Readonly<Record<ResolveKind, () => string>> = {
-  mark: () => m.inbox_marked(),
-  send: () => m.inbox_sent_again(),
-  cancel: () => m.inbox_canceled(),
+  mark: () => inboxText.inbox_marked(),
+  send: () => inboxText.inbox_sent_again(),
+  cancel: () => inboxText.inbox_canceled(),
 };
 
 interface Body {
@@ -101,7 +102,7 @@ function refresh(queryClient: QueryClient, workspaceId: string): Promise<void> {
 function failed(queryClient: QueryClient, workspaceId: string, error: unknown): Outcome {
   if (isDuplicateRisk(error)) return 'duplicate_risk';
   if (errorStatus(error) === 409) {
-    toast(m.inbox_changed());
+    toast(inboxText.inbox_changed());
     void refresh(queryClient, workspaceId);
   } else if (!isUnauthenticated(error)) {
     toast(failureMessage(error), 'destructive');

@@ -1,7 +1,7 @@
 import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { Temporal } from 'temporal-polyfill';
-import { m } from '../i18n.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
 import { CELL, DROP_OVER, type GridProps, PAST } from './grid.ts';
@@ -59,7 +59,7 @@ export function MonthGrid({ days, entries, formats, current, now, mover }: GridP
                   search={{ view: 'week', date: key }}
                   className="rounded px-1 text-muted-foreground text-xs hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
                 >
-                  {m.calendar_more({ count: hidden })}
+                  {calendarText.calendar_more({ count: hidden })}
                 </Link>
               ) : null}
             </li>

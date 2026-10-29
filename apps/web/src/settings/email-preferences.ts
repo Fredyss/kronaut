@@ -8,7 +8,7 @@ import { toast } from '@kronaut/ui';
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { useApiClient } from '../context.ts';
-import { m } from '../i18n.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 
 export type EmailPreferences = NotificationsPreferencesResponse['email'];
@@ -60,7 +60,7 @@ export function useSaveEmailPreferences(workspaceId: string) {
     },
     onError: (_error, toggle) => {
       flip({ key: toggle.key, on: !toggle.on });
-      toast(m.settings_email_failed(), 'destructive');
+      toast(settingsText.settings_email_failed(), 'destructive');
     },
   });
 }

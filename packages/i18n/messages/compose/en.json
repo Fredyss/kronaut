@@ -1,0 +1,102 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "compose_title": "New post",
+  "compose_subtitle": "Write it once, pick the channels, then publish it now or schedule it.",
+  "compose_text_label": "Text",
+  "compose_images_title": "Images",
+  "compose_images_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Up to {count} image: JPEG, PNG or WebP, at most {max} each.",
+        "countPlural=*": "Up to {count} images: JPEG, PNG or WebP, at most {max} each."
+      }
+    }
+  ],
+  "compose_images_add": "Add images",
+  "compose_image_bad_type": "{name}: only JPEG, PNG and WebP images can be added.",
+  "compose_image_too_big": "{name}: the file is larger than {max}.",
+  "compose_images_limit": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "A post can have at most {count} image.",
+        "countPlural=*": "A post can have at most {count} images."
+      }
+    }
+  ],
+  "compose_image_position": "Image {position}",
+  "compose_alt_text_label": "Alt text for image {position}",
+  "compose_alt_text_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Describe the image for people who can't see it. Up to {count} character.",
+        "countPlural=*": "Describe the image for people who can't see it. Up to {count} characters."
+      }
+    }
+  ],
+  "compose_ai_generated_label": "Image {position} is AI-generated",
+  "compose_ai_generated_hint": "Instagram marks it as made with AI. The other networks have no such label.",
+  "compose_image_move_up": "Move image {position} up",
+  "compose_image_move_down": "Move image {position} down",
+  "compose_video_hint": "Or one MP4, QuickTime or WebM video up to {max}.",
+  "compose_video_bad_type": "{name}: only MP4, QuickTime and WebM videos can be added.",
+  "compose_video_too_big": "{name}: the video is larger than {max}.",
+  "compose_video_limit": "A post can have only one video.",
+  "compose_media_exclusive": "A post can have images or one video, not both.",
+  "compose_video_preview": "Preview of {name}",
+  "compose_video_progress": "Upload progress",
+  "compose_video_uploading": "Uploading… {percent}",
+  "compose_video_processing": "Processing…",
+  "compose_video_ready": "Ready",
+  "compose_video_ready_duration": "Ready, {duration}",
+  "compose_video_retry": "Retry",
+  "compose_video_ai_label": "The video is AI-generated",
+  "compose_video_alt_label": "Alt text for the video",
+  "compose_video_ai_marked": "This video is marked as AI-generated in this workspace, and the label can't be removed.",
+  "compose_channel_video_unsupported": "Video isn't supported on this network yet.",
+  "compose_channels_title": "Channels",
+  "compose_no_channels": "No channels are connected yet.",
+  "compose_connect_channel": "Connect a channel",
+  "compose_channel_needs_image": "Needs an image or a video.",
+  "compose_channel_image_too_large": "An image is larger than the {max} this network accepts.",
+  "compose_channel_image_type": "This network doesn't accept the format of an attached image.",
+  "compose_channel_too_many_images": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "This network accepts at most {count} image.",
+        "countPlural=*": "This network accepts at most {count} images."
+      }
+    }
+  ],
+  "compose_channel_unsupported": "Posting to this network isn't supported yet.",
+  "compose_error_no_channel": "Pick at least one channel.",
+  "compose_error_empty": "Write some text or add an image.",
+  "compose_error_upload": "Image {position} couldn't be uploaded.",
+  "compose_error_ai_marked": "Image {position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image {position} is AI-generated” to post it, or use a different image.",
+  "compose_error_fix": "The post can't go out yet. Fix the following and try again:",
+  "compose_tabs_label": "Content for each channel",
+  "compose_tab_all": "All channels",
+  "compose_customize": "Customize for {channel}",
+  "compose_customized": "Customized",
+  "compose_inherits": "Uses the content from All channels.",
+  "compose_use_default": "Use the content from All channels",
+  "compose_add_reply": "Add reply",
+  "compose_reply_label": "Reply {position}",
+  "compose_remove_reply": "Remove reply {position}",
+  "compose_add_comment": "Add first comment",
+  "compose_comment_label": "First comment",
+  "compose_remove_comment": "Remove first comment",
+  "compose_main_only": "{channel} will publish the main post only.",
+  "compose_tab_problems": "has problems",
+  "compose_check_content": "Check the content for {channels}.",
+  "compose_error_empty_channel": "Write some text or add an image for {channel}.",
+  "compose_error_upload_channel": "Image {position} for {channel} couldn't be uploaded.",
+  "compose_error_approval_required": "This post needs an approval before it can be scheduled."
+}

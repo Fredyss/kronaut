@@ -1,0 +1,67 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "calendar_time_zone": "Časy v časovém pásmu {tz}",
+  "calendar_navigation": "Pohyb v kalendáři",
+  "calendar_previous_week": "Předchozí týden",
+  "calendar_next_week": "Další týden",
+  "calendar_previous_month": "Předchozí měsíc",
+  "calendar_next_month": "Další měsíc",
+  "calendar_today": "Dnes",
+  "calendar_views": "Zobrazení kalendáře",
+  "calendar_view_week": "Týden",
+  "calendar_view_month": "Měsíc",
+  "calendar_view_list": "Seznam",
+  "calendar_chip_label": "{time}, {channel}, {state}: {text}",
+  "calendar_own_time": "{when} v časovém pásmu {tz}",
+  "calendar_more": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "+{count} další",
+        "countPlural=few": "+{count} další",
+        "countPlural=many": "+{count} dalšího",
+        "countPlural=*": "+{count} dalších"
+      }
+    }
+  ],
+  "calendar_day_empty": "Nic naplánováno",
+  "calendar_truncated": "V tomto období je víc příspěvků, než kalendář dokáže zobrazit, takže některé chybí. Pokud je chcete vidět všechny, vyberte kratší období.",
+  "calendar_load_failed": "Kalendář se nepodařilo načíst. Zkuste to znovu.",
+  "calendar_drafts": "Koncepty",
+  "calendar_drafts_empty": "Žádné koncepty.",
+  "calendar_draft_updated": "Upraveno {when}",
+  "calendar_move_hint": "Klávesou Shift se šipkami posunete příspěvek o den nebo o týden. Všechny jeho kanály se přesunou společně.",
+  "calendar_moved": "Přesunuto na {when}",
+  "calendar_undo": "Vrátit zpět",
+  "calendar_move_in_past": "Tento čas už uplynul. Vyberte pozdější den.",
+  "calendar_move_changed": "Příspěvek mezitím upravil někdo jiný. Kalendář teď ukazuje jeho aktuální verzi.",
+  "calendar_move_approval": "Než příspěvek přesunete, musí být schválený.",
+  "calendar_move_unavailable": "Příspěvek teď nejde přesunout. Možná se právě zveřejňuje.",
+  "calendar_move_failed": "Příspěvek se nepodařilo přesunout. Zkuste to znovu.",
+  "home_empty_title": "Zatím nemáte nic naplánováno",
+  "home_empty_body": "Tady se zobrazí příspěvky, které naplánujete.",
+  "posts_scheduled": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} naplánovaný příspěvek",
+        "countPlural=few": "{count} naplánované příspěvky",
+        "countPlural=many": "{count} naplánovaného příspěvku",
+        "countPlural=*": "{count} naplánovaných příspěvků"
+      }
+    }
+  ],
+  "nav_new_post": "Nový příspěvek",
+  "calendar_move_reapproval": "Tento čas je mimo schválený rozsah, příspěvek proto musí být znovu schválen.",
+  "calendar_previous_day": "Předchozí den",
+  "calendar_next_day": "Následující den",
+  "calendar_create_post": "Vytvořit příspěvek",
+  "calendar_add_channel": "Přidat kanál",
+  "calendar_sidebar_collapse": "Sbalit postranní panel",
+  "calendar_sidebar_expand": "Rozbalit postranní panel",
+  "calendar_layout": "Rozložení",
+  "calendar_layout_grid": "Mřížka",
+  "calendar_new_post_at": "Vytvořit příspěvek: {when}"
+}

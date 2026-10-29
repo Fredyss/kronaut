@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { type FormEvent, type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { errorDetails, errorStatus, isUnauthenticated } from '../api.ts';
 import { useApiClient } from '../context.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import {
   PASSWORD_MAX_LENGTH,
@@ -25,10 +26,10 @@ function serverProblems(error: unknown): Problems | null {
   if (errorStatus(error) !== 422) return null;
   for (const { path, code } of errorDetails(error)) {
     if (path === 'body.currentPassword' && code === 'incorrect') {
-      return { current: m.settings_password_incorrect() };
+      return { current: settingsText.settings_password_incorrect() };
     }
     if (path === 'body.currentPassword' && code === 'two_factor_unavailable') {
-      return { form: m.settings_password_two_factor() };
+      return { form: settingsText.settings_password_two_factor() };
     }
     const policy = path === 'body.newPassword' ? policyMessage(code) : null;
     if (policy !== null) return { next: policy };
@@ -95,13 +96,13 @@ function PasswordForm({ onDone }: { onDone(): void }) {
     mutationFn: () =>
       authPasswordChange({ client, body: { currentPassword: current, newPassword: next } }),
     onSuccess: () => {
-      toast(m.settings_password_changed());
+      toast(settingsText.settings_password_changed());
       onDone();
     },
     onError: (error) => {
       if (isUnauthenticated(error)) return;
       const found = serverProblems(error);
-      if (found === null) toast(m.settings_password_failed(), 'destructive');
+      if (found === null) toast(settingsText.settings_password_failed(), 'destructive');
       else setProblems(found);
     },
   });
@@ -125,7 +126,7 @@ function PasswordForm({ onDone }: { onDone(): void }) {
         </p>
       )}
       <PasswordField
-        label={m.settings_password_current()}
+        label={settingsText.settings_password_current()}
         value={current}
         current
         error={problems.current}
@@ -140,14 +141,14 @@ function PasswordForm({ onDone }: { onDone(): void }) {
         onChange={setNext}
       />
       <PasswordField
-        label={m.settings_password_repeat()}
+        label={settingsText.settings_password_repeat()}
         value={repeat}
         error={problems.repeat}
         onChange={setRepeat}
       />
       <div className="flex flex-wrap gap-2">
         <Button type="submit" size="sm" disabled={!filled || change.isPending}>
-          {change.isPending ? m.settings_saving() : m.settings_save()}
+          {change.isPending ? settingsText.settings_saving() : m.settings_save()}
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={onDone}>
           {m.inbox_cancel()}
@@ -166,7 +167,7 @@ export function PasswordCard() {
       ) : (
         <SettingsRow label={m.login_password()}>
           <Button type="button" size="sm" variant="outline" onClick={() => setOpen(true)}>
-            {m.settings_password_change()}
+            {settingsText.settings_password_change()}
           </Button>
         </SettingsRow>
       )}

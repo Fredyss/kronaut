@@ -1,5 +1,7 @@
 import * as cs from '@kronaut/i18n/messages/cs';
 import * as en from '@kronaut/i18n/messages/en';
+import * as settingsCs from '@kronaut/i18n/settings/messages/cs';
+import * as settingsEn from '@kronaut/i18n/settings/messages/en';
 import { expect, type Page, test } from '@playwright/test';
 import { appUrl } from './env.ts';
 
@@ -22,7 +24,9 @@ function channelsLink(page: Page, messages: typeof en | typeof cs) {
 
 test('keeps a new display name after a reload', async ({ page }) => {
   await page.goto(appUrl('/settings/account'));
-  const name = page.getByRole('main').getByLabel(en.settings_display_name({}), { exact: true });
+  const name = page
+    .getByRole('main')
+    .getByLabel(settingsEn.settings_display_name({}), { exact: true });
   await name.fill(NAME);
   const saved = savedMe(page);
   await page
@@ -44,7 +48,9 @@ test('switches the shell to Czech and back', async ({ page }) => {
   await main.getByLabel(en.locale_label({}), { exact: true }).selectOption('cs');
   await toCzech;
   await expect(channelsLink(page, cs)).toBeVisible();
-  await expect(page.getByRole('heading', { name: cs.settings_account_title({}) })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: settingsCs.settings_account_title({}) }),
+  ).toBeVisible();
 
   await page.reload();
   await expect(channelsLink(page, cs)).toBeVisible();

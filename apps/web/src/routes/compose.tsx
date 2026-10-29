@@ -11,6 +11,7 @@ import { useComposeForm } from '../compose/use-compose-form.ts';
 import { submitLabel } from '../compose/when.ts';
 import { WhenFieldset } from '../compose/when-fieldset.tsx';
 import { useApiClient } from '../context.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 
 const route = getRouteApi('/app/compose');
@@ -132,8 +133,8 @@ export function ComposePage() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
       <header className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl tracking-tight">{m.compose_title()}</h1>
-        <p className="text-muted-foreground text-sm">{m.compose_subtitle()}</p>
+        <h1 className="font-semibold text-2xl tracking-tight">{composeText.compose_title()}</h1>
+        <p className="text-muted-foreground text-sm">{composeText.compose_subtitle()}</p>
       </header>
       {workspace === undefined ? null : (
         <Composer workspaceId={workspace.id} at={at} canRepeat={REPEAT_ROLES.has(workspace.role)} />

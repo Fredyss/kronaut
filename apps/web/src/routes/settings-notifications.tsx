@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { meQuery } from '../api.ts';
 import { useApiClient } from '../context.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import { SettingsCard, SettingsPage, SettingsRow } from '../settings/card.tsx';
 import {
@@ -13,18 +14,18 @@ import { Switch } from '../settings/switch.tsx';
 const ROWS = [
   {
     key: 'failures',
-    label: () => m.settings_email_failures(),
-    hint: () => m.settings_email_failures_hint(),
+    label: () => settingsText.settings_email_failures(),
+    hint: () => settingsText.settings_email_failures_hint(),
   },
   {
     key: 'approvals',
-    label: () => m.settings_email_approvals(),
-    hint: () => m.settings_email_approvals_hint(),
+    label: () => settingsText.settings_email_approvals(),
+    hint: () => settingsText.settings_email_approvals_hint(),
   },
   {
     key: 'channels',
-    label: () => m.settings_email_channels(),
-    hint: () => m.settings_email_channels_hint(),
+    label: () => settingsText.settings_email_channels(),
+    hint: () => settingsText.settings_email_channels_hint(),
   },
 ] as const satisfies readonly {
   readonly key: keyof EmailPreferences;
@@ -47,7 +48,7 @@ function EmailPreferencesCard({ workspaceId }: { readonly workspaceId: string })
     );
   }
   return (
-    <SettingsCard title={m.settings_email_title()}>
+    <SettingsCard title={settingsText.settings_email_title()}>
       {ROWS.map((row) => (
         <SettingsRow key={row.key} label={row.label()} description={row.hint()}>
           {(ids) => (
@@ -69,7 +70,7 @@ export function NotificationSettingsPage() {
   return (
     <SettingsPage title={m.notifications_title()}>
       {workspace === undefined ? null : <EmailPreferencesCard workspaceId={workspace.id} />}
-      <p className="text-muted-foreground text-sm">{m.settings_in_app_note()}</p>
+      <p className="text-muted-foreground text-sm">{settingsText.settings_in_app_note()}</p>
     </SettingsPage>
   );
 }

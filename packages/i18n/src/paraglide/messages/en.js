@@ -37,47 +37,9 @@
 /** @typedef {{}} Approval_Void_PolicyInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
-/** @typedef {{}} Calendar_Add_ChannelInputs */
-/** @typedef {{ time: NonNullable<unknown>, channel: NonNullable<unknown>, state: NonNullable<unknown>, text: NonNullable<unknown> }} Calendar_Chip_LabelInputs */
-/** @typedef {{}} Calendar_Create_PostInputs */
-/** @typedef {{}} Calendar_Day_EmptyInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
-/** @typedef {{}} Calendar_DraftsInputs */
-/** @typedef {{}} Calendar_Drafts_EmptyInputs */
-/** @typedef {{}} Calendar_LayoutInputs */
-/** @typedef {{}} Calendar_Layout_GridInputs */
-/** @typedef {{}} Calendar_Load_FailedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Calendar_MoreInputs */
-/** @typedef {{}} Calendar_Move_ApprovalInputs */
-/** @typedef {{}} Calendar_Move_ChangedInputs */
-/** @typedef {{}} Calendar_Move_FailedInputs */
-/** @typedef {{}} Calendar_Move_HintInputs */
-/** @typedef {{}} Calendar_Move_In_PastInputs */
-/** @typedef {{}} Calendar_Move_ReapprovalInputs */
-/** @typedef {{}} Calendar_Move_UnavailableInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_MovedInputs */
-/** @typedef {{}} Calendar_NavigationInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_New_Post_AtInputs */
-/** @typedef {{}} Calendar_Next_DayInputs */
-/** @typedef {{}} Calendar_Next_MonthInputs */
-/** @typedef {{}} Calendar_Next_WeekInputs */
-/** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Calendar_Own_TimeInputs */
-/** @typedef {{}} Calendar_Previous_DayInputs */
-/** @typedef {{}} Calendar_Previous_MonthInputs */
-/** @typedef {{}} Calendar_Previous_WeekInputs */
-/** @typedef {{}} Calendar_Sidebar_CollapseInputs */
-/** @typedef {{}} Calendar_Sidebar_ExpandInputs */
-/** @typedef {{ tz: NonNullable<unknown> }} Calendar_Time_ZoneInputs */
 /** @typedef {{}} Calendar_TitleInputs */
-/** @typedef {{}} Calendar_TodayInputs */
-/** @typedef {{}} Calendar_TruncatedInputs */
-/** @typedef {{}} Calendar_UndoInputs */
 /** @typedef {{}} Calendar_UntitledInputs */
 /** @typedef {{}} Calendar_View_DayInputs */
-/** @typedef {{}} Calendar_View_ListInputs */
-/** @typedef {{}} Calendar_View_MonthInputs */
-/** @typedef {{}} Calendar_View_WeekInputs */
-/** @typedef {{}} Calendar_ViewsInputs */
 /** @typedef {{}} Channel_Status_ActiveInputs */
 /** @typedef {{}} Channel_Status_DisabledInputs */
 /** @typedef {{}} Channel_Status_DisconnectedInputs */
@@ -126,49 +88,13 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
-/** @typedef {{}} Compose_Add_CommentInputs */
-/** @typedef {{}} Compose_Add_ReplyInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
-/** @typedef {{}} Compose_Ai_Generated_HintInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
-/** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
-/** @typedef {{}} Compose_Channel_Image_TypeInputs */
-/** @typedef {{}} Compose_Channel_Needs_ImageInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
-/** @typedef {{}} Compose_Channel_UnsupportedInputs */
-/** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
-/** @typedef {{}} Compose_Channels_TitleInputs */
-/** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
-/** @typedef {{}} Compose_Comment_LabelInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
-/** @typedef {{}} Compose_Connect_ChannelInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
-/** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
-/** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
-/** @typedef {{}} Compose_Error_EmptyInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
-/** @typedef {{}} Compose_Error_FixInputs */
-/** @typedef {{}} Compose_Error_No_ChannelInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
-/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{}} Compose_Error_When_MissingInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_DownInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_UpInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PositionInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PreviewInputs */
 /** @typedef {{}} Compose_Image_RemoveInputs */
-/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Image_Too_BigInputs */
-/** @typedef {{}} Compose_Images_AddInputs */
-/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Images_HintInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
-/** @typedef {{}} Compose_Images_TitleInputs */
-/** @typedef {{}} Compose_InheritsInputs */
 /** @typedef {{}} Compose_Issue_Comment_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
@@ -176,40 +102,22 @@
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
-/** @typedef {{}} Compose_Media_ExclusiveInputs */
-/** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Queue_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown>, tz: NonNullable<unknown> }} Compose_Queue_NextInputs */
-/** @typedef {{}} Compose_Remove_CommentInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_LongInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
 /** @typedef {{}} Compose_SchedulingInputs */
-/** @typedef {{}} Compose_SubtitleInputs */
-/** @typedef {{}} Compose_Tab_AllInputs */
-/** @typedef {{}} Compose_Tab_ProblemsInputs */
-/** @typedef {{}} Compose_Tabs_LabelInputs */
-/** @typedef {{}} Compose_Text_LabelInputs */
 /** @typedef {{}} Compose_TimeInputs */
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
-/** @typedef {{}} Compose_TitleInputs */
-/** @typedef {{}} Compose_Use_DefaultInputs */
 /** @typedef {{}} Compose_Video_Ai_FailedInputs */
-/** @typedef {{}} Compose_Video_Ai_LabelInputs */
-/** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Ai_SavingInputs */
-/** @typedef {{}} Compose_Video_Alt_LabelInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
-/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Frame_RateInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
@@ -219,21 +127,12 @@
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
-/** @typedef {{}} Compose_Video_LimitInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
 /** @typedef {{}} Compose_Video_Preview_CardInputs */
-/** @typedef {{}} Compose_Video_ProcessingInputs */
-/** @typedef {{}} Compose_Video_ProgressInputs */
-/** @typedef {{}} Compose_Video_ReadyInputs */
-/** @typedef {{ duration: NonNullable<unknown> }} Compose_Video_Ready_DurationInputs */
 /** @typedef {{}} Compose_Video_Rejected_Stream_MissingInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LargeInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LongInputs */
 /** @typedef {{ min: NonNullable<unknown> }} Compose_Video_Rejected_Too_ShortInputs */
 /** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
-/** @typedef {{}} Compose_Video_RetryInputs */
-/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
-/** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
 /** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
@@ -260,28 +159,11 @@
 /** @typedef {{}} Error_Logout_FailedInputs */
 /** @typedef {{}} Error_Rate_LimitedInputs */
 /** @typedef {{}} Error_UnavailableInputs */
-/** @typedef {{}} Home_Empty_BodyInputs */
-/** @typedef {{}} Home_Empty_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
-/** @typedef {{}} Inbox_CanceledInputs */
-/** @typedef {{}} Inbox_ChangedInputs */
 /** @typedef {{}} Inbox_Confirm_BackInputs */
-/** @typedef {{}} Inbox_Duplicate_AckInputs */
-/** @typedef {{}} Inbox_Duplicate_BodyInputs */
-/** @typedef {{}} Inbox_Duplicate_ConfirmInputs */
-/** @typedef {{}} Inbox_Duplicate_TitleInputs */
-/** @typedef {{}} Inbox_Empty_BodyInputs */
-/** @typedef {{}} Inbox_Empty_TitleInputs */
 /** @typedef {{}} Inbox_Load_FailedInputs */
-/** @typedef {{}} Inbox_Mark_DoneInputs */
-/** @typedef {{}} Inbox_Mark_PublishedInputs */
-/** @typedef {{}} Inbox_MarkedInputs */
-/** @typedef {{}} Inbox_ReconnectInputs */
-/** @typedef {{}} Inbox_Send_AgainInputs */
-/** @typedef {{}} Inbox_Sent_AgainInputs */
-/** @typedef {{ shown: NonNullable<unknown>, total: NonNullable<unknown> }} Inbox_TruncatedInputs */
 /** @typedef {{}} Issue_Alt_Text_RequiredInputs */
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
@@ -321,46 +203,6 @@
 /** @typedef {{}} Login_SubmittingInputs */
 /** @typedef {{}} Login_SubtitleInputs */
 /** @typedef {{}} Login_TitleInputs */
-/** @typedef {{}} Media_Ai_BadgeInputs */
-/** @typedef {{}} Media_Ai_LockedInputs */
-/** @typedef {{}} Media_Ai_RemoveInputs */
-/** @typedef {{}} Media_Ai_RemovedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Media_Alt_HintInputs */
-/** @typedef {{}} Media_Alt_LabelInputs */
-/** @typedef {{}} Media_Alt_SaveInputs */
-/** @typedef {{}} Media_Alt_SavedInputs */
-/** @typedef {{}} Media_DeleteInputs */
-/** @typedef {{}} Media_Delete_BodyInputs */
-/** @typedef {{}} Media_Delete_ConfirmInputs */
-/** @typedef {{}} Media_DeletedInputs */
-/** @typedef {{}} Media_DimensionsInputs */
-/** @typedef {{ width: NonNullable<unknown>, height: NonNullable<unknown> }} Media_Dimensions_ValueInputs */
-/** @typedef {{}} Media_DurationInputs */
-/** @typedef {{}} Media_Empty_BodyInputs */
-/** @typedef {{}} Media_Empty_FilteredInputs */
-/** @typedef {{}} Media_Empty_TitleInputs */
-/** @typedef {{}} Media_Filter_AllInputs */
-/** @typedef {{}} Media_Filter_ImagesInputs */
-/** @typedef {{}} Media_Filter_LabelInputs */
-/** @typedef {{}} Media_Filter_VideosInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Media_In_UseInputs */
-/** @typedef {{}} Media_In_Use_ErrorInputs */
-/** @typedef {{}} Media_Kind_ImageInputs */
-/** @typedef {{}} Media_Kind_VideoInputs */
-/** @typedef {{}} Media_Load_MoreInputs */
-/** @typedef {{ date: NonNullable<unknown> }} Media_Open_ImageInputs */
-/** @typedef {{ date: NonNullable<unknown> }} Media_Open_VideoInputs */
-/** @typedef {{}} Media_SizeInputs */
-/** @typedef {{}} Media_State_ProcessingInputs */
-/** @typedef {{}} Media_State_RejectedInputs */
-/** @typedef {{}} Media_SubtitleInputs */
-/** @typedef {{}} Media_TitleInputs */
-/** @typedef {{}} Media_TypeInputs */
-/** @typedef {{}} Media_UploadedInputs */
-/** @typedef {{}} Media_Usage_NoneInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
-/** @typedef {{}} Media_Usage_TitleInputs */
-/** @typedef {{}} Media_Usage_UntitledInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Meta_Status_CompletedInputs */
 /** @typedef {{}} Meta_Status_NoneInputs */
 /** @typedef {{}} Meta_Status_ReceivedInputs */
@@ -369,7 +211,6 @@
 /** @typedef {{}} Nav_InboxInputs */
 /** @typedef {{}} Nav_LabelInputs */
 /** @typedef {{}} Nav_MediaInputs */
-/** @typedef {{}} Nav_New_PostInputs */
 /** @typedef {{}} Not_Found_BackInputs */
 /** @typedef {{}} Not_Found_TitleInputs */
 /** @typedef {{}} Notification_Approval_RequestedInputs */
@@ -411,7 +252,6 @@
 /** @typedef {{}} Post_Summary_ScheduledInputs */
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Posts_ScheduledInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
@@ -469,92 +309,11 @@
 /** @typedef {{}} Series_StopInputs */
 /** @typedef {{}} Series_Stop_BodyInputs */
 /** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
-/** @typedef {{}} Settings_Account_TitleInputs */
-/** @typedef {{}} Settings_Allow_SelfInputs */
-/** @typedef {{}} Settings_Approval_RequiredInputs */
-/** @typedef {{}} Settings_Approvals_IntroInputs */
-/** @typedef {{}} Settings_Approvals_TitleInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_RequiredInputs */
-/** @typedef {{}} Settings_Brands_TitleInputs */
-/** @typedef {{}} Settings_ConflictInputs */
-/** @typedef {{}} Settings_DefaultsInputs */
-/** @typedef {{}} Settings_Display_NameInputs */
-/** @typedef {{}} Settings_Email_ApprovalsInputs */
-/** @typedef {{}} Settings_Email_Approvals_HintInputs */
-/** @typedef {{}} Settings_Email_ChannelsInputs */
-/** @typedef {{}} Settings_Email_Channels_HintInputs */
-/** @typedef {{}} Settings_Email_FailedInputs */
-/** @typedef {{}} Settings_Email_FailuresInputs */
-/** @typedef {{}} Settings_Email_Failures_HintInputs */
-/** @typedef {{}} Settings_Email_TitleInputs */
-/** @typedef {{}} Settings_In_App_NoteInputs */
-/** @typedef {{}} Settings_Name_FailedInputs */
-/** @typedef {{}} Settings_Name_SavedInputs */
-/** @typedef {{}} Settings_Nav_LabelInputs */
-/** @typedef {{}} Settings_Not_RequiredInputs */
-/** @typedef {{}} Settings_Not_SetInputs */
-/** @typedef {{}} Settings_Password_ChangeInputs */
-/** @typedef {{}} Settings_Password_ChangedInputs */
-/** @typedef {{}} Settings_Password_CurrentInputs */
-/** @typedef {{}} Settings_Password_FailedInputs */
-/** @typedef {{}} Settings_Password_IncorrectInputs */
-/** @typedef {{}} Settings_Password_RepeatInputs */
-/** @typedef {{}} Settings_Password_Two_FactorInputs */
-/** @typedef {{}} Settings_Policy_TitleInputs */
-/** @typedef {{}} Settings_Preferences_TitleInputs */
-/** @typedef {{}} Settings_Profile_TitleInputs */
-/** @typedef {{}} Settings_Read_OnlyInputs */
-/** @typedef {{}} Settings_Required_ApprovalsInputs */
 /** @typedef {{}} Settings_SaveInputs */
-/** @typedef {{}} Settings_SavedInputs */
-/** @typedef {{}} Settings_SavingInputs */
-/** @typedef {{}} Settings_System_TitleInputs */
-/** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_TitleInputs */
-/** @typedef {{}} Settings_ToleranceInputs */
-/** @typedef {{}} System_Api_CriticalInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
-/** @typedef {{}} System_Api_EndedInputs */
-/** @typedef {{}} System_Api_No_SunsetInputs */
-/** @typedef {{ date: NonNullable<unknown> }} System_Api_SunsetInputs */
-/** @typedef {{}} System_Api_TitleInputs */
-/** @typedef {{ version: NonNullable<unknown> }} System_Api_VersionInputs */
-/** @typedef {{}} System_Api_WarnInputs */
-/** @typedef {{ duration: NonNullable<unknown> }} System_Cron_DurationInputs */
-/** @typedef {{}} System_Cron_FailedInputs */
-/** @typedef {{ when: NonNullable<unknown> }} System_Cron_Last_RunInputs */
-/** @typedef {{}} System_Cron_NeverInputs */
-/** @typedef {{}} System_Cron_RunningInputs */
-/** @typedef {{}} System_Cron_StaleInputs */
-/** @typedef {{}} System_Cron_TitleInputs */
-/** @typedef {{}} System_Incident_App_Credentials_InvalidInputs */
-/** @typedef {{}} System_Incident_App_SuspendedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Incident_OccurrencesInputs */
-/** @typedef {{}} System_Incident_OpenInputs */
-/** @typedef {{}} System_Incident_Provider_OutageInputs */
-/** @typedef {{}} System_Incident_Rate_Limited_AppInputs */
-/** @typedef {{ when: NonNullable<unknown> }} System_Incident_ResolvedInputs */
-/** @typedef {{ first: NonNullable<unknown>, last: NonNullable<unknown> }} System_Incident_SeenInputs */
-/** @typedef {{}} System_Incident_Tier_Not_EnrolledInputs */
-/** @typedef {{}} System_Incidents_EmptyInputs */
-/** @typedef {{}} System_Incidents_TitleInputs */
-/** @typedef {{}} System_No_DataInputs */
-/** @typedef {{}} System_OkInputs */
-/** @typedef {{}} System_Slo_DayInputs */
-/** @typedef {{}} System_Slo_DuplicatesInputs */
-/** @typedef {{}} System_Slo_On_TimeInputs */
-/** @typedef {{}} System_Slo_TitleInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Slo_TotalInputs */
-/** @typedef {{}} System_Slo_UnconfirmedInputs */
-/** @typedef {{}} System_Slo_WeekInputs */
-/** @typedef {{}} System_Target_MetInputs */
-/** @typedef {{}} System_Target_MissedInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
-/** @typedef {{}} Theme_Option_DarkInputs */
-/** @typedef {{}} Theme_Option_LightInputs */
-/** @typedef {{}} Theme_Option_SystemInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Workspace_LabelInputs */
 import * as registry from "../registry.js"
@@ -716,146 +475,8 @@ export const approval_withdraw = /** @type {(inputs: Approval_WithdrawInputs) =>
 	return /** @type {LocalizedString} */ (`Withdraw`)
 };
 
-export const calendar_add_channel = /** @type {(inputs: Calendar_Add_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Add channel`)
-};
-
-export const calendar_chip_label = /** @type {(inputs: Calendar_Chip_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.time}, ${i?.channel}, ${i?.state}: ${i?.text}`)
-};
-
-export const calendar_create_post = /** @type {(inputs: Calendar_Create_PostInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Create post`)
-};
-
-export const calendar_day_empty = /** @type {(inputs: Calendar_Day_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nothing planned`)
-};
-
-export const calendar_draft_updated = /** @type {(inputs: Calendar_Draft_UpdatedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Edited ${i?.when}`)
-};
-
-export const calendar_drafts = /** @type {(inputs: Calendar_DraftsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Drafts`)
-};
-
-export const calendar_drafts_empty = /** @type {(inputs: Calendar_Drafts_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No drafts.`)
-};
-
-export const calendar_layout = /** @type {(inputs: Calendar_LayoutInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Layout`)
-};
-
-export const calendar_layout_grid = /** @type {(inputs: Calendar_Layout_GridInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Grid`)
-};
-
-export const calendar_load_failed = /** @type {(inputs: Calendar_Load_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The calendar couldn't be loaded. Try again.`)
-};
-
-export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`+${i?.count} more`);
-	return /** @type {LocalizedString} */ (`+${i?.count} more`)
-};
-
-export const calendar_move_approval = /** @type {(inputs: Calendar_Move_ApprovalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This post needs an approval before it can be moved.`)
-};
-
-export const calendar_move_changed = /** @type {(inputs: Calendar_Move_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Someone else changed this post in the meantime. The calendar now shows the latest version.`)
-};
-
-export const calendar_move_failed = /** @type {(inputs: Calendar_Move_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The post couldn't be moved. Try again.`)
-};
-
-export const calendar_move_hint = /** @type {(inputs: Calendar_Move_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Shift and the arrow keys move this post by a day or a week. All of its channels move together.`)
-};
-
-export const calendar_move_in_past = /** @type {(inputs: Calendar_Move_In_PastInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`That time has already passed. Pick a later day.`)
-};
-
-export const calendar_move_reapproval = /** @type {(inputs: Calendar_Move_ReapprovalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`That time is outside the approved window, so the post needs approval again.`)
-};
-
-export const calendar_move_unavailable = /** @type {(inputs: Calendar_Move_UnavailableInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This post can't be moved right now. It may already be publishing.`)
-};
-
-export const calendar_moved = /** @type {(inputs: Calendar_MovedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Moved to ${i?.when}`)
-};
-
-export const calendar_navigation = /** @type {(inputs: Calendar_NavigationInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Move through the calendar`)
-};
-
-export const calendar_new_post_at = /** @type {(inputs: Calendar_New_Post_AtInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Create post: ${i?.when}`)
-};
-
-export const calendar_next_day = /** @type {(inputs: Calendar_Next_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Next day`)
-};
-
-export const calendar_next_month = /** @type {(inputs: Calendar_Next_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Next month`)
-};
-
-export const calendar_next_week = /** @type {(inputs: Calendar_Next_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Next week`)
-};
-
-export const calendar_own_time = /** @type {(inputs: Calendar_Own_TimeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.when} in ${i?.tz}`)
-};
-
-export const calendar_previous_day = /** @type {(inputs: Calendar_Previous_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Previous day`)
-};
-
-export const calendar_previous_month = /** @type {(inputs: Calendar_Previous_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Previous month`)
-};
-
-export const calendar_previous_week = /** @type {(inputs: Calendar_Previous_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Previous week`)
-};
-
-export const calendar_sidebar_collapse = /** @type {(inputs: Calendar_Sidebar_CollapseInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Collapse the sidebar`)
-};
-
-export const calendar_sidebar_expand = /** @type {(inputs: Calendar_Sidebar_ExpandInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Expand the sidebar`)
-};
-
-export const calendar_time_zone = /** @type {(inputs: Calendar_Time_ZoneInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Times in ${i?.tz}`)
-};
-
 export const calendar_title = /** @type {(inputs: Calendar_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Calendar`)
-};
-
-export const calendar_today = /** @type {(inputs: Calendar_TodayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Today`)
-};
-
-export const calendar_truncated = /** @type {(inputs: Calendar_TruncatedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This range has more posts than the calendar can show, so some are missing. Pick a shorter range to see them all.`)
-};
-
-export const calendar_undo = /** @type {(inputs: Calendar_UndoInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Undo`)
 };
 
 export const calendar_untitled = /** @type {(inputs: Calendar_UntitledInputs) => LocalizedString} */ () => {
@@ -864,22 +485,6 @@ export const calendar_untitled = /** @type {(inputs: Calendar_UntitledInputs) =>
 
 export const calendar_view_day = /** @type {(inputs: Calendar_View_DayInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Day`)
-};
-
-export const calendar_view_list = /** @type {(inputs: Calendar_View_ListInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`List`)
-};
-
-export const calendar_view_month = /** @type {(inputs: Calendar_View_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Month`)
-};
-
-export const calendar_view_week = /** @type {(inputs: Calendar_View_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Week`)
-};
-
-export const calendar_views = /** @type {(inputs: Calendar_ViewsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Calendar view`)
 };
 
 export const channel_status_active = /** @type {(inputs: Channel_Status_ActiveInputs) => LocalizedString} */ () => {
@@ -1076,148 +681,24 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Channels`)
 };
 
-export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Add first comment`)
-};
-
-export const compose_add_reply = /** @type {(inputs: Compose_Add_ReplyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Add reply`)
-};
-
 export const compose_add_to_queue = /** @type {(inputs: Compose_Add_To_QueueInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Add to queue`)
-};
-
-export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Instagram marks it as made with AI. The other networks have no such label.`)
-};
-
-export const compose_ai_generated_label = /** @type {(inputs: Compose_Ai_Generated_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image ${i?.position} is AI-generated`)
-};
-
-export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Describe the image for people who can't see it. Up to ${i?.count} character.`);
-	return /** @type {LocalizedString} */ (`Describe the image for people who can't see it. Up to ${i?.count} characters.`)
-};
-
-export const compose_alt_text_label = /** @type {(inputs: Compose_Alt_Text_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Alt text for image ${i?.position}`)
-};
-
-export const compose_channel_image_too_large = /** @type {(inputs: Compose_Channel_Image_Too_LargeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`An image is larger than the ${i?.max} this network accepts.`)
-};
-
-export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Image_TypeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This network doesn't accept the format of an attached image.`)
-};
-
-export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Needs an image or a video.`)
-};
-
-export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`This network accepts at most ${i?.count} image.`);
-	return /** @type {LocalizedString} */ (`This network accepts at most ${i?.count} images.`)
-};
-
-export const compose_channel_unsupported = /** @type {(inputs: Compose_Channel_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posting to this network isn't supported yet.`)
-};
-
-export const compose_channel_video_unsupported = /** @type {(inputs: Compose_Channel_Video_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video isn't supported on this network yet.`)
-};
-
-export const compose_channels_title = /** @type {(inputs: Compose_Channels_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Channels`)
-};
-
-export const compose_check_content = /** @type {(inputs: Compose_Check_ContentInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Check the content for ${i?.channels}.`)
-};
-
-export const compose_comment_label = /** @type {(inputs: Compose_Comment_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`First comment`)
 };
 
 export const compose_comment_too_long = /** @type {(inputs: Compose_Comment_Too_LongInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`The first comment is too long for ${i?.channel} (${i?.count}/${i?.max})`)
 };
 
-export const compose_connect_channel = /** @type {(inputs: Compose_Connect_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Connect a channel`)
-};
-
-export const compose_customize = /** @type {(inputs: Compose_CustomizeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Customize for ${i?.channel}`)
-};
-
-export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Customized`)
-};
-
 export const compose_date = /** @type {(inputs: Compose_DateInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Date`)
-};
-
-export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image ${i?.position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image ${i?.position} is AI-generated” to post it, or use a different image.`)
-};
-
-export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This post needs an approval before it can be scheduled.`)
 };
 
 export const compose_error_conflict = /** @type {(inputs: Compose_Error_ConflictInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The post changed in the meantime. Try again.`)
 };
 
-export const compose_error_empty = /** @type {(inputs: Compose_Error_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Write some text or add an image.`)
-};
-
-export const compose_error_empty_channel = /** @type {(inputs: Compose_Error_Empty_ChannelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Write some text or add an image for ${i?.channel}.`)
-};
-
-export const compose_error_fix = /** @type {(inputs: Compose_Error_FixInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The post can't go out yet. Fix the following and try again:`)
-};
-
-export const compose_error_no_channel = /** @type {(inputs: Compose_Error_No_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pick at least one channel.`)
-};
-
-export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image ${i?.position} couldn't be uploaded.`)
-};
-
-export const compose_error_upload_channel = /** @type {(inputs: Compose_Error_Upload_ChannelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image ${i?.position} for ${i?.channel} couldn't be uploaded.`)
-};
-
 export const compose_error_when_missing = /** @type {(inputs: Compose_Error_When_MissingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pick a date and a time.`)
-};
-
-export const compose_image_bad_type = /** @type {(inputs: Compose_Image_Bad_TypeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: only JPEG, PNG and WebP images can be added.`)
-};
-
-export const compose_image_move_down = /** @type {(inputs: Compose_Image_Move_DownInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Move image ${i?.position} down`)
-};
-
-export const compose_image_move_up = /** @type {(inputs: Compose_Image_Move_UpInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Move image ${i?.position} up`)
-};
-
-export const compose_image_position = /** @type {(inputs: Compose_Image_PositionInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image ${i?.position}`)
 };
 
 export const compose_image_preview = /** @type {(inputs: Compose_Image_PreviewInputs) => LocalizedString} */ (i) => {
@@ -1226,34 +707,6 @@ export const compose_image_preview = /** @type {(inputs: Compose_Image_PreviewIn
 
 export const compose_image_remove = /** @type {(inputs: Compose_Image_RemoveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Remove`)
-};
-
-export const compose_image_too_big = /** @type {(inputs: Compose_Image_Too_BigInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: the file is larger than ${i?.max}.`)
-};
-
-export const compose_images_add = /** @type {(inputs: Compose_Images_AddInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Add images`)
-};
-
-export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Up to ${i?.count} image: JPEG, PNG or WebP, at most ${i?.max} each.`);
-	return /** @type {LocalizedString} */ (`Up to ${i?.count} images: JPEG, PNG or WebP, at most ${i?.max} each.`)
-};
-
-export const compose_images_limit = /** @type {(inputs: Compose_Images_LimitInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} image.`);
-	return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} images.`)
-};
-
-export const compose_images_title = /** @type {(inputs: Compose_Images_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Images`)
-};
-
-export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uses the content from All channels.`)
 };
 
 export const compose_issue_comment_empty = /** @type {(inputs: Compose_Issue_Comment_EmptyInputs) => LocalizedString} */ () => {
@@ -1286,18 +739,6 @@ export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs
 	return /** @type {LocalizedString} */ (`${i?.network} ${i?.count}/${i?.max}`)
 };
 
-export const compose_main_only = /** @type {(inputs: Compose_Main_OnlyInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.channel} will publish the main post only.`)
-};
-
-export const compose_media_exclusive = /** @type {(inputs: Compose_Media_ExclusiveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`A post can have images or one video, not both.`)
-};
-
-export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No channels are connected yet.`)
-};
-
 export const compose_preview_title = /** @type {(inputs: Compose_Preview_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Preview`)
 };
@@ -1316,18 +757,6 @@ export const compose_queue_empty = /** @type {(inputs: Compose_Queue_EmptyInputs
 
 export const compose_queue_next = /** @type {(inputs: Compose_Queue_NextInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.when} (${i?.tz})`)
-};
-
-export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Remove first comment`)
-};
-
-export const compose_remove_reply = /** @type {(inputs: Compose_Remove_ReplyInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Remove reply ${i?.position}`)
-};
-
-export const compose_reply_label = /** @type {(inputs: Compose_Reply_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Reply ${i?.position}`)
 };
 
 export const compose_reply_too_long = /** @type {(inputs: Compose_Reply_Too_LongInputs) => LocalizedString} */ (i) => {
@@ -1354,26 +783,6 @@ export const compose_scheduling = /** @type {(inputs: Compose_SchedulingInputs) 
 	return /** @type {LocalizedString} */ (`Scheduling…`)
 };
 
-export const compose_subtitle = /** @type {(inputs: Compose_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Write it once, pick the channels, then publish it now or schedule it.`)
-};
-
-export const compose_tab_all = /** @type {(inputs: Compose_Tab_AllInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`All channels`)
-};
-
-export const compose_tab_problems = /** @type {(inputs: Compose_Tab_ProblemsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`has problems`)
-};
-
-export const compose_tabs_label = /** @type {(inputs: Compose_Tabs_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Content for each channel`)
-};
-
-export const compose_text_label = /** @type {(inputs: Compose_Text_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Text`)
-};
-
 export const compose_time = /** @type {(inputs: Compose_TimeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Time`)
 };
@@ -1382,44 +791,16 @@ export const compose_time_zone = /** @type {(inputs: Compose_Time_ZoneInputs) =>
 	return /** @type {LocalizedString} */ (`Time zone: ${i?.tz}`)
 };
 
-export const compose_title = /** @type {(inputs: Compose_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`New post`)
-};
-
-export const compose_use_default = /** @type {(inputs: Compose_Use_DefaultInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Use the content from All channels`)
-};
-
 export const compose_video_ai_failed = /** @type {(inputs: Compose_Video_Ai_FailedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The AI label couldn't be saved.`)
-};
-
-export const compose_video_ai_label = /** @type {(inputs: Compose_Video_Ai_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The video is AI-generated`)
-};
-
-export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_MarkedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This video is marked as AI-generated in this workspace, and the label can't be removed.`)
 };
 
 export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Saving the AI label…`)
 };
 
-export const compose_video_alt_label = /** @type {(inputs: Compose_Video_Alt_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alt text for the video`)
-};
-
-export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: only MP4, QuickTime and WebM videos can be added.`)
-};
-
 export const compose_video_error = /** @type {(inputs: Compose_Video_ErrorInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video couldn't be uploaded.`)
-};
-
-export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Or one MP4, QuickTime or WebM video up to ${i?.max}.`)
 };
 
 export const compose_video_issue_aspect = /** @type {(inputs: Compose_Video_Issue_AspectInputs) => LocalizedString} */ (i) => {
@@ -1458,32 +839,8 @@ export const compose_video_issue_too_short = /** @type {(inputs: Compose_Video_I
 	return /** @type {LocalizedString} */ (`The video is shorter than ${i?.channel} needs (${i?.min}).`)
 };
 
-export const compose_video_limit = /** @type {(inputs: Compose_Video_LimitInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`A post can have only one video.`)
-};
-
-export const compose_video_preview = /** @type {(inputs: Compose_Video_PreviewInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Preview of ${i?.name}`)
-};
-
 export const compose_video_preview_card = /** @type {(inputs: Compose_Video_Preview_CardInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Video preview`)
-};
-
-export const compose_video_processing = /** @type {(inputs: Compose_Video_ProcessingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Processing…`)
-};
-
-export const compose_video_progress = /** @type {(inputs: Compose_Video_ProgressInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Upload progress`)
-};
-
-export const compose_video_ready = /** @type {(inputs: Compose_Video_ReadyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ready`)
-};
-
-export const compose_video_ready_duration = /** @type {(inputs: Compose_Video_Ready_DurationInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Ready, ${i?.duration}`)
 };
 
 export const compose_video_rejected_stream_missing = /** @type {(inputs: Compose_Video_Rejected_Stream_MissingInputs) => LocalizedString} */ () => {
@@ -1504,18 +861,6 @@ export const compose_video_rejected_too_short = /** @type {(inputs: Compose_Vide
 
 export const compose_video_rejected_unreadable = /** @type {(inputs: Compose_Video_Rejected_UnreadableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video couldn't be read. Try exporting it again.`)
-};
-
-export const compose_video_retry = /** @type {(inputs: Compose_Video_RetryInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Retry`)
-};
-
-export const compose_video_too_big = /** @type {(inputs: Compose_Video_Too_BigInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: the video is larger than ${i?.max}.`)
-};
-
-export const compose_video_uploading = /** @type {(inputs: Compose_Video_UploadingInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Uploading… ${i?.percent}`)
 };
 
 export const compose_video_wait = /** @type {(inputs: Compose_Video_WaitInputs) => LocalizedString} */ () => {
@@ -1622,14 +967,6 @@ export const error_unavailable = /** @type {(inputs: Error_UnavailableInputs) =>
 	return /** @type {LocalizedString} */ (`Kronaut can't be reached right now. Try again in a moment.`)
 };
 
-export const home_empty_body = /** @type {(inputs: Home_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posts you schedule will show up here.`)
-};
-
-export const home_empty_title = /** @type {(inputs: Home_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nothing scheduled yet`)
-};
-
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} item needs action`);
@@ -1644,74 +981,12 @@ export const inbox_cancel = /** @type {(inputs: Inbox_CancelInputs) => Localized
 	return /** @type {LocalizedString} */ (`Cancel`)
 };
 
-export const inbox_canceled = /** @type {(inputs: Inbox_CanceledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Canceled.`)
-};
-
-export const inbox_changed = /** @type {(inputs: Inbox_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This item changed in the meantime. The list now shows its latest state.`)
-};
-
 export const inbox_confirm_back = /** @type {(inputs: Inbox_Confirm_BackInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Not now`)
 };
 
-export const inbox_duplicate_ack = /** @type {(inputs: Inbox_Duplicate_AckInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`This may post twice`)
-};
-
-export const inbox_duplicate_body = /** @type {(inputs: Inbox_Duplicate_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The network may have received it. Sending it again could publish it twice.`)
-};
-
-export const inbox_duplicate_confirm = /** @type {(inputs: Inbox_Duplicate_ConfirmInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Send again anyway`)
-};
-
-export const inbox_duplicate_title = /** @type {(inputs: Inbox_Duplicate_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`It may already be live`)
-};
-
-export const inbox_empty_body = /** @type {(inputs: Inbox_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posts that fail, get blocked or wait for you show up here.`)
-};
-
-export const inbox_empty_title = /** @type {(inputs: Inbox_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nothing needs your attention`)
-};
-
 export const inbox_load_failed = /** @type {(inputs: Inbox_Load_FailedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The list couldn't be loaded. Try again.`)
-};
-
-export const inbox_mark_done = /** @type {(inputs: Inbox_Mark_DoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Mark as done`)
-};
-
-export const inbox_mark_published = /** @type {(inputs: Inbox_Mark_PublishedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Mark as published`)
-};
-
-export const inbox_marked = /** @type {(inputs: Inbox_MarkedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Marked as published.`)
-};
-
-export const inbox_reconnect = /** @type {(inputs: Inbox_ReconnectInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Reconnect channel`)
-};
-
-export const inbox_send_again = /** @type {(inputs: Inbox_Send_AgainInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Send again`)
-};
-
-export const inbox_sent_again = /** @type {(inputs: Inbox_Sent_AgainInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`It will be sent again shortly.`)
-};
-
-export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("en", i?.total, {}, true);
-	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} item.`);
-	return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} items.`)
 };
 
 export const issue_alt_text_required = /** @type {(inputs: Issue_Alt_Text_RequiredInputs) => LocalizedString} */ () => {
@@ -1870,170 +1145,6 @@ export const login_title = /** @type {(inputs: Login_TitleInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`Sign in`)
 };
 
-export const media_ai_badge = /** @type {(inputs: Media_Ai_BadgeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`AI-generated`)
-};
-
-export const media_ai_locked = /** @type {(inputs: Media_Ai_LockedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The label stays: an API key or agent uploaded or labelled this file.`)
-};
-
-export const media_ai_remove = /** @type {(inputs: Media_Ai_RemoveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Remove AI label`)
-};
-
-export const media_ai_removed = /** @type {(inputs: Media_Ai_RemovedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`AI label removed.`)
-};
-
-export const media_alt_hint = /** @type {(inputs: Media_Alt_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`New posts start with this description. Posts that already use the file keep their own. Up to ${i?.count} character.`);
-	return /** @type {LocalizedString} */ (`New posts start with this description. Posts that already use the file keep their own. Up to ${i?.count} characters.`)
-};
-
-export const media_alt_label = /** @type {(inputs: Media_Alt_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alt text`)
-};
-
-export const media_alt_save = /** @type {(inputs: Media_Alt_SaveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Save alt text`)
-};
-
-export const media_alt_saved = /** @type {(inputs: Media_Alt_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alt text saved.`)
-};
-
-export const media_delete = /** @type {(inputs: Media_DeleteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Delete`)
-};
-
-export const media_delete_body = /** @type {(inputs: Media_Delete_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Delete this file? It leaves the library now, and its data is erased after 30 days.`)
-};
-
-export const media_delete_confirm = /** @type {(inputs: Media_Delete_ConfirmInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Delete file`)
-};
-
-export const media_deleted = /** @type {(inputs: Media_DeletedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`File deleted.`)
-};
-
-export const media_dimensions = /** @type {(inputs: Media_DimensionsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Dimensions`)
-};
-
-export const media_dimensions_value = /** @type {(inputs: Media_Dimensions_ValueInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.width} × ${i?.height} px`)
-};
-
-export const media_duration = /** @type {(inputs: Media_DurationInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Duration`)
-};
-
-export const media_empty_body = /** @type {(inputs: Media_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Images and videos you add to posts appear here.`)
-};
-
-export const media_empty_filtered = /** @type {(inputs: Media_Empty_FilteredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nothing of this kind yet.`)
-};
-
-export const media_empty_title = /** @type {(inputs: Media_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No media yet`)
-};
-
-export const media_filter_all = /** @type {(inputs: Media_Filter_AllInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`All`)
-};
-
-export const media_filter_images = /** @type {(inputs: Media_Filter_ImagesInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Images`)
-};
-
-export const media_filter_label = /** @type {(inputs: Media_Filter_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Show`)
-};
-
-export const media_filter_videos = /** @type {(inputs: Media_Filter_VideosInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Videos`)
-};
-
-export const media_in_use = /** @type {(inputs: Media_In_UseInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Used in ${i?.count} post`);
-	return /** @type {LocalizedString} */ (`Used in ${i?.count} posts`)
-};
-
-export const media_in_use_error = /** @type {(inputs: Media_In_Use_ErrorInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`A post still uses this file, so it can't be deleted.`)
-};
-
-export const media_kind_image = /** @type {(inputs: Media_Kind_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Image`)
-};
-
-export const media_kind_video = /** @type {(inputs: Media_Kind_VideoInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video`)
-};
-
-export const media_load_more = /** @type {(inputs: Media_Load_MoreInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Load more`)
-};
-
-export const media_open_image = /** @type {(inputs: Media_Open_ImageInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Image uploaded ${i?.date}`)
-};
-
-export const media_open_video = /** @type {(inputs: Media_Open_VideoInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Video uploaded ${i?.date}`)
-};
-
-export const media_size = /** @type {(inputs: Media_SizeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Size`)
-};
-
-export const media_state_processing = /** @type {(inputs: Media_State_ProcessingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Processing`)
-};
-
-export const media_state_rejected = /** @type {(inputs: Media_State_RejectedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Rejected`)
-};
-
-export const media_subtitle = /** @type {(inputs: Media_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Images and videos uploaded to this workspace.`)
-};
-
-export const media_title = /** @type {(inputs: Media_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Media library`)
-};
-
-export const media_type = /** @type {(inputs: Media_TypeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Type`)
-};
-
-export const media_uploaded = /** @type {(inputs: Media_UploadedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uploaded`)
-};
-
-export const media_usage_none = /** @type {(inputs: Media_Usage_NoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No post uses this file.`)
-};
-
-export const media_usage_scheduled = /** @type {(inputs: Media_Usage_ScheduledInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Scheduled for ${i?.when}`)
-};
-
-export const media_usage_title = /** @type {(inputs: Media_Usage_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Used in`)
-};
-
-export const media_usage_untitled = /** @type {(inputs: Media_Usage_UntitledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Untitled post`)
-};
-
 export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Done. Kronaut deleted the data of ${i?.count} channel.`);
@@ -2066,10 +1177,6 @@ export const nav_label = /** @type {(inputs: Nav_LabelInputs) => LocalizedString
 
 export const nav_media = /** @type {(inputs: Nav_MediaInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Media`)
-};
-
-export const nav_new_post = /** @type {(inputs: Nav_New_PostInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`New post`)
 };
 
 export const not_found_back = /** @type {(inputs: Not_Found_BackInputs) => LocalizedString} */ () => {
@@ -2240,12 +1347,6 @@ export const post_title = /** @type {(inputs: Post_TitleInputs) => LocalizedStri
 
 export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`View post`)
-};
-
-export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post scheduled`);
-	return /** @type {LocalizedString} */ (`${i?.count} posts scheduled`)
 };
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
@@ -2487,332 +1588,12 @@ export const series_until = /** @type {(inputs: Series_UntilInputs) => Localized
 	return /** @type {LocalizedString} */ (`Ends on ${i?.date}`)
 };
 
-export const settings_account_title = /** @type {(inputs: Settings_Account_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Account`)
-};
-
-export const settings_allow_self = /** @type {(inputs: Settings_Allow_SelfInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Requesters can approve their own posts`)
-};
-
-export const settings_approval_required = /** @type {(inputs: Settings_Approval_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posts need approval`)
-};
-
-export const settings_approvals_intro = /** @type {(inputs: Settings_Approvals_IntroInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Decide whether posts need an approval before they go out.`)
-};
-
-export const settings_approvals_title = /** @type {(inputs: Settings_Approvals_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approvals`)
-};
-
-export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approval`);
-	return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approvals`)
-};
-
-export const settings_brands_title = /** @type {(inputs: Settings_Brands_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Brand overrides`)
-};
-
-export const settings_conflict = /** @type {(inputs: Settings_ConflictInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Someone else changed these settings. The latest version is shown.`)
-};
-
-export const settings_defaults = /** @type {(inputs: Settings_DefaultsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nothing saved yet: these are the defaults.`)
-};
-
-export const settings_display_name = /** @type {(inputs: Settings_Display_NameInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Name`)
-};
-
-export const settings_email_approvals = /** @type {(inputs: Settings_Email_ApprovalsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approvals`)
-};
-
-export const settings_email_approvals_hint = /** @type {(inputs: Settings_Email_Approvals_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approval requests and decisions`)
-};
-
-export const settings_email_channels = /** @type {(inputs: Settings_Email_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Channel problems`)
-};
-
-export const settings_email_channels_hint = /** @type {(inputs: Settings_Email_Channels_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Channels that need reconnecting or are about to expire`)
-};
-
-export const settings_email_failed = /** @type {(inputs: Settings_Email_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Your notification settings weren't saved. Try again.`)
-};
-
-export const settings_email_failures = /** @type {(inputs: Settings_Email_FailuresInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Failures`)
-};
-
-export const settings_email_failures_hint = /** @type {(inputs: Settings_Email_Failures_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posts that fail or need you to post manually`)
-};
-
-export const settings_email_title = /** @type {(inputs: Settings_Email_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Email notifications`)
-};
-
-export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`In-app notifications always show in the bell.`)
-};
-
-export const settings_name_failed = /** @type {(inputs: Settings_Name_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Your name wasn't saved. Try again.`)
-};
-
-export const settings_name_saved = /** @type {(inputs: Settings_Name_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Name saved.`)
-};
-
-export const settings_nav_label = /** @type {(inputs: Settings_Nav_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Settings sections`)
-};
-
-export const settings_not_required = /** @type {(inputs: Settings_Not_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No approval required`)
-};
-
-export const settings_not_set = /** @type {(inputs: Settings_Not_SetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Not set`)
-};
-
-export const settings_password_change = /** @type {(inputs: Settings_Password_ChangeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Change password`)
-};
-
-export const settings_password_changed = /** @type {(inputs: Settings_Password_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Password changed. Other devices were signed out.`)
-};
-
-export const settings_password_current = /** @type {(inputs: Settings_Password_CurrentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Current password`)
-};
-
-export const settings_password_failed = /** @type {(inputs: Settings_Password_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Your password wasn't changed. Try again.`)
-};
-
-export const settings_password_incorrect = /** @type {(inputs: Settings_Password_IncorrectInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The current password is incorrect.`)
-};
-
-export const settings_password_repeat = /** @type {(inputs: Settings_Password_RepeatInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Repeat new password`)
-};
-
-export const settings_password_two_factor = /** @type {(inputs: Settings_Password_Two_FactorInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Changing the password isn't available yet for accounts with two-factor sign-in.`)
-};
-
-export const settings_policy_title = /** @type {(inputs: Settings_Policy_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approval rules`)
-};
-
-export const settings_preferences_title = /** @type {(inputs: Settings_Preferences_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Preferences`)
-};
-
-export const settings_profile_title = /** @type {(inputs: Settings_Profile_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Profile`)
-};
-
-export const settings_read_only = /** @type {(inputs: Settings_Read_OnlyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Only owners and admins can change these settings.`)
-};
-
-export const settings_required_approvals = /** @type {(inputs: Settings_Required_ApprovalsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approvals needed`)
-};
-
 export const settings_save = /** @type {(inputs: Settings_SaveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Save`)
 };
 
-export const settings_saved = /** @type {(inputs: Settings_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Approval settings saved.`)
-};
-
-export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Saving…`)
-};
-
-export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`System`)
-};
-
-export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Theme`)
-};
-
 export const settings_title = /** @type {(inputs: Settings_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Settings`)
-};
-
-export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Allowed shift after approval (minutes)`)
-};
-
-export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Upgrade now`)
-};
-
-export const system_api_days_left = /** @type {(inputs: System_Api_Days_LeftInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} day left`);
-	return /** @type {LocalizedString} */ (`${i?.count} days left`)
-};
-
-export const system_api_ended = /** @type {(inputs: System_Api_EndedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Support has ended`)
-};
-
-export const system_api_no_sunset = /** @type {(inputs: System_Api_No_SunsetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No end date announced`)
-};
-
-export const system_api_sunset = /** @type {(inputs: System_Api_SunsetInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Support ends ${i?.date}`)
-};
-
-export const system_api_title = /** @type {(inputs: System_Api_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Network API versions`)
-};
-
-export const system_api_version = /** @type {(inputs: System_Api_VersionInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Version ${i?.version}`)
-};
-
-export const system_api_warn = /** @type {(inputs: System_Api_WarnInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Upgrade soon`)
-};
-
-export const system_cron_duration = /** @type {(inputs: System_Cron_DurationInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Took ${i?.duration}`)
-};
-
-export const system_cron_failed = /** @type {(inputs: System_Cron_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Failed`)
-};
-
-export const system_cron_last_run = /** @type {(inputs: System_Cron_Last_RunInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Last started ${i?.when}`)
-};
-
-export const system_cron_never = /** @type {(inputs: System_Cron_NeverInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Never ran`)
-};
-
-export const system_cron_running = /** @type {(inputs: System_Cron_RunningInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Running`)
-};
-
-export const system_cron_stale = /** @type {(inputs: System_Cron_StaleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Overdue`)
-};
-
-export const system_cron_title = /** @type {(inputs: System_Cron_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Background jobs`)
-};
-
-export const system_incident_app_credentials_invalid = /** @type {(inputs: System_Incident_App_Credentials_InvalidInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`App credentials rejected`)
-};
-
-export const system_incident_app_suspended = /** @type {(inputs: System_Incident_App_SuspendedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`App suspended`)
-};
-
-export const system_incident_occurrences = /** @type {(inputs: System_Incident_OccurrencesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} occurrence`);
-	return /** @type {LocalizedString} */ (`${i?.count} occurrences`)
-};
-
-export const system_incident_open = /** @type {(inputs: System_Incident_OpenInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Open`)
-};
-
-export const system_incident_provider_outage = /** @type {(inputs: System_Incident_Provider_OutageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Network outage`)
-};
-
-export const system_incident_rate_limited_app = /** @type {(inputs: System_Incident_Rate_Limited_AppInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`App hit its rate limit`)
-};
-
-export const system_incident_resolved = /** @type {(inputs: System_Incident_ResolvedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Resolved ${i?.when}`)
-};
-
-export const system_incident_seen = /** @type {(inputs: System_Incident_SeenInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`First seen ${i?.first}, last seen ${i?.last}`)
-};
-
-export const system_incident_tier_not_enrolled = /** @type {(inputs: System_Incident_Tier_Not_EnrolledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`API access level missing`)
-};
-
-export const system_incidents_empty = /** @type {(inputs: System_Incidents_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No incidents in the last 7 days.`)
-};
-
-export const system_incidents_title = /** @type {(inputs: System_Incidents_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Network incidents`)
-};
-
-export const system_no_data = /** @type {(inputs: System_No_DataInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No data`)
-};
-
-export const system_ok = /** @type {(inputs: System_OkInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`OK`)
-};
-
-export const system_slo_day = /** @type {(inputs: System_Slo_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Last 24 hours`)
-};
-
-export const system_slo_duplicates = /** @type {(inputs: System_Slo_DuplicatesInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Published twice`)
-};
-
-export const system_slo_on_time = /** @type {(inputs: System_Slo_On_TimeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Published on time`)
-};
-
-export const system_slo_title = /** @type {(inputs: System_Slo_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Publishing goals`)
-};
-
-export const system_slo_total = /** @type {(inputs: System_Slo_TotalInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} automatic post`);
-	return /** @type {LocalizedString} */ (`${i?.count} automatic posts`)
-};
-
-export const system_slo_unconfirmed = /** @type {(inputs: System_Slo_UnconfirmedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Unconfirmed`)
-};
-
-export const system_slo_week = /** @type {(inputs: System_Slo_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Last 7 days`)
-};
-
-export const system_target_met = /** @type {(inputs: System_Target_MetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`On target`)
-};
-
-export const system_target_missed = /** @type {(inputs: System_Target_MissedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Missed`)
 };
 
 export const technical_details = /** @type {(inputs: Technical_DetailsInputs) => LocalizedString} */ () => {
@@ -2825,18 +1606,6 @@ export const theme_dark = /** @type {(inputs: Theme_DarkInputs) => LocalizedStri
 
 export const theme_light = /** @type {(inputs: Theme_LightInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Theme: light`)
-};
-
-export const theme_option_dark = /** @type {(inputs: Theme_Option_DarkInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Dark`)
-};
-
-export const theme_option_light = /** @type {(inputs: Theme_Option_LightInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Light`)
-};
-
-export const theme_option_system = /** @type {(inputs: Theme_Option_SystemInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`System`)
 };
 
 export const theme_system = /** @type {(inputs: Theme_SystemInputs) => LocalizedString} */ () => {

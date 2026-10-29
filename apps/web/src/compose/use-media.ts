@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocale } from '../context.ts';
-import { m } from '../i18n.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { MAX_VIDEO_BYTES, VIDEO_TYPES } from './media.ts';
 import type { ImagesState } from './use-images.ts';
 import type { VideoEntry, VideosState } from './use-video.ts';
@@ -54,11 +54,12 @@ export function useMedia(target: MediaTarget) {
   const maxVideoSize = formatMegabytes(MAX_VIDEO_BYTES, locale);
 
   const pickVideo = (file: File, withImages: boolean): string | null => {
-    if (withImages || images.images.length > 0) return m.compose_media_exclusive();
-    if (video !== null) return m.compose_video_limit();
-    if (!VIDEO_TYPES.includes(file.type)) return m.compose_video_bad_type({ name: file.name });
+    if (withImages || images.images.length > 0) return composeText.compose_media_exclusive();
+    if (video !== null) return composeText.compose_video_limit();
+    if (!VIDEO_TYPES.includes(file.type))
+      return composeText.compose_video_bad_type({ name: file.name });
     if (file.size > MAX_VIDEO_BYTES) {
-      return m.compose_video_too_big({ name: file.name, max: maxVideoSize });
+      return composeText.compose_video_too_big({ name: file.name, max: maxVideoSize });
     }
     setVideo(videos.add(file));
     return null;
@@ -67,11 +68,12 @@ export function useMedia(target: MediaTarget) {
     const picked = files.filter(isVideo);
     const stills = files.filter((file) => !isVideo(file));
     const [first] = picked;
-    if (picked.length > 1) setProblems([m.compose_video_limit()]);
+    if (picked.length > 1) setProblems([composeText.compose_video_limit()]);
     else if (first !== undefined) {
       const problem = pickVideo(first, stills.length > 0);
       setProblems(problem === null ? [] : [problem]);
-    } else if (video !== null && stills.length > 0) setProblems([m.compose_media_exclusive()]);
+    } else if (video !== null && stills.length > 0)
+      setProblems([composeText.compose_media_exclusive()]);
     else setProblems(images.pick(stills));
   };
   return { images, problems, maxVideoSize, pick, video: slotFor(target) };

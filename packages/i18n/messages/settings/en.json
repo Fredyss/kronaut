@@ -1,0 +1,120 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "settings_approvals_title": "Approvals",
+  "settings_approvals_intro": "Decide whether posts need an approval before they go out.",
+  "settings_approval_required": "Posts need approval",
+  "settings_required_approvals": "Approvals needed",
+  "settings_allow_self": "Requesters can approve their own posts",
+  "settings_tolerance": "Allowed shift after approval (minutes)",
+  "settings_saving": "Saving…",
+  "settings_saved": "Approval settings saved.",
+  "settings_conflict": "Someone else changed these settings. The latest version is shown.",
+  "settings_read_only": "Only owners and admins can change these settings.",
+  "settings_defaults": "Nothing saved yet: these are the defaults.",
+  "settings_brands_title": "Brand overrides",
+  "settings_brand_required": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Approval required: {count} approval",
+        "countPlural=*": "Approval required: {count} approvals"
+      }
+    }
+  ],
+  "settings_not_required": "No approval required",
+  "settings_nav_label": "Settings sections",
+  "settings_account_title": "Account",
+  "settings_profile_title": "Profile",
+  "settings_display_name": "Name",
+  "settings_not_set": "Not set",
+  "settings_preferences_title": "Preferences",
+  "settings_theme": "Theme",
+  "theme_option_system": "System",
+  "theme_option_light": "Light",
+  "theme_option_dark": "Dark",
+  "settings_policy_title": "Approval rules",
+  "settings_email_title": "Email notifications",
+  "settings_email_failures": "Failures",
+  "settings_email_failures_hint": "Posts that fail or need you to post manually",
+  "settings_email_approvals": "Approvals",
+  "settings_email_approvals_hint": "Approval requests and decisions",
+  "settings_email_channels": "Channel problems",
+  "settings_email_channels_hint": "Channels that need reconnecting or are about to expire",
+  "settings_in_app_note": "In-app notifications always show in the bell.",
+  "settings_email_failed": "Your notification settings weren't saved. Try again.",
+  "settings_name_saved": "Name saved.",
+  "settings_name_failed": "Your name wasn't saved. Try again.",
+  "settings_password_change": "Change password",
+  "settings_password_current": "Current password",
+  "settings_password_repeat": "Repeat new password",
+  "settings_password_incorrect": "The current password is incorrect.",
+  "settings_password_two_factor": "Changing the password isn't available yet for accounts with two-factor sign-in.",
+  "settings_password_changed": "Password changed. Other devices were signed out.",
+  "settings_password_failed": "Your password wasn't changed. Try again.",
+  "settings_system_title": "System",
+  "system_slo_title": "Publishing goals",
+  "system_slo_day": "Last 24 hours",
+  "system_slo_week": "Last 7 days",
+  "system_slo_on_time": "Published on time",
+  "system_slo_duplicates": "Published twice",
+  "system_slo_unconfirmed": "Unconfirmed",
+  "system_slo_total": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} automatic post",
+        "countPlural=*": "{count} automatic posts"
+      }
+    }
+  ],
+  "system_no_data": "No data",
+  "system_target_met": "On target",
+  "system_target_missed": "Missed",
+  "system_cron_title": "Background jobs",
+  "system_ok": "OK",
+  "system_cron_failed": "Failed",
+  "system_cron_running": "Running",
+  "system_cron_stale": "Overdue",
+  "system_cron_never": "Never ran",
+  "system_cron_last_run": "Last started {when}",
+  "system_cron_duration": "Took {duration}",
+  "system_incidents_title": "Network incidents",
+  "system_incidents_empty": "No incidents in the last 7 days.",
+  "system_incident_open": "Open",
+  "system_incident_resolved": "Resolved {when}",
+  "system_incident_seen": "First seen {first}, last seen {last}",
+  "system_incident_occurrences": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} occurrence",
+        "countPlural=*": "{count} occurrences"
+      }
+    }
+  ],
+  "system_incident_app_credentials_invalid": "App credentials rejected",
+  "system_incident_app_suspended": "App suspended",
+  "system_incident_tier_not_enrolled": "API access level missing",
+  "system_incident_rate_limited_app": "App hit its rate limit",
+  "system_incident_provider_outage": "Network outage",
+  "system_api_title": "Network API versions",
+  "system_api_version": "Version {version}",
+  "system_api_no_sunset": "No end date announced",
+  "system_api_sunset": "Support ends {date}",
+  "system_api_days_left": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} day left",
+        "countPlural=*": "{count} days left"
+      }
+    }
+  ],
+  "system_api_ended": "Support has ended",
+  "system_api_warn": "Upgrade soon",
+  "system_api_critical": "Upgrade now"
+}

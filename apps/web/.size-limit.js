@@ -11,6 +11,13 @@ function shellChunks() {
     .map((path) => `dist/web/${path}`);
 }
 
+const ROUTE_CATALOGS = ['compose', 'calendar', 'media', 'inbox', 'settings'].flatMap((group) =>
+  ['en', 'sk', 'cs'].map((locale) => [
+    `${group}-${locale} messages JS`,
+    [`messages-${group}-${locale}`, '8 KB'],
+  ]),
+);
+
 const LAZY = {
   'en messages JS': ['en', '12 KB'],
   'sk messages JS': ['sk', '13 KB'],
@@ -31,6 +38,7 @@ const LAZY = {
   'preview JS': ['preview', '10 KB'],
   'queue editor JS': ['queue-editor', '10 KB'],
   'repeat control JS': ['repeat-fieldset', '5 KB'],
+  ...Object.fromEntries(ROUTE_CATALOGS),
 };
 
 function sharedLazyChunks(shell) {

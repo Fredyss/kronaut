@@ -37,47 +37,9 @@
 /** @typedef {{}} Approval_Void_PolicyInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
-/** @typedef {{}} Calendar_Add_ChannelInputs */
-/** @typedef {{ time: NonNullable<unknown>, channel: NonNullable<unknown>, state: NonNullable<unknown>, text: NonNullable<unknown> }} Calendar_Chip_LabelInputs */
-/** @typedef {{}} Calendar_Create_PostInputs */
-/** @typedef {{}} Calendar_Day_EmptyInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
-/** @typedef {{}} Calendar_DraftsInputs */
-/** @typedef {{}} Calendar_Drafts_EmptyInputs */
-/** @typedef {{}} Calendar_LayoutInputs */
-/** @typedef {{}} Calendar_Layout_GridInputs */
-/** @typedef {{}} Calendar_Load_FailedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Calendar_MoreInputs */
-/** @typedef {{}} Calendar_Move_ApprovalInputs */
-/** @typedef {{}} Calendar_Move_ChangedInputs */
-/** @typedef {{}} Calendar_Move_FailedInputs */
-/** @typedef {{}} Calendar_Move_HintInputs */
-/** @typedef {{}} Calendar_Move_In_PastInputs */
-/** @typedef {{}} Calendar_Move_ReapprovalInputs */
-/** @typedef {{}} Calendar_Move_UnavailableInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_MovedInputs */
-/** @typedef {{}} Calendar_NavigationInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Calendar_New_Post_AtInputs */
-/** @typedef {{}} Calendar_Next_DayInputs */
-/** @typedef {{}} Calendar_Next_MonthInputs */
-/** @typedef {{}} Calendar_Next_WeekInputs */
-/** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Calendar_Own_TimeInputs */
-/** @typedef {{}} Calendar_Previous_DayInputs */
-/** @typedef {{}} Calendar_Previous_MonthInputs */
-/** @typedef {{}} Calendar_Previous_WeekInputs */
-/** @typedef {{}} Calendar_Sidebar_CollapseInputs */
-/** @typedef {{}} Calendar_Sidebar_ExpandInputs */
-/** @typedef {{ tz: NonNullable<unknown> }} Calendar_Time_ZoneInputs */
 /** @typedef {{}} Calendar_TitleInputs */
-/** @typedef {{}} Calendar_TodayInputs */
-/** @typedef {{}} Calendar_TruncatedInputs */
-/** @typedef {{}} Calendar_UndoInputs */
 /** @typedef {{}} Calendar_UntitledInputs */
 /** @typedef {{}} Calendar_View_DayInputs */
-/** @typedef {{}} Calendar_View_ListInputs */
-/** @typedef {{}} Calendar_View_MonthInputs */
-/** @typedef {{}} Calendar_View_WeekInputs */
-/** @typedef {{}} Calendar_ViewsInputs */
 /** @typedef {{}} Channel_Status_ActiveInputs */
 /** @typedef {{}} Channel_Status_DisabledInputs */
 /** @typedef {{}} Channel_Status_DisconnectedInputs */
@@ -126,49 +88,13 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
-/** @typedef {{}} Compose_Add_CommentInputs */
-/** @typedef {{}} Compose_Add_ReplyInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
-/** @typedef {{}} Compose_Ai_Generated_HintInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
-/** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
-/** @typedef {{}} Compose_Channel_Image_TypeInputs */
-/** @typedef {{}} Compose_Channel_Needs_ImageInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
-/** @typedef {{}} Compose_Channel_UnsupportedInputs */
-/** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
-/** @typedef {{}} Compose_Channels_TitleInputs */
-/** @typedef {{ channels: NonNullable<unknown> }} Compose_Check_ContentInputs */
-/** @typedef {{}} Compose_Comment_LabelInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
-/** @typedef {{}} Compose_Connect_ChannelInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
-/** @typedef {{}} Compose_CustomizedInputs */
 /** @typedef {{}} Compose_DateInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
-/** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
-/** @typedef {{}} Compose_Error_EmptyInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
-/** @typedef {{}} Compose_Error_FixInputs */
-/** @typedef {{}} Compose_Error_No_ChannelInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
-/** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{}} Compose_Error_When_MissingInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_DownInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_UpInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PositionInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PreviewInputs */
 /** @typedef {{}} Compose_Image_RemoveInputs */
-/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Image_Too_BigInputs */
-/** @typedef {{}} Compose_Images_AddInputs */
-/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Images_HintInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
-/** @typedef {{}} Compose_Images_TitleInputs */
-/** @typedef {{}} Compose_InheritsInputs */
 /** @typedef {{}} Compose_Issue_Comment_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
@@ -176,40 +102,22 @@
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
-/** @typedef {{}} Compose_Media_ExclusiveInputs */
-/** @typedef {{}} Compose_No_ChannelsInputs */
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Queue_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown>, tz: NonNullable<unknown> }} Compose_Queue_NextInputs */
-/** @typedef {{}} Compose_Remove_CommentInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
-/** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_LongInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
 /** @typedef {{}} Compose_SchedulingInputs */
-/** @typedef {{}} Compose_SubtitleInputs */
-/** @typedef {{}} Compose_Tab_AllInputs */
-/** @typedef {{}} Compose_Tab_ProblemsInputs */
-/** @typedef {{}} Compose_Tabs_LabelInputs */
-/** @typedef {{}} Compose_Text_LabelInputs */
 /** @typedef {{}} Compose_TimeInputs */
 /** @typedef {{ tz: NonNullable<unknown> }} Compose_Time_ZoneInputs */
-/** @typedef {{}} Compose_TitleInputs */
-/** @typedef {{}} Compose_Use_DefaultInputs */
 /** @typedef {{}} Compose_Video_Ai_FailedInputs */
-/** @typedef {{}} Compose_Video_Ai_LabelInputs */
-/** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Ai_SavingInputs */
-/** @typedef {{}} Compose_Video_Alt_LabelInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
 /** @typedef {{}} Compose_Video_ErrorInputs */
-/** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_AspectInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Frame_RateInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Video_Issue_KindInputs */
@@ -219,21 +127,12 @@
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LargeInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Issue_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, min: NonNullable<unknown> }} Compose_Video_Issue_Too_ShortInputs */
-/** @typedef {{}} Compose_Video_LimitInputs */
-/** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
 /** @typedef {{}} Compose_Video_Preview_CardInputs */
-/** @typedef {{}} Compose_Video_ProcessingInputs */
-/** @typedef {{}} Compose_Video_ProgressInputs */
-/** @typedef {{}} Compose_Video_ReadyInputs */
-/** @typedef {{ duration: NonNullable<unknown> }} Compose_Video_Ready_DurationInputs */
 /** @typedef {{}} Compose_Video_Rejected_Stream_MissingInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LargeInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_Rejected_Too_LongInputs */
 /** @typedef {{ min: NonNullable<unknown> }} Compose_Video_Rejected_Too_ShortInputs */
 /** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
-/** @typedef {{}} Compose_Video_RetryInputs */
-/** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
-/** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
 /** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
@@ -260,28 +159,11 @@
 /** @typedef {{}} Error_Logout_FailedInputs */
 /** @typedef {{}} Error_Rate_LimitedInputs */
 /** @typedef {{}} Error_UnavailableInputs */
-/** @typedef {{}} Home_Empty_BodyInputs */
-/** @typedef {{}} Home_Empty_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
-/** @typedef {{}} Inbox_CanceledInputs */
-/** @typedef {{}} Inbox_ChangedInputs */
 /** @typedef {{}} Inbox_Confirm_BackInputs */
-/** @typedef {{}} Inbox_Duplicate_AckInputs */
-/** @typedef {{}} Inbox_Duplicate_BodyInputs */
-/** @typedef {{}} Inbox_Duplicate_ConfirmInputs */
-/** @typedef {{}} Inbox_Duplicate_TitleInputs */
-/** @typedef {{}} Inbox_Empty_BodyInputs */
-/** @typedef {{}} Inbox_Empty_TitleInputs */
 /** @typedef {{}} Inbox_Load_FailedInputs */
-/** @typedef {{}} Inbox_Mark_DoneInputs */
-/** @typedef {{}} Inbox_Mark_PublishedInputs */
-/** @typedef {{}} Inbox_MarkedInputs */
-/** @typedef {{}} Inbox_ReconnectInputs */
-/** @typedef {{}} Inbox_Send_AgainInputs */
-/** @typedef {{}} Inbox_Sent_AgainInputs */
-/** @typedef {{ shown: NonNullable<unknown>, total: NonNullable<unknown> }} Inbox_TruncatedInputs */
 /** @typedef {{}} Issue_Alt_Text_RequiredInputs */
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
@@ -321,46 +203,6 @@
 /** @typedef {{}} Login_SubmittingInputs */
 /** @typedef {{}} Login_SubtitleInputs */
 /** @typedef {{}} Login_TitleInputs */
-/** @typedef {{}} Media_Ai_BadgeInputs */
-/** @typedef {{}} Media_Ai_LockedInputs */
-/** @typedef {{}} Media_Ai_RemoveInputs */
-/** @typedef {{}} Media_Ai_RemovedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Media_Alt_HintInputs */
-/** @typedef {{}} Media_Alt_LabelInputs */
-/** @typedef {{}} Media_Alt_SaveInputs */
-/** @typedef {{}} Media_Alt_SavedInputs */
-/** @typedef {{}} Media_DeleteInputs */
-/** @typedef {{}} Media_Delete_BodyInputs */
-/** @typedef {{}} Media_Delete_ConfirmInputs */
-/** @typedef {{}} Media_DeletedInputs */
-/** @typedef {{}} Media_DimensionsInputs */
-/** @typedef {{ width: NonNullable<unknown>, height: NonNullable<unknown> }} Media_Dimensions_ValueInputs */
-/** @typedef {{}} Media_DurationInputs */
-/** @typedef {{}} Media_Empty_BodyInputs */
-/** @typedef {{}} Media_Empty_FilteredInputs */
-/** @typedef {{}} Media_Empty_TitleInputs */
-/** @typedef {{}} Media_Filter_AllInputs */
-/** @typedef {{}} Media_Filter_ImagesInputs */
-/** @typedef {{}} Media_Filter_LabelInputs */
-/** @typedef {{}} Media_Filter_VideosInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Media_In_UseInputs */
-/** @typedef {{}} Media_In_Use_ErrorInputs */
-/** @typedef {{}} Media_Kind_ImageInputs */
-/** @typedef {{}} Media_Kind_VideoInputs */
-/** @typedef {{}} Media_Load_MoreInputs */
-/** @typedef {{ date: NonNullable<unknown> }} Media_Open_ImageInputs */
-/** @typedef {{ date: NonNullable<unknown> }} Media_Open_VideoInputs */
-/** @typedef {{}} Media_SizeInputs */
-/** @typedef {{}} Media_State_ProcessingInputs */
-/** @typedef {{}} Media_State_RejectedInputs */
-/** @typedef {{}} Media_SubtitleInputs */
-/** @typedef {{}} Media_TitleInputs */
-/** @typedef {{}} Media_TypeInputs */
-/** @typedef {{}} Media_UploadedInputs */
-/** @typedef {{}} Media_Usage_NoneInputs */
-/** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
-/** @typedef {{}} Media_Usage_TitleInputs */
-/** @typedef {{}} Media_Usage_UntitledInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Meta_Status_CompletedInputs */
 /** @typedef {{}} Meta_Status_NoneInputs */
 /** @typedef {{}} Meta_Status_ReceivedInputs */
@@ -369,7 +211,6 @@
 /** @typedef {{}} Nav_InboxInputs */
 /** @typedef {{}} Nav_LabelInputs */
 /** @typedef {{}} Nav_MediaInputs */
-/** @typedef {{}} Nav_New_PostInputs */
 /** @typedef {{}} Not_Found_BackInputs */
 /** @typedef {{}} Not_Found_TitleInputs */
 /** @typedef {{}} Notification_Approval_RequestedInputs */
@@ -411,7 +252,6 @@
 /** @typedef {{}} Post_Summary_ScheduledInputs */
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Posts_ScheduledInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
@@ -469,92 +309,11 @@
 /** @typedef {{}} Series_StopInputs */
 /** @typedef {{}} Series_Stop_BodyInputs */
 /** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
-/** @typedef {{}} Settings_Account_TitleInputs */
-/** @typedef {{}} Settings_Allow_SelfInputs */
-/** @typedef {{}} Settings_Approval_RequiredInputs */
-/** @typedef {{}} Settings_Approvals_IntroInputs */
-/** @typedef {{}} Settings_Approvals_TitleInputs */
-/** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_RequiredInputs */
-/** @typedef {{}} Settings_Brands_TitleInputs */
-/** @typedef {{}} Settings_ConflictInputs */
-/** @typedef {{}} Settings_DefaultsInputs */
-/** @typedef {{}} Settings_Display_NameInputs */
-/** @typedef {{}} Settings_Email_ApprovalsInputs */
-/** @typedef {{}} Settings_Email_Approvals_HintInputs */
-/** @typedef {{}} Settings_Email_ChannelsInputs */
-/** @typedef {{}} Settings_Email_Channels_HintInputs */
-/** @typedef {{}} Settings_Email_FailedInputs */
-/** @typedef {{}} Settings_Email_FailuresInputs */
-/** @typedef {{}} Settings_Email_Failures_HintInputs */
-/** @typedef {{}} Settings_Email_TitleInputs */
-/** @typedef {{}} Settings_In_App_NoteInputs */
-/** @typedef {{}} Settings_Name_FailedInputs */
-/** @typedef {{}} Settings_Name_SavedInputs */
-/** @typedef {{}} Settings_Nav_LabelInputs */
-/** @typedef {{}} Settings_Not_RequiredInputs */
-/** @typedef {{}} Settings_Not_SetInputs */
-/** @typedef {{}} Settings_Password_ChangeInputs */
-/** @typedef {{}} Settings_Password_ChangedInputs */
-/** @typedef {{}} Settings_Password_CurrentInputs */
-/** @typedef {{}} Settings_Password_FailedInputs */
-/** @typedef {{}} Settings_Password_IncorrectInputs */
-/** @typedef {{}} Settings_Password_RepeatInputs */
-/** @typedef {{}} Settings_Password_Two_FactorInputs */
-/** @typedef {{}} Settings_Policy_TitleInputs */
-/** @typedef {{}} Settings_Preferences_TitleInputs */
-/** @typedef {{}} Settings_Profile_TitleInputs */
-/** @typedef {{}} Settings_Read_OnlyInputs */
-/** @typedef {{}} Settings_Required_ApprovalsInputs */
 /** @typedef {{}} Settings_SaveInputs */
-/** @typedef {{}} Settings_SavedInputs */
-/** @typedef {{}} Settings_SavingInputs */
-/** @typedef {{}} Settings_System_TitleInputs */
-/** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_TitleInputs */
-/** @typedef {{}} Settings_ToleranceInputs */
-/** @typedef {{}} System_Api_CriticalInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
-/** @typedef {{}} System_Api_EndedInputs */
-/** @typedef {{}} System_Api_No_SunsetInputs */
-/** @typedef {{ date: NonNullable<unknown> }} System_Api_SunsetInputs */
-/** @typedef {{}} System_Api_TitleInputs */
-/** @typedef {{ version: NonNullable<unknown> }} System_Api_VersionInputs */
-/** @typedef {{}} System_Api_WarnInputs */
-/** @typedef {{ duration: NonNullable<unknown> }} System_Cron_DurationInputs */
-/** @typedef {{}} System_Cron_FailedInputs */
-/** @typedef {{ when: NonNullable<unknown> }} System_Cron_Last_RunInputs */
-/** @typedef {{}} System_Cron_NeverInputs */
-/** @typedef {{}} System_Cron_RunningInputs */
-/** @typedef {{}} System_Cron_StaleInputs */
-/** @typedef {{}} System_Cron_TitleInputs */
-/** @typedef {{}} System_Incident_App_Credentials_InvalidInputs */
-/** @typedef {{}} System_Incident_App_SuspendedInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Incident_OccurrencesInputs */
-/** @typedef {{}} System_Incident_OpenInputs */
-/** @typedef {{}} System_Incident_Provider_OutageInputs */
-/** @typedef {{}} System_Incident_Rate_Limited_AppInputs */
-/** @typedef {{ when: NonNullable<unknown> }} System_Incident_ResolvedInputs */
-/** @typedef {{ first: NonNullable<unknown>, last: NonNullable<unknown> }} System_Incident_SeenInputs */
-/** @typedef {{}} System_Incident_Tier_Not_EnrolledInputs */
-/** @typedef {{}} System_Incidents_EmptyInputs */
-/** @typedef {{}} System_Incidents_TitleInputs */
-/** @typedef {{}} System_No_DataInputs */
-/** @typedef {{}} System_OkInputs */
-/** @typedef {{}} System_Slo_DayInputs */
-/** @typedef {{}} System_Slo_DuplicatesInputs */
-/** @typedef {{}} System_Slo_On_TimeInputs */
-/** @typedef {{}} System_Slo_TitleInputs */
-/** @typedef {{ count: NonNullable<unknown> }} System_Slo_TotalInputs */
-/** @typedef {{}} System_Slo_UnconfirmedInputs */
-/** @typedef {{}} System_Slo_WeekInputs */
-/** @typedef {{}} System_Target_MetInputs */
-/** @typedef {{}} System_Target_MissedInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
-/** @typedef {{}} Theme_Option_DarkInputs */
-/** @typedef {{}} Theme_Option_LightInputs */
-/** @typedef {{}} Theme_Option_SystemInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Workspace_LabelInputs */
 import * as registry from "../registry.js"
@@ -720,148 +479,8 @@ export const approval_withdraw = /** @type {(inputs: Approval_WithdrawInputs) =>
 	return /** @type {LocalizedString} */ (`Stiahnuť žiadosť`)
 };
 
-export const calendar_add_channel = /** @type {(inputs: Calendar_Add_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pridať kanál`)
-};
-
-export const calendar_chip_label = /** @type {(inputs: Calendar_Chip_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.time}, ${i?.channel}, ${i?.state}: ${i?.text}`)
-};
-
-export const calendar_create_post = /** @type {(inputs: Calendar_Create_PostInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vytvoriť príspevok`)
-};
-
-export const calendar_day_empty = /** @type {(inputs: Calendar_Day_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nič naplánované`)
-};
-
-export const calendar_draft_updated = /** @type {(inputs: Calendar_Draft_UpdatedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Upravené ${i?.when}`)
-};
-
-export const calendar_drafts = /** @type {(inputs: Calendar_DraftsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Koncepty`)
-};
-
-export const calendar_drafts_empty = /** @type {(inputs: Calendar_Drafts_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Žiadne koncepty.`)
-};
-
-export const calendar_layout = /** @type {(inputs: Calendar_LayoutInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Rozloženie`)
-};
-
-export const calendar_layout_grid = /** @type {(inputs: Calendar_Layout_GridInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Mriežka`)
-};
-
-export const calendar_load_failed = /** @type {(inputs: Calendar_Load_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Kalendár sa nepodarilo načítať. Skúste to znova.`)
-};
-
-export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`+${i?.count} ďalší`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`+${i?.count} ďalšie`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`+${i?.count} ďalšieho`);
-	return /** @type {LocalizedString} */ (`+${i?.count} ďalších`)
-};
-
-export const calendar_move_approval = /** @type {(inputs: Calendar_Move_ApprovalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pred presunutím musí byť príspevok schválený.`)
-};
-
-export const calendar_move_changed = /** @type {(inputs: Calendar_Move_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok medzitým zmenil niekto iný. Kalendár teraz zobrazuje jeho aktuálnu verziu.`)
-};
-
-export const calendar_move_failed = /** @type {(inputs: Calendar_Move_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok sa nepodarilo presunúť. Skúste to znova.`)
-};
-
-export const calendar_move_hint = /** @type {(inputs: Calendar_Move_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok posuniete o deň alebo o týždeň klávesom Shift so šípkami. Všetky jeho kanály sa presunú spolu.`)
-};
-
-export const calendar_move_in_past = /** @type {(inputs: Calendar_Move_In_PastInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tento čas už uplynul. Vyberte neskorší deň.`)
-};
-
-export const calendar_move_reapproval = /** @type {(inputs: Calendar_Move_ReapprovalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tento čas je mimo schváleného rozsahu, príspevok preto treba znova schváliť.`)
-};
-
-export const calendar_move_unavailable = /** @type {(inputs: Calendar_Move_UnavailableInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok sa teraz nedá presunúť. Možno sa práve uverejňuje.`)
-};
-
-export const calendar_moved = /** @type {(inputs: Calendar_MovedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Presunuté na ${i?.when}`)
-};
-
-export const calendar_navigation = /** @type {(inputs: Calendar_NavigationInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pohyb v kalendári`)
-};
-
-export const calendar_new_post_at = /** @type {(inputs: Calendar_New_Post_AtInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Vytvoriť príspevok: ${i?.when}`)
-};
-
-export const calendar_next_day = /** @type {(inputs: Calendar_Next_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nasledujúci deň`)
-};
-
-export const calendar_next_month = /** @type {(inputs: Calendar_Next_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nasledujúci mesiac`)
-};
-
-export const calendar_next_week = /** @type {(inputs: Calendar_Next_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nasledujúci týždeň`)
-};
-
-export const calendar_own_time = /** @type {(inputs: Calendar_Own_TimeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.when} v časovom pásme ${i?.tz}`)
-};
-
-export const calendar_previous_day = /** @type {(inputs: Calendar_Previous_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Predchádzajúci deň`)
-};
-
-export const calendar_previous_month = /** @type {(inputs: Calendar_Previous_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Predchádzajúci mesiac`)
-};
-
-export const calendar_previous_week = /** @type {(inputs: Calendar_Previous_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Predchádzajúci týždeň`)
-};
-
-export const calendar_sidebar_collapse = /** @type {(inputs: Calendar_Sidebar_CollapseInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zbaliť bočný panel`)
-};
-
-export const calendar_sidebar_expand = /** @type {(inputs: Calendar_Sidebar_ExpandInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Rozbaliť bočný panel`)
-};
-
-export const calendar_time_zone = /** @type {(inputs: Calendar_Time_ZoneInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Časy v časovom pásme ${i?.tz}`)
-};
-
 export const calendar_title = /** @type {(inputs: Calendar_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Kalendár`)
-};
-
-export const calendar_today = /** @type {(inputs: Calendar_TodayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Dnes`)
-};
-
-export const calendar_truncated = /** @type {(inputs: Calendar_TruncatedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`V tomto období je viac príspevkov, než dokáže kalendár zobraziť, preto niektoré chýbajú. Ak ich chcete vidieť všetky, vyberte kratšie obdobie.`)
-};
-
-export const calendar_undo = /** @type {(inputs: Calendar_UndoInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vrátiť späť`)
 };
 
 export const calendar_untitled = /** @type {(inputs: Calendar_UntitledInputs) => LocalizedString} */ () => {
@@ -870,22 +489,6 @@ export const calendar_untitled = /** @type {(inputs: Calendar_UntitledInputs) =>
 
 export const calendar_view_day = /** @type {(inputs: Calendar_View_DayInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Deň`)
-};
-
-export const calendar_view_list = /** @type {(inputs: Calendar_View_ListInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zoznam`)
-};
-
-export const calendar_view_month = /** @type {(inputs: Calendar_View_MonthInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Mesiac`)
-};
-
-export const calendar_view_week = /** @type {(inputs: Calendar_View_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Týždeň`)
-};
-
-export const calendar_views = /** @type {(inputs: Calendar_ViewsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zobrazenie kalendára`)
 };
 
 export const channel_status_active = /** @type {(inputs: Channel_Status_ActiveInputs) => LocalizedString} */ () => {
@@ -1084,152 +687,24 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Kanály`)
 };
 
-export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pridať prvý komentár`)
-};
-
-export const compose_add_reply = /** @type {(inputs: Compose_Add_ReplyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pridať odpoveď`)
-};
-
 export const compose_add_to_queue = /** @type {(inputs: Compose_Add_To_QueueInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pridať do frontu`)
-};
-
-export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Instagram ho označí ako vytvorený pomocou AI. Ostatné siete takéto označenie nemajú.`)
-};
-
-export const compose_ai_generated_label = /** @type {(inputs: Compose_Ai_Generated_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok ${i?.position} je vytvorený pomocou AI`)
-};
-
-export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac ${i?.count} znak.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac ${i?.count} znaky.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac ${i?.count} znaku.`);
-	return /** @type {LocalizedString} */ (`Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac ${i?.count} znakov.`)
-};
-
-export const compose_alt_text_label = /** @type {(inputs: Compose_Alt_Text_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Alternatívny text k obrázku ${i?.position}`)
-};
-
-export const compose_channel_image_too_large = /** @type {(inputs: Compose_Channel_Image_Too_LargeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok je väčší ako ${i?.max}, ktoré táto sieť prijme.`)
-};
-
-export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Image_TypeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Táto sieť neprijíma formát niektorého z priložených obrázkov.`)
-};
-
-export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Potrebuje obrázok alebo video.`)
-};
-
-export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Táto sieť prijme najviac ${i?.count} obrázok.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Táto sieť prijme najviac ${i?.count} obrázky.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Táto sieť prijme najviac ${i?.count} obrázka.`);
-	return /** @type {LocalizedString} */ (`Táto sieť prijme najviac ${i?.count} obrázkov.`)
-};
-
-export const compose_channel_unsupported = /** @type {(inputs: Compose_Channel_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uverejňovanie v tejto sieti zatiaľ nie je podporované.`)
-};
-
-export const compose_channel_video_unsupported = /** @type {(inputs: Compose_Channel_Video_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video v tejto sieti zatiaľ nie je podporované.`)
-};
-
-export const compose_channels_title = /** @type {(inputs: Compose_Channels_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Kanály`)
-};
-
-export const compose_check_content = /** @type {(inputs: Compose_Check_ContentInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Skontrolujte obsah pre ${i?.channels}.`)
-};
-
-export const compose_comment_label = /** @type {(inputs: Compose_Comment_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Prvý komentár`)
 };
 
 export const compose_comment_too_long = /** @type {(inputs: Compose_Comment_Too_LongInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Prvý komentár je pre ${i?.channel} príliš dlhý (${i?.count}/${i?.max})`)
 };
 
-export const compose_connect_channel = /** @type {(inputs: Compose_Connect_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pripojiť kanál`)
-};
-
-export const compose_customize = /** @type {(inputs: Compose_CustomizeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Prispôsobiť pre ${i?.channel}`)
-};
-
-export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Prispôsobené`)
-};
-
 export const compose_date = /** @type {(inputs: Compose_DateInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Dátum`)
-};
-
-export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok ${i?.position} je v tomto pracovnom priestore už označený ako vytvorený pomocou AI a toto označenie zatiaľ nejde odstrániť. Ak ho chcete uverejniť, zaškrtnite „Obrázok ${i?.position} je vytvorený pomocou AI“, alebo použite iný obrázok.`)
-};
-
-export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok treba pred naplánovaním schváliť.`)
 };
 
 export const compose_error_conflict = /** @type {(inputs: Compose_Error_ConflictInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Príspevok sa medzitým zmenil. Skúste to znova.`)
 };
 
-export const compose_error_empty = /** @type {(inputs: Compose_Error_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Napíšte text alebo pridajte obrázok.`)
-};
-
-export const compose_error_empty_channel = /** @type {(inputs: Compose_Error_Empty_ChannelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Pre ${i?.channel} napíšte text alebo pridajte obrázok.`)
-};
-
-export const compose_error_fix = /** @type {(inputs: Compose_Error_FixInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok zatiaľ nemožno odoslať. Opravte nasledujúce a skúste to znova:`)
-};
-
-export const compose_error_no_channel = /** @type {(inputs: Compose_Error_No_ChannelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vyberte aspoň jeden kanál.`)
-};
-
-export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok ${i?.position} sa nepodarilo nahrať.`)
-};
-
-export const compose_error_upload_channel = /** @type {(inputs: Compose_Error_Upload_ChannelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok ${i?.position} pre ${i?.channel} sa nepodarilo nahrať.`)
-};
-
 export const compose_error_when_missing = /** @type {(inputs: Compose_Error_When_MissingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vyberte dátum a čas.`)
-};
-
-export const compose_image_bad_type = /** @type {(inputs: Compose_Image_Bad_TypeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: pridať môžete iba obrázky JPEG, PNG a WebP.`)
-};
-
-export const compose_image_move_down = /** @type {(inputs: Compose_Image_Move_DownInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Posunúť obrázok ${i?.position} nižšie`)
-};
-
-export const compose_image_move_up = /** @type {(inputs: Compose_Image_Move_UpInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Posunúť obrázok ${i?.position} vyššie`)
-};
-
-export const compose_image_position = /** @type {(inputs: Compose_Image_PositionInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok ${i?.position}`)
 };
 
 export const compose_image_preview = /** @type {(inputs: Compose_Image_PreviewInputs) => LocalizedString} */ (i) => {
@@ -1238,38 +713,6 @@ export const compose_image_preview = /** @type {(inputs: Compose_Image_PreviewIn
 
 export const compose_image_remove = /** @type {(inputs: Compose_Image_RemoveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Odstrániť`)
-};
-
-export const compose_image_too_big = /** @type {(inputs: Compose_Image_Too_BigInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: súbor je väčší ako ${i?.max}.`)
-};
-
-export const compose_images_add = /** @type {(inputs: Compose_Images_AddInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pridať obrázky`)
-};
-
-export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Najviac ${i?.count} obrázok vo formáte JPEG, PNG alebo WebP, každý do ${i?.max}.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Najviac ${i?.count} obrázky vo formáte JPEG, PNG alebo WebP, každý do ${i?.max}.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Najviac ${i?.count} obrázka vo formáte JPEG, PNG alebo WebP, každý do ${i?.max}.`);
-	return /** @type {LocalizedString} */ (`Najviac ${i?.count} obrázkov vo formáte JPEG, PNG alebo WebP, každý do ${i?.max}.`)
-};
-
-export const compose_images_limit = /** @type {(inputs: Compose_Images_LimitInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} obrázok.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} obrázky.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} obrázka.`);
-	return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} obrázkov.`)
-};
-
-export const compose_images_title = /** @type {(inputs: Compose_Images_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obrázky`)
-};
-
-export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Používa obsah zo záložky Všetky kanály.`)
 };
 
 export const compose_issue_comment_empty = /** @type {(inputs: Compose_Issue_Comment_EmptyInputs) => LocalizedString} */ () => {
@@ -1304,18 +747,6 @@ export const compose_limit_usage = /** @type {(inputs: Compose_Limit_UsageInputs
 	return /** @type {LocalizedString} */ (`${i?.network} ${i?.count}/${i?.max}`)
 };
 
-export const compose_main_only = /** @type {(inputs: Compose_Main_OnlyInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.channel} uverejní iba hlavný príspevok.`)
-};
-
-export const compose_media_exclusive = /** @type {(inputs: Compose_Media_ExclusiveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok môže mať buď obrázky, alebo jedno video, nie oboje.`)
-};
-
-export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zatiaľ nemáte pripojený žiadny kanál.`)
-};
-
 export const compose_preview_title = /** @type {(inputs: Compose_Preview_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Náhľad`)
 };
@@ -1334,18 +765,6 @@ export const compose_queue_empty = /** @type {(inputs: Compose_Queue_EmptyInputs
 
 export const compose_queue_next = /** @type {(inputs: Compose_Queue_NextInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.when} (${i?.tz})`)
-};
-
-export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Odstrániť prvý komentár`)
-};
-
-export const compose_remove_reply = /** @type {(inputs: Compose_Remove_ReplyInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Odstrániť odpoveď ${i?.position}`)
-};
-
-export const compose_reply_label = /** @type {(inputs: Compose_Reply_LabelInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Odpoveď ${i?.position}`)
 };
 
 export const compose_reply_too_long = /** @type {(inputs: Compose_Reply_Too_LongInputs) => LocalizedString} */ (i) => {
@@ -1372,26 +791,6 @@ export const compose_scheduling = /** @type {(inputs: Compose_SchedulingInputs) 
 	return /** @type {LocalizedString} */ (`Plánuje sa…`)
 };
 
-export const compose_subtitle = /** @type {(inputs: Compose_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Napíšte ho raz, vyberte kanály a potom ho uverejnite hneď alebo naplánujte.`)
-};
-
-export const compose_tab_all = /** @type {(inputs: Compose_Tab_AllInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Všetky kanály`)
-};
-
-export const compose_tab_problems = /** @type {(inputs: Compose_Tab_ProblemsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`obsahuje chyby`)
-};
-
-export const compose_tabs_label = /** @type {(inputs: Compose_Tabs_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obsah pre jednotlivé kanály`)
-};
-
-export const compose_text_label = /** @type {(inputs: Compose_Text_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Text`)
-};
-
 export const compose_time = /** @type {(inputs: Compose_TimeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Čas`)
 };
@@ -1400,44 +799,16 @@ export const compose_time_zone = /** @type {(inputs: Compose_Time_ZoneInputs) =>
 	return /** @type {LocalizedString} */ (`Časové pásmo: ${i?.tz}`)
 };
 
-export const compose_title = /** @type {(inputs: Compose_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nový príspevok`)
-};
-
-export const compose_use_default = /** @type {(inputs: Compose_Use_DefaultInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Použiť obsah zo záložky Všetky kanály`)
-};
-
 export const compose_video_ai_failed = /** @type {(inputs: Compose_Video_Ai_FailedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Označenie AI sa nepodarilo uložiť.`)
-};
-
-export const compose_video_ai_label = /** @type {(inputs: Compose_Video_Ai_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video je vytvorené pomocou AI`)
-};
-
-export const compose_video_ai_marked = /** @type {(inputs: Compose_Video_Ai_MarkedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video je v tomto pracovnom priestore označené ako vytvorené pomocou AI a toto označenie sa nedá odstrániť.`)
 };
 
 export const compose_video_ai_saving = /** @type {(inputs: Compose_Video_Ai_SavingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Ukladá sa označenie AI…`)
 };
 
-export const compose_video_alt_label = /** @type {(inputs: Compose_Video_Alt_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alternatívny text k videu`)
-};
-
-export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: pridať sa dajú iba videá MP4, QuickTime a WebM.`)
-};
-
 export const compose_video_error = /** @type {(inputs: Compose_Video_ErrorInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Video sa nepodarilo nahrať.`)
-};
-
-export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Alebo jedno video vo formáte MP4, QuickTime či WebM do ${i?.max}.`)
 };
 
 export const compose_video_issue_aspect = /** @type {(inputs: Compose_Video_Issue_AspectInputs) => LocalizedString} */ (i) => {
@@ -1476,32 +847,8 @@ export const compose_video_issue_too_short = /** @type {(inputs: Compose_Video_I
 	return /** @type {LocalizedString} */ (`Video je kratšie, ako vyžaduje ${i?.channel} (${i?.min}).`)
 };
 
-export const compose_video_limit = /** @type {(inputs: Compose_Video_LimitInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok môže obsahovať len jedno video.`)
-};
-
-export const compose_video_preview = /** @type {(inputs: Compose_Video_PreviewInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Náhľad súboru ${i?.name}`)
-};
-
 export const compose_video_preview_card = /** @type {(inputs: Compose_Video_Preview_CardInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Náhľad videa`)
-};
-
-export const compose_video_processing = /** @type {(inputs: Compose_Video_ProcessingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Spracúva sa…`)
-};
-
-export const compose_video_progress = /** @type {(inputs: Compose_Video_ProgressInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Priebeh nahrávania`)
-};
-
-export const compose_video_ready = /** @type {(inputs: Compose_Video_ReadyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pripravené`)
-};
-
-export const compose_video_ready_duration = /** @type {(inputs: Compose_Video_Ready_DurationInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Pripravené, ${i?.duration}`)
 };
 
 export const compose_video_rejected_stream_missing = /** @type {(inputs: Compose_Video_Rejected_Stream_MissingInputs) => LocalizedString} */ () => {
@@ -1522,18 +869,6 @@ export const compose_video_rejected_too_short = /** @type {(inputs: Compose_Vide
 
 export const compose_video_rejected_unreadable = /** @type {(inputs: Compose_Video_Rejected_UnreadableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Video sa nepodarilo prečítať. Skúste ho exportovať znova.`)
-};
-
-export const compose_video_retry = /** @type {(inputs: Compose_Video_RetryInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Skúsiť znova`)
-};
-
-export const compose_video_too_big = /** @type {(inputs: Compose_Video_Too_BigInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.name}: video je väčšie ako ${i?.max}.`)
-};
-
-export const compose_video_uploading = /** @type {(inputs: Compose_Video_UploadingInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Nahráva sa… ${i?.percent}`)
 };
 
 export const compose_video_wait = /** @type {(inputs: Compose_Video_WaitInputs) => LocalizedString} */ () => {
@@ -1640,14 +975,6 @@ export const error_unavailable = /** @type {(inputs: Error_UnavailableInputs) =>
 	return /** @type {LocalizedString} */ (`Kronaut je momentálne nedostupný. Skúste to o chvíľu.`)
 };
 
-export const home_empty_body = /** @type {(inputs: Home_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tu sa zobrazia príspevky, ktoré naplánujete.`)
-};
-
-export const home_empty_title = /** @type {(inputs: Home_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zatiaľ nemáte nič naplánované`)
-};
-
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} položka čaká na riešenie`);
@@ -1664,76 +991,12 @@ export const inbox_cancel = /** @type {(inputs: Inbox_CancelInputs) => Localized
 	return /** @type {LocalizedString} */ (`Zrušiť`)
 };
 
-export const inbox_canceled = /** @type {(inputs: Inbox_CanceledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zrušené.`)
-};
-
-export const inbox_changed = /** @type {(inputs: Inbox_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Položka sa medzitým zmenila. Zoznam teraz ukazuje jej aktuálny stav.`)
-};
-
 export const inbox_confirm_back = /** @type {(inputs: Inbox_Confirm_BackInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Teraz nie`)
 };
 
-export const inbox_duplicate_ack = /** @type {(inputs: Inbox_Duplicate_AckInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Môže sa uverejniť dvakrát`)
-};
-
-export const inbox_duplicate_body = /** @type {(inputs: Inbox_Duplicate_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Sieť ho možno už prijala. Ak ho odošlete znova, môže sa uverejniť dvakrát.`)
-};
-
-export const inbox_duplicate_confirm = /** @type {(inputs: Inbox_Duplicate_ConfirmInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Napriek tomu odoslať`)
-};
-
-export const inbox_duplicate_title = /** @type {(inputs: Inbox_Duplicate_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok už možno je uverejnený`)
-};
-
-export const inbox_empty_body = /** @type {(inputs: Inbox_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zobrazia sa tu príspevky, ktoré zlyhali, sú zablokované alebo čakajú na vás.`)
-};
-
-export const inbox_empty_title = /** @type {(inputs: Inbox_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nič nevyžaduje vašu pozornosť`)
-};
-
 export const inbox_load_failed = /** @type {(inputs: Inbox_Load_FailedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zoznam sa nepodarilo načítať. Skúste to znova.`)
-};
-
-export const inbox_mark_done = /** @type {(inputs: Inbox_Mark_DoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Označiť ako hotový`)
-};
-
-export const inbox_mark_published = /** @type {(inputs: Inbox_Mark_PublishedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Označiť ako uverejnený`)
-};
-
-export const inbox_marked = /** @type {(inputs: Inbox_MarkedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Označené ako uverejnené.`)
-};
-
-export const inbox_reconnect = /** @type {(inputs: Inbox_ReconnectInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Znova pripojiť kanál`)
-};
-
-export const inbox_send_again = /** @type {(inputs: Inbox_Send_AgainInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Odoslať znova`)
-};
-
-export const inbox_sent_again = /** @type {(inputs: Inbox_Sent_AgainInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Čoskoro sa odošle znova.`)
-};
-
-export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("sk", i?.total, {}, true);
-	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položky.`);
-	if (totalPlural === "few") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položiek.`);
-	if (totalPlural === "many") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položky.`);
-	return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položiek.`)
 };
 
 export const issue_alt_text_required = /** @type {(inputs: Issue_Alt_Text_RequiredInputs) => LocalizedString} */ () => {
@@ -1892,174 +1155,6 @@ export const login_title = /** @type {(inputs: Login_TitleInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`Prihlásenie`)
 };
 
-export const media_ai_badge = /** @type {(inputs: Media_Ai_BadgeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vytvorené pomocou AI`)
-};
-
-export const media_ai_locked = /** @type {(inputs: Media_Ai_LockedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Označenie zostáva: súbor nahral alebo označil API kľúč či agent.`)
-};
-
-export const media_ai_remove = /** @type {(inputs: Media_Ai_RemoveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Odstrániť označenie AI`)
-};
-
-export const media_ai_removed = /** @type {(inputs: Media_Ai_RemovedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Označenie AI je odstránené.`)
-};
-
-export const media_alt_hint = /** @type {(inputs: Media_Alt_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znak.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znaky.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znaku.`);
-	return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znakov.`)
-};
-
-export const media_alt_label = /** @type {(inputs: Media_Alt_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alternatívny text`)
-};
-
-export const media_alt_save = /** @type {(inputs: Media_Alt_SaveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uložiť alternatívny text`)
-};
-
-export const media_alt_saved = /** @type {(inputs: Media_Alt_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Alternatívny text je uložený.`)
-};
-
-export const media_delete = /** @type {(inputs: Media_DeleteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vymazať`)
-};
-
-export const media_delete_body = /** @type {(inputs: Media_Delete_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vymazať tento súbor? Z knižnice zmizne hneď a jeho dáta sa zmažú po 30 dňoch.`)
-};
-
-export const media_delete_confirm = /** @type {(inputs: Media_Delete_ConfirmInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vymazať súbor`)
-};
-
-export const media_deleted = /** @type {(inputs: Media_DeletedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Súbor je vymazaný.`)
-};
-
-export const media_dimensions = /** @type {(inputs: Media_DimensionsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Rozmery`)
-};
-
-export const media_dimensions_value = /** @type {(inputs: Media_Dimensions_ValueInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.width} × ${i?.height} px`)
-};
-
-export const media_duration = /** @type {(inputs: Media_DurationInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Dĺžka`)
-};
-
-export const media_empty_body = /** @type {(inputs: Media_Empty_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obrázky a videá, ktoré pridáte do príspevkov, sa zobrazia tu.`)
-};
-
-export const media_empty_filtered = /** @type {(inputs: Media_Empty_FilteredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tohto druhu tu zatiaľ nič nie je.`)
-};
-
-export const media_empty_title = /** @type {(inputs: Media_Empty_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zatiaľ tu nie sú žiadne médiá`)
-};
-
-export const media_filter_all = /** @type {(inputs: Media_Filter_AllInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Všetko`)
-};
-
-export const media_filter_images = /** @type {(inputs: Media_Filter_ImagesInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obrázky`)
-};
-
-export const media_filter_label = /** @type {(inputs: Media_Filter_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zobraziť`)
-};
-
-export const media_filter_videos = /** @type {(inputs: Media_Filter_VideosInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Videá`)
-};
-
-export const media_in_use = /** @type {(inputs: Media_In_UseInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevku`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevkoch`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevku`);
-	return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevkoch`)
-};
-
-export const media_in_use_error = /** @type {(inputs: Media_In_Use_ErrorInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Súbor ešte používa niektorý príspevok, preto sa nedá vymazať.`)
-};
-
-export const media_kind_image = /** @type {(inputs: Media_Kind_ImageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obrázok`)
-};
-
-export const media_kind_video = /** @type {(inputs: Media_Kind_VideoInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Video`)
-};
-
-export const media_load_more = /** @type {(inputs: Media_Load_MoreInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Načítať ďalšie`)
-};
-
-export const media_open_image = /** @type {(inputs: Media_Open_ImageInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Obrázok nahraný ${i?.date}`)
-};
-
-export const media_open_video = /** @type {(inputs: Media_Open_VideoInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Video nahrané ${i?.date}`)
-};
-
-export const media_size = /** @type {(inputs: Media_SizeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Veľkosť`)
-};
-
-export const media_state_processing = /** @type {(inputs: Media_State_ProcessingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Spracúva sa`)
-};
-
-export const media_state_rejected = /** @type {(inputs: Media_State_RejectedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Odmietnuté`)
-};
-
-export const media_subtitle = /** @type {(inputs: Media_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Obrázky a videá nahrané do tohto pracovného priestoru.`)
-};
-
-export const media_title = /** @type {(inputs: Media_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Knižnica médií`)
-};
-
-export const media_type = /** @type {(inputs: Media_TypeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Typ`)
-};
-
-export const media_uploaded = /** @type {(inputs: Media_UploadedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nahrané`)
-};
-
-export const media_usage_none = /** @type {(inputs: Media_Usage_NoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tento súbor nepoužíva žiadny príspevok.`)
-};
-
-export const media_usage_scheduled = /** @type {(inputs: Media_Usage_ScheduledInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Naplánované na ${i?.when}`)
-};
-
-export const media_usage_title = /** @type {(inputs: Media_Usage_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Použité v`)
-};
-
-export const media_usage_untitled = /** @type {(inputs: Media_Usage_UntitledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevok bez názvu`)
-};
-
 export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanála.`);
@@ -2094,10 +1189,6 @@ export const nav_label = /** @type {(inputs: Nav_LabelInputs) => LocalizedString
 
 export const nav_media = /** @type {(inputs: Nav_MediaInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Médiá`)
-};
-
-export const nav_new_post = /** @type {(inputs: Nav_New_PostInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nový príspevok`)
 };
 
 export const not_found_back = /** @type {(inputs: Not_Found_BackInputs) => LocalizedString} */ () => {
@@ -2274,14 +1365,6 @@ export const post_title = /** @type {(inputs: Post_TitleInputs) => LocalizedStri
 
 export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zobraziť príspevok`)
-};
-
-export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} naplánovaný príspevok`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} naplánované príspevky`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} naplánovaného príspevku`);
-	return /** @type {LocalizedString} */ (`${i?.count} naplánovaných príspevkov`)
 };
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
@@ -2526,340 +1609,12 @@ export const series_until = /** @type {(inputs: Series_UntilInputs) => Localized
 	return /** @type {LocalizedString} */ (`Končí ${i?.date}`)
 };
 
-export const settings_account_title = /** @type {(inputs: Settings_Account_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Účet`)
-};
-
-export const settings_allow_self = /** @type {(inputs: Settings_Allow_SelfInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Autor žiadosti môže schváliť vlastný príspevok`)
-};
-
-export const settings_approval_required = /** @type {(inputs: Settings_Approval_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevky vyžadujú schválenie`)
-};
-
-export const settings_approvals_intro = /** @type {(inputs: Settings_Approvals_IntroInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Určite, či príspevky musia byť pred zverejnením schválené.`)
-};
-
-export const settings_approvals_title = /** @type {(inputs: Settings_Approvals_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Schvaľovanie`)
-};
-
-export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválenie`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Vyžadujú sa ${i?.count} schválenia`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválenia`);
-	return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválení`)
-};
-
-export const settings_brands_title = /** @type {(inputs: Settings_Brands_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Výnimky pre značky`)
-};
-
-export const settings_conflict = /** @type {(inputs: Settings_ConflictInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nastavenia medzitým zmenil niekto iný. Zobrazuje sa najnovšia verzia.`)
-};
-
-export const settings_defaults = /** @type {(inputs: Settings_DefaultsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zatiaľ nič nie je uložené: zobrazujú sa predvolené hodnoty.`)
-};
-
-export const settings_display_name = /** @type {(inputs: Settings_Display_NameInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Meno`)
-};
-
-export const settings_email_approvals = /** @type {(inputs: Settings_Email_ApprovalsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Schvaľovanie`)
-};
-
-export const settings_email_approvals_hint = /** @type {(inputs: Settings_Email_Approvals_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Žiadosti o schválenie a rozhodnutia o nich`)
-};
-
-export const settings_email_channels = /** @type {(inputs: Settings_Email_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Problémy s kanálmi`)
-};
-
-export const settings_email_channels_hint = /** @type {(inputs: Settings_Email_Channels_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Kanály, ktoré treba znova pripojiť alebo ktorým čoskoro vyprší prístup`)
-};
-
-export const settings_email_failed = /** @type {(inputs: Settings_Email_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nastavenia upozornení sa neuložili. Skúste to znova.`)
-};
-
-export const settings_email_failures = /** @type {(inputs: Settings_Email_FailuresInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zlyhania`)
-};
-
-export const settings_email_failures_hint = /** @type {(inputs: Settings_Email_Failures_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Príspevky, ktoré zlyhajú alebo ich musíte uverejniť ručne`)
-};
-
-export const settings_email_title = /** @type {(inputs: Settings_Email_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Upozornenia e-mailom`)
-};
-
-export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Upozornenia v aplikácii sa vždy zobrazia pod zvončekom.`)
-};
-
-export const settings_name_failed = /** @type {(inputs: Settings_Name_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Meno sa neuložilo. Skúste to znova.`)
-};
-
-export const settings_name_saved = /** @type {(inputs: Settings_Name_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Meno je uložené.`)
-};
-
-export const settings_nav_label = /** @type {(inputs: Settings_Nav_LabelInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Sekcie nastavení`)
-};
-
-export const settings_not_required = /** @type {(inputs: Settings_Not_RequiredInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Schválenie sa nevyžaduje`)
-};
-
-export const settings_not_set = /** @type {(inputs: Settings_Not_SetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nenastavené`)
-};
-
-export const settings_password_change = /** @type {(inputs: Settings_Password_ChangeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zmeniť heslo`)
-};
-
-export const settings_password_changed = /** @type {(inputs: Settings_Password_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Heslo je zmenené. Ostatné zariadenia boli odhlásené.`)
-};
-
-export const settings_password_current = /** @type {(inputs: Settings_Password_CurrentInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Súčasné heslo`)
-};
-
-export const settings_password_failed = /** @type {(inputs: Settings_Password_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Heslo sa nezmenilo. Skúste to znova.`)
-};
-
-export const settings_password_incorrect = /** @type {(inputs: Settings_Password_IncorrectInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Súčasné heslo nie je správne.`)
-};
-
-export const settings_password_repeat = /** @type {(inputs: Settings_Password_RepeatInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zopakujte nové heslo`)
-};
-
-export const settings_password_two_factor = /** @type {(inputs: Settings_Password_Two_FactorInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pri účtoch s dvojstupňovým prihlásením zatiaľ nie je zmena hesla dostupná.`)
-};
-
-export const settings_policy_title = /** @type {(inputs: Settings_Policy_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pravidlá schvaľovania`)
-};
-
-export const settings_preferences_title = /** @type {(inputs: Settings_Preferences_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Predvoľby`)
-};
-
-export const settings_profile_title = /** @type {(inputs: Settings_Profile_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Profil`)
-};
-
-export const settings_read_only = /** @type {(inputs: Settings_Read_OnlyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tieto nastavenia môžu meniť iba vlastníci a správcovia.`)
-};
-
-export const settings_required_approvals = /** @type {(inputs: Settings_Required_ApprovalsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Počet potrebných schválení`)
-};
-
 export const settings_save = /** @type {(inputs: Settings_SaveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Uložiť`)
 };
 
-export const settings_saved = /** @type {(inputs: Settings_SavedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nastavenia schvaľovania sú uložené.`)
-};
-
-export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ukladá sa…`)
-};
-
-export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Systém`)
-};
-
-export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Vzhľad`)
-};
-
 export const settings_title = /** @type {(inputs: Settings_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Nastavenia`)
-};
-
-export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Povolený posun po schválení (v minútach)`)
-};
-
-export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Aktualizujte hneď`)
-};
-
-export const system_api_days_left = /** @type {(inputs: System_Api_Days_LeftInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Zostáva ${i?.count} deň`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Zostávajú ${i?.count} dni`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Zostáva ${i?.count} dňa`);
-	return /** @type {LocalizedString} */ (`Zostáva ${i?.count} dní`)
-};
-
-export const system_api_ended = /** @type {(inputs: System_Api_EndedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Podpora už skončila`)
-};
-
-export const system_api_no_sunset = /** @type {(inputs: System_Api_No_SunsetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Koniec podpory zatiaľ nie je ohlásený`)
-};
-
-export const system_api_sunset = /** @type {(inputs: System_Api_SunsetInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Podpora končí ${i?.date}`)
-};
-
-export const system_api_title = /** @type {(inputs: System_Api_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Verzie API sietí`)
-};
-
-export const system_api_version = /** @type {(inputs: System_Api_VersionInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Verzia ${i?.version}`)
-};
-
-export const system_api_warn = /** @type {(inputs: System_Api_WarnInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Čoskoro aktualizujte`)
-};
-
-export const system_cron_duration = /** @type {(inputs: System_Cron_DurationInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Trvala ${i?.duration}`)
-};
-
-export const system_cron_failed = /** @type {(inputs: System_Cron_FailedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zlyhala`)
-};
-
-export const system_cron_last_run = /** @type {(inputs: System_Cron_Last_RunInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Naposledy spustená ${i?.when}`)
-};
-
-export const system_cron_never = /** @type {(inputs: System_Cron_NeverInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ešte nebežala`)
-};
-
-export const system_cron_running = /** @type {(inputs: System_Cron_RunningInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Beží`)
-};
-
-export const system_cron_stale = /** @type {(inputs: System_Cron_StaleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Mešká`)
-};
-
-export const system_cron_title = /** @type {(inputs: System_Cron_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Úlohy na pozadí`)
-};
-
-export const system_incident_app_credentials_invalid = /** @type {(inputs: System_Incident_App_Credentials_InvalidInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Sieť odmietla prihlasovacie údaje aplikácie`)
-};
-
-export const system_incident_app_suspended = /** @type {(inputs: System_Incident_App_SuspendedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Aplikácia je pozastavená`)
-};
-
-export const system_incident_occurrences = /** @type {(inputs: System_Incident_OccurrencesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} výskyt`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} výskyty`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} výskytu`);
-	return /** @type {LocalizedString} */ (`${i?.count} výskytov`)
-};
-
-export const system_incident_open = /** @type {(inputs: System_Incident_OpenInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Otvorený`)
-};
-
-export const system_incident_provider_outage = /** @type {(inputs: System_Incident_Provider_OutageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Výpadok siete`)
-};
-
-export const system_incident_rate_limited_app = /** @type {(inputs: System_Incident_Rate_Limited_AppInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Aplikácia dosiahla limit požiadaviek`)
-};
-
-export const system_incident_resolved = /** @type {(inputs: System_Incident_ResolvedInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Vyriešený ${i?.when}`)
-};
-
-export const system_incident_seen = /** @type {(inputs: System_Incident_SeenInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Prvýkrát ${i?.first}, naposledy ${i?.last}`)
-};
-
-export const system_incident_tier_not_enrolled = /** @type {(inputs: System_Incident_Tier_Not_EnrolledInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Chýba úroveň prístupu k API`)
-};
-
-export const system_incidents_empty = /** @type {(inputs: System_Incidents_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Za posledných 7 dní nenastal žiadny incident.`)
-};
-
-export const system_incidents_title = /** @type {(inputs: System_Incidents_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Incidenty sietí`)
-};
-
-export const system_no_data = /** @type {(inputs: System_No_DataInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Bez údajov`)
-};
-
-export const system_ok = /** @type {(inputs: System_OkInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`V poriadku`)
-};
-
-export const system_slo_day = /** @type {(inputs: System_Slo_DayInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posledných 24 hodín`)
-};
-
-export const system_slo_duplicates = /** @type {(inputs: System_Slo_DuplicatesInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uverejnené dvakrát`)
-};
-
-export const system_slo_on_time = /** @type {(inputs: System_Slo_On_TimeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Uverejnené načas`)
-};
-
-export const system_slo_title = /** @type {(inputs: System_Slo_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ciele uverejňovania`)
-};
-
-export const system_slo_total = /** @type {(inputs: System_Slo_TotalInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} automatický príspevok`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} automatické príspevky`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} automatického príspevku`);
-	return /** @type {LocalizedString} */ (`${i?.count} automatických príspevkov`)
-};
-
-export const system_slo_unconfirmed = /** @type {(inputs: System_Slo_UnconfirmedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nepotvrdené`)
-};
-
-export const system_slo_week = /** @type {(inputs: System_Slo_WeekInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Posledných 7 dní`)
-};
-
-export const system_target_met = /** @type {(inputs: System_Target_MetInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Splnené`)
-};
-
-export const system_target_missed = /** @type {(inputs: System_Target_MissedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Nesplnené`)
 };
 
 export const technical_details = /** @type {(inputs: Technical_DetailsInputs) => LocalizedString} */ () => {
@@ -2872,18 +1627,6 @@ export const theme_dark = /** @type {(inputs: Theme_DarkInputs) => LocalizedStri
 
 export const theme_light = /** @type {(inputs: Theme_LightInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vzhľad: svetlý`)
-};
-
-export const theme_option_dark = /** @type {(inputs: Theme_Option_DarkInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Tmavý`)
-};
-
-export const theme_option_light = /** @type {(inputs: Theme_Option_LightInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Svetlý`)
-};
-
-export const theme_option_system = /** @type {(inputs: Theme_Option_SystemInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Podľa systému`)
 };
 
 export const theme_system = /** @type {(inputs: Theme_SystemInputs) => LocalizedString} */ () => {

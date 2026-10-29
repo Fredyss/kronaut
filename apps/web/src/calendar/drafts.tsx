@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import type { PostSummary } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { postText } from './entries.ts';
 import type { Formats } from './formats.ts';
 
@@ -15,9 +15,9 @@ export function Drafts({
 }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="font-medium text-lg">{m.calendar_drafts()}</h2>
+      <h2 className="font-medium text-lg">{calendarText.calendar_drafts()}</h2>
       {items.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{m.calendar_drafts_empty()}</p>
+        <p className="text-muted-foreground text-sm">{calendarText.calendar_drafts_empty()}</p>
       ) : (
         <ul className="flex flex-col gap-1">
           {items.map((post) => (
@@ -30,7 +30,9 @@ export function Drafts({
                 {post.title ?? postText(post)}
               </Link>
               <span className="text-muted-foreground text-xs">
-                {m.calendar_draft_updated({ when: formats.stamp.format(new Date(post.updatedAt)) })}
+                {calendarText.calendar_draft_updated({
+                  when: formats.stamp.format(new Date(post.updatedAt)),
+                })}
               </span>
             </li>
           ))}

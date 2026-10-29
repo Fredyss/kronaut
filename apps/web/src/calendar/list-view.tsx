@@ -1,4 +1,4 @@
-import { m } from '../i18n.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { ChipList } from './chip.tsx';
 import type { GridProps } from './grid.ts';
 
@@ -18,7 +18,7 @@ export function ListView({ days, entries, formats, now, mover }: GridProps) {
               {day.toLocaleString(formats.locale, { dateStyle: 'full' })}
             </h2>
             {list.length === 0 ? (
-              <p className="text-muted-foreground text-sm">{m.calendar_day_empty()}</p>
+              <p className="text-muted-foreground text-sm">{calendarText.calendar_day_empty()}</p>
             ) : (
               <ChipList entries={list} formats={formats} mover={mover} draggable={false} />
             )}

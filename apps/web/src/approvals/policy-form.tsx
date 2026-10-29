@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { errorCode, errorStatus } from '../api.ts';
 import { useApiClient } from '../context.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { type ControlIds, SettingsCard, SettingsRow } from '../settings/card.tsx';
@@ -31,10 +32,10 @@ function useSavePolicy(workspaceId: string, version: number | undefined) {
     },
     onSuccess: () => {
       keyed.current = null;
-      toast(m.settings_saved());
+      toast(settingsText.settings_saved());
     },
     onError: (error) => {
-      if (errorStatus(error) === 409) toast(m.settings_conflict());
+      if (errorStatus(error) === 409) toast(settingsText.settings_conflict());
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: approvalPolicyKey(workspaceId) }),
   });
@@ -84,7 +85,7 @@ function SaveFooter({ save, editable }: { readonly save: SavePolicy; readonly ed
       {editable ? (
         <div>
           <Button type="submit" disabled={save.isPending}>
-            {save.isPending ? m.settings_saving() : m.settings_save()}
+            {save.isPending ? settingsText.settings_saving() : m.settings_save()}
           </Button>
         </div>
       ) : null}
@@ -105,10 +106,10 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
       }}
     >
       <SettingsCard
-        title={m.settings_policy_title()}
+        title={settingsText.settings_policy_title()}
         footer={<SaveFooter save={save} editable={editable} />}
       >
-        <SettingsRow label={m.settings_approval_required()}>
+        <SettingsRow label={settingsText.settings_approval_required()}>
           {(ids) => (
             <Checkbox
               ids={ids}
@@ -118,7 +119,7 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
             />
           )}
         </SettingsRow>
-        <SettingsRow label={m.settings_required_approvals()}>
+        <SettingsRow label={settingsText.settings_required_approvals()}>
           {(ids) => (
             <select
               {...ids}
@@ -135,7 +136,7 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
             </select>
           )}
         </SettingsRow>
-        <SettingsRow label={m.settings_allow_self()}>
+        <SettingsRow label={settingsText.settings_allow_self()}>
           {(ids) => (
             <Checkbox
               ids={ids}
@@ -145,7 +146,7 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
             />
           )}
         </SettingsRow>
-        <SettingsRow label={m.settings_tolerance()}>
+        <SettingsRow label={settingsText.settings_tolerance()}>
           {(ids) => (
             <Input
               {...ids}

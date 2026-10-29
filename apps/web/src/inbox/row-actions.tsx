@@ -1,14 +1,17 @@
 import { Button } from '@kronaut/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { NeedsActionItem } from '../api.ts';
+import { m as inboxText } from '../i18n/inbox.ts';
 import { m } from '../i18n.ts';
 import { actionsFor, type ResolveKind, useResolve } from './actions.ts';
 import { DuplicateConfirm } from './confirm.tsx';
 
 function actionLabel(kind: ResolveKind, state: NeedsActionItem['state']): string {
-  if (kind === 'send') return m.inbox_send_again();
+  if (kind === 'send') return inboxText.inbox_send_again();
   if (kind === 'cancel') return m.inbox_cancel();
-  return state === 'awaiting_manual' ? m.inbox_mark_done() : m.inbox_mark_published();
+  return state === 'awaiting_manual'
+    ? inboxText.inbox_mark_done()
+    : inboxText.inbox_mark_published();
 }
 
 interface RowActionsProps {

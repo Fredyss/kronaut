@@ -3,6 +3,7 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import type { CalendarView } from '../calendar-search.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import type { Formats } from './formats.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';
@@ -19,9 +20,9 @@ function viewLabel(view: GridView): string {
     case 'day':
       return m.calendar_view_day();
     case 'week':
-      return m.calendar_view_week();
+      return calendarText.calendar_view_week();
     case 'month':
-      return m.calendar_view_month();
+      return calendarText.calendar_view_month();
   }
 }
 
@@ -52,9 +53,11 @@ function rangeLabel(
 }
 
 function stepLabels(view: CalendarView): readonly [string, string] {
-  if (view === 'day') return [m.calendar_previous_day(), m.calendar_next_day()];
-  if (view === 'month') return [m.calendar_previous_month(), m.calendar_next_month()];
-  return [m.calendar_previous_week(), m.calendar_next_week()];
+  if (view === 'day')
+    return [calendarText.calendar_previous_day(), calendarText.calendar_next_day()];
+  if (view === 'month')
+    return [calendarText.calendar_previous_month(), calendarText.calendar_next_month()];
+  return [calendarText.calendar_previous_week(), calendarText.calendar_next_week()];
 }
 
 const ICON_BUTTON = buttonVariants({ variant: 'ghost', size: 'icon', className: 'size-8' });
@@ -116,7 +119,10 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
   return (
     <header className="flex flex-wrap items-center justify-between gap-3">
       <h1 className="sr-only">{m.calendar_title()}</h1>
-      <nav aria-label={m.calendar_navigation()} className="flex min-w-0 items-center gap-1">
+      <nav
+        aria-label={calendarText.calendar_navigation()}
+        className="flex min-w-0 items-center gap-1"
+      >
         <Link
           to="/"
           search={{ view, date: shift(view, current, -1).toString() }}
@@ -131,7 +137,7 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
             {rangeLabel(view, current, range, formats)}
           </span>
           <span className="block text-muted-foreground text-xs">
-            {m.calendar_time_zone({ tz: formats.timeZone })}
+            {calendarText.calendar_time_zone({ tz: formats.timeZone })}
           </span>
         </p>
         <Link
@@ -148,12 +154,12 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
           search={{ view }}
           className={buttonVariants({ variant: 'outline', size: 'sm' })}
         >
-          {m.calendar_today()}
+          {calendarText.calendar_today()}
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-2">
         <Segmented
-          label={m.calendar_views()}
+          label={calendarText.calendar_views()}
           onPick={pick}
           segments={GRID_VIEWS.map((option) => ({
             view: option,
@@ -162,16 +168,21 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
           }))}
         />
         <Segmented
-          label={m.calendar_layout()}
+          label={calendarText.calendar_layout()}
           onPick={pick}
           segments={[
             {
               view: listed ? 'week' : view,
-              label: m.calendar_layout_grid(),
+              label: calendarText.calendar_layout_grid(),
               pressed: !listed,
               icon: <GridIcon />,
             },
-            { view: 'list', label: m.calendar_view_list(), pressed: listed, icon: <ListIcon /> },
+            {
+              view: 'list',
+              label: calendarText.calendar_view_list(),
+              pressed: listed,
+              icon: <ListIcon />,
+            },
           ]}
         />
       </div>

@@ -1,5 +1,5 @@
 import { useNumberFormat, usePercentFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';
 import { StatusBadge } from './status-badge.tsx';
@@ -23,18 +23,18 @@ function metrics(window: SloWindow, targets: Targets, { pct, num }: Formats): Me
   const { onTimePct, duplicates, unconfirmedPct } = window;
   return [
     {
-      label: m.system_slo_on_time(),
-      value: onTimePct === null ? m.system_no_data() : pct(onTimePct),
+      label: settingsText.system_slo_on_time(),
+      value: onTimePct === null ? settingsText.system_no_data() : pct(onTimePct),
       missed: onTimePct === null ? null : onTimePct < targets.onTimePct,
     },
     {
-      label: m.system_slo_duplicates(),
+      label: settingsText.system_slo_duplicates(),
       value: num(duplicates),
       missed: duplicates > targets.duplicates,
     },
     {
-      label: m.system_slo_unconfirmed(),
-      value: unconfirmedPct === null ? m.system_no_data() : pct(unconfirmedPct),
+      label: settingsText.system_slo_unconfirmed(),
+      value: unconfirmedPct === null ? settingsText.system_no_data() : pct(unconfirmedPct),
       missed: unconfirmedPct === null ? null : unconfirmedPct >= targets.unconfirmedPct,
     },
   ];
@@ -55,7 +55,7 @@ function WindowRow({
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <span className="font-medium">{label}</span>
         <span className="text-muted-foreground">
-          {m.system_slo_total({ count: window.autoTotal })}
+          {settingsText.system_slo_total({ count: window.autoTotal })}
         </span>
       </div>
       <dl className="grid gap-3 sm:grid-cols-3">
@@ -74,7 +74,9 @@ function WindowRow({
               </span>
               {metric.missed === null ? null : (
                 <StatusBadge tone={metric.missed ? 'bad' : 'ok'}>
-                  {metric.missed ? m.system_target_missed() : m.system_target_met()}
+                  {metric.missed
+                    ? settingsText.system_target_missed()
+                    : settingsText.system_target_met()}
                 </StatusBadge>
               )}
             </dd>
@@ -88,9 +90,9 @@ function WindowRow({
 export function SloCard({ slo }: { readonly slo: Slo }) {
   const { targets } = slo;
   return (
-    <SettingsCard title={m.system_slo_title()}>
-      <WindowRow label={m.system_slo_day()} window={slo.day} targets={targets} />
-      <WindowRow label={m.system_slo_week()} window={slo.week} targets={targets} />
+    <SettingsCard title={settingsText.system_slo_title()}>
+      <WindowRow label={settingsText.system_slo_day()} window={slo.day} targets={targets} />
+      <WindowRow label={settingsText.system_slo_week()} window={slo.week} targets={targets} />
     </SettingsCard>
   );
 }

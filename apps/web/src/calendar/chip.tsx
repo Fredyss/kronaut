@@ -1,6 +1,7 @@
 import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { stateLabel } from '../destinations.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
 import { type Entry, postText } from './entries.ts';
@@ -29,13 +30,16 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
   const own =
     ownZone === null || ownZone === formats.timeZone
       ? undefined
-      : m.calendar_own_time({ when: formats.stampIn(ownZone).format(when), tz: ownZone });
+      : calendarText.calendar_own_time({
+          when: formats.stampIn(ownZone).format(when),
+          tz: ownZone,
+        });
   const movable = mover.canMove(post);
   return (
     <Link
       to="/posts/$postId"
       params={{ postId: post.id }}
-      aria-label={m.calendar_chip_label({ time, channel, state, text })}
+      aria-label={calendarText.calendar_chip_label({ time, channel, state, text })}
       aria-describedby={movable ? MOVE_HINT_ID : undefined}
       title={own}
       data-chip={destination.id}

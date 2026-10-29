@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { type Me, meQuery } from '../api.ts';
 import { useApiClient } from '../context.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import type { ControlIds } from './card.tsx';
 
@@ -25,9 +26,9 @@ export function DisplayNameForm({ stored, ...ids }: DisplayNameFormProps) {
         old === undefined ? old : { ...old, user },
       );
       setValue(user.displayName ?? '');
-      toast(m.settings_name_saved());
+      toast(settingsText.settings_name_saved());
     },
-    onError: () => toast(m.settings_name_failed(), 'destructive'),
+    onError: () => toast(settingsText.settings_name_failed(), 'destructive'),
   });
   const next = value.trim();
   const changed = next !== (stored ?? '');

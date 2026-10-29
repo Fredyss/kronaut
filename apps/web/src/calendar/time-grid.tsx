@@ -2,6 +2,7 @@ import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Temporal } from 'temporal-polyfill';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
@@ -89,7 +90,7 @@ function HourCell({ day, hour, list, past, formats, mover }: CellProps) {
           <Link
             to="/compose"
             search={{ at: `${key}:00` }}
-            aria-label={m.calendar_new_post_at({ when: label })}
+            aria-label={calendarText.calendar_new_post_at({ when: label })}
             className="absolute inset-0 rounded-md hover:bg-accent/50 focus-visible:outline-2 focus-visible:outline-ring"
           />
         )}
@@ -106,7 +107,7 @@ function HourCell({ day, hour, list, past, formats, mover }: CellProps) {
             search={{ view: 'day', date }}
             className="relative z-10 self-start rounded px-1 text-muted-foreground text-xs hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
           >
-            {m.calendar_more({ count: hidden })}
+            {calendarText.calendar_more({ count: hidden })}
           </Link>
         ) : null}
       </div>

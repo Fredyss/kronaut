@@ -1,5 +1,6 @@
 import { Button } from '@kronaut/ui';
 import { useEffect, useId, useRef, useState } from 'react';
+import { m as inboxText } from '../i18n/inbox.ts';
 import { m } from '../i18n.ts';
 
 interface ConfirmProps {
@@ -20,8 +21,8 @@ export function DuplicateConfirm({ pending, onConfirm, onClose }: ConfirmProps) 
       }}
       className="flex flex-col gap-3 rounded-lg border border-destructive/40 p-3 text-sm"
     >
-      <legend className="float-left font-medium">{m.inbox_duplicate_title()}</legend>
-      <p className="text-muted-foreground">{m.inbox_duplicate_body()}</p>
+      <legend className="float-left font-medium">{inboxText.inbox_duplicate_title()}</legend>
+      <p className="text-muted-foreground">{inboxText.inbox_duplicate_body()}</p>
       <div className="flex items-center gap-2">
         <input
           ref={box}
@@ -31,11 +32,11 @@ export function DuplicateConfirm({ pending, onConfirm, onClose }: ConfirmProps) 
           onChange={(event) => setTicked(event.currentTarget.checked)}
           className="size-4 accent-primary"
         />
-        <label htmlFor={boxId}>{m.inbox_duplicate_ack()}</label>
+        <label htmlFor={boxId}>{inboxText.inbox_duplicate_ack()}</label>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="destructive" disabled={!ticked || pending} onClick={onConfirm}>
-          {m.inbox_duplicate_confirm()}
+          {inboxText.inbox_duplicate_confirm()}
         </Button>
         <Button size="sm" variant="ghost" onClick={onClose}>
           {m.inbox_confirm_back()}

@@ -1,0 +1,128 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "settings_approvals_title": "Schvalování",
+  "settings_approvals_intro": "Určete, zda příspěvky musí být před zveřejněním schváleny.",
+  "settings_approval_required": "Příspěvky vyžadují schválení",
+  "settings_required_approvals": "Počet potřebných schválení",
+  "settings_allow_self": "Autor žádosti může schválit vlastní příspěvek",
+  "settings_tolerance": "Povolený posun po schválení (v minutách)",
+  "settings_saving": "Ukládá se…",
+  "settings_saved": "Nastavení schvalování je uloženo.",
+  "settings_conflict": "Nastavení mezitím změnil někdo jiný. Zobrazuje se nejnovější verze.",
+  "settings_read_only": "Tato nastavení mohou měnit jen vlastníci a správci.",
+  "settings_defaults": "Zatím není nic uloženo: zobrazují se výchozí hodnoty.",
+  "settings_brands_title": "Výjimky pro značky",
+  "settings_brand_required": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vyžaduje se {count} schválení",
+        "countPlural=few": "Vyžadují se {count} schválení",
+        "countPlural=many": "Vyžaduje se {count} schválení",
+        "countPlural=*": "Vyžaduje se {count} schválení"
+      }
+    }
+  ],
+  "settings_not_required": "Schválení se nevyžaduje",
+  "settings_nav_label": "Sekce nastavení",
+  "settings_account_title": "Účet",
+  "settings_profile_title": "Profil",
+  "settings_display_name": "Jméno",
+  "settings_not_set": "Nenastaveno",
+  "settings_preferences_title": "Předvolby",
+  "settings_theme": "Vzhled",
+  "theme_option_system": "Podle systému",
+  "theme_option_light": "Světlý",
+  "theme_option_dark": "Tmavý",
+  "settings_policy_title": "Pravidla schvalování",
+  "settings_email_title": "Oznámení e-mailem",
+  "settings_email_failures": "Selhání",
+  "settings_email_failures_hint": "Příspěvky, které selžou nebo je musíte zveřejnit ručně",
+  "settings_email_approvals": "Schvalování",
+  "settings_email_approvals_hint": "Žádosti o schválení a rozhodnutí o nich",
+  "settings_email_channels": "Problémy s kanály",
+  "settings_email_channels_hint": "Kanály, které je potřeba znovu připojit nebo kterým brzy vyprší přístup",
+  "settings_in_app_note": "Oznámení v aplikaci se vždy zobrazí pod zvonečkem.",
+  "settings_email_failed": "Nastavení oznámení se neuložilo. Zkuste to znovu.",
+  "settings_name_saved": "Jméno je uloženo.",
+  "settings_name_failed": "Jméno se neuložilo. Zkuste to znovu.",
+  "settings_password_change": "Změnit heslo",
+  "settings_password_current": "Současné heslo",
+  "settings_password_repeat": "Zopakujte nové heslo",
+  "settings_password_incorrect": "Současné heslo není správné.",
+  "settings_password_two_factor": "U účtů s dvoufázovým přihlášením zatím změna hesla není dostupná.",
+  "settings_password_changed": "Heslo je změněno. Ostatní zařízení byla odhlášena.",
+  "settings_password_failed": "Heslo se nezměnilo. Zkuste to znovu.",
+  "settings_system_title": "Systém",
+  "system_slo_title": "Cíle zveřejňování",
+  "system_slo_day": "Posledních 24 hodin",
+  "system_slo_week": "Posledních 7 dní",
+  "system_slo_on_time": "Zveřejněno včas",
+  "system_slo_duplicates": "Zveřejněno dvakrát",
+  "system_slo_unconfirmed": "Nepotvrzené",
+  "system_slo_total": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} automatický příspěvek",
+        "countPlural=few": "{count} automatické příspěvky",
+        "countPlural=many": "{count} automatického příspěvku",
+        "countPlural=*": "{count} automatických příspěvků"
+      }
+    }
+  ],
+  "system_no_data": "Bez údajů",
+  "system_target_met": "Splněno",
+  "system_target_missed": "Nesplněno",
+  "system_cron_title": "Úlohy na pozadí",
+  "system_ok": "V pořádku",
+  "system_cron_failed": "Selhala",
+  "system_cron_running": "Běží",
+  "system_cron_stale": "Má zpoždění",
+  "system_cron_never": "Ještě neběžela",
+  "system_cron_last_run": "Naposledy spuštěna {when}",
+  "system_cron_duration": "Trvala {duration}",
+  "system_incidents_title": "Incidenty sítí",
+  "system_incidents_empty": "Za posledních 7 dní nedošlo k žádnému incidentu.",
+  "system_incident_open": "Otevřený",
+  "system_incident_resolved": "Vyřešen {when}",
+  "system_incident_seen": "Poprvé {first}, naposledy {last}",
+  "system_incident_occurrences": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} výskyt",
+        "countPlural=few": "{count} výskyty",
+        "countPlural=many": "{count} výskytu",
+        "countPlural=*": "{count} výskytů"
+      }
+    }
+  ],
+  "system_incident_app_credentials_invalid": "Síť odmítla přihlašovací údaje aplikace",
+  "system_incident_app_suspended": "Aplikace je pozastavená",
+  "system_incident_tier_not_enrolled": "Chybí úroveň přístupu k API",
+  "system_incident_rate_limited_app": "Aplikace narazila na limit požadavků",
+  "system_incident_provider_outage": "Výpadek sítě",
+  "system_api_title": "Verze API sítí",
+  "system_api_version": "Verze {version}",
+  "system_api_no_sunset": "Konec podpory zatím není oznámen",
+  "system_api_sunset": "Podpora končí {date}",
+  "system_api_days_left": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Zbývá {count} den",
+        "countPlural=few": "Zbývají {count} dny",
+        "countPlural=many": "Zbývá {count} dne",
+        "countPlural=*": "Zbývá {count} dní"
+      }
+    }
+  ],
+  "system_api_ended": "Podpora už skončila",
+  "system_api_warn": "Brzy aktualizujte",
+  "system_api_critical": "Aktualizujte hned"
+}

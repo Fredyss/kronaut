@@ -4,14 +4,15 @@ import { needsActionQuery } from '../api.ts';
 import { useFormats } from '../calendar/formats.ts';
 import { browserTimeZone } from '../calendar/time.ts';
 import { useApiClient, useLocale } from '../context.ts';
+import { m as inboxText } from '../i18n/inbox.ts';
 import { m } from '../i18n.ts';
 import { InboxRow } from './row.tsx';
 
 function Empty() {
   return (
     <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
-      <h2 className="font-medium text-lg">{m.inbox_empty_title()}</h2>
-      <p className="text-muted-foreground text-sm">{m.inbox_empty_body()}</p>
+      <h2 className="font-medium text-lg">{inboxText.inbox_empty_title()}</h2>
+      <p className="text-muted-foreground text-sm">{inboxText.inbox_empty_body()}</p>
     </div>
   );
 }
@@ -37,7 +38,7 @@ export function InboxList({ workspaceId }: { readonly workspaceId: string }) {
     <>
       {truncated ? (
         <p className="rounded-md border px-3 py-2 text-sm">
-          {m.inbox_truncated({ shown: items.length, total })}
+          {inboxText.inbox_truncated({ shown: items.length, total })}
         </p>
       ) : null}
       <ul className="flex flex-col gap-3">
