@@ -1,0 +1,29 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "inbox_empty_title": "Nič nevyžaduje vašu pozornosť",
+  "inbox_empty_body": "Zobrazia sa tu príspevky, ktoré zlyhali, sú zablokované alebo čakajú na vás.",
+  "inbox_truncated": [
+    {
+      "declarations": ["input shown", "input total", "local totalPlural = total: plural"],
+      "selectors": ["totalPlural"],
+      "match": {
+        "totalPlural=one": "Zobrazujú sa len najnovšie: {shown} z {total} položky.",
+        "totalPlural=few": "Zobrazujú sa len najnovšie: {shown} z {total} položiek.",
+        "totalPlural=many": "Zobrazujú sa len najnovšie: {shown} z {total} položky.",
+        "totalPlural=*": "Zobrazujú sa len najnovšie: {shown} z {total} položiek."
+      }
+    }
+  ],
+  "inbox_mark_published": "Označiť ako uverejnený",
+  "inbox_mark_done": "Označiť ako hotový",
+  "inbox_send_again": "Odoslať znova",
+  "inbox_reconnect": "Znova pripojiť kanál",
+  "inbox_duplicate_title": "Príspevok už možno je uverejnený",
+  "inbox_duplicate_body": "Sieť ho možno už prijala. Ak ho odošlete znova, môže sa uverejniť dvakrát.",
+  "inbox_duplicate_ack": "Môže sa uverejniť dvakrát",
+  "inbox_duplicate_confirm": "Napriek tomu odoslať",
+  "inbox_marked": "Označené ako uverejnené.",
+  "inbox_sent_again": "Čoskoro sa odošle znova.",
+  "inbox_canceled": "Zrušené.",
+  "inbox_changed": "Položka sa medzitým zmenila. Zoznam teraz ukazuje jej aktuálny stav."
+}

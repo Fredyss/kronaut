@@ -1,5 +1,6 @@
 import { ApiRequestError } from '@kronaut/sdk';
 import { type Channel, errorCode, errorDetails, errorStatus } from '../api.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { destinationIndex, issueMessage } from './issues.ts';
 import { MarkedImageError, type SubmitError, type SubmitTarget } from './submit.ts';
@@ -19,18 +20,19 @@ function uploadHeadline(error: SubmitError, nameOf: ChannelName): string {
   const channel =
     variant === null ? null : nameOf(error.destinations.find((d) => d.variant === variant));
   return channel === null
-    ? m.compose_error_upload({ position })
-    : m.compose_error_upload_channel({ position, channel });
+    ? composeText.compose_error_upload({ position })
+    : composeText.compose_error_upload_channel({ position, channel });
 }
 
 function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
   const cause = error.cause;
   if (cause instanceof MarkedImageError) {
-    return m.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
+    return composeText.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
   }
   if (error.step === 'upload') return uploadHeadline(error, nameOf);
-  if (errorDetails(cause).length > 0) return m.compose_error_fix();
-  if (errorCode(cause) === 'approval_required') return m.compose_error_approval_required();
+  if (errorDetails(cause).length > 0) return composeText.compose_error_fix();
+  if (errorCode(cause) === 'approval_required')
+    return composeText.compose_error_approval_required();
   if (errorCode(cause) === 'conflict') return m.approval_error_waiting();
   if (errorStatus(cause) === 409) return m.compose_error_conflict();
   return apiErrorMessage(cause instanceof ApiRequestError ? cause.code : 'unavailable');

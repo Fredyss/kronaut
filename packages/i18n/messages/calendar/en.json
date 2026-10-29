@@ -1,0 +1,63 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "calendar_time_zone": "Times in {tz}",
+  "calendar_navigation": "Move through the calendar",
+  "calendar_previous_week": "Previous week",
+  "calendar_next_week": "Next week",
+  "calendar_previous_month": "Previous month",
+  "calendar_next_month": "Next month",
+  "calendar_today": "Today",
+  "calendar_views": "Calendar view",
+  "calendar_view_week": "Week",
+  "calendar_view_month": "Month",
+  "calendar_view_list": "List",
+  "calendar_chip_label": "{time}, {channel}, {state}: {text}",
+  "calendar_own_time": "{when} in {tz}",
+  "calendar_more": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "+{count} more",
+        "countPlural=*": "+{count} more"
+      }
+    }
+  ],
+  "calendar_day_empty": "Nothing planned",
+  "calendar_truncated": "This range has more posts than the calendar can show, so some are missing. Pick a shorter range to see them all.",
+  "calendar_load_failed": "The calendar couldn't be loaded. Try again.",
+  "calendar_drafts": "Drafts",
+  "calendar_drafts_empty": "No drafts.",
+  "calendar_draft_updated": "Edited {when}",
+  "calendar_move_hint": "Shift and the arrow keys move this post by a day or a week. All of its channels move together.",
+  "calendar_moved": "Moved to {when}",
+  "calendar_undo": "Undo",
+  "calendar_move_in_past": "That time has already passed. Pick a later day.",
+  "calendar_move_changed": "Someone else changed this post in the meantime. The calendar now shows the latest version.",
+  "calendar_move_approval": "This post needs an approval before it can be moved.",
+  "calendar_move_unavailable": "This post can't be moved right now. It may already be publishing.",
+  "calendar_move_failed": "The post couldn't be moved. Try again.",
+  "home_empty_title": "Nothing scheduled yet",
+  "home_empty_body": "Posts you schedule will show up here.",
+  "posts_scheduled": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} post scheduled",
+        "countPlural=*": "{count} posts scheduled"
+      }
+    }
+  ],
+  "nav_new_post": "New post",
+  "calendar_move_reapproval": "That time is outside the approved window, so the post needs approval again.",
+  "calendar_previous_day": "Previous day",
+  "calendar_next_day": "Next day",
+  "calendar_create_post": "Create post",
+  "calendar_add_channel": "Add channel",
+  "calendar_sidebar_collapse": "Collapse the sidebar",
+  "calendar_sidebar_expand": "Expand the sidebar",
+  "calendar_layout": "Layout",
+  "calendar_layout_grid": "Grid",
+  "calendar_new_post_at": "Create post: {when}"
+}

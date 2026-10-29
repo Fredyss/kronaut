@@ -3,17 +3,21 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { compile } from '@inlang/paraglide-js';
 import { describe, expect, it } from 'vitest';
-import * as cs from '#paraglide/messages/cs.js';
-import * as sk from '#paraglide/messages/sk.js';
+import * as cs from '#paraglide-calendar/messages/cs.js';
+import * as sk from '#paraglide-calendar/messages/sk.js';
 import * as cliCs from '#paraglide-cli/messages/cs.js';
 import * as cliSk from '#paraglide-cli/messages/sk.js';
-import { PARAGLIDE, PARAGLIDE_CLI } from '../i18n.config.ts';
+import { PARAGLIDE, PARAGLIDE_CLI, PARAGLIDE_GROUPS, ROUTE_GROUPS } from '../i18n.config.ts';
 
 const MESSAGES = new URL('../messages/', import.meta.url);
 
+const PROJECT_DIRS = ['', 'cli/', ...ROUTE_GROUPS.map((group) => `${group}/`)];
+
 function keys(locale: string, dir = ''): string[] {
   const file = new URL(`${dir}${locale}.json`, MESSAGES);
-  return Object.keys(JSON.parse(readFileSync(file, 'utf8')) as object).sort();
+  return Object.keys(JSON.parse(readFileSync(file, 'utf8')) as object)
+    .filter((key) => key !== '$schema')
+    .sort();
 }
 
 function tree(root: string): Map<string, string> {
@@ -28,10 +32,10 @@ function tree(root: string): Map<string, string> {
 
 describe('message catalog', () => {
   it('has every key in every locale and picks sk/cs plural forms', () => {
-    expect(keys('sk')).toEqual(keys('en'));
-    expect(keys('cs')).toEqual(keys('en'));
-    expect(keys('sk', 'cli/')).toEqual(keys('en', 'cli/'));
-    expect(keys('cs', 'cli/')).toEqual(keys('en', 'cli/'));
+    for (const dir of PROJECT_DIRS) {
+      expect(keys('sk', dir), dir).toEqual(keys('en', dir));
+      expect(keys('cs', dir), dir).toEqual(keys('en', dir));
+    }
 
     expect([1, 3, 5, 0, 1.5].map((count) => sk.posts_scheduled({ count }))).toEqual([
       '1 naplánovaný príspevok',
@@ -60,9 +64,15 @@ describe('message catalog', () => {
     ]);
   });
 
+  it('keeps every key in exactly one project', () => {
+    const all = PROJECT_DIRS.flatMap((dir) => keys('en', dir));
+    expect(all.filter((key, index) => all.indexOf(key) !== index)).toEqual([]);
+  });
+
   it.each([
     ['paraglide', PARAGLIDE],
     ['paraglide-cli', PARAGLIDE_CLI],
+    ...ROUTE_GROUPS.map((group) => [`paraglide-${group}`, PARAGLIDE_GROUPS[group]] as const),
   ] as const)('keeps the committed %s output current', async (name, options) => {
     const outdir = mkdtempSync(join(tmpdir(), 'kronaut-paraglide-'));
     try {

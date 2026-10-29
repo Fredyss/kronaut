@@ -4,6 +4,7 @@ import { useId } from 'react';
 import type { NeedsActionItem } from '../api.ts';
 import type { Formats } from '../calendar/formats.ts';
 import { httpsUrl, stateLabel } from '../destinations.ts';
+import { m as inboxText } from '../i18n/inbox.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
 import { RECONNECT, reasonLabel } from './reasons.ts';
@@ -72,7 +73,7 @@ export function InboxRow({ workspaceId, item, formats }: RowProps) {
       <Status item={item} formats={formats} />
       {reconnect ? (
         <Link to="/channels" className={buttonVariants({ size: 'sm', className: 'self-start' })}>
-          {m.inbox_reconnect()}
+          {inboxText.inbox_reconnect()}
         </Link>
       ) : null}
       <RowActions workspaceId={workspaceId} item={item} describedBy={headingId} />

@@ -2,7 +2,7 @@ import { Button } from '@kronaut/ui';
 import { lazy, Suspense, useId } from 'react';
 import type { Channel } from '../api.ts';
 import { useLocale } from '../context.ts';
-import { m } from '../i18n.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
 import { effective } from './contents.ts';
@@ -30,7 +30,7 @@ function tabsFor(state: ContentsState, flagged: readonly string[]): ContentTab[]
   const customized = (channel: Channel) => state.contents.customized.has(channel.id);
   const all: ContentTab = {
     key: null,
-    label: m.compose_tab_all(),
+    label: composeText.compose_tab_all(),
     customized: false,
     problems: state.tabs.some((channel) => !customized(channel) && flagged.includes(channel.id)),
   };
@@ -80,7 +80,7 @@ function checkNote(tabs: readonly ContentTab[], active: string | null, locale: s
   const labels = tabs.filter((tab) => tab.problems && tab.key !== active).map((tab) => tab.label);
   if (labels.length === 0) return null;
   const channels = new Intl.ListFormat(locale, { type: 'conjunction' }).format(labels);
-  return m.compose_check_content({ channels });
+  return composeText.compose_check_content({ channels });
 }
 
 function Inherited({
@@ -94,9 +94,9 @@ function Inherited({
 }) {
   return (
     <div className="flex flex-col items-start gap-3 rounded-md border border-dashed p-4 text-sm">
-      <p className="text-muted-foreground">{m.compose_inherits()}</p>
+      <p className="text-muted-foreground">{composeText.compose_inherits()}</p>
       <Button type="button" variant="outline" size="sm" disabled={pending} onClick={onCustomize}>
-        {m.compose_customize({ channel })}
+        {composeText.compose_customize({ channel })}
       </Button>
     </div>
   );
@@ -111,10 +111,10 @@ function TextHeader({
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <span className="font-medium text-sm">{m.compose_text_label()}</span>
+      <span className="font-medium text-sm">{composeText.compose_text_label()}</span>
       {onReset === undefined ? null : (
         <Button type="button" variant="ghost" size="sm" disabled={pending} onClick={onReset}>
-          {m.compose_use_default()}
+          {composeText.compose_use_default()}
         </Button>
       )}
     </div>
@@ -164,7 +164,7 @@ export function ContentSection(props: ContentSectionProps) {
               <PostEditor
                 key={active ?? ''}
                 id={editorId}
-                label={m.compose_text_label()}
+                label={composeText.compose_text_label()}
                 disabled={pending}
                 initial={state.doc}
                 onChange={state.setDoc}

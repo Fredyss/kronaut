@@ -4,6 +4,7 @@ import { type FormEvent, useState } from 'react';
 import { type Channel, channelsQuery, errorCode, postKey, postsKey } from '../api.ts';
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
 import { useApiClient, useLocale } from '../context.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { choiceFor } from './choice.ts';
 import { type Content, effective } from './contents.ts';
@@ -73,11 +74,11 @@ function usedContents(plan: Plan, base: Content): Content[] {
 }
 
 function emptyProblem(plan: Plan, base: Content): string | null {
-  if (plan.destinations.length === 0) return m.compose_error_no_channel();
-  if (plan.usesDefault && isEmpty(base)) return m.compose_error_empty();
+  if (plan.destinations.length === 0) return composeText.compose_error_no_channel();
+  if (plan.usesDefault && isEmpty(base)) return composeText.compose_error_empty();
   const empty = plan.variants.find(({ content }) => isEmpty(content));
   if (empty !== undefined)
-    return m.compose_error_empty_channel({ channel: empty.channel.displayName });
+    return composeText.compose_error_empty_channel({ channel: empty.channel.displayName });
   for (const content of usedContents(plan, base)) {
     const problem = blankItemProblem(content);
     if (problem !== null) return problem;

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "inbox_empty_title": "Nic nevyžaduje vaši pozornost",
+  "inbox_empty_body": "Objeví se tu příspěvky, které selhaly, jsou zablokované nebo čekají na vás.",
+  "inbox_truncated": [
+    {
+      "declarations": ["input shown", "input total", "local totalPlural = total: plural"],
+      "selectors": ["totalPlural"],
+      "match": {
+        "totalPlural=one": "Zobrazují se jen nejnovější: {shown} z {total} položky.",
+        "totalPlural=few": "Zobrazují se jen nejnovější: {shown} z {total} položek.",
+        "totalPlural=many": "Zobrazují se jen nejnovější: {shown} z {total} položky.",
+        "totalPlural=*": "Zobrazují se jen nejnovější: {shown} z {total} položek."
+      }
+    }
+  ],
+  "inbox_mark_published": "Označit jako zveřejněný",
+  "inbox_mark_done": "Označit jako hotový",
+  "inbox_send_again": "Odeslat znovu",
+  "inbox_reconnect": "Znovu připojit kanál",
+  "inbox_duplicate_title": "Příspěvek už možná je zveřejněný",
+  "inbox_duplicate_body": "Síť ho možná už přijala. Když ho odešlete znovu, může se zveřejnit dvakrát.",
+  "inbox_duplicate_ack": "Může se zveřejnit dvakrát",
+  "inbox_duplicate_confirm": "Přesto odeslat",
+  "inbox_marked": "Označeno jako zveřejněné.",
+  "inbox_sent_again": "Brzy se odešle znovu.",
+  "inbox_canceled": "Zrušeno.",
+  "inbox_changed": "Položka se mezitím změnila. Seznam teď ukazuje její aktuální stav."
+}

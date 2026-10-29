@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { type Dispatch, type SetStateAction, useId } from 'react';
 import type { Channel } from '../api.ts';
 import { useLocale } from '../context.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { type PublishChoice, providerUi } from '../providers.ts';
 import { statusLabel } from '../routes/channels.tsx';
@@ -13,20 +14,20 @@ export function channelHint(
   locale: string,
 ): string | null {
   if (channel.status !== 'active') return statusLabel(channel.status);
-  if (choice.kind === 'needs_image') return m.compose_channel_needs_image();
-  if (choice.kind === 'image_type_unsupported') return m.compose_channel_image_type();
+  if (choice.kind === 'needs_image') return composeText.compose_channel_needs_image();
+  if (choice.kind === 'image_type_unsupported') return composeText.compose_channel_image_type();
   if (choice.kind === 'too_many_images')
-    return m.compose_channel_too_many_images({ count: choice.max });
+    return composeText.compose_channel_too_many_images({ count: choice.max });
   if (choice.kind === 'image_too_large') {
     const max = new Intl.NumberFormat(locale, {
       style: 'unit',
       unit: 'megabyte',
       maximumFractionDigits: 1,
     }).format(choice.maxBytes / 1_000_000);
-    return m.compose_channel_image_too_large({ max });
+    return composeText.compose_channel_image_too_large({ max });
   }
-  if (choice.kind === 'video_unsupported') return m.compose_channel_video_unsupported();
-  if (choice.kind === 'unsupported') return m.compose_channel_unsupported();
+  if (choice.kind === 'video_unsupported') return composeText.compose_channel_video_unsupported();
+  if (choice.kind === 'unsupported') return composeText.compose_channel_unsupported();
   return null;
 }
 
@@ -50,9 +51,9 @@ function ChannelPicker({
   if (channels.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
-        {m.compose_no_channels()}{' '}
+        {composeText.compose_no_channels()}{' '}
         <Link to="/channels" className="underline underline-offset-4">
-          {m.compose_connect_channel()}
+          {composeText.compose_connect_channel()}
         </Link>
       </p>
     );
@@ -117,7 +118,7 @@ export function ChannelsFieldset({
 }: ChannelsFieldsetProps) {
   return (
     <fieldset className="flex flex-col gap-3">
-      <legend className="mb-3 font-medium text-sm">{m.compose_channels_title()}</legend>
+      <legend className="mb-3 font-medium text-sm">{composeText.compose_channels_title()}</legend>
       {failed ? (
         <p role="alert" className="text-destructive text-sm">
           {m.error_generic()}

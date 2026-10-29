@@ -1,5 +1,6 @@
 import { buttonVariants } from '@kronaut/ui';
 import { useEffect } from 'react';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import type { Moved } from './move.ts';
 
@@ -28,7 +29,7 @@ export function UndoNotice({ moved, when, onUndo, onDismiss }: UndoNoticeProps) 
           role="status"
           className="pointer-events-auto flex w-full max-w-sm items-center gap-3 rounded-lg border bg-popover p-4 text-popover-foreground text-sm shadow-lg"
         >
-          <p className="flex-1">{m.calendar_moved({ when })}</p>
+          <p className="flex-1">{calendarText.calendar_moved({ when })}</p>
           <button
             type="button"
             className={buttonVariants({ variant: 'outline', size: 'sm' })}
@@ -37,7 +38,7 @@ export function UndoNotice({ moved, when, onUndo, onDismiss }: UndoNoticeProps) 
               onUndo(moved);
             }}
           >
-            {m.calendar_undo()}
+            {calendarText.calendar_undo()}
           </button>
           <button
             type="button"

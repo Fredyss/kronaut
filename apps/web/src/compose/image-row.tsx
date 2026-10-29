@@ -1,5 +1,6 @@
 import { Button, Label } from '@kronaut/ui';
 import { useId } from 'react';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import type { PickedImage } from './contents.ts';
 import { MAX_ALT_TEXT } from './media.ts';
@@ -30,7 +31,7 @@ export function ImageRow({
     <li className="flex flex-wrap items-start gap-3 rounded-lg border p-3">
       {image.thumb === null ? (
         <div className="flex size-24 items-center justify-center rounded-md bg-muted text-muted-foreground text-xs">
-          {m.compose_image_position({ position })}
+          {composeText.compose_image_position({ position })}
         </div>
       ) : (
         <img
@@ -40,7 +41,7 @@ export function ImageRow({
         />
       )}
       <div className="flex min-w-48 flex-1 flex-col gap-2">
-        <Label htmlFor={altId}>{m.compose_alt_text_label({ position })}</Label>
+        <Label htmlFor={altId}>{composeText.compose_alt_text_label({ position })}</Label>
         <textarea
           id={altId}
           value={image.altText}
@@ -51,7 +52,7 @@ export function ImageRow({
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring"
         />
         <p className="text-muted-foreground text-xs">
-          {m.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
+          {composeText.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
         </p>
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -62,10 +63,10 @@ export function ImageRow({
             onChange={(event) => onAi(event.currentTarget.checked)}
             className="size-4 accent-primary"
           />
-          {m.compose_ai_generated_label({ position })}
+          {composeText.compose_ai_generated_label({ position })}
         </label>
         <p id={aiHintId} className="text-muted-foreground text-xs">
-          {m.compose_ai_generated_hint()}
+          {composeText.compose_ai_generated_hint()}
         </p>
       </div>
       <div className="flex flex-col gap-1">
@@ -74,7 +75,7 @@ export function ImageRow({
           size="sm"
           variant="outline"
           disabled={disabled || index === 0}
-          aria-label={m.compose_image_move_up({ position })}
+          aria-label={composeText.compose_image_move_up({ position })}
           onClick={() => onMove(-1)}
         >
           ↑
@@ -84,7 +85,7 @@ export function ImageRow({
           size="sm"
           variant="outline"
           disabled={disabled || index === count - 1}
-          aria-label={m.compose_image_move_down({ position })}
+          aria-label={composeText.compose_image_move_down({ position })}
           onClick={() => onMove(1)}
         >
           ↓

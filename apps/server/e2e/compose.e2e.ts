@@ -1,3 +1,4 @@
+import * as composeEn from '@kronaut/i18n/compose/messages/en';
 import * as en from '@kronaut/i18n/messages/en';
 import { expect, test } from '@playwright/test';
 import { Temporal } from 'temporal-polyfill';
@@ -8,9 +9,11 @@ const TEXT = 'Ahoj svet, čaká nás ťažký deň';
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
   await page.goto(appUrl('/compose'));
-  await expect(page.getByRole('heading', { name: en.compose_title({}), level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: composeEn.compose_title({}), level: 1 }),
+  ).toBeVisible();
 
-  await page.getByRole('textbox', { name: en.compose_text_label({}) }).fill(TEXT);
+  await page.getByRole('textbox', { name: composeEn.compose_text_label({}) }).fill(TEXT);
   await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
   await page.getByRole('radio', { name: en.compose_schedule({}) }).check();
   await page.getByLabel(en.compose_date({}), { exact: true }).fill(date);
@@ -29,7 +32,7 @@ test('schedules a post a week ahead and keeps it after a reload', async ({ page 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {
   await page.goto(appUrl('/compose'));
   await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
-  await page.getByRole('textbox', { name: en.compose_text_label({}) }).fill('x'.repeat(301));
+  await page.getByRole('textbox', { name: composeEn.compose_text_label({}) }).fill('x'.repeat(301));
   const network = en.provider_bluesky({});
   await expect(page.getByText(`${network} 301/300`, { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: en.compose_publish_now({}) })).toBeDisabled();
@@ -38,7 +41,7 @@ test('counts the text against Bluesky and blocks a post over its limit', async (
 test('schedules a long default after customizing Bluesky with short text', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 8 }).toString();
   await page.goto(appUrl('/compose'));
-  const text = page.getByRole('textbox', { name: en.compose_text_label({}) });
+  const text = page.getByRole('textbox', { name: composeEn.compose_text_label({}) });
   await text.fill('x'.repeat(301));
   await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
   await page.getByRole('radio', { name: en.compose_schedule({}) }).check();
@@ -49,7 +52,7 @@ test('schedules a long default after customizing Bluesky with short text', async
 
   await page.getByRole('tab', { name: CHANNEL.displayName }).click();
   const channel = CHANNEL.displayName;
-  await page.getByRole('button', { name: en.compose_customize({ channel }) }).click();
+  await page.getByRole('button', { name: composeEn.compose_customize({ channel }) }).click();
   await text.fill('Short and sweet');
   await expect(submit).toBeEnabled();
   await submit.click();

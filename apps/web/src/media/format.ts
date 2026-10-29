@@ -1,4 +1,4 @@
-import { m } from '../i18n.ts';
+import { m as mediaText } from '../i18n/media.ts';
 import type { LibraryAsset } from './queries.ts';
 
 const UNITS = [
@@ -18,7 +18,7 @@ export function formatBytes(bytes: number, locale: string): string {
 }
 
 export function kindLabel(asset: Pick<LibraryAsset, 'kind'>): string {
-  return asset.kind === 'video' ? m.media_kind_video() : m.media_kind_image();
+  return asset.kind === 'video' ? mediaText.media_kind_video() : mediaText.media_kind_image();
 }
 
 export function stateLabel(asset: Pick<LibraryAsset, 'state'>): string | null {
@@ -26,8 +26,8 @@ export function stateLabel(asset: Pick<LibraryAsset, 'state'>): string | null {
     case 'ready':
       return null;
     case 'rejected':
-      return m.media_state_rejected();
+      return mediaText.media_state_rejected();
     default:
-      return m.media_state_processing();
+      return mediaText.media_state_processing();
   }
 }

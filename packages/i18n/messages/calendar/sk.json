@@ -1,0 +1,67 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "calendar_time_zone": "Časy v časovom pásme {tz}",
+  "calendar_navigation": "Pohyb v kalendári",
+  "calendar_previous_week": "Predchádzajúci týždeň",
+  "calendar_next_week": "Nasledujúci týždeň",
+  "calendar_previous_month": "Predchádzajúci mesiac",
+  "calendar_next_month": "Nasledujúci mesiac",
+  "calendar_today": "Dnes",
+  "calendar_views": "Zobrazenie kalendára",
+  "calendar_view_week": "Týždeň",
+  "calendar_view_month": "Mesiac",
+  "calendar_view_list": "Zoznam",
+  "calendar_chip_label": "{time}, {channel}, {state}: {text}",
+  "calendar_own_time": "{when} v časovom pásme {tz}",
+  "calendar_more": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "+{count} ďalší",
+        "countPlural=few": "+{count} ďalšie",
+        "countPlural=many": "+{count} ďalšieho",
+        "countPlural=*": "+{count} ďalších"
+      }
+    }
+  ],
+  "calendar_day_empty": "Nič naplánované",
+  "calendar_truncated": "V tomto období je viac príspevkov, než dokáže kalendár zobraziť, preto niektoré chýbajú. Ak ich chcete vidieť všetky, vyberte kratšie obdobie.",
+  "calendar_load_failed": "Kalendár sa nepodarilo načítať. Skúste to znova.",
+  "calendar_drafts": "Koncepty",
+  "calendar_drafts_empty": "Žiadne koncepty.",
+  "calendar_draft_updated": "Upravené {when}",
+  "calendar_move_hint": "Príspevok posuniete o deň alebo o týždeň klávesom Shift so šípkami. Všetky jeho kanály sa presunú spolu.",
+  "calendar_moved": "Presunuté na {when}",
+  "calendar_undo": "Vrátiť späť",
+  "calendar_move_in_past": "Tento čas už uplynul. Vyberte neskorší deň.",
+  "calendar_move_changed": "Príspevok medzitým zmenil niekto iný. Kalendár teraz zobrazuje jeho aktuálnu verziu.",
+  "calendar_move_approval": "Pred presunutím musí byť príspevok schválený.",
+  "calendar_move_unavailable": "Príspevok sa teraz nedá presunúť. Možno sa práve uverejňuje.",
+  "calendar_move_failed": "Príspevok sa nepodarilo presunúť. Skúste to znova.",
+  "home_empty_title": "Zatiaľ nemáte nič naplánované",
+  "home_empty_body": "Tu sa zobrazia príspevky, ktoré naplánujete.",
+  "posts_scheduled": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} naplánovaný príspevok",
+        "countPlural=few": "{count} naplánované príspevky",
+        "countPlural=many": "{count} naplánovaného príspevku",
+        "countPlural=*": "{count} naplánovaných príspevkov"
+      }
+    }
+  ],
+  "nav_new_post": "Nový príspevok",
+  "calendar_move_reapproval": "Tento čas je mimo schváleného rozsahu, príspevok preto treba znova schváliť.",
+  "calendar_previous_day": "Predchádzajúci deň",
+  "calendar_next_day": "Nasledujúci deň",
+  "calendar_create_post": "Vytvoriť príspevok",
+  "calendar_add_channel": "Pridať kanál",
+  "calendar_sidebar_collapse": "Zbaliť bočný panel",
+  "calendar_sidebar_expand": "Rozbaliť bočný panel",
+  "calendar_layout": "Rozloženie",
+  "calendar_layout_grid": "Mriežka",
+  "calendar_new_post_at": "Vytvoriť príspevok: {when}"
+}

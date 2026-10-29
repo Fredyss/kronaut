@@ -1,5 +1,5 @@
 import { useLocale } from '../context.ts';
-import { m } from '../i18n.ts';
+import { m as mediaText } from '../i18n/media.ts';
 import { kindLabel, stateLabel } from './format.ts';
 import { KindIcon } from './kind-icon.tsx';
 import type { LibraryAsset } from './queries.ts';
@@ -12,7 +12,7 @@ interface TileProps {
 export function AiBadge() {
   return (
     <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-xs">
-      {m.media_ai_badge()}
+      {mediaText.media_ai_badge()}
     </span>
   );
 }
@@ -39,7 +39,9 @@ export function MediaTile({ asset, onOpen }: TileProps) {
     new Date(asset.createdAt),
   );
   const label =
-    asset.kind === 'video' ? m.media_open_video({ date }) : m.media_open_image({ date });
+    asset.kind === 'video'
+      ? mediaText.media_open_video({ date })
+      : mediaText.media_open_image({ date });
   const state = stateLabel(asset);
   return (
     <li>

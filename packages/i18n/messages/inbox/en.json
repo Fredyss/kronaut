@@ -1,0 +1,27 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "inbox_empty_title": "Nothing needs your attention",
+  "inbox_empty_body": "Posts that fail, get blocked or wait for you show up here.",
+  "inbox_truncated": [
+    {
+      "declarations": ["input shown", "input total", "local totalPlural = total: plural"],
+      "selectors": ["totalPlural"],
+      "match": {
+        "totalPlural=one": "Showing only the newest {shown} of {total} item.",
+        "totalPlural=*": "Showing only the newest {shown} of {total} items."
+      }
+    }
+  ],
+  "inbox_mark_published": "Mark as published",
+  "inbox_mark_done": "Mark as done",
+  "inbox_send_again": "Send again",
+  "inbox_reconnect": "Reconnect channel",
+  "inbox_duplicate_title": "It may already be live",
+  "inbox_duplicate_body": "The network may have received it. Sending it again could publish it twice.",
+  "inbox_duplicate_ack": "This may post twice",
+  "inbox_duplicate_confirm": "Send again anyway",
+  "inbox_marked": "Marked as published.",
+  "inbox_sent_again": "It will be sent again shortly.",
+  "inbox_canceled": "Canceled.",
+  "inbox_changed": "This item changed in the meantime. The list now shows its latest state."
+}

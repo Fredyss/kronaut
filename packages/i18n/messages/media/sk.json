@@ -1,0 +1,65 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "media_title": "Knižnica médií",
+  "media_subtitle": "Obrázky a videá nahrané do tohto pracovného priestoru.",
+  "media_filter_label": "Zobraziť",
+  "media_filter_all": "Všetko",
+  "media_filter_images": "Obrázky",
+  "media_filter_videos": "Videá",
+  "media_load_more": "Načítať ďalšie",
+  "media_empty_title": "Zatiaľ tu nie sú žiadne médiá",
+  "media_empty_body": "Obrázky a videá, ktoré pridáte do príspevkov, sa zobrazia tu.",
+  "media_empty_filtered": "Tohto druhu tu zatiaľ nič nie je.",
+  "media_kind_image": "Obrázok",
+  "media_kind_video": "Video",
+  "media_open_image": "Obrázok nahraný {date}",
+  "media_open_video": "Video nahrané {date}",
+  "media_state_processing": "Spracúva sa",
+  "media_state_rejected": "Odmietnuté",
+  "media_type": "Typ",
+  "media_size": "Veľkosť",
+  "media_dimensions": "Rozmery",
+  "media_dimensions_value": "{width} × {height} px",
+  "media_duration": "Dĺžka",
+  "media_uploaded": "Nahrané",
+  "media_alt_label": "Alternatívny text",
+  "media_alt_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac {count} znak.",
+        "countPlural=few": "Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac {count} znaky.",
+        "countPlural=many": "Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac {count} znaku.",
+        "countPlural=*": "Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac {count} znakov."
+      }
+    }
+  ],
+  "media_alt_save": "Uložiť alternatívny text",
+  "media_alt_saved": "Alternatívny text je uložený.",
+  "media_ai_badge": "Vytvorené pomocou AI",
+  "media_ai_remove": "Odstrániť označenie AI",
+  "media_ai_removed": "Označenie AI je odstránené.",
+  "media_ai_locked": "Označenie zostáva: súbor nahral alebo označil API kľúč či agent.",
+  "media_usage_title": "Použité v",
+  "media_usage_none": "Tento súbor nepoužíva žiadny príspevok.",
+  "media_usage_untitled": "Príspevok bez názvu",
+  "media_usage_scheduled": "Naplánované na {when}",
+  "media_delete": "Vymazať",
+  "media_delete_body": "Vymazať tento súbor? Z knižnice zmizne hneď a jeho dáta sa zmažú po 30 dňoch.",
+  "media_delete_confirm": "Vymazať súbor",
+  "media_deleted": "Súbor je vymazaný.",
+  "media_in_use": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Použité v {count} príspevku",
+        "countPlural=few": "Použité v {count} príspevkoch",
+        "countPlural=many": "Použité v {count} príspevku",
+        "countPlural=*": "Použité v {count} príspevkoch"
+      }
+    }
+  ],
+  "media_in_use_error": "Súbor ešte používa niektorý príspevok, preto sa nedá vymazať."
+}

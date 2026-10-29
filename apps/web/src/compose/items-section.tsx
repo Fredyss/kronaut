@@ -1,6 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { lazy, Suspense, useId } from 'react';
 import type { Channel } from '../api.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { effective } from './contents.ts';
 import type { Doc } from './doc.ts';
@@ -91,8 +92,8 @@ export function ItemsSection({ state, targets, pending }: ItemsSectionProps) {
               key={`${tab}-${reply.id}`}
               {...shared}
               id={`${prefix}-${reply.id}`}
-              label={m.compose_reply_label({ position: index + 1 })}
-              removeLabel={m.compose_remove_reply({ position: index + 1 })}
+              label={composeText.compose_reply_label({ position: index + 1 })}
+              removeLabel={composeText.compose_remove_reply({ position: index + 1 })}
               item={{ kind: 'thread', position: index + 1 }}
               initial={reply.doc}
               onChange={(doc) => items.setReply(reply.id, doc)}
@@ -104,8 +105,8 @@ export function ItemsSection({ state, targets, pending }: ItemsSectionProps) {
               key={`${tab}-comment`}
               {...shared}
               id={`${prefix}-comment`}
-              label={m.compose_comment_label()}
-              removeLabel={m.compose_remove_comment()}
+              label={composeText.compose_comment_label()}
+              removeLabel={composeText.compose_remove_comment()}
               item={{ kind: 'comment' }}
               initial={comment.doc}
               onChange={items.setComment}
@@ -124,7 +125,7 @@ export function ItemsSection({ state, targets, pending }: ItemsSectionProps) {
               disabled={pending}
               onClick={items.addReply}
             >
-              {m.compose_add_reply()}
+              {composeText.compose_add_reply()}
             </Button>
           ) : null}
           {items.canComment ? (
@@ -135,7 +136,7 @@ export function ItemsSection({ state, targets, pending }: ItemsSectionProps) {
               disabled={pending}
               onClick={items.addComment}
             >
-              {m.compose_add_comment()}
+              {composeText.compose_add_comment()}
             </Button>
           ) : null}
         </div>
@@ -158,7 +159,7 @@ export function MainOnlyNotes({ state }: { readonly state: ContentsState }) {
   return (
     <ul className="flex flex-col gap-1 text-muted-foreground text-sm">
       {channels.map((channel) => (
-        <li key={channel.id}>{m.compose_main_only({ channel: channel.displayName })}</li>
+        <li key={channel.id}>{composeText.compose_main_only({ channel: channel.displayName })}</li>
       ))}
     </ul>
   );

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { meQuery } from '../api.ts';
 import { useApiClient } from '../context.ts';
+import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import { SettingsPage } from '../settings/card.tsx';
 import { ApiVersionsCard } from '../system/api-versions-card.tsx';
@@ -36,7 +37,7 @@ export function SystemSettingsPage() {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
   return (
-    <SettingsPage title={m.settings_system_title()}>
+    <SettingsPage title={settingsText.settings_system_title()}>
       {workspace === undefined ? null : <SystemStatusCards workspaceId={workspace.id} />}
     </SettingsPage>
   );

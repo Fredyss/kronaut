@@ -14,7 +14,7 @@ import {
 } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { BUSY } from '../destinations.ts';
-import { m } from '../i18n.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { currentInstant, today } from './time.ts';
 
 const ATTEMPTS = 2;
@@ -174,20 +174,20 @@ async function reschedule(
 export function moveError(error: unknown): string {
   const code = errorCode(error);
   if (code === 'unprocessable' && detailCodes(error).includes('in_past')) {
-    return m.calendar_move_in_past();
+    return calendarText.calendar_move_in_past();
   }
   if (code === 'unprocessable' && detailCodes(error).includes('outside_approved_schedule')) {
-    return m.calendar_move_reapproval();
+    return calendarText.calendar_move_reapproval();
   }
   switch (code) {
     case 'version_conflict':
-      return m.calendar_move_changed();
+      return calendarText.calendar_move_changed();
     case 'approval_required':
-      return m.calendar_move_approval();
+      return calendarText.calendar_move_approval();
     case 'conflict':
-      return m.calendar_move_unavailable();
+      return calendarText.calendar_move_unavailable();
     default:
-      return m.calendar_move_failed();
+      return calendarText.calendar_move_failed();
   }
 }
 

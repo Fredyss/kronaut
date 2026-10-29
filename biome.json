@@ -13,7 +13,12 @@
       "!packages/contract/openapi.json",
       "!packages/sdk/src/gen",
       "!packages/i18n/src/paraglide",
-      "!packages/i18n/src/paraglide-cli"
+      "!packages/i18n/src/paraglide-cli",
+      "!packages/i18n/src/paraglide-compose",
+      "!packages/i18n/src/paraglide-calendar",
+      "!packages/i18n/src/paraglide-media",
+      "!packages/i18n/src/paraglide-inbox",
+      "!packages/i18n/src/paraglide-settings"
     ]
   },
   "plugins": [

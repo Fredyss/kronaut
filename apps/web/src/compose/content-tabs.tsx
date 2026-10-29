@@ -1,6 +1,6 @@
 import { cn } from '@kronaut/ui';
 import type { KeyboardEvent } from 'react';
-import { m } from '../i18n.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import type { ContentKey } from './contents.ts';
 
 export interface ContentTab {
@@ -42,7 +42,7 @@ export function ContentTabs({ tabs, active, idPrefix, panelId, onSelect }: Conte
   return (
     <div
       role="tablist"
-      aria-label={m.compose_tabs_label()}
+      aria-label={composeText.compose_tabs_label()}
       className="flex flex-wrap gap-1 border-b"
     >
       {tabs.map((tab, index) => {
@@ -68,13 +68,13 @@ export function ContentTabs({ tabs, active, idPrefix, panelId, onSelect }: Conte
             {tab.label}
             {tab.customized ? (
               <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs">
-                {m.compose_customized()}
+                {composeText.compose_customized()}
               </span>
             ) : null}
             {tab.problems ? (
               <>
                 <span aria-hidden="true" className="size-2 rounded-full bg-destructive" />
-                <span className="sr-only">{m.compose_tab_problems()}</span>
+                <span className="sr-only">{composeText.compose_tab_problems()}</span>
               </>
             ) : null}
           </button>

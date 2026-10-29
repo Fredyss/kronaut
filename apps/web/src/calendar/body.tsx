@@ -5,6 +5,7 @@ import { draftsQuery, type PostSummary, postsRangeQuery } from '../api.ts';
 import type { CalendarView } from '../calendar-search.ts';
 import { useApiClient } from '../context.ts';
 import { pollDelay } from '../destinations.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { MOVE_HINT_ID } from './chip.tsx';
 import { Drafts } from './drafts.tsx';
@@ -49,7 +50,7 @@ export function CalendarBody(props: BodyProps) {
     <>
       <CalendarContent {...props} mover={mover} />
       <p id={MOVE_HINT_ID} hidden>
-        {m.calendar_move_hint()}
+        {calendarText.calendar_move_hint()}
       </p>
       <UndoNotice
         moved={moved}
@@ -83,7 +84,7 @@ function CalendarContent({
   if (posts.data === undefined) {
     return posts.isError ? (
       <p role="alert" className="text-destructive text-sm">
-        {m.calendar_load_failed()}
+        {calendarText.calendar_load_failed()}
       </p>
     ) : (
       <p className="text-muted-foreground text-sm">{m.loading()}</p>
@@ -97,7 +98,7 @@ function CalendarContent({
     <>
       {posts.data.truncated ? (
         <p role="status" className="rounded-md border px-3 py-2 text-sm">
-          {m.calendar_truncated()}
+          {calendarText.calendar_truncated()}
         </p>
       ) : null}
       {view === 'month' ? (
@@ -110,7 +111,7 @@ function CalendarContent({
       {view !== 'list' ? null : drafts.data === undefined ? (
         drafts.isError ? (
           <p role="alert" className="text-destructive text-sm">
-            {m.calendar_load_failed()}
+            {calendarText.calendar_load_failed()}
           </p>
         ) : null
       ) : (

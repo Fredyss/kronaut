@@ -1,0 +1,110 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "compose_title": "Nový príspevok",
+  "compose_subtitle": "Napíšte ho raz, vyberte kanály a potom ho uverejnite hneď alebo naplánujte.",
+  "compose_text_label": "Text",
+  "compose_images_title": "Obrázky",
+  "compose_images_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Najviac {count} obrázok vo formáte JPEG, PNG alebo WebP, každý do {max}.",
+        "countPlural=few": "Najviac {count} obrázky vo formáte JPEG, PNG alebo WebP, každý do {max}.",
+        "countPlural=many": "Najviac {count} obrázka vo formáte JPEG, PNG alebo WebP, každý do {max}.",
+        "countPlural=*": "Najviac {count} obrázkov vo formáte JPEG, PNG alebo WebP, každý do {max}."
+      }
+    }
+  ],
+  "compose_images_add": "Pridať obrázky",
+  "compose_image_bad_type": "{name}: pridať môžete iba obrázky JPEG, PNG a WebP.",
+  "compose_image_too_big": "{name}: súbor je väčší ako {max}.",
+  "compose_images_limit": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Príspevok môže mať najviac {count} obrázok.",
+        "countPlural=few": "Príspevok môže mať najviac {count} obrázky.",
+        "countPlural=many": "Príspevok môže mať najviac {count} obrázka.",
+        "countPlural=*": "Príspevok môže mať najviac {count} obrázkov."
+      }
+    }
+  ],
+  "compose_image_position": "Obrázok {position}",
+  "compose_alt_text_label": "Alternatívny text k obrázku {position}",
+  "compose_alt_text_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac {count} znak.",
+        "countPlural=few": "Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac {count} znaky.",
+        "countPlural=many": "Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac {count} znaku.",
+        "countPlural=*": "Opíšte obrázok pre ľudí, ktorí ho nevidia. Najviac {count} znakov."
+      }
+    }
+  ],
+  "compose_ai_generated_label": "Obrázok {position} je vytvorený pomocou AI",
+  "compose_ai_generated_hint": "Instagram ho označí ako vytvorený pomocou AI. Ostatné siete takéto označenie nemajú.",
+  "compose_image_move_up": "Posunúť obrázok {position} vyššie",
+  "compose_image_move_down": "Posunúť obrázok {position} nižšie",
+  "compose_video_hint": "Alebo jedno video vo formáte MP4, QuickTime či WebM do {max}.",
+  "compose_video_bad_type": "{name}: pridať sa dajú iba videá MP4, QuickTime a WebM.",
+  "compose_video_too_big": "{name}: video je väčšie ako {max}.",
+  "compose_video_limit": "Príspevok môže obsahovať len jedno video.",
+  "compose_media_exclusive": "Príspevok môže mať buď obrázky, alebo jedno video, nie oboje.",
+  "compose_video_preview": "Náhľad súboru {name}",
+  "compose_video_progress": "Priebeh nahrávania",
+  "compose_video_uploading": "Nahráva sa… {percent}",
+  "compose_video_processing": "Spracúva sa…",
+  "compose_video_ready": "Pripravené",
+  "compose_video_ready_duration": "Pripravené, {duration}",
+  "compose_video_retry": "Skúsiť znova",
+  "compose_video_ai_label": "Video je vytvorené pomocou AI",
+  "compose_video_alt_label": "Alternatívny text k videu",
+  "compose_video_ai_marked": "Video je v tomto pracovnom priestore označené ako vytvorené pomocou AI a toto označenie sa nedá odstrániť.",
+  "compose_channel_video_unsupported": "Video v tejto sieti zatiaľ nie je podporované.",
+  "compose_channels_title": "Kanály",
+  "compose_no_channels": "Zatiaľ nemáte pripojený žiadny kanál.",
+  "compose_connect_channel": "Pripojiť kanál",
+  "compose_channel_needs_image": "Potrebuje obrázok alebo video.",
+  "compose_channel_image_too_large": "Obrázok je väčší ako {max}, ktoré táto sieť prijme.",
+  "compose_channel_image_type": "Táto sieť neprijíma formát niektorého z priložených obrázkov.",
+  "compose_channel_too_many_images": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Táto sieť prijme najviac {count} obrázok.",
+        "countPlural=few": "Táto sieť prijme najviac {count} obrázky.",
+        "countPlural=many": "Táto sieť prijme najviac {count} obrázka.",
+        "countPlural=*": "Táto sieť prijme najviac {count} obrázkov."
+      }
+    }
+  ],
+  "compose_channel_unsupported": "Uverejňovanie v tejto sieti zatiaľ nie je podporované.",
+  "compose_error_no_channel": "Vyberte aspoň jeden kanál.",
+  "compose_error_empty": "Napíšte text alebo pridajte obrázok.",
+  "compose_error_upload": "Obrázok {position} sa nepodarilo nahrať.",
+  "compose_error_ai_marked": "Obrázok {position} je v tomto pracovnom priestore už označený ako vytvorený pomocou AI a toto označenie zatiaľ nejde odstrániť. Ak ho chcete uverejniť, zaškrtnite „Obrázok {position} je vytvorený pomocou AI“, alebo použite iný obrázok.",
+  "compose_error_fix": "Príspevok zatiaľ nemožno odoslať. Opravte nasledujúce a skúste to znova:",
+  "compose_tabs_label": "Obsah pre jednotlivé kanály",
+  "compose_tab_all": "Všetky kanály",
+  "compose_customize": "Prispôsobiť pre {channel}",
+  "compose_customized": "Prispôsobené",
+  "compose_inherits": "Používa obsah zo záložky Všetky kanály.",
+  "compose_use_default": "Použiť obsah zo záložky Všetky kanály",
+  "compose_add_reply": "Pridať odpoveď",
+  "compose_reply_label": "Odpoveď {position}",
+  "compose_remove_reply": "Odstrániť odpoveď {position}",
+  "compose_add_comment": "Pridať prvý komentár",
+  "compose_comment_label": "Prvý komentár",
+  "compose_remove_comment": "Odstrániť prvý komentár",
+  "compose_main_only": "{channel} uverejní iba hlavný príspevok.",
+  "compose_tab_problems": "obsahuje chyby",
+  "compose_check_content": "Skontrolujte obsah pre {channels}.",
+  "compose_error_empty_channel": "Pre {channel} napíšte text alebo pridajte obrázok.",
+  "compose_error_upload_channel": "Obrázok {position} pre {channel} sa nepodarilo nahrať.",
+  "compose_error_approval_required": "Príspevok treba pred naplánovaním schváliť."
+}

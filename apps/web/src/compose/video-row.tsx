@@ -1,6 +1,7 @@
 import { Button, Label } from '@kronaut/ui';
 import { useId } from 'react';
 import { useLocale } from '../context.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { MAX_ALT_TEXT } from './media.ts';
 import type { VideoSlot } from './use-media.ts';
@@ -25,23 +26,27 @@ function PhaseStatus({
         <progress
           value={phase.sent}
           max={phase.total}
-          aria-label={m.compose_video_progress()}
+          aria-label={composeText.compose_video_progress()}
           className="h-2 w-40 accent-primary"
         />
-        <span>{m.compose_video_uploading({ percent })}</span>
+        <span>{composeText.compose_video_uploading({ percent })}</span>
       </div>
     );
   }
   if (phase.kind === 'processing') {
-    return <p className="text-muted-foreground text-xs">{m.compose_video_processing()}</p>;
+    return (
+      <p className="text-muted-foreground text-xs">{composeText.compose_video_processing()}</p>
+    );
   }
   if (phase.kind === 'ready') {
     const { durationMs } = phase.asset;
     return (
       <p className="text-muted-foreground text-xs">
         {durationMs === null
-          ? m.compose_video_ready()
-          : m.compose_video_ready_duration({ duration: formatDuration(durationMs, locale) })}
+          ? composeText.compose_video_ready()
+          : composeText.compose_video_ready_duration({
+              duration: formatDuration(durationMs, locale),
+            })}
       </p>
     );
   }
@@ -56,7 +61,7 @@ function PhaseStatus({
     <div role="alert" className="flex items-center gap-2 text-destructive text-xs">
       <span>{m.compose_video_error()}</span>
       <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={onRetry}>
-        {m.compose_video_retry()}
+        {composeText.compose_video_retry()}
       </Button>
     </div>
   );
@@ -79,13 +84,13 @@ export function VideoRow({
         src={entry.url}
         muted
         preload="metadata"
-        aria-label={m.compose_video_preview({ name: entry.file.name })}
+        aria-label={composeText.compose_video_preview({ name: entry.file.name })}
         className="size-24 rounded-md bg-muted object-cover"
       />
       <div className="flex min-w-48 flex-1 flex-col gap-2">
         <p className="break-all font-medium text-sm">{entry.file.name}</p>
         <PhaseStatus phase={entry.phase} disabled={disabled} onRetry={video.retry} />
-        <Label htmlFor={altId}>{m.compose_video_alt_label()}</Label>
+        <Label htmlFor={altId}>{composeText.compose_video_alt_label()}</Label>
         <textarea
           id={altId}
           value={video.altText}
@@ -96,7 +101,7 @@ export function VideoRow({
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring"
         />
         <p className="text-muted-foreground text-xs">
-          {m.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
+          {composeText.compose_alt_text_hint({ count: MAX_ALT_TEXT })}
         </p>
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -107,10 +112,10 @@ export function VideoRow({
             onChange={(event) => video.setAi(event.currentTarget.checked)}
             className="size-4 accent-primary"
           />
-          {m.compose_video_ai_label()}
+          {composeText.compose_video_ai_label()}
         </label>
         <p id={aiHintId} className="text-muted-foreground text-xs">
-          {marked ? m.compose_video_ai_marked() : m.compose_ai_generated_hint()}
+          {marked ? composeText.compose_video_ai_marked() : composeText.compose_ai_generated_hint()}
         </p>
         {entry.aiFailed && !marked ? (
           <div role="alert" className="flex items-center gap-2 text-destructive text-sm">
@@ -122,7 +127,7 @@ export function VideoRow({
               disabled={disabled}
               onClick={() => video.setAi(true)}
             >
-              {m.compose_video_retry()}
+              {composeText.compose_video_retry()}
             </Button>
           </div>
         ) : null}

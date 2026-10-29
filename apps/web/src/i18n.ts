@@ -6,18 +6,28 @@ export { baseLocale, isLocale, type Locale, locales };
 type Catalog = typeof en;
 
 // Paraglide's per-locale modules type `inputs` as required even for messages that take none.
-export type Messages = {
-  readonly [K in keyof Catalog]: Catalog[K] extends (inputs: infer I) => infer R
+export type MessagesOf<C> = {
+  readonly [K in keyof C]: C[K] extends (inputs: infer I) => infer R
     ? Partial<I> extends I
       ? (inputs?: I) => R
       : (inputs: I) => R
     : never;
 };
 
+export type Messages = MessagesOf<Catalog>;
+
+export interface RouteCatalogs {
+  readonly has: (locale: Locale) => boolean;
+  readonly load: (locale: Locale) => Promise<void>;
+  readonly apply: (locale: Locale) => void;
+}
+
 const messages = (catalog: Catalog): Messages => catalog as Messages;
 
 const english = messages(await import('@kronaut/i18n/messages/en'));
 const catalogs = new Map<Locale, Messages>([[baseLocale, english]]);
+const routeCatalogs = new Set<RouteCatalogs>();
+let active: Locale = baseLocale;
 
 export let m: Messages = english;
 
@@ -33,18 +43,32 @@ function importCatalog(locale: Locale): Promise<Messages> {
 }
 
 export function isLoaded(locale: Locale): boolean {
-  return catalogs.has(locale);
+  return catalogs.has(locale) && [...routeCatalogs].every((group) => group.has(locale));
 }
 
 export async function loadLocale(locale: Locale): Promise<void> {
-  if (catalogs.has(locale)) return;
-  catalogs.set(locale, await importCatalog(locale));
+  if (!catalogs.has(locale)) catalogs.set(locale, await importCatalog(locale));
+  await Promise.all([...routeCatalogs].map((group) => group.load(locale)));
+}
+
+function missingLocales(group: RouteCatalogs): Locale[] {
+  return [...catalogs.keys()].filter((locale) => !group.has(locale));
+}
+
+export async function registerRouteCatalogs(group: RouteCatalogs): Promise<void> {
+  for (let missing = missingLocales(group); missing.length > 0; missing = missingLocales(group)) {
+    await Promise.all(missing.map((locale) => group.load(locale)));
+  }
+  routeCatalogs.add(group);
+  group.apply(active);
 }
 
 export function applyLocale(locale: Locale): void {
   const catalog = catalogs.get(locale);
-  if (catalog === undefined) throw new Error(`locale ${locale} is not loaded`);
+  if (catalog === undefined || !isLoaded(locale)) throw new Error(`locale ${locale} is not loaded`);
   m = catalog;
+  active = locale;
+  for (const group of routeCatalogs) group.apply(locale);
 }
 
 export function pickLocale(userLocale: string | undefined, languages: readonly string[]): Locale {

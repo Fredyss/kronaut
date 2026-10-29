@@ -6,6 +6,7 @@ import { Temporal } from 'temporal-polyfill';
 import { type Channel, channelsQuery } from '../api.ts';
 import { preloadEditor } from '../compose/load.ts';
 import { useApiClient, useLocale } from '../context.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
 import { statusLabel } from '../routes/channels.tsx';
@@ -96,8 +97,10 @@ function ChannelList({ workspaceId }: { readonly workspaceId: string }) {
 export function CalendarSidebar({ workspaceId }: { readonly workspaceId: string | undefined }) {
   const [collapsed, setCollapsed] = useState(storedCollapsed);
   const panelId = useId();
-  const toggleLabel = collapsed ? m.calendar_sidebar_expand() : m.calendar_sidebar_collapse();
-  const create = m.calendar_create_post();
+  const toggleLabel = collapsed
+    ? calendarText.calendar_sidebar_expand()
+    : calendarText.calendar_sidebar_collapse();
+  const create = calendarText.calendar_create_post();
   return (
     <aside
       aria-label={m.nav_channels()}
@@ -146,7 +149,7 @@ export function CalendarSidebar({ workspaceId }: { readonly workspaceId: string 
       <div id={panelId} hidden={collapsed} className="flex flex-col gap-3">
         <Link to="/channels" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
           <Plus />
-          {m.calendar_add_channel()}
+          {calendarText.calendar_add_channel()}
         </Link>
         {workspaceId === undefined ? null : <ChannelList workspaceId={workspaceId} />}
       </div>

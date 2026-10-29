@@ -46,7 +46,8 @@
 - **Autosave:** IndexedDB on every change (1 s debounce) + server revision; a multi-tab conflict banner.
 - **Budgets** (gzipped, CI `size-limit`):
   - shell + calendar ≤ 150 KB
-  - message catalogs (en, sk, cs) lazy, ≤ 12 KB for en and ≤ 13 KB for sk and cs; en is preloaded
+  - shell message catalogs (en, sk, cs) lazy, ≤ 12 KB for en and ≤ 13 KB for sk and cs; en is preloaded
+  - each route catalog (per group and locale) ≤ 8 KB
   - CSS ≤ 25 KB
   - route chunks ≤ 40 KB
   - editor ≤ 130 KB (preloaded on hover)
@@ -65,6 +66,10 @@
   - Stored per user (`users.locale`); the first visit falls back to `Accept-Language`.
   - No locale in URLs (the app is behind login). Public review pages use the viewer's `Accept-Language`.
 - **Bundles:** only the active locale ships. Paraglide compiles one module per locale, so sk/cs add 0 KB to an English session. CI fails on a missing key in any locale.
+- **Route catalogs:** the strings of a lazy route ship with that route, not with the shell.
+  - Each group (`compose`, `calendar`, `media`, `inbox`, `settings`) is its own Paraglide project, `messages/<group>/{en,sk,cs}.json`, compiled to `src/paraglide-<group>/`, next to the shell project and the CLI one.
+  - A group's catalog for the active locale loads with its route's chunk. A language switch loads every group already in use before the UI changes language, so a screen never mixes languages.
+  - A message belongs to a group only when every use is inside that group's route modules. Anything shared, and every string the server uses (emails, API errors), stays in the shell catalog. A CI test enforces both.
 - **Provider errors (ADR-0038):**
   - Shown as class codes with a localised message and fix action; raw provider text only under "Technical details".
   - CI fails if a mapped code is missing in any locale.

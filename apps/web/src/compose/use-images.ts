@@ -1,5 +1,5 @@
 import { useLocale } from '../context.ts';
-import { m } from '../i18n.ts';
+import { m as composeText } from '../i18n/compose.ts';
 import type { PickedImage } from './contents.ts';
 import { fileProblem, MAX_IMAGE_BYTES, MAX_IMAGES, thumbnail } from './media.ts';
 
@@ -36,11 +36,11 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
     const room = MAX_IMAGES - images.length;
     for (const file of files) {
       const problem = fileProblem(file);
-      if (problem === 'type') found.push(m.compose_image_bad_type({ name: file.name }));
+      if (problem === 'type') found.push(composeText.compose_image_bad_type({ name: file.name }));
       else if (problem === 'size') {
-        found.push(m.compose_image_too_big({ name: file.name, max: maxSize }));
+        found.push(composeText.compose_image_too_big({ name: file.name, max: maxSize }));
       } else if (accepted.length >= room) {
-        found.push(m.compose_images_limit({ count: MAX_IMAGES }));
+        found.push(composeText.compose_images_limit({ count: MAX_IMAGES }));
         break;
       } else
         accepted.push({
