@@ -12,6 +12,8 @@ import { enqueuePublish } from '../jobs.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { type DestinationUpdate, transition } from '../publish/finalize.ts';
 import { approvalStatus } from '../publish/principal.ts';
+import { RepeatInput } from '../series/repeat.ts';
+import { startSeries } from '../series/start.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';
 import type { PostRouteDeps } from './deps.ts';
 import { discardPublishProgress, type ProgressReset } from './destinations.ts';
@@ -62,7 +64,12 @@ export const postScheduleRoute = defineRoute({
   action: 'posts:schedule',
   params: PostParams,
   body: z.discriminatedUnion('mode', [
-    z.object({ ...ScheduleCommon, mode: z.literal('instant'), ...InstantFields }),
+    z.object({
+      ...ScheduleCommon,
+      mode: z.literal('instant'),
+      ...InstantFields,
+      repeat: RepeatInput.optional(),
+    }),
     z.strictObject({ ...ScheduleCommon, mode: z.literal('asap') }),
     z.strictObject({ ...ScheduleCommon, mode: z.literal('queue') }),
   ]),
@@ -70,11 +77,13 @@ export const postScheduleRoute = defineRoute({
   idempotency: true,
   summary: 'Schedule a post',
   description:
-    "Freezes every draft destination and schedules it, at a local time in a time zone, as soon as possible, or at the next free slot of each destination's channel queue (422 queue_empty or queue_full names the channel).",
+    "Freezes every draft destination and schedules it, at a local time in a time zone, as soon as possible, or at the next free slot of each destination's channel queue (422 queue_empty or queue_full names the channel). With repeat (instant only) the post becomes occurrence 1 of a series that starts at that local time (422 invalid_repeat; 409 when the post is already in a series).",
   tags: ['posts'],
 });
 
 type ScheduleBody = z.output<typeof postScheduleRoute.body>;
+
+export type ScheduleActor = Pick<RequestContext, 'principal' | 'now' | 'authorize'>;
 
 export interface ScheduleScope {
   readonly workspaceId: string;
@@ -116,7 +125,7 @@ function toDate(instant: Temporal.Instant): Date {
 // checked first and the approval again after the freeze, inside the same transaction.
 export async function authorizeSchedule(
   trx: TenantDb,
-  ctx: RequestContext,
+  ctx: ScheduleActor,
   { workspaceId, locked, units }: ScheduleScope,
 ): Promise<ScheduleAuth> {
   const resource = { workspaceId, postId: locked.id, units };
@@ -243,6 +252,10 @@ export function scheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
           body,
         };
         await scheduleLocked(trx, run, rows);
+        if (body.mode === 'instant' && body.repeat !== undefined) {
+          const resource = { workspaceId, postId, units };
+          await startSeries(trx, ctx, { resource, body, repeat: body.repeat });
+        }
         return await readPost(trx, workspaceId, postId);
       });
       return { body: post };

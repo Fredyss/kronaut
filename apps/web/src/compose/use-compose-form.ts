@@ -11,6 +11,7 @@ import { type Content, effective } from './contents.ts';
 import { isBlank } from './doc.ts';
 import { blankItemProblem } from './issues.ts';
 import { useQueueChoice } from './queue-choice.ts';
+import { type RepeatControl, useRepeatControl } from './repeat.ts';
 import {
   type ComposeContent,
   type ComposeDestination,
@@ -21,7 +22,17 @@ import {
 import { type ContentsState, useContents } from './use-contents.ts';
 import type { VideoRegistry } from './use-video.ts';
 import { waitProblem } from './video-text.ts';
-import { resolveWhen, useWhen } from './when.ts';
+import { resolveWhen, useWhen, type WhenState } from './when.ts';
+
+type When = ReturnType<typeof resolveWhen>;
+
+function withRepeat(resolved: When, { preview: result }: RepeatControl): When {
+  if (!('when' in resolved) || resolved.when.mode !== 'instant') return resolved;
+  if ('problem' in result) return result;
+  return result.repeat === undefined
+    ? resolved
+    : { when: { ...resolved.when, repeat: result.repeat } };
+}
 
 function usePublish(workspaceId: string) {
   const client = useApiClient();
@@ -125,6 +136,17 @@ function useApprovalMode(workspaceId: string, failure: SubmitError | null) {
   return { request, offer, force: () => setForced(true), note: { value: note, set: setNote } };
 }
 
+function resolveFull(when: WhenState, repeat: RepeatControl): When {
+  return withRepeat(resolveWhen(when.mode, when.date, when.time, when.tz), repeat);
+}
+
+function usePlanQueue(workspaceId: string, list: readonly Channel[], plan: Plan) {
+  return useQueueChoice(
+    workspaceId,
+    list.filter((channel) => plan.destinations.some((d) => d.accountId === channel.id)),
+  );
+}
+
 export function useComposeForm(workspaceId: string, at?: string) {
   const client = useApiClient();
   const channels = useQuery(channelsQuery(client, workspaceId));
@@ -132,7 +154,7 @@ export function useComposeForm(workspaceId: string, at?: string) {
   const approval = useApprovalMode(workspaceId, failure);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const when = useWhen(at);
-  const { mode, date, time, tz } = when;
+  const repeat = useRepeatControl(when.date);
   const [formError, setFormError] = useState<string | null>(null);
   const [limitFlags, setLimitFlags] = useState<readonly string[]>([]);
   const pending = run.isPending;
@@ -142,10 +164,7 @@ export function useComposeForm(workspaceId: string, at?: string) {
   const flagged = [...limitFlags, ...content.unusable];
   const blocked = flagged.length > 0;
   const plan = toPlan(list, content, selected);
-  const queue = useQueueChoice(
-    workspaceId,
-    list.filter((channel) => plan.destinations.some((d) => d.accountId === channel.id)),
-  );
+  const queue = usePlanQueue(workspaceId, list, plan);
 
   const send = (asRequest: boolean) => {
     if (pending || blocked) return;
@@ -153,10 +172,10 @@ export function useComposeForm(workspaceId: string, at?: string) {
     if (empty !== null) return setFormError(empty);
     const waiting = videoProblem(plan, content.contents.base, content.videos, locale);
     if (waiting !== null) return setFormError(waiting);
-    if (mode === 'queue' && queue.empty !== undefined) {
+    if (when.mode === 'queue' && queue.empty !== undefined) {
       return setFormError(m.compose_queue_empty({ channel: queue.empty.displayName }));
     }
-    const resolved = resolveWhen(mode, date, time, tz);
+    const resolved = resolveFull(when, repeat);
     if ('problem' in resolved) return setFormError(resolved.problem);
     setFormError(null);
     run.mutate({
@@ -183,6 +202,7 @@ export function useComposeForm(workspaceId: string, at?: string) {
     selected,
     setSelected,
     when,
+    repeat,
     formError,
     blocked,
     flagged,

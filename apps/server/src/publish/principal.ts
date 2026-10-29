@@ -26,7 +26,7 @@ export interface ScheduleCheck {
 
 const DENIED: Decision = { kind: 'deny', code: 'not_permitted' };
 
-async function schedulerPrincipal(
+export async function schedulerPrincipal(
   trx: TenantDb,
   workspaceId: string,
   scheduler: Scheduler,

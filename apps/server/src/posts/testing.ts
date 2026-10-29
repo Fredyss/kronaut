@@ -31,6 +31,7 @@ import {
   fakeProvider,
 } from '../publish/testing.ts';
 import { queueRoutes } from '../queue/routes.ts';
+import { seriesRoutes } from '../series/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
 import type { PostDto } from './dto.ts';
 import { postRoutes } from './routes.ts';
@@ -216,6 +217,7 @@ export async function startPosts(
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
     ...queueRoutes(),
+    ...seriesRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({
       providers,

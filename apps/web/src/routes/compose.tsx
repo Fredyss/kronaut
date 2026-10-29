@@ -6,6 +6,7 @@ import { meQuery } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
 import { Failure } from '../compose/failure.tsx';
+import { REPEAT_ROLES } from '../compose/repeat.ts';
 import { useComposeForm } from '../compose/use-compose-form.ts';
 import { submitLabel } from '../compose/when.ts';
 import { WhenFieldset } from '../compose/when-fieldset.tsx';
@@ -49,9 +50,11 @@ function SubmitRow({
 function Composer({
   workspaceId,
   at,
+  canRepeat,
 }: {
   readonly workspaceId: string;
   readonly at?: string | undefined;
+  readonly canRepeat: boolean;
 }) {
   const {
     channels,
@@ -60,6 +63,7 @@ function Composer({
     selected,
     setSelected,
     when,
+    repeat,
     formError,
     blocked,
     flagged,
@@ -102,6 +106,7 @@ function Composer({
         pending={pending}
         note={approval.request ? approval.note : undefined}
         queue={approval.request ? undefined : queue}
+        repeat={canRepeat ? repeat : undefined}
       />
 
       {formError === null ? null : (
@@ -131,7 +136,9 @@ export function ComposePage() {
         <h1 className="font-semibold text-2xl tracking-tight">{composeText.compose_title()}</h1>
         <p className="text-muted-foreground text-sm">{composeText.compose_subtitle()}</p>
       </header>
-      {workspace === undefined ? null : <Composer workspaceId={workspace.id} at={at} />}
+      {workspace === undefined ? null : (
+        <Composer workspaceId={workspace.id} at={at} canRepeat={REPEAT_ROLES.has(workspace.role)} />
+      )}
     </section>
   );
 }
