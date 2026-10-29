@@ -17,7 +17,7 @@ export const GRAPH = 'https://graph.instagram.com/v26.0';
 export const MEDIA = `${GRAPH}/${IG_ID}/media?access_token=${TOKEN}`;
 export const LIMIT = `${GRAPH}/${IG_ID}/content_publishing_limit?fields=quota_usage%2Cconfig&access_token=${TOKEN}`;
 export const PUBLISH = `${GRAPH}/${IG_ID}/media_publish?access_token=${TOKEN}`;
-export const RECENT = `${GRAPH}/${IG_ID}/media?fields=id%2Ctimestamp%2Cmedia_type%2Cmedia_product_type%2Cpermalink%2Calt_text&limit=10&access_token=${TOKEN}`;
+export const RECENT = `${GRAPH}/${IG_ID}/media?fields=id%2Ctimestamp%2Cmedia_type%2Cpermalink%2Calt_text&limit=10&access_token=${TOKEN}`;
 export const PERMALINK = 'https://www.instagram.com/p/DAbc123/';
 export const SENT_AT = '2026-10-21T12:00:00.000Z';
 

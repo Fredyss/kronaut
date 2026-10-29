@@ -177,7 +177,7 @@ describe('instagram reel', () => {
     });
   });
 
-  it('publishes a finished reel and recovers only a REELS candidate', async () => {
+  it('publishes a finished reel and recovers the only video sent after it', async () => {
     const http = scriptedHttp([
       status('17900000000000021', 'FINISHED'),
       quota(0),
@@ -192,28 +192,31 @@ describe('instagram reel', () => {
     });
     http.assertDone();
 
-    const feedVideo = {
-      id: '18000000000000005',
-      timestamp: '2026-10-21T12:00:03+0000',
-      media_type: 'VIDEO',
-      media_product_type: 'FEED',
-    };
     const ours = {
-      ...feedVideo,
       id: '18000000000000007',
       timestamp: '2026-10-21T12:00:04+0000',
-      media_product_type: 'REELS',
+      media_type: 'VIDEO',
       permalink: PERMALINK,
     };
-    const recovered = scriptedHttp([
-      status('17900000000000021', 'PUBLISHED'),
-      { url: RECENT, json: { data: [ours, feedVideo] } },
-    ]);
+    const others = [
+      { id: '18000000000000006', timestamp: '2026-10-21T12:00:06+0000', media_type: 'IMAGE' },
+      { id: '18000000000000005', timestamp: '2026-10-21T11:40:00+0000', media_type: 'VIDEO' },
+    ];
     const published = reel({ container: '17900000000000021', sentAt: SENT_AT });
+    const recover = (data: readonly object[]) =>
+      scriptedHttp([status('17900000000000021', 'PUBLISHED'), { url: RECENT, json: { data } }]);
+    const recovered = recover([ours, ...others]);
     expect(
       await instagramRuntime.publish(testPublishContext(recovered, media).ctx, published),
     ).toEqual({ kind: 'published', remoteId: '18000000000000007', url: PERMALINK });
     recovered.assertDone();
     expect(recovered.calls.map((call) => call.url)).not.toContain(MEDIA);
+
+    const twoReels = recover([ours, { ...ours, id: '18000000000000008' }]);
+    const failure = await failureOf(
+      instagramRuntime.publish(testPublishContext(twoReels, media).ctx, published),
+    );
+    expect(failure).toMatchObject({ kind: 'ambiguous', detail: 'media_unrecovered' });
+    expect(twoReels.calls.map((call) => call.url)).not.toContain(MEDIA);
   });
 });
