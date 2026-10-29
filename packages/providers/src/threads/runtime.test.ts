@@ -56,6 +56,12 @@ const longLived: ScriptedExchange = {
   json: { access_token: 'long-1', token_type: 'bearer', expires_in: LONG_LIVED_S },
 };
 
+const GRANTED = [...SCOPES, 'threads_manage_insights'];
+const debugToken: ScriptedExchange = {
+  url: /^https:\/\/graph\.threads\.com\/v1\.0\/debug_token\?/,
+  json: { data: { type: 'USER', is_valid: true, scopes: GRANTED, user_id: USER_ID } },
+};
+
 function me(name?: string | null): ScriptedExchange {
   return {
     url: /^https:\/\/graph\.threads\.com\/v1\.0\/me\?/,
@@ -118,7 +124,7 @@ describe('threads connect', () => {
     expect(Object.fromEntries(url.searchParams)).toEqual({
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
-      scope: 'threads_basic,threads_content_publish,threads_manage_replies',
+      scope: 'threads_basic,threads_content_publish,threads_manage_replies,threads_manage_insights',
       response_type: 'code',
       state: 'state-1',
     });
@@ -127,11 +133,15 @@ describe('threads connect', () => {
   });
 
   it('strips #_, exchanges the code, upgrades it to a long-lived token and reads /me', async () => {
-    const http = scriptedHttp([codeExchange, longLived, me('  Alice  ')]);
+    const http = scriptedHttp([codeExchange, longLived, me('  Alice  '), debugToken]);
     const account = await finish(http, { code: 'code-1#_', state: 'state-1' });
     http.assertDone();
 
-    const [code, upgrade, profile] = http.calls;
+    const [code, upgrade, profile, debug] = http.calls;
+    expect(query(debug)).toEqual({
+      input_token: 'long-1',
+      access_token: `TH|${CLIENT_ID}|${SECRET}`,
+    });
     expect(code?.headers['content-type']).toBe('application/x-www-form-urlencoded');
     expect(Object.fromEntries(new URLSearchParams(String(code?.body)))).toEqual({
       client_id: CLIENT_ID,
@@ -163,22 +173,34 @@ describe('threads connect', () => {
       handle: '@alice.example',
       displayName: 'Alice',
       profileUrl: 'https://www.threads.com/@alice.example',
-      capabilities: { replies: true },
-      grantedScopes: SCOPES,
+      capabilities: { replies: true, insights: true },
+      grantedScopes: GRANTED,
       accessExpiresAt: undefined,
       credentials: {
         userId: USER_ID,
         accessToken: 'long-1',
         issuedAt: TEST_NOW.toString(),
-        scopes: SCOPES,
+        scopes: GRANTED,
       },
     });
     expect(threadsRuntime.parseCredentials(account.credentials)).toEqual(account.credentials);
   });
 
+  it('connects without insights when the scope check fails or the token is invalid', async () => {
+    const refused = { ...debugToken, status: 400, json: { error: { code: 190 } } };
+    const invalid = { ...debugToken, json: { data: { is_valid: false, scopes: GRANTED } } };
+    for (const check of [refused, invalid]) {
+      const http = scriptedHttp([codeExchange, longLived, me('Alice'), check]);
+      const account = await finish(http, { code: 'code-1', state: 'state-1' });
+      http.assertDone();
+      expect(account.credentials.scopes).toEqual(SCOPES);
+      expect(account.capabilities).toEqual({ replies: true, insights: false });
+    }
+  });
+
   it('falls back to the username when /me has no usable name', async () => {
     for (const name of [undefined, null, ' ']) {
-      const http = scriptedHttp([codeExchange, longLived, me(name)]);
+      const http = scriptedHttp([codeExchange, longLived, me(name), debugToken]);
       const account = await finish(http, { code: 'code-1', state: 'state-1' });
       expect(account.displayName).toBe('alice.example');
     }

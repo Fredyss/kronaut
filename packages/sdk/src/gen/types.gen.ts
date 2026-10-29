@@ -745,6 +745,7 @@ export type ChannelsListResponses = {
             displayName: string;
             handle: string | null;
             id: string;
+            insights: boolean;
             lastErrorCode: string | null;
             postTypes: Array<{
                 comment: {
@@ -2783,7 +2784,7 @@ export type AnalyticsPostMetricsResponses = {
                 };
             };
             snapshots: Array<{
-                metric: 'likes' | 'reposts' | 'replies' | 'quotes' | 'comments' | 'shares' | 'reactions' | 'bookmarks' | 'views';
+                metric: 'likes' | 'reposts' | 'replies' | 'quotes' | 'comments' | 'shares' | 'reactions' | 'bookmarks' | 'views' | 'reach';
                 observedAt: string;
                 value: number | null;
             }>;

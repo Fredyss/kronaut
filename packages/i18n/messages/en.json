@@ -466,6 +466,7 @@
         "metric=reactions": "Reactions",
         "metric=bookmarks": "Bookmarks",
         "metric=views": "Views",
+        "metric=reach": "Reach",
         "metric=*": "Metric"
       }
     }
@@ -474,5 +475,6 @@
   "analytics_not_reported": "not reported",
   "analytics_as_of": "As of {when}",
   "channels_followers": "Followers: {value}",
-  "channels_followers_change": "{change} in 30 days"
+  "channels_followers_change": "{change} in 30 days",
+  "channels_insights_reconnect": "Reconnect to add insights"
 }

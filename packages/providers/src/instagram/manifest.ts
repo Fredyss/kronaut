@@ -116,7 +116,7 @@ export const instagramManifest: ProviderManifest<InstagramSettings> = {
   ],
   concurrency: 1,
   preview: 'media-grid',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   egressHosts: ['api.instagram.com', 'graph.instagram.com'],
   accountPostType: commentPostType,
 };

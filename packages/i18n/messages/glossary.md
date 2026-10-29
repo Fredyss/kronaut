@@ -27,6 +27,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | evergreen post | nadčasový príspevok | nadčasový příspěvek | A post in the pool that refills free queue slots with copies. |
 | analytics | štatistiky | statistiky | The counts a network reports for a published post or a channel. |
 | follower | sledovateľ (sledovatelia) | sledující | An account that follows a channel. |
+| insights | podrobné štatistiky | podrobné statistiky | The extra counts a Meta network gives only with its insights permission. |
+| reach | dosah | dosah | Unique accounts that saw a post, as the network estimates it. |
 
 ## Style
 

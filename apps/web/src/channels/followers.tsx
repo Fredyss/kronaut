@@ -32,9 +32,39 @@ function Count({ value }: { readonly value: number | null }) {
 interface FollowersProps {
   readonly workspaceId: string;
   readonly channel: Channel;
+  readonly onReconnect: (() => void) | null;
+  readonly pending: boolean;
 }
 
-export function Followers({ workspaceId, channel }: FollowersProps) {
+function InsightsHint({ channel, onReconnect, pending }: Omit<FollowersProps, 'workspaceId'>) {
+  if (onReconnect === null || channel.status !== 'active' || channel.insights) return null;
+  if (providerUi(channel.provider).insights !== true) return null;
+  return (
+    <button
+      type="button"
+      className="text-muted-foreground underline underline-offset-4 disabled:opacity-50"
+      disabled={pending}
+      onClick={onReconnect}
+    >
+      {m.channels_insights_reconnect()}
+    </button>
+  );
+}
+
+export function Followers(props: FollowersProps) {
+  return (
+    <>
+      <FollowerCount {...props} />
+      <InsightsHint
+        channel={props.channel}
+        onReconnect={props.onReconnect}
+        pending={props.pending}
+      />
+    </>
+  );
+}
+
+function FollowerCount({ workspaceId, channel }: FollowersProps) {
   const client = useApiClient();
   const signed = useSignedFormat();
   const enabled = channel.status === 'active' && providerUi(channel.provider).followers === true;

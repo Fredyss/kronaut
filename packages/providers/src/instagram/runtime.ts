@@ -6,7 +6,8 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { commentCapabilities } from '../_kit/meta-comment.ts';
+import { scopeCapabilities } from '../_kit/meta-scopes.ts';
+import { accountMetrics, mediaAnalytics } from './analytics.ts';
 import type { InstagramSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
@@ -15,6 +16,7 @@ import {
   GRAPH_VERSION,
   graphGet,
   graphUrl,
+  INSIGHTS_SCOPE,
   longLivedToken,
   PROFILE_FIELDS,
   PUBLISH_SCOPE,
@@ -123,7 +125,10 @@ export const instagramRuntime: ProviderRuntime<InstagramCredentials, InstagramSe
         handle: me.username,
         displayName: name === undefined || name === '' ? me.username : name,
         profileUrl: `https://www.instagram.com/${encodeURIComponent(me.username)}/`,
-        capabilities: commentCapabilities(exchanged.permissions, COMMENTS_SCOPE),
+        capabilities: scopeCapabilities(exchanged.permissions, {
+          comments: COMMENTS_SCOPE,
+          insights: INSIGHTS_SCOPE,
+        }),
       },
     ];
   },
@@ -153,4 +158,6 @@ export const instagramRuntime: ProviderRuntime<InstagramCredentials, InstagramSe
 
   publish: publishMedia,
   verify: verifyMedia,
+  analytics: mediaAnalytics,
+  accountMetrics,
 };

@@ -21,6 +21,7 @@ const SCOPES = [
   'pages_manage_posts',
   'pages_read_engagement',
   'pages_manage_engagement',
+  'read_insights',
 ];
 const EXPIRES_AT = 1_798_000_000;
 const NEXT = `${GRAPH}/me/accounts?access_token=user-long-1&limit=100&after=CURSOR`;
@@ -127,7 +128,8 @@ describe('facebook connect', () => {
       redirect_uri: REDIRECT_URI,
       state: 'state-1',
       response_type: 'code',
-      scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement',
+      scope:
+        'pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement,read_insights',
       auth_type: 'rerequest',
     });
     expect(started.pending).toEqual({});
@@ -204,8 +206,8 @@ describe('facebook connect', () => {
         profileUrl: 'https://www.facebook.com/alpha',
         grantedScopes: SCOPES,
         accessExpiresAt: Temporal.Instant.fromEpochMilliseconds(EXPIRES_AT * 1000),
-        credentials: { accessToken: 'page-token-101' },
-        capabilities: { comments: true },
+        credentials: { accessToken: 'page-token-101', scopes: SCOPES },
+        capabilities: { comments: true, insights: true },
       },
       {
         providerAccountId: '103',
@@ -213,8 +215,8 @@ describe('facebook connect', () => {
         accountKind: 'page',
         displayName: 'Page 103',
         grantedScopes: ['pages_show_list'],
-        credentials: { accessToken: 'page-token-103' },
-        capabilities: { comments: false },
+        credentials: { accessToken: 'page-token-103', scopes: ['pages_show_list'] },
+        capabilities: { comments: false, insights: false },
       },
     ]);
     for (const account of connected)

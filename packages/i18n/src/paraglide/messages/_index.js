@@ -85,6 +85,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
+/** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
 /** @typedef {{}} Channels_QueueInputs */
@@ -390,6 +391,7 @@ export const analytics_as_of = /** @type {((inputs: Analytics_As_OfInputs, optio
 * | "reactions" | "Reactions" |
 * | "bookmarks" | "Bookmarks" |
 * | "views" | "Views" |
+* | "reach" | "Reach" |
 * | * | "Metric" |
 *
 * @param {Analytics_MetricInputs} inputs
@@ -1604,6 +1606,21 @@ export const channels_handle_placeholder = /** @type {((inputs?: Channels_Handle
 	if (locale === "sk") return __sk.channels_handle_placeholder(inputs)
 	if (locale === "cs") return __cs.channels_handle_placeholder(inputs)
 	return __en.channels_handle_placeholder(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reconnect to add insights" |
+*
+* @param {Channels_Insights_ReconnectInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_insights_reconnect = /** @type {((inputs?: Channels_Insights_ReconnectInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Insights_ReconnectInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_insights_reconnect(inputs)
+	if (locale === "cs") return __cs.channels_insights_reconnect(inputs)
+	return __en.channels_insights_reconnect(inputs)
 });
 /**
 * | output |

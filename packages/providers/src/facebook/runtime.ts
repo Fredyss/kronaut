@@ -7,8 +7,8 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { commentCapabilities } from '../_kit/meta-comment.ts';
 import { permanent } from '../_kit/meta-graph.ts';
+import { scopeCapabilities } from '../_kit/meta-scopes.ts';
 import { postAnalytics } from './analytics.ts';
 import type { FacebookSettings } from './manifest.ts';
 import {
@@ -17,6 +17,7 @@ import {
   appSecret,
   ENGAGEMENT_SCOPE,
   exchangeCode,
+  INSIGHTS_SCOPE,
   inspectPageToken,
   listPages,
   longLivedUserToken,
@@ -31,7 +32,10 @@ import { verifyPost } from './verify.ts';
 const CREATE_CONTENT = 'CREATE_CONTENT';
 const TOKEN_CHECKS_AT_ONCE = 5;
 
-export const facebookCredentials = z.object({ accessToken: z.string().min(1) });
+export const facebookCredentials = z.object({
+  accessToken: z.string().min(1),
+  scopes: z.array(z.string()).optional(),
+});
 export type FacebookCredentials = z.infer<typeof facebookCredentials>;
 
 type PublishablePage = Page & { readonly access_token: string };
@@ -60,7 +64,10 @@ async function connectedPage(
   const token = await inspectPageToken(ctx, app, page.access_token);
   const profileUrl = httpsUrl(page.link);
   return {
-    credentials: facebookCredentials.parse({ accessToken: page.access_token }),
+    credentials: facebookCredentials.parse({
+      accessToken: page.access_token,
+      scopes: token.scopes,
+    }),
     grantedScopes: token.scopes,
     ...(token.expiresAt > 0
       ? { accessExpiresAt: Temporal.Instant.fromEpochMilliseconds(token.expiresAt * 1000) }
@@ -71,7 +78,10 @@ async function connectedPage(
     displayName: page.name,
     ...(page.username === undefined || page.username === '' ? {} : { handle: page.username }),
     ...(profileUrl === undefined ? {} : { profileUrl }),
-    capabilities: commentCapabilities(token.scopes, ENGAGEMENT_SCOPE),
+    capabilities: scopeCapabilities(token.scopes, {
+      comments: ENGAGEMENT_SCOPE,
+      insights: INSIGHTS_SCOPE,
+    }),
   };
 }
 

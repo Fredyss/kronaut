@@ -111,6 +111,10 @@ printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
 ```
 
+### Meta analytics
+
+Kronaut reads post insights from Instagram, Threads and Facebook. Every Meta connect requests `instagram_business_manage_insights`, `threads_manage_insights` or `read_insights`, so add them to your Meta app's use cases before you upgrade; otherwise Meta's login dialog may reject the connect. Channels connected earlier keep working and show "Reconnect to add insights" until you reconnect them. See [Operations](../architecture/11-operations.md) for the full permission lists.
+
 ### Facebook Pages
 
 Kronaut connects Facebook Pages, not personal profiles. One login can add several Pages: Meta's login dialog asks which Pages to share, and each ticked Page you can create content on becomes its own channel.
@@ -118,7 +122,7 @@ Kronaut connects Facebook Pages, not personal profiles. One login can add severa
 - **In the Meta app:**
   - Add Facebook Login (or Facebook Login for Business).
   - Set the Valid OAuth Redirect URI to `https://kronaut.example.com/v1/oauth/facebook/callback`, using your own host. It must match exactly.
-  - Request the `pages_show_list`, `pages_manage_posts`, `pages_read_engagement` and `pages_manage_engagement` permissions.
+  - Request the `pages_show_list`, `pages_manage_posts`, `pages_read_engagement`, `pages_manage_engagement` and `read_insights` permissions.
   - Register the app with its Meta app ID and app secret, using the `register facebook` command above.
 - **Access:**
   - In Development mode, anyone with a role on the app (admin, developer or tester) can connect the Pages they manage. That needs no App Review.

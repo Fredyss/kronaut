@@ -31,13 +31,6 @@ export function firstComment(text: readonly TextLimit[]): NonNullable<PostTypeSp
   return { text, steps: COMMENT_STEPS };
 }
 
-export function commentCapabilities(
-  scopes: readonly string[],
-  scope: string,
-): Readonly<Record<string, unknown>> {
-  return { comments: scopes.includes(scope) };
-}
-
 export function commentPostType(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec {
   if (commentsGranted.safeParse(capabilities).success) return postType;
   const { comment: _comment, ...rest } = postType;

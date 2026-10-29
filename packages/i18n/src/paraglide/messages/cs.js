@@ -83,6 +83,7 @@
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
+/** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
 /** @typedef {{}} Channels_QueueInputs */
@@ -353,6 +354,7 @@ export const analytics_metric = /** @type {(inputs: Analytics_MetricInputs) => L
 	if (i?.metric === "reactions") return /** @type {LocalizedString} */ (`Reakce`);
 	if (i?.metric === "bookmarks") return /** @type {LocalizedString} */ (`Záložky`);
 	if (i?.metric === "views") return /** @type {LocalizedString} */ (`Zobrazení`);
+	if (i?.metric === "reach") return /** @type {LocalizedString} */ (`Dosah`);
 	return /** @type {LocalizedString} */ (`Metrika`)
 };
 
@@ -686,6 +688,10 @@ export const channels_handle_label = /** @type {(inputs: Channels_Handle_LabelIn
 
 export const channels_handle_placeholder = /** @type {(inputs: Channels_Handle_PlaceholderInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`vasejmeno.bsky.social`)
+};
+
+export const channels_insights_reconnect = /** @type {(inputs: Channels_Insights_ReconnectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Znovu připojte kanál a získejte podrobné statistiky`)
 };
 
 export const channels_not_set_up = /** @type {(inputs: Channels_Not_Set_UpInputs) => LocalizedString} */ () => {

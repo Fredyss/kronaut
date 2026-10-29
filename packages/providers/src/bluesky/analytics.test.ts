@@ -24,7 +24,7 @@ const GET_POSTS = `${PUBLIC_APPVIEW}/xrpc/app.bsky.feed.getPosts?`;
 
 function analytics(http: ReturnType<typeof scriptedHttp>, remoteIds: readonly string[]) {
   if (blueskyRuntime.analytics === undefined) throw new Error('bluesky reads analytics');
-  return blueskyRuntime.analytics(testBaseContext(http), { ...base, remoteIds });
+  return blueskyRuntime.analytics(testBaseContext(http), { ...base, remoteIds, postTypes: {} });
 }
 
 describe('bluesky analytics', () => {

@@ -82,7 +82,7 @@ export const threadsManifest: ProviderManifest<ThreadsSettings> = {
   ],
   concurrency: 1,
   preview: 'short-feed',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   egressHosts: ['threads.com', 'graph.threads.com'],
   accountPostType,
 };
