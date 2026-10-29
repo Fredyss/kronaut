@@ -1,5 +1,6 @@
 import { type AccountMetrics, encodePublicId, isProviderFailure } from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
+import { sql } from 'kysely';
 import { createBaseContext, type ProviderEntry } from '../providers.ts';
 import {
   type ChannelRef,
@@ -11,7 +12,7 @@ import {
   utcDay,
   utcDayOf,
 } from './source.ts';
-import { storedValue } from './store.ts';
+import { MAX_ATTEMPTS, storedValue } from './store.ts';
 
 const MAX_CHANNELS = 50;
 const SYSTEM: Actor = { kind: 'system' };
@@ -66,9 +67,26 @@ async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef
     .insertInto('account_metric_pulls')
     .values({ workspace_id: workspaceId, social_account_id: accountId, checked_on: day })
     .onConflict((oc) =>
-      oc.columns(['workspace_id', 'social_account_id']).doUpdateSet({ checked_on: day }),
+      oc
+        .columns(['workspace_id', 'social_account_id'])
+        .doUpdateSet({ checked_on: day, attempts: 0 }),
     )
     .execute();
+}
+
+async function countAttempt(trx: TenantDb, channel: ChannelRef, day: string) {
+  const { workspaceId, accountId } = channel;
+  const row = await trx
+    .insertInto('account_metric_pulls')
+    .values({ workspace_id: workspaceId, social_account_id: accountId, attempts: 1 })
+    .onConflict((oc) =>
+      oc
+        .columns(['workspace_id', 'social_account_id'])
+        .doUpdateSet({ attempts: sql`account_metric_pulls.attempts + 1` }),
+    )
+    .returning('attempts')
+    .executeTakeFirstOrThrow();
+  if (row.attempts >= MAX_ATTEMPTS) await markChecked(trx, channel, day);
 }
 
 async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChannel[]> {
@@ -120,6 +138,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
   const ctx = createBaseContext(channel.entry, deps.logger, new AbortController().signal, deps.now);
   run.counts.followerChecks++;
   let metrics: AccountMetrics | null = null;
+  let transient = false;
   try {
     metrics = await read(ctx, channel.source);
   } catch (err) {
@@ -133,9 +152,11 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
       'the follower count could not be read',
     );
     if (err.error.kind === 'rate_limited') return;
+    transient = err.error.kind === 'transient';
   }
   const readAt = utcDayOf(deps.now());
   await deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
+    if (transient) return await countAttempt(trx, channel, readAt.day);
     if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }

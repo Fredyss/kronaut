@@ -61,7 +61,8 @@ GRANT SELECT, INSERT, UPDATE ON destination_metric_pulls TO kronaut_app;
 CREATE TABLE account_metric_pulls (
   workspace_id uuid NOT NULL REFERENCES workspaces ON DELETE CASCADE,
   social_account_id uuid NOT NULL,
-  checked_on date NOT NULL,
+  checked_on date,
+  attempts smallint NOT NULL DEFAULT 0 CHECK (attempts >= 0),
   PRIMARY KEY (workspace_id, social_account_id),
   FOREIGN KEY (workspace_id, social_account_id) REFERENCES social_accounts ON DELETE CASCADE
 );

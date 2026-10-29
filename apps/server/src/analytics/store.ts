@@ -5,6 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 import { PULL_OFFSETS_HOURS } from './seed.ts';
 
 export const MAX_ATTEMPTS = 3;
+const MAX_DEFER_HOURS = 3;
 
 export interface DueRow {
   readonly destinationId: string;
@@ -214,7 +215,9 @@ export async function settlePull(
 function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
   if (error?.kind !== 'rate_limited') return new Date(now.add({ hours: 1 }).epochMilliseconds);
   const floor = now.add({ minutes: 15 });
-  const at = Temporal.Instant.compare(error.resetAt, floor) > 0 ? error.resetAt : floor;
+  const ceiling = now.add({ hours: MAX_DEFER_HOURS });
+  const reset = Temporal.Instant.compare(error.resetAt, ceiling) < 0 ? error.resetAt : ceiling;
+  const at = Temporal.Instant.compare(reset, floor) > 0 ? reset : floor;
   return new Date(at.epochMilliseconds);
 }
 

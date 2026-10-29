@@ -300,14 +300,13 @@ describe('analytics pulls', () => {
     expect(calls()).toBe(2);
     expect(await rows()).toEqual([{ day: '2027-02-01', metric: 'followers', value: '10' }]);
     followerError = { kind: 'transient' };
-    await pullAt(day.add({ hours: 48 }));
-    await pullAt(day.add({ hours: 48, minutes: 15 }));
-    expect(calls()).toBe(3);
+    for (let run = 0; run < 4; run++) await pullAt(day.add({ hours: 48, minutes: 15 * run }));
+    expect(calls()).toBe(5);
     followerError = { kind: 'rate_limited', scope: 'app', resetAt: day.add({ hours: 73 }) };
     await pullAt(day.add({ hours: 72 }));
     await pullAt(day.add({ hours: 72, minutes: 15 }));
     followerError = null;
-    expect(calls()).toBe(5);
+    expect(calls()).toBe(7);
   });
 
   it('a stopped channel is pushed back and does not starve a healthy one', async () => {
