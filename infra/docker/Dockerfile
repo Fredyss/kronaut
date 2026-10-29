@@ -51,7 +51,7 @@ RUN set -eu; \
     make install-lib-static; \
     install -D -m 0644 COPYING /opt/ffmpeg/licenses/x264-COPYING
 RUN set -eu; \
-    curl -fsSL --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_URL}" \
+    curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_URL}" \
       || curl -fsSL --retry 3 --retry-all-errors -o ffmpeg.tar.xz "${FFMPEG_MIRROR_URL}"; \
     echo "${FFMPEG_SHA256}  ffmpeg.tar.xz" | sha256sum -c -; \
     mkdir ffmpeg; \
