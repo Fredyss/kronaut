@@ -2,12 +2,7 @@ import type { AnalyticsInput, AnalyticsResult, BaseContext, PostMetrics } from '
 import * as z from 'zod';
 import { countOf, eachPost } from '../_kit/analytics.ts';
 import { permanent } from '../_kit/meta-graph.ts';
-import {
-  type InsightNames,
-  insightMetrics,
-  insights,
-  insightsOrNone,
-} from '../_kit/meta-insights.ts';
+import { extraInsights, type InsightNames, insights } from '../_kit/meta-insights.ts';
 import { graphCall } from './graph.ts';
 import { GRAPH_VERSION, INSIGHTS_SCOPE } from './oauth.ts';
 import { postId } from './publish.ts';
@@ -43,8 +38,7 @@ export function postMetrics(post: z.infer<typeof counts>): PostMetrics {
 
 async function postInsights(ctx: BaseContext, page: PageAuth, id: string): Promise<PostMetrics> {
   const url = readUrl(page, `${id}/insights`, INSIGHT_QUERY);
-  const body = await insightsOrNone(() => graphCall(ctx, 'none', { url }, insights));
-  return insightMetrics(body, POST_INSIGHTS);
+  return extraInsights(() => graphCall(ctx, 'none', { url }, insights), POST_INSIGHTS);
 }
 
 export async function postAnalytics(

@@ -8,9 +8,11 @@ import {
 } from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
+import { Temporal } from 'temporal-polyfill';
 import { createBaseContext, type ProviderEntry } from '../providers.ts';
 import { sweepCron } from '../workspace-sweep.ts';
 import { pullFollowers } from './followers.ts';
+import { stepInside, windowHoursOf } from './seed.ts';
 import {
   errorFields,
   metricValue,
@@ -23,6 +25,7 @@ import {
   type DueRow,
   deferPulls,
   dueRows,
+  endPulls,
   insertSnapshots,
   latestSnapshots,
   type PullOutcome,
@@ -107,9 +110,8 @@ async function changedSnapshots(
   );
 }
 
-function windowOf(channel: Channel, row: DueRow): number | undefined {
-  const spec = channel.entry.manifest.postTypes.find((type) => type.id === row.postType);
-  return spec?.analytics?.windowHours;
+function windowOf(channel: Pick<Channel, 'entry'>, row: DueRow): number | undefined {
+  return windowHoursOf(channel.entry.manifest, row.postType);
 }
 
 async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetched) {
@@ -213,12 +215,35 @@ async function channelOf(
     : { ...ref, entry, read, rows, source };
 }
 
+// A row can sit on a step its post type's window no longer covers (a manifest change); the network has nothing left to read for it.
+async function endExpired(
+  trx: TenantDb,
+  run: Run,
+  workspaceId: string,
+  rows: readonly DueRow[],
+): Promise<DueRow[]> {
+  const entry = run.deps.providers.get(rows[0]?.provider ?? '');
+  if (entry === undefined) return [...rows];
+  const now = run.deps.now();
+  const expired = rows.filter((row) => {
+    const windowHours = windowOf({ entry }, row);
+    if (!stepInside(row.step, windowHours)) return true;
+    if (windowHours === undefined) return false;
+    return Temporal.Instant.compare(row.publishedAt.add({ hours: windowHours }), now) <= 0;
+  });
+  await endPulls(trx, workspaceId, expired);
+  run.counts.done += expired.length;
+  return rows.filter((row) => !expired.includes(row));
+}
+
 async function loadChannels(run: Run, workspaceId: string): Promise<Channel[]> {
   return await run.deps.db.withTenant(workspaceId, SYSTEM, async (trx) => {
     const rows = await dueRows(trx, workspaceId, run.observedAt, LIMITS);
     const scope = { workspaceId, now: run.deps.now() };
     const channels: Channel[] = [];
-    for (const [accountId, group] of groupByChannel(rows)) {
+    for (const [accountId, due] of groupByChannel(rows)) {
+      const group = await endExpired(trx, run, workspaceId, due);
+      if (group.length === 0) continue;
       const channel = await channelOf(trx, run, { workspaceId, accountId }, group);
       if (typeof channel === 'object' && channel !== null) {
         channels.push(channel);

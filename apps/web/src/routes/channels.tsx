@@ -180,6 +180,7 @@ function ChannelCard(props: CardProps) {
                 workspaceId={metricsWorkspace}
                 channel={channel}
                 onReconnect={onAddInsights}
+                pending={props.pending}
               />
             </Suspense>
           )}

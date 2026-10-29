@@ -9,12 +9,7 @@ import type {
 import * as z from 'zod';
 import { countOf, eachPost } from '../_kit/analytics.ts';
 import { graphId } from '../_kit/meta-container-state.ts';
-import {
-  type InsightNames,
-  insightMetrics,
-  insights,
-  insightsOrNone,
-} from '../_kit/meta-insights.ts';
+import { extraInsights, type InsightNames, insights } from '../_kit/meta-insights.ts';
 import { GRAPH_VERSION, graphGet, graphUrl, INSIGHTS_SCOPE, permanent } from './oauth.ts';
 import type { InstagramCredentials } from './runtime.ts';
 
@@ -56,8 +51,7 @@ async function readMedia(
   if (!input.credentials.scopes.includes(INSIGHTS_SCOPE)) return basic;
   const names = insightNames(input.postTypes[id]);
   const url = readUrl(input, `${id}/insights`, { metric: Object.keys(names).join(',') });
-  const body = await insightsOrNone(() => graphGet(ctx, 'none', url, insights));
-  return { ...basic, ...insightMetrics(body, names) };
+  return { ...basic, ...(await extraInsights(() => graphGet(ctx, 'none', url, insights), names)) };
 }
 
 export function mediaAnalytics(

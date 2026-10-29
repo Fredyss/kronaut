@@ -122,7 +122,7 @@ describe('instagram analytics', () => {
     http.assertDone();
   });
 
-  it('maps empty or failed insights to NULL, but not a stop or a failed media read', async () => {
+  it('maps empty insights to NULL, drops them on a 5xx, and keeps stops and failed media reads', async () => {
     const empty = scriptedHttp([
       counts,
       insights('views,reach,shares,reposts,saved', { data: [] }),
@@ -137,11 +137,7 @@ describe('instagram analytics', () => {
       bookmarks: null,
     });
     const down = scriptedHttp([counts, insights('views,reach,shares,reposts,saved', {}, 500)]);
-    expect((await analytics(down, WITH_INSIGHTS)).posts[MEDIA]).toMatchObject({
-      likes: 12,
-      views: null,
-      bookmarks: null,
-    });
+    expect((await analytics(down, WITH_INSIGHTS)).posts[MEDIA]).toEqual({ likes: 12, comments: 3 });
     const gone = scriptedHttp([{ ...counts, status: 400, json: { error: { code: 100 } } }]);
     expect((await analytics(gone, WITH_INSIGHTS)).failed?.[MEDIA]).toMatchObject({
       kind: 'permanent',

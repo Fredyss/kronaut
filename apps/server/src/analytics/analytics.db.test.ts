@@ -140,15 +140,18 @@ async function publishOne(label: string, existing?: string): Promise<Published> 
   const row = await owner.withActor(SYSTEM, (trx) =>
     trx
       .selectFrom('post_destinations as d')
-      .innerJoin('destination_metric_pulls as p', 'p.destination_id', 'd.id')
+      .leftJoin('destination_metric_pulls as p', 'p.destination_id', 'd.id')
       .select(['d.state', 'd.published_at', 'p.step', 'p.attempts', 'p.next_pull_at'])
       .where('d.id', '=', destination.id)
       .executeTakeFirstOrThrow(),
   );
-  expect(row).toMatchObject({ state: 'published', step: 0, attempts: 0 });
+  const result = { post, destinationId: destination.id, channel, remoteId };
+  expect(row.state).toBe('published');
+  if (row.step === null) return { ...result, publishedAt: PUBLISHED_AT };
+  expect(row).toMatchObject({ step: 0, attempts: 0 });
   expect(row.next_pull_at?.getTime()).toBe((row.published_at?.getTime() ?? 0) + HOUR_MS);
   await pin(destination.id);
-  return { post, destinationId: destination.id, channel, remoteId, publishedAt: PUBLISHED_AT };
+  return { ...result, publishedAt: PUBLISHED_AT };
 }
 
 async function pin(destinationId: string): Promise<void> {
@@ -297,6 +300,47 @@ describe('analytics pulls', () => {
       ['reach', '3'],
       ['views', '4'],
     ]);
+  });
+
+  it('seeds no pulls for a window without the first step, and ends a row outside it', async () => {
+    windowHours = 1;
+    try {
+      const unseeded = await publishOne('unseeded');
+      const pulls = await owner.withActor(SYSTEM, (trx) =>
+        trx
+          .selectFrom('destination_metric_pulls')
+          .select('step')
+          .where('destination_id', '=', unseeded.destinationId)
+          .execute(),
+      );
+      expect(pulls).toEqual([]);
+    } finally {
+      windowHours = undefined;
+    }
+    const narrowed = await publishOne('narrowed');
+    replies.set(narrowed.remoteId, { views: 1 });
+    await pullAt(hoursAfter(narrowed, 1));
+    expect(await pullOf(narrowed)).toMatchObject({ step: 1 });
+    const calls = analyticsCalls.get(`fake-narrowed ${published - 1}`);
+    replies.set(narrowed.remoteId, { views: 2 });
+    windowHours = 6;
+    try {
+      await pullAt(hoursAfter(narrowed, 6));
+    } finally {
+      windowHours = undefined;
+    }
+    expect(await pullOf(narrowed)).toMatchObject({ step: 1, next_pull_at: null });
+    expect(analyticsCalls.get(`fake-narrowed ${published - 1}`)).toBe(calls);
+    expect((await snapshotsOf(narrowed)).map((row) => row.value)).toEqual(['1']);
+    windowHours = 24;
+    try {
+      const late = await publishOne('late-story');
+      await pullAt(hoursAfter(late, 30));
+      expect(await pullOf(late)).toMatchObject({ step: 0, next_pull_at: null });
+      expect(analyticsCalls.has(`fake-late-story ${published - 1}`)).toBe(false);
+    } finally {
+      windowHours = undefined;
+    }
   });
 
   it('retries a transient error and skips the step after 3 attempts', async () => {

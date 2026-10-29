@@ -1,3 +1,4 @@
+import type { ProviderManifest } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 
@@ -7,6 +8,18 @@ export function pullSteps(windowHours?: number): [step: number, hours: number][]
   return [...PULL_OFFSETS_HOURS.entries()].filter(
     ([, hours]) => windowHours === undefined || hours < windowHours,
   );
+}
+
+export function windowHoursOf(manifest: ProviderManifest, postType: string): number | undefined {
+  return manifest.postTypes.find((type) => type.id === postType)?.analytics?.windowHours;
+}
+
+export function stepInside(step: number, windowHours: number | undefined): boolean {
+  return pullSteps(windowHours).some(([inside]) => inside === step);
+}
+
+export function seedsPulls(manifest: ProviderManifest, postType: string): boolean {
+  return manifest.capabilities.analytics && stepInside(0, windowHoursOf(manifest, postType));
 }
 
 export async function seedPulls(

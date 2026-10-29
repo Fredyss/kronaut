@@ -72,6 +72,6 @@ export async function threadsFollowers(
 ): Promise<AccountMetrics> {
   if (!granted(input)) return { followers: null, apiVersion: GRAPH_VERSION };
   const url = readUrl(input, `${input.credentials.userId}/threads_insights`, 'followers_count');
-  const body = await insightsOrNone(() => graphGet(ctx, 'none', url, insights));
+  const body = await graphGet(ctx, 'none', url, insights);
   return { followers: insightValue(body, 'followers_count'), apiVersion: GRAPH_VERSION };
 }

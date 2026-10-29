@@ -1,3 +1,4 @@
+import { isProviderFailure } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import { type ScriptedExchange, scriptedHttp, testBaseContext } from '../_kit/testing.ts';
 import { threadsManifest } from './manifest.ts';
@@ -40,6 +41,16 @@ function readers() {
 }
 
 const METRICS = 'views,likes,replies,reposts,quotes,shares';
+
+async function kindOf(promise: Promise<unknown>): Promise<string> {
+  try {
+    await promise;
+  } catch (error) {
+    if (isProviderFailure(error)) return error.error.kind;
+    throw error;
+  }
+  throw new Error('expected a provider failure');
+}
 
 describe('threads analytics', () => {
   it('ends the pulls without the insights scope and reads no followers', async () => {
@@ -95,6 +106,24 @@ describe('threads analytics', () => {
       followers: 812,
       apiVersion: 'v1.0',
     });
+    http.assertDone();
+  });
+
+  it('fails a post on a 5xx or a deleted post, and followers on a 5xx', async () => {
+    const http = scriptedHttp([
+      read(`${MEDIA}/insights`, METRICS, {}, 500),
+      read(`${MEDIA}/insights`, METRICS, { error: { code: 100, error_subcode: 33 } }, 400),
+      read(`${USER_ID}/threads_insights`, 'followers_count', {}, 500),
+    ]);
+    const { analytics, accountMetrics } = readers();
+    const ctx = testBaseContext(http);
+    expect((await analytics(ctx, input(WITH_INSIGHTS))).failed?.[MEDIA]).toMatchObject({
+      kind: 'transient',
+    });
+    expect((await analytics(ctx, input(WITH_INSIGHTS))).failed?.[MEDIA]).toMatchObject({
+      kind: 'permanent',
+    });
+    expect(await kindOf(accountMetrics(ctx, input(WITH_INSIGHTS)))).toBe('transient');
     http.assertDone();
   });
 });

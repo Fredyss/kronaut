@@ -9,6 +9,9 @@ function postTypeProblems(type: PostTypeSpec): string[] {
     problems.push(`${type.id}: no public step`);
   if (type.text.length === 0) problems.push(`${type.id}: no text limit`);
   if (type.media.minCount > type.media.maxCount) problems.push(`${type.id}: media min > max`);
+  const windowHours = type.analytics?.windowHours;
+  if (windowHours !== undefined && !(windowHours > 1))
+    problems.push(`${type.id}: analytics window must cover the first pull at 1 h`);
   return problems;
 }
 

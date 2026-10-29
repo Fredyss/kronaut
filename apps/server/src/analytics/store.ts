@@ -217,6 +217,24 @@ export async function settlePull(
   return next.at === null ? 'done' : 'advance';
 }
 
+export async function endPulls(
+  trx: TenantDb,
+  workspaceId: string,
+  rows: readonly DueRow[],
+): Promise<void> {
+  if (rows.length === 0) return;
+  await trx
+    .updateTable('destination_metric_pulls')
+    .set({ next_pull_at: null, attempts: 0 })
+    .where('workspace_id', '=', workspaceId)
+    .where(
+      'destination_id',
+      'in',
+      rows.map((row) => row.destinationId),
+    )
+    .execute();
+}
+
 export function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
   if (error?.kind !== 'rate_limited') return new Date(now.add({ hours: 1 }).epochMilliseconds);
   const floor = now.add({ minutes: 15 });

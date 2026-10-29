@@ -1,5 +1,3 @@
-SET LOCAL lock_timeout = '3s';
-
 ALTER TABLE post_metric_snapshots ADD CONSTRAINT ck_post_metric_snapshots_metric
   CHECK (metric IN ('likes','reposts','replies','quotes','comments','shares',
     'reactions','bookmarks','views','reach')) NOT VALID;
