@@ -212,11 +212,40 @@ describe('instagram reel', () => {
     recovered.assertDone();
     expect(recovered.calls.map((call) => call.url)).not.toContain(MEDIA);
 
-    const twoReels = recover([ours, { ...ours, id: '18000000000000008' }]);
+    const twoVideos = recover([ours, { ...ours, id: '18000000000000008' }]);
     const failure = await failureOf(
-      instagramRuntime.publish(testPublishContext(twoReels, media).ctx, published),
+      instagramRuntime.publish(testPublishContext(twoVideos, media).ctx, published),
     );
     expect(failure).toMatchObject({ kind: 'ambiguous', detail: 'media_unrecovered' });
-    expect(twoReels.calls.map((call) => call.url)).not.toContain(MEDIA);
+    expect(twoVideos.calls.map((call) => call.url)).not.toContain(MEDIA);
+  });
+
+  it('accepts a lone video in the window as the reel and never recovers without a window', async () => {
+    const container = '17900000000000021';
+    const published = status(container, 'PUBLISHED');
+    const video = { timestamp: '2026-10-21T12:00:04+0000', media_type: 'VIDEO' };
+    const foreign = { ...video, id: '18000000000000003' };
+    const lone = scriptedHttp([published, { url: RECENT, json: { data: [foreign] } }]);
+    const sent = reel({ container, sentAt: SENT_AT });
+    expect(await instagramRuntime.publish(testPublishContext(lone, media).ctx, sent)).toEqual({
+      kind: 'published',
+      remoteId: '18000000000000003',
+    });
+
+    const windowless = scriptedHttp([published]);
+    const failure = await failureOf(
+      instagramRuntime.publish(testPublishContext(windowless, media).ctx, reel({ container })),
+    );
+    expect(failure).toMatchObject({ kind: 'ambiguous', detail: 'media_unrecovered' });
+    windowless.assertDone();
+
+    const twoVideos = scriptedHttp([
+      published,
+      { url: RECENT, json: { data: [foreign, { ...video, id: '18000000000000004' }] } },
+    ]);
+    expect(await instagramRuntime.verify?.(testPublishContext(twoVideos, media).ctx, sent)).toEqual(
+      { kind: 'inconclusive' },
+    );
+    twoVideos.assertDone();
   });
 });

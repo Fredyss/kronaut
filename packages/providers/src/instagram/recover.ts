@@ -27,6 +27,7 @@ export function recover(
   input: Input,
   sentAt: string | undefined,
 ): Promise<Recovered | undefined> {
+  if (input.postType === 'reel' && sentAt === undefined) return Promise.resolve(undefined);
   const mediaType = MEDIA_TYPES[input.postType];
   const main = input.items.find((item) => item.role === 'main');
   const altText = input.postType === 'image' ? sentAltText(main?.media[0]) : undefined;
