@@ -12,7 +12,8 @@
       "!packages/db/schema",
       "!packages/contract/openapi.json",
       "!packages/sdk/src/gen",
-      "!packages/i18n/src/paraglide"
+      "!packages/i18n/src/paraglide",
+      "!packages/i18n/src/paraglide-cli"
     ]
   },
   "plugins": [

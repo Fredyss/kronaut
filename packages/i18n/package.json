@@ -5,7 +5,8 @@
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
   "imports": {
-    "#paraglide/*": "./src/paraglide/*"
+    "#paraglide/*": "./src/paraglide/*",
+    "#paraglide-cli/*": "./src/paraglide-cli/*"
   },
   "exports": {
     "./runtime": "./src/paraglide/runtime.js",
@@ -13,6 +14,7 @@
     "./messages/sk": "./src/paraglide/messages/sk.js",
     "./messages/cs": "./src/paraglide/messages/cs.js",
     "./notifications": "./src/notifications.ts",
+    "./cli": "./src/cli.ts",
     "./config": "./i18n.config.ts"
   },
   "scripts": {

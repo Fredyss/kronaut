@@ -54,19 +54,19 @@ async function keyCommand(args: readonly string[]): Promise<void> {
     }
     return;
   }
-  throw new UsageError('unknown provider-app key command');
+  throw new UsageError((m) => m.unknown_key_command({}));
 }
 
 async function readStdinSecret(): Promise<string> {
-  if (process.stdin.isTTY) throw new UsageError('pipe the app secret on stdin');
+  if (process.stdin.isTTY) throw new UsageError((m) => m.secret_stdin_tty({}));
   const chunks: Buffer[] = [];
   for await (const chunk of process.stdin) chunks.push(Buffer.from(chunk as Uint8Array));
   const raw = Buffer.concat(chunks);
   for (const chunk of chunks) chunk.fill(0);
   const secret = raw.toString('utf8').trim();
   raw.fill(0);
-  if (secret === '') throw new UsageError('the app secret on stdin is empty');
-  if (/[\r\n]/.test(secret)) throw new UsageError('the app secret on stdin must be one line');
+  if (secret === '') throw new UsageError((m) => m.secret_stdin_empty({}));
+  if (/[\r\n]/.test(secret)) throw new UsageError((m) => m.secret_stdin_lines({}));
   return secret;
 }
 
@@ -78,10 +78,11 @@ async function registerCommand(args: readonly string[]): Promise<void> {
     options: { 'client-id': { type: 'string' } },
   });
   const [provider, ...extra] = names;
-  if (provider === undefined || extra.length > 0) throw new UsageError('expected one provider');
+  if (provider === undefined || extra.length > 0)
+    throw new UsageError((m) => m.expected_one_provider({}));
   const clientId = values['client-id']?.trim();
   if (provider === 'bluesky') {
-    if (clientId !== undefined) throw new UsageError('bluesky takes no --client-id');
+    if (clientId !== undefined) throw new UsageError((m) => m.bluesky_client_id({}));
     const publicUrl = parseBaseUrl(
       'KRONAUT_PUBLIC_URL',
       requireEnv(process.env, 'KRONAUT_PUBLIC_URL'),
@@ -92,7 +93,8 @@ async function registerCommand(args: readonly string[]): Promise<void> {
   }
   if (isSecretAppProvider(provider)) {
     if (clientId === undefined || !clientIdValid(provider, clientId)) {
-      throw new UsageError(`--client-id <${provider} app id> is required`);
+      const option = `--client-id <${provider} app id>`;
+      throw new UsageError((m) => m.option_required({ option }));
     }
     const secret = await readStdinSecret();
     const ring = keyring();
@@ -102,7 +104,7 @@ async function registerCommand(args: readonly string[]): Promise<void> {
     process.stdout.write(`${id}\n`);
     return;
   }
-  throw new UsageError('only bluesky, facebook, instagram, linkedin or threads can be registered');
+  throw new UsageError((m) => m.provider_unsupported({}));
 }
 
 export async function providerAppCommand(args: readonly string[]): Promise<void> {
@@ -115,5 +117,5 @@ export async function providerAppCommand(args: readonly string[]): Promise<void>
     await keyCommand(rest);
     return;
   }
-  throw new UsageError('unknown provider-app command');
+  throw new UsageError((m) => m.unknown_provider_app_command({}));
 }

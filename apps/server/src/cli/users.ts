@@ -62,9 +62,9 @@ export function slugify(name: string): string {
 
 function text(label: string, value: string): string {
   const cleaned = value.trim().normalize('NFC');
-  if (cleaned === '') throw new UsageError(`${label} must not be empty`);
+  if (cleaned === '') throw new UsageError((m) => m.option_empty({ option: label }));
   if ([...cleaned].length > NAME_MAX_LENGTH) {
-    throw new UsageError(`${label} must be at most ${NAME_MAX_LENGTH} characters`);
+    throw new UsageError((m) => m.option_too_long({ option: label, count: NAME_MAX_LENGTH }));
   }
   return cleaned;
 }
@@ -72,27 +72,26 @@ function text(label: string, value: string): string {
 function email(value: string): string {
   const cleaned = value.trim().normalize('NFC');
   if (cleaned.length > EMAIL_MAX_LENGTH || !EMAIL.test(cleaned)) {
-    throw new UsageError('--email must be an email address');
+    throw new UsageError((m) => m.email_invalid({}));
   }
   return cleaned;
 }
 
 function timezone(value: string): string {
-  if (!IANA_TZ.test(value)) throw new UsageError('--timezone must be an IANA time zone');
+  const fail = new UsageError((m) => m.timezone_invalid({ option: '--timezone' }));
+  if (!IANA_TZ.test(value)) throw fail;
   try {
     return Temporal.Now.zonedDateTimeISO(value).timeZoneId;
   } catch {
-    throw new UsageError('--timezone must be an IANA time zone');
+    throw fail;
   }
 }
 
 function slug(value: string | undefined, workspace: string): string {
   const chosen = value ?? slugify(workspace);
   if (!SLUG.test(chosen)) {
-    throw new UsageError(
-      value === undefined
-        ? 'cannot derive a slug from the workspace name; pass --slug'
-        : '--slug must match ^[a-z0-9][a-z0-9-]{0,62}$',
+    throw new UsageError((m) =>
+      value === undefined ? m.slug_underivable({}) : m.slug_invalid({ pattern: SLUG.source }),
     );
   }
   return chosen;
@@ -147,10 +146,10 @@ export async function createOwner(
     });
   } catch (err) {
     if (uniqueViolation(err, 'users_email_normalized_key')) {
-      throw new CommandError('a user with this email already exists');
+      throw new CommandError((m) => m.user_email_taken({}));
     }
     if (uniqueViolation(err, 'workspaces_slug_key')) {
-      throw new CommandError('a workspace with this slug already exists; pass another --slug');
+      throw new CommandError((m) => m.workspace_slug_taken({}));
     }
     throw err;
   }
@@ -171,7 +170,7 @@ export async function resetPassword(deps: UserCommandDeps, rawEmail: string): Pr
     `.execute(trx);
     return result.rows[0];
   });
-  if (account === undefined) throw new CommandError('no active user has this email');
+  if (account === undefined) throw new CommandError((m) => m.user_not_found({}));
 
   const userId = account.user_id;
   const revoked = await deps.db.withActor({ kind: 'user', id: userId }, async (trx) => {

@@ -71,7 +71,7 @@ async function refuseExisting(path: string): Promise<void> {
     if (isErrno(error, 'ENOENT')) return;
     throw error;
   }
-  throw new CommandError('the output file already exists');
+  throw new CommandError((m) => m.output_exists({}));
 }
 
 async function openPartial(path: string): Promise<FileHandle> {
@@ -79,7 +79,7 @@ async function openPartial(path: string): Promise<FileHandle> {
     return await open(path, 'wx', 0o600);
   } catch (error) {
     if (isErrno(error, 'EEXIST')) {
-      throw new CommandError('a .partial file from an earlier export exists; remove it first');
+      throw new CommandError((m) => m.partial_exists({}));
     }
     throw error;
   }
@@ -128,7 +128,7 @@ async function dumpDatabase(
            and not c.relispartition and a.attnum > 0 and not a.attisdropped
            and a.attname ~ 'kek_version$'
          order by 1, 2`.execute(trx);
-      if (columns.rows.length === 0) throw new CommandError('the database holds no Kronaut schema');
+      if (columns.rows.length === 0) throw new CommandError((m) => m.no_schema({}));
       const versions = sql.join(
         columns.rows.map(
           (column) => sql`select ${sql.ref(column.column_name)}::int as v
@@ -148,11 +148,9 @@ async function dumpDatabase(
                array(select v from (${versions}) k where v is not null order by v) as kek_versions
       `.execute(trx);
       const row = result.rows[0];
-      if (row?.schema_version == null) throw new CommandError('the database has no migrations');
+      if (row?.schema_version == null) throw new CommandError((m) => m.no_migrations({}));
       if (!row.instance_started) {
-        throw new CommandError(
-          'the instance has never started; start the server once, then export',
-        );
+        throw new CommandError((m) => m.never_started({}));
       }
       const dump = await spool(path, (sink) => deps.pg.dump(deps.migrationUrl, row.snapshot, sink));
       return {
@@ -278,7 +276,7 @@ export async function exportArchive(deps: ExportDeps, out: string): Promise<Expo
     try {
       await link(partial, target);
     } catch (error) {
-      if (isErrno(error, 'EEXIST')) throw new CommandError('the output file already exists');
+      if (isErrno(error, 'EEXIST')) throw new CommandError((m) => m.output_exists({}));
       throw error;
     }
     finished = true;

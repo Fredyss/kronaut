@@ -14,7 +14,7 @@
   - IG `is_ai_generated`, TikTok `is_aigc`, X `made_with_ai`, YouTube `containsSyntheticMedia`.
   - The flag is sticky for agent-generated media.
   - Compose sets it per image as `aiGenerated` on the upload. The flag lives on the deduplicated `media_assets` row, so an upload can set it but never clear it; clearing belongs to the media library.
-  - Of the shipped networks only Instagram takes it (`is_ai_generated` on the single image or carousel parent). Threads, Facebook Pages, Bluesky, Mastodon and LinkedIn have no such field (checked 2026-10-27).
+  - Of the shipped networks Instagram takes it (`is_ai_generated` on the single image, the carousel parent and the Reel), and so do Facebook Reels (`is_ai_generated` on `finish`). Threads, Facebook photo posts, Bluesky, Mastodon and LinkedIn have no such field (checked 2026-10-27; Threads re-checked 2026-10-28 against the `POST /{threads-user-id}/threads` reference).
 - **Media library** (`/media`):
   - A grid of thumbnails, newest first, with an All / Images / Videos filter, loaded in pages.
   - The asset panel shows the preview, type, size, dimensions, duration and upload date. It edits the default alt text, clears the AI label where allowed, and lists the posts that use the asset, with links.
@@ -81,7 +81,7 @@
   - sk/cs UI strings run ~20–35% longer than English, so there are no fixed-width buttons.
   - Playwright visual snapshots run in `cs` (the longest).
   - The `cs` visual snapshots are **not in yet**. Today `pnpm test:e2e` (`apps/server/e2e/`) runs a Chromium smoke suite against the real server, the built web app and a throwaway Postgres: setting the first password and signing in and out, the channel list, scheduling a post with Slovak diacritics, and the display name and language settings.
-- **Server-side text:** notification emails, API error `message` and the CLI use the same message catalog. The machine-readable `code` stays English.
+- **Server-side text:** notification emails and API error `message` use the same message catalog. The CLI has its own catalog in the same package (`messages/cli/`), so operator strings never ship to the browser. The machine-readable `code` stays English.
 - **Translation flow:**
   - English source → AI draft → native review by you.
   - A glossary file (`post` = príspevok / příspěvek, `channel`, `schedule`, `approval`…) is kept in the repo so terminology stays consistent.

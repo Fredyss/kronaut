@@ -1,0 +1,117 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "usage_title": "usage:",
+  "usage_app_secret_stdin": "app secret on stdin",
+  "usage_client_secret_stdin": "client secret on stdin",
+  "config_error": "configuration error",
+  "unexpected_error": "an unexpected error",
+  "unknown_command": "unknown command",
+  "unknown_user_command": "unknown user command",
+  "unknown_provider_app_command": "unknown provider-app command",
+  "unknown_key_command": "unknown provider-app key command",
+  "wrong_argument_count": "wrong number of arguments",
+  "option_required": "{option} is required",
+  "owner_options_required": "--email, --name and --workspace are required",
+  "option_empty": "{option} must not be empty",
+  "option_too_long": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{option} must be at most {count} character",
+        "countPlural=*": "{option} must be at most {count} characters"
+      }
+    }
+  ],
+  "timezone_invalid": "{option} must be an IANA time zone",
+  "expected_one_email": "expected one email",
+  "email_invalid": "--email must be an email address",
+  "slug_underivable": "cannot derive a slug from the workspace name; pass --slug",
+  "slug_invalid": "--slug must match {pattern}",
+  "user_email_taken": "a user with this email already exists",
+  "workspace_slug_taken": "a workspace with this slug already exists; pass another --slug",
+  "user_not_found": "no active user has this email",
+  "secret_stdin_tty": "pipe the app secret on stdin",
+  "secret_stdin_empty": "the app secret on stdin is empty",
+  "secret_stdin_lines": "the app secret on stdin must be one line",
+  "expected_one_provider": "expected one provider",
+  "bluesky_client_id": "bluesky takes no --client-id",
+  "provider_unsupported": "only bluesky, facebook, instagram, linkedin or threads can be registered",
+  "provider_app_exists": [
+    {
+      "declarations": ["input provider"],
+      "selectors": ["provider"],
+      "match": {
+        "provider=instagram": "an {provider} app is already registered: {id}",
+        "provider=*": "a {provider} app is already registered: {id}"
+      }
+    }
+  ],
+  "provider_app_not_found": "no provider app has this id",
+  "key_not_found": "no key with this kid for this app",
+  "key_not_next": "only a next key can be activated; this one is {status}",
+  "key_active": "an active key cannot be deleted; activate a next key first",
+  "key_recently_retired": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "key {kid} was retired less than {count} minute ago; connects started before the rotation may still need it",
+        "countPlural=*": "key {kid} was retired less than {count} minutes ago; connects started before the rotation may still need it"
+      }
+    }
+  ],
+  "key_in_use": "key {kid} still signs for connected credentials; they must reconnect or be disconnected before it can be deleted",
+  "expected_one_archive": "expected one archive file",
+  "backup_mode": "expected `backup run` or `backup schedule`",
+  "backup_time_invalid": "KRONAUT_BACKUP_TIME must be HH:MM (24-hour)",
+  "import_done": "restore epoch {epoch}; publishing is paused in restore quarantine",
+  "import_next": "run `kronaut migrate`, review the quarantined posts, then run `kronaut release`",
+  "db_url_invalid": "the database URL is not a valid postgres:// URL",
+  "db_url_password": "the database URL has a malformed password",
+  "tool_missing": "{tool} was not found on PATH",
+  "tool_failed": "{tool} failed",
+  "tool_stopped_reading": "{tool} stopped reading",
+  "tool_version": "{tool} must be PostgreSQL {major}, found {found}",
+  "tool_version_unknown": "{tool} must be PostgreSQL {major}, found an unknown version",
+  "output_exists": "the output file already exists",
+  "partial_exists": "a .partial file from an earlier export exists; remove it first",
+  "no_schema": "the database holds no Kronaut schema",
+  "no_migrations": "the database has no migrations",
+  "never_started": "the instance has never started; start the server once, then export",
+  "identity_unreadable": "cannot read the identity file",
+  "identity_invalid": "the identity file holds an invalid age identity",
+  "identity_empty": "the identity file holds no age identity",
+  "archive_undecryptable": "cannot decrypt the archive: wrong identity or not an age file",
+  "archive_corrupt": "the archive is corrupt or truncated",
+  "archive_unopenable": "cannot open the archive file",
+  "archive_not_file": "the archive is not a regular file",
+  "archive_changed": "the archive changed while it was being imported",
+  "archive_non_regular": "archive holds a non-regular entry",
+  "archive_outside_whitelist": "archive holds an entry outside the whitelist",
+  "archive_dump_first": "db.dump must be the first entry",
+  "archive_manifest_last": "manifest.json must be the last entry",
+  "archive_repeats_dump": "archive repeats db.dump",
+  "archive_repeats_media": "archive repeats a media entry",
+  "archive_incomplete": "archive is missing db.dump or manifest.json",
+  "archive_missing_dump": "archive is missing db.dump",
+  "archive_missing_manifest": "archive is missing manifest.json",
+  "archive_media_mismatch": "the media entries do not match the manifest",
+  "manifest_too_large": "manifest.json is too large",
+  "manifest_invalid_json": "manifest.json is not valid JSON",
+  "manifest_wrong_format": "manifest.json is not a format {format} manifest",
+  "keyring_missing": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "the keyring lacks KEK version {versions}; set KRONAUT_KEK_<n> before importing",
+        "countPlural=*": "the keyring lacks KEK versions {versions}; set KRONAUT_KEK_<n> for each before importing"
+      }
+    }
+  ],
+  "target_db_not_empty": "the target database is not empty",
+  "target_media_not_empty": "the target media directory is not empty",
+  "restored_no_state": "the restored database has no instance state",
+  "media_copy_failed": "the database is restored and quarantined (restore epoch {epoch}), but copying media failed: {reason}"
+}
