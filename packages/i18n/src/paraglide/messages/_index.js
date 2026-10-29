@@ -3,6 +3,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Account_LogoutInputs */
 /** @typedef {{}} Account_MenuInputs */
+/** @typedef {{ when: NonNullable<unknown> }} Analytics_As_OfInputs */
+/** @typedef {{ metric: NonNullable<unknown> }} Analytics_MetricInputs */
+/** @typedef {{}} Analytics_MissingInputs */
+/** @typedef {{}} Analytics_Not_ReportedInputs */
+/** @typedef {{}} Analytics_TitleInputs */
 /** @typedef {{}} App_NameInputs */
 /** @typedef {{}} Approval_ApproveInputs */
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Approval_BoundInputs */
@@ -76,6 +81,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Error_State_InvalidInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Channels_Error_Too_Many_AccountsInputs */
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
+/** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
+/** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
@@ -355,6 +362,90 @@ export const account_menu = /** @type {((inputs?: Account_MenuInputs, options?: 
 	if (locale === "sk") return __sk.account_menu(inputs)
 	if (locale === "cs") return __cs.account_menu(inputs)
 	return __en.account_menu(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "As of {when}" |
+*
+* @param {Analytics_As_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_as_of = /** @type {((inputs: Analytics_As_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_As_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_as_of(inputs)
+	if (locale === "cs") return __cs.analytics_as_of(inputs)
+	return __en.analytics_as_of(inputs)
+});
+/**
+* | metric | output |
+* | --- | --- |
+* | "likes" | "Likes" |
+* | "reposts" | "Reposts" |
+* | "replies" | "Replies" |
+* | "quotes" | "Quotes" |
+* | "comments" | "Comments" |
+* | "shares" | "Shares" |
+* | "reactions" | "Reactions" |
+* | "bookmarks" | "Bookmarks" |
+* | "views" | "Views" |
+* | * | "Metric" |
+*
+* @param {Analytics_MetricInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_metric = /** @type {((inputs: Analytics_MetricInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_MetricInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_metric(inputs)
+	if (locale === "cs") return __cs.analytics_metric(inputs)
+	return __en.analytics_metric(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "—" |
+*
+* @param {Analytics_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_missing = /** @type {((inputs?: Analytics_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_missing(inputs)
+	if (locale === "cs") return __cs.analytics_missing(inputs)
+	return __en.analytics_missing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "not reported" |
+*
+* @param {Analytics_Not_ReportedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_not_reported = /** @type {((inputs?: Analytics_Not_ReportedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_Not_ReportedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_not_reported(inputs)
+	if (locale === "cs") return __cs.analytics_not_reported(inputs)
+	return __en.analytics_not_reported(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Analytics" |
+*
+* @param {Analytics_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_title = /** @type {((inputs?: Analytics_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_title(inputs)
+	if (locale === "cs") return __cs.analytics_title(inputs)
+	return __en.analytics_title(inputs)
 });
 /**
 * | output |
@@ -1453,6 +1544,36 @@ export const channels_expires = /** @type {((inputs: Channels_ExpiresInputs, opt
 	if (locale === "sk") return __sk.channels_expires(inputs)
 	if (locale === "cs") return __cs.channels_expires(inputs)
 	return __en.channels_expires(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Followers: {value}" |
+*
+* @param {Channels_FollowersInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_followers = /** @type {((inputs: Channels_FollowersInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_FollowersInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_followers(inputs)
+	if (locale === "cs") return __cs.channels_followers(inputs)
+	return __en.channels_followers(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{change} in 30 days" |
+*
+* @param {Channels_Followers_ChangeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_followers_change = /** @type {((inputs: Channels_Followers_ChangeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Followers_ChangeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_followers_change(inputs)
+	if (locale === "cs") return __cs.channels_followers_change(inputs)
+	return __en.channels_followers_change(inputs)
 });
 /**
 * | output |

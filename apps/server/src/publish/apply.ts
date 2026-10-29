@@ -1,6 +1,7 @@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
+import { seedPulls } from '../analytics/seed.ts';
 import { type DestinationJob, enqueuePublish, enqueueVerify } from '../jobs.ts';
 import { type ChainStep, chainStep, settleChainItems } from './chain-step.ts';
 import { type CredentialFence, flagAccount, flagApp } from './incidents.ts';
@@ -18,6 +19,7 @@ export interface PlanContext {
   readonly socialAccountId: string;
   readonly providerAppId: string;
   readonly credential: CredentialFence;
+  readonly analytics: boolean;
 }
 
 export function toDate(instant: Temporal.Instant): Date {
@@ -87,6 +89,7 @@ export async function applyPlan(
   await settleChainItems(trx, context.job, step);
   if (step.hold) return;
   await auditTransition(trx, ref, next, context.attemptId);
+  if (next.state === 'published' && context.analytics) await seedPulls(trx, ref);
   if (next.sideEffect !== undefined) await applySideEffect(trx, context, next.sideEffect);
   await enqueueNext(trx, context.job, next);
 }

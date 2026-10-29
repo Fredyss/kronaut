@@ -1,6 +1,12 @@
 import type { Temporal } from 'temporal-polyfill';
 import type * as z from 'zod';
 import type { MediaLimits } from './media-limits.ts';
+import type {
+  AccountMetrics,
+  AccountMetricsInput,
+  AnalyticsInput,
+  AnalyticsResult,
+} from './provider-analytics.ts';
 import type { RateLimitScope } from './provider-error.ts';
 
 export type { ImageLimits, MediaLimits, Ratio, VideoLimits } from './media-limits.ts';
@@ -310,6 +316,8 @@ export interface ProviderRuntime<C = unknown, S = unknown> {
   publish(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   poll?(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   verify?(ctx: PublishContext, input: PublishInput<C, S>): Promise<VerifyOutcome>;
+  analytics?(ctx: BaseContext, input: AnalyticsInput<C>): Promise<AnalyticsResult>;
+  accountMetrics?(ctx: BaseContext, input: AccountMetricsInput<C>): Promise<AccountMetrics>;
   readInstanceCapabilities?(
     ctx: BaseContext,
     instanceHost: string,

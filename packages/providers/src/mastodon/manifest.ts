@@ -98,7 +98,7 @@ export const mastodonManifest: ProviderManifest<MastodonSettings> = {
   ],
   concurrency: 1,
   preview: 'short-feed',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   egressHosts: ['*'],
   accountPostType,
 };

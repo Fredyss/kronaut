@@ -1,5 +1,6 @@
 import type { ProviderRuntime } from '@kronaut/core';
 import * as z from 'zod';
+import { accountMetrics, statusAnalytics } from './analytics.ts';
 import { readInstanceCapabilities } from './capabilities.ts';
 import { connectFinish, connectStart, type MastodonCredentials, registerApp } from './connect.ts';
 import type { MastodonSettings } from './manifest.ts';
@@ -27,6 +28,10 @@ export const mastodonRuntime: ProviderRuntime<MastodonCredentials, MastodonSetti
   publish: publishStatus,
 
   verify: verifyStatus,
+
+  analytics: statusAnalytics,
+
+  accountMetrics,
 
   readInstanceCapabilities,
 };

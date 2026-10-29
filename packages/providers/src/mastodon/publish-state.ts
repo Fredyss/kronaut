@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
+  type BaseContext,
   ProviderFailure,
   type ProviderHttpResponse,
   type PublishContext,
@@ -65,7 +66,7 @@ function resetAt(headers: Headers, now: Temporal.Instant): Temporal.Instant {
 }
 
 export function failureOf(
-  ctx: PublishContext,
+  ctx: BaseContext,
   response: ProviderHttpResponse,
   effect: StepEffect,
   invalid: string,

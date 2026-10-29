@@ -162,6 +162,7 @@ async function loadScope(
     socialAccountId: account.id,
     providerAppId: account.provider_app_id,
     credential: { unchangedSince: attempt.started_at },
+    analytics: deps.providers.get(dest.provider)?.manifest.capabilities.analytics === true,
   };
   const now = deps.now();
   return { ...verifying, deps, trx, job, ref, attempt, account, context, now };

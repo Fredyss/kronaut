@@ -450,5 +450,29 @@
     }
   ],
   "evergreen_copies": "Recent copies",
-  "evergreen_copy": "{channel}, {when}"
+  "evergreen_copy": "{channel}, {when}",
+  "analytics_title": "Analytics",
+  "analytics_metric": [
+    {
+      "declarations": ["input metric"],
+      "selectors": ["metric"],
+      "match": {
+        "metric=likes": "Likes",
+        "metric=reposts": "Reposts",
+        "metric=replies": "Replies",
+        "metric=quotes": "Quotes",
+        "metric=comments": "Comments",
+        "metric=shares": "Shares",
+        "metric=reactions": "Reactions",
+        "metric=bookmarks": "Bookmarks",
+        "metric=views": "Views",
+        "metric=*": "Metric"
+      }
+    }
+  ],
+  "analytics_missing": "—",
+  "analytics_not_reported": "not reported",
+  "analytics_as_of": "As of {when}",
+  "channels_followers": "Followers: {value}",
+  "channels_followers_change": "{change} in 30 days"
 }

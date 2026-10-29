@@ -9,6 +9,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { commentCapabilities } from '../_kit/meta-comment.ts';
 import { permanent } from '../_kit/meta-graph.ts';
+import { postAnalytics } from './analytics.ts';
 import type { FacebookSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
@@ -118,4 +119,5 @@ export const facebookRuntime: ProviderRuntime<FacebookCredentials, FacebookSetti
   publish: publishPost,
   poll: pollReel,
   verify: verifyPost,
+  analytics: postAnalytics,
 };

@@ -1,4 +1,5 @@
 import { ProviderFailure, type ProviderRuntime } from '@kronaut/core';
+import { postAnalytics, profileMetrics } from './analytics.ts';
 import { connectFinish, connectStart } from './connect.ts';
 import { type BlueskyCredentials, blueskyCredentials, issued } from './credentials.ts';
 import { authServerFor, permanent, resolveDid } from './identity.ts';
@@ -65,6 +66,8 @@ export const blueskyRuntime: ProviderRuntime<BlueskyCredentials, BlueskySettings
 
   publish: publishPost,
   verify: verifyPost,
+  analytics: postAnalytics,
+  accountMetrics: profileMetrics,
 
   publicDocuments: (app) => ({ [CLIENT_METADATA]: clientMetadata(app) }),
 };

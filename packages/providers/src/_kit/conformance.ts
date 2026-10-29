@@ -35,6 +35,8 @@ export function conformanceProblems(
     problems.push('instanceScoped without runtime.registerApp');
   if (manifest.verify.mode !== 'none' && runtime.verify === undefined)
     problems.push(`verify ${manifest.verify.mode} without runtime.verify`);
+  if (manifest.capabilities.analytics && runtime.analytics === undefined)
+    problems.push('analytics without runtime.analytics');
   problems.push(...settingsProblems(manifest));
   return problems;
 }

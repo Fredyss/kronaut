@@ -1,5 +1,6 @@
 import type { Keyring } from '@kronaut/credentials';
 import type { MediaStore } from '@kronaut/media';
+import { analyticsRoutes } from '../analytics/routes.ts';
 import { approvalRoutes } from '../approvals/routes.ts';
 import { passwordChangeRoutes } from '../auth/password-change.ts';
 import { profileRoutes } from '../auth/profile.ts';
@@ -59,6 +60,7 @@ export function apiRoutes({
     ...queueRoutes(),
     ...seriesRoutes(),
     ...evergreenRoutes(),
+    ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({

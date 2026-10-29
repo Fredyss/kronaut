@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
+import { AnalyticsSection } from '../analytics/section.tsx';
 import {
+  ANALYTICS_ROLES,
   type Channel,
   channelsQuery,
   type Destination,
@@ -167,6 +169,13 @@ function PostStatus({
       <article className="flex flex-col gap-3 rounded-xl border p-4">
         <Content item={data.items[0]} />
       </article>
+      <AnalyticsSection
+        workspaceId={workspaceId}
+        post={data}
+        channels={byId}
+        format={format}
+        readable={ANALYTICS_ROLES.has(role)}
+      />
       <section className="flex flex-col gap-3">
         <h2 className="font-medium text-lg">{m.post_destinations_title()}</h2>
         <ul className="flex flex-col gap-3">

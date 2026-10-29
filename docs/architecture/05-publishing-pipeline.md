@@ -275,7 +275,7 @@ The approval events are written in the transaction that opens or decides the req
 | evergreen fill (`evergreen_fill`, see [Evergreen posts](#evergreen-posts)) | 1 h |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
-| analytics pulls | staggered |
+| analytics pull (`analytics_pull`, see [Analytics](#analytics)) | 15 min |
 | account capabilities refresh (`account_capabilities_refresh`: Mastodon `/api/v2/instance`, once per host, for accounts whose limits are over 24 h old; a failing server keeps the old values) | daily |
 | media GC | daily |
 | tenant-table retention purge (`notification_retention`, `credential_retention`: per workspace via `sweep_workspaces`) | daily |
@@ -344,3 +344,28 @@ Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with 
     - A copy whose slot passes without approval stays a draft. Its open request is voided, and a later slot gets another post.
   - **Locking:** per-channel queue locks, as in "add to queue", so a manual queue claim and the fill never take the same slot.
 - **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (`preflight_failed`, `unprocessable` or `invalid_request`), is taken out of the **whole** pool with a reason, even if only one channel failed; re-marking puts it back. Other errors, conflicts included, are retried on the next run.
+
+## Analytics
+
+Kronaut keeps the counts each network reports for what it published, and a daily follower count per channel. Charts stay honest (ADR-0037): a value is stored only when it changes, and a value the network didn't give is NULL, never 0.
+
+- **Providers (first cut):** Mastodon, Bluesky and Facebook public counts, which need no new scopes. Instagram and Threads insights and Facebook `read_insights` come next, with their scopes requested on connect; a channel connected without them skips analytics until it is reconnected. LinkedIn has no self-serve member post statistics, so it has none.
+- **Metrics:** one vocabulary across networks, so a chart can compare channels:
+  - post: `likes`, `reposts`, `replies`, `quotes`, `comments`, `shares`, `reactions`, `bookmarks`, `views`;
+  - account: `followers` (Mastodon and Bluesky; a Facebook Page's `followers_count` needs `pages_read_user_content`, which Kronaut doesn't request).
+  - Each provider maps only what its API documents (Mastodon favourites → `likes`, reblogs → `reposts`; Facebook reactions summary → `reactions`). A metric a provider never reports is absent, not NULL; a metric it reports but left out of this response is NULL.
+- **What is pulled:** each `published` destination with a `remote_id` on an `active` channel whose manifest has `capabilities.analytics`. For a thread, only the first item. Pulls happen 1 h, 6 h, 24 h, 3 days, 7 days and 30 days after `published_at`, then stop.
+- **Pulling:** the `analytics_pull` cron task (every 15 min) walks `sweep_workspaces` and, inside `withTenant()`, loads the due rows of `destination_metric_pulls` (up to 25 per channel and 100 per workspace) and the channels' credentials. It calls the network outside any transaction, one `analytics` call per channel (Bluesky up to 25 posts a request; Mastodon at most 20 single reads per channel per run, to stay inside the server's per-IP budget; a post left unread stays due without using an attempt), then writes each channel's results in its own `withTenant()`: a `post_metric_snapshots` row for each metric whose value differs from the latest one, and `next_pull_at` moved to the first step still ahead, so steps missed during downtime aren't pulled one after another.
+  - The pull row is created when a destination becomes `published` through finalize or verify; marking a post published by hand doesn't create one.
+  - **Followers:** every `active` channel whose provider has `accountMetrics` is read once per UTC day (`account_metric_pulls.checked_on`, up to 50 channels per workspace per run), independent of post pulls. An `account_daily_metrics` row is written only when the count changed. A `transient` failure retries on the next runs, up to 3 times a day; `rate_limited` waits until the reset time (at least 15 min and at most 3 h ahead, `account_metric_pulls.retry_after`); any other failure marks the channel checked for the day.
+- **Failures:**
+  - `rate_limited` stops that channel for this run and moves its rows to the reset time (at least 15 min and at most 3 h ahead).
+  - `transient` retries on the next run, up to 3 times per step; then the step is skipped.
+  - `permanent` (the post was deleted at the network) ends the pulls for that destination. Bluesky reports a post missing from `getPosts` as `transient`, since the AppView also leaves out posts that aren't indexed yet.
+  - `auth_expired`/`auth_revoked`/`app_config`, unreadable credentials or a missing provider stop the channel for this run and move its rows 1 h ahead, so one stuck channel never blocks the others; flagging the account stays with the token refresh and publish paths. Unreadable credentials are counted apart and don't fail the cron run.
+  - Pulls never change a destination's state and never retry a publish.
+- **Provenance:** every snapshot stores the provider, its API version and when that channel was read (`observed_at`), so a chart can say where a number came from.
+- **API (`analytics:read`):**
+  - `GET /v1/workspaces/:id/posts/:postId/metrics`: per destination, the latest value and `observed_at` of each metric, plus its snapshots.
+  - `GET /v1/workspaces/:id/channels/:channelId/metrics?from&to`: the daily follower counts, plus `before`, the last value before `from`, since a stable count has no rows in the range.
+

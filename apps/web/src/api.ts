@@ -1,6 +1,7 @@
 import {
   ApiRequestError,
   type AuthMeResponse,
+  analyticsChannelMetrics,
   authMe,
   type ChannelsListResponse,
   type Client,
@@ -69,6 +70,24 @@ export function connectableQuery(client: Client, workspaceId: string) {
     queryKey: ['channels', workspaceId, 'providers'],
     queryFn: async () => (await channelsProviders({ client, path: { workspaceId } })).data.items,
     staleTime: 60_000,
+  });
+}
+
+export interface DayRange {
+  readonly from: string;
+  readonly to: string;
+}
+
+export function channelMetricsQuery(
+  client: Client,
+  workspaceId: string,
+  channelId: string,
+  query: DayRange,
+) {
+  return queryOptions({
+    queryKey: ['channel-metrics', workspaceId, channelId, query.from, query.to],
+    queryFn: async () =>
+      (await analyticsChannelMetrics({ client, path: { workspaceId, channelId }, query })).data,
   });
 }
 
@@ -155,3 +174,10 @@ export function notificationsQuery(client: Client, workspaceId: string) {
     refetchOnWindowFocus: true,
   });
 }
+export const ANALYTICS_ROLES: ReadonlySet<string> = new Set([
+  'owner',
+  'admin',
+  'editor',
+  'contributor',
+  'viewer',
+]);

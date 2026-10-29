@@ -76,7 +76,7 @@ function channelRef(params: z.output<typeof QueueParams>): ChannelRef {
   };
 }
 
-async function requireChannel(trx: TenantDb, { workspaceId, accountId }: ChannelRef) {
+export async function requireChannel(trx: TenantDb, { workspaceId, accountId }: ChannelRef) {
   const account = await trx
     .selectFrom('social_accounts')
     .select(['id', 'brand_id', 'location_id'])

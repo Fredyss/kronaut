@@ -897,6 +897,46 @@ export type ChannelsDisconnectResponses = {
 
 export type ChannelsDisconnectResponse = ChannelsDisconnectResponses[keyof ChannelsDisconnectResponses];
 
+export type AnalyticsChannelMetricsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: {
+        from?: string;
+        to?: string;
+    };
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/metrics';
+};
+
+export type AnalyticsChannelMetricsErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type AnalyticsChannelMetricsError = AnalyticsChannelMetricsErrors[keyof AnalyticsChannelMetricsErrors];
+
+export type AnalyticsChannelMetricsResponses = {
+    /**
+     * OK
+     */
+    200: {
+        before: {
+            day: string;
+            value: number | null;
+        } | null;
+        followers: Array<{
+            day: string;
+            value: number | null;
+        }>;
+    };
+};
+
+export type AnalyticsChannelMetricsResponse = AnalyticsChannelMetricsResponses[keyof AnalyticsChannelMetricsResponses];
+
 export type ChannelsQueueData = {
     body?: never;
     path: {
@@ -2708,6 +2748,50 @@ export type EvergreenMarkResponses = {
 };
 
 export type EvergreenMarkResponse = EvergreenMarkResponses[keyof EvergreenMarkResponses];
+
+export type AnalyticsPostMetricsData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/metrics';
+};
+
+export type AnalyticsPostMetricsErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type AnalyticsPostMetricsError = AnalyticsPostMetricsErrors[keyof AnalyticsPostMetricsErrors];
+
+export type AnalyticsPostMetricsResponses = {
+    /**
+     * OK
+     */
+    200: {
+        destinations: Array<{
+            channelId: string;
+            destinationId: string;
+            latest: {
+                [key: string]: {
+                    observedAt: string;
+                    value: number | null;
+                };
+            };
+            snapshots: Array<{
+                metric: 'likes' | 'reposts' | 'replies' | 'quotes' | 'comments' | 'shares' | 'reactions' | 'bookmarks' | 'views';
+                observedAt: string;
+                value: number | null;
+            }>;
+        }>;
+    };
+};
+
+export type AnalyticsPostMetricsResponse = AnalyticsPostMetricsResponses[keyof AnalyticsPostMetricsResponses];
 
 export type PostsRescheduleData = {
     body: {

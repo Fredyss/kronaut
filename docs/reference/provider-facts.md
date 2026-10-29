@@ -428,6 +428,24 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - **Local posts.** `localPosts` is still v4. `state` is PROCESSING, LIVE, REJECTED, SCHEDULED or RECURRING, so posts are async with a possible policy rejection.
   - Native `scheduledTime` is supported.
 
+**Analytics** (checked 2026-10-29 against the official docs linked below)
+- **Mastodon.** `GET /api/v1/statuses/:id` returns `replies_count`, `reblogs_count`, `favourites_count`, and `quotes_count` from 4.5.0, so older servers lack it. A public status needs no token; a private one needs `read:statuses`, which Kronaut already requests. `GET /api/v1/statuses?id[]=…` batches from 4.3.0; its maximum isn't documented, and it may return fewer statuses than asked. Rate limits: 300 per 5 min per account and per IP. `verify_credentials` returns `followers_count`. These are live counters, with no history. Sources: https://docs.joinmastodon.org/methods/statuses/, https://docs.joinmastodon.org/entities/Status/, https://docs.joinmastodon.org/api/rate-limits/
+- **Bluesky.** `app.bsky.feed.getPosts` takes up to 25 URIs and returns `likeCount`, `repostCount`, `replyCount`, `quoteCount` and `bookmarkCount`. `app.bsky.actor.getProfile` returns `followersCount`. The public AppView `public.api.bsky.app` needs no auth; it is cached and its limits aren't published. Live counters, with no history. Sources: the `bluesky-social/atproto` lexicons `app/bsky/feed/getPosts.json`, `app/bsky/feed/defs.json`, `app/bsky/actor/defs.json`, and `bluesky-social/bsky-docs` `docs/advanced-guides/rate-limits.md`.
+- **Facebook Page.**
+  - Public counts: `GET /{post-id}?fields=shares,reactions.limit(0).summary(total_count),comments.limit(0).summary(total_count)` with the Page token (`pages_read_engagement`).
+  - Real insights (`/{post-id}/insights`: `post_media_view`, `post_total_media_view_unique`, `post_clicks`, `post_reactions_by_type_total`, video metrics) need `read_insights` and a Page with 100+ likes. They cover the last 2 years and mostly refresh daily. All `post_impressions*` metrics are gone (2025-06-15 / 2025-11-15).
+  - Sources: https://developers.facebook.com/docs/graph-api/reference/post/, https://developers.facebook.com/docs/graph-api/reference/insights/, https://developers.facebook.com/documentation/pages-api/platforminsights/page/deprecated-metrics
+  - `shares` is a struct with a `count` key; the reference doesn't say whether it's omitted at 0, so a missing `shares` is stored as NULL. `reactions` and `comments` take `summary=total_count`; comments' `total_count` can exceed the visible comments (privacy, deletion). The Page `followers_count` field is documented, but the reference names no permission for it, and its Page-owned-data permissions include `pages_read_user_content`, which Kronaut doesn't request, so Kronaut reads no Facebook follower count. Checked 2026-10-29: https://developers.facebook.com/docs/graph-api/reference/object/reactions/, https://developers.facebook.com/docs/graph-api/reference/object/comments/, https://developers.facebook.com/docs/graph-api/reference/page/
+- **Instagram.**
+  - `GET /{ig-media-id}/insights` needs `instagram_business_manage_insights`. Metrics: `views`, `reach`, `likes`, `comments`, `saved`, `shares`, `reposts`, `total_interactions`, plus Reels watch-time metrics. Up to 48 h delay, 2 years kept. Missing data comes back as an empty set, not 0.
+  - Removed: `video_views` (2025-01-08); `plays` and `impressions` (2025-04-21; `impressions` only for media created on or after 2024-07-02).
+  - Album children have no insights.
+  - Story metrics live 24 h, and values under 5 return error 10.
+  - Accounts outside the app's roles need Advanced Access.
+  - Sources: https://developers.facebook.com/docs/instagram-platform/reference/instagram-media/insights, https://developers.facebook.com/docs/graph-api/changelog/version22.0/
+- **Threads.** `GET /{media-id}/insights?metric=views,likes,replies,reposts,quotes,shares` and `/{user-id}/threads_insights` (`followers_count`) need `threads_manage_insights`, which goes through App Review. `views` and `shares` are in development. Source: https://developers.facebook.com/docs/threads/insights
+- **LinkedIn.** Member post statistics (`memberCreatorPostAnalytics`) need `r_member_postAnalytics`, which comes only with the Community Management API for registered legal organizations. `w_member_social` gives no stats. Source: https://learn.microsoft.com/en-us/linkedin/marketing/community-management/members/post-statistics?view=li-lms-2026-10
+
 ## Sources
 
 - U1 https://github.com/nodejs/undici/blob/main/docs/docs/api/DiagnosticsChannel.md

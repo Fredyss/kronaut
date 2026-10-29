@@ -2747,6 +2747,156 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/channels/{channelId}/metrics": {
+      "get": {
+        "description": "The daily follower counts in [from, to] (UTC dates; default the last 30 days up to today; at most 366 days). A day is listed only when the count changed; a null value means the network did not report it. `before` is the last count before `from`, the value in effect at the start of the range.",
+        "operationId": "analytics.channel_metrics",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "before": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "day": {
+                              "format": "date",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                              "type": "string"
+                            },
+                            "value": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "day",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "followers": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "day": {
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                            "type": "string"
+                          },
+                          "value": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "day",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "followers",
+                    "before"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Read a channel's metrics",
+        "tags": [
+          "analytics"
+        ],
+        "x-kronaut-action": "analytics:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/channels/{channelId}/queue": {
       "get": {
         "description": "The weekly slots (weekday 1 = Monday, local time in the queue time zone) and the next free slots that \"add to queue\" would take. A channel without slots has a null time zone.",
@@ -11072,6 +11222,185 @@
           "posts"
         ],
         "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/metrics": {
+      "get": {
+        "description": "Per published destination that has metrics: the latest value of each metric with when it was read, and its snapshots oldest first (at most 500). A snapshot is stored only when a value changes. A null value means the network did not report it; a metric the network never reports is absent.",
+        "operationId": "analytics.post_metrics",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "destinations": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelId": {
+                            "type": "string"
+                          },
+                          "destinationId": {
+                            "type": "string"
+                          },
+                          "latest": {
+                            "additionalProperties": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "observedAt": {
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "maximum": 9007199254740991,
+                                      "minimum": 0,
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "observedAt"
+                              ],
+                              "type": "object"
+                            },
+                            "propertyNames": {
+                              "enum": [
+                                "likes",
+                                "reposts",
+                                "replies",
+                                "quotes",
+                                "comments",
+                                "shares",
+                                "reactions",
+                                "bookmarks",
+                                "views"
+                              ],
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "snapshots": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "metric": {
+                                  "enum": [
+                                    "likes",
+                                    "reposts",
+                                    "replies",
+                                    "quotes",
+                                    "comments",
+                                    "shares",
+                                    "reactions",
+                                    "bookmarks",
+                                    "views"
+                                  ],
+                                  "type": "string"
+                                },
+                                "observedAt": {
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "maximum": 9007199254740991,
+                                      "minimum": 0,
+                                      "type": "integer"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "metric",
+                                "value",
+                                "observedAt"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "destinationId",
+                          "channelId",
+                          "latest",
+                          "snapshots"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "destinations"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Read a post's metrics",
+        "tags": [
+          "analytics"
+        ],
+        "x-kronaut-action": "analytics:read",
         "x-kronaut-auth": [
           "session",
           "grant"

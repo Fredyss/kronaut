@@ -8,6 +8,7 @@ import { sql } from 'kysely';
 import { type Logger, pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
+import { analyticsRoutes } from '../analytics/routes.ts';
 import { approvalRoutes } from '../approvals/routes.ts';
 import { hashGrantToken } from '../auth/grant.ts';
 import { passwordChangeRoutes } from '../auth/password-change.ts';
@@ -220,6 +221,7 @@ export async function startPosts(
     ...queueRoutes(),
     ...seriesRoutes(),
     ...evergreenRoutes(),
+    ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({
       providers,
