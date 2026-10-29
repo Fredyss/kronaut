@@ -86,6 +86,12 @@ SELECT pg_temp.must('TEN-04 operator has no tenant-table privilege on ' || c.rel
 SELECT pg_temp.must('TEN-04 no privilege for PUBLIC on ' || c.relname, false)
   FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace, aclexplode(c.relacl) a
  WHERE n.nspname = 'public' AND c.relkind IN ('r','p') AND a.grantee = 0;
+SELECT pg_temp.must('TEN-04 queue_slots: tenant policy, app may only read, insert and delete',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'queue_slots'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'queue_slots'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'queue_slots'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT');
 
 -- TEN-05: the SECURITY DEFINER allowlist, pinned search_path, and EXECUTE per role.
 CREATE TEMP TABLE expected_definer (fn text, app boolean, operator boolean);

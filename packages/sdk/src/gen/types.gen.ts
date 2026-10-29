@@ -897,6 +897,93 @@ export type ChannelsDisconnectResponses = {
 
 export type ChannelsDisconnectResponse = ChannelsDisconnectResponses[keyof ChannelsDisconnectResponses];
 
+export type ChannelsQueueData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/queue';
+};
+
+export type ChannelsQueueErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsQueueError = ChannelsQueueErrors[keyof ChannelsQueueErrors];
+
+export type ChannelsQueueResponses = {
+    /**
+     * OK
+     */
+    200: {
+        slots: Array<{
+            time: string;
+            weekday: number;
+        }>;
+        timezone: string | null;
+        upcoming: Array<{
+            at: string;
+            local: string;
+            timezone: string;
+        }>;
+    };
+};
+
+export type ChannelsQueueResponse = ChannelsQueueResponses[keyof ChannelsQueueResponses];
+
+export type ChannelsQueueUpdateData = {
+    body: {
+        slots: Array<{
+            time: string;
+            weekday: number;
+        }>;
+        timezone: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/queue';
+};
+
+export type ChannelsQueueUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsQueueUpdateError = ChannelsQueueUpdateErrors[keyof ChannelsQueueUpdateErrors];
+
+export type ChannelsQueueUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        slots: Array<{
+            time: string;
+            weekday: number;
+        }>;
+        timezone: string | null;
+        upcoming: Array<{
+            at: string;
+            local: string;
+            timezone: string;
+        }>;
+    };
+};
+
+export type ChannelsQueueUpdateResponse = ChannelsQueueUpdateResponses[keyof ChannelsQueueUpdateResponses];
+
 export type MediaListData = {
     body?: never;
     path: {
@@ -2585,6 +2672,10 @@ export type PostsScheduleData = {
         acknowledgedCodes?: Array<string>;
         expectedVersion: number;
         mode: 'asap';
+    } | {
+        acknowledgedCodes?: Array<string>;
+        expectedVersion: number;
+        mode: 'queue';
     };
     headers: {
         'Idempotency-Key': string;

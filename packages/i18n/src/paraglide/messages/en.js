@@ -116,6 +116,7 @@
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Server_LabelInputs */
@@ -127,6 +128,7 @@
 /** @typedef {{}} Channels_TitleInputs */
 /** @typedef {{}} Compose_Add_CommentInputs */
 /** @typedef {{}} Compose_Add_ReplyInputs */
+/** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -180,6 +182,8 @@
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Queue_EmptyInputs */
+/** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown>, tz: NonNullable<unknown> }} Compose_Queue_NextInputs */
 /** @typedef {{}} Compose_Remove_CommentInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
@@ -293,6 +297,8 @@
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
+/** @typedef {{}} Issue_Queue_EmptyInputs */
+/** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
@@ -411,6 +417,9 @@
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Queue_AddInputs */
+/** @typedef {{}} Queue_SavedInputs */
+/** @typedef {{}} Queue_ZoneInputs */
 /** @typedef {{}} Reason_Account_DisabledInputs */
 /** @typedef {{}} Reason_Account_DisconnectedInputs */
 /** @typedef {{}} Reason_Account_Needs_ReauthInputs */
@@ -1008,6 +1017,10 @@ export const channels_open_profile = /** @type {(inputs: Channels_Open_ProfileIn
 	return /** @type {LocalizedString} */ (`Open profile`)
 };
 
+export const channels_queue = /** @type {(inputs: Channels_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Queue`)
+};
+
 export const channels_reconnect = /** @type {(inputs: Channels_ReconnectInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Reconnect`)
 };
@@ -1050,6 +1063,10 @@ export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs
 
 export const compose_add_reply = /** @type {(inputs: Compose_Add_ReplyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Add reply`)
+};
+
+export const compose_add_to_queue = /** @type {(inputs: Compose_Add_To_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add to queue`)
 };
 
 export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {
@@ -1272,6 +1289,14 @@ export const compose_publish_now = /** @type {(inputs: Compose_Publish_NowInputs
 
 export const compose_publishing = /** @type {(inputs: Compose_PublishingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Publishing…`)
+};
+
+export const compose_queue_empty = /** @type {(inputs: Compose_Queue_EmptyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} has an empty queue.`)
+};
+
+export const compose_queue_next = /** @type {(inputs: Compose_Queue_NextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.when} (${i?.tz})`)
 };
 
 export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
@@ -1728,6 +1753,14 @@ export const issue_post_type_unavailable = /** @type {(inputs: Issue_Post_Type_U
 
 export const issue_provider_unavailable = /** @type {(inputs: Issue_Provider_UnavailableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This network isn't available on this server right now.`)
+};
+
+export const issue_queue_empty = /** @type {(inputs: Issue_Queue_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The channel's queue is empty.`)
+};
+
+export const issue_queue_full = /** @type {(inputs: Issue_Queue_FullInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No free queue slot in the next 8 weeks.`)
 };
 
 export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_Too_HighInputs) => LocalizedString} */ () => {
@@ -2214,6 +2247,18 @@ export const provider_mastodon = /** @type {(inputs: Provider_MastodonInputs) =>
 
 export const provider_threads = /** @type {(inputs: Provider_ThreadsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Threads`)
+};
+
+export const queue_add = /** @type {(inputs: Queue_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add time`)
+};
+
+export const queue_saved = /** @type {(inputs: Queue_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Queue saved.`)
+};
+
+export const queue_zone = /** @type {(inputs: Queue_ZoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Time zone`)
 };
 
 export const reason_account_disabled = /** @type {(inputs: Reason_Account_DisabledInputs) => LocalizedString} */ () => {

@@ -19,6 +19,8 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   alt_text_required: () => m.issue_alt_text_required(),
   in_past: () => m.issue_in_past(),
   invalid_time_zone: () => m.issue_invalid_time_zone(),
+  queue_empty: () => m.issue_queue_empty(),
+  queue_full: () => m.issue_queue_full(),
   post_type_unavailable: () => m.issue_post_type_unavailable(),
   provider_unavailable: () => m.issue_provider_unavailable(),
   not_ready: () => m.issue_not_ready(),

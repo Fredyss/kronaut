@@ -1,7 +1,10 @@
 import { Input, Label } from '@kronaut/ui';
 import { useId } from 'react';
+import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
-import type { WhenState } from './when.ts';
+import { issueMessage } from './issues.ts';
+import type { QueueChoice, QueueEntry } from './queue-choice.ts';
+import type { Mode, WhenState } from './when.ts';
 
 export const NOTE_MAX = 2000;
 
@@ -16,6 +19,7 @@ interface WhenFieldsetProps {
   readonly timeId: string;
   readonly pending: boolean;
   readonly note?: NoteState | undefined;
+  readonly queue?: QueueChoice | undefined;
 }
 
 function NoteField({ note, pending }: { readonly note: NoteState; readonly pending: boolean }) {
@@ -36,35 +40,77 @@ function NoteField({ note, pending }: { readonly note: NoteState; readonly pendi
   );
 }
 
-export function WhenFieldset({ when, dateId, timeId, pending, note }: WhenFieldsetProps) {
-  const { mode, setMode, date, setDate, time, setTime, tz } = when;
+interface ModeOptionProps {
+  readonly value: Mode;
+  readonly label: string;
+  readonly when: WhenState;
+  readonly disabled: boolean;
+}
+
+function ModeOption({ value, label, when, disabled }: ModeOptionProps) {
+  return (
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="mode"
+        value={value}
+        checked={when.mode === value}
+        disabled={disabled}
+        onChange={() => when.setMode(value)}
+      />
+      {label}
+    </label>
+  );
+}
+
+function QueueLine({ entry: { channel, queue } }: { readonly entry: QueueEntry }) {
+  const next = queue?.upcoming[0];
+  const format = useFormat(next?.timezone ?? null);
+  const name = channel.displayName;
+  if (queue === undefined) return null;
+  if (queue.timezone === null) {
+    return <li className="text-destructive">{m.compose_queue_empty({ channel: name })}</li>;
+  }
+  if (next === undefined) {
+    return (
+      <li>{m.compose_issue_on_channel({ channel: name, message: issueMessage('queue_full') })}</li>
+    );
+  }
+  return (
+    <li>{m.compose_queue_next({ channel: name, when: format(next.at), tz: next.timezone })}</li>
+  );
+}
+
+function QueueLines({ queue, all }: { readonly queue: QueueChoice; readonly all: boolean }) {
+  const shown = all ? queue.entries : queue.entries.filter((e) => e.queue?.timezone === null);
+  if (shown.length === 0) return null;
+  return (
+    <ul className="flex flex-col gap-1 text-muted-foreground text-sm">
+      {shown.map((entry) => (
+        <QueueLine key={entry.channel.id} entry={entry} />
+      ))}
+    </ul>
+  );
+}
+
+export function WhenFieldset({ when, dateId, timeId, pending, note, queue }: WhenFieldsetProps) {
+  const { mode, date, setDate, time, setTime, tz } = when;
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className="mb-3 font-medium text-sm">{m.compose_when_title()}</legend>
       <div className="flex flex-wrap gap-4 text-sm">
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="mode"
-            value="asap"
-            checked={mode === 'asap'}
-            disabled={pending}
-            onChange={() => setMode('asap')}
+        <ModeOption value="asap" label={m.compose_publish_now()} when={when} disabled={pending} />
+        <ModeOption value="instant" label={m.compose_schedule()} when={when} disabled={pending} />
+        {queue === undefined ? null : (
+          <ModeOption
+            value="queue"
+            label={m.compose_add_to_queue()}
+            when={when}
+            disabled={pending || queue.empty !== undefined}
           />
-          {m.compose_publish_now()}
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="mode"
-            value="instant"
-            checked={mode === 'instant'}
-            disabled={pending}
-            onChange={() => setMode('instant')}
-          />
-          {m.compose_schedule()}
-        </label>
+        )}
       </div>
+      {queue === undefined ? null : <QueueLines queue={queue} all={mode === 'queue'} />}
       {mode === 'instant' ? (
         <div className="flex flex-wrap items-end gap-3">
           <div className="flex flex-col gap-2">

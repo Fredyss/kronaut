@@ -3,6 +3,7 @@ import type { UpdateObject } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
 import type { ProviderRegistry } from '../providers.ts';
+import { queueSchedules } from '../queue/slots.ts';
 import { type Frozen, freeze, resolveLocal, type Schedule, scheduleAt } from './freeze.ts';
 import { unprocessable } from './issues.ts';
 import type { CurrentPost, LockedDestination } from './locks.ts';
@@ -10,9 +11,17 @@ import type { CurrentPost, LockedDestination } from './locks.ts';
 const PAST_GRACE_SECONDS = 60;
 const DRAFT_ONLY: ReadonlySet<string> = new Set(['draft']);
 
-export type ScheduleSpec =
+export type FixedSpec =
   | { readonly mode: 'asap' }
   | { readonly mode: 'instant'; readonly scheduleLocal: string; readonly scheduleTz: string };
+
+export type ScheduleSpec = FixedSpec | { readonly mode: 'queue' };
+
+export interface ScheduleTiming {
+  readonly workspaceId: string;
+  readonly postId: string;
+  readonly now: Temporal.Instant;
+}
 
 export interface Target {
   readonly row: LockedDestination;
@@ -35,7 +44,7 @@ export interface FreezeScope {
 export async function scheduleOf(
   trx: TenantDb,
   workspaceId: string,
-  spec: ScheduleSpec,
+  spec: FixedSpec,
   now: Temporal.Instant,
 ): Promise<Schedule> {
   if (spec.mode === 'asap') {
@@ -59,17 +68,34 @@ export async function scheduleOf(
   return schedule;
 }
 
+export async function targetSchedules(
+  trx: TenantDb,
+  timing: ScheduleTiming,
+  spec: ScheduleSpec,
+  targets: readonly Target[],
+): Promise<ReadonlyMap<string, Schedule>> {
+  const rows = targets.map(({ row }) => row);
+  if (spec.mode === 'queue') return await queueSchedules(trx, timing, rows);
+  const schedule = await scheduleOf(trx, timing.workspaceId, spec, timing.now);
+  return new Map(rows.map((row) => [row.id, schedule]));
+}
+
+export function earliest(schedules: ReadonlyMap<string, Schedule>): Schedule {
+  const [first, ...rest] = schedules.values();
+  if (first === undefined) throw new Error('no destination has a schedule');
+  return rest.reduce((min, s) => (Temporal.Instant.compare(s.at, min.at) < 0 ? s : min), first);
+}
+
 export function postSchedule(
   mode: ScheduleSpec['mode'],
   schedule: Schedule,
 ): UpdateObject<DB, 'posts'> {
-  return mode === 'instant'
-    ? {
-        schedule_mode: 'instant',
-        schedule_local: schedule.local.toString(),
-        schedule_tz: schedule.tz,
-      }
-    : { schedule_mode: 'asap', schedule_local: null, schedule_tz: null };
+  if (mode === 'asap') return { schedule_mode: 'asap', schedule_local: null, schedule_tz: null };
+  return {
+    schedule_mode: mode === 'queue' ? 'local_per_destination' : 'instant',
+    schedule_local: schedule.local.toString(),
+    schedule_tz: schedule.tz,
+  };
 }
 
 export function draftTargets(

@@ -21,7 +21,7 @@ import { providerUi } from '../providers.ts';
 const route = getRouteApi('/app/posts/$postId');
 
 function scheduleLine(post: Post, format: (iso: string) => string): string {
-  const at = post.destinations.find((d) => d.scheduledAt !== null)?.scheduledAt ?? null;
+  const at = post.destinations.flatMap((d) => d.scheduledAt ?? []).sort()[0] ?? null;
   if (post.scheduleMode === 'asap') return m.post_schedule_asap();
   if (at === null) return m.post_schedule_none();
   return post.scheduleTz === null

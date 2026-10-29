@@ -39,6 +39,7 @@ export interface ComposeDestination {
 
 export type ComposeWhen =
   | { readonly mode: 'asap' }
+  | { readonly mode: 'queue' }
   | { readonly mode: 'instant'; readonly scheduleLocal: string; readonly scheduleTz: string };
 
 export interface ComposeInput {

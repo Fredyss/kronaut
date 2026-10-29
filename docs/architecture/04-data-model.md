@@ -39,7 +39,7 @@
 | Billing seam (ADR-0019) | `organizations`, `entitlement_overrides`, `usage_counters` |
 | Identity | `users`, `sessions`, `security_events`, `memberships` (role + `can_approve`), `deletion_receipts` |
 | Context | `brands`, `locations`, `campaigns`, `account_groups`, `account_group_members` |
-| Channels | `provider_apps` (status active\|misconfigured\|disabled, review_state), `provider_app_keys` (client signing keys, ADR-0050), `provider_app_incidents`, `social_accounts`, `account_credentials` (DEK-wrapped ciphertext, refresh lease, `version`, `client_key_id` binding the session to its signing key), `channel_incidents` |
+| Channels | `provider_apps` (status active\|misconfigured\|disabled, review_state), `provider_app_keys` (client signing keys, ADR-0050), `provider_app_incidents`, `social_accounts`, `account_credentials` (DEK-wrapped ciphertext, refresh lease, `version`, `client_key_id` binding the session to its signing key), `channel_incidents`, `queue_slots` (weekday + local time + zone per channel) |
 | Machine access (ADR-0013/14) | `access_grants`, `grant_tokens`, `access_scopes`, `idempotency_keys` |
 | Content (ADR-0033) | `posts` (origin, `agent_dirty`, schedule_mode, `publish_summary`, soft delete), `post_variants`, `variant_items`, `post_revisions` + `revision_destinations` (immutable snapshots with hashes) |
 | Media (ADR-0023) | `media_assets` (immutable master, sha256, per-workspace storage key), `media_renditions`, `item_media`, `destination_media` |

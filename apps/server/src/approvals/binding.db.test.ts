@@ -13,6 +13,7 @@ import {
   errorOf,
   grantAuth,
   inMinutes,
+  insertAccount,
   ownerAuth,
   scheduleCall,
   startPosts,
@@ -175,6 +176,31 @@ describe('scheduling under a required policy', () => {
       scheduleTz: 'Europe/Prague',
     });
     await expectOutside(response);
+  });
+
+  it('holds each queued destination to the approved time on its own', async () => {
+    const shown = Temporal.PlainDateTime.from(inMinutes(24 * 60));
+    const later = shown.add({ hours: 3 });
+    const slot = (local: Temporal.PlainDateTime) => ({
+      weekday: local.dayOfWeek,
+      time: local.toPlainTime().toString({ smallestUnit: 'minute' }),
+    });
+    const queue = (channel: string, local: Temporal.PlainDateTime) =>
+      call('PUT', `channels/${channel}/queue`, ownerAuth, { timezone: TZ, slots: [slot(local)] });
+    const [onTime, offTime] = [await insertAccount('On time'), await insertAccount('Off time')];
+    await queue(onTime, shown);
+    await queue(offTime, later);
+    const body = {
+      items: [{ doc: doc('Ahoj') }],
+      destinations: [onTime, offTime].map((accountId) => ({ accountId, publishType: 'post' })),
+    };
+    const post = await requested(await create(ownerAuth, body), {
+      schedule: { scheduleLocal: shown.toString(), scheduleTz: TZ },
+    });
+    await decided(await openRequestOf(post), 'approve', approver.auth);
+    await expectOutside(await scheduleCall(await fresh(post), { mode: 'queue' }));
+    await queue(offTime, shown);
+    expect((await scheduleCall(await fresh(post), { mode: 'queue' })).status).toBe(200);
   });
 
   it('schedules unbound outside the approved time once the policy no longer requires approval', async () => {

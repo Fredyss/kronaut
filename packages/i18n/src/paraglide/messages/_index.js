@@ -118,6 +118,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Server_LabelInputs */
@@ -129,6 +130,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_TitleInputs */
 /** @typedef {{}} Compose_Add_CommentInputs */
 /** @typedef {{}} Compose_Add_ReplyInputs */
+/** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -182,6 +184,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Preview_TitleInputs */
 /** @typedef {{}} Compose_Publish_NowInputs */
 /** @typedef {{}} Compose_PublishingInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Queue_EmptyInputs */
+/** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown>, tz: NonNullable<unknown> }} Compose_Queue_NextInputs */
 /** @typedef {{}} Compose_Remove_CommentInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
@@ -295,6 +299,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
+/** @typedef {{}} Issue_Queue_EmptyInputs */
+/** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
@@ -413,6 +419,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Queue_AddInputs */
+/** @typedef {{}} Queue_SavedInputs */
+/** @typedef {{}} Queue_ZoneInputs */
 /** @typedef {{}} Reason_Account_DisabledInputs */
 /** @typedef {{}} Reason_Account_DisconnectedInputs */
 /** @typedef {{}} Reason_Account_Needs_ReauthInputs */
@@ -2296,6 +2305,21 @@ export const channels_open_profile = /** @type {((inputs?: Channels_Open_Profile
 /**
 * | output |
 * | --- |
+* | "Queue" |
+*
+* @param {Channels_QueueInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_queue = /** @type {((inputs?: Channels_QueueInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_QueueInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_queue(inputs)
+	if (locale === "cs") return __cs.channels_queue(inputs)
+	return __en.channels_queue(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Reconnect" |
 *
 * @param {Channels_ReconnectInputs} inputs
@@ -2457,6 +2481,21 @@ export const compose_add_reply = /** @type {((inputs?: Compose_Add_ReplyInputs, 
 	if (locale === "sk") return __sk.compose_add_reply(inputs)
 	if (locale === "cs") return __cs.compose_add_reply(inputs)
 	return __en.compose_add_reply(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add to queue" |
+*
+* @param {Compose_Add_To_QueueInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_add_to_queue = /** @type {((inputs?: Compose_Add_To_QueueInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Add_To_QueueInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_add_to_queue(inputs)
+	if (locale === "cs") return __cs.compose_add_to_queue(inputs)
+	return __en.compose_add_to_queue(inputs)
 });
 /**
 * | output |
@@ -3257,6 +3296,36 @@ export const compose_publishing = /** @type {((inputs?: Compose_PublishingInputs
 	if (locale === "sk") return __sk.compose_publishing(inputs)
 	if (locale === "cs") return __cs.compose_publishing(inputs)
 	return __en.compose_publishing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} has an empty queue." |
+*
+* @param {Compose_Queue_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_queue_empty = /** @type {((inputs: Compose_Queue_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Queue_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_queue_empty(inputs)
+	if (locale === "cs") return __cs.compose_queue_empty(inputs)
+	return __en.compose_queue_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel}: {when} ({tz})" |
+*
+* @param {Compose_Queue_NextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_queue_next = /** @type {((inputs: Compose_Queue_NextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Queue_NextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_queue_next(inputs)
+	if (locale === "cs") return __cs.compose_queue_next(inputs)
+	return __en.compose_queue_next(inputs)
 });
 /**
 * | output |
@@ -4954,6 +5023,36 @@ export const issue_provider_unavailable = /** @type {((inputs?: Issue_Provider_U
 	if (locale === "sk") return __sk.issue_provider_unavailable(inputs)
 	if (locale === "cs") return __cs.issue_provider_unavailable(inputs)
 	return __en.issue_provider_unavailable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The channel's queue is empty." |
+*
+* @param {Issue_Queue_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_queue_empty = /** @type {((inputs?: Issue_Queue_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Queue_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_queue_empty(inputs)
+	if (locale === "cs") return __cs.issue_queue_empty(inputs)
+	return __en.issue_queue_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No free queue slot in the next 8 weeks." |
+*
+* @param {Issue_Queue_FullInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_queue_full = /** @type {((inputs?: Issue_Queue_FullInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Queue_FullInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_queue_full(inputs)
+	if (locale === "cs") return __cs.issue_queue_full(inputs)
+	return __en.issue_queue_full(inputs)
 });
 /**
 * | output |
@@ -6731,6 +6830,51 @@ export const provider_threads = /** @type {((inputs?: Provider_ThreadsInputs, op
 	if (locale === "sk") return __sk.provider_threads(inputs)
 	if (locale === "cs") return __cs.provider_threads(inputs)
 	return __en.provider_threads(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add time" |
+*
+* @param {Queue_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const queue_add = /** @type {((inputs?: Queue_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Queue_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.queue_add(inputs)
+	if (locale === "cs") return __cs.queue_add(inputs)
+	return __en.queue_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Queue saved." |
+*
+* @param {Queue_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const queue_saved = /** @type {((inputs?: Queue_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Queue_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.queue_saved(inputs)
+	if (locale === "cs") return __cs.queue_saved(inputs)
+	return __en.queue_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Time zone" |
+*
+* @param {Queue_ZoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const queue_zone = /** @type {((inputs?: Queue_ZoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Queue_ZoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.queue_zone(inputs)
+	if (locale === "cs") return __cs.queue_zone(inputs)
+	return __en.queue_zone(inputs)
 });
 /**
 * | output |

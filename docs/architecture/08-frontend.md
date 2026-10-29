@@ -6,6 +6,7 @@
 - **Live validation strip** from the shared manifest ("X 291/280", "IG Reel needs 9:16, 3–90 s", Bluesky graphemes + bytes):
   - Media is checked in a Web Worker (`createImageBitmap`, mediabunny) *before* upload.
   - Schedule stays disabled until everything is valid, and each error comes with a fix action.
+  - "Add to queue" sits next to ASAP and a fixed time. It shows each selected channel's next free slot, and is disabled with the reason when a channel has no slots. Each channel's queue is edited from the channel list.
 - **Previews** are React components per archetype (short-feed, pro-feed, media-grid, vertical-video, chat, article):
   - They use real truncation cutoffs and crop overlays.
   - Golden tests per network keep preview == published.
