@@ -37,9 +37,15 @@ interface Channel {
 type RemoveReason = 'owner_lost' | 'copy_failed';
 
 // A client error repeats every hour until someone changes the pool post, so retrying only fails again.
+const CONTENT_ERRORS: ReadonlySet<string> = new Set([
+  'invalid_request',
+  'unprocessable',
+  'preflight_failed',
+]);
+
 function removeReason(err: unknown): RemoveReason | null {
   if (err instanceof OwnerLost) return 'owner_lost';
-  if (err instanceof HttpError && err.status >= 400 && err.status < 500) return 'copy_failed';
+  if (err instanceof HttpError && CONTENT_ERRORS.has(err.code)) return 'copy_failed';
   return null;
 }
 

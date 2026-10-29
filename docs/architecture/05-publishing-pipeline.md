@@ -343,4 +343,4 @@ Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with 
     - While its slot is ahead, a draft copy holds the slot against "add to queue". Each fill schedules copies whose request was approved in the meantime.
     - A copy whose slot passes without approval stays a draft. Its open request is voided, and a later slot gets another post.
   - **Locking:** per-channel queue locks, as in "add to queue", so a manual queue claim and the fill never take the same slot.
-- **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (preflight or another `4xx`), is taken out of the **whole** pool with a reason, even if only one channel failed; re-marking puts it back. Other errors are retried on the next run.
+- **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (`preflight_failed`, `unprocessable` or `invalid_request`), is taken out of the **whole** pool with a reason, even if only one channel failed; re-marking puts it back. Other errors, conflicts included, are retried on the next run.
