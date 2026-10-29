@@ -10,6 +10,7 @@ import { purgeNotifications } from './notifications/retention.ts';
 import { recomputeTimes } from './posts/tz-recompute.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
+import { purgeInstanceRetention } from './system/instance-retention.ts';
 import { checkApiVersionSunsets } from './system/sunset.ts';
 
 export const CRON_TASKS = {
@@ -18,6 +19,7 @@ export const CRON_TASKS = {
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
   credentialRetention: 'credential_retention',
+  instanceRetention: 'instance_retention',
   mediaGc: 'media_gc',
   notificationEmail: 'notification_email',
   notificationRetention: 'notification_retention',
@@ -65,6 +67,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     task: CRON_TASKS.credentialRetention,
     identifier: CRON_TASKS.credentialRetention,
     match: '51 3 * * *',
+    options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
+  {
+    task: CRON_TASKS.instanceRetention,
+    identifier: CRON_TASKS.instanceRetention,
+    match: '29 3 * * *',
     options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
   },
   {
@@ -117,6 +125,7 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.auditMaintenance]: DAY_MS,
   [CRON_TASKS.credentialRefresh]: 5 * MINUTE_MS,
   [CRON_TASKS.credentialRetention]: DAY_MS,
+  [CRON_TASKS.instanceRetention]: DAY_MS,
   [CRON_TASKS.mediaGc]: 60 * MINUTE_MS,
   [CRON_TASKS.notificationEmail]: MINUTE_MS,
   [CRON_TASKS.notificationRetention]: DAY_MS,
@@ -235,6 +244,9 @@ export function cronTaskList(
       await recordCronRun(db, CRON_TASKS.credentialRetention, () =>
         purgeDisconnectedCredentials(db),
       );
+    },
+    [CRON_TASKS.instanceRetention]: async () => {
+      await recordCronRun(db, CRON_TASKS.instanceRetention, () => purgeInstanceRetention(db));
     },
     [CRON_TASKS.mediaGc]: async () => {
       await recordCronRun(db, CRON_TASKS.mediaGc, () => collectMedia(db, sweeps));
