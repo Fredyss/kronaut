@@ -12,6 +12,7 @@ it('re-exports the public runtime names of every module', () => {
     'MAX_CONNECT_ACCOUNTS',
     'NEVER_GRANTABLE_ACTIONS',
     'POLICY_VERSION',
+    'POST_METRICS',
     'PREVIEW_ARCHETYPES',
     'PUBLISH_DEADLINE_MS',
     'ProviderFailure',

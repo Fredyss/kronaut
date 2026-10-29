@@ -113,6 +113,30 @@ SELECT pg_temp.must('TEN-04 evergreen_runs: tenant policy, app may read and inse
   AND (SELECT string_agg(x.privilege_type || '(' || att.attname || ')', ',' ORDER BY att.attname)
          FROM pg_attribute att, aclexplode(att.attacl) x
         WHERE att.attrelid = 'evergreen_runs'::regclass AND x.grantee = 'kronaut_app'::regrole) = 'UPDATE(copy_post_id)');
+SELECT pg_temp.must('TEN-04 post_metric_snapshots: tenant policy, app may only read and insert',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_metric_snapshots'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_metric_snapshots'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'post_metric_snapshots'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT');
+SELECT pg_temp.must('TEN-04 account_daily_metrics: tenant policy, app may only read and insert',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'account_daily_metrics'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'account_daily_metrics'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'account_daily_metrics'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT');
+SELECT pg_temp.must('TEN-04 destination_metric_pulls: tenant policy, app may only read, insert and update',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'destination_metric_pulls'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'destination_metric_pulls'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'destination_metric_pulls'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 account_metric_pulls: tenant policy, app may only read, insert and update',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'account_metric_pulls'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'account_metric_pulls'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'account_metric_pulls'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'INSERT,SELECT,UPDATE');
 
 -- TEN-05: the SECURITY DEFINER allowlist, pinned search_path, and EXECUTE per role.
 CREATE TEMP TABLE expected_definer (fn text, app boolean, operator boolean);

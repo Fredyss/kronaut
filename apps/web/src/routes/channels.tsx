@@ -3,7 +3,14 @@ import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { lazy, Suspense, useId, useState } from 'react';
-import { type Channel, channelsQuery, connectableQuery, errorStatus, meQuery } from '../api.ts';
+import {
+  ANALYTICS_ROLES,
+  type Channel,
+  channelsQuery,
+  connectableQuery,
+  errorStatus,
+  meQuery,
+} from '../api.ts';
 import { AddChannelDialog } from '../channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
 import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
@@ -13,6 +20,10 @@ import { useApiClient, useLocale } from '../context.ts';
 import { httpsUrl } from '../destinations.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
+
+const Followers = lazy(() =>
+  import('../channels/followers.tsx').then((module) => ({ default: module.Followers })),
+);
 
 const QueueEditor = lazy(() =>
   import('../channels/queue-editor.tsx').then((module) => ({ default: module.QueueEditor })),
@@ -85,6 +96,7 @@ interface CardProps {
   readonly pending: boolean;
   readonly disconnecting: boolean;
   readonly queueWorkspace: string | null;
+  readonly metricsWorkspace: string | null;
 }
 
 type Panel = 'confirm' | 'queue' | null;
@@ -128,7 +140,7 @@ function CardActions({ channel, onReconnect, onDisconnect, pending, ...rest }: A
 }
 
 function ChannelCard(props: CardProps) {
-  const { channel, onDisconnect, disconnecting, queueWorkspace } = props;
+  const { channel, onDisconnect, disconnecting, queueWorkspace, metricsWorkspace } = props;
   const { locale } = useLocale();
   const [panel, setPanel] = useState<Panel>(null);
   const profile = httpsUrl(channel.profileUrl);
@@ -159,6 +171,11 @@ function ChannelCard(props: CardProps) {
           )}
           {expires === null ? null : (
             <span className="text-muted-foreground">{m.channels_expires({ date: expires })}</span>
+          )}
+          {metricsWorkspace === null ? null : (
+            <Suspense fallback={null}>
+              <Followers workspaceId={metricsWorkspace} channel={channel} />
+            </Suspense>
           )}
         </div>
       </div>
@@ -249,6 +266,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
               pending={connect.isPending}
               disconnecting={disconnect.isPending}
               queueWorkspace={QUEUE_ROLES.has(role) ? workspaceId : null}
+              metricsWorkspace={ANALYTICS_ROLES.has(role) ? workspaceId : null}
             />
           ))}
         </ul>

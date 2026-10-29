@@ -1,6 +1,10 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Account_LogoutInputs */
 /** @typedef {{}} Account_MenuInputs */
+/** @typedef {{ when: NonNullable<unknown> }} Analytics_As_OfInputs */
+/** @typedef {{ metric: NonNullable<unknown> }} Analytics_MetricInputs */
+/** @typedef {{}} Analytics_MissingInputs */
+/** @typedef {{}} Analytics_TitleInputs */
 /** @typedef {{}} App_NameInputs */
 /** @typedef {{}} Approval_ApproveInputs */
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Approval_BoundInputs */
@@ -74,6 +78,8 @@
 /** @typedef {{}} Channels_Error_State_InvalidInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Channels_Error_Too_Many_AccountsInputs */
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
+/** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
+/** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
@@ -330,6 +336,30 @@ export const account_logout = /** @type {(inputs: Account_LogoutInputs) => Local
 
 export const account_menu = /** @type {(inputs: Account_MenuInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Účet`)
+};
+
+export const analytics_as_of = /** @type {(inputs: Analytics_As_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Stav k ${i?.when}`)
+};
+
+export const analytics_metric = /** @type {(inputs: Analytics_MetricInputs) => LocalizedString} */ (i) => {
+	if (i?.metric === "likes") return /** @type {LocalizedString} */ (`Líbí se mi`);
+	if (i?.metric === "reposts") return /** @type {LocalizedString} */ (`Reposty`);
+	if (i?.metric === "replies") return /** @type {LocalizedString} */ (`Odpovědi`);
+	if (i?.metric === "quotes") return /** @type {LocalizedString} */ (`Citace`);
+	if (i?.metric === "comments") return /** @type {LocalizedString} */ (`Komentáře`);
+	if (i?.metric === "shares") return /** @type {LocalizedString} */ (`Sdílení`);
+	if (i?.metric === "reactions") return /** @type {LocalizedString} */ (`Reakce`);
+	if (i?.metric === "bookmarks") return /** @type {LocalizedString} */ (`Záložky`);
+	return /** @type {LocalizedString} */ (`Zobrazení`)
+};
+
+export const analytics_missing = /** @type {(inputs: Analytics_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`—`)
+};
+
+export const analytics_title = /** @type {(inputs: Analytics_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Statistiky`)
 };
 
 export const app_name = /** @type {(inputs: App_NameInputs) => LocalizedString} */ () => {
@@ -634,6 +664,14 @@ export const channels_error_too_many_accounts = /** @type {(inputs: Channels_Err
 
 export const channels_expires = /** @type {(inputs: Channels_ExpiresInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Přístup vyprší ${i?.date}`)
+};
+
+export const channels_followers = /** @type {(inputs: Channels_FollowersInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Sledující: ${i?.value}`)
+};
+
+export const channels_followers_change = /** @type {(inputs: Channels_Followers_ChangeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.change} za 30 dní`)
 };
 
 export const channels_handle_label = /** @type {(inputs: Channels_Handle_LabelInputs) => LocalizedString} */ () => {

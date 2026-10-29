@@ -30,7 +30,7 @@ export function parseState(state: unknown): State {
   return parsed.data;
 }
 
-export function pageOf(input: Input): PageAuth {
+export function pageOf(input: Pick<Input, 'account' | 'credentials' | 'app'>): PageAuth {
   const id = input.account.providerAccountId;
   if (!graphId.safeParse(id).success) throw permanent('page_id_invalid');
   const token = input.credentials.accessToken;

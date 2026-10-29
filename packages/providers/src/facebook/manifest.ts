@@ -78,7 +78,7 @@ export const facebookManifest: ProviderManifest<FacebookSettings> = {
   ],
   concurrency: 1,
   preview: 'pro-feed',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   egressHosts: ['www.facebook.com', 'graph.facebook.com', 'rupload.facebook.com'],
   accountPostType: commentPostType,
 };

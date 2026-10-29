@@ -2,6 +2,7 @@ import type { Actor, Database } from '@kronaut/db';
 import { type CronItem, type ParsedCronItem, parseCronItems, type TaskList } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
+import { pullAnalytics } from './analytics/pull.ts';
 import { refreshCapabilities } from './channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './channels/retention.ts';
 import { fillEvergreen } from './evergreen/fill.ts';
@@ -17,6 +18,7 @@ import { checkApiVersionSunsets } from './system/sunset.ts';
 
 export const CRON_TASKS = {
   accountCapabilitiesRefresh: 'account_capabilities_refresh',
+  analyticsPull: 'analytics_pull',
   apiVersionSunset: 'api_version_sunset',
   auditMaintenance: 'audit_maintenance',
   credentialRefresh: 'credential_refresh',
@@ -48,6 +50,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     identifier: CRON_TASKS.accountCapabilitiesRefresh,
     match: '37 4 * * *',
     options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
+  {
+    task: CRON_TASKS.analyticsPull,
+    identifier: CRON_TASKS.analyticsPull,
+    match: '11,26,41,56 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
   },
   {
     task: CRON_TASKS.apiVersionSunset,
@@ -137,6 +145,7 @@ const CRON_ITEMS: readonly CronItem[] = [
 
 export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.accountCapabilitiesRefresh]: DAY_MS,
+  [CRON_TASKS.analyticsPull]: 15 * MINUTE_MS,
   [CRON_TASKS.apiVersionSunset]: DAY_MS,
   [CRON_TASKS.auditMaintenance]: DAY_MS,
   [CRON_TASKS.credentialRefresh]: 5 * MINUTE_MS,
@@ -244,6 +253,9 @@ export function cronTaskList(
       await recordCronRun(db, CRON_TASKS.accountCapabilitiesRefresh, () =>
         refreshCapabilities(sweeps),
       );
+    },
+    [CRON_TASKS.analyticsPull]: async () => {
+      await recordCronRun(db, CRON_TASKS.analyticsPull, () => pullAnalytics(sweeps));
     },
     [CRON_TASKS.apiVersionSunset]: async () => {
       await recordCronRun(db, CRON_TASKS.apiVersionSunset, async () =>

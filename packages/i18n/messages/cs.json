@@ -471,5 +471,27 @@
     }
   ],
   "evergreen_copies": "Poslední kopie",
-  "evergreen_copy": "{channel}, {when}"
+  "evergreen_copy": "{channel}, {when}",
+  "analytics_title": "Statistiky",
+  "analytics_metric": [
+    {
+      "declarations": ["input metric"],
+      "selectors": ["metric"],
+      "match": {
+        "metric=likes": "Líbí se mi",
+        "metric=reposts": "Reposty",
+        "metric=replies": "Odpovědi",
+        "metric=quotes": "Citace",
+        "metric=comments": "Komentáře",
+        "metric=shares": "Sdílení",
+        "metric=reactions": "Reakce",
+        "metric=bookmarks": "Záložky",
+        "metric=*": "Zobrazení"
+      }
+    }
+  ],
+  "analytics_missing": "—",
+  "analytics_as_of": "Stav k {when}",
+  "channels_followers": "Sledující: {value}",
+  "channels_followers_change": "{change} za 30 dní"
 }

@@ -12,6 +12,7 @@ export {
 export * from './authz.ts';
 export * from './destination-state.ts';
 export * from './ids.ts';
+export * from './provider-analytics.ts';
 export * from './provider-contract.ts';
 export * from './provider-error.ts';
 export * from './recurrence.ts';

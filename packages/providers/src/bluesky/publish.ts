@@ -68,7 +68,7 @@ function rateLimitScope(policy: string | null): 'account' | 'instance' {
   return policy !== null && /;\s*w=300\b/.test(policy) ? 'instance' : 'account';
 }
 
-function resetAt(headers: Headers, now: Temporal.Instant): Temporal.Instant {
+export function resetAt(headers: Headers, now: Temporal.Instant): Temporal.Instant {
   const reset = headers.get('ratelimit-reset')?.trim();
   if (reset !== undefined && /^\d{1,12}$/.test(reset))
     return Temporal.Instant.fromEpochMilliseconds(Number(reset) * 1000);

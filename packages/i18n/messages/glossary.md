@@ -25,6 +25,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | reply | odpoveď | odpověď | A later item of a reply chain, published under the main post. |
 | first comment | prvý komentár | první komentář | A comment the channel posts under its own post. |
 | evergreen post | nadčasový príspevok | nadčasový příspěvek | A post in the pool that refills free queue slots with copies. |
+| analytics | štatistiky | statistiky | The counts a network reports for a published post or a channel. |
+| follower | sledovateľ (sledovatelia) | sledující | An account that follows a channel. |
 
 ## Style
 

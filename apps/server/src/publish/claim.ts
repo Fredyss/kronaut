@@ -36,6 +36,7 @@ export interface Claimed {
   readonly deadlineAt: Temporal.Instant | null;
   readonly afterRefresh: boolean;
   readonly entry: ProviderEntry;
+  readonly analytics: boolean;
   readonly postType: PostTypeSpec;
   readonly position: number;
   readonly role: ItemRole;
@@ -216,6 +217,7 @@ async function claimAttempt(
       deadlineAt: dest.main_confirmed ? null : instant(scope.deadlineAt),
       afterRefresh: dest.state === 'retry_wait' && dest.state_reason === 'auth_refreshed',
       entry,
+      analytics: entry.manifest.capabilities.analytics,
       postType,
       position: current.item.position,
       role: current.item.role,

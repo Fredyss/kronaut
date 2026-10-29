@@ -78,6 +78,17 @@ export interface AccountCredentials {
   wrapped_dek: Buffer;
 }
 
+export interface AccountDailyMetrics {
+  api_version: string;
+  day: string;
+  metric: string;
+  observed_at: Timestamp;
+  provider: string;
+  social_account_id: string;
+  value: Int8 | null;
+  workspace_id: string;
+}
+
 export interface AccountGroupMembers {
   added_at: Generated<Timestamp>;
   added_by: string | null;
@@ -94,6 +105,12 @@ export interface AccountGroups {
   id: Generated<string>;
   name: string;
   updated_at: Generated<Timestamp>;
+  workspace_id: string;
+}
+
+export interface AccountMetricPulls {
+  checked_on: string;
+  social_account_id: string;
   workspace_id: string;
 }
 
@@ -312,6 +329,14 @@ export interface DestinationItems {
 export interface DestinationMedia {
   destination_id: string;
   media_asset_id: string;
+  workspace_id: string;
+}
+
+export interface DestinationMetricPulls {
+  attempts: Generated<number>;
+  destination_id: string;
+  next_pull_at: Timestamp | null;
+  step: number;
   workspace_id: string;
 }
 
@@ -581,6 +606,16 @@ export interface PostDestinations {
   variant_id: string | null;
   verified_at: Timestamp | null;
   version: Generated<number>;
+  workspace_id: string;
+}
+
+export interface PostMetricSnapshots {
+  api_version: string;
+  destination_id: string;
+  metric: string;
+  observed_at: Timestamp;
+  provider: string;
+  value: Int8 | null;
   workspace_id: string;
 }
 
@@ -936,8 +971,10 @@ export interface DB {
   access_grants: AccessGrants;
   access_scopes: AccessScopes;
   account_credentials: AccountCredentials;
+  account_daily_metrics: AccountDailyMetrics;
   account_group_members: AccountGroupMembers;
   account_groups: AccountGroups;
+  account_metric_pulls: AccountMetricPulls;
   approval_decisions: ApprovalDecisions;
   approval_policies: ApprovalPolicies;
   approval_request_destinations: ApprovalRequestDestinations;
@@ -952,6 +989,7 @@ export interface DB {
   deletion_receipts: DeletionReceipts;
   destination_items: DestinationItems;
   destination_media: DestinationMedia;
+  destination_metric_pulls: DestinationMetricPulls;
   destination_state_reasons: DestinationStateReasons;
   destination_transitions: DestinationTransitions;
   entitlement_overrides: EntitlementOverrides;
@@ -971,6 +1009,7 @@ export interface DB {
   notifications: Notifications;
   organizations: Organizations;
   post_destinations: PostDestinations;
+  post_metric_snapshots: PostMetricSnapshots;
   post_revisions: PostRevisions;
   post_series: PostSeries;
   post_variants: PostVariants;
