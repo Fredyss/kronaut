@@ -3,6 +3,12 @@ import { sql } from 'kysely';
 
 export const PULL_OFFSETS_HOURS = [1, 6, 24, 72, 168, 720] as const;
 
+export function pullSteps(windowHours?: number): [step: number, hours: number][] {
+  return [...PULL_OFFSETS_HOURS.entries()].filter(
+    ([, hours]) => windowHours === undefined || hours < windowHours,
+  );
+}
+
 export async function seedPulls(
   trx: TenantDb,
   ref: { readonly workspaceId: string; readonly id: string },

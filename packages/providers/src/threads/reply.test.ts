@@ -82,8 +82,12 @@ describe('threads replies: manifest and capabilities', () => {
   });
 
   it('offers replies only to accounts connected with the replies scope', () => {
-    expect(accountCapabilities(SCOPES)).toEqual({ replies: true });
-    expect(accountCapabilities(SCOPES.slice(0, 2))).toEqual({ replies: false });
+    expect(accountCapabilities(SCOPES)).toEqual({ replies: true, insights: false });
+    expect(accountCapabilities([...SCOPES, 'threads_manage_insights'])).toEqual({
+      replies: true,
+      insights: true,
+    });
+    expect(accountCapabilities(SCOPES.slice(0, 2))).toEqual({ replies: false, insights: false });
     for (const type of [post, video]) {
       expect(accountPostType(type, { replies: true })).toEqual(type);
       const { thread: _thread, ...plain } = type;

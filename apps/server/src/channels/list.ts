@@ -67,6 +67,7 @@ export const ChannelSchema = z.object({
   lastErrorCode: z.string().nullable(),
   postTypes: z.array(PostTypeRulesSchema),
   preview: z.enum(PREVIEW_ARCHETYPES),
+  insights: z.boolean(),
 });
 
 export const channelListRoute = defineRoute({
@@ -145,6 +146,12 @@ function postTypes(
   });
 }
 
+const insightsCapability = z.looseObject({ insights: z.literal(true) });
+
+function insightsGranted(capabilities: unknown): boolean {
+  return insightsCapability.safeParse(capabilities).success;
+}
+
 export async function listChannels(
   trx: TenantDb,
   workspaceId: string,
@@ -194,6 +201,7 @@ export async function listChannels(
       lastErrorCode: row.last_error_code,
       postTypes: postTypes(entry, row.capabilities),
       preview: entry?.manifest.preview ?? 'short-feed',
+      insights: insightsGranted(row.capabilities),
     });
   });
 }

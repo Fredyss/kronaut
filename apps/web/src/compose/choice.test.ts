@@ -16,6 +16,7 @@ const threads: Channel = {
   lastErrorCode: null,
   postTypes: [],
   preview: 'short-feed',
+  insights: true,
 };
 
 const facebook: Channel = {

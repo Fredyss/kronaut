@@ -487,6 +487,7 @@
         "metric=reactions": "Reakce",
         "metric=bookmarks": "Záložky",
         "metric=views": "Zobrazení",
+        "metric=reach": "Dosah",
         "metric=*": "Metrika"
       }
     }
@@ -495,5 +496,6 @@
   "analytics_not_reported": "neuvedeno",
   "analytics_as_of": "Stav k {when}",
   "channels_followers": "Sledující: {value}",
-  "channels_followers_change": "{change} za 30 dní"
+  "channels_followers_change": "{change} za 30 dní",
+  "channels_insights_reconnect": "Znovu připojte kanál a získejte podrobné statistiky"
 }

@@ -107,6 +107,11 @@ async function changedSnapshots(
   );
 }
 
+function windowOf(channel: Channel, row: DueRow): number | undefined {
+  const spec = channel.entry.manifest.postTypes.find((type) => type.id === row.postType);
+  return spec?.analytics?.windowHours;
+}
+
 async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetched) {
   const scope = { workspaceId: channel.workspaceId, now: run.deps.now() };
   for (const [row, result] of fetched.results) {
@@ -117,7 +122,12 @@ async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetche
     const outcome = outcomeOf(result);
     if (outcome === null) continue;
     run.counts.pulled++;
-    const settled = await settlePull(trx, scope, row, outcome);
+    const settled = await settlePull(
+      trx,
+      { ...scope, windowHours: windowOf(channel, row) },
+      row,
+      outcome,
+    );
     if (settled === 'done') run.counts.done++;
     if (settled === 'transient') run.counts.retried++;
   }
@@ -156,8 +166,9 @@ async function fetchResults(run: Run, channel: Channel): Promise<Fetched | Provi
   const { deps } = run;
   const ctx = createBaseContext(channel.entry, deps.logger, new AbortController().signal, deps.now);
   const remoteIds = [...new Set(channel.rows.map((row) => row.remoteId))];
+  const postTypes = Object.fromEntries(channel.rows.map((row) => [row.remoteId, row.postType]));
   try {
-    const result = await channel.read(ctx, { ...channel.source, remoteIds });
+    const result = await channel.read(ctx, { ...channel.source, remoteIds, postTypes });
     const results = new Map(channel.rows.map((row) => [row, rowResult(result, row.remoteId)]));
     const observedAt = new Date(deps.now().epochMilliseconds);
     return { results, apiVersion: result.apiVersion, observedAt };

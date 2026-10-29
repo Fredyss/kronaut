@@ -1,7 +1,8 @@
 import { type BaseContext, ProviderFailure } from '@kronaut/core';
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
-import { permanent } from '../_kit/meta-graph.ts';
+import { graphGet, permanent } from '../_kit/meta-graph.ts';
+import { INSIGHTS_SCOPE, REPLIES_SCOPE } from './capabilities.ts';
 
 export const AUTHORIZE_URL = 'https://threads.com/oauth/authorize';
 export const GRAPH_ORIGIN = 'https://graph.threads.com';
@@ -10,9 +11,16 @@ export const GRAPH_VERSION = 'v1.0';
 export const SCOPES = [
   'threads_basic',
   'threads_content_publish',
-  'threads_manage_replies',
+  REPLIES_SCOPE,
+  INSIGHTS_SCOPE,
 ] as const;
 export const PROFILE_FIELDS = 'id,username,name,threads_profile_picture_url';
+
+const WITHOUT_INSIGHTS = SCOPES.filter((scope) => scope !== INSIGHTS_SCOPE);
+
+const debugToken = z.looseObject({
+  data: z.looseObject({ is_valid: z.boolean(), scopes: z.array(z.string()) }),
+});
 
 const shortLivedToken = z.looseObject({ access_token: z.string().min(1) });
 
@@ -46,4 +54,31 @@ export async function shortLivedAccessToken(
   if (status !== 200) throw permanent('code_exchange_failed');
   const token = await readJson(response, shortLivedToken, 'private');
   return token.access_token;
+}
+
+export interface ThreadsApp {
+  readonly clientId: string;
+  readonly secret: string;
+}
+
+// The code exchange doesn't say which permissions were granted; a failed check must not fail the connect, so it counts as no insights.
+export async function grantedScopes(
+  ctx: BaseContext,
+  app: ThreadsApp,
+  token: string,
+): Promise<string[]> {
+  const url = threadsUrl(`/${GRAPH_VERSION}/debug_token`, {
+    input_token: token,
+    access_token: `TH|${app.clientId}|${app.secret}`,
+  });
+  try {
+    const { data } = await graphGet(ctx, 'private', url, debugToken);
+    if (data.is_valid) return data.scopes;
+  } catch (error) {
+    ctx.logger.warn(
+      { error: error instanceof Error ? error.name : typeof error },
+      'threads scope check failed',
+    );
+  }
+  return [...WITHOUT_INSIGHTS];
 }

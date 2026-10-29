@@ -6,11 +6,13 @@ import { graphGet, permanent } from '../_kit/meta-graph.ts';
 export const GRAPH_VERSION = 'v26.0';
 export const AUTHORIZE_URL = `https://www.facebook.com/${GRAPH_VERSION}/dialog/oauth`;
 export const ENGAGEMENT_SCOPE = 'pages_manage_engagement';
+export const INSIGHTS_SCOPE = 'read_insights';
 export const SCOPES = [
   'pages_show_list',
   'pages_manage_posts',
   'pages_read_engagement',
   ENGAGEMENT_SCOPE,
+  INSIGHTS_SCOPE,
 ] as const;
 export const GRAPH_HOST = 'graph.facebook.com';
 const PAGE_FIELDS = 'id,name,access_token,tasks,link,username';

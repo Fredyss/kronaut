@@ -49,6 +49,8 @@ let followerError: ProviderError | null = null;
 const followerCalls = new Map<string, number>();
 const revoked = new Set<string>();
 const analyticsCalls = new Map<string, number>();
+const postTypesSeen = new Map<string, string>();
+let windowHours: number | undefined;
 const PUBLISHED_AT = Temporal.Instant.from('2027-01-04T06:00:00Z');
 
 function analytics(account: string, remoteIds: readonly string[]): AnalyticsResult {
@@ -69,7 +71,10 @@ function analytics(account: string, remoteIds: readonly string[]): AnalyticsResu
 function registry() {
   const runtime: ProviderRuntime = {
     ...fake.runtime,
-    analytics: async (_ctx, input) => analytics(input.account.providerAccountId, input.remoteIds),
+    analytics: async (_ctx, input) => {
+      for (const [id, type] of Object.entries(input.postTypes)) postTypesSeen.set(id, type);
+      return analytics(input.account.providerAccountId, input.remoteIds);
+    },
     accountMetrics: async (_ctx, input): Promise<AccountMetrics> => {
       const id = input.account.providerAccountId;
       followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
@@ -77,7 +82,13 @@ function registry() {
       return { followers, apiVersion: 'v-test' };
     },
   };
-  const manifest = { ...fake.manifest, capabilities: { analytics: true, delete: false } };
+  const manifest = {
+    ...fake.manifest,
+    postTypes: fake.manifest.postTypes.map((type) =>
+      windowHours === undefined ? type : { ...type, analytics: { windowHours } },
+    ),
+    capabilities: { analytics: true, delete: false },
+  };
   return createProviderRegistry([manifest], [runtime], () => ({}) as HttpClient);
 }
 
@@ -267,6 +278,25 @@ describe('analytics pulls', () => {
       attempts: 0,
       next_pull_at: new Date(late.publishedAt.add({ hours: 168 }).epochMilliseconds),
     });
+  });
+
+  it('stops a post type with an analytics window after the last step inside it', async () => {
+    const story = await publishOne('story');
+    replies.set(story.remoteId, { views: 4, reach: 3 });
+    windowHours = 24;
+    try {
+      await pullAt(hoursAfter(story, 1));
+      expect(postTypesSeen.get(story.remoteId)).toBe('post');
+      expect(await pullOf(story)).toMatchObject({ step: 1 });
+      await pullAt(hoursAfter(story, 6));
+      expect(await pullOf(story)).toMatchObject({ step: 1, next_pull_at: null });
+    } finally {
+      windowHours = undefined;
+    }
+    expect((await snapshotsOf(story)).map((row) => [row.metric, row.value])).toEqual([
+      ['reach', '3'],
+      ['views', '4'],
+    ]);
   });
 
   it('retries a transient error and skips the step after 3 attempts', async () => {

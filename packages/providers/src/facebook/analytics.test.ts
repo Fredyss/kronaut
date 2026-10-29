@@ -12,10 +12,32 @@ const base = {
 };
 const POST_URL = new RegExp(`^https://graph\\.facebook\\.com/v26\\.0/${POST}\\?fields=shares`);
 
-function analytics(http: ReturnType<typeof scriptedHttp>, remoteIds: readonly string[]) {
+const INSIGHTS_URL = new RegExp(
+  `^https://graph\\.facebook\\.com/v26\\.0/${POST}/insights\\?metric=post_media_view%2Cpost_total_media_view_unique&period=lifetime&`,
+);
+
+function analytics(
+  http: ReturnType<typeof scriptedHttp>,
+  remoteIds: readonly string[],
+  scopes?: readonly string[],
+) {
   if (facebookRuntime.analytics === undefined) throw new Error('facebook reads analytics');
-  return facebookRuntime.analytics(testBaseContext(http), { ...base, remoteIds });
+  const credentials = {
+    ...base.credentials,
+    ...(scopes === undefined ? {} : { scopes: [...scopes] }),
+  };
+  return facebookRuntime.analytics(testBaseContext(http), {
+    ...base,
+    credentials,
+    remoteIds,
+    postTypes: {},
+  });
 }
+
+const counted = {
+  url: POST_URL,
+  json: { id: POST, shares: { count: 1 }, reactions: { data: [], summary: { total_count: 2 } } },
+};
 
 async function failureOf(promise: Promise<unknown>): Promise<ProviderError> {
   try {
@@ -54,6 +76,67 @@ describe('facebook analytics', () => {
     const url = new URL(http.calls[0]?.url ?? '');
     expect(url.searchParams.get('access_token')).toBe('CANARY_page_token');
     expect(url.searchParams.get('appsecret_proof')).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('adds views and reach with read_insights, a missing metric as NULL', async () => {
+    const http = scriptedHttp([
+      counted,
+      {
+        url: INSIGHTS_URL,
+        json: {
+          data: [
+            {
+              name: 'post_media_view',
+              period: 'lifetime',
+              values: [{ value: 120 }],
+              id: `${POST}/insights/post_media_view/lifetime`,
+            },
+          ],
+          paging: {},
+        },
+      },
+    ]);
+    expect((await analytics(http, [POST], ['read_insights'])).posts[POST]).toEqual({
+      shares: 1,
+      reactions: 2,
+      comments: null,
+      views: 120,
+      reach: null,
+    });
+    http.assertDone();
+    expect(new URL(http.calls[1]?.url ?? '').searchParams.get('appsecret_proof')).toMatch(
+      /^[0-9a-f]{64}$/,
+    );
+  });
+
+  it('keeps the public counts when insights are refused or not granted', async () => {
+    const refused = scriptedHttp([
+      counted,
+      { url: INSIGHTS_URL, status: 400, json: { error: { code: 10, type: 'OAuthException' } } },
+    ]);
+    expect((await analytics(refused, [POST], ['read_insights'])).posts[POST]).toEqual({
+      shares: 1,
+      reactions: 2,
+      comments: null,
+      views: null,
+      reach: null,
+    });
+    const invalid = scriptedHttp([
+      counted,
+      { url: INSIGHTS_URL, status: 400, json: { error: { code: 100, type: 'OAuthException' } } },
+    ]);
+    expect(await analytics(invalid, [POST], ['read_insights'])).toEqual({
+      posts: { [POST]: { shares: 1, reactions: 2, comments: null, views: null, reach: null } },
+      apiVersion: 'v26.0',
+    });
+    invalid.assertDone();
+    const without = scriptedHttp([counted]);
+    expect((await analytics(without, [POST], ['pages_read_engagement'])).posts[POST]).toEqual({
+      shares: 1,
+      reactions: 2,
+      comments: null,
+    });
+    without.assertDone();
   });
 
   it('fails a deleted post or a reel on its own and stops on a dead token', async () => {

@@ -20,6 +20,7 @@ export interface ProviderUi {
   readonly loginHint: boolean;
   readonly instance: boolean;
   readonly followers?: boolean;
+  readonly insights?: boolean;
   readonly maxImageBytes: number;
   readonly imageTypes: readonly string[];
   publishType(media: PublishMedia): PublishChoice;
@@ -49,6 +50,7 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     badge: 'bg-blue-600',
     loginHint: false,
     instance: false,
+    insights: true,
     maxImageBytes: 10_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
     publishType: (media) =>
@@ -59,6 +61,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     badge: 'bg-rose-600',
     loginHint: false,
     instance: false,
+    followers: true,
+    insights: true,
     maxImageBytes: 8_000_000,
     imageTypes: ['image/jpeg'],
     publishType: ({ images, video }) => {
@@ -93,6 +97,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     badge: 'bg-foreground',
     loginHint: false,
     instance: false,
+    followers: true,
+    insights: true,
     maxImageBytes: 8_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
     publishType: (media) =>
