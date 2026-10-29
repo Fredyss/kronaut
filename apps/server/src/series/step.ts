@@ -87,8 +87,7 @@ async function advancePast(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
       sourceId: turn.latest.id,
       origin: 'recurrence',
       owner: row,
-      local: next,
-      timezone: row.timezone,
+      at: { local: next, timezone: row.timezone },
       seriesId: row.id,
     },
   );

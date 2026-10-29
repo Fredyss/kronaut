@@ -9,7 +9,13 @@ export const ApprovalRequestSchema = z.object({
   id: z.string(),
   state: z.enum(['open', 'approved', 'rejected', 'voided', 'withdrawn', 'revoked']),
   voidReason: z
-    .enum(['content_changed', 'destinations_changed', 'schedule_changed', 'policy_changed'])
+    .enum([
+      'content_changed',
+      'destinations_changed',
+      'schedule_changed',
+      'policy_changed',
+      'post_deleted',
+    ])
     .nullable(),
   note: z.string().nullable(),
   requestedBy: z.object({ kind: z.enum(['user', 'grant']), id: z.string() }),

@@ -495,5 +495,35 @@
   "analytics_not_reported": "neuvedené",
   "analytics_as_of": "Stav k {when}",
   "channels_followers": "Sledovatelia: {value}",
-  "channels_followers_change": "{change} za 30 dní"
+  "channels_followers_change": "{change} za 30 dní",
+  "approval_void_post_deleted": "Príspevok bol odstránený.",
+  "close": "Zavrieť",
+  "post_action_stats": "Štatistiky",
+  "post_action_duplicate": "Duplikovať",
+  "post_action_delete": "Odstrániť",
+  "post_delete_title": "Odstrániť tento príspevok?",
+  "post_delete_body": "Zmizne z kalendára aj zo všetkých zoznamov. Naplánované kanály sa zrušia.",
+  "post_delete_published": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Na sieti zostáva uverejnený ({count} kanál). Odstránením zmizne iba z Kronautu, nie zo siete.",
+        "countPlural=few": "Na sieti zostáva uverejnený ({count} kanály). Odstránením zmizne iba z Kronautu, nie zo siete.",
+        "countPlural=many": "Na sieti zostáva uverejnený ({count} kanála). Odstránením zmizne iba z Kronautu, nie zo siete.",
+        "countPlural=*": "Na sieti zostáva uverejnený ({count} kanálov). Odstránením zmizne iba z Kronautu, nie zo siete."
+      }
+    }
+  ],
+  "post_delete_confirm": "Odstrániť príspevok",
+  "post_delete_keep": "Ponechať",
+  "post_delete_live": "Príspevok sa práve uverejňuje. Skúste to znova, keď sa dokončí.",
+  "post_deleted": "Príspevok je odstránený.",
+  "post_preview_title": "Náhľad príspevku",
+  "post_preview_empty": "Pre tieto kanály náhľad nie je k dispozícii.",
+  "post_new_title": "Nový príspevok",
+  "post_discard_title": "Zahodiť tento príspevok?",
+  "post_discard_body": "To, čo ste doteraz napísali, sa neuloží.",
+  "post_discard_confirm": "Zahodiť",
+  "post_discard_keep": "Pokračovať v úpravách"
 }

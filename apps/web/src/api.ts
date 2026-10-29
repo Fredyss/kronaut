@@ -174,6 +174,13 @@ export function notificationsQuery(client: Client, workspaceId: string) {
     refetchOnWindowFocus: true,
   });
 }
+export const DRAFT_ROLES: ReadonlySet<string> = new Set([
+  'owner',
+  'admin',
+  'editor',
+  'contributor',
+]);
+
 export const ANALYTICS_ROLES: ReadonlySet<string> = new Set([
   'owner',
   'admin',

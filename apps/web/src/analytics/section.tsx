@@ -1,9 +1,12 @@
 import { type AnalyticsPostMetricsResponse, analyticsPostMetrics, type Client } from '@kronaut/sdk';
 import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import type { Channel, Post } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { useNumberFormat } from '../format.ts';
 import { m } from '../i18n.ts';
+
+export const ANALYTICS_ID = 'analytics';
 
 type Metrics = AnalyticsPostMetricsResponse['destinations'][number];
 type Metric = Metrics['snapshots'][number]['metric'];
@@ -97,9 +100,18 @@ export function AnalyticsSection({ workspaceId, post, channels, format, readable
     enabled: readable && published,
   });
   const rows = readable && published ? (metrics.data?.destinations ?? []) : [];
-  if (rows.length === 0) return null;
+  const shown = rows.length > 0;
+  useEffect(() => {
+    if (shown && window.location.hash === `#${ANALYTICS_ID}`) {
+      document.getElementById(ANALYTICS_ID)?.scrollIntoView();
+    }
+  }, [shown]);
+  if (!shown) return null;
   return (
-    <section className="flex flex-col gap-3 rounded-xl border p-4 text-sm">
+    <section
+      id={ANALYTICS_ID}
+      className="flex scroll-mt-4 flex-col gap-3 rounded-xl border p-4 text-sm"
+    >
       <h2 className="font-medium">{m.analytics_title()}</h2>
       <ul className="flex flex-col gap-3">
         {rows.map((row) => (

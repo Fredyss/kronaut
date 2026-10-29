@@ -63,5 +63,8 @@
   "calendar_sidebar_expand": "Rozbaliť bočný panel",
   "calendar_layout": "Rozloženie",
   "calendar_layout_grid": "Mriežka",
-  "calendar_new_post_at": "Vytvoriť príspevok: {when}"
+  "calendar_new_post_at": "Vytvoriť príspevok: {when}",
+  "calendar_entry_options": "Možnosti príspevku: {text}",
+  "calendar_entry_open": "Otvoriť",
+  "calendar_entry_preview": "Náhľad"
 }

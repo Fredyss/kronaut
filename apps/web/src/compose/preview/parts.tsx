@@ -7,10 +7,12 @@ import { providerUi } from '../../providers.ts';
 import type { PickedImage } from '../contents.ts';
 import type { AspectRange } from './aspect.ts';
 
+export type PreviewImage = Pick<PickedImage, 'id' | 'thumb' | 'altText'>;
+
 export interface CardProps {
   readonly channel: Channel;
   readonly text: string;
-  readonly images: readonly PickedImage[];
+  readonly images: readonly PreviewImage[];
   readonly video: string | null;
   readonly aspect: AspectRange | null;
 }
@@ -71,7 +73,7 @@ export function Thumb({
   className,
   onLoad,
 }: {
-  readonly image: PickedImage;
+  readonly image: PreviewImage;
   readonly index: number;
   readonly className: string;
   readonly onLoad?: (event: SyntheticEvent<HTMLImageElement>) => void;

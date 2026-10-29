@@ -1747,7 +1747,8 @@
                             "content_changed",
                             "destinations_changed",
                             "schedule_changed",
-                            "policy_changed"
+                            "policy_changed",
+                            "post_deleted"
                           ],
                           "type": "string"
                         },
@@ -1999,7 +2000,8 @@
                             "content_changed",
                             "destinations_changed",
                             "schedule_changed",
-                            "policy_changed"
+                            "policy_changed",
+                            "post_deleted"
                           ],
                           "type": "string"
                         },
@@ -7064,6 +7066,70 @@
       }
     },
     "/v1/workspaces/{workspaceId}/posts/{postId}": {
+      "delete": {
+        "description": "Scheduled destinations are canceled (this also needs posts:cancel) and an open approval request is voided. Published content stays on the network. 409 destination_live while a destination is publishing, retrying or being verified.",
+        "operationId": "posts.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Delete a post",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:draft",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
       "get": {
         "operationId": "posts.get",
         "parameters": [
@@ -8317,7 +8383,8 @@
                                   "content_changed",
                                   "destinations_changed",
                                   "schedule_changed",
-                                  "policy_changed"
+                                  "policy_changed",
+                                  "post_deleted"
                                 ],
                                 "type": "string"
                               },
@@ -10843,6 +10910,446 @@
           "destinations"
         ],
         "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/duplicate": {
+      "post": {
+        "description": "A new unscheduled draft with the same content, variants, media and destinations, and no approvals or publish state.",
+        "operationId": "posts.duplicate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "destinations": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "accountId": {
+                            "type": "string"
+                          },
+                          "deliveryMode": {
+                            "enum": [
+                              "auto",
+                              "reminder"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "lastErrorCode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "publishType": {
+                            "type": "string"
+                          },
+                          "publishedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "remoteUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "scheduledAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "settings": {
+                            "additionalProperties": {},
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "state": {
+                            "enum": [
+                              "draft",
+                              "scheduled",
+                              "publishing",
+                              "retry_wait",
+                              "verifying",
+                              "published",
+                              "unconfirmed",
+                              "failed",
+                              "blocked",
+                              "awaiting_manual",
+                              "canceled"
+                            ],
+                            "type": "string"
+                          },
+                          "stateReason": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "variant": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "version": {
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "accountId",
+                          "provider",
+                          "publishType",
+                          "deliveryMode",
+                          "settings",
+                          "state",
+                          "stateReason",
+                          "version",
+                          "scheduledAt",
+                          "remoteUrl",
+                          "publishedAt",
+                          "lastErrorCode",
+                          "variant"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "doc": {
+                            "additionalProperties": {},
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
+                          "media": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "altText": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "mediaId": {
+                                  "type": "string"
+                                },
+                                "position": {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "mediaId",
+                                "position",
+                                "altText"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "position": {
+                            "maximum": 9007199254740991,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "role": {
+                            "enum": [
+                              "main",
+                              "thread",
+                              "comment"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "position",
+                          "role",
+                          "doc",
+                          "media"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "publishSummary": {
+                      "enum": [
+                        "draft",
+                        "in_review",
+                        "scheduled",
+                        "in_progress",
+                        "needs_action",
+                        "completed_all",
+                        "completed_partial",
+                        "completed_failed",
+                        "canceled"
+                      ],
+                      "type": "string"
+                    },
+                    "scheduleLocal": {
+                      "anyOf": [
+                        {
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?)$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "scheduleMode": {
+                      "enum": [
+                        "unscheduled",
+                        "asap",
+                        "instant",
+                        "local_per_destination"
+                      ],
+                      "type": "string"
+                    },
+                    "scheduleTz": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "seriesId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "variants": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "items": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "doc": {
+                                  "additionalProperties": {},
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "type": "object"
+                                },
+                                "media": {
+                                  "items": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "altText": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "mediaId": {
+                                        "type": "string"
+                                      },
+                                      "position": {
+                                        "maximum": 9007199254740991,
+                                        "minimum": 0,
+                                        "type": "integer"
+                                      }
+                                    },
+                                    "required": [
+                                      "mediaId",
+                                      "position",
+                                      "altText"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  "type": "array"
+                                },
+                                "position": {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                "role": {
+                                  "enum": [
+                                    "main",
+                                    "thread",
+                                    "comment"
+                                  ],
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "position",
+                                "role",
+                                "doc",
+                                "media"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "items"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "version": {
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "version",
+                    "title",
+                    "scheduleMode",
+                    "scheduleLocal",
+                    "scheduleTz",
+                    "seriesId",
+                    "evergreen",
+                    "publishSummary",
+                    "items",
+                    "variants",
+                    "destinations",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Duplicate a post",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:draft",
         "x-kronaut-auth": [
           "session",
           "grant"

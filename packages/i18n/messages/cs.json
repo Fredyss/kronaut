@@ -495,5 +495,35 @@
   "analytics_not_reported": "neuvedeno",
   "analytics_as_of": "Stav k {when}",
   "channels_followers": "Sledující: {value}",
-  "channels_followers_change": "{change} za 30 dní"
+  "channels_followers_change": "{change} za 30 dní",
+  "approval_void_post_deleted": "Příspěvek byl smazán.",
+  "close": "Zavřít",
+  "post_action_stats": "Statistiky",
+  "post_action_duplicate": "Duplikovat",
+  "post_action_delete": "Smazat",
+  "post_delete_title": "Smazat tento příspěvek?",
+  "post_delete_body": "Zmizí z kalendáře i ze všech seznamů. Naplánované kanály se zruší.",
+  "post_delete_published": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Na síti zůstává zveřejněný ({count} kanál). Smazáním zmizí jen z Kronautu, ne ze sítě.",
+        "countPlural=few": "Na síti zůstává zveřejněný ({count} kanály). Smazáním zmizí jen z Kronautu, ne ze sítě.",
+        "countPlural=many": "Na síti zůstává zveřejněný ({count} kanálu). Smazáním zmizí jen z Kronautu, ne ze sítě.",
+        "countPlural=*": "Na síti zůstává zveřejněný ({count} kanálů). Smazáním zmizí jen z Kronautu, ne ze sítě."
+      }
+    }
+  ],
+  "post_delete_confirm": "Smazat příspěvek",
+  "post_delete_keep": "Ponechat",
+  "post_delete_live": "Příspěvek se právě zveřejňuje. Zkuste to znovu, až se dokončí.",
+  "post_deleted": "Příspěvek je smazaný.",
+  "post_preview_title": "Náhled příspěvku",
+  "post_preview_empty": "Pro tyto kanály není náhled k dispozici.",
+  "post_new_title": "Nový příspěvek",
+  "post_discard_title": "Zahodit tento příspěvek?",
+  "post_discard_body": "To, co jste zatím napsali, se neuloží.",
+  "post_discard_confirm": "Zahodit",
+  "post_discard_keep": "Pokračovat v úpravách"
 }

@@ -1,7 +1,9 @@
 import type { BoundRoute } from '../http/types.ts';
 import { cancelRoutes } from './cancel.ts';
 import { createRoutes } from './create.ts';
+import { deleteRoutes } from './delete.ts';
 import type { PostRouteDeps } from './deps.ts';
+import { duplicateRoutes } from './duplicate.ts';
 import { getRoutes } from './get.ts';
 import { listRoutes } from './list.ts';
 import { rescheduleRoutes } from './reschedule.ts';
@@ -19,5 +21,7 @@ export function postRoutes(deps: PostRouteDeps): BoundRoute[] {
     ...unscheduleRoutes(),
     ...rescheduleRoutes(deps),
     ...cancelRoutes(),
+    ...deleteRoutes(),
+    ...duplicateRoutes(deps),
   ];
 }

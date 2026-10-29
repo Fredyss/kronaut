@@ -1,9 +1,8 @@
-import type { PickedImage } from '../contents.ts';
-import { Card, type CardProps, More, Text, Thumb } from './parts.tsx';
+import { Card, type CardProps, More, type PreviewImage, Text, Thumb } from './parts.tsx';
 
 const GRID_MAX = 4;
 
-function Images({ images }: { readonly images: readonly PickedImage[] }) {
+function Images({ images }: { readonly images: readonly PreviewImage[] }) {
   const [only] = images;
   if (only === undefined) return null;
   if (images.length === 1) {

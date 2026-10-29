@@ -36,6 +36,7 @@ const LAZY = {
   'editor JS': ['editor', '130 KB'],
   'text limits JS': ['text-limits', '5 KB'],
   'preview JS': ['preview', '10 KB'],
+  'post actions JS': ['entry-actions', '10 KB'],
   'queue editor JS': ['queue-editor', '10 KB'],
   'followers JS': ['followers', '10 KB'],
   'repeat control JS': ['repeat-fieldset', '5 KB'],

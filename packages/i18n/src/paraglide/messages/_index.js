@@ -42,6 +42,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Approval_Void_ContentInputs */
 /** @typedef {{}} Approval_Void_DestinationsInputs */
 /** @typedef {{}} Approval_Void_PolicyInputs */
+/** @typedef {{}} Approval_Void_Post_DeletedInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
 /** @typedef {{}} Calendar_TitleInputs */
@@ -97,6 +98,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} CloseInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_DateInputs */
@@ -244,10 +246,27 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Notifications_UnreadInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Password_Min_LengthInputs */
 /** @typedef {{}} Password_Too_LongInputs */
+/** @typedef {{}} Post_Action_DeleteInputs */
+/** @typedef {{}} Post_Action_DuplicateInputs */
+/** @typedef {{}} Post_Action_StatsInputs */
 /** @typedef {{}} Post_CustomizedInputs */
+/** @typedef {{}} Post_Delete_BodyInputs */
+/** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_KeepInputs */
+/** @typedef {{}} Post_Delete_LiveInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
+/** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
+/** @typedef {{}} Post_Discard_BodyInputs */
+/** @typedef {{}} Post_Discard_ConfirmInputs */
+/** @typedef {{}} Post_Discard_KeepInputs */
+/** @typedef {{}} Post_Discard_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
+/** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
+/** @typedef {{}} Post_Preview_EmptyInputs */
+/** @typedef {{}} Post_Preview_TitleInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Published_AtInputs */
 /** @typedef {{}} Post_Schedule_AsapInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Schedule_AtInputs */
@@ -958,6 +977,21 @@ export const approval_void_policy = /** @type {((inputs?: Approval_Void_PolicyIn
 	if (locale === "sk") return __sk.approval_void_policy(inputs)
 	if (locale === "cs") return __cs.approval_void_policy(inputs)
 	return __en.approval_void_policy(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The post was deleted." |
+*
+* @param {Approval_Void_Post_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const approval_void_post_deleted = /** @type {((inputs?: Approval_Void_Post_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Approval_Void_Post_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.approval_void_post_deleted(inputs)
+	if (locale === "cs") return __cs.approval_void_post_deleted(inputs)
+	return __en.approval_void_post_deleted(inputs)
 });
 /**
 * | output |
@@ -1784,6 +1818,21 @@ export const channels_title = /** @type {((inputs?: Channels_TitleInputs, option
 	if (locale === "sk") return __sk.channels_title(inputs)
 	if (locale === "cs") return __cs.channels_title(inputs)
 	return __en.channels_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Close" |
+*
+* @param {CloseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const close = /** @type {((inputs?: CloseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<CloseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.close(inputs)
+	if (locale === "cs") return __cs.close(inputs)
+	return __en.close(inputs)
 });
 /**
 * | output |
@@ -3999,6 +4048,51 @@ export const password_too_long = /** @type {((inputs?: Password_Too_LongInputs, 
 /**
 * | output |
 * | --- |
+* | "Delete" |
+*
+* @param {Post_Action_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_action_delete = /** @type {((inputs?: Post_Action_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Action_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_action_delete(inputs)
+	if (locale === "cs") return __cs.post_action_delete(inputs)
+	return __en.post_action_delete(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Duplicate" |
+*
+* @param {Post_Action_DuplicateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_action_duplicate = /** @type {((inputs?: Post_Action_DuplicateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Action_DuplicateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_action_duplicate(inputs)
+	if (locale === "cs") return __cs.post_action_duplicate(inputs)
+	return __en.post_action_duplicate(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Stats" |
+*
+* @param {Post_Action_StatsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_action_stats = /** @type {((inputs?: Post_Action_StatsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Action_StatsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_action_stats(inputs)
+	if (locale === "cs") return __cs.post_action_stats(inputs)
+	return __en.post_action_stats(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Text customized for this channel" |
 *
 * @param {Post_CustomizedInputs} inputs
@@ -4014,6 +4108,112 @@ export const post_customized = /** @type {((inputs?: Post_CustomizedInputs, opti
 /**
 * | output |
 * | --- |
+* | "It leaves the calendar and every list. Scheduled channels are canceled." |
+*
+* @param {Post_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_body = /** @type {((inputs?: Post_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_body(inputs)
+	if (locale === "cs") return __cs.post_delete_body(inputs)
+	return __en.post_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete post" |
+*
+* @param {Post_Delete_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_confirm = /** @type {((inputs?: Post_Delete_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_confirm(inputs)
+	if (locale === "cs") return __cs.post_delete_confirm(inputs)
+	return __en.post_delete_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep post" |
+*
+* @param {Post_Delete_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_keep = /** @type {((inputs?: Post_Delete_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_keep(inputs)
+	if (locale === "cs") return __cs.post_delete_keep(inputs)
+	return __en.post_delete_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post is being published right now. Try again once it has finished." |
+*
+* @param {Post_Delete_LiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_live = /** @type {((inputs?: Post_Delete_LiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_LiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_live(inputs)
+	if (locale === "cs") return __cs.post_delete_live(inputs)
+	return __en.post_delete_live(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "It stays live on {count} channel: deleting removes it from Kronaut, not from the network." |
+* | * | "It stays live on {count} channels: deleting removes it from Kronaut, not from the network." |
+*
+* @param {Post_Delete_PublishedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_published = /** @type {((inputs: Post_Delete_PublishedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_PublishedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_published(inputs)
+	if (locale === "cs") return __cs.post_delete_published(inputs)
+	return __en.post_delete_published(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete this post?" |
+*
+* @param {Post_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_title = /** @type {((inputs?: Post_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_title(inputs)
+	if (locale === "cs") return __cs.post_delete_title(inputs)
+	return __en.post_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post deleted." |
+*
+* @param {Post_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_deleted = /** @type {((inputs?: Post_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_deleted(inputs)
+	if (locale === "cs") return __cs.post_deleted(inputs)
+	return __en.post_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Channels" |
 *
 * @param {Post_Destinations_TitleInputs} inputs
@@ -4025,6 +4225,66 @@ export const post_destinations_title = /** @type {((inputs?: Post_Destinations_T
 	if (locale === "sk") return __sk.post_destinations_title(inputs)
 	if (locale === "cs") return __cs.post_destinations_title(inputs)
 	return __en.post_destinations_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "What you've written so far isn't saved." |
+*
+* @param {Post_Discard_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_discard_body = /** @type {((inputs?: Post_Discard_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Discard_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_discard_body(inputs)
+	if (locale === "cs") return __cs.post_discard_body(inputs)
+	return __en.post_discard_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Discard" |
+*
+* @param {Post_Discard_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_discard_confirm = /** @type {((inputs?: Post_Discard_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Discard_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_discard_confirm(inputs)
+	if (locale === "cs") return __cs.post_discard_confirm(inputs)
+	return __en.post_discard_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep editing" |
+*
+* @param {Post_Discard_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_discard_keep = /** @type {((inputs?: Post_Discard_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Discard_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_discard_keep(inputs)
+	if (locale === "cs") return __cs.post_discard_keep(inputs)
+	return __en.post_discard_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Discard this post?" |
+*
+* @param {Post_Discard_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_discard_title = /** @type {((inputs?: Post_Discard_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Discard_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_discard_title(inputs)
+	if (locale === "cs") return __cs.post_discard_title(inputs)
+	return __en.post_discard_title(inputs)
 });
 /**
 * | countPlural | output |
@@ -4045,6 +4305,21 @@ export const post_images = /** @type {((inputs: Post_ImagesInputs, options?: { l
 /**
 * | output |
 * | --- |
+* | "New post" |
+*
+* @param {Post_New_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_new_title = /** @type {((inputs?: Post_New_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_New_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_new_title(inputs)
+	if (locale === "cs") return __cs.post_new_title(inputs)
+	return __en.post_new_title(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "This post couldn't be loaded." |
 *
 * @param {Post_Not_FoundInputs} inputs
@@ -4056,6 +4331,36 @@ export const post_not_found = /** @type {((inputs?: Post_Not_FoundInputs, option
 	if (locale === "sk") return __sk.post_not_found(inputs)
 	if (locale === "cs") return __cs.post_not_found(inputs)
 	return __en.post_not_found(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No preview is available for these channels." |
+*
+* @param {Post_Preview_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_preview_empty = /** @type {((inputs?: Post_Preview_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Preview_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_preview_empty(inputs)
+	if (locale === "cs") return __cs.post_preview_empty(inputs)
+	return __en.post_preview_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post preview" |
+*
+* @param {Post_Preview_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_preview_title = /** @type {((inputs?: Post_Preview_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Preview_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_preview_title(inputs)
+	if (locale === "cs") return __cs.post_preview_title(inputs)
+	return __en.post_preview_title(inputs)
 });
 /**
 * | output |

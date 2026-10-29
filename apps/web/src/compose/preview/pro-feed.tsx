@@ -1,9 +1,8 @@
-import type { PickedImage } from '../contents.ts';
-import { Card, type CardProps, More, Text, Thumb } from './parts.tsx';
+import { Card, type CardProps, More, type PreviewImage, Text, Thumb } from './parts.tsx';
 
 const ROW_MAX = 3;
 
-function Images({ images }: { readonly images: readonly PickedImage[] }) {
+function Images({ images }: { readonly images: readonly PreviewImage[] }) {
   const [first, ...rest] = images;
   if (first === undefined) return null;
   const row = rest.slice(0, ROW_MAX);

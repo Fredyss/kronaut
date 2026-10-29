@@ -1,9 +1,8 @@
 import { cn } from '@kronaut/ui';
 import { type SyntheticEvent, useState } from 'react';
 import { m } from '../../i18n.ts';
-import type { PickedImage } from '../contents.ts';
 import { type AspectRange, clampAspect, type Ratio } from './aspect.ts';
-import { Card, type CardProps, Thumb } from './parts.tsx';
+import { Card, type CardProps, type PreviewImage, Thumb } from './parts.tsx';
 
 const SQUARE: Ratio = { width: 1, height: 1 };
 
@@ -11,7 +10,7 @@ function Cover({
   image,
   aspect,
 }: {
-  readonly image: PickedImage;
+  readonly image: PreviewImage;
   readonly aspect: AspectRange | null;
 }) {
   const [natural, setNatural] = useState<Ratio>(SQUARE);
@@ -27,7 +26,7 @@ function Cover({
   );
 }
 
-function Dots({ images }: { readonly images: readonly PickedImage[] }) {
+function Dots({ images }: { readonly images: readonly PreviewImage[] }) {
   if (images.length < 2) return null;
   return (
     <div aria-hidden="true" className="flex justify-center gap-1">

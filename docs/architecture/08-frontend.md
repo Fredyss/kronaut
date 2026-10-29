@@ -46,6 +46,14 @@
   - keyboard-first (j/k, n, e, d, ⇧-arrows, ⌘K)
   - the timezone shown on every time
   - optimistic drag-reschedule with an undo toast (re-approval warning when outside tolerance)
+  - **Empty slot:** in week and day view, clicking (or Enter on) a free future slot opens the composer in a dialog over the calendar, with that date and time filled in, in the shown time zone. The dialog is the compose route's own form, loaded lazily; its state is in the URL (`?compose=new&at=…&tz=…`), so Back closes it and a reload reopens it. Closing with unsaved changes asks first; after saving or scheduling, the dialog closes and the calendar refreshes. Past slots aren't actionable.
+  - **Post actions:** each calendar entry has an options button, shown on hover and focus and always on touch, with a menu (keyboard-operable, `menu` role):
+    - **Open** → the post page;
+    - **Stats** → the post page's analytics section (only when a destination is published);
+    - **Duplicate** → `POST …/duplicate`, then the copy's post page (the composer opens existing posts once it has an edit mode);
+    - **Preview** → a read-only dialog with the network preview the composer uses;
+    - **Delete** → a confirm dialog; for a published post it says the post stays on the network and only leaves Kronaut. Hidden from roles without `posts:draft`.
+- **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited keeps the composer.
 - **Autosave:** IndexedDB on every change (1 s debounce) + server revision; a multi-tab conflict banner.
 - **Budgets** (gzipped, CI `size-limit`):
   - shell + calendar ≤ 150 KB

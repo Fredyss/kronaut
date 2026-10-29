@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type { Principal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../http/errors.ts';
@@ -58,6 +59,34 @@ export async function writeDestinationAudit(trx: TenantDb, audit: DestinationAud
       ...(audit.args === undefined ? {} : { args_summary: JSON.stringify(audit.args) }),
       correlation_id: audit.correlationId,
       request_id: audit.ctx.requestId,
+    })
+    .execute();
+}
+
+export interface PostAudit {
+  readonly ctx: RequestContext;
+  readonly post: PostRef;
+  readonly action: string;
+  readonly postVersion: number;
+  readonly args?: Readonly<Record<string, unknown>>;
+}
+
+export async function writePostAudit(trx: TenantDb, audit: PostAudit): Promise<void> {
+  const { ctx, post } = audit;
+  await trx
+    .insertInto('audit_events')
+    .values({
+      workspace_id: post.workspaceId,
+      ...(await auditActor(trx, post.workspaceId, ctx.principal)),
+      action: audit.action,
+      resource_kind: 'post',
+      resource_id: post.postId,
+      post_id: post.postId,
+      post_version: audit.postVersion,
+      outcome: 'ok',
+      ...(audit.args === undefined ? {} : { args_summary: JSON.stringify(audit.args) }),
+      correlation_id: randomUUID(),
+      request_id: ctx.requestId,
     })
     .execute();
 }

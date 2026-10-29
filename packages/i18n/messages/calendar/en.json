@@ -59,5 +59,8 @@
   "calendar_sidebar_expand": "Expand the sidebar",
   "calendar_layout": "Layout",
   "calendar_layout_grid": "Grid",
-  "calendar_new_post_at": "Create post: {when}"
+  "calendar_new_post_at": "Create post: {when}",
+  "calendar_entry_options": "Post options: {text}",
+  "calendar_entry_open": "Open",
+  "calendar_entry_preview": "Preview"
 }
