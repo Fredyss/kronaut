@@ -168,6 +168,8 @@ services:
       KRONAUT_OPERATOR_DATABASE_URL_FILE: /run/secrets/operator_database_url
       KRONAUT_KEK_1_FILE: /run/secrets/kek_1
       KRONAUT_BACKUP_RECIPIENT_FILE: /run/secrets/backup_recipient
+      LC_ALL: ${LC_ALL:-}
+      LC_MESSAGES: ${LC_MESSAGES:-}
       LANG: ${LANG:-}
     secrets:
       - instance_id

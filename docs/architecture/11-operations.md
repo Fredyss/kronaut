@@ -3,7 +3,7 @@
 - **Self-host setup:** step by step in the [self-hosting guide](../guides/self-hosting.md) (compose stack, secrets, Cloudflare Tunnel and Access).
 - **FFmpeg and x264 pins (ADR-0054):** to bump them, change the `ARG`s of the `ffmpeg` stage in `infra/docker/Dockerfile` (FFmpeg release tarball from ffmpeg.org, x264 commit on its `stable` branch, each with a sha256 you computed) and the same values in `tools/licenses/native.ts`; a test fails if the two differ.
 - **CLI language:** `kronaut` speaks English, Slovak or Czech.
-  - It picks the first of `LC_ALL`, `LC_MESSAGES` and `LANG` that is set and non-empty, and uses its language part (`sk_SK.UTF-8` → `sk`). Anything else, `C` or `POSIX` included, gives English. The compose `cli` service passes the host's `LANG` through.
+  - It picks the first of `LC_ALL`, `LC_MESSAGES` and `LANG` that is set and non-empty, and uses its language part (`sk_SK.UTF-8` → `sk`). Anything else, `C` or `POSIX` included, gives English. The compose `cli` service passes the host's `LC_ALL`, `LC_MESSAGES` and `LANG` through.
   - Translated: the usage text, errors, prompts and confirmations. Never translated: command and flag names, ids, key ids, file paths, machine-readable output and the pino logs.
   - A `ConfigError` gets a translated prefix, while its detail stays English, because the server logs share it.
   - Strings live in `packages/i18n/messages/cli/{en,sk,cs}.json`, a second Paraglide project, so they never reach the web bundle.
