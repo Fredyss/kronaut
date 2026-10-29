@@ -339,6 +339,27 @@ export interface EphemeralKv {
   value: Json;
 }
 
+export interface EvergreenPosts {
+  created_at: Generated<Timestamp>;
+  owner_grant_id: string | null;
+  owner_user_id: string | null;
+  post_id: string;
+  state: Generated<string>;
+  state_reason: string | null;
+  updated_at: Generated<Timestamp>;
+  workspace_id: string;
+}
+
+export interface EvergreenRuns {
+  copy_post_id: string | null;
+  created_at: Generated<Timestamp>;
+  evergreen_post_id: string;
+  id: Generated<string>;
+  slot_at: Timestamp;
+  social_account_id: string;
+  workspace_id: string;
+}
+
 export interface GrantTokens {
   created_at: Generated<Timestamp>;
   expires_at: Timestamp | null;
@@ -935,6 +956,8 @@ export interface DB {
   destination_transitions: DestinationTransitions;
   entitlement_overrides: EntitlementOverrides;
   ephemeral_kv: EphemeralKv;
+  evergreen_posts: EvergreenPosts;
+  evergreen_runs: EvergreenRuns;
   grant_tokens: GrantTokens;
   idempotency_keys: IdempotencyKeys;
   inbound_events: InboundEvents;

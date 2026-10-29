@@ -159,6 +159,10 @@
 /** @typedef {{}} Error_Logout_FailedInputs */
 /** @typedef {{}} Error_Rate_LimitedInputs */
 /** @typedef {{}} Error_UnavailableInputs */
+/** @typedef {{}} Evergreen_CopiesInputs */
+/** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown> }} Evergreen_CopyInputs */
+/** @typedef {{}} Evergreen_LabelInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Evergreen_ReasonInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
@@ -259,6 +263,7 @@
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
 /** @typedef {{}} Queue_AddInputs */
+/** @typedef {{}} Queue_EvergreenInputs */
 /** @typedef {{}} Queue_SavedInputs */
 /** @typedef {{}} Queue_ZoneInputs */
 /** @typedef {{}} Reason_Account_DisabledInputs */
@@ -975,6 +980,23 @@ export const error_unavailable = /** @type {(inputs: Error_UnavailableInputs) =>
 	return /** @type {LocalizedString} */ (`Kronaut je momentálne nedostupný. Skúste to o chvíľu.`)
 };
 
+export const evergreen_copies = /** @type {(inputs: Evergreen_CopiesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posledné kópie`)
+};
+
+export const evergreen_copy = /** @type {(inputs: Evergreen_CopyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel}, ${i?.when}`)
+};
+
+export const evergreen_label = /** @type {(inputs: Evergreen_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nadčasový príspevok`)
+};
+
+export const evergreen_reason = /** @type {(inputs: Evergreen_ReasonInputs) => LocalizedString} */ (i) => {
+	if (i?.reason === "owner_lost") return /** @type {LocalizedString} */ (`Vyradený: jeho vlastník už nemôže plánovať príspevky.`);
+	return /** @type {LocalizedString} */ (`Vyradený: kópiu sa nepodarilo vytvoriť.`)
+};
+
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} položka čaká na riešenie`);
@@ -1393,6 +1415,10 @@ export const provider_threads = /** @type {(inputs: Provider_ThreadsInputs) => L
 
 export const queue_add = /** @type {(inputs: Queue_AddInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pridať čas`)
+};
+
+export const queue_evergreen = /** @type {(inputs: Queue_EvergreenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Voľné termíny sa 24 h vopred doplnia nadčasovými príspevkami.`)
 };
 
 export const queue_saved = /** @type {(inputs: Queue_SavedInputs) => LocalizedString} */ () => {

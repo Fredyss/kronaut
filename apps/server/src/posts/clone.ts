@@ -1,21 +1,25 @@
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
-import { insertDraft } from '../posts/create.ts';
 import type { ProviderRegistry } from '../providers.ts';
-import type { OwnerActing } from './owner.ts';
-import type { SeriesRow } from './store.ts';
+import { insertDraft } from './create.ts';
+import type { Owned, OwnerActing } from './owner.ts';
 
 export interface CloneInput {
   readonly workspaceId: string;
-  readonly series: SeriesRow;
   readonly sourceId: string;
+  readonly origin: 'recurrence' | 'duplicate';
+  readonly owner: Owned;
   readonly local: Temporal.PlainDateTime;
+  readonly timezone: string;
+  readonly seriesId: string | null;
+  readonly accountId?: string;
 }
 
 type Doc = Record<string, unknown>;
 
-async function loadSource(trx: TenantDb, workspaceId: string, postId: string) {
+async function loadSource(trx: TenantDb, input: CloneInput) {
+  const { workspaceId, sourceId: postId, accountId } = input;
   const post = await trx
     .selectFrom('posts')
     .select(['title', 'brand_id', 'location_id', 'campaign_id', 'agent_dirty'])
@@ -57,6 +61,7 @@ async function loadSource(trx: TenantDb, workspaceId: string, postId: string) {
     .select('agent_content')
     .where('workspace_id', '=', workspaceId)
     .where('post_id', '=', postId)
+    .$if(accountId !== undefined, (qb) => qb.where('social_account_id', '=', accountId as string))
     .orderBy('created_at')
     .orderBy('id')
     .execute();
@@ -107,27 +112,28 @@ function tainted(source: Source): boolean {
   return source.post.agent_dirty || source.destinations.some((d) => d.agent_content);
 }
 
-export async function cloneOccurrence(
+export async function clonePost(
   trx: TenantDb,
   deps: { readonly providers: ProviderRegistry; readonly acting: OwnerActing },
-  { workspaceId, series, sourceId, local }: CloneInput,
+  input: CloneInput,
 ): Promise<string> {
-  const source = await loadSource(trx, workspaceId, sourceId);
+  const { workspaceId, owner } = input;
+  const source = await loadSource(trx, input);
   const { post } = source;
   return await insertDraft(trx, deps.providers, {
     workspaceId,
     body: bodyOf(source),
     columns: {
-      origin: 'recurrence',
-      created_by_user_id: series.owner_user_id,
-      created_by_grant_id: series.owner_grant_id,
+      origin: input.origin,
+      created_by_user_id: owner.owner_user_id,
+      created_by_grant_id: owner.owner_grant_id,
       brand_id: post.brand_id,
       location_id: post.location_id,
       campaign_id: post.campaign_id,
       schedule_mode: 'instant',
-      schedule_local: local.toString(),
-      schedule_tz: series.timezone,
-      series_id: series.id,
+      schedule_local: input.local.toString(),
+      schedule_tz: input.timezone,
+      series_id: input.seriesId,
       agent_dirty: tainted(source),
     },
     authorize: (units) => deps.acting.authorize('posts:draft', { workspaceId, units }),

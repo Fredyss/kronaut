@@ -32,6 +32,7 @@ export interface QueueRef {
   readonly accountId: string;
   readonly now: Temporal.Instant;
   readonly postId: string | null;
+  readonly until?: Temporal.Instant;
 }
 
 export interface QueueTarget {
@@ -71,6 +72,7 @@ export function candidates(
   timezone: string,
   slots: readonly QueueSlot[],
   now: Temporal.Instant,
+  until?: Temporal.Instant,
 ): Schedule[] {
   const today = now.toZonedDateTimeISO(timezone).toPlainDate();
   const earliest = now.add({ minutes: LEAD_MINUTES });
@@ -82,6 +84,7 @@ export function candidates(
       const schedule = resolveLocal(date.toPlainDateTime(slot.time), timezone);
       const key = schedule.at.epochNanoseconds;
       if (Temporal.Instant.compare(schedule.at, earliest) < 0 || seen.has(key)) continue;
+      if (until !== undefined && Temporal.Instant.compare(schedule.at, until) > 0) continue;
       seen.set(key, schedule);
     }
   }
@@ -121,7 +124,7 @@ export interface FreeSlots {
 export async function freeSlots(trx: TenantDb, ref: QueueRef, limit: number): Promise<FreeSlots> {
   const timetable = await loadTimetable(trx, ref.workspaceId, ref.accountId);
   if (timetable.timezone === null) return { timetable, free: [] };
-  const all = candidates(timetable.timezone, timetable.slots, ref.now);
+  const all = candidates(timetable.timezone, timetable.slots, ref.now, ref.until);
   const taken = await occupied(trx, ref, all);
   const free = all.filter((s) => !taken.has(s.at.epochMilliseconds)).slice(0, limit);
   return { timetable, free };

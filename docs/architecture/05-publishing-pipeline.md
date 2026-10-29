@@ -272,6 +272,7 @@ The approval events are written in the transaction that opens or decides the req
 | refresh sweep | 5 min |
 | tz recompute after a tzdata update (`tz_recompute`, see [Time](#time)) | 1 h |
 | series advance (`series_advance`, see [Recurring posts](#recurring-posts)) | 5 min |
+| evergreen fill (`evergreen_fill`, see [Evergreen posts](#evergreen-posts)) | 1 h |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
 | analytics pulls | staggered |
@@ -328,4 +329,17 @@ A series repeats a post on a rule in local wall time. Each occurrence is an ordi
   - **Ending:** the series ends after `COUNT` occurrences or past `UNTIL`.
 - **Stopping:** `POST …/series/:seriesId/stop` (`posts:schedule`) ends the series. Already-materialised occurrences are left as they are. Deleting or cancelling one occurrence doesn't stop the series.
 - **Duplicate text:** some providers reject identical text on the same account. The composer warns when a series repeats unchanged content more often than every 7 days.
+
+## Evergreen posts
+
+Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with proven content, so the queue doesn't run dry.
+
+- **Pool:** any post can be marked evergreen (`evergreen_posts`) by someone who may schedule. That person (or API key) is its owner, re-authorized on every use, as for a series. Unmarking takes it out of the pool and leaves its copies alone.
+- **Filling:** the hourly `evergreen_fill` cron task walks `sweep_workspaces`. For each channel with queue slots, it looks at the free slots more than 5 minutes and at most 24 hours ahead, so anything queued by hand always comes first.
+  - Each free slot gets one pool post that has a destination on that channel.
+  - **Eligible:** no copy of it was scheduled or published on that channel in the last 30 days, and no copy of it is still pending there. Among the eligible posts, the one least recently used on that channel goes first, then the oldest.
+  - **The copy:** a new draft post (`origin = 'duplicate'`) with that channel's destinations only, cloned from the pool post: variants, items, media and settings, but no revisions, approvals or publish state. It's recorded in `evergreen_runs`.
+  - **Approval:** when it's needed, the task opens a request as the owner, bound to the slot. Otherwise it schedules the copy at the slot right away, as the owner. A copy whose slot passes without approval stays a draft, and a later slot gets another post.
+  - **Locking:** per-channel queue locks, as in "add to queue", so a manual queue claim and the fill never take the same slot.
+- **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (preflight, a removed channel), is taken out of the pool with a reason. Nothing retries it every hour.
 

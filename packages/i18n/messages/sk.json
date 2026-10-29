@@ -79,6 +79,7 @@
   "queue_zone": "Časové pásmo",
   "queue_add": "Pridať čas",
   "queue_saved": "Front bol uložený.",
+  "queue_evergreen": "Voľné termíny sa 24 h vopred doplnia nadčasovými príspevkami.",
   "channels_disconnect_body": "Odpojiť {name}? Príspevky naplánované do tohto kanála sa nezverejnia. Neskôr ho môžete znova pripojiť.",
   "channels_disconnect_confirm": "Odpojiť kanál",
   "channels_disconnected": "Kanál {name} bol odpojený.",
@@ -457,5 +458,18 @@
         "state=*": "Séria bola zastavená."
       }
     }
-  ]
+  ],
+  "evergreen_label": "Nadčasový príspevok",
+  "evergreen_reason": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=owner_lost": "Vyradený: jeho vlastník už nemôže plánovať príspevky.",
+        "reason=*": "Vyradený: kópiu sa nepodarilo vytvoriť."
+      }
+    }
+  ],
+  "evergreen_copies": "Posledné kópie",
+  "evergreen_copy": "{channel}, {when}"
 }

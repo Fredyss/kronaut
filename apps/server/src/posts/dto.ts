@@ -46,6 +46,7 @@ export const PostSchema = z.object({
   scheduleLocal: z.iso.datetime({ local: true }).nullable(),
   scheduleTz: z.string().nullable(),
   seriesId: z.string().nullable(),
+  evergreen: z.enum(['active', 'removed']).nullable(),
   publishSummary: z.enum([
     'draft',
     'in_review',
@@ -118,6 +119,14 @@ async function loadPost(trx: TenantDb, workspaceId: string, postId: string) {
       'created_at',
       'updated_at',
     ])
+    .select((eb) =>
+      eb
+        .selectFrom('evergreen_posts as e')
+        .select('e.state')
+        .whereRef('e.workspace_id', '=', 'posts.workspace_id')
+        .whereRef('e.post_id', '=', 'posts.id')
+        .as('evergreen'),
+    )
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', postId)
     .where('deleted_at', 'is', null)
@@ -258,6 +267,7 @@ export async function findPost(
     scheduleLocal: plainLocal(post.schedule_local),
     scheduleTz: post.schedule_tz,
     seriesId: post.series_id === null ? null : encodePublicId('series', post.series_id),
+    evergreen: post.evergreen,
     publishSummary: post.publish_summary,
     items,
     variants,

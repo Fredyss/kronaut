@@ -13,6 +13,7 @@ import { docParagraphs } from '../compose/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { useApiClient } from '../context.ts';
 import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
+import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { summaryLabel } from '../post-summary.ts';
@@ -120,9 +121,11 @@ function DestinationRow({
 function PostStatus({
   workspaceId,
   postId,
+  role,
 }: {
   readonly workspaceId: string;
   readonly postId: string;
+  readonly role: string;
 }) {
   const client = useApiClient();
   const post = useQuery({
@@ -154,6 +157,13 @@ function PostStatus({
       {data.seriesId === null ? null : (
         <SeriesSection workspaceId={workspaceId} seriesId={data.seriesId} />
       )}
+      <EvergreenSection
+        workspaceId={workspaceId}
+        post={data}
+        channels={byId}
+        format={format}
+        editable={EVERGREEN_ROLES.has(role)}
+      />
       <article className="flex flex-col gap-3 rounded-xl border p-4">
         <Content item={data.items[0]} />
       </article>
@@ -186,7 +196,9 @@ export function PostPage() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
       <h1 className="font-semibold text-2xl tracking-tight">{m.post_title()}</h1>
-      {workspace === undefined ? null : <PostStatus workspaceId={workspace.id} postId={postId} />}
+      {workspace === undefined ? null : (
+        <PostStatus workspaceId={workspace.id} postId={postId} role={workspace.role} />
+      )}
     </section>
   );
 }

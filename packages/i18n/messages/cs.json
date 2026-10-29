@@ -79,6 +79,7 @@
   "queue_zone": "Časové pásmo",
   "queue_add": "Přidat čas",
   "queue_saved": "Fronta byla uložena.",
+  "queue_evergreen": "Volné termíny se 24 h předem doplní nadčasovými příspěvky.",
   "channels_disconnect_body": "Odpojit {name}? Příspěvky naplánované do tohoto kanálu se nezveřejní. Později ho můžete znovu připojit.",
   "channels_disconnect_confirm": "Odpojit kanál",
   "channels_disconnected": "Kanál {name} byl odpojen.",
@@ -457,5 +458,18 @@
         "state=*": "Série byla zastavena."
       }
     }
-  ]
+  ],
+  "evergreen_label": "Nadčasový příspěvek",
+  "evergreen_reason": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=owner_lost": "Vyřazen: jeho vlastník už nemůže plánovat příspěvky.",
+        "reason=*": "Vyřazen: kopii se nepodařilo vytvořit."
+      }
+    }
+  ],
+  "evergreen_copies": "Poslední kopie",
+  "evergreen_copy": "{channel}, {when}"
 }

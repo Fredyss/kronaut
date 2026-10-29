@@ -6643,6 +6643,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -6855,6 +6869,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -7057,6 +7072,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -7269,6 +7298,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -7676,6 +7706,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -7888,6 +7932,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -8463,6 +8508,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -8675,6 +8734,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -8908,6 +8968,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -9120,6 +9194,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -9361,6 +9436,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -9573,6 +9662,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -9814,6 +9904,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -10026,6 +10130,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -10324,6 +10429,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -10536,6 +10655,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -10571,6 +10691,385 @@
         "summary": "Send a destination again",
         "tags": [
           "destinations"
+        ],
+        "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/evergreen": {
+      "delete": {
+        "description": "No further copies are made. Existing copies stay as they are. 404 when the post was never marked.",
+        "operationId": "evergreen.unmark",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "recent": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelId": {
+                            "type": "string"
+                          },
+                          "copyPostId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "slotAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "channelId",
+                          "slotAt",
+                          "copyPostId"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "removed"
+                      ],
+                      "type": "string"
+                    },
+                    "stateReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "owner_lost",
+                            "copy_failed",
+                            "unmarked"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "stateReason",
+                    "recent"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Remove a post from the evergreen pool",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
+      "get": {
+        "description": "Whether the post is in the evergreen pool, why it left it, and its 10 most recent copies (channel, queue slot, copy post; null once the copy is deleted). 404 when the post was never marked.",
+        "operationId": "evergreen.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "recent": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelId": {
+                            "type": "string"
+                          },
+                          "copyPostId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "slotAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "channelId",
+                          "slotAt",
+                          "copyPostId"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "removed"
+                      ],
+                      "type": "string"
+                    },
+                    "stateReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "owner_lost",
+                            "copy_failed",
+                            "unmarked"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "stateReason",
+                    "recent"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Get a post's evergreen state",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
+      "put": {
+        "description": "Free queue slots up to 24 h ahead are filled with copies of pool posts, at most once per channel every 30 days. The caller becomes the owner: copies are scheduled or submitted in their name. Marking a removed post again makes the caller its new owner; marking an active one changes nothing.",
+        "operationId": "evergreen.mark",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "recent": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelId": {
+                            "type": "string"
+                          },
+                          "copyPostId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "slotAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "channelId",
+                          "slotAt",
+                          "copyPostId"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "removed"
+                      ],
+                      "type": "string"
+                    },
+                    "stateReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "owner_lost",
+                            "copy_failed",
+                            "unmarked"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "stateReason",
+                    "recent"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Add a post to the evergreen pool",
+        "tags": [
+          "posts"
         ],
         "x-kronaut-action": "posts:schedule",
         "x-kronaut-auth": [
@@ -10788,6 +11287,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -11000,6 +11513,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -11369,6 +11883,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -11581,6 +12109,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",
@@ -11814,6 +12343,20 @@
                       },
                       "type": "array"
                     },
+                    "evergreen": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "active",
+                            "removed"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "id": {
                       "type": "string"
                     },
@@ -12026,6 +12569,7 @@
                     "scheduleLocal",
                     "scheduleTz",
                     "seriesId",
+                    "evergreen",
                     "publishSummary",
                     "items",
                     "variants",

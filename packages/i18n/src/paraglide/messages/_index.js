@@ -161,6 +161,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Error_Logout_FailedInputs */
 /** @typedef {{}} Error_Rate_LimitedInputs */
 /** @typedef {{}} Error_UnavailableInputs */
+/** @typedef {{}} Evergreen_CopiesInputs */
+/** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown> }} Evergreen_CopyInputs */
+/** @typedef {{}} Evergreen_LabelInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Evergreen_ReasonInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
@@ -261,6 +265,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
 /** @typedef {{}} Queue_AddInputs */
+/** @typedef {{}} Queue_EvergreenInputs */
 /** @typedef {{}} Queue_SavedInputs */
 /** @typedef {{}} Queue_ZoneInputs */
 /** @typedef {{}} Reason_Account_DisabledInputs */
@@ -2726,6 +2731,67 @@ export const error_unavailable = /** @type {((inputs?: Error_UnavailableInputs, 
 	return __en.error_unavailable(inputs)
 });
 /**
+* | output |
+* | --- |
+* | "Recent copies" |
+*
+* @param {Evergreen_CopiesInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const evergreen_copies = /** @type {((inputs?: Evergreen_CopiesInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Evergreen_CopiesInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.evergreen_copies(inputs)
+	if (locale === "cs") return __cs.evergreen_copies(inputs)
+	return __en.evergreen_copies(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel}, {when}" |
+*
+* @param {Evergreen_CopyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const evergreen_copy = /** @type {((inputs: Evergreen_CopyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Evergreen_CopyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.evergreen_copy(inputs)
+	if (locale === "cs") return __cs.evergreen_copy(inputs)
+	return __en.evergreen_copy(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Evergreen" |
+*
+* @param {Evergreen_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const evergreen_label = /** @type {((inputs?: Evergreen_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Evergreen_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.evergreen_label(inputs)
+	if (locale === "cs") return __cs.evergreen_label(inputs)
+	return __en.evergreen_label(inputs)
+});
+/**
+* | reason | output |
+* | --- | --- |
+* | "owner_lost" | "Removed: its owner can no longer schedule posts." |
+* | * | "Removed: a copy couldn't be created." |
+*
+* @param {Evergreen_ReasonInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const evergreen_reason = /** @type {((inputs: Evergreen_ReasonInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Evergreen_ReasonInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.evergreen_reason(inputs)
+	if (locale === "cs") return __cs.evergreen_reason(inputs)
+	return __en.evergreen_reason(inputs)
+});
+/**
 * | countPlural | output |
 * | --- | --- |
 * | "one" | "{count} item needs action" |
@@ -4229,6 +4295,21 @@ export const queue_add = /** @type {((inputs?: Queue_AddInputs, options?: { loca
 	if (locale === "sk") return __sk.queue_add(inputs)
 	if (locale === "cs") return __cs.queue_add(inputs)
 	return __en.queue_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Free slots are filled from evergreen posts 24 h ahead." |
+*
+* @param {Queue_EvergreenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const queue_evergreen = /** @type {((inputs?: Queue_EvergreenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Queue_EvergreenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.queue_evergreen(inputs)
+	if (locale === "cs") return __cs.queue_evergreen(inputs)
+	return __en.queue_evergreen(inputs)
 });
 /**
 * | output |

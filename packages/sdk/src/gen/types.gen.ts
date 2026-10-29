@@ -1822,6 +1822,7 @@ export type PostsCreateResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -1905,6 +1906,7 @@ export type PostsGetResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2025,6 +2027,7 @@ export type PostsUpdateResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2182,6 +2185,7 @@ export type PostsRequestApprovalResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2270,6 +2274,7 @@ export type PostsCancelResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2359,6 +2364,7 @@ export type DestinationsCancelResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2448,6 +2454,7 @@ export type DestinationsMarkPublishedResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2547,6 +2554,7 @@ export type DestinationsSendAgainResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2586,6 +2594,120 @@ export type DestinationsSendAgainResponses = {
 };
 
 export type DestinationsSendAgainResponse = DestinationsSendAgainResponses[keyof DestinationsSendAgainResponses];
+
+export type EvergreenUnmarkData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/evergreen';
+};
+
+export type EvergreenUnmarkErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type EvergreenUnmarkError = EvergreenUnmarkErrors[keyof EvergreenUnmarkErrors];
+
+export type EvergreenUnmarkResponses = {
+    /**
+     * OK
+     */
+    200: {
+        recent: Array<{
+            channelId: string;
+            copyPostId: string | null;
+            slotAt: string;
+        }>;
+        state: 'active' | 'removed';
+        stateReason: 'owner_lost' | 'copy_failed' | 'unmarked' | null;
+    };
+};
+
+export type EvergreenUnmarkResponse = EvergreenUnmarkResponses[keyof EvergreenUnmarkResponses];
+
+export type EvergreenGetData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/evergreen';
+};
+
+export type EvergreenGetErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type EvergreenGetError = EvergreenGetErrors[keyof EvergreenGetErrors];
+
+export type EvergreenGetResponses = {
+    /**
+     * OK
+     */
+    200: {
+        recent: Array<{
+            channelId: string;
+            copyPostId: string | null;
+            slotAt: string;
+        }>;
+        state: 'active' | 'removed';
+        stateReason: 'owner_lost' | 'copy_failed' | 'unmarked' | null;
+    };
+};
+
+export type EvergreenGetResponse = EvergreenGetResponses[keyof EvergreenGetResponses];
+
+export type EvergreenMarkData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/evergreen';
+};
+
+export type EvergreenMarkErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type EvergreenMarkError = EvergreenMarkErrors[keyof EvergreenMarkErrors];
+
+export type EvergreenMarkResponses = {
+    /**
+     * OK
+     */
+    200: {
+        recent: Array<{
+            channelId: string;
+            copyPostId: string | null;
+            slotAt: string;
+        }>;
+        state: 'active' | 'removed';
+        stateReason: 'owner_lost' | 'copy_failed' | 'unmarked' | null;
+    };
+};
+
+export type EvergreenMarkResponse = EvergreenMarkResponses[keyof EvergreenMarkResponses];
 
 export type PostsRescheduleData = {
     body: {
@@ -2638,6 +2760,7 @@ export type PostsRescheduleResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2746,6 +2869,7 @@ export type PostsScheduleResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {
@@ -2834,6 +2958,7 @@ export type PostsUnscheduleResponses = {
             variant: number | null;
             version: number;
         }>;
+        evergreen: 'active' | 'removed' | null;
         id: string;
         items: Array<{
             doc: {

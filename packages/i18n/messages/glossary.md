@@ -24,6 +24,7 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | time zone | časové pásmo | časové pásmo | An IANA zone such as Europe/Bratislava; never "zóna". |
 | reply | odpoveď | odpověď | A later item of a reply chain, published under the main post. |
 | first comment | prvý komentár | první komentář | A comment the channel posts under its own post. |
+| evergreen post | nadčasový príspevok | nadčasový příspěvek | A post in the pool that refills free queue slots with copies. |
 
 ## Style
 

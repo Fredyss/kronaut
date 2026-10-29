@@ -8,10 +8,10 @@ import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { auditActor } from '../posts/audit.ts';
+import { ownerColumns } from '../posts/owner.ts';
 import { pathId } from '../posts/params.ts';
 import { postUnits } from '../posts/units.ts';
 import { RepeatInput, repeatOf } from './repeat.ts';
-import { seriesOwner } from './start.ts';
 import {
   latestOccurrence,
   occurrenceInstant,
@@ -140,7 +140,7 @@ async function findSeries(trx: TenantDb, workspaceId: string, seriesId: string, 
 }
 
 type Change = { readonly state: 'stopped' } | { readonly state: 'active'; readonly owner: Owner };
-type Owner = ReturnType<typeof seriesOwner>;
+type Owner = ReturnType<typeof ownerColumns>;
 
 interface Target {
   readonly workspaceId: string;
@@ -189,7 +189,7 @@ async function resume(trx: TenantDb, ctx: RequestContext, target: Target) {
   const { row } = target;
   if (row.state === 'active') return row;
   if (row.state !== 'paused') throw new HttpError('conflict', 'Only a paused series can resume.');
-  return await change(trx, ctx, target, { state: 'active', owner: seriesOwner(ctx.principal) });
+  return await change(trx, ctx, target, { state: 'active', owner: ownerColumns(ctx.principal) });
 }
 
 type Transition = (trx: TenantDb, ctx: RequestContext, target: Target) => Promise<SeriesRow>;
