@@ -30,6 +30,7 @@ import {
   type FixtureUrls,
   fakeProvider,
 } from '../publish/testing.ts';
+import { queueRoutes } from '../queue/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
 import type { PostDto } from './dto.ts';
 import { postRoutes } from './routes.ts';
@@ -188,6 +189,7 @@ export async function errorOf(response: Response): Promise<ErrorResponse['error'
 export async function startPosts(
   test: FixtureUrls,
   logger: Logger = pino({ level: 'silent' }),
+  clock: () => Temporal.Instant = () => Temporal.Now.instant(),
 ): Promise<void> {
   owner = createDatabase({ connectionString: test.ownerUrl });
   db = createDatabase({ connectionString: test.appUrl });
@@ -196,7 +198,7 @@ export async function startPosts(
     db,
     keys: deriveHttpKeys(randomBytes(32)),
     logger,
-    clock: () => Temporal.Now.instant(),
+    clock,
     publicBaseUrl: BASE,
     readiness: async () => true,
   };
@@ -213,6 +215,7 @@ export async function startPosts(
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
+    ...queueRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({
       providers,

@@ -2,16 +2,21 @@ import { channelsConnectStart } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { useId, useState } from 'react';
+import { lazy, Suspense, useId, useState } from 'react';
 import { type Channel, channelsQuery, connectableQuery, errorStatus, meQuery } from '../api.ts';
 import { AddChannelDialog } from '../channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
 import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
+import { QUEUE_ROLES } from '../channels/queue.ts';
 import { SearchToasts } from '../channels/search-toasts.tsx';
 import { useApiClient, useLocale } from '../context.ts';
 import { httpsUrl } from '../destinations.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
+
+const QueueEditor = lazy(() =>
+  import('../channels/queue-editor.tsx').then((module) => ({ default: module.QueueEditor })),
+);
 
 export interface ChannelsSearch {
   readonly connected?: string;
@@ -79,11 +84,53 @@ interface CardProps {
   readonly onDisconnect: (() => void) | null;
   readonly pending: boolean;
   readonly disconnecting: boolean;
+  readonly queueWorkspace: string | null;
 }
 
-function ChannelCard({ channel, onReconnect, onDisconnect, pending, disconnecting }: CardProps) {
+type Panel = 'confirm' | 'queue' | null;
+
+interface ActionProps extends CardProps {
+  readonly panel: Panel;
+  setPanel(panel: Panel): void;
+}
+
+function CardActions({ channel, onReconnect, onDisconnect, pending, ...rest }: ActionProps) {
+  const { panel, setPanel, queueWorkspace } = rest;
+  const healthy = channel.status === 'active';
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <span
+        className={
+          healthy
+            ? 'rounded-full bg-secondary px-2 py-0.5 text-xs'
+            : 'rounded-full bg-destructive/10 px-2 py-0.5 text-destructive text-xs'
+        }
+      >
+        {statusLabel(channel.status)}
+      </span>
+      {onReconnect === null ? null : (
+        <Button size="sm" variant="outline" disabled={pending} onClick={onReconnect}>
+          {m.channels_reconnect()}
+        </Button>
+      )}
+      {queueWorkspace === null || panel !== null ? null : (
+        <Button size="sm" variant="ghost" onClick={() => setPanel('queue')}>
+          {m.channels_queue()}
+        </Button>
+      )}
+      {onDisconnect === null || panel !== null ? null : (
+        <Button size="sm" variant="ghost" onClick={() => setPanel('confirm')}>
+          {m.channels_disconnect()}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function ChannelCard(props: CardProps) {
+  const { channel, onDisconnect, disconnecting, queueWorkspace } = props;
   const { locale } = useLocale();
-  const [confirming, setConfirming] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
   const profile = httpsUrl(channel.profileUrl);
   const expires =
     channel.accessExpiresAt === null
@@ -91,7 +138,6 @@ function ChannelCard({ channel, onReconnect, onDisconnect, pending, disconnectin
       : new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(
           new Date(channel.accessExpiresAt),
         );
-  const healthy = channel.status === 'active';
   return (
     <li className="flex flex-wrap items-start gap-3 rounded-xl border p-4">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -116,34 +162,23 @@ function ChannelCard({ channel, onReconnect, onDisconnect, pending, disconnectin
           )}
         </div>
       </div>
-      <div className="flex flex-col items-end gap-2">
-        <span
-          className={
-            healthy
-              ? 'rounded-full bg-secondary px-2 py-0.5 text-xs'
-              : 'rounded-full bg-destructive/10 px-2 py-0.5 text-destructive text-xs'
-          }
-        >
-          {statusLabel(channel.status)}
-        </span>
-        {onReconnect === null ? null : (
-          <Button size="sm" variant="outline" disabled={pending} onClick={onReconnect}>
-            {m.channels_reconnect()}
-          </Button>
-        )}
-        {onDisconnect === null || confirming ? null : (
-          <Button size="sm" variant="ghost" onClick={() => setConfirming(true)}>
-            {m.channels_disconnect()}
-          </Button>
-        )}
-      </div>
-      {onDisconnect === null || !confirming ? null : (
+      <CardActions {...props} panel={panel} setPanel={setPanel} />
+      {onDisconnect === null || panel !== 'confirm' ? null : (
         <DisconnectConfirm
           name={channel.displayName}
           pending={disconnecting}
           onConfirm={onDisconnect}
-          onClose={() => setConfirming(false)}
+          onClose={() => setPanel(null)}
         />
+      )}
+      {queueWorkspace === null || panel !== 'queue' ? null : (
+        <Suspense fallback={null}>
+          <QueueEditor
+            workspaceId={queueWorkspace}
+            channel={channel}
+            onClose={() => setPanel(null)}
+          />
+        </Suspense>
       )}
     </li>
   );
@@ -213,6 +248,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
               onDisconnect={canDisconnect ? () => disconnect.mutate(channel) : null}
               pending={connect.isPending}
               disconnecting={disconnect.isPending}
+              queueWorkspace={QUEUE_ROLES.has(role) ? workspaceId : null}
             />
           ))}
         </ul>

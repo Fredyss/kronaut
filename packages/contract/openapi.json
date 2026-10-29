@@ -2747,6 +2747,304 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/channels/{channelId}/queue": {
+      "get": {
+        "description": "The weekly slots (weekday 1 = Monday, local time in the queue time zone) and the next free slots that \"add to queue\" would take. A channel without slots has a null time zone.",
+        "operationId": "channels.queue",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "slots": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "time": {
+                            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                            "type": "string"
+                          },
+                          "weekday": {
+                            "maximum": 7,
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "weekday",
+                          "time"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "timezone": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "upcoming": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "at": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "local": {
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d)$",
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "at",
+                          "local",
+                          "timezone"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "timezone",
+                    "slots",
+                    "upcoming"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Read a channel's queue",
+        "tags": [
+          "channels"
+        ],
+        "x-kronaut-action": "channels:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
+      "put": {
+        "description": "Replaces every slot of the channel's queue; at most 56 slots, each weekday and time once. An empty list clears the queue and ignores the time zone. Scheduled posts never move. Owners and admins only.",
+        "operationId": "channels.queue_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "slots": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "time": {
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                          "type": "string"
+                        },
+                        "weekday": {
+                          "maximum": 7,
+                          "minimum": 1,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "weekday",
+                        "time"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "timezone": {
+                    "maxLength": 64,
+                    "pattern": "^[A-Za-z_]+(\\/[A-Za-z0-9_+-]+)*$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "timezone",
+                  "slots"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "slots": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "time": {
+                            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                            "type": "string"
+                          },
+                          "weekday": {
+                            "maximum": 7,
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "weekday",
+                          "time"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "timezone": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "upcoming": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "at": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "local": {
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d)$",
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "at",
+                          "local",
+                          "timezone"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "timezone",
+                    "slots",
+                    "upcoming"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Replace a channel's queue",
+        "tags": [
+          "channels"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/media": {
       "get": {
         "description": "The workspace's library assets that are ready or processing, not deleted and not a duplicate, newest first, optionally of one kind (image or video). limit 1–100, default 50; pass nextCursor as cursor for the next page. usageCount is the number of posts that use the asset; previewUrl is a signed URL of the image, or of a video's poster, valid for an hour.",
@@ -10630,7 +10928,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts/{postId}/schedule": {
       "post": {
-        "description": "Freezes every draft destination and schedules it, at a local time in a time zone or as soon as possible.",
+        "description": "Freezes every draft destination and schedules it, at a local time in a time zone, as soon as possible, or at the next free slot of each destination's channel queue (422 queue_empty or queue_full names the channel).",
         "operationId": "posts.schedule",
         "parameters": [
           {
@@ -10720,6 +11018,33 @@
                       },
                       "mode": {
                         "const": "asap",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "expectedVersion",
+                      "mode"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "acknowledgedCodes": {
+                        "items": {
+                          "pattern": "^[a-z_]{1,64}$",
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "type": "array"
+                      },
+                      "expectedVersion": {
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991,
+                        "type": "integer"
+                      },
+                      "mode": {
+                        "const": "queue",
                         "type": "string"
                       }
                     },

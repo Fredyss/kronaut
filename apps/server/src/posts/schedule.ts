@@ -29,11 +29,12 @@ import {
 import { ExpectedVersion, PostParams, pathId } from './params.ts';
 import {
   draftTargets,
+  earliest,
   freezeTargets,
   postSchedule,
   refuseOpenRequest,
-  scheduleOf,
   type Target,
+  targetSchedules,
 } from './targets.ts';
 import { postUnits } from './units.ts';
 
@@ -63,12 +64,13 @@ export const postScheduleRoute = defineRoute({
   body: z.discriminatedUnion('mode', [
     z.object({ ...ScheduleCommon, mode: z.literal('instant'), ...InstantFields }),
     z.strictObject({ ...ScheduleCommon, mode: z.literal('asap') }),
+    z.strictObject({ ...ScheduleCommon, mode: z.literal('queue') }),
   ]),
   response: PostSchema,
   idempotency: true,
   summary: 'Schedule a post',
   description:
-    'Freezes every draft destination and schedules it, at a local time in a time zone or as soon as possible.',
+    "Freezes every draft destination and schedules it, at a local time in a time zone, as soon as possible, or at the next free slot of each destination's channel queue (422 queue_empty or queue_full names the channel).",
   tags: ['posts'],
 });
 
@@ -159,11 +161,11 @@ function scheduledColumns(
 interface Prepared {
   readonly targets: readonly Target[];
   readonly frozen: readonly Frozen[];
-  readonly schedule: Schedule;
+  readonly schedules: ReadonlyMap<string, Schedule>;
 }
 
 async function approvalFor(trx: TenantDb, run: ScheduleRun, prepared: Prepared) {
-  const { targets, frozen, schedule } = prepared;
+  const { targets, frozen, schedules } = prepared;
   const resolved = await resolveApproval(trx, {
     workspaceId: run.workspaceId,
     postId: run.locked.id,
@@ -172,7 +174,7 @@ async function approvalFor(trx: TenantDb, run: ScheduleRun, prepared: Prepared) 
       kept: run.kept?.get(row.id) ?? row.approval_request_id,
     })),
     frozen,
-    schedule,
+    schedules,
     fallback: run.auth.approval,
   });
   run.auth.authorize(resolved.approval);
@@ -191,11 +193,12 @@ export async function scheduleLocked(
   const postId = locked.id;
   const targets = draftTargets(rows, run);
   await refuseOpenRequest(trx, workspaceId, postId, WAITING);
-  const schedule = await scheduleOf(trx, workspaceId, body, run.now);
-  const version = await bumpPost(trx, workspaceId, postId, postSchedule(body.mode, schedule));
+  const timing = { workspaceId, postId, now: run.now };
+  const schedules = await targetSchedules(trx, timing, body, targets);
+  const set = postSchedule(body.mode, earliest(schedules));
+  const version = await bumpPost(trx, workspaceId, postId, set);
   const frozen = await freezeTargets(trx, run, version, targets);
-  const { approval, bindings } = await approvalFor(trx, run, { targets, frozen, schedule });
-  const deadline = schedule.at.add({ milliseconds: PUBLISH_DEADLINE_MS });
+  const { approval, bindings } = await approvalFor(trx, run, { targets, frozen, schedules });
   await resetProgress(
     trx,
     workspaceId,
@@ -203,7 +206,11 @@ export async function scheduleLocked(
   );
   for (const { row } of targets) {
     const f = frozen.find((candidate) => candidate.id === row.id);
-    if (f === undefined) throw new Error(`destination ${row.id} was not frozen`);
+    const schedule = schedules.get(row.id);
+    if (f === undefined || schedule === undefined) {
+      throw new Error(`destination ${row.id} was not frozen and timed`);
+    }
+    const deadline = schedule.at.add({ milliseconds: PUBLISH_DEADLINE_MS });
     const binding = bindings.get(row.id);
     await transition(trx, destinationRef(workspaceId, postId, row, version), {
       state: 'scheduled',

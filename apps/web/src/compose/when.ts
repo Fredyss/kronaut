@@ -13,7 +13,7 @@ function browserTimeZone(): string {
 type WhenResult = { readonly when: ComposeWhen } | { readonly problem: string };
 
 export function resolveWhen(mode: Mode, date: string, time: string, tz: string): WhenResult {
-  if (mode === 'asap') return { when: { mode: 'asap' } };
+  if (mode !== 'instant') return { when: { mode } };
   let local: Temporal.PlainDateTime;
   try {
     local = Temporal.PlainDate.from(date).toPlainDateTime(Temporal.PlainTime.from(time));
@@ -30,6 +30,7 @@ export function resolveWhen(mode: Mode, date: string, time: string, tz: string):
 export function submitLabel(mode: Mode, pending: boolean, request = false): string {
   if (request) return pending ? m.compose_requesting_approval() : m.compose_request_approval();
   if (mode === 'asap') return pending ? m.compose_publishing() : m.compose_publish_now();
+  if (mode === 'queue') return pending ? m.compose_scheduling() : m.compose_add_to_queue();
   return pending ? m.compose_scheduling() : m.compose_schedule();
 }
 

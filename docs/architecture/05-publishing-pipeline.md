@@ -294,3 +294,18 @@ Every run is recorded in `cron_runs`, and `worker_heartbeats` feed `/readyz`.
   - Rows that are already sending or verifying are never touched. The approval stays valid, because it binds the wall time and zone (ADR-0011).
 - The UI always shows the resolved instant and zone.
 - Recurring = RRULE + tz, expanded from **local wall time** (never +7×24 h); only the next occurrence is materialised.
+
+## Queue slots
+
+A channel's queue is a weekly timetable: weekday + local wall time in one IANA zone per channel (`queue_slots`). A new channel has no slots. Owners and admins edit it (`settings:write`, session only); anyone who may schedule can add to it.
+
+- **Add to queue** is a third mode of `POST …/posts/:postId/schedule` (`mode: 'queue'`), so approvals, preflight and freezing are unchanged.
+  - Each draft destination gets the next free slot of **its own** channel, so one post can land at different times on different channels. The post is stored with `schedule_mode = 'local_per_destination'`; `schedule_local`/`schedule_tz` hold the earliest destination's time.
+  - Destinations of the same post on the same channel share that channel's slot.
+  - **Free** means no other destination of that channel is `scheduled`, `publishing`, `retry_wait`, `verifying`, `published`, `unconfirmed` or `awaiting_manual` at exactly that instant. A post scheduled by hand at a slot's time takes the slot.
+  - Slot times are expanded from local wall time for the next 8 weeks, with the same DST rules as any schedule (gap → forward, overlap → earlier offset). A slot less than 5 minutes ahead is skipped.
+  - Concurrent "add to queue" calls on one channel are serialised with a transaction-scoped advisory lock per channel, taken in channel-id order after the destination locks.
+  - No slots → `422 queue_empty`; none free in 8 weeks → `422 queue_full`. Both name the channel.
+- **Gaps stay.** Deleting, cancelling or rescheduling a queued post never moves the others; the next "add to queue" fills the gap. A queued destination is an ordinary scheduled destination afterwards (reschedule, `tz_recompute` and approval binding apply as usual).
+- **API:** `GET /v1/workspaces/:id/channels/:channelId/queue` returns the zone, the slots and the next 3 free instants (`channels:read`); `PUT` replaces the timetable as a whole (`settings:write`) and writes the audit event `channel.queue_updated`.
+

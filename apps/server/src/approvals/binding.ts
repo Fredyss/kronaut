@@ -27,7 +27,7 @@ export interface BindingInput {
   readonly postId: string;
   readonly targets: readonly BindingTarget[];
   readonly frozen: readonly Frozen[];
-  readonly schedule: Pick<Schedule, 'local' | 'tz'>;
+  readonly schedules: ReadonlyMap<string, Pick<Schedule, 'local' | 'tz'>>;
   readonly fallback: ApprovalStatus;
 }
 
@@ -115,9 +115,10 @@ export async function resolveApproval(
   const loaded = await loadBindings(trx, input);
   const matched = input.frozen.every((f) => loaded.get(f.id)?.contentHash.equals(f.contentHash));
   if (!matched) return { approval: input.fallback, bindings: new Map() };
-  const outside = [...loaded.values()].some(
-    (binding) => binding.slot !== null && !withinApprovedSchedule(input.schedule, binding.slot),
-  );
+  const outside = [...loaded].some(([id, { slot }]) => {
+    const schedule = input.schedules.get(id);
+    return slot !== null && (schedule === undefined || !withinApprovedSchedule(schedule, slot));
+  });
   if (outside && input.fallback === 'exempt') return { approval: 'exempt', bindings: new Map() };
   if (outside) {
     throw unprocessable([{ path: 'body.scheduleLocal', code: 'outside_approved_schedule' }]);

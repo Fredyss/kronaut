@@ -682,6 +682,15 @@ export interface PublishAttempts {
   workspace_id: string;
 }
 
+export interface QueueSlots {
+  created_at: Generated<Timestamp>;
+  local_time: string;
+  social_account_id: string;
+  timezone: string;
+  weekday: number;
+  workspace_id: string;
+}
+
 export interface RateBuckets {
   blocked_until: Timestamp | null;
   capacity: Numeric;
@@ -930,6 +939,7 @@ export interface DB {
   provider_app_keys: ProviderAppKeys;
   provider_apps: ProviderApps;
   publish_attempts: PublishAttempts;
+  queue_slots: QueueSlots;
   rate_buckets: RateBuckets;
   review_link_posts: ReviewLinkPosts;
   review_links: ReviewLinks;

@@ -68,6 +68,7 @@ function Composer({
     onSubmit,
     approval,
     requestInstead,
+    queue,
   } = useComposeForm(workspaceId, at);
   const dateId = useId();
   const timeId = useId();
@@ -99,6 +100,7 @@ function Composer({
         timeId={timeId}
         pending={pending}
         note={approval.request ? approval.note : undefined}
+        queue={approval.request ? undefined : queue}
       />
 
       {formError === null ? null : (

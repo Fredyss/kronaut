@@ -29,6 +29,7 @@ const LAZY = {
   'editor JS': ['editor', '130 KB'],
   'text limits JS': ['text-limits', '5 KB'],
   'preview JS': ['preview', '10 KB'],
+  'queue editor JS': ['queue-editor', '10 KB'],
 };
 
 function sharedLazyChunks(shell) {

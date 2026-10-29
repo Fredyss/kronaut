@@ -34,3 +34,12 @@ export function useNumberFormat() {
   const format = new Intl.NumberFormat(locale);
   return (value: number) => format.format(value);
 }
+
+const A_MONDAY = Date.UTC(2024, 0, 1);
+const DAY_MS = 86_400_000;
+
+export function useWeekdayFormat() {
+  const { locale } = useLocale();
+  const format = new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' });
+  return (isoWeekday: number) => format.format(new Date(A_MONDAY + (isoWeekday - 1) * DAY_MS));
+}

@@ -17,6 +17,7 @@ import { metaRoutes } from '../meta/routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
+import { queueRoutes } from '../queue/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
 import type { HttpDeps } from './kernel.ts';
 import { systemRoutes } from './system-routes.ts';
@@ -53,6 +54,7 @@ export function apiRoutes({
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),
+    ...queueRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({

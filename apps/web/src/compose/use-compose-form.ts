@@ -9,6 +9,7 @@ import { choiceFor } from './choice.ts';
 import { type Content, effective } from './contents.ts';
 import { isBlank } from './doc.ts';
 import { blankItemProblem } from './issues.ts';
+import { useQueueChoice } from './queue-choice.ts';
 import {
   type ComposeContent,
   type ComposeDestination,
@@ -140,6 +141,10 @@ export function useComposeForm(workspaceId: string, at?: string) {
   const flagged = [...limitFlags, ...content.unusable];
   const blocked = flagged.length > 0;
   const plan = toPlan(list, content, selected);
+  const queue = useQueueChoice(
+    workspaceId,
+    list.filter((channel) => plan.destinations.some((d) => d.accountId === channel.id)),
+  );
 
   const send = (asRequest: boolean) => {
     if (pending || blocked) return;
@@ -147,6 +152,9 @@ export function useComposeForm(workspaceId: string, at?: string) {
     if (empty !== null) return setFormError(empty);
     const waiting = videoProblem(plan, content.contents.base, content.videos, locale);
     if (waiting !== null) return setFormError(waiting);
+    if (mode === 'queue' && queue.empty !== undefined) {
+      return setFormError(m.compose_queue_empty({ channel: queue.empty.displayName }));
+    }
     const resolved = resolveWhen(mode, date, time, tz);
     if ('problem' in resolved) return setFormError(resolved.problem);
     setFormError(null);
@@ -183,5 +191,6 @@ export function useComposeForm(workspaceId: string, at?: string) {
     onSubmit,
     approval,
     requestInstead,
+    queue,
   };
 }
