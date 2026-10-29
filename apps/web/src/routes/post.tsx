@@ -17,6 +17,7 @@ import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { summaryLabel } from '../post-summary.ts';
 import { providerUi } from '../providers.ts';
+import { SeriesSection } from '../series/section.tsx';
 
 const route = getRouteApi('/app/posts/$postId');
 
@@ -150,6 +151,9 @@ function PostStatus({
         <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
       </div>
       <ApprovalSection workspaceId={workspaceId} post={data} />
+      {data.seriesId === null ? null : (
+        <SeriesSection workspaceId={workspaceId} seriesId={data.seriesId} />
+      )}
       <article className="flex flex-col gap-3 rounded-xl border p-4">
         <Content item={data.items[0]} />
       </article>

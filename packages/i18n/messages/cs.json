@@ -780,5 +780,66 @@
     }
   ],
   "meta_status_none": "Kronaut nenašel žádný kanál propojený s tímto účtem Meta. Kanál připojený před zavedením této funkce nelze přiřadit: vlastník pracovního prostoru ho může odpojit nebo jednou znovu připojit.",
-  "meta_status_unknown": "Neznámý potvrzovací kód."
+  "meta_status_unknown": "Neznámý potvrzovací kód.",
+  "repeat_label": "Opakování",
+  "repeat_never": "Nikdy",
+  "repeat_daily": "Každý den",
+  "repeat_weekly": "Každý týden",
+  "repeat_monthly": "Každý měsíc",
+  "repeat_every": "Interval",
+  "repeat_ends": "Konec",
+  "repeat_on": "K datu",
+  "repeat_after": "Po počtu příspěvků",
+  "repeat_warning": "Některé sítě odmítnou stejný text opakovaný do týdne. Text obměňujte.",
+  "issue_invalid_repeat": "Toto nastavení opakování není podporováno.",
+  "series_rule": [
+    {
+      "declarations": [
+        "input freq",
+        "input count",
+        "input days",
+        "input day",
+        "local countPlural = count: plural"
+      ],
+      "selectors": ["freq", "countPlural"],
+      "match": {
+        "freq=daily, countPlural=one": "Každý den",
+        "freq=daily, countPlural=few": "Každé {count} dny",
+        "freq=daily, countPlural=*": "Každých {count} dní",
+        "freq=weekly, countPlural=one": "Každý týden: {days}",
+        "freq=weekly, countPlural=few": "Každé {count} týdny: {days}",
+        "freq=weekly, countPlural=*": "Každých {count} týdnů: {days}",
+        "freq=*, countPlural=one": "Každý měsíc, {day}. den",
+        "freq=*, countPlural=few": "Každé {count} měsíce, {day}. den",
+        "freq=*, countPlural=*": "Každých {count} měsíců, {day}. den"
+      }
+    }
+  ],
+  "series_until": "Končí {date}",
+  "series_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Končí po {count} příspěvku",
+        "countPlural=*": "Končí po {count} příspěvcích"
+      }
+    }
+  ],
+  "series_next": "Další: {when} ({tz})",
+  "series_stop": "Zastavit sérii",
+  "series_stop_body": "Zastavit tuto sérii? Již vytvořené příspěvky zůstanou, jak jsou.",
+  "series_resume": "Obnovit sérii",
+  "series_state": [
+    {
+      "declarations": ["input state"],
+      "selectors": ["state"],
+      "match": {
+        "state=paused": "Pozastaveno: vlastník série už nemůže plánovat.",
+        "state=ended": "Série skončila.",
+        "state=failed": "Pozastaveno: příspěvek se nepodařilo naplánovat.",
+        "state=*": "Série byla zastavena."
+      }
+    }
+  ]
 }

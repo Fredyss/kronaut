@@ -736,5 +736,63 @@
     }
   ],
   "meta_status_none": "Kronaut found no channel linked to this Meta account. A channel connected before this feature existed can't be matched: its workspace owner can disconnect it, or reconnect it once.",
-  "meta_status_unknown": "Unknown confirmation code."
+  "meta_status_unknown": "Unknown confirmation code.",
+  "repeat_label": "Repeat",
+  "repeat_never": "Never",
+  "repeat_daily": "Daily",
+  "repeat_weekly": "Weekly",
+  "repeat_monthly": "Monthly",
+  "repeat_every": "Every",
+  "repeat_ends": "Ends",
+  "repeat_on": "On a date",
+  "repeat_after": "After a number of posts",
+  "repeat_warning": "Some networks reject the same text repeated within a week. Vary the text.",
+  "issue_invalid_repeat": "These repeat settings aren't supported.",
+  "series_rule": [
+    {
+      "declarations": [
+        "input freq",
+        "input count",
+        "input days",
+        "input day",
+        "local countPlural = count: plural"
+      ],
+      "selectors": ["freq", "countPlural"],
+      "match": {
+        "freq=daily, countPlural=one": "Every day",
+        "freq=daily, countPlural=*": "Every {count} days",
+        "freq=weekly, countPlural=one": "Every week on {days}",
+        "freq=weekly, countPlural=*": "Every {count} weeks on {days}",
+        "freq=*, countPlural=one": "Every month on day {day}",
+        "freq=*, countPlural=*": "Every {count} months on day {day}"
+      }
+    }
+  ],
+  "series_until": "Ends on {date}",
+  "series_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Ends after {count} post",
+        "countPlural=*": "Ends after {count} posts"
+      }
+    }
+  ],
+  "series_next": "Next: {when} ({tz})",
+  "series_stop": "Stop series",
+  "series_stop_body": "Stop this series? Posts already created stay as they are.",
+  "series_resume": "Resume series",
+  "series_state": [
+    {
+      "declarations": ["input state"],
+      "selectors": ["state"],
+      "match": {
+        "state=paused": "Paused: its owner can no longer schedule posts.",
+        "state=ended": "The series has ended.",
+        "state=failed": "Paused: a post couldn't be scheduled.",
+        "state=*": "The series was stopped."
+      }
+    }
+  ]
 }

@@ -50,6 +50,7 @@ describe('ID_PREFIXES', () => {
       notification: 'ntf',
       approvalRequest: 'apr',
       grant: 'grant',
+      series: 'ser',
     });
   });
 

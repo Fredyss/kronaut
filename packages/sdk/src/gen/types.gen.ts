@@ -1839,6 +1839,7 @@ export type PostsCreateResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -1921,6 +1922,7 @@ export type PostsGetResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2040,6 +2042,7 @@ export type PostsUpdateResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2122,6 +2125,14 @@ export type PostsRequestApprovalData = {
         acknowledgedCodes?: Array<string>;
         expectedVersion: number;
         note?: string;
+        repeat?: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
         schedule?: {
             scheduleLocal: string;
             scheduleTz: string;
@@ -2188,6 +2199,7 @@ export type PostsRequestApprovalResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2275,6 +2287,7 @@ export type PostsCancelResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2363,6 +2376,7 @@ export type DestinationsCancelResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2451,6 +2465,7 @@ export type DestinationsMarkPublishedResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2549,6 +2564,7 @@ export type DestinationsSendAgainResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2639,6 +2655,7 @@ export type PostsRescheduleResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2666,6 +2683,14 @@ export type PostsScheduleData = {
         acknowledgedCodes?: Array<string>;
         expectedVersion: number;
         mode: 'instant';
+        repeat?: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
         scheduleLocal: string;
         scheduleTz: string;
     } | {
@@ -2738,6 +2763,7 @@ export type PostsScheduleResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2825,6 +2851,7 @@ export type PostsUnscheduleResponses = {
         scheduleLocal: string | null;
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
+        seriesId: string | null;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2846,6 +2873,144 @@ export type PostsUnscheduleResponses = {
 };
 
 export type PostsUnscheduleResponse = PostsUnscheduleResponses[keyof PostsUnscheduleResponses];
+
+export type SeriesGetData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        seriesId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/series/{seriesId}';
+};
+
+export type SeriesGetErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SeriesGetError = SeriesGetErrors[keyof SeriesGetErrors];
+
+export type SeriesGetResponses = {
+    /**
+     * OK
+     */
+    200: {
+        dtstartLocal: string;
+        id: string;
+        nextLocal: string | null;
+        occurrences: number;
+        rule: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
+        state: 'active' | 'paused' | 'ended' | 'stopped';
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
+        timezone: string;
+    };
+};
+
+export type SeriesGetResponse = SeriesGetResponses[keyof SeriesGetResponses];
+
+export type SeriesResumeData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        seriesId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/series/{seriesId}/resume';
+};
+
+export type SeriesResumeErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SeriesResumeError = SeriesResumeErrors[keyof SeriesResumeErrors];
+
+export type SeriesResumeResponses = {
+    /**
+     * OK
+     */
+    200: {
+        dtstartLocal: string;
+        id: string;
+        nextLocal: string | null;
+        occurrences: number;
+        rule: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
+        state: 'active' | 'paused' | 'ended' | 'stopped';
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
+        timezone: string;
+    };
+};
+
+export type SeriesResumeResponse = SeriesResumeResponses[keyof SeriesResumeResponses];
+
+export type SeriesStopData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        seriesId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/series/{seriesId}/stop';
+};
+
+export type SeriesStopErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SeriesStopError = SeriesStopErrors[keyof SeriesStopErrors];
+
+export type SeriesStopResponses = {
+    /**
+     * OK
+     */
+    200: {
+        dtstartLocal: string;
+        id: string;
+        nextLocal: string | null;
+        occurrences: number;
+        rule: {
+            byDay?: Array<'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'>;
+            byMonthDay?: number;
+            count?: number;
+            freq: 'daily' | 'weekly' | 'monthly';
+            interval?: number;
+            until?: string;
+        };
+        state: 'active' | 'paused' | 'ended' | 'stopped';
+        stateReason: 'owner_lost' | 'advance_failed' | 'count_reached' | 'until_passed' | 'occurrences_deleted' | null;
+        timezone: string;
+    };
+};
+
+export type SeriesStopResponse = SeriesStopResponses[keyof SeriesStopResponses];
 
 export type SystemStatusData = {
     body?: never;

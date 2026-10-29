@@ -30,6 +30,7 @@ const LAZY = {
   'text limits JS': ['text-limits', '5 KB'],
   'preview JS': ['preview', '10 KB'],
   'queue editor JS': ['queue-editor', '10 KB'],
+  'repeat control JS': ['repeat-fieldset', '5 KB'],
 };
 
 function sharedLazyChunks(shell) {

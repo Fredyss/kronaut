@@ -11,6 +11,7 @@ import {
 import { errorStatus, type Post } from '../api.ts';
 import { approvalBody } from '../approvals/queries.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import type { Repeat } from '../series/rule-text.ts';
 import { distinctImages } from './contents.ts';
 import type { Doc } from './doc.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';
@@ -40,7 +41,12 @@ export interface ComposeDestination {
 export type ComposeWhen =
   | { readonly mode: 'asap' }
   | { readonly mode: 'queue' }
-  | { readonly mode: 'instant'; readonly scheduleLocal: string; readonly scheduleTz: string };
+  | {
+      readonly mode: 'instant';
+      readonly scheduleLocal: string;
+      readonly scheduleTz: string;
+      readonly repeat?: Repeat;
+    };
 
 export interface ComposeInput {
   readonly content: ComposeContent;

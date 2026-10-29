@@ -780,5 +780,66 @@
     }
   ],
   "meta_status_none": "Kronaut nenašiel žiadny kanál prepojený s týmto účtom Meta. Kanál pripojený pred zavedením tejto funkcie sa nedá priradiť: vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť.",
-  "meta_status_unknown": "Neznámy potvrdzovací kód."
+  "meta_status_unknown": "Neznámy potvrdzovací kód.",
+  "repeat_label": "Opakovanie",
+  "repeat_never": "Nikdy",
+  "repeat_daily": "Každý deň",
+  "repeat_weekly": "Každý týždeň",
+  "repeat_monthly": "Každý mesiac",
+  "repeat_every": "Interval",
+  "repeat_ends": "Koniec",
+  "repeat_on": "K dátumu",
+  "repeat_after": "Po počte príspevkov",
+  "repeat_warning": "Niektoré siete odmietnu rovnaký text zopakovaný do týždňa. Text obmieňajte.",
+  "issue_invalid_repeat": "Toto nastavenie opakovania nie je podporované.",
+  "series_rule": [
+    {
+      "declarations": [
+        "input freq",
+        "input count",
+        "input days",
+        "input day",
+        "local countPlural = count: plural"
+      ],
+      "selectors": ["freq", "countPlural"],
+      "match": {
+        "freq=daily, countPlural=one": "Každý deň",
+        "freq=daily, countPlural=few": "Každé {count} dni",
+        "freq=daily, countPlural=*": "Každých {count} dní",
+        "freq=weekly, countPlural=one": "Každý týždeň: {days}",
+        "freq=weekly, countPlural=few": "Každé {count} týždne: {days}",
+        "freq=weekly, countPlural=*": "Každých {count} týždňov: {days}",
+        "freq=*, countPlural=one": "Každý mesiac, {day}. deň",
+        "freq=*, countPlural=few": "Každé {count} mesiace, {day}. deň",
+        "freq=*, countPlural=*": "Každých {count} mesiacov, {day}. deň"
+      }
+    }
+  ],
+  "series_until": "Končí {date}",
+  "series_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Končí po {count} príspevku",
+        "countPlural=*": "Končí po {count} príspevkoch"
+      }
+    }
+  ],
+  "series_next": "Ďalší: {when} ({tz})",
+  "series_stop": "Zastaviť sériu",
+  "series_stop_body": "Zastaviť túto sériu? Už vytvorené príspevky zostanú, ako sú.",
+  "series_resume": "Obnoviť sériu",
+  "series_state": [
+    {
+      "declarations": ["input state"],
+      "selectors": ["state"],
+      "match": {
+        "state=paused": "Pozastavená: vlastník série už nemôže plánovať.",
+        "state=ended": "Séria skončila.",
+        "state=failed": "Pozastavená: príspevok sa nepodarilo naplánovať.",
+        "state=*": "Séria bola zastavená."
+      }
+    }
+  ]
 }

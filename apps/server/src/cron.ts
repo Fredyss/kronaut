@@ -10,6 +10,7 @@ import { purgeNotifications } from './notifications/retention.ts';
 import { recomputeTimes } from './posts/tz-recompute.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
+import { advanceSeries } from './series/advance.ts';
 import { purgeInstanceRetention } from './system/instance-retention.ts';
 import { checkApiVersionSunsets } from './system/sunset.ts';
 
@@ -26,6 +27,7 @@ export const CRON_TASKS = {
   publishDueSweep: 'publish_due_sweep',
   publishLeaseReaper: 'publish_lease_reaper',
   publishReconcile: 'publish_reconcile',
+  seriesAdvance: 'series_advance',
   tzRecompute: 'tz_recompute',
 } as const;
 
@@ -112,6 +114,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     options: { backfillPeriod: 0, maxAttempts: 1 },
   },
   {
+    task: CRON_TASKS.seriesAdvance,
+    identifier: CRON_TASKS.seriesAdvance,
+    match: '*/5 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
     task: CRON_TASKS.tzRecompute,
     identifier: CRON_TASKS.tzRecompute,
     match: '7 * * * *',
@@ -132,6 +140,7 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.publishDueSweep]: MINUTE_MS,
   [CRON_TASKS.publishLeaseReaper]: MINUTE_MS,
   [CRON_TASKS.publishReconcile]: 10 * MINUTE_MS,
+  [CRON_TASKS.seriesAdvance]: 5 * MINUTE_MS,
   [CRON_TASKS.tzRecompute]: 60 * MINUTE_MS,
 };
 
@@ -262,6 +271,9 @@ export function cronTaskList(
     },
     [CRON_TASKS.publishReconcile]: async () => {
       await recordCronRun(db, CRON_TASKS.publishReconcile, () => reconcile(sweeps));
+    },
+    [CRON_TASKS.seriesAdvance]: async () => {
+      await recordCronRun(db, CRON_TASKS.seriesAdvance, () => advanceSeries(sweeps));
     },
     [CRON_TASKS.tzRecompute]: async () => {
       await recordCronRun(db, CRON_TASKS.tzRecompute, () => recomputeTimes(db, logger));

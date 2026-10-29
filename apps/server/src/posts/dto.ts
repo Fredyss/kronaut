@@ -45,6 +45,7 @@ export const PostSchema = z.object({
   scheduleMode: z.enum(['unscheduled', 'asap', 'instant', 'local_per_destination']),
   scheduleLocal: z.iso.datetime({ local: true }).nullable(),
   scheduleTz: z.string().nullable(),
+  seriesId: z.string().nullable(),
   publishSummary: z.enum([
     'draft',
     'in_review',
@@ -112,6 +113,7 @@ async function loadPost(trx: TenantDb, workspaceId: string, postId: string) {
       'schedule_mode',
       'schedule_local',
       'schedule_tz',
+      'series_id',
       'publish_summary',
       'created_at',
       'updated_at',
@@ -255,6 +257,7 @@ export async function findPost(
     scheduleMode: post.schedule_mode,
     scheduleLocal: plainLocal(post.schedule_local),
     scheduleTz: post.schedule_tz,
+    seriesId: post.series_id === null ? null : encodePublicId('series', post.series_id),
     publishSummary: post.publish_summary,
     items,
     variants,
