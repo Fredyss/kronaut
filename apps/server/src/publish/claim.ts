@@ -9,6 +9,7 @@ import type {
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
+import { seedsPulls } from '../analytics/seed.ts';
 import { type DestinationJob, enqueuePublish } from '../jobs.ts';
 import type { ProviderEntry } from '../providers.ts';
 import { currentInput, selectItems } from './chain.ts';
@@ -217,7 +218,7 @@ async function claimAttempt(
       deadlineAt: dest.main_confirmed ? null : instant(scope.deadlineAt),
       afterRefresh: dest.state === 'retry_wait' && dest.state_reason === 'auth_refreshed',
       entry,
-      analytics: entry.manifest.capabilities.analytics,
+      analytics: seedsPulls(entry.manifest, dest.publish_type),
       postType,
       position: current.item.position,
       role: current.item.role,

@@ -97,6 +97,7 @@ interface CardProps {
   readonly disconnecting: boolean;
   readonly queueWorkspace: string | null;
   readonly metricsWorkspace: string | null;
+  readonly onAddInsights: (() => void) | null;
 }
 
 type Panel = 'confirm' | 'queue' | null;
@@ -141,6 +142,7 @@ function CardActions({ channel, onReconnect, onDisconnect, pending, ...rest }: A
 
 function ChannelCard(props: CardProps) {
   const { channel, onDisconnect, disconnecting, queueWorkspace, metricsWorkspace } = props;
+  const { onAddInsights } = props;
   const { locale } = useLocale();
   const [panel, setPanel] = useState<Panel>(null);
   const profile = httpsUrl(channel.profileUrl);
@@ -174,7 +176,12 @@ function ChannelCard(props: CardProps) {
           )}
           {metricsWorkspace === null ? null : (
             <Suspense fallback={null}>
-              <Followers workspaceId={metricsWorkspace} channel={channel} />
+              <Followers
+                workspaceId={metricsWorkspace}
+                channel={channel}
+                onReconnect={onAddInsights}
+                pending={props.pending}
+              />
             </Suspense>
           )}
         </div>
@@ -216,13 +223,14 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
 
   const fieldPrefix = useId();
   const providers = connectable.data?.map((provider) => provider.id);
-  const reconnect = (channel: Channel): (() => void) | null => {
+  const startReconnect = (channel: Channel): (() => void) | null => {
     if (providers === undefined) return null;
-    if (channel.status !== 'needs_reauth') return null;
     const request = reconnectRequest(channel);
     if (request !== null) return () => connect.mutate({ body: request, fromForm: false });
     return () => setAdding({ initial: channel.provider });
   };
+  const reconnect = (channel: Channel) =>
+    channel.status === 'needs_reauth' ? startReconnect(channel) : null;
   const errorFor = (provider: string): string | null => {
     const attempt = connect.variables;
     if (connect.error === null || attempt?.body.provider !== provider) return null;
@@ -262,6 +270,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
               key={channel.id}
               channel={channel}
               onReconnect={reconnect(channel)}
+              onAddInsights={startReconnect(channel)}
               onDisconnect={canDisconnect ? () => disconnect.mutate(channel) : null}
               pending={connect.isPending}
               disconnecting={disconnect.isPending}

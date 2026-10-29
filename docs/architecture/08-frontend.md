@@ -9,7 +9,7 @@
   - "Add to queue" sits next to ASAP and a fixed time. It shows each selected channel's next free slot, and is disabled with the reason when a channel has no slots. Each channel's queue is edited from the channel list.
   - "Repeat" sits under a fixed time: presets only (daily, weekly on days, monthly on a day, every N, end never/on a date/after N). The post page shows the series, its next time and a stop action.
   - The post page has an "Evergreen" switch (add to or remove from the pool) and lists its recent copies. The queue editor says that free slots are filled from the pool 24 h ahead.
-  - The post page shows each published destination's latest counts and when they were read; a missing value shows as a dash, never 0. The channel page shows the follower count and its change over 30 days.
+  - The post page shows each published destination's latest counts and when they were read; a missing value shows as a dash, never 0. The channel page shows the follower count and its change over 30 days, and for a Meta channel connected without its insight scope, a line that reconnecting adds insights.
 - **Previews** are React components per archetype (short-feed, pro-feed, media-grid, vertical-video, chat, article):
   - They use real truncation cutoffs and crop overlays.
   - Golden tests per network keep preview == published.

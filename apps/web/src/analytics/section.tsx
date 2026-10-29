@@ -21,6 +21,7 @@ const ORDER: readonly Metric[] = [
   'reactions',
   'bookmarks',
   'views',
+  'reach',
 ];
 
 interface Scope {

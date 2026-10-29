@@ -66,6 +66,7 @@ export interface PostTypeSpec {
   readonly async?: AsyncLimits;
   readonly thread?: { readonly maxItems: number; readonly media: MediaLimits };
   readonly comment?: { readonly text: readonly TextLimit[]; readonly steps: readonly PostStep[] };
+  readonly analytics?: { readonly windowHours: number };
 }
 
 export interface RateLimitSpec {

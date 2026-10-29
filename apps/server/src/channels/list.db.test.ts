@@ -201,7 +201,10 @@ beforeAll(async () => {
   await addAccount(rulesId, ownerId, 'thr', { provider: 'threads' });
   const previewId = await provision(ownerId, 'ws-preview');
   previewWorkspace = encodePublicId('workspace', previewId);
-  await addAccount(previewId, ownerId, 'gram', { provider: 'instagram' });
+  await addAccount(previewId, ownerId, 'gram', {
+    provider: 'instagram',
+    capabilities: { comments: true, insights: true },
+  });
   await addAccount(previewId, ownerId, 'sky', { provider: 'bluesky' });
   await root.withActor(CLI, async (trx) => {
     await trx
@@ -256,6 +259,7 @@ describe('channel listing', () => {
       'displayName',
       'handle',
       'id',
+      'insights',
       'lastErrorCode',
       'postTypes',
       'preview',
@@ -355,18 +359,29 @@ describe('channel listing', () => {
     });
     expect(response.status).toBe(200);
     const { items } = (await response.json()) as {
-      items: { provider: string; preview: string; postTypes: { imageAspect: unknown }[] }[];
+      items: {
+        provider: string;
+        preview: string;
+        insights: boolean;
+        postTypes: { imageAspect: unknown }[];
+      }[];
     };
     const aspect = { min: { width: 4, height: 5 }, max: { width: 191, height: 100 } };
     expect(
-      items.map(({ provider, preview, postTypes }) => ({
+      items.map(({ provider, preview, insights, postTypes }) => ({
         provider,
         preview,
+        insights,
         aspects: postTypes.map((postType) => postType.imageAspect),
       })),
     ).toEqual([
-      { provider: 'instagram', preview: 'media-grid', aspects: [aspect, aspect, null] },
-      { provider: 'bluesky', preview: 'short-feed', aspects: [null] },
+      {
+        provider: 'instagram',
+        preview: 'media-grid',
+        insights: true,
+        aspects: [aspect, aspect, null],
+      },
+      { provider: 'bluesky', preview: 'short-feed', insights: false, aspects: [null] },
     ]);
   });
 

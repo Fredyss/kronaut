@@ -487,6 +487,7 @@
         "metric=reactions": "Reakcie",
         "metric=bookmarks": "Záložky",
         "metric=views": "Zobrazenia",
+        "metric=reach": "Dosah",
         "metric=*": "Metrika"
       }
     }
@@ -525,5 +526,6 @@
   "post_discard_title": "Zahodiť tento príspevok?",
   "post_discard_body": "To, čo ste doteraz napísali, sa neuloží.",
   "post_discard_confirm": "Zahodiť",
-  "post_discard_keep": "Pokračovať v úpravách"
+  "post_discard_keep": "Pokračovať v úpravách",
+  "channels_insights_reconnect": "Znova pripojte kanál a získajte podrobné štatistiky"
 }

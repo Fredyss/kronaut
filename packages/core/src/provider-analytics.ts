@@ -11,12 +11,14 @@ export const POST_METRICS = [
   'reactions',
   'bookmarks',
   'views',
+  'reach',
 ] as const;
 export type PostMetric = (typeof POST_METRICS)[number];
 export type PostMetrics = Readonly<Partial<Record<PostMetric, number | null>>>;
 
 export interface AnalyticsInput<C> extends RefreshInput<C> {
   readonly remoteIds: readonly string[];
+  readonly postTypes: Readonly<Record<string, string>>;
 }
 
 export interface AnalyticsResult {

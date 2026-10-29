@@ -466,6 +466,7 @@
         "metric=reactions": "Reactions",
         "metric=bookmarks": "Bookmarks",
         "metric=views": "Views",
+        "metric=reach": "Reach",
         "metric=*": "Metric"
       }
     }
@@ -502,5 +503,6 @@
   "post_discard_title": "Discard this post?",
   "post_discard_body": "What you've written so far isn't saved.",
   "post_discard_confirm": "Discard",
-  "post_discard_keep": "Keep editing"
+  "post_discard_keep": "Keep editing",
+  "channels_insights_reconnect": "Reconnect to add insights"
 }

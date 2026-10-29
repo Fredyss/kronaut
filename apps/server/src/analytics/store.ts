@@ -2,7 +2,7 @@ import type { PostMetric, ProviderError } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { PULL_OFFSETS_HOURS } from './seed.ts';
+import { pullSteps } from './seed.ts';
 
 export const MAX_ATTEMPTS = 3;
 const MAX_DEFER_HOURS = 3;
@@ -12,6 +12,7 @@ export interface DueRow {
   readonly accountId: string;
   readonly provider: string;
   readonly remoteId: string;
+  readonly postType: string;
   readonly publishedAt: Temporal.Instant;
   readonly step: number;
   readonly attempts: number;
@@ -63,6 +64,7 @@ function rankedDue(trx: TenantDb, workspaceId: string, now: Date) {
       'd.social_account_id',
       'd.provider',
       'd.remote_id',
+      'd.publish_type',
       'd.published_at',
       eb.fn
         .agg<string>('row_number')
@@ -98,6 +100,7 @@ export async function dueRows(
       'social_account_id',
       'provider',
       'remote_id',
+      'publish_type',
       'published_at',
     ])
     .where('rank', '<=', String(limits.perChannel))
@@ -114,6 +117,7 @@ export async function dueRows(
             accountId: row.social_account_id,
             provider: row.provider,
             remoteId: row.remote_id,
+            postType: row.publish_type,
             publishedAt: instant(row.published_at),
             step: row.step,
             attempts: row.attempts,
@@ -173,13 +177,14 @@ export type PullOutcome = 'advance' | 'transient' | 'done';
 export interface PullScope {
   readonly workspaceId: string;
   readonly now: Temporal.Instant;
+  readonly windowHours?: number | undefined;
 }
 
-function nextPullAt(row: DueRow, outcome: PullOutcome, now: Temporal.Instant) {
+function nextPullAt(row: DueRow, outcome: PullOutcome, scope: PullScope) {
   if (outcome !== 'done') {
-    for (const [step, hours] of PULL_OFFSETS_HOURS.entries()) {
+    for (const [step, hours] of pullSteps(scope.windowHours)) {
       const at = row.publishedAt.add({ hours });
-      if (step > row.step && Temporal.Instant.compare(at, now) > 0) {
+      if (step > row.step && Temporal.Instant.compare(at, scope.now) > 0) {
         return { step, at: new Date(at.epochMilliseconds) };
       }
     }
@@ -195,7 +200,7 @@ export async function settlePull(
 ): Promise<PullOutcome> {
   const retry = outcome === 'transient' && row.attempts + 1 < MAX_ATTEMPTS;
   const settled = outcome === 'transient' && !retry ? 'advance' : outcome;
-  const next = nextPullAt(row, settled, scope.now);
+  const next = nextPullAt(row, settled, scope);
   await trx
     .updateTable('destination_metric_pulls')
     .set(
@@ -210,6 +215,24 @@ export async function settlePull(
     .execute();
   if (retry) return 'transient';
   return next.at === null ? 'done' : 'advance';
+}
+
+export async function endPulls(
+  trx: TenantDb,
+  workspaceId: string,
+  rows: readonly DueRow[],
+): Promise<void> {
+  if (rows.length === 0) return;
+  await trx
+    .updateTable('destination_metric_pulls')
+    .set({ next_pull_at: null, attempts: 0 })
+    .where('workspace_id', '=', workspaceId)
+    .where(
+      'destination_id',
+      'in',
+      rows.map((row) => row.destinationId),
+    )
+    .execute();
 }
 
 export function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {

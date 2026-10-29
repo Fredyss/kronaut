@@ -3,6 +3,7 @@ import type { StateReason } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
+import { seedsPulls } from '../analytics/seed.ts';
 import type { DestinationJob } from '../jobs.ts';
 import { PROVIDER_EGRESS } from '../providers.ts';
 import { applyPlan, type PlanContext } from './apply.ts';
@@ -156,13 +157,14 @@ async function loadScope(
     .where('workspace_id', '=', job.workspaceId)
     .where('id', '=', dest.social_account_id)
     .executeTakeFirstOrThrow();
+  const manifest = deps.providers.get(dest.provider)?.manifest;
   const context: PlanContext = {
     job,
     attemptId: claimedAttemptId,
     socialAccountId: account.id,
     providerAppId: account.provider_app_id,
     credential: { unchangedSince: attempt.started_at },
-    analytics: deps.providers.get(dest.provider)?.manifest.capabilities.analytics === true,
+    analytics: manifest !== undefined && seedsPulls(manifest, dest.publish_type),
   };
   const now = deps.now();
   return { ...verifying, deps, trx, job, ref, attempt, account, context, now };

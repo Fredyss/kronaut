@@ -2116,6 +2116,9 @@
                           "id": {
                             "type": "string"
                           },
+                          "insights": {
+                            "type": "boolean"
+                          },
                           "lastErrorCode": {
                             "type": [
                               "string",
@@ -2484,7 +2487,8 @@
                           "connectedAt",
                           "lastErrorCode",
                           "postTypes",
-                          "preview"
+                          "preview",
+                          "insights"
                         ],
                         "type": "object"
                       },
@@ -11812,7 +11816,8 @@
                                 "shares",
                                 "reactions",
                                 "bookmarks",
-                                "views"
+                                "views",
+                                "reach"
                               ],
                               "type": "string"
                             },
@@ -11832,7 +11837,8 @@
                                     "shares",
                                     "reactions",
                                     "bookmarks",
-                                    "views"
+                                    "views",
+                                    "reach"
                                   ],
                                   "type": "string"
                                 },

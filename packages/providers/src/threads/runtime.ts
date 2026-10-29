@@ -8,11 +8,13 @@ import {
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { graphGet, longLivedToken, permanent } from '../_kit/meta-graph.ts';
+import { threadAnalytics, threadsFollowers } from './analytics.ts';
 import { accountCapabilities } from './capabilities.ts';
 import type { ThreadsSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
   GRAPH_VERSION,
+  grantedScopes,
   PROFILE_FIELDS,
   profile,
   SCOPES,
@@ -104,7 +106,7 @@ export const threadsRuntime: ProviderRuntime<ThreadsCredentials, ThreadsSettings
       userId: me.id,
       accessToken: token.accessToken,
       issuedAt: issuedAt.toString(),
-      scopes: [...SCOPES],
+      scopes: await grantedScopes(ctx, { clientId: input.app.clientId, secret }, token.accessToken),
     };
     return [
       {
@@ -134,4 +136,6 @@ export const threadsRuntime: ProviderRuntime<ThreadsCredentials, ThreadsSettings
 
   publish: publishThread,
   verify: verifyThread,
+  analytics: threadAnalytics,
+  accountMetrics: threadsFollowers,
 };

@@ -300,6 +300,30 @@ describe('mastodon connect', () => {
     expect(bodies).toHaveLength(1);
   });
 
+  it('offers a reconnect for insights only on a Meta channel without them', async () => {
+    vi.spyOn(window.location, 'assign').mockImplementation(() => {});
+    const active = (id: string, provider: string, insights: boolean) => ({
+      ...CHANNEL,
+      id,
+      provider,
+      status: 'active',
+      statusReason: null,
+      displayName: `Ada ${id}`,
+      insights,
+    });
+    const { bodies } = mount('/channels', ['https://www.facebook.com/dialog'], {
+      channels: [
+        active('acct_1', 'facebook', false),
+        active('acct_2', 'instagram', true),
+        active('acct_3', 'bluesky', false),
+      ],
+    });
+    const hints = await screen.findAllByRole('button', { name: 'Reconnect to add insights' });
+    expect(hints).toHaveLength(1);
+    fireEvent.click(hints[0] as HTMLElement);
+    await waitFor(() => expect(bodies).toEqual([{ provider: 'facebook' }]));
+  });
+
   it('toasts a failed reconnect instead of marking the connect field', async () => {
     const { bodies } = mount('/channels', [], {
       connect: () => failure(503),

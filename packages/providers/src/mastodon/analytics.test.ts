@@ -12,6 +12,7 @@ function analytics(http: ReturnType<typeof scriptedHttp>, remoteIds: readonly st
     account,
     credentials,
     remoteIds,
+    postTypes: {},
   });
 }
 
