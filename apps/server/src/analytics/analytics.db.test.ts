@@ -45,10 +45,15 @@ type Reply = PostMetrics | ProviderError;
 const replies = new Map<string, Reply>();
 let thrown: ProviderError | null = null;
 let followers: number | null = 10;
+let followerError: ProviderError | null = null;
 const followerCalls = new Map<string, number>();
+const revoked = new Set<string>();
+const analyticsCalls = new Map<string, number>();
 const PUBLISHED_AT = Temporal.Instant.from('2027-01-04T06:00:00Z');
 
-function analytics(remoteIds: readonly string[]): AnalyticsResult {
+function analytics(account: string, remoteIds: readonly string[]): AnalyticsResult {
+  analyticsCalls.set(account, (analyticsCalls.get(account) ?? 0) + 1);
+  if (revoked.has(account)) throw new ProviderFailure({ kind: 'auth_revoked' });
   if (thrown !== null) throw new ProviderFailure(thrown);
   const posts: Record<string, PostMetrics> = {};
   const failed: Record<string, ProviderError> = {};
@@ -64,10 +69,11 @@ function analytics(remoteIds: readonly string[]): AnalyticsResult {
 function registry() {
   const runtime: ProviderRuntime = {
     ...fake.runtime,
-    analytics: async (_ctx, input) => analytics(input.remoteIds),
+    analytics: async (_ctx, input) => analytics(input.account.providerAccountId, input.remoteIds),
     accountMetrics: async (_ctx, input): Promise<AccountMetrics> => {
       const id = input.account.providerAccountId;
       followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
+      if (followerError !== null) throw new ProviderFailure(followerError);
       return { followers, apiVersion: 'v-test' };
     },
   };
@@ -96,8 +102,9 @@ interface Published {
 let published = 0;
 const HOUR_MS = 3_600_000;
 
-async function publishOne(label: string): Promise<Published> {
-  const channel = await insertAccount(`${label} ${published++}`);
+async function publishOne(label: string, existing?: string): Promise<Published> {
+  const channel = existing ?? (await insertAccount(`${label} ${published}`));
+  published++;
   const post = await scheduled(await create(ownerAuth, draft(channel)));
   const destination = await owner.withActor(SYSTEM, (trx) =>
     trx
@@ -237,18 +244,29 @@ describe('analytics pulls', () => {
     expect(await pullOf(gone)).toMatchObject({ step: 0, next_pull_at: null });
 
     const limited = await publishOne('limited');
-    const before = await pullOf(limited);
-    thrown = {
-      kind: 'rate_limited',
-      scope: 'account',
-      resetAt: Temporal.Now.instant().add({ hours: 1 }),
-    };
+    const resetAt = hoursAfter(limited, 1).add({ minutes: 40 });
+    thrown = { kind: 'rate_limited', scope: 'account', resetAt };
     try {
       await pullAt(hoursAfter(limited, 1));
     } finally {
       thrown = null;
     }
-    expect(await pullOf(limited)).toEqual(before);
+    expect(await pullOf(limited)).toEqual({
+      step: 0,
+      attempts: 0,
+      next_pull_at: new Date(resetAt.epochMilliseconds),
+    });
+  });
+
+  it('skips steps whose time has already passed', async () => {
+    const late = await publishOne('late');
+    replies.set(late.remoteId, { likes: 1 });
+    await pullAt(hoursAfter(late, 80));
+    expect(await pullOf(late)).toEqual({
+      step: 4,
+      attempts: 0,
+      next_pull_at: new Date(late.publishedAt.add({ hours: 168 }).epochMilliseconds),
+    });
   });
 
   it('retries a transient error and skips the step after 3 attempts', async () => {
@@ -281,6 +299,32 @@ describe('analytics pulls', () => {
     await pullAt(day.add({ hours: 24 }));
     expect(calls()).toBe(2);
     expect(await rows()).toEqual([{ day: '2027-02-01', metric: 'followers', value: '10' }]);
+    followerError = { kind: 'transient' };
+    await pullAt(day.add({ hours: 48 }));
+    await pullAt(day.add({ hours: 48, minutes: 15 }));
+    expect(calls()).toBe(3);
+    followerError = { kind: 'rate_limited', scope: 'app', resetAt: day.add({ hours: 73 }) };
+    await pullAt(day.add({ hours: 72 }));
+    await pullAt(day.add({ hours: 72, minutes: 15 }));
+    followerError = null;
+    expect(calls()).toBe(5);
+  });
+
+  it('a stopped channel is pushed back and does not starve a healthy one', async () => {
+    const stuck = await insertAccount('revoked');
+    const rows = [];
+    for (let i = 0; i < 30; i++) rows.push(await publishOne('revoked', stuck));
+    const healthy = await publishOne('healthy');
+    replies.set(healthy.remoteId, { likes: 1 });
+    revoked.add('fake-revoked');
+    const at = hoursAfter(healthy, 1);
+    await pullAt(at);
+    expect(await pullOf(healthy)).toMatchObject({ step: 1 });
+    expect(analyticsCalls.get('fake-revoked')).toBe(1);
+    const pulls = await Promise.all(rows.map(pullOf));
+    const resumed = new Date(at.add({ hours: 1 }).epochMilliseconds).getTime();
+    expect(pulls.filter((pull) => pull.next_pull_at?.getTime() === resumed)).toHaveLength(25);
+    expect(pulls.every((pull) => pull.step === 0 && pull.attempts === 0)).toBe(true);
   });
 });
 
@@ -314,9 +358,14 @@ describe('analytics routes', () => {
     });
     const range = 'from=2027-01-01&to=2027-01-31';
     const channel = await call('GET', `channels/${target.channel}/metrics?${range}`, ownerAuth);
-    expect(await channel.json()).toEqual({
-      followers: [{ day: hoursAfter(target, 1).toString().slice(0, 10), value: 10 }],
-    });
+    const day = hoursAfter(target, 1).toString().slice(0, 10);
+    expect(await channel.json()).toEqual({ followers: [{ day, value: 10 }], before: null });
+    const later = await call(
+      'GET',
+      `channels/${target.channel}/metrics?from=2027-01-10&to=2027-01-31`,
+      ownerAuth,
+    );
+    expect(await later.json()).toEqual({ followers: [], before: { day, value: 10 } });
   });
 
   it('needs analytics:read', async () => {

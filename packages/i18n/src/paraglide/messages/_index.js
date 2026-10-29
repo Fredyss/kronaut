@@ -6,6 +6,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ when: NonNullable<unknown> }} Analytics_As_OfInputs */
 /** @typedef {{ metric: NonNullable<unknown> }} Analytics_MetricInputs */
 /** @typedef {{}} Analytics_MissingInputs */
+/** @typedef {{}} Analytics_Not_ReportedInputs */
 /** @typedef {{}} Analytics_TitleInputs */
 /** @typedef {{}} App_NameInputs */
 /** @typedef {{}} Approval_ApproveInputs */
@@ -388,7 +389,8 @@ export const analytics_as_of = /** @type {((inputs: Analytics_As_OfInputs, optio
 * | "shares" | "Shares" |
 * | "reactions" | "Reactions" |
 * | "bookmarks" | "Bookmarks" |
-* | * | "Views" |
+* | "views" | "Views" |
+* | * | "Metric" |
 *
 * @param {Analytics_MetricInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -414,6 +416,21 @@ export const analytics_missing = /** @type {((inputs?: Analytics_MissingInputs, 
 	if (locale === "sk") return __sk.analytics_missing(inputs)
 	if (locale === "cs") return __cs.analytics_missing(inputs)
 	return __en.analytics_missing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "not reported" |
+*
+* @param {Analytics_Not_ReportedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const analytics_not_reported = /** @type {((inputs?: Analytics_Not_ReportedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Analytics_Not_ReportedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.analytics_not_reported(inputs)
+	if (locale === "cs") return __cs.analytics_not_reported(inputs)
+	return __en.analytics_not_reported(inputs)
 });
 /**
 * | output |

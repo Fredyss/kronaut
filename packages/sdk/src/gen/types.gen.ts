@@ -924,6 +924,10 @@ export type AnalyticsChannelMetricsResponses = {
      * OK
      */
     200: {
+        before: {
+            day: string;
+            value: number | null;
+        } | null;
         followers: Array<{
             day: string;
             value: number | null;

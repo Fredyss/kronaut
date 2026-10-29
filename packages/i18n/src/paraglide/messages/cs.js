@@ -4,6 +4,7 @@
 /** @typedef {{ when: NonNullable<unknown> }} Analytics_As_OfInputs */
 /** @typedef {{ metric: NonNullable<unknown> }} Analytics_MetricInputs */
 /** @typedef {{}} Analytics_MissingInputs */
+/** @typedef {{}} Analytics_Not_ReportedInputs */
 /** @typedef {{}} Analytics_TitleInputs */
 /** @typedef {{}} App_NameInputs */
 /** @typedef {{}} Approval_ApproveInputs */
@@ -351,11 +352,16 @@ export const analytics_metric = /** @type {(inputs: Analytics_MetricInputs) => L
 	if (i?.metric === "shares") return /** @type {LocalizedString} */ (`Sdílení`);
 	if (i?.metric === "reactions") return /** @type {LocalizedString} */ (`Reakce`);
 	if (i?.metric === "bookmarks") return /** @type {LocalizedString} */ (`Záložky`);
-	return /** @type {LocalizedString} */ (`Zobrazení`)
+	if (i?.metric === "views") return /** @type {LocalizedString} */ (`Zobrazení`);
+	return /** @type {LocalizedString} */ (`Metrika`)
 };
 
 export const analytics_missing = /** @type {(inputs: Analytics_MissingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`—`)
+};
+
+export const analytics_not_reported = /** @type {(inputs: Analytics_Not_ReportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`neuvedeno`)
 };
 
 export const analytics_title = /** @type {(inputs: Analytics_TitleInputs) => LocalizedString} */ () => {

@@ -465,11 +465,13 @@
         "metric=shares": "Shares",
         "metric=reactions": "Reactions",
         "metric=bookmarks": "Bookmarks",
-        "metric=*": "Views"
+        "metric=views": "Views",
+        "metric=*": "Metric"
       }
     }
   ],
   "analytics_missing": "—",
+  "analytics_not_reported": "not reported",
   "analytics_as_of": "As of {when}",
   "channels_followers": "Followers: {value}",
   "channels_followers_change": "{change} in 30 days"

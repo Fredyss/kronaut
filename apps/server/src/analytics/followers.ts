@@ -1,7 +1,16 @@
 import { type AccountMetrics, encodePublicId, isProviderFailure } from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
 import { createBaseContext, type ProviderEntry } from '../providers.ts';
-import { type ChannelRef, metricValue, type Run, type Source, sourceOf, utcDay } from './source.ts';
+import {
+  type ChannelRef,
+  errorFields,
+  metricValue,
+  type Run,
+  type Source,
+  sourceOf,
+  utcDay,
+  utcDayOf,
+} from './source.ts';
 import { storedValue } from './store.ts';
 
 const MAX_CHANNELS = 50;
@@ -12,11 +21,16 @@ interface FollowerChannel extends ChannelRef {
   readonly source: Source;
 }
 
+interface ReadTime {
+  readonly at: Date;
+  readonly day: string;
+}
+
 async function storeFollowers(
   trx: TenantDb,
-  run: Run,
   channel: FollowerChannel,
   metrics: AccountMetrics,
+  read: ReadTime,
 ): Promise<boolean> {
   const { workspaceId, accountId } = channel;
   const value = metricValue(metrics.followers);
@@ -35,10 +49,10 @@ async function storeFollowers(
     .values({
       workspace_id: workspaceId,
       social_account_id: accountId,
-      day: utcDay(run.observedAt),
+      day: read.day,
       metric: 'followers',
       value,
-      observed_at: run.observedAt,
+      observed_at: read.at,
       provider: channel.entry.manifest.id,
       api_version: metrics.apiVersion,
     })
@@ -47,13 +61,12 @@ async function storeFollowers(
   return true;
 }
 
-async function markChecked(trx: TenantDb, run: Run, { workspaceId, accountId }: ChannelRef) {
-  const checkedOn = utcDay(run.observedAt);
+async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef, day: string) {
   await trx
     .insertInto('account_metric_pulls')
-    .values({ workspace_id: workspaceId, social_account_id: accountId, checked_on: checkedOn })
+    .values({ workspace_id: workspaceId, social_account_id: accountId, checked_on: day })
     .onConflict((oc) =>
-      oc.columns(['workspace_id', 'social_account_id']).doUpdateSet({ checked_on: checkedOn }),
+      oc.columns(['workspace_id', 'social_account_id']).doUpdateSet({ checked_on: day }),
     )
     .execute();
 }
@@ -89,8 +102,12 @@ async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChann
       if (entry === undefined) continue;
       const ref = { workspaceId, accountId: row.id, entry };
       const source = await sourceOf(trx, run.deps, ref);
-      if (source === 'unreadable') run.counts.failed++;
-      if (source !== null && source !== 'unreadable') channels.push({ ...ref, source });
+      if (source !== null && source !== 'unreadable') {
+        channels.push({ ...ref, source });
+        continue;
+      }
+      if (source === 'unreadable') run.counts.unreadable++;
+      await markChecked(trx, ref, utcDayOf(run.deps.now()).day);
     }
     return channels;
   });
@@ -115,13 +132,14 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
       },
       'the follower count could not be read',
     );
-    if (err.error.kind !== 'permanent') return;
+    if (err.error.kind === 'rate_limited') return;
   }
+  const readAt = utcDayOf(deps.now());
   await deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
-    if (metrics !== null && (await storeFollowers(trx, run, channel, metrics))) {
+    if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }
-    await markChecked(trx, run, channel);
+    await markChecked(trx, channel, readAt.day);
   });
 }
 
@@ -129,10 +147,14 @@ export async function pullFollowers(run: Run, workspaceId: string): Promise<void
   for (const channel of await dueChannels(run, workspaceId)) {
     try {
       await readFollowers(run, channel);
-    } catch {
+    } catch (err) {
       run.counts.failed++;
       run.deps.logger.error(
-        { task: 'analytics_pull', channel: encodePublicId('socialAccount', channel.accountId) },
+        {
+          task: 'analytics_pull',
+          channel: encodePublicId('socialAccount', channel.accountId),
+          ...errorFields(err),
+        },
         'the follower count could not be stored',
       );
     }

@@ -32,6 +32,15 @@ function metricsQuery(client: Client, path: Scope) {
   });
 }
 
+function Missing() {
+  return (
+    <>
+      <span aria-hidden="true">{m.analytics_missing()}</span>
+      <span className="sr-only">{m.analytics_not_reported()}</span>
+    </>
+  );
+}
+
 interface RowProps {
   readonly row: Metrics;
   readonly channel: Channel | undefined;
@@ -58,7 +67,7 @@ function MetricsRow({ row, channel, format }: RowProps) {
               {m.analytics_metric({ metric: entry.metric })}
             </dt>
             <dd className="tabular-nums">
-              {entry.value === null ? m.analytics_missing() : number(entry.value)}
+              {entry.value === null ? <Missing /> : number(entry.value)}
             </dd>
           </div>
         ))}

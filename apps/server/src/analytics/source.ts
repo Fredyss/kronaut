@@ -1,5 +1,6 @@
-import { type Account, encodePublicId, type ProviderApp } from '@kronaut/core';
+import { type Account, encodePublicId, isProviderFailure, type ProviderApp } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
+import type { Temporal } from 'temporal-polyfill';
 import { loadCredential, loadProviderApp } from '../credential-store.ts';
 import type { ProviderEntry } from '../providers.ts';
 import type { RefreshDeps } from '../publish/refresh.ts';
@@ -16,6 +17,8 @@ export type Counts = Record<
   | 'done'
   | 'retried'
   | 'stopped'
+  | 'skipped'
+  | 'unreadable'
   | 'followerChecks'
   | 'followers'
   | 'failed',
@@ -99,4 +102,19 @@ export function metricValue(value: number | null | undefined): number | null {
 
 export function utcDay(at: Date): string {
   return at.toISOString().slice(0, 10);
+}
+
+export function utcDayOf(now: Temporal.Instant): { readonly at: Date; readonly day: string } {
+  const at = new Date(now.epochMilliseconds);
+  return { at, day: utcDay(at) };
+}
+
+export function errorFields(err: unknown): { readonly kind: string; readonly code?: string } {
+  if (isProviderFailure(err)) {
+    const { error } = err;
+    return 'code' in error ? { kind: error.kind, code: error.code } : { kind: error.kind };
+  }
+  if (!(err instanceof Error)) return { kind: typeof err };
+  const code = (err as { code?: unknown }).code;
+  return typeof code === 'string' ? { kind: err.name, code } : { kind: err.name };
 }

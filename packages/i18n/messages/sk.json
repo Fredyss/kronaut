@@ -486,11 +486,13 @@
         "metric=shares": "Zdieľania",
         "metric=reactions": "Reakcie",
         "metric=bookmarks": "Záložky",
-        "metric=*": "Zobrazenia"
+        "metric=views": "Zobrazenia",
+        "metric=*": "Metrika"
       }
     }
   ],
   "analytics_missing": "—",
+  "analytics_not_reported": "neuvedené",
   "analytics_as_of": "Stav k {when}",
   "channels_followers": "Sledovatelia: {value}",
   "channels_followers_change": "{change} za 30 dní"

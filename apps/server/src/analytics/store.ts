@@ -1,4 +1,4 @@
-import type { PostMetric } from '@kronaut/core';
+import type { PostMetric, ProviderError } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -40,13 +40,13 @@ export function storedValue(value: string | null): number | null {
   return value === null ? null : Number(value);
 }
 
-export async function dueRows(
-  trx: TenantDb,
-  workspaceId: string,
-  now: Date,
-  limit: number,
-): Promise<DueRow[]> {
-  const rows = await trx
+export interface DueLimits {
+  readonly total: number;
+  readonly perChannel: number;
+}
+
+function rankedDue(trx: TenantDb, workspaceId: string, now: Date) {
+  return trx
     .selectFrom('destination_metric_pulls as p')
     .innerJoin('post_destinations as d', (join) =>
       join.onRef('d.workspace_id', '=', 'p.workspace_id').onRef('d.id', '=', 'p.destination_id'),
@@ -54,14 +54,24 @@ export async function dueRows(
     .innerJoin('social_accounts as a', (join) =>
       join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
     )
-    .select([
+    .select((eb) => [
       'p.destination_id',
       'p.step',
       'p.attempts',
+      'p.next_pull_at',
       'd.social_account_id',
       'd.provider',
       'd.remote_id',
       'd.published_at',
+      eb.fn
+        .agg<string>('row_number')
+        .over((ob) =>
+          ob
+            .partitionBy('d.social_account_id')
+            .orderBy('p.next_pull_at')
+            .orderBy('p.destination_id'),
+        )
+        .as('rank'),
     ])
     .where('p.workspace_id', '=', workspaceId)
     .where('p.next_pull_at', 'is not', null)
@@ -69,10 +79,30 @@ export async function dueRows(
     .where('d.state', '=', 'published')
     .where('d.remote_id', 'is not', null)
     .where('d.published_at', 'is not', null)
-    .where('a.status', '=', 'active')
-    .orderBy('p.next_pull_at')
-    .orderBy('p.destination_id')
-    .limit(limit)
+    .where('a.status', '=', 'active');
+}
+
+export async function dueRows(
+  trx: TenantDb,
+  workspaceId: string,
+  now: Date,
+  limits: DueLimits,
+): Promise<DueRow[]> {
+  const rows = await trx
+    .selectFrom(rankedDue(trx, workspaceId, now).as('due'))
+    .select([
+      'destination_id',
+      'step',
+      'attempts',
+      'social_account_id',
+      'provider',
+      'remote_id',
+      'published_at',
+    ])
+    .where('rank', '<=', String(limits.perChannel))
+    .orderBy('next_pull_at')
+    .orderBy('destination_id')
+    .limit(limits.total)
     .execute();
   return rows.flatMap((row) =>
     row.remote_id === null || row.published_at === null
@@ -139,23 +169,32 @@ export async function insertSnapshots(
 
 export type PullOutcome = 'advance' | 'transient' | 'done';
 
-function nextPullAt(row: DueRow, outcome: PullOutcome): { step: number; at: Date | null } {
-  if (outcome === 'done') return { step: row.step, at: null };
-  const step = row.step + 1;
-  const hours = PULL_OFFSETS_HOURS[step];
-  if (hours === undefined) return { step: row.step, at: null };
-  return { step, at: new Date(row.publishedAt.add({ hours }).epochMilliseconds) };
+export interface PullScope {
+  readonly workspaceId: string;
+  readonly now: Temporal.Instant;
+}
+
+function nextPullAt(row: DueRow, outcome: PullOutcome, now: Temporal.Instant) {
+  if (outcome !== 'done') {
+    for (const [step, hours] of PULL_OFFSETS_HOURS.entries()) {
+      const at = row.publishedAt.add({ hours });
+      if (step > row.step && Temporal.Instant.compare(at, now) > 0) {
+        return { step, at: new Date(at.epochMilliseconds) };
+      }
+    }
+  }
+  return { step: row.step, at: null };
 }
 
 export async function settlePull(
   trx: TenantDb,
-  workspaceId: string,
+  scope: PullScope,
   row: DueRow,
   outcome: PullOutcome,
 ): Promise<PullOutcome> {
   const retry = outcome === 'transient' && row.attempts + 1 < MAX_ATTEMPTS;
   const settled = outcome === 'transient' && !retry ? 'advance' : outcome;
-  const next = nextPullAt(row, settled);
+  const next = nextPullAt(row, settled, scope.now);
   await trx
     .updateTable('destination_metric_pulls')
     .set(
@@ -163,11 +202,38 @@ export async function settlePull(
         ? { attempts: sql<number>`attempts + 1` }
         : { step: next.step, next_pull_at: next.at, attempts: 0 },
     )
-    .where('workspace_id', '=', workspaceId)
+    .where('workspace_id', '=', scope.workspaceId)
     .where('destination_id', '=', row.destinationId)
     .where('step', '=', row.step)
     .where('attempts', '=', row.attempts)
     .execute();
   if (retry) return 'transient';
   return next.at === null ? 'done' : 'advance';
+}
+
+function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
+  if (error?.kind !== 'rate_limited') return new Date(now.add({ hours: 1 }).epochMilliseconds);
+  const floor = now.add({ minutes: 15 });
+  const at = Temporal.Instant.compare(error.resetAt, floor) > 0 ? error.resetAt : floor;
+  return new Date(at.epochMilliseconds);
+}
+
+export async function deferPulls(
+  trx: TenantDb,
+  scope: PullScope,
+  rows: readonly DueRow[],
+  error: ProviderError | null,
+): Promise<void> {
+  if (rows.length === 0) return;
+  await trx
+    .updateTable('destination_metric_pulls')
+    .set({ next_pull_at: resumeAt(scope.now, error) })
+    .where('workspace_id', '=', scope.workspaceId)
+    .where(
+      'destination_id',
+      'in',
+      rows.map((row) => row.destinationId),
+    )
+    .where('next_pull_at', 'is not', null)
+    .execute();
 }

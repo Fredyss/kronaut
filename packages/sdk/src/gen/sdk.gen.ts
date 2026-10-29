@@ -345,7 +345,7 @@ export const channelsDisconnect = <ThrowOnError extends boolean = true>(options:
 /**
  * Read a channel's metrics
  *
- * The daily follower counts in [from, to] (UTC dates; default the last 30 days up to today; at most 366 days). A day is listed only when the count changed; a null value means the network did not report it.
+ * The daily follower counts in [from, to] (UTC dates; default the last 30 days up to today; at most 366 days). A day is listed only when the count changed; a null value means the network did not report it. `before` is the last count before `from`, the value in effect at the start of the range.
  */
 export const analyticsChannelMetrics = <ThrowOnError extends boolean = true>(options: Options<AnalyticsChannelMetricsData, ThrowOnError>): RequestResult<AnalyticsChannelMetricsResponses, AnalyticsChannelMetricsErrors, ThrowOnError> => (options.client ?? client).get<AnalyticsChannelMetricsResponses, AnalyticsChannelMetricsErrors, ThrowOnError>({
     security: [{

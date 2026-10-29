@@ -62,14 +62,18 @@ describe('bluesky analytics', () => {
     });
   });
 
-  it('fails a post missing from the response as not found', async () => {
+  it('retries a post missing from the response or a rejected chunk', async () => {
     const http = scriptedHttp([
       { url: new RegExp(`^${GET_POSTS}`), json: { posts: [{ uri: uri('a'), likeCount: 5 }] } },
     ]);
     const result = await analytics(http, [uri('a'), uri('b'), 'https://example.org/x']);
     expect(result.failed).toEqual({
-      [uri('b')]: { kind: 'permanent', code: 'not_found' },
+      [uri('b')]: { kind: 'transient', detail: 'not_in_response' },
       'https://example.org/x': { kind: 'permanent', code: 'remote_id_invalid' },
+    });
+    const rejected = scriptedHttp([{ url: new RegExp(`^${GET_POSTS}`), status: 400, json: {} }]);
+    expect((await analytics(rejected, [uri('a')])).failed).toEqual({
+      [uri('a')]: { kind: 'transient', detail: 'http_400' },
     });
     const limited = scriptedHttp([{ url: new RegExp(`^${GET_POSTS}`), status: 429 }]);
     expect((await failureOf(analytics(limited, [uri('a')]))).kind).toBe('rate_limited');

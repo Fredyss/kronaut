@@ -2749,7 +2749,7 @@
     },
     "/v1/workspaces/{workspaceId}/channels/{channelId}/metrics": {
       "get": {
-        "description": "The daily follower counts in [from, to] (UTC dates; default the last 30 days up to today; at most 366 days). A day is listed only when the count changed; a null value means the network did not report it.",
+        "description": "The daily follower counts in [from, to] (UTC dates; default the last 30 days up to today; at most 366 days). A day is listed only when the count changed; a null value means the network did not report it. `before` is the last count before `from`, the value in effect at the start of the range.",
         "operationId": "analytics.channel_metrics",
         "parameters": [
           {
@@ -2792,6 +2792,40 @@
                 "schema": {
                   "additionalProperties": false,
                   "properties": {
+                    "before": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "day": {
+                              "format": "date",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                              "type": "string"
+                            },
+                            "value": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "day",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "followers": {
                       "items": {
                         "additionalProperties": false,
@@ -2824,7 +2858,8 @@
                     }
                   },
                   "required": [
-                    "followers"
+                    "followers",
+                    "before"
                   ],
                   "type": "object"
                 }

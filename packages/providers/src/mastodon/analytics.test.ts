@@ -57,6 +57,18 @@ describe('mastodon analytics', () => {
     expect(await failureOf(analytics(revoked, ['111']))).toEqual({ kind: 'auth_revoked' });
   });
 
+  it('reads at most 20 statuses per call and leaves the rest unread', async () => {
+    const ids = Array.from({ length: 21 }, (_, i) => String(1000 + i));
+    const http = scriptedHttp(
+      ids.slice(0, 20).map((id) => ({ url: `${STATUSES}/${id}`, json: { id } })),
+    );
+    const result = await analytics(http, ids);
+    http.assertDone();
+    expect(Object.keys(result.posts)).toHaveLength(20);
+    expect(result.posts['1020']).toBeUndefined();
+    expect(result.failed).toBeUndefined();
+  });
+
   it('reads followers from the account, NULL when the field is missing', async () => {
     if (mastodonRuntime.accountMetrics === undefined) throw new Error('mastodon reads followers');
     const url = `${ORIGIN}/api/v1/accounts/verify_credentials`;

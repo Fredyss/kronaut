@@ -12,10 +12,11 @@ import { storedValue } from './store.ts';
 const DEFAULT_DAYS = 30;
 const MAX_DAYS = 366;
 
+const DayValue = z.object({ day: z.iso.date(), value: z.number().int().nonnegative().nullable() });
+
 export const ChannelMetricsSchema = z.object({
-  followers: z.array(
-    z.object({ day: z.iso.date(), value: z.number().int().nonnegative().nullable() }),
-  ),
+  followers: z.array(DayValue),
+  before: DayValue.nullable(),
 });
 
 export const channelMetricsRoute = defineRoute({
@@ -28,7 +29,7 @@ export const channelMetricsRoute = defineRoute({
   query: z.object({ from: z.string().optional(), to: z.string().optional() }),
   response: ChannelMetricsSchema,
   summary: "Read a channel's metrics",
-  description: `The daily follower counts in [from, to] (UTC dates; default the last ${DEFAULT_DAYS} days up to today; at most ${MAX_DAYS} days). A day is listed only when the count changed; a null value means the network did not report it.`,
+  description: `The daily follower counts in [from, to] (UTC dates; default the last ${DEFAULT_DAYS} days up to today; at most ${MAX_DAYS} days). A day is listed only when the count changed; a null value means the network did not report it. \`before\` is the last count before \`from\`, the value in effect at the start of the range.`,
   tags: ['analytics'],
 });
 
@@ -60,22 +61,39 @@ export function dayRange(
   return { from: from.toString(), to: to.toString() };
 }
 
-async function readFollowers(
-  trx: TenantDb,
-  ref: { readonly workspaceId: string; readonly accountId: string },
-  range: DayRange,
-) {
-  const rows = await trx
+interface AccountRef {
+  readonly workspaceId: string;
+  readonly accountId: string;
+}
+
+function followerRows(trx: TenantDb, ref: AccountRef) {
+  return trx
     .selectFrom('account_daily_metrics')
     .select(['day', 'value'])
     .where('workspace_id', '=', ref.workspaceId)
     .where('social_account_id', '=', ref.accountId)
-    .where('metric', '=', 'followers')
+    .where('metric', '=', 'followers');
+}
+
+async function readFollowers(trx: TenantDb, ref: AccountRef, range: DayRange) {
+  const rows = await followerRows(trx, ref)
     .where('day', '>=', range.from)
     .where('day', '<=', range.to)
     .orderBy('day')
     .execute();
-  return { followers: rows.map((row) => ({ day: row.day, value: storedValue(row.value) })) };
+  const before = await followerRows(trx, ref)
+    .where('day', '<', range.from)
+    .orderBy('day', 'desc')
+    .limit(1)
+    .executeTakeFirst();
+  const dayValue = (row: { day: string; value: string | null }) => ({
+    day: row.day,
+    value: storedValue(row.value),
+  });
+  return {
+    followers: rows.map(dayValue),
+    before: before === undefined ? null : dayValue(before),
+  };
 }
 
 export function bindChannelMetrics(): BoundRoute {
