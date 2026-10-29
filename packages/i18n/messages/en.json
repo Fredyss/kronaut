@@ -714,5 +714,18 @@
   ],
   "system_api_ended": "Support has ended",
   "system_api_warn": "Upgrade soon",
-  "system_api_critical": "Upgrade now"
+  "system_api_critical": "Upgrade now",
+  "meta_status_received": "Kronaut received your request and is deleting your data.",
+  "meta_status_completed": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Done. Kronaut deleted the data of {count} channel.",
+        "countPlural=*": "Done. Kronaut deleted the data of {count} channels."
+      }
+    }
+  ],
+  "meta_status_none": "Kronaut found no channel linked to this Meta account. A channel connected before this feature existed can't be matched: its workspace owner can disconnect it, or reconnect it once.",
+  "meta_status_unknown": "Unknown confirmation code."
 }

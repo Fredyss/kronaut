@@ -59,6 +59,11 @@ const longLived: ScriptedExchange = {
   json: { access_token: 'user-long-1', token_type: 'bearer', expires_in: 5_183_944 },
 };
 
+const me: ScriptedExchange = {
+  url: /^https:\/\/graph\.facebook\.com\/v26\.0\/me\?/,
+  json: { id: '9001' },
+};
+
 function accounts(data: readonly unknown[], next?: string): ScriptedExchange {
   return {
     url: /^https:\/\/graph\.facebook\.com\/v26\.0\/me\/accounts\?/,
@@ -133,6 +138,7 @@ describe('facebook connect', () => {
     const http = scriptedHttp([
       codeExchange,
       longLived,
+      me,
       accounts(
         [
           page('101', ['ANALYZE', 'CREATE_CONTENT'], {
@@ -150,7 +156,7 @@ describe('facebook connect', () => {
     const connected = await finish(http, code);
     http.assertDone();
 
-    const [exchange, upgrade, first, second, debugA, debugC] = http.calls;
+    const [exchange, upgrade, user, first, second, debugA, debugC] = http.calls;
     expect(query(exchange)).toEqual({
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
@@ -162,6 +168,11 @@ describe('facebook connect', () => {
       client_id: CLIENT_ID,
       client_secret: SECRET,
       fb_exchange_token: 'short-1',
+    });
+    expect(query(user)).toEqual({
+      fields: 'id',
+      access_token: 'user-long-1',
+      appsecret_proof: proof('user-long-1'),
     });
     expect(query(first)).toEqual({
       fields: 'id,name,access_token,tasks,link,username',
@@ -186,6 +197,7 @@ describe('facebook connect', () => {
     expect(connected).toEqual([
       {
         providerAccountId: '101',
+        subjectId: '9001',
         accountKind: 'page',
         displayName: 'Page 101',
         handle: 'alpha',
@@ -197,6 +209,7 @@ describe('facebook connect', () => {
       },
       {
         providerAccountId: '103',
+        subjectId: '9001',
         accountKind: 'page',
         displayName: 'Page 103',
         grantedScopes: ['pages_show_list'],
@@ -210,14 +223,14 @@ describe('facebook connect', () => {
   });
 
   it('returns no accounts when no Page was shared', async () => {
-    const http = scriptedHttp([codeExchange, longLived, accounts([])]);
+    const http = scriptedHttp([codeExchange, longLived, me, accounts([])]);
     expect(await finish(http, code)).toEqual([]);
     http.assertDone();
   });
 
   it('refuses more than 100 Pages before checking any token', async () => {
     const pages = Array.from({ length: 101 }, (_, i) => page(String(1000 + i), ['CREATE_CONTENT']));
-    const http = scriptedHttp([codeExchange, longLived, accounts(pages)]);
+    const http = scriptedHttp([codeExchange, longLived, me, accounts(pages)]);
     expect(await failureOf(finish(http, code))).toEqual({
       kind: 'permanent',
       code: 'too_many_accounts',
@@ -233,6 +246,7 @@ describe('facebook connect', () => {
       const http = scriptedHttp([
         codeExchange,
         longLived,
+        me,
         accounts([page('101', ['CREATE_CONTENT'])], next),
         debug(0),
       ]);
@@ -243,6 +257,7 @@ describe('facebook connect', () => {
     const endless = scriptedHttp([
       codeExchange,
       longLived,
+      me,
       ...Array.from({ length: 11 }, () => accounts([], NEXT)),
     ]);
     expect(await finish(endless, code)).toEqual([]);
@@ -278,6 +293,7 @@ describe('facebook connect', () => {
     const revoked = scriptedHttp([
       codeExchange,
       longLived,
+      me,
       {
         ...accounts([]),
         status: 400,
@@ -291,7 +307,7 @@ describe('facebook connect', () => {
   });
 
   it('fails the whole connect when a Page token does not check out', async () => {
-    const shared = [codeExchange, longLived, accounts([page('101', ['CREATE_CONTENT'])])];
+    const shared = [codeExchange, longLived, me, accounts([page('101', ['CREATE_CONTENT'])])];
     for (const [check, expected] of [
       [debug(0, { is_valid: false }), { kind: 'permanent', code: 'page_token_invalid' }],
       [debug(0, { app_id: '999' }), { kind: 'permanent', code: 'page_token_app_mismatch' }],

@@ -30,6 +30,7 @@ export interface RequestContext {
   readonly now: Temporal.Instant;
   readonly logger: Logger;
   readonly ipPrefix: string | null;
+  readonly acceptLanguage: string | null;
   tenant<T>(fn: (db: TenantDb) => Promise<T>): Promise<T>;
   authorize(
     action: Action,

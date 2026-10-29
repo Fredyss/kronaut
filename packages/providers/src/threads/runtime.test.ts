@@ -158,6 +158,7 @@ describe('threads connect', () => {
     );
     expect({ ...account, accessExpiresAt: undefined }).toEqual({
       providerAccountId: USER_ID,
+      subjectId: USER_ID,
       accountKind: 'personal',
       handle: '@alice.example',
       displayName: 'Alice',

@@ -32,6 +32,7 @@ export interface ContextInput {
   readonly cookies: ReadonlyMap<string, string>;
   readonly setCookies: string[];
   readonly state: RequestState;
+  readonly acceptLanguage: string | null;
 }
 
 export function settle(state: RequestState, route: Route): void {
@@ -83,6 +84,7 @@ export function createContext(input: ContextInput): RequestContext {
     now,
     logger: input.logger,
     ipPrefix: null,
+    acceptLanguage: input.acceptLanguage,
     async tenant(fn) {
       const shared = state.shared;
       try {

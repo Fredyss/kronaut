@@ -1,6 +1,6 @@
 # ADR-0048: Least-privilege global tables and bounded cross-tenant entry points (revised)
 
-- **Status:** Accepted
+- **Status:** Superseded by ADR-0056
 - **Date:** 2026-10-22
 - **Deciders:** Frederik Schlentc
 - **Area:** Tenancy & data

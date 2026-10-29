@@ -6,7 +6,8 @@ export type KeyPurpose =
   | 'review-token/v1'
   | 'reset-token/v1'
   | 'oauth-state/v1'
-  | 'oauth-pending/v1';
+  | 'oauth-pending/v1'
+  | 'meta-subject/v1';
 
 export const TOKEN_PREFIX = {
   session: 'kro_sess_',

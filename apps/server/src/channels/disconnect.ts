@@ -44,6 +44,25 @@ async function revokeLater(trx: TenantDb, workspaceId: string, accountId: string
   }
 }
 
+export interface DisconnectTarget {
+  readonly workspaceId: string;
+  readonly accountId: string;
+  readonly reason: string;
+}
+
+export async function markDisconnected(trx: TenantDb, target: DisconnectTarget): Promise<void> {
+  await trx
+    .updateTable('social_accounts')
+    .set({
+      status: 'disconnected',
+      status_reason: target.reason,
+      status_changed_at: sql<Date>`now()`,
+    })
+    .where('workspace_id', '=', target.workspaceId)
+    .where('id', '=', target.accountId)
+    .execute();
+}
+
 async function disconnect(
   trx: TenantDb,
   providers: ProviderRegistry,
@@ -59,12 +78,7 @@ async function disconnect(
     .executeTakeFirst();
   if (account === undefined) throw new HttpError('not_found', 'Not found.');
   if (account.status === 'disconnected') return;
-  await trx
-    .updateTable('social_accounts')
-    .set({ status: 'disconnected', status_reason: 'user', status_changed_at: sql<Date>`now()` })
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', accountId)
-    .execute();
+  await markDisconnected(trx, { workspaceId, accountId, reason: 'user' });
   if (providers.get(account.provider)?.runtime.revoke !== undefined) {
     await revokeLater(trx, workspaceId, accountId);
   }

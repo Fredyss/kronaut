@@ -103,6 +103,7 @@ function context(tenant: Tenant, principal: Principal = member(tenant)): Request
     now: NOW,
     logger: pino({ level: 'silent' }),
     ipPrefix: null,
+    acceptLanguage: null,
     tenant: (fn) => fx.db.withTenant(tenant.workspaceId, actor, fn),
     authorize: (action, resource) => {
       const decision = authorize(principal, action, resource, { now: NOW });

@@ -2,6 +2,7 @@ export type { AuthMode, HttpMethod } from './auth.ts';
 export { AUTH_MODES, HTTP_METHODS } from './auth.ts';
 export type {
   ObjectSchema,
+  ResponseEncoding,
   Route,
   RouteAuth,
   RouteDefinition,

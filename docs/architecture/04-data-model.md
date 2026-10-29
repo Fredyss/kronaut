@@ -26,8 +26,8 @@
 - `withTenant(ws, actor, fn)` = a Kysely transaction + `set_config(…, true)`. `app_workspace_id()` raises when the setting is unset.
 - `withActor(actor, fn)` sets only `app.actor`, for login and account pages before a workspace is chosen.
 - Only `TenantDb` is exported; a lint bans importing the raw db.
-- Global tables (no `workspace_id`) are default-deny. `kronaut_app` gets only the grants listed in ADR-0048; users, sessions and security events are limited to the actor's own rows, and organization rows to the current workspace's organization.
-- Everything that crosses tenants goes through an allowlisted `SECURITY DEFINER` function (ADR-0048): `auth_*` lookups, `provision_*`, `instance_*`, one `sweep_*` per job, `purge_instance_retention`, `maintain_audit_partitions` and `slo_publish_stats`. Sweeps return `(workspace_id, id)` only, cap the batch at 1000, order deterministically and return nothing while publishing is paused; the caller re-reads each row inside `withTenant()`.
+- Global tables (no `workspace_id`) are default-deny. `kronaut_app` gets only the grants listed in ADR-0056; users, sessions and security events are limited to the actor's own rows, and organization rows to the current workspace's organization.
+- Everything that crosses tenants goes through an allowlisted `SECURITY DEFINER` function (ADR-0056): `auth_*` lookups, `provision_*`, `instance_*`, one `sweep_*` per job, `purge_instance_retention`, `maintain_audit_partitions` and `slo_publish_stats`. Sweeps return `(workspace_id, id)` only, cap the batch at 1000, order deterministically and return nothing while publishing is paused; the caller re-reads each row inside `withTenant()`.
 - The CLI connects as a login role granted `kronaut_operator`, the only role that can release a paused instance or write entitlements, instance-wide provider apps and client signing keys.
 - The `graphile_worker` schema belongs to the migration role, which installs and upgrades it after the Kronaut migrations; `kronaut_app` gets DML and EXECUTE there, never DDL (ADR-0046).
 

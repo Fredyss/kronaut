@@ -253,6 +253,7 @@ export interface ConnectedAccount<C> extends IssuedCredentials<C> {
   readonly handle?: string;
   readonly displayName: string;
   readonly profileUrl?: string;
+  readonly subjectId?: string;
   readonly capabilities?: Readonly<Record<string, unknown>>;
 }
 

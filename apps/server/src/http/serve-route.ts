@@ -87,6 +87,7 @@ async function prepare(kernel: Kernel, req: Authorized): Promise<Prepared> {
     cookies: req.cookies,
     setCookies,
     state,
+    acceptLanguage: request.headers.get('accept-language'),
   });
   const execution: Execution = { bound: matched.bound, input, ctx, logger: req.logger, state };
   return { ...req, raw, setCookies, execution };
@@ -111,5 +112,5 @@ async function finish(kernel: Kernel, prepared: Prepared): Promise<Response> {
   for (const [name, value] of Object.entries(outcome.headers ?? {})) {
     if (value !== undefined) headers.set(name, value);
   }
-  return respond(outcome.status, outcome.body, headers);
+  return respond(outcome.status, outcome.body, headers, execution.bound.route.responseEncoding);
 }

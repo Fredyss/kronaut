@@ -314,6 +314,94 @@ export type AuthMeUpdateResponses = {
 
 export type AuthMeUpdateResponse = AuthMeUpdateResponses[keyof AuthMeUpdateResponses];
 
+export type MetaDeletionStatusData = {
+    body?: never;
+    path: {
+        code: string;
+    };
+    query?: never;
+    url: '/v1/meta/deletion/{code}';
+};
+
+export type MetaDeletionStatusErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MetaDeletionStatusError = MetaDeletionStatusErrors[keyof MetaDeletionStatusErrors];
+
+export type MetaDeletionStatusResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type MetaDeletionStatusResponse = MetaDeletionStatusResponses[keyof MetaDeletionStatusResponses];
+
+export type MetaDeauthorizeData = {
+    body: {
+        signed_request: string;
+    };
+    path: {
+        provider: string;
+    };
+    query?: never;
+    url: '/v1/meta/{provider}/deauthorize';
+};
+
+export type MetaDeauthorizeErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MetaDeauthorizeError = MetaDeauthorizeErrors[keyof MetaDeauthorizeErrors];
+
+export type MetaDeauthorizeResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type MetaDeauthorizeResponse = MetaDeauthorizeResponses[keyof MetaDeauthorizeResponses];
+
+export type MetaDeletionData = {
+    body: {
+        signed_request: string;
+    };
+    path: {
+        provider: string;
+    };
+    query?: never;
+    url: '/v1/meta/{provider}/deletion';
+};
+
+export type MetaDeletionErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MetaDeletionError = MetaDeletionErrors[keyof MetaDeletionErrors];
+
+export type MetaDeletionResponses = {
+    /**
+     * OK
+     */
+    200: {
+        confirmation_code: string;
+        url: string;
+    };
+};
+
+export type MetaDeletionResponse = MetaDeletionResponses[keyof MetaDeletionResponses];
+
 export type ChannelsConnectCallbackData = {
     body?: never;
     path: {

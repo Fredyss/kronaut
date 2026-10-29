@@ -305,6 +305,7 @@ describe('media routes', () => {
       now: NOW,
       logger: pino({ level: 'silent' }),
       ipPrefix: null,
+      acceptLanguage: null,
       tenant: (fn) => db.withTenant(tenant.workspaceId, asUser(tenant), fn),
       authorize: (action, resource) => {
         calls.push([action, resource]);

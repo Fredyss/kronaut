@@ -23,7 +23,8 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0041](0041-phase-0-ships-the-full-v1-schema.md) | Phase 0 ships the full v1 schema |
 | [0044](0044-least-privilege-global-tables-and-cross-tenant-entry-points.md) | ~~Least-privilege global tables and bounded cross-tenant entry points~~ Superseded by 0048 |
 | [0046](0046-job-queue-schema-owned-by-the-migration-role.md) | Job queue schema owned by the migration role |
-| [0048](0048-least-privilege-global-tables-and-cross-tenant-entry-points-revised.md) | Least-privilege global tables and bounded cross-tenant entry points (revised) |
+| [0048](0048-least-privilege-global-tables-and-cross-tenant-entry-points-revised.md) | ~~Least-privilege global tables and bounded cross-tenant entry points (revised)~~ Superseded by 0056 |
+| [0056](0056-least-privilege-global-tables-third-revision.md) | Least-privilege global tables and bounded cross-tenant entry points (third revision) |
 
 ## Content & approval
 
@@ -87,6 +88,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0053](0053-multi-account-channel-connect.md) | One connect can add several channels (supersedes 0049) |
 | [0054](0054-video-pipeline.md) | Video upload, conversion and publishing |
 | [0055](0055-reply-chains-and-first-comment.md) | Reply chains and first comment, published one item at a time |
+| [0057](0057-meta-data-deletion-and-deauthorize-callbacks.md) | Meta data deletion and deauthorize callbacks |
 
 ## Defaults
 

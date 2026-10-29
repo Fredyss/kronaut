@@ -31,7 +31,7 @@
       - Media is written after the database commits, and the CLI prints the restore epoch and the `kronaut release` step.
   - **Hosted:** PITR for 7 days, plus daily dumps kept 30 days off-region.
   - Every restore enters restore quarantine (ADR-0020), and the restore test in CI goes through quarantine as well.
-  - `kronaut restore-complete` calls `instance_mark_restored()` and `kronaut release` calls `instance_release()`. Both run as `kronaut_operator` (ADR-0048); the app itself can only pause.
+  - `kronaut restore-complete` calls `instance_mark_restored()` and `kronaut release` calls `instance_release()`. Both run as `kronaut_operator` (ADR-0056); the app itself can only pause.
 - **Bluesky app setup (ADR-0050)**: every command runs as `kronaut_operator` (`KRONAUT_OPERATOR_DATABASE_URL`); `key create` also needs the KEKs.
   - `kronaut provider-app register bluesky` registers the app with `client_id` = `<KRONAUT_PUBLIC_URL>/oauth/bluesky/oauth-client-metadata.json` and prints its id.
   - `kronaut provider-app key create <app-id>` adds a `next` key and prints its `kid`; `kronaut provider-app key activate <app-id> <kid>` makes it `active`. `key list <app-id>` shows each `kid`, its status and creation time.
@@ -39,12 +39,12 @@
 - **Instagram app setup (ADR-0053)**: Instagram Login on `graph.instagram.com`.
   - Create a Business-type Meta app and add the Instagram use case with "API setup with Instagram login".
   - Give the use case the `instagram_business_basic`, `instagram_business_content_publish` and `instagram_business_manage_comments` (first comment) permissions.
-  - Register the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/instagram/callback` and set a data-deletion instructions URL in the dashboard.
+  - Register the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/instagram/callback`. In the business login settings, set the deauthorize callback URL `<KRONAUT_PUBLIC_URL>/v1/meta/instagram/deauthorize` and the data deletion request URL `<KRONAUT_PUBLIC_URL>/v1/meta/instagram/deletion` (ADR-0057).
   - Add a public Instagram professional account as an Instagram Tester.
   - `echo -n "$SECRET" | kronaut provider-app register instagram --client-id <instagram app id>` runs as `kronaut_operator` with the KEKs. It reads the Instagram app secret from stdin (never argv or env), seals it and prints the app id. It refuses while an active Instagram app is registered.
 - **Threads app setup (ADR-0053)**: Threads API on `graph.threads.com`. Text, single-image and carousel (2–20 images) posts; no video yet.
   - Add the Threads use case ("Access the Threads API") to the same Meta app, with `threads_basic`, `threads_content_publish` and `threads_manage_replies` (reply chains). Meta's docs only describe picking the use case when the app is created; if the dashboard doesn't offer it on the existing app, create a separate app for it.
-  - In the use case's settings, add the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/threads/callback` (it must match exactly), plus a deauthorize callback URL and a data deletion requests URL.
+  - In the use case's settings, add the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/threads/callback` (it must match exactly), plus the deauthorize callback URL `<KRONAUT_PUBLIC_URL>/v1/meta/threads/deauthorize` and the data deletion requests URL `<KRONAUT_PUBLIC_URL>/v1/meta/threads/deletion` (ADR-0057).
   - Use the **Threads app ID and Threads app secret** from the app's settings, not the Meta or Instagram ones.
   - Add each Threads account as a Threads Tester (App roles > Roles > Add People). The account accepts the invite under Account Settings > Website permissions in Threads. Testers need no App Review.
   - `echo -n "$SECRET" | kronaut provider-app register threads --client-id <threads app id>` works like the Instagram command: the Threads app secret comes from stdin, is sealed, and the app id is printed. It refuses while an active Threads app is registered.
@@ -55,6 +55,7 @@
   - In Development mode, people with a role on the app can connect the Pages they manage without App Review. Anyone else needs Advanced Access (App Review plus Business Verification).
   - `echo -n "$SECRET" | kronaut provider-app register facebook --client-id <meta app id>` works like the Instagram command: the Meta app secret comes from stdin, is sealed, and the app id is printed. It refuses while an active Facebook app is registered.
   - One login connects every ticked Page the person can create content on, each with its own Page token. Kronaut keeps no user token. Page tokens have no refresh; when one stops working, the channel needs reconnecting.
+  - Under App settings > Basic, set the data deletion request URL `<KRONAUT_PUBLIC_URL>/v1/meta/facebook/deletion`. Under Facebook Login > Settings, set the deauthorize callback URL `<KRONAUT_PUBLIC_URL>/v1/meta/facebook/deauthorize` (ADR-0057).
 - **LinkedIn app setup (ADR-0053)**: "Sign In with LinkedIn using OpenID Connect" plus "Share on LinkedIn", both self-serve, posting as the member's personal profile through `api.linkedin.com/rest` (`Linkedin-Version: 202610`, which sunsets 2027-10-15). Text posts, 1 image or 2–20 JPEG or PNG images with optional alt text; no Pages, video or link cards yet.
   - Register the redirect URL `<KRONAUT_PUBLIC_URL>/v1/oauth/linkedin/callback` on the app's Auth tab. Kronaut requests `openid profile w_member_social`.
   - `echo -n "$SECRET" | kronaut provider-app register linkedin --client-id <linkedin client id>` works like the Instagram command, with the app's Client Secret on stdin. It refuses while an active LinkedIn app is registered.
@@ -67,6 +68,12 @@
   - `KRONAUT_SMTP_FROM`: the sender address, required once the host is set.
   - `KRONAUT_SMTP_TLS`: `starttls` (required STARTTLS, the default), `tls` (implicit TLS, the default on port 465) or `none` (a local relay only). Certificates are always verified.
   - Every minute the worker emails each in-app notification from the last day to its recipient, in their UI language, as plain text. Delivery is at most once and best effort; the in-app notification stays the source of truth.
+- **Meta data deletion and deauthorize (ADR-0057)**
+  - Meta posts a `signed_request` to `/v1/meta/<provider>/deletion` or `/deauthorize`. Kronaut verifies it with that provider's app secret, answers with a status URL and a confirmation code, and the `meta_lifecycle` job does the work.
+  - **Deletion:** in every workspace, the matching channels are disconnected, their tokens are deleted at once and their name, handle and profile URL are wiped. Posts stay.
+  - **Deauthorize:** the matching active channels go to needs-reauth with the `auth_revoked` incident, and their tokens are deleted.
+  - **Status:** `GET /v1/meta/deletion/<code>` shows the status as plain text. Rows are kept 180 days after completion; a request still incomplete after 30 days is purged with its raw id.
+  - **Upgrade:** Facebook channels connected before this release need one reconnect to be matched.
 - **Media GC (`media_gc`, hourly at :23)**: takes up to 500 candidates from `sweep_media_gc`, expired uploads first. An upload still unfinished 24 h after it started is deleted together with its staged parts under `<data>/media/.staging/<key>/`; that directory also holds `.incoming/`, where a part is written before it is checked. It also deletes files in `.incoming/` older than 1 h. Other candidates are counted as skipped for now.
 - **Video conversion (`media_process`, queue `media`)**: the worker converts each completed upload to its master and poster, one job at a time across the instance, retrying up to 3 times. It needs `ffmpeg` and `ffprobe` on the `PATH` (the Docker image ships them under `/opt/ffmpeg`); when they are missing it logs an error and the video stays `processing` until the retries run out.
 - **Retention (daily purge job)**: tenant tables are purged per workspace via `sweep_workspaces`; global tables by `purge_instance_retention`, at most 10,000 rows per table per call. `maintain_audit_partitions` keeps audit partitions two months ahead, drops partitions past 400 d and nulls audit PII at 90 d; a non-zero default-partition count is an alert (ADR-0045).

@@ -109,6 +109,7 @@ function context(tenant: Tenant): RequestContext {
     now: NOW,
     logger: pino({ level: 'silent' }),
     ipPrefix: null,
+    acceptLanguage: null,
     tenant: (fn) => fx.db.withTenant(tenant.workspaceId, asUser(tenant), fn),
     authorize: () => ({ kind: 'allow' }),
     cookie: () => undefined,

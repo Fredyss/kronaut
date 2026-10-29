@@ -5,7 +5,8 @@ import { AUTH_MODES, type AuthMode, type HttpMethod } from './auth.ts';
 export type ObjectSchema = z.ZodObject<z.core.$ZodLooseShape, z.core.$ZodObjectConfig>;
 export type RouteStatus = 200 | 201 | 202 | 204 | 303;
 export type RouteAuth = readonly [AuthMode, ...AuthMode[]];
-export type BodyEncoding = 'json' | 'octet-stream';
+export type BodyEncoding = 'json' | 'octet-stream' | 'form';
+export type ResponseEncoding = 'json' | 'text';
 
 export interface RouteDefinition<
   P extends ObjectSchema | undefined = undefined,
@@ -28,6 +29,7 @@ export interface RouteDefinition<
   readonly tags?: readonly string[];
   readonly idempotency?: boolean;
   readonly bodyEncoding?: BodyEncoding;
+  readonly responseEncoding?: ResponseEncoding;
 }
 
 export interface Route<
@@ -51,6 +53,7 @@ export interface Route<
   readonly tags: readonly string[];
   readonly idempotency: boolean;
   readonly bodyEncoding: BodyEncoding;
+  readonly responseEncoding: ResponseEncoding;
 }
 
 const ID_PATTERN = /^[a-z][a-z_]*(\.[a-z][a-z_]*)+$/;
@@ -175,6 +178,28 @@ type MethodSlots = Pick<
   'method' | 'body' | 'idempotency'
 >;
 
+type EncodingSlots = Pick<
+  RouteDefinition<undefined, undefined, z.ZodType | undefined>,
+  'body' | 'response' | 'bodyEncoding' | 'responseEncoding'
+>;
+
+function validateEncodings(
+  def: EncodingSlots,
+  idempotency: boolean,
+  fail: (reason: string) => never,
+): void {
+  const bodyEncoding = def.bodyEncoding ?? 'json';
+  if (bodyEncoding !== 'json' && def.body === undefined) {
+    fail(`bodyEncoding ${bodyEncoding} needs a body schema`);
+  }
+  if (bodyEncoding === 'octet-stream' && idempotency) {
+    fail('an octet-stream route must set idempotency false');
+  }
+  if (def.responseEncoding === 'text' && !(def.response instanceof z.ZodString)) {
+    fail('a text route needs a z.string() response');
+  }
+}
+
 function validateMethod(
   { method, body, idempotency }: MethodSlots,
   isPublic: boolean,
@@ -209,11 +234,7 @@ export function defineRoute<
   validateMethod(def, isPublic, fail);
   if (def.summary.trim() === '') fail('summary must not be empty');
   const idempotency = def.idempotency ?? (def.method !== 'GET' && !isPublic);
-  const bodyEncoding = def.bodyEncoding ?? 'json';
-  if (bodyEncoding === 'octet-stream') {
-    if (def.body === undefined) fail('an octet-stream route needs a body schema');
-    if (idempotency) fail('an octet-stream route must set idempotency false');
-  }
+  validateEncodings(def, idempotency, fail);
 
   const route: Route<P, Q, B, R> = {
     id: def.id,
@@ -230,7 +251,8 @@ export function defineRoute<
     ...(def.description === undefined ? {} : { description: def.description }),
     tags: Object.freeze([...(def.tags ?? [])]),
     idempotency,
-    bodyEncoding,
+    bodyEncoding: def.bodyEncoding ?? 'json',
+    responseEncoding: def.responseEncoding ?? 'json',
   };
   const frozen = Object.freeze(route);
   DEFINED.add(frozen);
