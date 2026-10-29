@@ -69,7 +69,7 @@ export async function flagAccount(
     readonly fence: CredentialFence;
     readonly incident: AccountIncident;
   },
-): Promise<void> {
+): Promise<boolean> {
   const { workspaceId, socialAccountId, fence, incident } = target;
   const flagged = await trx
     .updateTable('social_accounts')
@@ -99,7 +99,7 @@ export async function flagAccount(
     })
     .returning(['provider', 'status_changed_at'])
     .executeTakeFirst();
-  if (flagged === undefined) return;
+  if (flagged === undefined) return false;
   const incidentId = await openChannelIncident(trx, workspaceId, socialAccountId, incident);
   const event = channelNeedsReauthEvent(
     workspaceId,
@@ -108,6 +108,7 @@ export async function flagAccount(
   );
   await writeWebhookEvent(trx, event);
   await notifyFor(trx, event, incidentId);
+  return true;
 }
 
 export async function flagApp(

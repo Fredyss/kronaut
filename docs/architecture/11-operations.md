@@ -70,10 +70,10 @@
   - Every minute the worker emails each in-app notification from the last day to its recipient, in their UI language, as plain text. Delivery is at most once and best effort; the in-app notification stays the source of truth.
 - **Meta data deletion and deauthorize (ADR-0057)**
   - Meta posts a `signed_request` to `/v1/meta/<provider>/deletion` or `/deauthorize`. Kronaut verifies it with that provider's app secret, answers with a status URL and a confirmation code, and the `meta_lifecycle` job does the work.
-  - **Deletion:** in every workspace, the matching channels are disconnected, their tokens are deleted at once and their name, handle, profile URL and avatar are wiped. Posts stay.
-  - **Deauthorize:** the matching channels go to needs-reauth and their tokens are deleted.
-  - **Status:** `GET /v1/meta/deletion/<code>` shows the status as plain text. Rows are kept 180 days after completion.
-  - Channels are matched on the app-scoped id stored at connect, so a channel connected before this release matches only after one reconnect.
+  - **Deletion:** in every workspace, the matching channels are disconnected, their tokens are deleted at once and their name, handle and profile URL are wiped. Posts stay.
+  - **Deauthorize:** the matching active channels go to needs-reauth with the `auth_revoked` incident, and their tokens are deleted.
+  - **Status:** `GET /v1/meta/deletion/<code>` shows the status as plain text. Rows are kept 180 days after completion; a request still incomplete after 30 days is purged with its raw id.
+  - **Upgrade:** Facebook channels connected before this release need one reconnect to be matched.
 - **Media GC (`media_gc`, hourly at :23)**: takes up to 500 candidates from `sweep_media_gc`, expired uploads first. An upload still unfinished 24 h after it started is deleted together with its staged parts under `<data>/media/.staging/<key>/`; that directory also holds `.incoming/`, where a part is written before it is checked. It also deletes files in `.incoming/` older than 1 h. Other candidates are counted as skipped for now.
 - **Video conversion (`media_process`, queue `media`)**: the worker converts each completed upload to its master and poster, one job at a time across the instance, retrying up to 3 times. It needs `ffmpeg` and `ffprobe` on the `PATH` (the Docker image ships them under `/opt/ffmpeg`); when they are missing it logs an error and the video stays `processing` until the retries run out.
 - **Retention (daily purge job)**: tenant tables are purged per workspace via `sweep_workspaces`; global tables by `purge_instance_retention`, at most 10,000 rows per table per call. `maintain_audit_partitions` keeps audit partitions two months ahead, drops partitions past 400 d and nulls audit PII at 90 d; a non-zero default-partition count is an alert (ADR-0045).

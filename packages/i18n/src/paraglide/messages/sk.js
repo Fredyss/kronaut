@@ -2013,7 +2013,7 @@ export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedIn
 };
 
 export const meta_status_none = /** @type {(inputs: Meta_Status_NoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Kronaut nemá žiadne údaje tohto účtu Meta. Ak kanál stále vidíte, vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť, aby sa dal priradiť.`)
+	return /** @type {LocalizedString} */ (`Kronaut nenašiel žiadny kanál prepojený s týmto účtom Meta. Kanál pripojený pred zavedením tejto funkcie sa nedá priradiť: vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť.`)
 };
 
 export const meta_status_received = /** @type {(inputs: Meta_Status_ReceivedInputs) => LocalizedString} */ () => {

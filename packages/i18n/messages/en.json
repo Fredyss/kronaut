@@ -726,6 +726,6 @@
       }
     }
   ],
-  "meta_status_none": "Kronaut holds no data for this Meta account. If you still see a channel, its workspace owner can disconnect it, or reconnect it once so it can be matched.",
+  "meta_status_none": "Kronaut found no channel linked to this Meta account. A channel connected before this feature existed can't be matched: its workspace owner can disconnect it, or reconnect it once.",
   "meta_status_unknown": "Unknown confirmation code."
 }

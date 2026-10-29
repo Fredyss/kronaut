@@ -18,6 +18,8 @@ CREATE TABLE meta_lifecycle_requests (
 
 CREATE INDEX ix_meta_lifecycle_completed ON meta_lifecycle_requests (completed_at)
   WHERE completed_at IS NOT NULL;
+CREATE INDEX ix_meta_lifecycle_pending ON meta_lifecycle_requests (received_at)
+  WHERE completed_at IS NULL;
 
 GRANT SELECT, INSERT, UPDATE (subject_id, completed_at, matched) ON meta_lifecycle_requests TO kronaut_app;
 
@@ -61,4 +63,8 @@ BEGIN
   DELETE FROM meta_lifecycle_requests WHERE id IN (SELECT id FROM meta_lifecycle_requests
     WHERE completed_at < now() - interval '180 days' ORDER BY completed_at, id LIMIT lim);
   GET DIAGNOSTICS n = ROW_COUNT; relation := 'meta_lifecycle_requests'; affected := n; RETURN NEXT;
+
+  DELETE FROM meta_lifecycle_requests WHERE id IN (SELECT id FROM meta_lifecycle_requests
+    WHERE completed_at IS NULL AND received_at < now() - interval '30 days' ORDER BY received_at, id LIMIT lim);
+  GET DIAGNOSTICS n = ROW_COUNT; relation := 'meta_lifecycle_requests.pending'; affected := n; RETURN NEXT;
 END $$;

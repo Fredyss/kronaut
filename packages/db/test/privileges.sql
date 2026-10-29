@@ -172,6 +172,9 @@ INSERT INTO security_events (user_id, kind) VALUES (:U1, 'auth.login'), (:U2, 'a
 INSERT INTO meta_lifecycle_requests (provider, kind, request_hash, subject_hmac, confirmation_code, completed_at) VALUES
   ('facebook', 'deletion', decode(repeat('61', 32), 'hex'), decode(repeat('60', 32), 'hex'), repeat('A', 20), now() - interval '181 days'),
   ('threads', 'deletion', decode(repeat('62', 32), 'hex'), decode(repeat('60', 32), 'hex'), repeat('B', 20), now() - interval '179 days');
+INSERT INTO meta_lifecycle_requests (provider, kind, request_hash, subject_hmac, subject_id, received_at) VALUES
+  ('instagram', 'deauthorize', decode(repeat('63', 32), 'hex'), decode(repeat('60', 32), 'hex'), '1', now() - interval '31 days'),
+  ('facebook', 'deauthorize', decode(repeat('64', 32), 'hex'), decode(repeat('60', 32), 'hex'), '2', now() - interval '29 days');
 INSERT INTO entitlement_overrides (organization_id, key, value) VALUES (:A1, 'seats', '5'), (:A2, 'seats', '50');
 INSERT INTO provider_apps (id, provider, instance_host, client_id) VALUES
   ('00000000-0000-7000-8000-0000000000c1', 'bluesky', '', 'x'),
@@ -406,8 +409,8 @@ SELECT pg_temp.must_fail('slo: window over 31 days', $$SELECT * FROM slo_publish
 SELECT pg_temp.must('slo: aggregates', (SELECT auto_total >= 0 AND duplicates >= 0 FROM slo_publish_stats(now() - interval '1 day', now())));
 SELECT pg_temp.must('retention: expired session purged',
   (SELECT affected FROM purge_instance_retention(100) WHERE relation = 'sessions') = 1);
-SELECT pg_temp.must('retention: Meta lifecycle requests purged 180 days after completion',
-  (SELECT array_agg(provider) FROM meta_lifecycle_requests) = ARRAY['threads']);
+SELECT pg_temp.must('retention: Meta lifecycle requests purged 180 days after completion, or 30 days after receipt when incomplete',
+  (SELECT array_agg(provider ORDER BY provider) FROM meta_lifecycle_requests) = ARRAY['facebook', 'threads']);
 SELECT pg_temp.must('audit: partitions exist two months ahead and the default partition is empty',
   (SELECT count(*) FROM pg_inherits WHERE inhparent = 'audit_events'::regclass) >= 4
   AND (SELECT affected FROM maintain_audit_partitions(100) WHERE relation = 'audit_events_default') = 0);

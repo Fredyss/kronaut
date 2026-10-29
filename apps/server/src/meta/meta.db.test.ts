@@ -18,6 +18,7 @@ const SYSTEM: Actor = { kind: 'system' };
 const CLI: Actor = { kind: 'cli' };
 const FB_SECRET = 'CANARY_facebook_app_secret';
 const IG_SECRET = 'CANARY_instagram_app_secret';
+const TH_SECRET = 'CANARY_threads_app_secret';
 const USER_ID = '10203040506070809';
 const FORM = { 'content-type': 'application/x-www-form-urlencoded' };
 
@@ -162,6 +163,14 @@ beforeAll(async () => {
   const commands = { db: operator, keyring, logger: pino({ level: 'silent' }) };
   const fb = await registerSecretApp(commands, 'facebook', 'fb-client', FB_SECRET);
   const ig = await registerSecretApp(commands, 'instagram', 'ig-client', IG_SECRET);
+  const th = await registerSecretApp(commands, 'threads', 'th-client', TH_SECRET);
+  await root.withActor(CLI, (trx) =>
+    trx
+      .updateTable('provider_apps')
+      .set({ status: 'misconfigured' })
+      .where('id', '=', th)
+      .execute(),
+  );
   const keys = deriveHttpKeys(randomBytes(32));
   const deps = { db, keyring, subjectKey: keys.metaSubject, publicBaseUrl: BASE };
   const http = { db, keys, logger, clock: () => Temporal.Now.instant(), publicBaseUrl: BASE };
@@ -200,6 +209,14 @@ beforeAll(async () => {
       workspace: 0,
       provider: 'instagram',
       appId: ig,
+      accountId: USER_ID,
+      subjectId: null,
+    },
+    {
+      label: 'th',
+      workspace: 1,
+      provider: 'threads',
+      appId: th,
       accountId: USER_ID,
       subjectId: null,
     },
@@ -299,6 +316,15 @@ describe('meta data deletion', () => {
       [accounts.fbA, accounts.fbB].sort(),
     );
     expect(await status(code)).toBe('Done. Kronaut deleted the data of 2 channels.');
+    await root.withActor(CLI, (trx) =>
+      trx
+        .updateTable('meta_lifecycle_requests')
+        .set({ completed_at: null, subject_id: USER_ID })
+        .where('id', '=', id)
+        .execute(),
+    );
+    expect(await runMetaLifecycle(db, id)).toBe(2);
+    expect(await requestRow('facebook', 'deletion')).toMatchObject({ matched: 2 });
     expect(await status(code, 'de-AT, sk;q=0.8, cs;q=0.5')).toBe(
       'Hotovo. Kronaut vymazal údaje z 2 kanálov.',
     );
@@ -307,22 +333,42 @@ describe('meta data deletion', () => {
     expect(await status('not-a-code', 'sk')).toBe('Neznámy potvrdzovací kód.');
   });
 
-  it('moves a deauthorized channel to needs reauth and deletes its credentials', async () => {
+  it('flags an Instagram channel matched by account id as revoked and deletes its credentials', async () => {
     const response = await callback('instagram/deauthorize', sign(payload(), IG_SECRET));
     expect(response.status).toBe(204);
     const { id } = await requestRow('instagram', 'deauthorize');
     expect(await runMetaLifecycle(db, id)).toBe(1);
     expect(await account('ig')).toMatchObject({
       status: 'needs_reauth',
-      status_reason: 'deauthorized',
+      status_reason: 'auth_revoked',
       display_name: 'ig name',
+      credentials: 0,
+    });
+    const incidents = await root.withActor(CLI, (trx) =>
+      trx
+        .selectFrom('channel_incidents')
+        .select('kind')
+        .where('social_account_id', '=', accounts.ig ?? '')
+        .execute(),
+    );
+    expect(incidents).toEqual([{ kind: 'auth_revoked' }]);
+  });
+
+  it('accepts a misconfigured app and matches a Threads channel by account id', async () => {
+    const response = await callback('threads/deletion', sign(payload(), TH_SECRET));
+    expect(response.status).toBe(200);
+    const { id } = await requestRow('threads', 'deletion');
+    expect(await runMetaLifecycle(db, id)).toBe(1);
+    expect(await account('th')).toMatchObject({
+      status: 'disconnected',
+      status_reason: 'data_deletion_requested',
       credentials: 0,
     });
   });
 
   it('never logs the signed request, the user id or a secret', () => {
     const logs = lines.join('\n');
-    for (const secret of [USER_ID, FB_SECRET, IG_SECRET, sign(payload(), FB_SECRET)]) {
+    for (const secret of [USER_ID, FB_SECRET, IG_SECRET, TH_SECRET, sign(payload(), FB_SECRET)]) {
       expect(logs).not.toContain(secret);
     }
   });

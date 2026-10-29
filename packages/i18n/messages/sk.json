@@ -770,6 +770,6 @@
       }
     }
   ],
-  "meta_status_none": "Kronaut nemá žiadne údaje tohto účtu Meta. Ak kanál stále vidíte, vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť, aby sa dal priradiť.",
+  "meta_status_none": "Kronaut nenašiel žiadny kanál prepojený s týmto účtom Meta. Kanál pripojený pred zavedením tejto funkcie sa nedá priradiť: vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť.",
   "meta_status_unknown": "Neznámy potvrdzovací kód."
 }

@@ -26,15 +26,15 @@ AR-12 (architecture hardening review) asks every unauthenticated endpoint to def
 
 **Public routes**, all in the committed public-route snapshot, `provider ∈ {facebook, instagram, threads}`:
 - `POST /v1/meta/:provider/deletion` and `POST /v1/meta/:provider/deauthorize` take a form body with one field, `signed_request`.
-  - The body limit is 8 KiB. The signature check is the gate: an unsigned request costs one HMAC and is refused before any write. Kronaut has no per-IP limiter yet; when the public API adds one (Phase 2 integrations), these routes join it at 30 per minute.
+  - The body limit is 8 KiB. The signature check is the gate: an unsigned request costs one HMAC and is refused before any write. The unsealed secret is cached in memory for 60 s, so unsigned requests don't each open a transaction. Kronaut has no per-IP limiter yet; when the public API adds one (Phase 2 integrations), these routes join it at 30 per minute.
 - `GET /v1/meta/deletion/:code` answers with a `text/plain` status in en, sk or cs, chosen from `Accept-Language`. It has no HTML, so nothing user-supplied is ever rendered as markup.
 - These paths, and only these, become the third exemption from the Cloudflare Access gate (`/v1/meta/*`). The self-hosting guide adds the bypass policy.
 
 **Verification:**
 - Split on the first `.`, then base64url-decode the signature.
-- Compute HMAC-SHA256 over the encoded payload with the provider's active app secret, unsealed through the keyring. Compare in constant time.
+- Compute HMAC-SHA256 over the encoded payload with the provider's app secret, unsealed through the keyring. Compare in constant time. Any app that isn't disabled is accepted, so an app flagged misconfigured still receives Meta's callbacks.
 - The payload must parse as JSON, have `algorithm` equal to `HMAC-SHA256` ignoring case, and carry a non-empty string `user_id`.
-- Anything else gets a `400` with a fixed body.
+- An invalid signature or payload gets a `400` with a fixed body. A malformed form body gets the kernel's standard `400`.
 - Neither the `signed_request` nor the `user_id` is ever logged, returned or written to the audit trail.
 
 **Storage:** a new global table `meta_lifecycle_requests` (ADR-0056).
@@ -47,12 +47,12 @@ AR-12 (architecture hardening review) asks every unauthenticated endpoint to def
   - `completed_at` and `matched`.
 - `CHECK (completed_at IS NULL OR subject_id IS NULL)` keeps a raw id from outliving its job.
 - **Replay:** `(provider, kind, request_hash)` is unique. The same `signed_request` on the same route returns the stored row and its code, so replays are idempotent and need no freshness window. The same request sent to both deletion and deauthorize counts as two requests.
-- **Retention:** rows are purged 180 days after completion by `purge_instance_retention`.
+- **Retention:** `purge_instance_retention` purges rows 180 days after completion, and incomplete rows 30 days after receipt.
 
 **Matching:** `social_accounts` gains `provider_subject_id text`, the app-scoped id of the person who authorized.
 - Facebook sets it from `GET /me`, Instagram from the app-scoped `id` of `/me`, and Threads from the `/me` `id`, on every connect and reconnect.
 - Accounts connected earlier have it null until they are reconnected.
-- Instagram is also matched on `provider_account_id`, because which id its callback carries is undocumented.
+- Instagram and Threads are also matched on `provider_account_id`: Threads stores its user id there, and which id the Instagram callback carries is undocumented. Facebook is matched on the subject only, because its `provider_account_id` is the Page id.
 
 **Processing:** the route inserts the row and enqueues the `meta_lifecycle` job, whose payload is the request id only (ADR-0046). It then answers at once.
 - The job walks `sweep_workspaces`; this is database-local work, so no new definer function is needed. Inside `withTenant()` it locks the matching `social_accounts` rows of that provider.
@@ -62,13 +62,14 @@ AR-12 (architecture hardening review) asks every unauthenticated endpoint to def
   - `handle`, `display_name`, `profile_url` and `provider_subject_id` are wiped, so the raw Meta id doesn't outlive the request.
   - It writes the audit event `channel.data_deleted`.
   - Posts and their history stay, because they are the workspace's records, not Meta's data.
-- **Deauthorize:** the account goes to `needs_reauth` with reason `deauthorized`, and its credentials are deleted. The profile fields stay.
-- **Finish:** the job sets `matched`, `completed_at` and `subject_id = null`.
+- **Deauthorize:** an `active` account goes through `flagAccount` with the `auth_revoked` incident, so it moves to `needs_reauth` and raises the same incident, webhook and notification as a revoked token. It writes the audit event `channel.deauthorized`. Its credentials are deleted; the profile fields stay. An account in any other status only loses its credentials.
+- **Count:** each workspace transaction adds the accounts it changed to `matched`, so a retry after a partial run doesn't undercount.
+- **Finish:** the job sets `completed_at` and `subject_id = null`, keeping the stored `matched`.
 
 **Status page:**
 - While the job runs, it reads "received".
 - Then it reads "completed", saying how many channels were deleted.
-- With no match, it says Kronaut holds no data for that Meta account. If the person still sees a channel, the workspace owner can disconnect it, or reconnect it once so it can be matched.
+- With no match, it says Kronaut found no channel linked to that Meta account. A channel connected before this feature existed can't be matched; its workspace owner can disconnect it, or reconnect it once.
 
 ## Options considered
 
@@ -83,5 +84,5 @@ AR-12 (architecture hardening review) asks every unauthenticated endpoint to def
 
 - The Facebook, Instagram and Threads app settings get the three callback URLs (11-operations), and App Review has a working callback.
 - The Access gate gains a third exemption, `/v1/meta/*`.
-- A deletion request for an account connected before this release matches nothing until that account is reconnected.
+- A deletion request for a Facebook channel connected before this release matches nothing until that channel is reconnected. Instagram and Threads also match on the stored account id.
 - Revisit when: Meta documents the Instagram or Threads payloads differently, or a provider requires proof of deletion.

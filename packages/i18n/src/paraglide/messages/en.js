@@ -1985,7 +1985,7 @@ export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedIn
 };
 
 export const meta_status_none = /** @type {(inputs: Meta_Status_NoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Kronaut holds no data for this Meta account. If you still see a channel, its workspace owner can disconnect it, or reconnect it once so it can be matched.`)
+	return /** @type {LocalizedString} */ (`Kronaut found no channel linked to this Meta account. A channel connected before this feature existed can't be matched: its workspace owner can disconnect it, or reconnect it once.`)
 };
 
 export const meta_status_received = /** @type {(inputs: Meta_Status_ReceivedInputs) => LocalizedString} */ () => {

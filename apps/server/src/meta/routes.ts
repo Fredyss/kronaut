@@ -2,7 +2,6 @@ import { defineRoute } from '@kronaut/contract';
 import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import * as z from 'zod';
-import { selectAppId } from '../channels/connect.ts';
 import { loadProviderApp } from '../credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
@@ -20,6 +19,7 @@ const META_PROVIDERS: ReadonlySet<string> = new Set(['facebook', 'instagram', 't
 const CONFIRMATION_CODE = /^[A-Z2-7]{20}$/;
 const SYSTEM: Actor = { kind: 'system' };
 const INVALID = 'The signed request is invalid.';
+const SECRET_TTL_MS = 60_000;
 
 export interface MetaRouteDeps {
   readonly db: Database;
@@ -94,13 +94,39 @@ interface Incoming {
   readonly signedRequest: string;
 }
 
-async function activeSecret(deps: MetaRouteDeps, provider: string): Promise<string | null> {
+type SecretLookup = (provider: string) => Promise<string | null>;
+
+async function usableAppId(trx: TenantDb, provider: string): Promise<string | null> {
+  const rows = await trx
+    .selectFrom('provider_apps')
+    .select('id')
+    .where('provider', '=', provider)
+    .where('status', '<>', 'disabled')
+    .where('instance_host', '=', '')
+    .limit(2)
+    .execute();
+  const [only] = rows;
+  return rows.length === 1 && only !== undefined ? only.id : null;
+}
+
+async function appSecret(deps: MetaRouteDeps, provider: string): Promise<string | null> {
   const app = await deps.db.withActor(SYSTEM, async (trx) => {
-    const id = await selectAppId(trx, provider);
+    const id = await usableAppId(trx, provider);
     if (id === null) return null;
     return loadProviderApp(trx, deps.keyring, { id }, { publicBaseUrl: deps.publicBaseUrl });
   });
-  return app?.status === 'active' ? (app.app.clientSecret ?? null) : null;
+  return app === null || app.status === 'disabled' ? null : (app.app.clientSecret ?? null);
+}
+
+function cachedSecrets(deps: MetaRouteDeps): SecretLookup {
+  const cache = new Map<string, { readonly secret: string | null; readonly expiresAt: number }>();
+  return async (provider) => {
+    const hit = cache.get(provider);
+    if (hit !== undefined && hit.expiresAt > Date.now()) return hit.secret;
+    const secret = await appSecret(deps, provider);
+    cache.set(provider, { secret, expiresAt: Date.now() + SECRET_TTL_MS });
+    return secret;
+  };
 }
 
 async function insertRequest(
@@ -134,9 +160,13 @@ async function insertRequest(
   );
 }
 
-async function receive(deps: MetaRouteDeps, incoming: Incoming): Promise<Received> {
+async function receive(
+  deps: MetaRouteDeps,
+  secretFor: SecretLookup,
+  incoming: Incoming,
+): Promise<Received> {
   if (!META_PROVIDERS.has(incoming.provider)) throw new HttpError('not_found', 'Not found.');
-  const secret = await activeSecret(deps, incoming.provider);
+  const secret = await secretFor(incoming.provider);
   const userId = secret === null ? null : verifySignedRequest(incoming.signedRequest, secret);
   if (userId === null) throw new HttpError('invalid_request', INVALID);
   return await deps.db.withActor(SYSTEM, async (trx) => {
@@ -159,17 +189,18 @@ async function deletionStatus(deps: MetaRouteDeps, code: string) {
 }
 
 export function metaRoutes(deps: MetaRouteDeps): BoundRoute[] {
+  const secretFor = cachedSecrets(deps);
   return [
     bindRoute(metaDeletionRoute, async ({ params, body }) => {
       const incoming = { provider: params.provider, signedRequest: body.signed_request };
-      const row = await receive(deps, { ...incoming, kind: 'deletion' });
+      const row = await receive(deps, secretFor, { ...incoming, kind: 'deletion' });
       const code = row.confirmation_code ?? '';
       const url = new URL(`/v1/meta/deletion/${code}`, deps.publicBaseUrl).toString();
       return { body: { url, confirmation_code: code } };
     }),
     bindRoute(metaDeauthorizeRoute, async ({ params, body }) => {
       const incoming = { provider: params.provider, signedRequest: body.signed_request };
-      await receive(deps, { ...incoming, kind: 'deauthorize' });
+      await receive(deps, secretFor, { ...incoming, kind: 'deauthorize' });
       return { body: undefined };
     }),
     bindRoute(metaDeletionStatusRoute, async ({ params }, ctx) => {

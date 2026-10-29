@@ -4,11 +4,12 @@ import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import * as z from 'zod';
 import { markDisconnected } from '../channels/disconnect.ts';
+import { flagAccount } from '../publish/incidents.ts';
 
 export const DATA_DELETION_REASON = 'data_deletion_requested';
-export const DEAUTHORIZED_REASON = 'deauthorized';
 const SYSTEM: Actor = { kind: 'system' };
 const WORKSPACE_PAGE = 1000;
+const BY_ACCOUNT_ID: ReadonlySet<string> = new Set(['instagram', 'threads']);
 
 const PayloadSchema = z.object({ requestId: z.uuid() });
 
@@ -58,7 +59,7 @@ function matching(trx: TenantDb, workspaceId: string, request: LifecycleRequest)
     .where('provider', '=', request.provider)
     .where((eb) => {
       const bySubject = eb('provider_subject_id', '=', request.subjectId);
-      return request.provider === 'instagram'
+      return BY_ACCOUNT_ID.has(request.provider)
         ? eb.or([bySubject, eb('provider_account_id', '=', request.subjectId)])
         : bySubject;
     })
@@ -93,10 +94,12 @@ async function audit(step: Step, action: string): Promise<void> {
     .execute();
 }
 
-async function deleteData(step: Step): Promise<void> {
+async function deleteData(step: Step): Promise<boolean> {
   const { trx, workspaceId, account } = step;
   await deleteCredentials(step);
-  if (account.status === 'disconnected' && account.status_reason === DATA_DELETION_REASON) return;
+  if (account.status === 'disconnected' && account.status_reason === DATA_DELETION_REASON) {
+    return false;
+  }
   await markDisconnected(trx, { workspaceId, accountId: account.id, reason: DATA_DELETION_REASON });
   await trx
     .updateTable('social_accounts')
@@ -105,61 +108,67 @@ async function deleteData(step: Step): Promise<void> {
     .where('id', '=', account.id)
     .execute();
   await audit(step, 'channel.data_deleted');
+  return true;
 }
 
-async function deauthorize(step: Step): Promise<void> {
+async function deauthorize(step: Step): Promise<boolean> {
   const { trx, workspaceId, account } = step;
+  let flagged = false;
+  if (account.status === 'active') {
+    const { now } = await trx.selectNoFrom(sql<Date>`now()`.as('now')).executeTakeFirstOrThrow();
+    flagged = await flagAccount(trx, {
+      workspaceId,
+      socialAccountId: account.id,
+      fence: { unchangedSince: now },
+      incident: 'auth_revoked',
+    });
+  }
   await deleteCredentials(step);
-  if (account.status === 'disconnected') return;
-  if (account.status === 'needs_reauth' && account.status_reason === DEAUTHORIZED_REASON) return;
-  await trx
-    .updateTable('social_accounts')
-    .set({
-      status: 'needs_reauth',
-      status_reason: DEAUTHORIZED_REASON,
-      status_changed_at: sql<Date>`now()`,
-    })
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', account.id)
-    .execute();
-  await audit(step, 'channel.deauthorized');
+  if (flagged) await audit(step, 'channel.deauthorized');
+  return flagged;
 }
 
 function processWorkspace(
   db: Database,
   workspaceId: string,
   request: LifecycleRequest,
-): Promise<number> {
+): Promise<void> {
   return db.withTenant(workspaceId, SYSTEM, async (trx) => {
-    const accounts = await matching(trx, workspaceId, request);
-    for (const account of accounts) {
+    let changed = 0;
+    for (const account of await matching(trx, workspaceId, request)) {
       const step = { trx, workspaceId, account, requestId: request.id };
-      await (request.kind === 'deletion' ? deleteData(step) : deauthorize(step));
+      if (await (request.kind === 'deletion' ? deleteData(step) : deauthorize(step))) changed++;
     }
-    return accounts.length;
+    if (changed === 0) return;
+    await trx
+      .updateTable('meta_lifecycle_requests')
+      .set({ matched: sql<number>`matched + ${changed}` })
+      .where('id', '=', request.id)
+      .where('completed_at', 'is', null)
+      .execute();
   });
 }
 
 export async function runMetaLifecycle(db: Database, requestId: string): Promise<number | null> {
   const request = await loadRequest(db, requestId);
   if (request === null) return null;
-  let matched = 0;
   let after: string | null = null;
   for (;;) {
     const page = await db.sweeps.workspaces(after, WORKSPACE_PAGE);
-    for (const workspaceId of page) matched += await processWorkspace(db, workspaceId, request);
+    for (const workspaceId of page) await processWorkspace(db, workspaceId, request);
     after = page.at(-1) ?? null;
     if (page.length < WORKSPACE_PAGE) break;
   }
-  await db.withActor(SYSTEM, (trx) =>
+  const done = await db.withActor(SYSTEM, (trx) =>
     trx
       .updateTable('meta_lifecycle_requests')
-      .set({ matched, completed_at: sql<Date>`now()`, subject_id: null })
+      .set({ completed_at: sql<Date>`now()`, subject_id: null })
       .where('id', '=', requestId)
       .where('completed_at', 'is', null)
-      .execute(),
+      .returning('matched')
+      .executeTakeFirst(),
   );
-  return matched;
+  return done?.matched ?? null;
 }
 
 export function metaLifecycleTask(deps: MetaLifecycleDeps): Task {

@@ -5891,7 +5891,7 @@ export const meta_status_completed = /** @type {((inputs: Meta_Status_CompletedI
 /**
 * | output |
 * | --- |
-* | "Kronaut holds no data for this Meta account. If you still see a channel, its workspace owner can disconnect it, or reconnect it once so it can be matched." |
+* | "Kronaut found no channel linked to this Meta account. A channel connected before this feature existed can't be matched: its workspace owner can disconnect it..." |
 *
 * @param {Meta_Status_NoneInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
