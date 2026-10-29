@@ -65,14 +65,14 @@ These are the dashboard names as of 2026-10-24. Sources:
    - Go to **Zero Trust > Access controls > Applications**, select **Create new application**, then **Self-hosted and private**, then **Add public hostname** `kronaut.example.com`.
    - Attach an **Allow** policy that matches only you, for example your email address. Applications deny by default.
 2. **OAuth bypass:**
-   - Create a second self-hosted application for `kronaut.example.com/oauth/*` with a single **Bypass** policy (include: Everyone).
+   - Create a second self-hosted application for `kronaut.example.com/oauth/*` with a single **Bypass** policy (include: Everyone). Add `kronaut.example.com/v1/meta/*` as a second path of the same application, for Meta's data deletion and deauthorize callbacks.
    - Providers fetch these public documents server-to-server, for example the Bluesky client metadata, so they can't log in to Access.
-   - Bypass requests are not logged by Access. Kronaut only skips the Access check for `GET /oauth/<provider>/<name>`.
+   - Bypass requests are not logged by Access. Kronaut only skips the Access check for `GET /oauth/<provider>/<name>` and the three Meta callback routes.
 3. **No Access application on `media.example.com`.** Providers fetch media directly, and signed URLs protect the files.
 4. **AUD tag:** in **Applications**, select **Configure** on the app application (the first one). Under **Additional settings**, copy the **Application Audience (AUD) Tag** into `ACCESS_AUD` in `.env`.
 5. **Team domain:** under **Zero Trust > Settings**, copy `<team>.cloudflareaccess.com` into `ACCESS_TEAM_DOMAIN`.
 
-With both set, the app also verifies the `Cf-Access-Jwt-Assertion` header on every request. The exceptions are `/healthz`, `/readyz` and `GET /oauth/*` (see [Security](../architecture/06-security.md)).
+With both set, the app also verifies the `Cf-Access-Jwt-Assertion` header on every request. The exceptions are `/healthz`, `/readyz`, `GET /oauth/*` and `/v1/meta/*` (see [Security](../architecture/06-security.md)).
 
 ## 4. Start
 

@@ -8,6 +8,7 @@ export const JOBS = {
   refreshCredential: 'refresh_credential',
   revokeCredential: 'revoke_credential',
   mediaProcess: 'media_process',
+  metaLifecycle: 'meta_lifecycle',
 } as const;
 
 export type JobName = (typeof JOBS)[keyof typeof JOBS];
@@ -35,6 +36,7 @@ export interface MediaJob {
 
 export const REVOKE_ATTEMPTS = 8;
 export const MEDIA_PROCESS_ATTEMPTS = 3;
+export const META_LIFECYCLE_ATTEMPTS = 8;
 
 export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promise<void> {
   const payload = JSON.stringify(credential);
@@ -124,6 +126,16 @@ export async function enqueueMediaProcess(trx: TenantDb, job: MediaJob): Promise
       queue_name := 'media',
       max_attempts := ${MEDIA_PROCESS_ATTEMPTS},
       job_key := ${`media:${job.id}`},
+      job_key_mode := 'preserve_run_at')
+  `.execute(trx);
+}
+
+export async function enqueueMetaLifecycle(trx: TenantDb, requestId: string): Promise<void> {
+  const payload = JSON.stringify({ requestId });
+  await sql`
+    select graphile_worker.add_job(${JOBS.metaLifecycle}, ${payload}::json,
+      max_attempts := ${META_LIFECYCLE_ATTEMPTS},
+      job_key := ${`meta:${requestId}`},
       job_key_mode := 'preserve_run_at')
   `.execute(trx);
 }

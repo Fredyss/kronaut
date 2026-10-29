@@ -356,6 +356,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
 /** @typedef {{}} Media_Usage_TitleInputs */
 /** @typedef {{}} Media_Usage_UntitledInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Meta_Status_CompletedInputs */
+/** @typedef {{}} Meta_Status_NoneInputs */
+/** @typedef {{}} Meta_Status_ReceivedInputs */
+/** @typedef {{}} Meta_Status_UnknownInputs */
 /** @typedef {{}} Nav_ChannelsInputs */
 /** @typedef {{}} Nav_InboxInputs */
 /** @typedef {{}} Nav_LabelInputs */
@@ -5867,6 +5871,67 @@ export const media_usage_untitled = /** @type {((inputs?: Media_Usage_UntitledIn
 	if (locale === "sk") return __sk.media_usage_untitled(inputs)
 	if (locale === "cs") return __cs.media_usage_untitled(inputs)
 	return __en.media_usage_untitled(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "Done. Kronaut deleted the data of {count} channel." |
+* | * | "Done. Kronaut deleted the data of {count} channels." |
+*
+* @param {Meta_Status_CompletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const meta_status_completed = /** @type {((inputs: Meta_Status_CompletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Meta_Status_CompletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.meta_status_completed(inputs)
+	if (locale === "cs") return __cs.meta_status_completed(inputs)
+	return __en.meta_status_completed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut holds no data for this Meta account. If you still see a channel, its workspace owner can disconnect it, or reconnect it once so it can be matched." |
+*
+* @param {Meta_Status_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const meta_status_none = /** @type {((inputs?: Meta_Status_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Meta_Status_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.meta_status_none(inputs)
+	if (locale === "cs") return __cs.meta_status_none(inputs)
+	return __en.meta_status_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut received your request and is deleting your data." |
+*
+* @param {Meta_Status_ReceivedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const meta_status_received = /** @type {((inputs?: Meta_Status_ReceivedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Meta_Status_ReceivedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.meta_status_received(inputs)
+	if (locale === "cs") return __cs.meta_status_received(inputs)
+	return __en.meta_status_received(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Unknown confirmation code." |
+*
+* @param {Meta_Status_UnknownInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const meta_status_unknown = /** @type {((inputs?: Meta_Status_UnknownInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Meta_Status_UnknownInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.meta_status_unknown(inputs)
+	if (locale === "cs") return __cs.meta_status_unknown(inputs)
+	return __en.meta_status_unknown(inputs)
 });
 /**
 * | output |

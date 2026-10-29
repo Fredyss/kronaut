@@ -167,6 +167,7 @@ async function upsertAccount(
     handle: nfc(account.handle),
     display_name: account.displayName.normalize('NFC'),
     profile_url: account.profileUrl ?? null,
+    provider_subject_id: account.subjectId ?? null,
     account_kind: account.accountKind,
     provider_app_id: input.providerAppId,
     access_expires_at: toDate(account.accessExpiresAt),

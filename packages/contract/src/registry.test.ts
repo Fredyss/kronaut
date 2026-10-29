@@ -110,6 +110,7 @@ describe('add', () => {
       tags: [],
       idempotency: false,
       bodyEncoding: 'json',
+      responseEncoding: 'json',
     };
     expect(() => registry.add(literal)).toThrow(/admin\.wipe was not created by defineRoute/);
     expect(registry.all()).toEqual([]);

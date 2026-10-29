@@ -12,6 +12,7 @@ import { permanent } from '../_kit/meta-graph.ts';
 import type { FacebookSettings } from './manifest.ts';
 import {
   AUTHORIZE_URL,
+  appScopedUserId,
   appSecret,
   ENGAGEMENT_SCOPE,
   exchangeCode,
@@ -53,6 +54,7 @@ async function connectedPage(
   ctx: BaseContext,
   app: MetaApp,
   page: PublishablePage,
+  subjectId: string,
 ): Promise<ConnectedAccount<FacebookCredentials>> {
   const token = await inspectPageToken(ctx, app, page.access_token);
   const profileUrl = httpsUrl(page.link);
@@ -63,6 +65,7 @@ async function connectedPage(
       ? { accessExpiresAt: Temporal.Instant.fromEpochMilliseconds(token.expiresAt * 1000) }
       : {}),
     providerAccountId: page.id,
+    subjectId,
     accountKind: 'page',
     displayName: page.name,
     ...(page.username === undefined || page.username === '' ? {} : { handle: page.username }),
@@ -99,12 +102,15 @@ export const facebookRuntime: ProviderRuntime<FacebookCredentials, FacebookSetti
 
     const shortLived = await exchangeCode(ctx, app, { code, redirectUri: input.redirectUri });
     const userToken = await longLivedUserToken(ctx, app, shortLived);
+    const subjectId = await appScopedUserId(ctx, app, userToken);
     const pages = publishable(await listPages(ctx, app, userToken));
     if (pages.length > MAX_CONNECT_ACCOUNTS) throw permanent(TOO_MANY_ACCOUNTS);
     const accounts: ConnectedAccount<FacebookCredentials>[] = [];
     for (let start = 0; start < pages.length; start += TOKEN_CHECKS_AT_ONCE) {
       const batch = pages.slice(start, start + TOKEN_CHECKS_AT_ONCE);
-      accounts.push(...(await Promise.all(batch.map((page) => connectedPage(ctx, app, page)))));
+      accounts.push(
+        ...(await Promise.all(batch.map((page) => connectedPage(ctx, app, page, subjectId)))),
+      );
     }
     return accounts;
   },

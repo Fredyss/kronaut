@@ -150,7 +150,7 @@ describe('instagram connect', () => {
     });
     expect(new URL(me?.url ?? '').pathname).toBe('/v26.0/me');
     expect(query(me)).toEqual({
-      fields: 'user_id,username,name,account_type,profile_picture_url',
+      fields: 'id,user_id,username,name,account_type,profile_picture_url',
       access_token: 'long-1',
     });
     expect(me?.body).toBeUndefined();
@@ -161,6 +161,7 @@ describe('instagram connect', () => {
     );
     expect({ ...account, accessExpiresAt: undefined }).toEqual({
       providerAccountId: IG_ID,
+      subjectId: '555',
       accountKind: 'creator',
       handle: 'alice.example',
       displayName: 'Alice',

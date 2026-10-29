@@ -354,6 +354,10 @@
 /** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
 /** @typedef {{}} Media_Usage_TitleInputs */
 /** @typedef {{}} Media_Usage_UntitledInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Meta_Status_CompletedInputs */
+/** @typedef {{}} Meta_Status_NoneInputs */
+/** @typedef {{}} Meta_Status_ReceivedInputs */
+/** @typedef {{}} Meta_Status_UnknownInputs */
 /** @typedef {{}} Nav_ChannelsInputs */
 /** @typedef {{}} Nav_InboxInputs */
 /** @typedef {{}} Nav_LabelInputs */
@@ -1972,6 +1976,24 @@ export const media_usage_title = /** @type {(inputs: Media_Usage_TitleInputs) =>
 
 export const media_usage_untitled = /** @type {(inputs: Media_Usage_UntitledInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Untitled post`)
+};
+
+export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Done. Kronaut deleted the data of ${i?.count} channel.`);
+	return /** @type {LocalizedString} */ (`Done. Kronaut deleted the data of ${i?.count} channels.`)
+};
+
+export const meta_status_none = /** @type {(inputs: Meta_Status_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut holds no data for this Meta account. If you still see a channel, its workspace owner can disconnect it, or reconnect it once so it can be matched.`)
+};
+
+export const meta_status_received = /** @type {(inputs: Meta_Status_ReceivedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut received your request and is deleting your data.`)
+};
+
+export const meta_status_unknown = /** @type {(inputs: Meta_Status_UnknownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Unknown confirmation code.`)
 };
 
 export const nav_channels = /** @type {(inputs: Nav_ChannelsInputs) => LocalizedString} */ () => {

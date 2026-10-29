@@ -110,6 +110,7 @@ export const threadsRuntime: ProviderRuntime<ThreadsCredentials, ThreadsSettings
       {
         ...withExpiry(credentials, token.expiresAt),
         providerAccountId: me.id,
+        subjectId: me.id,
         accountKind: 'personal',
         handle: `@${me.username}`,
         displayName: name === '' ? me.username : name,

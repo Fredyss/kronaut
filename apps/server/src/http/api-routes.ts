@@ -13,6 +13,7 @@ import { libraryRoutes } from '../media/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
 import type { Staging } from '../media/staging.ts';
 import { uploadRoutes } from '../media/upload-routes.ts';
+import { metaRoutes } from '../meta/routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
@@ -61,6 +62,12 @@ export function apiRoutes({
       providers,
       publicBaseUrl: http.publicBaseUrl,
       clock: http.clock,
+    }),
+    ...metaRoutes({
+      db: http.db,
+      keyring,
+      subjectKey: http.keys.metaSubject,
+      publicBaseUrl: http.publicBaseUrl,
     }),
   ];
 }

@@ -118,6 +118,7 @@ export const instagramRuntime: ProviderRuntime<InstagramCredentials, InstagramSe
           scopes: exchanged.permissions,
         }),
         providerAccountId: me.user_id,
+        ...(me.id === undefined ? {} : { subjectId: me.id }),
         accountKind: accountKind(me.account_type),
         handle: me.username,
         displayName: name === undefined || name === '' ? me.username : name,

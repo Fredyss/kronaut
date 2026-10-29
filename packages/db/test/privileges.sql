@@ -1,4 +1,4 @@
--- Privilege and cross-tenant entry point tests (ADR-0048; TEN-04..07). Run as a superuser against a database
+-- Privilege and cross-tenant entry point tests (ADR-0056; TEN-04..07). Run as a superuser against a database
 -- loaded from schema/v1.sql. Everything happens in one transaction that is rolled back; any failure raises.
 \set ON_ERROR_STOP 1
 \o /dev/null
@@ -32,7 +32,7 @@ CREATE FUNCTION pg_temp.grants(r regrole) RETURNS TABLE (relname name, privs tex
                       WHERE a.attrelid = c.oid AND a.attname = 'workspace_id' AND NOT a.attisdropped)
 $$;
 
--- TEN-04: every global table is default-deny; only the grants ADR-0048 lists exist.
+-- TEN-04: every global table is default-deny; only the grants ADR-0056 lists exist.
 CREATE TEMP TABLE expected_app (relname name, privs text);
 INSERT INTO expected_app VALUES
   ('cron_runs', 'INSERT,SELECT,UPDATE'),
@@ -43,6 +43,7 @@ INSERT INTO expected_app VALUES
   ('ephemeral_kv', 'DELETE,INSERT,SELECT,UPDATE'),
   ('inbound_events', 'INSERT,SELECT,UPDATE(processed_at)'),
   ('instance_state', 'SELECT'),
+  ('meta_lifecycle_requests', 'INSERT,SELECT,UPDATE(completed_at),UPDATE(matched),UPDATE(subject_id)'),
   ('organizations', 'SELECT,UPDATE(name)'),
   ('provider_app_incidents', 'INSERT,SELECT,UPDATE'),
   ('provider_app_keys', 'SELECT'),
@@ -168,6 +169,9 @@ INSERT INTO sessions (id, token_hash, user_id, expires_at, idle_expires_at, reau
   ('00000000-0000-7000-8000-000000000502', decode(repeat('52', 32), 'hex'), :U2, now() + interval '1 day', now() + interval '1 hour', now()),
   ('00000000-0000-7000-8000-000000000503', decode(repeat('53', 32), 'hex'), :U1, now() - interval '1 minute', now() + interval '1 hour', now());
 INSERT INTO security_events (user_id, kind) VALUES (:U1, 'auth.login'), (:U2, 'auth.login');
+INSERT INTO meta_lifecycle_requests (provider, kind, request_hash, subject_hmac, confirmation_code, completed_at) VALUES
+  ('facebook', 'deletion', decode(repeat('61', 32), 'hex'), decode(repeat('60', 32), 'hex'), repeat('A', 20), now() - interval '181 days'),
+  ('threads', 'deletion', decode(repeat('62', 32), 'hex'), decode(repeat('60', 32), 'hex'), repeat('B', 20), now() - interval '179 days');
 INSERT INTO entitlement_overrides (organization_id, key, value) VALUES (:A1, 'seats', '5'), (:A2, 'seats', '50');
 INSERT INTO provider_apps (id, provider, instance_host, client_id) VALUES
   ('00000000-0000-7000-8000-0000000000c1', 'bluesky', '', 'x'),
@@ -341,6 +345,9 @@ SELECT pg_temp.must_fail('AR-01 cannot register an instance-wide provider app',
   $$INSERT INTO provider_apps (provider, client_id) VALUES ('bluesky', 'evil')$$, '42501');
 SELECT pg_temp.must_fail('AR-01 cannot disable a provider app',
   $$UPDATE provider_apps SET status = 'disabled' WHERE id = '00000000-0000-7000-8000-0000000000c2'$$, '42501');
+SELECT pg_temp.must_fail('AR-01 cannot delete Meta lifecycle requests', $$DELETE FROM meta_lifecycle_requests$$, '42501');
+SELECT pg_temp.must_fail('AR-01 cannot rewrite a Meta lifecycle request',
+  $$UPDATE meta_lifecycle_requests SET confirmation_code = repeat('C', 20)$$, '42501');
 SELECT pg_temp.must_fail('AR-01 cannot replace provider app credentials',
   $$UPDATE provider_apps SET client_id = 'evil'$$, '42501');
 SELECT pg_temp.must_fail('AR-01 cannot read deletion receipts', $$SELECT * FROM deletion_receipts$$, '42501');
@@ -399,6 +406,8 @@ SELECT pg_temp.must_fail('slo: window over 31 days', $$SELECT * FROM slo_publish
 SELECT pg_temp.must('slo: aggregates', (SELECT auto_total >= 0 AND duplicates >= 0 FROM slo_publish_stats(now() - interval '1 day', now())));
 SELECT pg_temp.must('retention: expired session purged',
   (SELECT affected FROM purge_instance_retention(100) WHERE relation = 'sessions') = 1);
+SELECT pg_temp.must('retention: Meta lifecycle requests purged 180 days after completion',
+  (SELECT array_agg(provider) FROM meta_lifecycle_requests) = ARRAY['threads']);
 SELECT pg_temp.must('audit: partitions exist two months ahead and the default partition is empty',
   (SELECT count(*) FROM pg_inherits WHERE inhparent = 'audit_events'::regclass) >= 4
   AND (SELECT affected FROM maintain_audit_partitions(100) WHERE relation = 'audit_events_default') = 0);

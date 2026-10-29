@@ -354,6 +354,10 @@
 /** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
 /** @typedef {{}} Media_Usage_TitleInputs */
 /** @typedef {{}} Media_Usage_UntitledInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Meta_Status_CompletedInputs */
+/** @typedef {{}} Meta_Status_NoneInputs */
+/** @typedef {{}} Meta_Status_ReceivedInputs */
+/** @typedef {{}} Meta_Status_UnknownInputs */
 /** @typedef {{}} Nav_ChannelsInputs */
 /** @typedef {{}} Nav_InboxInputs */
 /** @typedef {{}} Nav_LabelInputs */
@@ -1998,6 +2002,26 @@ export const media_usage_title = /** @type {(inputs: Media_Usage_TitleInputs) =>
 
 export const media_usage_untitled = /** @type {(inputs: Media_Usage_UntitledInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Príspevok bez názvu`)
+};
+
+export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanála.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanálov.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanála.`);
+	return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanálov.`)
+};
+
+export const meta_status_none = /** @type {(inputs: Meta_Status_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut nemá žiadne údaje tohto účtu Meta. Ak kanál stále vidíte, vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť, aby sa dal priradiť.`)
+};
+
+export const meta_status_received = /** @type {(inputs: Meta_Status_ReceivedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut prijal vašu žiadosť a maže vaše údaje.`)
+};
+
+export const meta_status_unknown = /** @type {(inputs: Meta_Status_UnknownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Neznámy potvrdzovací kód.`)
 };
 
 export const nav_channels = /** @type {(inputs: Nav_ChannelsInputs) => LocalizedString} */ () => {

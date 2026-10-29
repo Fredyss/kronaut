@@ -5,9 +5,13 @@ import { HttpError } from './errors.ts';
 const ACCESS_DENIED = 'Access denied.';
 const PROBE_PATHS: ReadonlySet<string> = new Set(['/healthz', '/readyz']);
 const OAUTH_DOCUMENT = /^\/oauth\/[a-z0-9_]{2,32}\/[A-Za-z0-9._-]{1,64}$/;
+const META_CALLBACK = /^\/v1\/meta\/(facebook|instagram|threads)\/(deletion|deauthorize)$/;
+const META_STATUS = /^\/v1\/meta\/deletion\/[A-Z2-7]{20}$/;
 
 export function accessExempt(method: string, path: string): boolean {
-  return method === 'GET' && (PROBE_PATHS.has(path) || OAUTH_DOCUMENT.test(path));
+  if (method === 'POST') return META_CALLBACK.test(path);
+  if (method !== 'GET') return false;
+  return PROBE_PATHS.has(path) || OAUTH_DOCUMENT.test(path) || META_STATUS.test(path);
 }
 
 export async function checkAccess(

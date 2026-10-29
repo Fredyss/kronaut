@@ -1,6 +1,12 @@
 import type { Route } from '@kronaut/contract';
 import type * as z from 'zod';
-import { isJsonContentType, isOctetStreamContentType, queryObject, readBody } from './body.ts';
+import {
+  isFormContentType,
+  isJsonContentType,
+  isOctetStreamContentType,
+  queryObject,
+  readBody,
+} from './body.ts';
 import { HttpError, type IssueDetail } from './errors.ts';
 import type { RouteInput } from './types.ts';
 
@@ -33,8 +39,23 @@ function parseJson(raw: Uint8Array, contentType: string | null): unknown {
   }
 }
 
+function parseForm(raw: Uint8Array, contentType: string | null): unknown {
+  if (!isFormContentType(contentType)) {
+    throw new HttpError(
+      'unsupported_media_type',
+      'The request body must be application/x-www-form-urlencoded.',
+    );
+  }
+  try {
+    return queryObject(new URLSearchParams(DECODER.decode(raw)));
+  } catch {
+    throw new HttpError('invalid_request', 'The request body is not valid UTF-8.');
+  }
+}
+
 function rawBody(route: Route, raw: Uint8Array, contentType: string | null): unknown {
   if (route.bodyEncoding === 'json') return parseJson(raw, contentType);
+  if (route.bodyEncoding === 'form') return parseForm(raw, contentType);
   if (!isOctetStreamContentType(contentType)) {
     throw new HttpError(
       'unsupported_media_type',

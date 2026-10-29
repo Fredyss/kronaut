@@ -465,6 +465,19 @@ export interface Memberships {
   workspace_id: string;
 }
 
+export interface MetaLifecycleRequests {
+  completed_at: Timestamp | null;
+  confirmation_code: string | null;
+  id: Generated<string>;
+  kind: string;
+  matched: Generated<number>;
+  provider: string;
+  received_at: Generated<Timestamp>;
+  request_hash: Buffer;
+  subject_hmac: Buffer;
+  subject_id: string | null;
+}
+
 export interface Notifications {
   created_at: Generated<Timestamp>;
   dedupe_key: string;
@@ -756,6 +769,7 @@ export interface SocialAccounts {
   provider: string;
   provider_account_id: string;
   provider_app_id: string;
+  provider_subject_id: string | null;
   refresh_expires_at: Timestamp | null;
   status: Generated<string>;
   status_changed_at: Generated<Timestamp>;
@@ -905,6 +919,7 @@ export interface DB {
   media_assets: MediaAssets;
   media_renditions: MediaRenditions;
   memberships: Memberships;
+  meta_lifecycle_requests: MetaLifecycleRequests;
   notifications: Notifications;
   organizations: Organizations;
   post_destinations: PostDestinations;

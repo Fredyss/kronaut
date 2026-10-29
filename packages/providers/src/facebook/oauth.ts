@@ -34,6 +34,8 @@ const page = z.looseObject({
 });
 export type Page = z.infer<typeof page>;
 
+const me = z.looseObject({ id: z.string().regex(/^\d{1,32}$/) });
+
 const accountsPage = z.looseObject({
   data: z.array(page),
   paging: z.looseObject({ next: z.string().optional() }).optional(),
@@ -107,6 +109,15 @@ function nextLink(next: string | undefined, app: MetaApp, token: string): URL | 
   const url = new URL(next);
   if (url.protocol !== 'https:' || url.hostname !== GRAPH_HOST) return undefined;
   return signed(url, app, token);
+}
+
+export async function appScopedUserId(
+  ctx: BaseContext,
+  app: MetaApp,
+  userToken: string,
+): Promise<string> {
+  const url = signed(graphUrl('me', { fields: 'id' }), app, userToken);
+  return (await graphGet(ctx, 'none', url, me)).id;
 }
 
 export async function listPages(

@@ -35,6 +35,8 @@ import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
 import { MEDIA_BODY_LIMITS } from './media/upload-routes.ts';
+import { metaLifecycleTask } from './meta/lifecycle.ts';
+import { META_BODY_LIMITS } from './meta/routes.ts';
 import { emailDeps } from './notifications/email.ts';
 import { createProviderRegistry } from './providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
@@ -193,6 +195,7 @@ async function startWorker(boot: Boot): Promise<void> {
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
       [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
+      [JOBS.metaLifecycle]: metaLifecycleTask({ db, logger }),
     },
     parsedCronItems: cronItems(email !== null),
   });
@@ -229,7 +232,7 @@ async function startApi(boot: Boot): Promise<void> {
     publicBaseUrl: config.publicUrl.origin,
     instanceAdmins: config.instanceAdmins,
     readiness: async () => !state.stopping && (await workerAlive(db)),
-    routeBodyLimits: MEDIA_BODY_LIMITS,
+    routeBodyLimits: { ...MEDIA_BODY_LIMITS, ...META_BODY_LIMITS },
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };

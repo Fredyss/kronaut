@@ -1,3 +1,4 @@
+import type { ResponseEncoding } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import { errorBody, HttpError } from './errors.ts';
 
@@ -15,8 +16,17 @@ export function headersFor(requestId: string, hsts: boolean): Headers {
   return headers;
 }
 
-export function respond(status: number, body: unknown, headers: Headers): Response {
+export function respond(
+  status: number,
+  body: unknown,
+  headers: Headers,
+  encoding: ResponseEncoding = 'json',
+): Response {
   if (status === 204 || body === undefined) return new Response(null, { status, headers });
+  if (encoding === 'text') {
+    headers.set('Content-Type', 'text/plain; charset=utf-8');
+    return new Response(String(body), { status, headers });
+  }
   headers.set('Content-Type', 'application/json; charset=utf-8');
   return new Response(JSON.stringify(body), { status, headers });
 }

@@ -756,5 +756,20 @@
   ],
   "system_api_ended": "Podpora už skončila",
   "system_api_warn": "Čoskoro aktualizujte",
-  "system_api_critical": "Aktualizujte hneď"
+  "system_api_critical": "Aktualizujte hneď",
+  "meta_status_received": "Kronaut prijal vašu žiadosť a maže vaše údaje.",
+  "meta_status_completed": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Hotovo. Kronaut vymazal údaje z {count} kanála.",
+        "countPlural=few": "Hotovo. Kronaut vymazal údaje z {count} kanálov.",
+        "countPlural=many": "Hotovo. Kronaut vymazal údaje z {count} kanála.",
+        "countPlural=*": "Hotovo. Kronaut vymazal údaje z {count} kanálov."
+      }
+    }
+  ],
+  "meta_status_none": "Kronaut nemá žiadne údaje tohto účtu Meta. Ak kanál stále vidíte, vlastník pracovného priestoru ho môže odpojiť alebo raz znova pripojiť, aby sa dal priradiť.",
+  "meta_status_unknown": "Neznámy potvrdzovací kód."
 }

@@ -26,9 +26,15 @@ export interface OpenApiParameter {
   readonly schema: JsonObject;
 }
 
+type ResponseMediaType = 'application/json' | 'text/plain';
+type RequestMediaType =
+  | 'application/json'
+  | 'application/octet-stream'
+  | 'application/x-www-form-urlencoded';
+
 export interface OpenApiResponse {
   readonly description: string;
-  readonly content?: { readonly 'application/json': { readonly schema: JsonObject } };
+  readonly content?: Readonly<Partial<Record<ResponseMediaType, { readonly schema: JsonObject }>>>;
 }
 
 export interface OpenApiOperation {
@@ -39,11 +45,7 @@ export interface OpenApiOperation {
   readonly parameters?: readonly OpenApiParameter[];
   readonly requestBody?: {
     readonly required: true;
-    readonly content: Readonly<
-      Partial<
-        Record<'application/json' | 'application/octet-stream', { readonly schema: JsonObject }>
-      >
-    >;
+    readonly content: Readonly<Partial<Record<RequestMediaType, { readonly schema: JsonObject }>>>;
   };
   readonly responses: Readonly<Record<string, OpenApiResponse>>;
   readonly security: readonly Readonly<Record<string, readonly string[]>>[];
@@ -116,13 +118,27 @@ function parameters(route: Route): readonly OpenApiParameter[] {
   return out;
 }
 
+const BODY_MEDIA_TYPES = {
+  json: 'application/json',
+  'octet-stream': 'application/octet-stream',
+  form: 'application/x-www-form-urlencoded',
+} as const satisfies Readonly<Record<Route['bodyEncoding'], RequestMediaType>>;
+
 function requestBody(route: Route): Pick<OpenApiOperation, 'requestBody'> {
   if (route.body === undefined) return {};
-  const content =
+  const schema =
     route.bodyEncoding === 'octet-stream'
-      ? { 'application/octet-stream': { schema: { type: 'string', format: 'binary' } } }
-      : { 'application/json': { schema: jsonSchema(route.id, route.body, 'input') } };
+      ? { type: 'string', format: 'binary' }
+      : jsonSchema(route.id, route.body, 'input');
+  const content = { [BODY_MEDIA_TYPES[route.bodyEncoding]]: { schema } };
   return { requestBody: { required: true, content } };
+}
+
+function successContent(route: Route): NonNullable<OpenApiResponse['content']> {
+  const schema = jsonSchema(route.id, route.response, 'output');
+  return route.responseEncoding === 'text'
+    ? { 'text/plain': { schema } }
+    : { 'application/json': { schema } };
 }
 
 function operation(route: Route): OpenApiOperation {
@@ -132,12 +148,7 @@ function operation(route: Route): OpenApiOperation {
       ? { description: 'See Other' }
       : route.status === 204
         ? { description: 'OK' }
-        : {
-            description: 'OK',
-            content: {
-              'application/json': { schema: jsonSchema(route.id, route.response, 'output') },
-            },
-          };
+        : { description: 'OK', content: successContent(route) };
   return {
     operationId: route.id,
     summary: route.summary,

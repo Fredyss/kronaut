@@ -42,6 +42,10 @@ export function isJsonContentType(header: string | null): boolean {
   return hasMediaType(header, 'application/json');
 }
 
+export function isFormContentType(header: string | null): boolean {
+  return hasMediaType(header, 'application/x-www-form-urlencoded');
+}
+
 export function isOctetStreamContentType(header: string | null): boolean {
   return hasMediaType(header, 'application/octet-stream');
 }

@@ -22,6 +22,7 @@ export interface HttpKeys {
   readonly grant: Uint8Array;
   readonly reset: Uint8Array;
   readonly oauthPending: Uint8Array;
+  readonly metaSubject: Uint8Array;
 }
 
 export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
@@ -30,6 +31,7 @@ export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
     grant: purposeKey(secret, 'grant-token/v1'),
     reset: purposeKey(secret, 'reset-token/v1'),
     oauthPending: purposeKey(secret, 'oauth-pending/v1'),
+    metaSubject: purposeKey(secret, 'meta-subject/v1'),
   };
 }
 

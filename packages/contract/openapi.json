@@ -725,6 +725,189 @@
         ]
       }
     },
+    "/v1/meta/deletion/{code}": {
+      "get": {
+        "description": "Plain text in English, Slovak or Czech, chosen from Accept-Language.",
+        "operationId": "meta.deletion_status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [],
+        "summary": "Status of a Meta data deletion request",
+        "tags": [
+          "meta"
+        ],
+        "x-kronaut-action": null,
+        "x-kronaut-auth": [
+          "public"
+        ]
+      }
+    },
+    "/v1/meta/{provider}/deauthorize": {
+      "post": {
+        "description": "Meta posts a signed request when a person removes the app. Their channels on that network need reconnecting and their tokens are deleted. Called by Meta, not by API clients.",
+        "operationId": "meta.deauthorize",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "properties": {
+                  "signed_request": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "signed_request"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [],
+        "summary": "Meta deauthorize callback",
+        "tags": [
+          "meta"
+        ],
+        "x-kronaut-action": null,
+        "x-kronaut-auth": [
+          "public"
+        ]
+      }
+    },
+    "/v1/meta/{provider}/deletion": {
+      "post": {
+        "description": "Meta posts a signed request when a person asks to delete their data. Their channels on that network are disconnected and wiped in every workspace; the answer links to a status page. Called by Meta, not by API clients.",
+        "operationId": "meta.deletion",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "properties": {
+                  "signed_request": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "signed_request"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "confirmation_code": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "confirmation_code"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [],
+        "summary": "Meta data deletion callback",
+        "tags": [
+          "meta"
+        ],
+        "x-kronaut-action": null,
+        "x-kronaut-auth": [
+          "public"
+        ]
+      }
+    },
     "/v1/oauth/{provider}/callback": {
       "get": {
         "operationId": "channels.connect_callback",
