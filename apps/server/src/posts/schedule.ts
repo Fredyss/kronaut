@@ -1,6 +1,6 @@
 import { CONTENT_HASH_V } from '@kronaut/compose';
 import { defineRoute } from '@kronaut/contract';
-import { type ApprovalStatus, PUBLISH_DEADLINE_MS, type ScopeUnit } from '@kronaut/core';
+import { type ApprovalStatus, PUBLISH_DEADLINE_MS, type ScopeUnit, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
@@ -115,10 +115,6 @@ interface Slot {
   readonly deadline: Temporal.Instant;
   readonly approval: ApprovalStatus;
   readonly binding: Binding | undefined;
-}
-
-function toDate(instant: Temporal.Instant): Date {
-  return new Date(instant.epochMilliseconds);
 }
 
 // The approval is only known once the content is frozen and hashed, so the role and scope are

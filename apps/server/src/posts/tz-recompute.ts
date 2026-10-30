@@ -1,3 +1,4 @@
+import { toDate } from '@kronaut/core';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
@@ -25,10 +26,6 @@ interface Run {
 
 function instant(date: Date): Temporal.Instant {
   return Temporal.Instant.fromEpochMilliseconds(date.getTime());
-}
-
-function toDate(at: Temporal.Instant): Date {
-  return new Date(at.epochMilliseconds);
 }
 
 function lockStale(trx: TenantDb, workspaceId: string, tzdb: string, after: string | null) {

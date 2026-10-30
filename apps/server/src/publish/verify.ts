@@ -1,9 +1,10 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Task } from 'graphile-worker';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { type DestinationJob, enqueueVerify } from '../jobs.ts';
-import { applyPlan, toDate } from './apply.ts';
+import { applyPlan } from './apply.ts';
 import { jsonb } from './chain.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';

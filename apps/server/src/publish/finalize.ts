@@ -1,7 +1,8 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
-import { applyPlan, toDate } from './apply.ts';
+import { applyPlan } from './apply.ts';
 import { jsonb } from './chain.ts';
 import type { Claimed } from './claim.ts';
 import { lockPost, SYSTEM } from './lock.ts';

@@ -1,5 +1,6 @@
 import { defineRoute } from '@kronaut/contract';
 import type { UserPrincipal } from '@kronaut/core';
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
@@ -83,7 +84,7 @@ async function insertDecision(
         decision,
         approver_kind: 'user',
         user_id: user.userId,
-        session_reauth_at: new Date(user.authenticatedAt.epochMilliseconds),
+        session_reauth_at: toDate(user.authenticatedAt),
       })
       .execute();
   } catch (err) {

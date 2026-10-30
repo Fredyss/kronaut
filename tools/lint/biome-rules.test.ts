@@ -84,7 +84,7 @@ const LAYERS = (
 
 describe('biome rules', () => {
   it('maps every plugin to a distinct message', () => {
-    expect(PLUGIN_BY_MESSAGE.size).toBe(7);
+    expect(PLUGIN_BY_MESSAGE.size).toBe(9);
     expect([...PLUGIN_BY_MESSAGE.values()].every((rule) => rule.startsWith('plugin/no'))).toBe(
       true,
     );
@@ -93,6 +93,13 @@ describe('biome rules', () => {
   it.each([
     ['plugin/noMathRandom', 'apps/server/src/token.ts', 'export const r = Math.random();\n'],
     ['plugin/noMathRandom', 'packages/core/src/token.ts', 'export const r = Math.random;\n'],
+    ['plugin/noWallClock', 'apps/server/src/clock.ts', 'export const n = Date.now();\n'],
+    ['plugin/noWallClock', 'packages/media/src/clock.ts', 'export const n = new Date();\n'],
+    [
+      'plugin/noInstantDate',
+      'apps/server/src/clock.ts',
+      'declare const at: { epochMilliseconds: number };\nexport const d = new Date(at.epochMilliseconds);\n',
+    ],
     [
       'plugin/noMathRandom',
       'packages/media/src/token.ts',
@@ -403,6 +410,14 @@ describe('biome rules', () => {
   it.each([
     ['apps/web/src/token.ts', 'export const r = Math.random();\n'],
     ['packages/compose/src/token.ts', 'export const r = Math.random();\n'],
+    ['apps/web/src/clock.ts', 'export const n = Date.now();\n'],
+    ['apps/server/src/clock.test.ts', 'export const n = Date.now();\n'],
+    ['apps/server/src/posts/testing.ts', 'export const n = new Date();\n'],
+    ['packages/ui/src/clock.ts', 'export const n = Date.now();\n'],
+    [
+      'packages/core/src/time.ts',
+      'declare const at: { epochMilliseconds: number };\nexport const d = new Date(at.epochMilliseconds);\n',
+    ],
     ['packages/ui/src/token.ts', 'export const r = Math.random();\n'],
     [
       'packages/db/src/repo.test.ts',

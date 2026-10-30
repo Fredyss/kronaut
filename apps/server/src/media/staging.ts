@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { mkdir, open, readdir, rename, rm, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { Temporal } from 'temporal-polyfill';
 
 export interface Staging {
   receive(bytes: Uint8Array): Promise<string>;
@@ -30,7 +31,7 @@ async function sweepOlderThan(dir: string, olderThanMs: number): Promise<number>
     if (isErrno(error, 'ENOENT')) return 0;
     throw error;
   }
-  const cutoff = Date.now() - olderThanMs;
+  const cutoff = Temporal.Now.instant().epochMilliseconds - olderThanMs;
   let removed = 0;
   for (const entry of entries) {
     const path = join(dir, entry);

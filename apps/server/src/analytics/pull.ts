@@ -5,6 +5,7 @@ import {
   type PostMetrics,
   type ProviderError,
   type ProviderRuntime,
+  toDate,
 } from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
@@ -172,7 +173,7 @@ async function fetchResults(run: Run, channel: Channel): Promise<Fetched | Provi
   try {
     const result = await channel.read(ctx, { ...channel.source, remoteIds, postTypes });
     const results = new Map(channel.rows.map((row) => [row, rowResult(result, row.remoteId)]));
-    const observedAt = new Date(deps.now().epochMilliseconds);
+    const observedAt = toDate(deps.now());
     return { results, apiVersion: result.apiVersion, observedAt };
   } catch (err) {
     const error = toProviderFailure(err, 'none').error;
@@ -180,7 +181,7 @@ async function fetchResults(run: Run, channel: Channel): Promise<Fetched | Provi
     const results = new Map(
       channel.rows.map((row): [DueRow, RowResult] => [row, { kind: 'error', error }]),
     );
-    return { results, apiVersion: '', observedAt: new Date(deps.now().epochMilliseconds) };
+    return { results, apiVersion: '', observedAt: toDate(deps.now()) };
   }
 }
 
@@ -295,6 +296,6 @@ export async function pullAnalytics(deps: PullDeps): Promise<string> {
     followers: 0,
     failed: 0,
   };
-  const run: Run = { deps, observedAt: new Date(deps.now().epochMilliseconds), counts };
+  const run: Run = { deps, observedAt: toDate(deps.now()), counts };
   return await sweepCron(deps, TASK, counts, (workspaceId) => pullWorkspace(run, workspaceId));
 }

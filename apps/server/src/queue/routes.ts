@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { defineRoute } from '@kronaut/contract';
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
@@ -100,7 +101,7 @@ async function readQueue(trx: TenantDb, ref: ChannelRef, now: Temporal.Instant) 
       time: slot.time.toString({ smallestUnit: 'minute' }),
     })),
     upcoming: free.map((s) => ({
-      at: new Date(s.at.epochMilliseconds).toISOString(),
+      at: toDate(s.at).toISOString(),
       local: s.local.toString({ smallestUnit: 'minute' }),
       timezone: s.tz,
     })),

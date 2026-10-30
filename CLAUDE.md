@@ -39,7 +39,7 @@ When a task conflicts with 1–3, stop and ask. Don't silently deviate.
   - Normalize text to NFC.
   - Payloads that get hashed contain integers only.
 - **Banned in code:** `dangerouslySetInnerHTML`, `Math.random` on the server, `MODE==='saas'` outside the entitlements module.
-- **Time:** use Temporal (`temporal-polyfill`). Store wall time + IANA tz + UTC. Expand recurrence from local wall time.
+- **Time:** use Temporal (`temporal-polyfill`); `toDate` from `@kronaut/core` turns an Instant into a `Date` for the database. Store wall time + IANA tz + UTC. Expand recurrence from local wall time.
 - **UI text:** every user-visible string goes through Paraglide in **en, sk and cs**.
   - Count messages use plural variants.
   - Never build date formats by hand.

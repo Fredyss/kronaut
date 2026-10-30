@@ -1,0 +1,5 @@
+language js
+
+`new Date($instant.epochMilliseconds)` as $ref where {
+  register_diagnostic(span=$ref, message="Use toDate from @kronaut/core to turn an Instant into a Date.", severity="error")
+}

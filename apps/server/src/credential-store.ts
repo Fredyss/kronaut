@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import type { CredentialKind } from '@kronaut/core';
+import { toDateOrNull } from '@kronaut/core';
 import type { Keyring } from '@kronaut/credentials';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
-import { openValue, sealValue, toDate } from './credential-seal.ts';
+import { openValue, sealValue } from './credential-seal.ts';
 
 export {
   loadProviderApp,
@@ -68,8 +69,8 @@ export async function saveCredential(
       input.value,
     ),
     granted_scopes: [...input.grantedScopes],
-    access_expires_at: toDate(input.accessExpiresAt),
-    refresh_expires_at: toDate(input.refreshExpiresAt),
+    access_expires_at: toDateOrNull(input.accessExpiresAt),
+    refresh_expires_at: toDateOrNull(input.refreshExpiresAt),
     client_key_id: input.clientKeyId ?? null,
   };
 
@@ -248,8 +249,8 @@ export async function persistRefreshed(
         input.value,
       ),
       granted_scopes: [...input.grantedScopes],
-      access_expires_at: toDate(input.accessExpiresAt),
-      refresh_expires_at: toDate(input.refreshExpiresAt),
+      access_expires_at: toDateOrNull(input.accessExpiresAt),
+      refresh_expires_at: toDateOrNull(input.refreshExpiresAt),
       version: input.version + 1,
       updated_at: sql<Date>`now()`,
       refresh_lease_until: null,

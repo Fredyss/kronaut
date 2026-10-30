@@ -1,6 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
+import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { loadProviderApp } from '../credential-store.ts';
 import { HttpError } from '../http/errors.ts';
@@ -118,13 +119,17 @@ async function appSecret(deps: MetaRouteDeps, provider: string): Promise<string 
   return app === null || app.status === 'disabled' ? null : (app.app.clientSecret ?? null);
 }
 
+function nowMs(): number {
+  return Temporal.Now.instant().epochMilliseconds;
+}
+
 function cachedSecrets(deps: MetaRouteDeps): SecretLookup {
   const cache = new Map<string, { readonly secret: string | null; readonly expiresAt: number }>();
   return async (provider) => {
     const hit = cache.get(provider);
-    if (hit !== undefined && hit.expiresAt > Date.now()) return hit.secret;
+    if (hit !== undefined && hit.expiresAt > nowMs()) return hit.secret;
     const secret = await appSecret(deps, provider);
-    cache.set(provider, { secret, expiresAt: Date.now() + SECRET_TTL_MS });
+    cache.set(provider, { secret, expiresAt: nowMs() + SECRET_TTL_MS });
     return secret;
   };
 }

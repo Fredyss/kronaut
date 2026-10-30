@@ -1,4 +1,4 @@
-import { encodePublicId } from '@kronaut/core';
+import { encodePublicId, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -89,10 +89,6 @@ export function candidates(
     }
   }
   return [...seen.values()].sort((a, b) => Temporal.Instant.compare(a.at, b.at));
-}
-
-function toDate(instant: Temporal.Instant): Date {
-  return new Date(instant.epochMilliseconds);
 }
 
 // A copy waiting for approval is still a draft, but the evergreen fill bound it to its slot.

@@ -1,3 +1,4 @@
+import { toDate } from '@kronaut/core';
 import type { HttpClient } from '@kronaut/egress';
 import { createLocalJWKSet, errors, importJWK, type JWK, jwtVerify } from 'jose';
 import type { Logger } from 'pino';
@@ -139,7 +140,7 @@ async function verifyWith(
       issuer: expected.issuer,
       clockTolerance: CLOCK_TOLERANCE_S,
       requiredClaims: ['exp'],
-      currentDate: new Date(expected.now().epochMilliseconds),
+      currentDate: toDate(expected.now()),
     });
     return OK;
   } catch (err) {

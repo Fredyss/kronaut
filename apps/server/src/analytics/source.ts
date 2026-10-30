@@ -1,4 +1,10 @@
-import { type Account, encodePublicId, isProviderFailure, type ProviderApp } from '@kronaut/core';
+import {
+  type Account,
+  encodePublicId,
+  isProviderFailure,
+  type ProviderApp,
+  toDate,
+} from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
 import { loadCredential, loadProviderApp } from '../credential-store.ts';
@@ -105,7 +111,7 @@ export function utcDay(at: Date): string {
 }
 
 export function utcDayOf(now: Temporal.Instant): { readonly at: Date; readonly day: string } {
-  const at = new Date(now.epochMilliseconds);
+  const at = toDate(now);
   return { at, day: utcDay(at) };
 }
 

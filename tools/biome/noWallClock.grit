@@ -1,0 +1,8 @@
+language js
+
+or {
+  `Date.now`,
+  `new Date()`
+} as $ref where {
+  register_diagnostic(span=$ref, message="Read the clock through Temporal or an injected clock on the server (CLAUDE.md).", severity="error")
+}
