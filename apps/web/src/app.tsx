@@ -171,6 +171,15 @@ const tagSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('./routes/settings-tags.tsx'), 'TagSettingsPage'),
 });
 
+const savedTextSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'saved-texts',
+  component: lazyRouteComponent(
+    () => import('./routes/settings-saved-texts.tsx'),
+    'SavedTextSettingsPage',
+  ),
+});
+
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -206,6 +215,7 @@ const routeTree = rootRoute.addChildren([
       approvalSettingsRoute,
       notificationSettingsRoute,
       tagSettingsRoute,
+      savedTextSettingsRoute,
       systemSettingsRoute,
     ]),
   ]),

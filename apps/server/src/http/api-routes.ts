@@ -20,6 +20,7 @@ import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { queueRoutes } from '../queue/routes.ts';
+import { savedTextRoutes } from '../saved-texts/routes.ts';
 import { seriesRoutes } from '../series/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
 import { tagRoutes } from '../tags/routes.ts';
@@ -67,6 +68,7 @@ export function apiRoutes({
     ...seriesRoutes(),
     ...evergreenRoutes(),
     ...tagRoutes(),
+    ...savedTextRoutes(),
     ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),

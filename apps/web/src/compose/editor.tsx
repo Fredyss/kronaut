@@ -3,17 +3,24 @@ import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Fragment, Slice } from '@tiptap/pm/model';
+import { Selection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { EditorContent, type JSONContent, useEditor } from '@tiptap/react';
-import { useLayoutEffect, useRef } from 'react';
+import { type Ref, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import { type Doc, EMPTY_DOC, textToParagraphs, toDoc } from './doc.ts';
 
+export interface PostEditorHandle {
+  readonly insertText: (text: string) => void;
+}
+
 export interface PostEditorProps {
+  readonly ref?: Ref<PostEditorHandle>;
   readonly id: string;
   readonly label: string;
   readonly disabled?: boolean;
   readonly initial?: Doc;
   readonly onChange: (doc: Doc) => void;
+  readonly onFocus?: () => void;
 }
 
 function insertPlainText(view: EditorView, text: string, at?: number): void {
@@ -45,16 +52,19 @@ const plainTextOnly = {
 };
 
 export default function PostEditor({
+  ref,
   id,
   label,
   disabled = false,
   initial = EMPTY_DOC,
   onChange,
+  onFocus,
 }: PostEditorProps) {
   const changed = useRef(onChange);
   useLayoutEffect(() => {
     changed.current = onChange;
   }, [onChange]);
+  const cursorPlaced = useRef(false);
   const editor = useEditor({
     extensions: [Document, Paragraph, Text, HardBreak],
     content: structuredClone(initial) as JSONContent,
@@ -71,9 +81,31 @@ export default function PostEditor({
           'min-h-40 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring',
       },
       handleDOMEvents: plainTextOnly,
+      handleClick: () => {
+        cursorPlaced.current = true;
+        return false;
+      },
+    },
+    onFocus: () => onFocus?.(),
+    onSelectionUpdate: () => {
+      cursorPlaced.current = true;
     },
     onUpdate: ({ editor: current }) => changed.current(toDoc(current.getJSON())),
   });
+  useImperativeHandle(
+    ref,
+    () => ({
+      insertText(text) {
+        const { view } = editor;
+        if (!cursorPlaced.current) {
+          view.dispatch(view.state.tr.setSelection(Selection.atEnd(view.state.doc)));
+        }
+        insertPlainText(view, text);
+        view.focus();
+      },
+    }),
+    [editor],
+  );
   useLayoutEffect(() => {
     editor.setEditable(!disabled, false);
   }, [editor, disabled]);

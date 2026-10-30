@@ -36,6 +36,26 @@
 /** @typedef {{}} Settings_Read_OnlyInputs */
 /** @typedef {{}} Settings_Required_ApprovalsInputs */
 /** @typedef {{}} Settings_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_AddInputs */
+/** @typedef {{}} Settings_Saved_Text_CancelInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
+/** @typedef {{}} Settings_Saved_Text_DeletedInputs */
+/** @typedef {{}} Settings_Saved_Text_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Edit_NamedInputs */
+/** @typedef {{}} Settings_Saved_Text_ExistsInputs */
+/** @typedef {{}} Settings_Saved_Text_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_KeepInputs */
+/** @typedef {{}} Settings_Saved_Text_LimitInputs */
+/** @typedef {{}} Settings_Saved_Text_NameInputs */
+/** @typedef {{}} Settings_Saved_Text_Name_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_TextInputs */
+/** @typedef {{}} Settings_Saved_Texts_EmptyInputs */
+/** @typedef {{}} Settings_Saved_Texts_IntroInputs */
+/** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
@@ -247,6 +267,86 @@ export const settings_required_approvals = /** @type {(inputs: Settings_Required
 
 export const settings_saved = /** @type {(inputs: Settings_SavedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Nastavenia schvaľovania sú uložené.`)
+};
+
+export const settings_saved_text_add = /** @type {(inputs: Settings_Saved_Text_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať uložený text`)
+};
+
+export const settings_saved_text_cancel = /** @type {(inputs: Settings_Saved_Text_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušiť`)
+};
+
+export const settings_saved_text_delete = /** @type {(inputs: Settings_Saved_Text_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť uložený text ${i?.name}`)
+};
+
+export const settings_saved_text_delete_body = /** @type {(inputs: Settings_Saved_Text_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevky, ktoré ho už použili, si svoj text ponechajú.`)
+};
+
+export const settings_saved_text_delete_confirm = /** @type {(inputs: Settings_Saved_Text_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť uložený text`)
+};
+
+export const settings_saved_text_delete_title = /** @type {(inputs: Settings_Saved_Text_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť uložený text „${i?.name}“?`)
+};
+
+export const settings_saved_text_deleted = /** @type {(inputs: Settings_Saved_Text_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text je odstránený`)
+};
+
+export const settings_saved_text_edit = /** @type {(inputs: Settings_Saved_Text_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upraviť`)
+};
+
+export const settings_saved_text_edit_named = /** @type {(inputs: Settings_Saved_Text_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Upraviť uložený text ${i?.name}`)
+};
+
+export const settings_saved_text_exists = /** @type {(inputs: Settings_Saved_Text_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložený text s týmto názvom už existuje.`)
+};
+
+export const settings_saved_text_invalid = /** @type {(inputs: Settings_Saved_Text_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento text je prázdny alebo príliš dlhý.`)
+};
+
+export const settings_saved_text_keep = /** @type {(inputs: Settings_Saved_Text_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechať uložený text`)
+};
+
+export const settings_saved_text_limit = /** @type {(inputs: Settings_Saved_Text_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovný priestor dosiahol limit uložených textov. Najprv niektorý odstráňte.`)
+};
+
+export const settings_saved_text_name = /** @type {(inputs: Settings_Saved_Text_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Názov`)
+};
+
+export const settings_saved_text_name_invalid = /** @type {(inputs: Settings_Saved_Text_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento názov je prázdny alebo príliš dlhý.`)
+};
+
+export const settings_saved_text_saved = /** @type {(inputs: Settings_Saved_Text_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text je uložený`)
+};
+
+export const settings_saved_text_text = /** @type {(inputs: Settings_Saved_Text_TextInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text`)
+};
+
+export const settings_saved_texts_empty = /** @type {(inputs: Settings_Saved_Texts_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ tu nie sú žiadne uložené texty.`)
+};
+
+export const settings_saved_texts_intro = /** @type {(inputs: Settings_Saved_Texts_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Opakovane použiteľný text pre celý pracovný priestor, napríklad podpis alebo šablóna. Vložíte ho pri písaní príspevku.`)
+};
+
+export const settings_saved_texts_title = /** @type {(inputs: Settings_Saved_Texts_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložené texty`)
 };
 
 export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {

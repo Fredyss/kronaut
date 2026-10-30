@@ -21,6 +21,8 @@ describe('status table', () => {
     ['media_in_use', 409],
     ['tag_exists', 409],
     ['tag_limit', 409],
+    ['saved_text_exists', 409],
+    ['saved_text_limit', 409],
     ['idempotency_key_reused', 409],
     ['idempotency_key_required', 428],
     ['payload_too_large', 413],

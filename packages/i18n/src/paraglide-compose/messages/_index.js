@@ -49,6 +49,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_InsertInputs */
+/** @typedef {{}} Compose_Insert_Saved_TextInputs */
 /** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
@@ -817,6 +819,36 @@ export const compose_inherits = /** @type {((inputs?: Compose_InheritsInputs, op
 	if (locale === "sk") return __sk.compose_inherits(inputs)
 	if (locale === "cs") return __cs.compose_inherits(inputs)
 	return __en.compose_inherits(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Insert" |
+*
+* @param {Compose_InsertInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_insert = /** @type {((inputs?: Compose_InsertInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_InsertInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_insert(inputs)
+	if (locale === "cs") return __cs.compose_insert(inputs)
+	return __en.compose_insert(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Insert saved text" |
+*
+* @param {Compose_Insert_Saved_TextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_insert_saved_text = /** @type {((inputs?: Compose_Insert_Saved_TextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Insert_Saved_TextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_insert_saved_text(inputs)
+	if (locale === "cs") return __cs.compose_insert_saved_text(inputs)
+	return __en.compose_insert_saved_text(inputs)
 });
 /**
 * | output |

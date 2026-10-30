@@ -3307,6 +3307,155 @@ export type PostsUnscheduleResponses = {
 
 export type PostsUnscheduleResponse = PostsUnscheduleResponses[keyof PostsUnscheduleResponses];
 
+export type SavedTextsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/saved-texts';
+};
+
+export type SavedTextsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SavedTextsListError = SavedTextsListErrors[keyof SavedTextsListErrors];
+
+export type SavedTextsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            doc: {
+                [key: string]: unknown;
+            };
+            id: string;
+            name: string;
+        }>;
+    };
+};
+
+export type SavedTextsListResponse = SavedTextsListResponses[keyof SavedTextsListResponses];
+
+export type SavedTextsCreateData = {
+    body: {
+        doc: {
+            [key: string]: unknown;
+        };
+        name: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/saved-texts';
+};
+
+export type SavedTextsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SavedTextsCreateError = SavedTextsCreateErrors[keyof SavedTextsCreateErrors];
+
+export type SavedTextsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        doc: {
+            [key: string]: unknown;
+        };
+        id: string;
+        name: string;
+    };
+};
+
+export type SavedTextsCreateResponse = SavedTextsCreateResponses[keyof SavedTextsCreateResponses];
+
+export type SavedTextsDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        savedTextId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/saved-texts/{savedTextId}';
+};
+
+export type SavedTextsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SavedTextsDeleteError = SavedTextsDeleteErrors[keyof SavedTextsDeleteErrors];
+
+export type SavedTextsDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type SavedTextsDeleteResponse = SavedTextsDeleteResponses[keyof SavedTextsDeleteResponses];
+
+export type SavedTextsUpdateData = {
+    body: {
+        doc?: {
+            [key: string]: unknown;
+        };
+        name?: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        savedTextId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/saved-texts/{savedTextId}';
+};
+
+export type SavedTextsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type SavedTextsUpdateError = SavedTextsUpdateErrors[keyof SavedTextsUpdateErrors];
+
+export type SavedTextsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        doc: {
+            [key: string]: unknown;
+        };
+        id: string;
+        name: string;
+    };
+};
+
+export type SavedTextsUpdateResponse = SavedTextsUpdateResponses[keyof SavedTextsUpdateResponses];
+
 export type SeriesGetData = {
     body?: never;
     path: {
