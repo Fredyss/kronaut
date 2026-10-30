@@ -1,10 +1,12 @@
 import type {
   BaseContext,
+  ProviderError,
   ProviderHttp,
   ProviderHttpResponse,
   ProviderLogger,
   ProviderState,
   PublishContext,
+  StepEffect,
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 
@@ -170,4 +172,16 @@ export function testPublishContext(
     },
   };
   return { ctx, checkpoints, events };
+}
+
+const TABLE_STATUSES = [302, 400, 401, 403, 404, 409, 413, 422, 429, 500, 503];
+
+export function statusTable(
+  classify: (status: number, effect: StepEffect) => ProviderError,
+): Readonly<Record<string, string>> {
+  const effects: readonly StepEffect[] = ['private', 'public'];
+  const rows = TABLE_STATUSES.flatMap((status) =>
+    effects.map((effect) => [`${status} ${effect}`, JSON.stringify(classify(status, effect))]),
+  );
+  return Object.fromEntries(rows);
 }

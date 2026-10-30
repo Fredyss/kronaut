@@ -75,7 +75,11 @@ export function resetAt(headers: Headers, now: Temporal.Instant): Temporal.Insta
   return retryAfter(headers, now, RATE_LIMIT_FALLBACK_MS);
 }
 
-function failureOf(reply: ResourceReply, effect: StepEffect, now: Temporal.Instant): ProviderError {
+export function failureOf(
+  reply: ResourceReply,
+  effect: StepEffect,
+  now: Temporal.Instant,
+): ProviderError {
   const { status, headers } = reply.response;
   const raw = errorCode(reply.body);
   if (status === 429)
