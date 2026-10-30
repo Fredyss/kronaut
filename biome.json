@@ -61,8 +61,7 @@
         "!**/*.test.ts",
         "!**/*.test.tsx",
         "!**/testing.ts",
-        "!**/testing/**",
-        "!**/*testing*"
+        "!**/testing/**"
       ]
     },
     {
@@ -74,8 +73,7 @@
         "!**/*.test.ts",
         "!**/*.test.tsx",
         "!**/testing.ts",
-        "!**/testing/**",
-        "!**/*testing*"
+        "!**/testing/**"
       ]
     },
     {
