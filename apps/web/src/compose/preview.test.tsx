@@ -2,11 +2,11 @@
 import { toPlainText } from '@kronaut/compose/text';
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { PostEditorProps } from './compose/editor.tsx';
-import { channel, jpeg, mount, pickFiles } from './compose-testing.tsx';
+import type { PostEditorProps } from './editor.tsx';
+import { channel, jpeg, mount, pickFiles } from './testing.tsx';
 
-vi.mock('./compose/editor.tsx', async () => {
-  const { toDoc } = await import('./compose/doc.ts');
+vi.mock('./editor.tsx', async () => {
+  const { toDoc } = await import('./doc.ts');
   return {
     default: ({ id, label, initial, onChange }: PostEditorProps) => (
       <textarea
@@ -19,8 +19,8 @@ vi.mock('./compose/editor.tsx', async () => {
   };
 });
 
-vi.mock('./compose/media.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./compose/media.ts')>()),
+vi.mock('./media.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./media.ts')>()),
   thumbnail: async () => 'data:image/jpeg;base64,AA==',
 }));
 

@@ -7,6 +7,15 @@ import { type MediaStore, storageKey } from '@kronaut/media';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Auth, BASE, expectError, requestAs } from '../http/testing.ts';
+import { findMediaAsset } from './dto.ts';
+import { MEDIA_IMAGE_MAX_BYTES } from './ingest.ts';
+import {
+  MEDIA_UPLOAD_BODY_LIMIT,
+  mediaGetRoute,
+  mediaMarkAiRoute,
+  mediaRoutes,
+  mediaUploadRoute,
+} from './routes.ts';
 import {
   asUser,
   clock,
@@ -17,16 +26,7 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './db-testing.ts';
-import { findMediaAsset } from './dto.ts';
-import { MEDIA_IMAGE_MAX_BYTES } from './ingest.ts';
-import {
-  MEDIA_UPLOAD_BODY_LIMIT,
-  mediaGetRoute,
-  mediaMarkAiRoute,
-  mediaRoutes,
-  mediaUploadRoute,
-} from './routes.ts';
+} from './testing/db.ts';
 import {
   bytes,
   expectMediaError,

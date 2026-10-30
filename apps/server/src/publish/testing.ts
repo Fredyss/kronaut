@@ -12,8 +12,8 @@ import type { MediaAccess } from '../media-access.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { contentHashInput, resolveDestination } from '../snapshot.ts';
 import { type PublishDeps, publishDeps } from './task.ts';
-import { FAKE_PROVIDER, type FakeProvider, fakeProvider } from './testing-fake.ts';
-import { type SeedItem, seedSnapshot } from './testing-seed.ts';
+import { FAKE_PROVIDER, type FakeProvider, fakeProvider } from './testing/fake.ts';
+import { type SeedItem, seedSnapshot } from './testing/seed.ts';
 
 export {
   FAKE_PROVIDER,
@@ -32,9 +32,9 @@ export {
   fakeManifest,
   fakeProvider,
   fakeVerifyDefaults,
-} from './testing-fake.ts';
+} from './testing/fake.ts';
 
-export { SEED_TEXT } from './testing-seed.ts';
+export { SEED_TEXT } from './testing/seed.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const CLI: Actor = { kind: 'cli' };

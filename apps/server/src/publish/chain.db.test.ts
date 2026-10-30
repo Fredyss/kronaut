@@ -6,7 +6,6 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { restartPublishProgress } from '../posts/destinations.ts';
 import { MAX_ATTEMPTS } from './plan.ts';
 import { reapLeases } from './sweeps.ts';
-import { FAKE_TEXT_MAX, fakeManifest, fakeVerifyDefaults, type Seeded } from './testing.ts';
 import {
   deps,
   fake,
@@ -18,7 +17,8 @@ import {
   stopHarness,
   updateDestination,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import { FAKE_TEXT_MAX, fakeManifest, fakeVerifyDefaults, type Seeded } from './testing.ts';
 import { runVerify } from './verify.ts';
 
 let test: TestDatabase;

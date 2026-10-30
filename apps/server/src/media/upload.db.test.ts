@@ -8,9 +8,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronItems } from '../cron.ts';
 import { expectError } from '../http/testing.ts';
 import { installJobQueue } from '../job-queue.ts';
-import { type MediaDb, stagingUnder, startMediaDb, type Tenant, uuidOf } from './db-testing.ts';
 import { collectMedia } from './gc.ts';
 import type { Staging } from './staging.ts';
+import { type MediaDb, stagingUnder, startMediaDb, type Tenant, uuidOf } from './testing/db.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
 import { videoUploadRoute } from './upload-routes.ts';
 

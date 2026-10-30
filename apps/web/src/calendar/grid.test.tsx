@@ -4,16 +4,16 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Temporal } from 'temporal-polyfill';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { PostSummary } from './api.ts';
-import { App, createApp } from './app.tsx';
-import { byDay, byHour } from './calendar/entries.ts';
-import { dayDelta, instantOf, type MovablePost, movedLocal, slotLocal } from './calendar/move.ts';
-import { visibleRange } from './calendar/time.ts';
+import type { PostSummary } from '../api.ts';
+import { App, createApp } from '../app.tsx';
+import { byDay, byHour } from './entries.ts';
+import { dayDelta, instantOf, type MovablePost, movedLocal, slotLocal } from './move.ts';
+import { visibleRange } from './time.ts';
 
 const clock = vi.hoisted(() => ({ now: '2026-10-01T10:00:00Z' }));
 
-vi.mock('./calendar/time.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./calendar/time.ts')>()),
+vi.mock('./time.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./time.ts')>()),
   browserTimeZone: () => 'Europe/Bratislava',
   browserLanguage: () => 'en-US',
   today: () => Temporal.PlainDate.from('2026-10-01'),

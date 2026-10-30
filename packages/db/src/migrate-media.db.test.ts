@@ -1,7 +1,7 @@
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { migrate } from './migrate.ts';
-import { createDatabaseIn, query, recordThrough } from './migrate-testing.ts';
+import { createDatabaseIn, query, recordThrough } from './testing/migrate.ts';
 
 let container: StartedPostgreSqlContainer;
 

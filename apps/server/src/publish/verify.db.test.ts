@@ -4,7 +4,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { saveCredential } from '../credential-store.ts';
 import { BACKOFF_BASE_MS } from './backoff.ts';
 import { reapLeases, reconcile } from './sweeps.ts';
-import { fakeVerifyDefaults, type Seeded } from './testing.ts';
 import {
   audits,
   CLI,
@@ -24,7 +23,8 @@ import {
   updateDestination,
   verifyRunAt,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import { fakeVerifyDefaults, type Seeded } from './testing.ts';
 import { runVerify } from './verify.ts';
 
 let test: TestDatabase;

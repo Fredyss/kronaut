@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database } from '@kronaut/db';
 import { sql } from 'kysely';
-import { type PublishDeps, runPublish } from './task.ts';
+import { type PublishDeps, runPublish } from '../task.ts';
 import {
   type FakeProvider,
   type FixtureUrls,
@@ -11,7 +11,7 @@ import {
   type Seeded,
   type SeedOptions,
   startPublishFixture,
-} from './testing.ts';
+} from '../testing.ts';
 
 export const SYSTEM: Actor = { kind: 'system' };
 export const CLI: Actor = { kind: 'cli' };
