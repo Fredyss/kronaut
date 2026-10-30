@@ -46,5 +46,5 @@ These rules bind new code, but existing code still breaks them:
 - `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Feature folders import each other in cycles. A cycle between files fails the check; a cycle between folders doesn't yet.
-- Folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
+- Feature folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
 - New post, edit from the post page and duplicate open the full-page composer, not a dialog.
