@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  featureImports,
   findCycles,
   type ImportGraph,
   isTesting,
@@ -29,9 +31,38 @@ describe('repo structure', () => {
   it('keeps testing helpers out of production code', () => {
     expect(testingLeaks(graph)).toEqual([]);
   });
+
+  it('matches the declared imports between features', () => {
+    const declared = readFileSync(join(import.meta.dirname, 'feature-imports.json'), 'utf8');
+    expect(featureImports(graph)).toEqual((JSON.parse(declared) as string[]).sort());
+  });
 });
 
 describe('the structure rules', () => {
+  it('lists production imports between features by target file', () => {
+    const server = 'apps/server/src';
+    const app = (target: string) => `${server}/${target}`;
+    const imports: ImportGraph = new Map([
+      [app('posts/a.ts'), [app('posts/b.ts'), app('tags/read.ts'), app('tags/read.ts')]],
+      [app('posts/c.ts'), [app('tags/read.ts'), app('queue/slots.ts'), app('config.ts')]],
+      [app('posts/d.ts'), [app('http/types.ts'), 'packages/core/src/index.ts']],
+      [app('posts/a.test.ts'), [app('queue/routes.ts')]],
+      [app('posts/testing.ts'), [app('queue/routes.ts')]],
+      [app('http/api-routes.ts'), [app('posts/routes.ts')]],
+      [app('start.ts'), [app('posts/routes.ts')]],
+      ['apps/web/src/routes/post.tsx', ['apps/web/src/compose/form.tsx']],
+      ['apps/web/src/inbox/list.tsx', ['apps/web/src/compose/form.tsx']],
+      ['apps/web/src/inbox/row.tsx', ['apps/web/src/routes/post.tsx']],
+    ]);
+    expect(featureImports(imports)).toEqual([
+      'server/posts -> http/types.ts',
+      'server/posts -> queue/slots.ts',
+      'server/posts -> tags/read.ts',
+      'web/inbox -> compose/form.tsx',
+      'web/inbox -> routes/post.tsx',
+    ]);
+  });
+
   it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {
     const source = [
       "import { a } from './a.ts';",
