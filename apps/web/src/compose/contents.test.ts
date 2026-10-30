@@ -18,7 +18,7 @@ function doc(text: string): Doc {
 
 function image(id: string, altText = ''): PickedImage {
   const file = new File([id], `${id}.jpg`, { type: 'image/jpeg' });
-  return { id, file, thumb: null, altText, aiGenerated: false };
+  return { id, file, facts: file, thumb: null, altText, aiGenerated: false };
 }
 
 const BASE: Contents = {

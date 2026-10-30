@@ -14,6 +14,7 @@ import {
   reset,
 } from './contents.ts';
 import type { Doc } from './doc.ts';
+import type { OpenedForm } from './from-post.ts';
 import { itemSupport, itemsState, postTypeFor } from './items.ts';
 import { useImages } from './use-images.ts';
 import { useMedia } from './use-media.ts';
@@ -55,13 +56,14 @@ export function useContents(
   workspaceId: string,
   list: readonly Channel[],
   selected: ReadonlySet<string>,
+  seed?: OpenedForm,
 ) {
-  const [contents, setContents] = useState<Contents>(EMPTY_CONTENTS);
+  const [contents, setContents] = useState<Contents>(seed?.contents ?? EMPTY_CONTENTS);
   const [active, setActive] = useState<ContentKey>(null);
-  const videos = useVideos(workspaceId, videoIds(contents));
+  const videos = useVideos(workspaceId, videoIds(contents), seed?.videos);
   const mediaFor = (channelId: string): MediaFacts => {
     const content = effective(contents, channelId);
-    return { images: content.images.map((image) => image.file), video: content.video !== null };
+    return { images: content.images.map((image) => image.facts), video: content.video !== null };
   };
   const choiceOf = (channel: Channel) => choiceFor(channel, mediaFor(channel.id));
   const tabs = list.filter(
@@ -69,6 +71,8 @@ export function useContents(
       selected.has(channel.id) &&
       (choiceOf(channel).kind === 'ok' || contents.customized.has(channel.id)),
   );
+  const stored = seed?.stored;
+  const keeps = (id: string) => contents.customized.has(id) || stored?.has(id) === true;
   const shown = active !== null && tabs.some((channel) => channel.id === active) ? active : null;
   if (shown !== active) setActive(shown);
   const target = shown !== null && contents.customized.has(shown) ? shown : null;
@@ -96,7 +100,10 @@ export function useContents(
     videos: videos.entries,
     mediaFor,
     choiceOf,
-    unusable: tabs.filter((channel) => choiceOf(channel).kind !== 'ok').map(({ id }) => id),
+    unusable: list
+      .filter(({ id }) => selected.has(id) && keeps(id))
+      .filter((channel) => choiceOf(channel).kind !== 'ok')
+      .map(({ id }) => id),
   };
 }
 

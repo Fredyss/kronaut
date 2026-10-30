@@ -30,8 +30,6 @@ describe('draftBody', () => {
           { accountId: 'acct_a', publishType: 'post', variant: null },
           { accountId: 'acct_b', publishType: 'post', variant: 0 },
         ],
-        when: { mode: 'asap' },
-        request: null,
       },
       new Map(),
     );

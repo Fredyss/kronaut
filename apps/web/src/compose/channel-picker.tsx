@@ -102,6 +102,7 @@ interface ChannelsFieldsetProps {
   readonly failed: boolean;
   readonly mediaFor: (channelId: string) => MediaFacts;
   readonly customized: (channelId: string) => boolean;
+  readonly stored: ReadonlySet<string>;
   readonly selected: ReadonlySet<string>;
   readonly setSelected: Dispatch<SetStateAction<ReadonlySet<string>>>;
   readonly pending: boolean;
@@ -112,10 +113,12 @@ export function ChannelsFieldset({
   failed,
   mediaFor,
   customized,
+  stored,
   selected,
   setSelected,
   pending,
 }: ChannelsFieldsetProps) {
+  const held = (id: string) => stored.has(id) && selected.has(id);
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className="mb-3 font-medium text-sm">{composeText.compose_channels_title()}</legend>
@@ -126,9 +129,9 @@ export function ChannelsFieldset({
       ) : null}
       {channels === undefined ? null : (
         <ChannelPicker
-          channels={channels.filter((channel) => channel.status !== 'disconnected')}
+          channels={channels.filter(({ id, status }) => status !== 'disconnected' || held(id))}
           mediaFor={mediaFor}
-          customized={customized}
+          customized={(id) => customized(id) || held(id)}
           selected={selected}
           disabled={pending}
           toggle={(id, on) =>

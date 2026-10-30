@@ -58,7 +58,7 @@ export function ImageRow({
           <input
             type="checkbox"
             checked={image.aiGenerated}
-            disabled={disabled}
+            disabled={disabled || image.file === null}
             aria-describedby={aiHintId}
             onChange={(event) => onAi(event.currentTarget.checked)}
             className="size-4 accent-primary"

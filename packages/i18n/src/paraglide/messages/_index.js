@@ -123,6 +123,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
+/** @typedef {{}} Compose_Save_DraftInputs */
+/** @typedef {{}} Compose_Saving_DraftInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
 /** @typedef {{}} Compose_SchedulingInputs */
 /** @typedef {{}} Compose_TimeInputs */
@@ -249,6 +251,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Password_Too_LongInputs */
 /** @typedef {{}} Post_Action_DeleteInputs */
 /** @typedef {{}} Post_Action_DuplicateInputs */
+/** @typedef {{}} Post_Action_EditInputs */
 /** @typedef {{}} Post_Action_StatsInputs */
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
@@ -265,6 +268,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Post_Discard_ConfirmInputs */
 /** @typedef {{}} Post_Discard_KeepInputs */
 /** @typedef {{}} Post_Discard_TitleInputs */
+/** @typedef {{}} Post_Edit_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
 /** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
@@ -2202,6 +2206,36 @@ export const compose_requesting_approval = /** @type {((inputs?: Compose_Request
 /**
 * | output |
 * | --- |
+* | "Save draft" |
+*
+* @param {Compose_Save_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_save_draft = /** @type {((inputs?: Compose_Save_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Save_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_save_draft(inputs)
+	if (locale === "cs") return __cs.compose_save_draft(inputs)
+	return __en.compose_save_draft(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Saving…" |
+*
+* @param {Compose_Saving_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_saving_draft = /** @type {((inputs?: Compose_Saving_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Saving_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_saving_draft(inputs)
+	if (locale === "cs") return __cs.compose_saving_draft(inputs)
+	return __en.compose_saving_draft(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Schedule" |
 *
 * @param {Compose_ScheduleInputs} inputs
@@ -4097,6 +4131,21 @@ export const post_action_duplicate = /** @type {((inputs?: Post_Action_Duplicate
 /**
 * | output |
 * | --- |
+* | "Edit" |
+*
+* @param {Post_Action_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_action_edit = /** @type {((inputs?: Post_Action_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Action_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_action_edit(inputs)
+	if (locale === "cs") return __cs.post_action_edit(inputs)
+	return __en.post_action_edit(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Stats" |
 *
 * @param {Post_Action_StatsInputs} inputs
@@ -4335,6 +4384,21 @@ export const post_discard_title = /** @type {((inputs?: Post_Discard_TitleInputs
 	if (locale === "sk") return __sk.post_discard_title(inputs)
 	if (locale === "cs") return __cs.post_discard_title(inputs)
 	return __en.post_discard_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit post" |
+*
+* @param {Post_Edit_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_edit_title = /** @type {((inputs?: Post_Edit_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Edit_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_edit_title(inputs)
+	if (locale === "cs") return __cs.post_edit_title(inputs)
+	return __en.post_edit_title(inputs)
 });
 /**
 * | countPlural | output |

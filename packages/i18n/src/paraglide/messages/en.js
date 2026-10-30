@@ -121,6 +121,8 @@
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Reply_Too_Many_LinksInputs */
 /** @typedef {{}} Compose_Request_ApprovalInputs */
 /** @typedef {{}} Compose_Requesting_ApprovalInputs */
+/** @typedef {{}} Compose_Save_DraftInputs */
+/** @typedef {{}} Compose_Saving_DraftInputs */
 /** @typedef {{}} Compose_ScheduleInputs */
 /** @typedef {{}} Compose_SchedulingInputs */
 /** @typedef {{}} Compose_TimeInputs */
@@ -247,6 +249,7 @@
 /** @typedef {{}} Password_Too_LongInputs */
 /** @typedef {{}} Post_Action_DeleteInputs */
 /** @typedef {{}} Post_Action_DuplicateInputs */
+/** @typedef {{}} Post_Action_EditInputs */
 /** @typedef {{}} Post_Action_StatsInputs */
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
@@ -263,6 +266,7 @@
 /** @typedef {{}} Post_Discard_ConfirmInputs */
 /** @typedef {{}} Post_Discard_KeepInputs */
 /** @typedef {{}} Post_Discard_TitleInputs */
+/** @typedef {{}} Post_Edit_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
 /** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
@@ -859,6 +863,14 @@ export const compose_requesting_approval = /** @type {(inputs: Compose_Requestin
 	return /** @type {LocalizedString} */ (`Requesting approval…`)
 };
 
+export const compose_save_draft = /** @type {(inputs: Compose_Save_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Save draft`)
+};
+
+export const compose_saving_draft = /** @type {(inputs: Compose_Saving_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Saving…`)
+};
+
 export const compose_schedule = /** @type {(inputs: Compose_ScheduleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Schedule`)
 };
@@ -1372,6 +1384,10 @@ export const post_action_duplicate = /** @type {(inputs: Post_Action_DuplicateIn
 	return /** @type {LocalizedString} */ (`Duplicate`)
 };
 
+export const post_action_edit = /** @type {(inputs: Post_Action_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit`)
+};
+
 export const post_action_stats = /** @type {(inputs: Post_Action_StatsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Stats`)
 };
@@ -1438,6 +1454,10 @@ export const post_discard_keep = /** @type {(inputs: Post_Discard_KeepInputs) =>
 
 export const post_discard_title = /** @type {(inputs: Post_Discard_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Discard this post?`)
+};
+
+export const post_edit_title = /** @type {(inputs: Post_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit post`)
 };
 
 export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {

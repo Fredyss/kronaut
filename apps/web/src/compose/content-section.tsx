@@ -71,8 +71,10 @@ function previewTargets(state: ContentsState): PreviewTarget[] {
     const choice = state.choiceOf(channel);
     if (!shown || choice.kind !== 'ok') return [];
     const { images } = effective(state.contents, channel.id);
-    const video = videoOf(state, channel.id)?.url ?? null;
-    return [{ channel, doc, images, video, publishType: choice.publishType }];
+    const entry = videoOf(state, channel.id);
+    const video = entry?.url ?? null;
+    const poster = entry?.poster ?? null;
+    return [{ channel, doc, images, video, poster, publishType: choice.publishType }];
   });
 }
 

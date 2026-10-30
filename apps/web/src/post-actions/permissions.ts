@@ -1,5 +1,10 @@
-const DRAFT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin', 'editor', 'contributor']);
-const CANCEL_ROLES: ReadonlySet<string> = new Set(['owner', 'admin', 'editor']);
+export const DRAFT_ROLES: ReadonlySet<string> = new Set([
+  'owner',
+  'admin',
+  'editor',
+  'contributor',
+]);
+export const CANCEL_ROLES: ReadonlySet<string> = new Set(['owner', 'admin', 'editor']);
 const CANCELED_ON_DELETE: ReadonlySet<string> = new Set([
   'scheduled',
   'awaiting_manual',

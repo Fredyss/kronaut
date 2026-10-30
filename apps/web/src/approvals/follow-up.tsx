@@ -2,7 +2,7 @@ import { postsRequestApproval, postsSchedule } from '@kronaut/sdk';
 import { Button } from '@kronaut/ui';
 import { useState } from 'react';
 import { errorCode } from '../api.ts';
-import type { ComposeWhen } from '../compose/submit.ts';
+import type { ScheduleWhen } from '../compose/submit.ts';
 import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
 import { type PostScope, useApprovalCall } from './actions.ts';
@@ -33,7 +33,7 @@ export function RequestApproval({ scope, version, again }: FollowUpProps & { aga
       </div>
     );
   }
-  const submit = (when: ComposeWhen, note: string) => {
+  const submit = (when: ScheduleWhen, note: string) => {
     const body = approvalBody(version, when, note);
     action.mutate({
       fingerprint: JSON.stringify({ request: scope.postId, body }),
@@ -54,7 +54,7 @@ export function RequestApproval({ scope, version, again }: FollowUpProps & { aga
 function useSchedule(scope: PostScope, version: number) {
   const client = useApiClient();
   const action = useApprovalCall(scope);
-  const run = (when: ComposeWhen) => {
+  const run = (when: ScheduleWhen) => {
     const body = { expectedVersion: version, ...when };
     action.mutate({
       fingerprint: JSON.stringify({ schedule: scope.postId, body }),

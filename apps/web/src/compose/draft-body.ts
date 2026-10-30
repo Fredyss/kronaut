@@ -1,7 +1,9 @@
 import type { PostsCreateData } from '@kronaut/sdk';
-import type { ComposeContent, ComposeInput } from './submit.ts';
+import type { ComposeContent, ComposeDestination, ComposeInput } from './submit.ts';
 
 export type DraftBody = PostsCreateData['body'];
+
+type DraftInput = Pick<ComposeInput, 'content' | 'variants' | 'destinations'>;
 
 type DraftItem = DraftBody['items'][0];
 
@@ -31,13 +33,27 @@ function toItems(content: ComposeContent, ids: ReadonlyMap<string, string>): Dra
   return [main, ...replies, ...last];
 }
 
-export function draftBody(input: ComposeInput, ids: ReadonlyMap<string, string>): DraftBody {
+function toDestination(destination: ComposeDestination) {
+  const { accountId, publishType, variant, settings, deliveryMode } = destination;
+  return {
+    accountId,
+    publishType,
+    ...(settings === undefined ? {} : { settings }),
+    ...(deliveryMode === undefined ? {} : { deliveryMode }),
+    ...(variant === null ? {} : { variant }),
+  };
+}
+
+export function draftBody(input: DraftInput, ids: ReadonlyMap<string, string>): DraftBody {
   const variants = input.variants.map((v) => ({ items: toItems(v, ids) }));
   return {
     items: toItems(input.content, ids),
     ...(variants.length === 0 ? {} : { variants }),
-    destinations: input.destinations.map(({ accountId, publishType, variant }) =>
-      variant === null ? { accountId, publishType } : { accountId, publishType, variant },
-    ),
+    destinations: input.destinations.map(toDestination),
   };
+}
+
+export function formFingerprint(input: DraftInput): string {
+  const images = [input.content, ...input.variants].flatMap((content) => content.images);
+  return JSON.stringify(draftBody(input, new Map(images.map(({ id }) => [id, id]))));
 }

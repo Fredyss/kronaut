@@ -1,6 +1,6 @@
 import { Button } from '@kronaut/ui';
 import { useId, useState } from 'react';
-import type { ComposeWhen } from '../compose/submit.ts';
+import type { ScheduleWhen } from '../compose/submit.ts';
 import { resolveWhen, submitLabel, useWhen } from '../compose/when.ts';
 import { WhenFieldset } from '../compose/when-fieldset.tsx';
 import { m } from '../i18n.ts';
@@ -9,7 +9,7 @@ interface WhenFormProps {
   readonly request: boolean;
   readonly pending: boolean;
   readonly error: string | null;
-  onSubmit(when: ComposeWhen, note: string): void;
+  onSubmit(when: ScheduleWhen, note: string): void;
   onCancel(): void;
 }
 
@@ -30,7 +30,7 @@ export function WhenForm({ request, pending, error, onSubmit, onCancel }: WhenFo
         const resolved = resolveWhen(when.mode, when.date, when.time, when.tz);
         if ('problem' in resolved) return setProblem(resolved.problem);
         setProblem(null);
-        onSubmit(resolved.when, note);
+        if (resolved.when.mode !== 'draft') onSubmit(resolved.when, note);
       }}
     >
       <WhenFieldset

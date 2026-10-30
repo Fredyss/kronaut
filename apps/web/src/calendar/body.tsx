@@ -67,6 +67,7 @@ export function CalendarBody(props: BodyProps) {
 
 function CalendarContent({
   workspaceId,
+  role,
   view,
   range,
   current,
@@ -118,7 +119,7 @@ function CalendarContent({
           </p>
         ) : null
       ) : (
-        <Drafts items={drafts.data.items} formats={formats} />
+        <Drafts items={drafts.data.items} formats={formats} role={role} />
       )}
     </>
   );

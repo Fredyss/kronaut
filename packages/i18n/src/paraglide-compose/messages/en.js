@@ -17,12 +17,20 @@
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
+/** @typedef {{}} Compose_Edit_Queue_NoteInputs */
+/** @typedef {{}} Compose_Edit_Review_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
+/** @typedef {{}} Compose_Error_Now_DraftInputs */
+/** @typedef {{}} Compose_Error_Post_ChangedInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -35,9 +43,22 @@
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
+/** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Item_OrderInputs */
+/** @typedef {{}} Compose_Refused_Many_VideosInputs */
+/** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Part_LiveInputs */
+/** @typedef {{}} Compose_Refused_Publish_TypeInputs */
+/** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
+/** @typedef {{}} Compose_Refused_Reply_MediaInputs */
+/** @typedef {{}} Compose_Refused_Rich_ContentInputs */
+/** @typedef {{}} Compose_Reload_PostInputs */
 /** @typedef {{}} Compose_Remove_CommentInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
@@ -52,6 +73,7 @@
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Alt_LabelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ExistingInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{}} Compose_Video_LimitInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
@@ -141,12 +163,36 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 	return /** @type {LocalizedString} */ (`Customized`)
 };
 
+export const compose_edit_canceled_note = /** @type {(inputs: Compose_Edit_Canceled_NoteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Canceled on: ${i?.channels}. Saving a change removes these from the post; tick one to publish to it again.`)
+};
+
+export const compose_edit_queue_note = /** @type {(inputs: Compose_Edit_Queue_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Saving takes the next free slots in each channel's queue.`)
+};
+
+export const compose_edit_review_note = /** @type {(inputs: Compose_Edit_Review_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Saving changed content withdraws the open approval request.`)
+};
+
+export const compose_edit_series_note = /** @type {(inputs: Compose_Edit_Series_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The series schedules this draft at that time.`)
+};
+
+export const compose_edit_series_skip = /** @type {(inputs: Compose_Edit_Series_SkipInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keeping this as a draft skips this occurrence of the series.`)
+};
+
 export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Image ${i?.position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image ${i?.position} is AI-generated” to post it, or use a different image.`)
 };
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post needs an approval before it can be scheduled.`)
+};
+
+export const compose_error_channel_gone = /** @type {(inputs: Compose_Error_Channel_GoneInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`This post can't be saved because a channel it goes to is no longer available: ${i?.channels}.`)
 };
 
 export const compose_error_empty = /** @type {(inputs: Compose_Error_EmptyInputs) => LocalizedString} */ () => {
@@ -163,6 +209,14 @@ export const compose_error_fix = /** @type {(inputs: Compose_Error_FixInputs) =>
 
 export const compose_error_no_channel = /** @type {(inputs: Compose_Error_No_ChannelInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pick at least one channel.`)
+};
+
+export const compose_error_now_draft = /** @type {(inputs: Compose_Error_Now_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The post is now a draft. Saving again continues from there.`)
+};
+
+export const compose_error_post_changed = /** @type {(inputs: Compose_Error_Post_ChangedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post changed after you opened it. Reload it to see the latest version; your edits here will be lost.`)
 };
 
 export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
@@ -217,6 +271,10 @@ export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => L
 	return /** @type {LocalizedString} */ (`Uses the content from All channels.`)
 };
 
+export const compose_keep_draft = /** @type {(inputs: Compose_Keep_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep as draft`)
+};
+
 export const compose_main_only = /** @type {(inputs: Compose_Main_OnlyInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel} will publish the main post only.`)
 };
@@ -227,6 +285,54 @@ export const compose_media_exclusive = /** @type {(inputs: Compose_Media_Exclusi
 
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`No channels are connected yet.`)
+};
+
+export const compose_refused_channel_twice = /** @type {(inputs: Compose_Refused_Channel_TwiceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because it goes to the same channel twice.`)
+};
+
+export const compose_refused_channel_unavailable = /** @type {(inputs: Compose_Refused_Channel_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because one of its channels isn't available.`)
+};
+
+export const compose_refused_item_order = /** @type {(inputs: Compose_Refused_Item_OrderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because its items are in an order the composer can't show.`)
+};
+
+export const compose_refused_many_videos = /** @type {(inputs: Compose_Refused_Many_VideosInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because it has more than one video.`)
+};
+
+export const compose_refused_media_unavailable = /** @type {(inputs: Compose_Refused_Media_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because some of its media isn't available.`)
+};
+
+export const compose_refused_mixed_media = /** @type {(inputs: Compose_Refused_Mixed_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because it has images next to a video.`)
+};
+
+export const compose_refused_part_live = /** @type {(inputs: Compose_Refused_Part_LiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because a canceled destination is already live in part.`)
+};
+
+export const compose_refused_publish_type = /** @type {(inputs: Compose_Refused_Publish_TypeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because its publish type isn't the one the composer would choose.`)
+};
+
+export const compose_refused_repeated_media = /** @type {(inputs: Compose_Refused_Repeated_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because it uses the same media twice.`)
+};
+
+export const compose_refused_reply_media = /** @type {(inputs: Compose_Refused_Reply_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because a reply or comment has media.`)
+};
+
+export const compose_refused_rich_content = /** @type {(inputs: Compose_Refused_Rich_ContentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because its text has formatting the composer can't show.`)
+};
+
+export const compose_reload_post = /** @type {(inputs: Compose_Reload_PostInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Reload the post`)
 };
 
 export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
@@ -283,6 +389,10 @@ export const compose_video_alt_label = /** @type {(inputs: Compose_Video_Alt_Lab
 
 export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.name}: only MP4, QuickTime and WebM videos can be added.`)
+};
+
+export const compose_video_existing = /** @type {(inputs: Compose_Video_ExistingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video already in this post`)
 };
 
 export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {
