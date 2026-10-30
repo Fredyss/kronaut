@@ -48,12 +48,13 @@ export function SavedTextForm({
   const [text, setText] = useState(initial.text);
   useFocusWhileOpen(nameInput);
   const blank = name.trim() === '' || text.trim() === '';
+  const unchanged = name === initial.name && text === initial.text;
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (!blank && !pending) onSave({ name, text });
   };
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') onCancel();
+    if (event.key === 'Escape' && unchanged) onCancel();
   };
   return (
     <form onSubmit={submit} onKeyDown={onKeyDown} className="flex basis-full flex-col gap-3">

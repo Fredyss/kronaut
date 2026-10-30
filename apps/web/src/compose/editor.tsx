@@ -20,6 +20,7 @@ export interface PostEditorProps {
   readonly disabled?: boolean;
   readonly initial?: Doc;
   readonly onChange: (doc: Doc) => void;
+  readonly onFocus?: () => void;
 }
 
 function insertPlainText(view: EditorView, text: string, at?: number): void {
@@ -57,6 +58,7 @@ export default function PostEditor({
   disabled = false,
   initial = EMPTY_DOC,
   onChange,
+  onFocus,
 }: PostEditorProps) {
   const changed = useRef(onChange);
   useLayoutEffect(() => {
@@ -79,8 +81,13 @@ export default function PostEditor({
           'min-h-40 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring',
       },
       handleDOMEvents: plainTextOnly,
+      handleClick: () => {
+        cursorPlaced.current = true;
+        return false;
+      },
     },
-    onFocus: () => {
+    onFocus: () => onFocus?.(),
+    onSelectionUpdate: () => {
       cursorPlaced.current = true;
     },
     onUpdate: ({ editor: current }) => changed.current(toDoc(current.getJSON())),

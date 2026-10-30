@@ -118,6 +118,8 @@ test('saves a text in settings and inserts it in the composer', async ({ page })
   await editor.fill(TEXT);
   const menu = page.getByRole('combobox', { name: composeEn.compose_insert_saved_text({}) });
   await menu.selectOption({ label: SAVED_NAME });
+  await expect(editor).toHaveText(TEXT);
+  await page.getByRole('button', { name: composeEn.compose_insert({}), exact: true }).click();
   await expect(editor).toHaveText(`${TEXT}${SAVED_TEXT}`);
   await expect(menu).toHaveValue('');
   await expect(editor).toBeFocused();

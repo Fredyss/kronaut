@@ -126,5 +126,6 @@
   "compose_error_tags": "The post was saved, but its tags weren't. Saving again tries once more.",
   "compose_error_tags_opened": "The tags weren't saved, so nothing else in this save changed. Saving again tries once more.",
   "compose_error_tags_unscheduled": "The post was saved as a draft, but its tags weren't, so it isn't scheduled yet. Saving again finishes it.",
-  "compose_insert_saved_text": "Insert saved text"
+  "compose_insert_saved_text": "Insert saved text",
+  "compose_insert": "Insert"
 }

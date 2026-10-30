@@ -1,6 +1,6 @@
 import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { meQuery } from '../api.ts';
 import { docText, textToParagraphs } from '../compose/doc.ts';
 import { useApiClient } from '../context.ts';
@@ -31,7 +31,7 @@ function Summary({ savedText }: { readonly savedText: SavedText }) {
     <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
       <span className="truncate font-medium">{savedText.name}</span>
       <span className="line-clamp-2 whitespace-pre-line text-muted-foreground">
-        {docText(savedText.doc)}
+        {docText(savedText.doc).trim()}
       </span>
     </div>
   );
@@ -66,6 +66,7 @@ function EditableRow({
         size="sm"
         variant="outline"
         aria-label={settingsText.settings_saved_text_delete({ name })}
+        disabled={open === 'edit'}
         onClick={() => setOpen('delete')}
       >
         {settingsText.settings_saved_text_delete_confirm()}
@@ -101,9 +102,16 @@ function ReadOnlyRow({ savedText }: { readonly savedText: SavedText }) {
 function AddSavedText({ workspaceId }: { readonly workspaceId: string }) {
   const [adding, setAdding] = useState(false);
   const create = useCreateSavedText(workspaceId, () => setAdding(false));
+  const addButton = useRef<HTMLButtonElement>(null);
+  const wasAdding = useRef(false);
+  useEffect(() => {
+    if (wasAdding.current && !adding) addButton.current?.focus();
+    wasAdding.current = adding;
+  }, [adding]);
   if (!adding) {
     return (
       <Button
+        ref={addButton}
         type="button"
         variant="outline"
         className="self-start"

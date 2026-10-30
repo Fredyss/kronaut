@@ -47,6 +47,7 @@
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_InsertInputs */
 /** @typedef {{}} Compose_Insert_Saved_TextInputs */
 /** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
@@ -299,6 +300,10 @@ export const compose_images_title = /** @type {(inputs: Compose_Images_TitleInpu
 
 export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Používá obsah ze záložky Všechny kanály.`)
+};
+
+export const compose_insert = /** @type {(inputs: Compose_InsertInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vložit`)
 };
 
 export const compose_insert_saved_text = /** @type {(inputs: Compose_Insert_Saved_TextInputs) => LocalizedString} */ () => {

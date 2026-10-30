@@ -1,5 +1,5 @@
 import { Button } from '@kronaut/ui';
-import { lazy, Suspense, useId, useState } from 'react';
+import { lazy, type Ref, type RefObject, Suspense, useId, useRef, useState } from 'react';
 import type { Channel } from '../api.ts';
 import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
@@ -70,14 +70,54 @@ function Inherited({
   );
 }
 
+function MainEditor({
+  ref,
+  id,
+  state,
+  channel,
+  pending,
+  onFocus,
+}: {
+  readonly ref: Ref<PostEditorHandle>;
+  readonly id: string;
+  readonly state: ContentsState;
+  readonly channel: Channel | undefined;
+  readonly pending: boolean;
+  readonly onFocus: () => void;
+}) {
+  if (!state.editing && channel !== undefined) {
+    return (
+      <Inherited
+        channel={channel.displayName}
+        pending={pending}
+        onCustomize={() => state.customize(channel.id)}
+      />
+    );
+  }
+  return (
+    <Suspense fallback={<EditorFallback />}>
+      <PostEditor
+        key={state.active ?? ''}
+        ref={ref}
+        id={id}
+        label={composeText.compose_text_label()}
+        disabled={pending}
+        initial={state.doc}
+        onChange={state.setDoc}
+        onFocus={onFocus}
+      />
+    </Suspense>
+  );
+}
+
 function TextHeader({
   workspaceId,
-  editor,
+  onPick,
   onReset,
   pending,
 }: {
   readonly workspaceId: string;
-  readonly editor: PostEditorHandle | null;
+  readonly onPick: ((text: string) => void) | null;
   readonly onReset: (() => void) | undefined;
   readonly pending: boolean;
 }) {
@@ -85,8 +125,8 @@ function TextHeader({
     <div className="flex flex-wrap items-center justify-between gap-2">
       <span className="font-medium text-sm">{composeText.compose_text_label()}</span>
       <div className="flex flex-wrap items-center gap-2">
-        {editor === null ? null : (
-          <SavedTextMenu workspaceId={workspaceId} disabled={pending} onPick={editor.insertText} />
+        {onPick === null ? null : (
+          <SavedTextMenu workspaceId={workspaceId} disabled={pending} onPick={onPick} />
         )}
         {onReset === undefined ? null : (
           <Button type="button" variant="ghost" size="sm" disabled={pending} onClick={onReset}>
@@ -101,6 +141,8 @@ function TextHeader({
 export function ContentSection(props: ContentSectionProps) {
   const { workspaceId, state, flagged, pending, limitsId, onIssuesChange } = props;
   const [editor, setEditor] = useState<PostEditorHandle | null>(null);
+  const focused = useRef<RefObject<PostEditorHandle | null> | null>(null);
+  const pick = (text: string) => (focused.current?.current ?? editor)?.insertText(text);
   const idPrefix = useId();
   const editorId = useId();
   const fileId = useId();
@@ -133,30 +175,21 @@ export function ContentSection(props: ContentSectionProps) {
           {editing ? (
             <TextHeader
               workspaceId={workspaceId}
-              editor={editor}
+              onPick={editor === null ? null : pick}
               pending={pending}
               onReset={channel === undefined ? undefined : () => state.reset(channel.id)}
             />
           ) : null}
-          {editing || channel === undefined ? (
-            <Suspense fallback={<EditorFallback />}>
-              <PostEditor
-                key={active ?? ''}
-                ref={setEditor}
-                id={editorId}
-                label={composeText.compose_text_label()}
-                disabled={pending}
-                initial={state.doc}
-                onChange={state.setDoc}
-              />
-            </Suspense>
-          ) : (
-            <Inherited
-              channel={channel.displayName}
-              pending={pending}
-              onCustomize={() => state.customize(channel.id)}
-            />
-          )}
+          <MainEditor
+            ref={setEditor}
+            id={editorId}
+            state={state}
+            channel={channel}
+            pending={pending}
+            onFocus={() => {
+              focused.current = null;
+            }}
+          />
           <Suspense fallback={null}>
             <TextLimits
               targets={targets}
@@ -168,7 +201,16 @@ export function ContentSection(props: ContentSectionProps) {
         </div>
         {reason === null ? null : <p className="text-destructive text-sm">{reason}</p>}
         {editing ? <ImagesSection fileId={fileId} media={state.media} pending={pending} /> : null}
-        {editing ? <ItemsSection state={state} targets={targets} pending={pending} /> : null}
+        {editing ? (
+          <ItemsSection
+            state={state}
+            targets={targets}
+            pending={pending}
+            onEditorFocus={(handle) => {
+              focused.current = handle;
+            }}
+          />
+        ) : null}
         <MainOnlyNotes state={state} />
       </div>
     </div>

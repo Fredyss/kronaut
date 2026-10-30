@@ -72,7 +72,8 @@
   - The composer saves tags first on a post it opened: a tag failure leaves the schedule alone. On a new post, a tag failure stops before scheduling, and the error says the post isn't scheduled yet. A post's tags only change if the user changed them in the form, so a save can't undo someone else's change.
 - **Saved texts:** reusable text, such as a signature or a template, kept for the whole workspace.
   - Settings → Saved texts adds, edits and deletes them, for roles with `settings:write`. It's plain text, edited in a text box.
-  - The composer's "Insert saved text" menu sits above the text box and inserts at the cursor, in the tab being edited. It's hidden while the workspace has none.
+  - In the composer, an "Insert saved text" select and an Insert button sit above the text box, hidden while the workspace has none. Choosing a text inserts nothing until Insert is pressed, so type-ahead and arrow keys can't change the post.
+  - It inserts at the cursor of the box last focused in the tab being edited: the text, a reply or the first comment. With no focused box, it uses the text box. With no cursor placed, it inserts at the end.
   - Inserted text is ordinary post text: it counts toward limits, shows in the preview and can be edited. Changing or deleting a saved text doesn't change posts that already used it.
 - **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited shows an Edit button.
 - **Editing a post:** the composer opens an existing post in the dialog, from the options menu, the calendar's draft list or the post page; `/compose?post=<id>` opens it from a direct link. Changing the content, the channels or the time counts as unsaved changes.
