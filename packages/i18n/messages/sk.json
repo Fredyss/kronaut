@@ -527,5 +527,18 @@
   "post_discard_body": "To, čo ste doteraz napísali, sa neuloží.",
   "post_discard_confirm": "Zahodiť",
   "post_discard_keep": "Pokračovať v úpravách",
-  "channels_insights_reconnect": "Znova pripojte kanál a získajte podrobné štatistiky"
+  "channels_insights_reconnect": "Znova pripojte kanál a získajte podrobné štatistiky",
+  "post_delete_forbidden": "Vaša rola nemôže zrušiť čakajúce kanály tohto príspevku, preto ho nemôžete odstrániť. Požiadajte editora alebo administrátora.",
+  "post_delete_unconfirmed": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Na sieti už môže byť uverejnený ({count} kanál), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.",
+        "countPlural=few": "Na sieti už môže byť uverejnený ({count} kanály), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.",
+        "countPlural=many": "Na sieti už môže byť uverejnený ({count} kanála), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.",
+        "countPlural=*": "Na sieti už môže byť uverejnený ({count} kanálov), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže."
+      }
+    }
+  ]
 }

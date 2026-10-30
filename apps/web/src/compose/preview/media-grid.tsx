@@ -43,13 +43,14 @@ function Dots({ images }: { readonly images: readonly PreviewImage[] }) {
   );
 }
 
-export function MediaGrid({ channel, text, images, video, aspect }: CardProps) {
+export function MediaGrid({ channel, text, images, video, poster = null, aspect }: CardProps) {
   const [first] = images;
   return (
     <Card channel={channel}>
-      {video === null ? null : (
+      {video === null && poster === null ? null : (
         <video
-          src={video}
+          src={video ?? undefined}
+          poster={poster ?? undefined}
           muted
           playsInline
           controls

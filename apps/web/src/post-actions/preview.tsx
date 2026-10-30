@@ -18,7 +18,12 @@ function mainItem(post: Post, variant: number | null): Item | undefined {
   return items.find((item) => item.role === 'main') ?? items[0];
 }
 
-function useThumbs(workspaceId: string, post: Post): ReadonlyMap<string, string | null> {
+interface Thumb {
+  readonly url: string | null;
+  readonly video: boolean;
+}
+
+function useThumbs(workspaceId: string, post: Post): ReadonlyMap<string, Thumb> {
   const client = useApiClient();
   const ids = [
     ...new Set(
@@ -33,7 +38,7 @@ function useThumbs(workspaceId: string, post: Post): ReadonlyMap<string, string 
       await Promise.all(
         ids.map(async (mediaId) => {
           const { data } = await mediaGet({ client, path: { workspaceId, mediaId } });
-          return [mediaId, data.previewUrl] as const;
+          return [mediaId, { url: data.previewUrl, video: data.kind === 'video' }] as const;
         }),
       ),
     enabled: ids.length > 0,
@@ -45,24 +50,29 @@ function useThumbs(workspaceId: string, post: Post): ReadonlyMap<string, string 
 function targetsOf(
   post: Post,
   channels: readonly Channel[],
-  thumbs: ReadonlyMap<string, string | null>,
+  thumbs: ReadonlyMap<string, Thumb>,
 ): PreviewTarget[] {
   const byId = new Map(channels.map((channel) => [channel.id, channel]));
   return post.destinations.flatMap((destination) => {
     const channel = byId.get(destination.accountId);
     const item = mainItem(post, destination.variant);
     if (channel === undefined || item === undefined) return [];
-    const images = item.media.map((media) => ({
-      id: media.mediaId,
-      thumb: thumbs.get(media.mediaId) ?? null,
-      altText: media.altText ?? '',
-    }));
+    const video = item.media.find((media) => thumbs.get(media.mediaId)?.video === true);
+    const images = item.media
+      .filter((media) => media !== video)
+      .map((media) => ({
+        id: media.mediaId,
+        thumb: thumbs.get(media.mediaId)?.url ?? null,
+        altText: media.altText ?? '',
+      }));
+    const poster = video === undefined ? null : (thumbs.get(video.mediaId)?.url ?? null);
     return [
       {
         channel,
         doc: item.doc as unknown as Doc,
         images,
         video: null,
+        poster,
         publishType: destination.publishType,
       },
     ];

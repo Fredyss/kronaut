@@ -10,15 +10,16 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import type { PostSummary } from '../api.ts';
+import { ANALYTICS_ROLES, type PostSummary } from '../api.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
+import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
 import { MoreIcon } from './icons.tsx';
 
 export type EntryDialog = 'preview' | 'delete';
 
 export interface EntryActions {
-  readonly canDraft: boolean;
+  readonly role: string;
   show(dialog: EntryDialog, post: PostSummary): void;
   duplicate(post: PostSummary): void;
 }
@@ -126,7 +127,7 @@ export function EntryMenu({ post, text }: { readonly post: PostSummary; readonly
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
         onClick={() => setOpen((was) => !was)}
-        className="absolute top-0.5 right-0.5 z-20 flex size-5 items-center justify-center rounded-sm bg-card text-muted-foreground opacity-0 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring group-hover/chip:opacity-100 group-focus-within/chip:opacity-100 aria-expanded:opacity-100 [@media(hover:none)]:opacity-100"
+        className="absolute top-1/2 right-0 z-20 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm bg-card text-muted-foreground opacity-0 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring group-hover/chip:opacity-100 group-focus-within/chip:opacity-100 aria-expanded:opacity-100 [@media(hover:none)]:opacity-100"
       >
         <MoreIcon />
       </button>
@@ -135,7 +136,7 @@ export function EntryMenu({ post, text }: { readonly post: PostSummary; readonly
           <Link to="/posts/$postId" params={{ postId: post.id }} role="menuitem" className={ITEM}>
             {calendarText.calendar_entry_open()}
           </Link>
-          {published(post) ? (
+          {ANALYTICS_ROLES.has(actions.role) && published(post) ? (
             <Link
               to="/posts/$postId"
               params={{ postId: post.id }}
@@ -146,7 +147,7 @@ export function EntryMenu({ post, text }: { readonly post: PostSummary; readonly
               {m.post_action_stats()}
             </Link>
           ) : null}
-          {actions.canDraft ? (
+          {canDuplicate(actions.role) ? (
             <button
               type="button"
               role="menuitem"
@@ -164,7 +165,7 @@ export function EntryMenu({ post, text }: { readonly post: PostSummary; readonly
           >
             {calendarText.calendar_entry_preview()}
           </button>
-          {actions.canDraft ? (
+          {canDelete(actions.role, post.destinations) ? (
             <button
               type="button"
               role="menuitem"

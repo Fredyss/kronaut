@@ -14,6 +14,7 @@ export interface CardProps {
   readonly text: string;
   readonly images: readonly PreviewImage[];
   readonly video: string | null;
+  readonly poster?: string | null;
   readonly aspect: AspectRange | null;
 }
 

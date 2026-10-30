@@ -20,11 +20,14 @@ export function Modal({
   onCancel,
 }: ModalProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const shown = useRef(false);
   useEffect(() => {
     const element = dialog.current;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     element?.showModal();
+    shown.current = true;
     return () => {
+      shown.current = false;
       if (element?.open === true) element.close();
       if (opener?.isConnected === true) opener.focus();
     };
@@ -38,6 +41,10 @@ export function Modal({
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
+      }}
+      onClose={(event) => {
+        // A repeated Escape fires a cancel the browser won't let us prevent; stay open until React unmounts us.
+        if (shown.current && !event.currentTarget.open) event.currentTarget.showModal();
       }}
       className={cn(
         'm-auto w-[calc(100%-2rem)] rounded-xl border bg-background p-5 text-foreground shadow-lg backdrop:bg-black/40',

@@ -93,14 +93,18 @@ interface SectionProps {
   readonly readable: boolean;
 }
 
-export function AnalyticsSection({ workspaceId, post, channels, format, readable }: SectionProps) {
+export function useMetricsRows(workspaceId: string, post: Post, readable: boolean) {
   const client = useApiClient();
   const published = post.destinations.some((destination) => destination.state === 'published');
   const metrics = useQuery({
     ...metricsQuery(client, { workspaceId, postId: post.id }),
     enabled: readable && published,
   });
-  const rows = readable && published ? (metrics.data?.destinations ?? []) : [];
+  return readable && published ? (metrics.data?.destinations ?? []) : [];
+}
+
+export function AnalyticsSection({ workspaceId, post, channels, format, readable }: SectionProps) {
+  const rows = useMetricsRows(workspaceId, post, readable);
   const shown = rows.length > 0;
   useEffect(() => {
     if (shown && window.location.hash === `#${ANALYTICS_ID}`) {

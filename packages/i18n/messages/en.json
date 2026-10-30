@@ -504,5 +504,16 @@
   "post_discard_body": "What you've written so far isn't saved.",
   "post_discard_confirm": "Discard",
   "post_discard_keep": "Keep editing",
-  "channels_insights_reconnect": "Reconnect to add insights"
+  "channels_insights_reconnect": "Reconnect to add insights",
+  "post_delete_forbidden": "Your role can't cancel this post's pending channels, so you can't delete it. Ask an editor or admin.",
+  "post_delete_unconfirmed": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "It may already be live on {count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network.",
+        "countPlural=*": "It may already be live on {count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network."
+      }
+    }
+  ]
 }

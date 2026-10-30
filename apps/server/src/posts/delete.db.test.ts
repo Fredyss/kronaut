@@ -2,17 +2,22 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { requested, setPolicy } from '../approvals/testing.ts';
+import { postIn } from '../destinations/testing.ts';
 import type { PostDto } from './dto.ts';
 import {
+  type Auth,
   accountA,
   accountB,
+  CLI,
   call,
   create,
+  createUser,
   doc,
   draft,
   errorOf,
   internal,
   jobRunAt,
+  login,
   owner,
   ownerAuth,
   SYSTEM,
@@ -20,14 +25,24 @@ import {
   startPosts,
   stopPosts,
   viewerAuth,
+  workspaceId,
 } from './testing.ts';
 
 let test: TestDatabase;
+let contributorAuth: Auth;
 
 beforeAll(async () => {
   test = await startTestDatabase();
   await startPosts(test);
   await setPolicy({ mode: 'none', allow_self_approval: true });
+  const contributorId = await createUser('contributor');
+  await owner.withActor(CLI, (trx) =>
+    trx
+      .insertInto('memberships')
+      .values({ workspace_id: workspaceId, user_id: contributorId, role: 'contributor' })
+      .execute(),
+  );
+  contributorAuth = await login('contributor');
 });
 
 afterAll(async () => {
@@ -85,6 +100,25 @@ describe('deleting a post', () => {
     const { destinations } = await rowsOf(post);
     expect(destinations).toMatchObject([{ state: 'canceled', state_reason: 'user_canceled' }]);
     expect(await jobRunAt(destinations[0]?.id ?? '')).toBeUndefined();
+  });
+
+  it('refuses a role without posts:cancel while a destination is scheduled', async () => {
+    const post = await scheduled(await create(ownerAuth, draft()));
+    expect((await remove(post, contributorAuth)).status).toBe(403);
+    const rows = await rowsOf(post);
+    expect(rows.post.deleted_at).toBeNull();
+    expect(rows.destinations).toMatchObject([{ state: 'scheduled' }]);
+    expect(await jobRunAt(rows.destinations[0]?.id ?? '')).toBeDefined();
+    const plain = await create(contributorAuth, draft());
+    expect((await remove(plain, contributorAuth)).status).toBe(204);
+  });
+
+  it('cancels a destination awaiting manual publishing', async () => {
+    const { post } = await postIn('awaiting_manual');
+    expect((await remove(post)).status).toBe(204);
+    expect((await rowsOf(post)).destinations).toMatchObject([
+      { state: 'canceled', state_reason: 'user_canceled' },
+    ]);
   });
 
   it('refuses while a destination is publishing', async () => {

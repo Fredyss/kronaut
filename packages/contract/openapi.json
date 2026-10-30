@@ -7071,7 +7071,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts/{postId}": {
       "delete": {
-        "description": "Scheduled destinations are canceled (this also needs posts:cancel) and an open approval request is voided. Published content stays on the network. 409 destination_live while a destination is publishing, retrying or being verified.",
+        "description": "Every destination that can still be canceled (scheduled, awaiting manual publishing, blocked, failed) is canceled, which also needs posts:cancel, and an open approval request is voided. Published content stays on the network. 409 destination_live while a destination is publishing, retrying or being verified.",
         "operationId": "posts.delete",
         "parameters": [
           {

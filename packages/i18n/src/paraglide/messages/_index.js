@@ -253,10 +253,12 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
 /** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_ForbiddenInputs */
 /** @typedef {{}} Post_Delete_KeepInputs */
 /** @typedef {{}} Post_Delete_LiveInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
 /** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_UnconfirmedInputs */
 /** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
 /** @typedef {{}} Post_Discard_BodyInputs */
@@ -4155,6 +4157,21 @@ export const post_delete_confirm = /** @type {((inputs?: Post_Delete_ConfirmInpu
 /**
 * | output |
 * | --- |
+* | "Your role can't cancel this post's pending channels, so you can't delete it. Ask an editor or admin." |
+*
+* @param {Post_Delete_ForbiddenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_forbidden = /** @type {((inputs?: Post_Delete_ForbiddenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_ForbiddenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_forbidden(inputs)
+	if (locale === "cs") return __cs.post_delete_forbidden(inputs)
+	return __en.post_delete_forbidden(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Keep post" |
 *
 * @param {Post_Delete_KeepInputs} inputs
@@ -4212,6 +4229,22 @@ export const post_delete_title = /** @type {((inputs?: Post_Delete_TitleInputs, 
 	if (locale === "sk") return __sk.post_delete_title(inputs)
 	if (locale === "cs") return __cs.post_delete_title(inputs)
 	return __en.post_delete_title(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "It may already be live on {count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network." |
+* | * | "It may already be live on {count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network." |
+*
+* @param {Post_Delete_UnconfirmedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_delete_unconfirmed = /** @type {((inputs: Post_Delete_UnconfirmedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Delete_UnconfirmedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_delete_unconfirmed(inputs)
+	if (locale === "cs") return __cs.post_delete_unconfirmed(inputs)
+	return __en.post_delete_unconfirmed(inputs)
 });
 /**
 * | output |

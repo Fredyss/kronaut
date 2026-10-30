@@ -18,7 +18,7 @@ import { ExpectedVersion, PostParams, pathId } from './params.ts';
 import { postUnits } from './units.ts';
 
 // unconfirmed may already be live, and a canceled row can go back to draft without a duplicate check.
-const CANCELABLE: ReadonlySet<string> = new Set(
+export const CANCELABLE: ReadonlySet<string> = new Set(
   DESTINATION_STATES.filter(
     (state) =>
       state !== 'publishing' && state !== 'unconfirmed' && canTransition(state, 'canceled'),

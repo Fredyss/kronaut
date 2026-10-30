@@ -52,7 +52,7 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
         }}
         onDragEnd={mover.dragEnd}
         className={cn(
-          'flex min-w-0 rounded-md border bg-card pr-6 text-xs hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring',
+          'flex min-w-0 rounded-md border bg-card pr-7 text-xs hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring',
           compact ? 'items-center gap-1.5 py-0.5 pl-1.5' : 'flex-col gap-0.5 py-1 pl-2',
         )}
       >

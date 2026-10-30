@@ -46,7 +46,7 @@
   - keyboard-first (j/k, n, e, d, ⇧-arrows, ⌘K)
   - the timezone shown on every time
   - optimistic drag-reschedule with an undo toast (re-approval warning when outside tolerance)
-  - **Empty slot:** in week and day view, clicking (or Enter on) a free future slot opens the composer in a dialog over the calendar, with that date and time filled in, in the shown time zone. The dialog is the compose route's own form, loaded lazily; its state is in the URL (`?compose=new&at=…&tz=…`), so Back closes it and a reload reopens it. Closing with unsaved changes asks first; after saving or scheduling, the dialog closes and the calendar refreshes. Past slots aren't actionable.
+  - **Empty slot:** in week and day view, clicking (or Enter on) a free future slot opens the composer in a dialog over the calendar, with that date and time filled in, in the shown time zone. The dialog is the compose route's own form, loaded lazily; its state is in the URL (`?compose=new&at=…&tz=…`), so Back closes it and a reload reopens it. Closing with unsaved changes asks first, by Back, Escape, the close button or leaving the page; after saving or scheduling, the dialog closes and the calendar refreshes. Past slots aren't actionable.
   - **Post actions:** each calendar entry has an options button, shown on hover and focus and always on touch, with a menu (keyboard-operable, `menu` role):
     - **Open** → the post page;
     - **Stats** → the post page's analytics section (only when a destination is published);

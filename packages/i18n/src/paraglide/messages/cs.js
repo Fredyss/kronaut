@@ -251,10 +251,12 @@
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
 /** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_ForbiddenInputs */
 /** @typedef {{}} Post_Delete_KeepInputs */
 /** @typedef {{}} Post_Delete_LiveInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
 /** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_UnconfirmedInputs */
 /** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
 /** @typedef {{}} Post_Discard_BodyInputs */
@@ -1402,6 +1404,10 @@ export const post_delete_confirm = /** @type {(inputs: Post_Delete_ConfirmInputs
 	return /** @type {LocalizedString} */ (`Smazat příspěvek`)
 };
 
+export const post_delete_forbidden = /** @type {(inputs: Post_Delete_ForbiddenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vaše role nemůže zrušit čekající kanály tohoto příspěvku, takže ho nemůžete smazat. Požádejte editora nebo administrátora.`)
+};
+
 export const post_delete_keep = /** @type {(inputs: Post_Delete_KeepInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Ponechat`)
 };
@@ -1420,6 +1426,14 @@ export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedIn
 
 export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Smazat tento příspěvek?`)
+};
+
+export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanál), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanály), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanálu), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanálů), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`)
 };
 
 export const post_deleted = /** @type {(inputs: Post_DeletedInputs) => LocalizedString} */ () => {

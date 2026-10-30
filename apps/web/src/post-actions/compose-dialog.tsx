@@ -1,5 +1,6 @@
 import { Button } from '@kronaut/ui';
-import { lazy, Suspense, useId, useState } from 'react';
+import { useBlocker } from '@tanstack/react-router';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import { m } from '../i18n.ts';
 import { Modal } from './modal.tsx';
 
@@ -18,17 +19,24 @@ export interface ComposeDialogProps {
 function Discard({ onKeep, onDiscard }: { onKeep(): void; onDiscard(): void }) {
   const titleId = useId();
   const bodyId = useId();
+  const keep = useRef<HTMLButtonElement>(null);
+  useEffect(() => keep.current?.focus(), []);
   return (
-    <Modal labelledBy={titleId} describedBy={bodyId} onCancel={onKeep}>
-      <div className="flex flex-col gap-4">
-        <h2 id={titleId} className="font-medium text-lg">
+    <div className="absolute inset-0 z-10 flex items-start justify-center bg-background/90 pt-16">
+      <div
+        role="alertdialog"
+        aria-labelledby={titleId}
+        aria-describedby={bodyId}
+        className="flex w-full max-w-sm flex-col gap-4 rounded-xl border bg-background p-5 shadow-lg"
+      >
+        <h3 id={titleId} className="font-medium text-lg">
           {m.post_discard_title()}
-        </h2>
+        </h3>
         <p id={bodyId} className="text-muted-foreground text-sm">
           {m.post_discard_body()}
         </p>
         <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onKeep}>
+          <Button ref={keep} type="button" variant="ghost" onClick={onKeep}>
             {m.post_discard_keep()}
           </Button>
           <Button type="button" variant="destructive" onClick={onDiscard}>
@@ -36,38 +44,68 @@ function Discard({ onKeep, onDiscard }: { onKeep(): void; onDiscard(): void }) {
           </Button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
+}
+
+function useLeaveGuard(onClose: () => void) {
+  const [dirty, setDirty] = useState(false);
+  const [asking, setAsking] = useState(false);
+  const guarded = useRef({ dirty: false, leaving: false });
+  guarded.current.dirty = dirty;
+  const blocks = () => guarded.current.dirty && !guarded.current.leaving;
+  const blocker = useBlocker({
+    shouldBlockFn: blocks,
+    enableBeforeUnload: blocks,
+    withResolver: true,
+  });
+  const prompt = asking || blocker.status === 'blocked';
+  const leave = () => {
+    guarded.current.leaving = true;
+    setAsking(false);
+    if (blocker.status === 'blocked') blocker.proceed();
+    else onClose();
+  };
+  const keep = () => {
+    setAsking(false);
+    blocker.reset?.();
+  };
+  const close = () => {
+    if (prompt) keep();
+    else if (dirty) setAsking(true);
+    else leave();
+  };
+  return { prompt, setDirty, leave, keep, close };
 }
 
 export function ComposeDialog({ workspaceId, role, at, tz, onClose }: ComposeDialogProps) {
   const titleId = useId();
-  const [dirty, setDirty] = useState(false);
-  const [asking, setAsking] = useState(false);
-  const close = () => (dirty ? setAsking(true) : onClose());
+  const guard = useLeaveGuard(onClose);
   return (
-    <Modal labelledBy={titleId} wide onCancel={close}>
-      <div className="flex flex-col gap-6">
-        <header className="flex items-center justify-between gap-4">
-          <h2 id={titleId} className="font-semibold text-xl tracking-tight">
-            {m.post_new_title()}
-          </h2>
-          <Button type="button" variant="ghost" size="sm" onClick={close}>
-            {m.close()}
-          </Button>
-        </header>
-        <Suspense fallback={<p className="text-muted-foreground text-sm">{m.loading()}</p>}>
-          <ComposeForm
-            workspaceId={workspaceId}
-            at={at}
-            tz={tz}
-            role={role}
-            onDone={onClose}
-            onDirtyChange={setDirty}
-          />
-        </Suspense>
+    <Modal labelledBy={titleId} wide onCancel={guard.close}>
+      <div className="relative">
+        <div inert={guard.prompt} className="flex flex-col gap-6">
+          <header className="flex items-center justify-between gap-4">
+            <h2 id={titleId} className="font-semibold text-xl tracking-tight">
+              {m.post_new_title()}
+            </h2>
+            <Button type="button" variant="ghost" size="sm" onClick={guard.close}>
+              {m.close()}
+            </Button>
+          </header>
+          <Suspense fallback={<p className="text-muted-foreground text-sm">{m.loading()}</p>}>
+            <ComposeForm
+              workspaceId={workspaceId}
+              at={at}
+              tz={tz}
+              role={role}
+              onDone={guard.leave}
+              onDirtyChange={guard.setDirty}
+            />
+          </Suspense>
+        </div>
+        {guard.prompt ? <Discard onKeep={guard.keep} onDiscard={guard.leave} /> : null}
       </div>
-      {asking ? <Discard onKeep={() => setAsking(false)} onDiscard={onClose} /> : null}
     </Modal>
   );
 }

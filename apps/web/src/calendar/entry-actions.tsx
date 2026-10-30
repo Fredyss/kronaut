@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { lazy, type ReactNode, Suspense, useMemo, useState } from 'react';
-import { DRAFT_ROLES, type PostSummary } from '../api.ts';
+import { lazy, type ReactNode, Suspense, useEffect, useMemo, useState } from 'react';
+import type { PostSummary } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { type EntryActions, EntryActionsContext, type EntryDialog } from './entry-menu.tsx';
 
@@ -30,7 +30,7 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
   const [shown, setShown] = useState<Shown | null>(null);
   const actions = useMemo<EntryActions>(
     () => ({
-      canDraft: DRAFT_ROLES.has(role),
+      role,
       show: (dialog, post) => setShown({ dialog, post }),
       duplicate: (post) => {
         const open = (postId: string) => navigate({ to: '/posts/$postId', params: { postId } });
@@ -63,11 +63,24 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
   );
 }
 
+let openedHere = false;
+
+export function markComposeOpened(): void {
+  openedHere = true;
+}
+
 export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'children'>) {
   const { compose, at, tz, ...rest } = route.useSearch();
   const navigate = route.useNavigate();
+  useEffect(() => {
+    if (compose !== 'new') openedHere = false;
+  }, [compose]);
   if (compose !== 'new') return null;
-  const close = () => void navigate({ search: rest, replace: true });
+  const close = () => {
+    if (!openedHere) return void navigate({ search: rest, replace: true });
+    openedHere = false;
+    window.history.back();
+  };
   return (
     <Suspense fallback={null}>
       <ComposeDialog workspaceId={workspaceId} role={role} at={at} tz={tz} onClose={close} />

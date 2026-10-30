@@ -1,11 +1,12 @@
-import { Button } from '@kronaut/ui';
+import { Button, buttonVariants } from '@kronaut/ui';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { lazy, type ReactNode, Suspense, useState } from 'react';
-import { ANALYTICS_ID } from '../analytics/section.tsx';
-import { ANALYTICS_ROLES, DRAFT_ROLES, type Post } from '../api.ts';
+import { ANALYTICS_ID, useMetricsRows } from '../analytics/section.tsx';
+import { ANALYTICS_ROLES, type Post } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
+import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
 
 const load = () => import('../post-actions/entry-actions.tsx');
 const PostPreview = lazy(() => load().then((module) => ({ default: module.PostPreview })));
@@ -44,8 +45,7 @@ export function PublishedView({ workspaceId, post, role, time, content }: Publis
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const duplicate = useDuplicate(workspaceId, post.id);
-  const stats = ANALYTICS_ROLES.has(role) && post.destinations.some((d) => d.state === 'published');
-  const editable = DRAFT_ROLES.has(role);
+  const stats = useMetricsRows(workspaceId, post, ANALYTICS_ROLES.has(role)).length > 0;
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 md:items-start">
@@ -57,30 +57,30 @@ export function PublishedView({ workspaceId, post, role, time, content }: Publis
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-auto text-muted-foreground text-sm">{time}</span>
         {stats ? (
+          <Link
+            to="/posts/$postId"
+            params={{ postId: post.id }}
+            hash={ANALYTICS_ID}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            {m.post_action_stats()}
+          </Link>
+        ) : null}
+        {canDuplicate(role) ? (
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => document.getElementById(ANALYTICS_ID)?.scrollIntoView()}
+            disabled={duplicate.pending}
+            onClick={duplicate.run}
           >
-            {m.post_action_stats()}
+            {m.post_action_duplicate()}
           </Button>
         ) : null}
-        {editable ? (
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={duplicate.pending}
-              onClick={duplicate.run}
-            >
-              {m.post_action_duplicate()}
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setDeleting(true)}>
-              {m.post_action_delete()}
-            </Button>
-          </>
+        {canDelete(role, post.destinations) ? (
+          <Button type="button" variant="outline" size="sm" onClick={() => setDeleting(true)}>
+            {m.post_action_delete()}
+          </Button>
         ) : null}
       </div>
       {deleting ? (

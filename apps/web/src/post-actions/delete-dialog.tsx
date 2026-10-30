@@ -8,8 +8,6 @@ import { apiErrorMessage, m } from '../i18n.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { Modal } from './modal.tsx';
 
-const LIVE: ReadonlySet<string> = new Set(['published', 'unconfirmed']);
-
 export interface DeleteTarget {
   readonly id: string;
   readonly destinations: readonly { readonly state: string }[];
@@ -24,7 +22,8 @@ export interface DeleteDialogProps {
 
 function deleteProblem(error: unknown): string {
   const code = errorCode(error);
-  return code === 'destination_live' ? m.post_delete_live() : apiErrorMessage(code);
+  if (code === 'destination_live') return m.post_delete_live();
+  return code === 'forbidden' ? m.post_delete_forbidden() : apiErrorMessage(code);
 }
 
 function useDelete(workspaceId: string, postId: string, onDeleted: () => void) {
@@ -54,7 +53,9 @@ export function DeleteDialog({ workspaceId, post, onClose, onDeleted }: DeleteDi
   const bodyId = useId();
   const remove = useDelete(workspaceId, post.id, onDeleted);
   const failed = remove.error !== null && errorStatus(remove.error) !== 401;
-  const live = post.destinations.filter((destination) => LIVE.has(destination.state)).length;
+  const count = (state: string) => post.destinations.filter((d) => d.state === state).length;
+  const live = count('published');
+  const maybe = count('unconfirmed');
   return (
     <Modal labelledBy={titleId} describedBy={bodyId} onCancel={onClose}>
       <div className="flex flex-col gap-4">
@@ -64,6 +65,7 @@ export function DeleteDialog({ workspaceId, post, onClose, onDeleted }: DeleteDi
         <div id={bodyId} className="flex flex-col gap-2 text-muted-foreground text-sm">
           <p>{m.post_delete_body()}</p>
           {live === 0 ? null : <p>{m.post_delete_published({ count: live })}</p>}
+          {maybe === 0 ? null : <p>{m.post_delete_unconfirmed({ count: maybe })}</p>}
         </div>
         {failed ? (
           <p role="alert" className="text-destructive text-sm">

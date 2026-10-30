@@ -689,7 +689,7 @@ export const postsCreate = <ThrowOnError extends boolean = true>(options: Option
 /**
  * Delete a post
  *
- * Scheduled destinations are canceled (this also needs posts:cancel) and an open approval request is voided. Published content stays on the network. 409 destination_live while a destination is publishing, retrying or being verified.
+ * Every destination that can still be canceled (scheduled, awaiting manual publishing, blocked, failed) is canceled, which also needs posts:cancel, and an open approval request is voided. Published content stays on the network. 409 destination_live while a destination is publishing, retrying or being verified.
  */
 export const postsDelete = <ThrowOnError extends boolean = true>(options: Options<PostsDeleteData, ThrowOnError>): RequestResult<PostsDeleteResponses, PostsDeleteErrors, ThrowOnError> => (options.client ?? client).delete<PostsDeleteResponses, PostsDeleteErrors, ThrowOnError>({
     security: [{

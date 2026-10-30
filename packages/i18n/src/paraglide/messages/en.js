@@ -251,10 +251,12 @@
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
 /** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_ForbiddenInputs */
 /** @typedef {{}} Post_Delete_KeepInputs */
 /** @typedef {{}} Post_Delete_LiveInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
 /** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_UnconfirmedInputs */
 /** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
 /** @typedef {{}} Post_Discard_BodyInputs */
@@ -1386,6 +1388,10 @@ export const post_delete_confirm = /** @type {(inputs: Post_Delete_ConfirmInputs
 	return /** @type {LocalizedString} */ (`Delete post`)
 };
 
+export const post_delete_forbidden = /** @type {(inputs: Post_Delete_ForbiddenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your role can't cancel this post's pending channels, so you can't delete it. Ask an editor or admin.`)
+};
+
 export const post_delete_keep = /** @type {(inputs: Post_Delete_KeepInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Keep post`)
 };
@@ -1402,6 +1408,12 @@ export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedIn
 
 export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Delete this post?`)
+};
+
+export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network.`);
+	return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network.`)
 };
 
 export const post_deleted = /** @type {(inputs: Post_DeletedInputs) => LocalizedString} */ () => {

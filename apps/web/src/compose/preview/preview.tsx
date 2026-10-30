@@ -13,6 +13,7 @@ export interface PreviewTarget {
   readonly doc: Doc;
   readonly images: readonly PreviewImage[];
   readonly video: string | null;
+  readonly poster?: string | null;
   readonly publishType: string;
 }
 
@@ -44,6 +45,7 @@ export default function Previews({ targets, empty = null, stacked = false }: Pre
         text={toPlainText(target.doc)}
         images={target.images}
         video={target.video}
+        poster={target.poster ?? null}
         aspect={aspectOf(target)}
       />,
     ];

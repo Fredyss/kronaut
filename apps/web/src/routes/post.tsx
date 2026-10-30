@@ -160,7 +160,9 @@ function PostStatus({
         <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-sm">
           {summaryLabel(data.publishSummary)}
         </span>
-        <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
+        {settled ? null : (
+          <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
+        )}
       </div>
       {settled ? (
         <PublishedView

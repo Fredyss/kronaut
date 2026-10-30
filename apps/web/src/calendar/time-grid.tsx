@@ -7,6 +7,7 @@ import { m } from '../i18n.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
 import { byHour, type Entry, slotCompose, slotKey } from './entries.ts';
+import { markComposeOpened } from './entry-actions.tsx';
 import type { Formats } from './formats.ts';
 import { CELL, DROP_OVER, type GridProps, PAST } from './grid.ts';
 import { hourEnded, wallClock } from './time.ts';
@@ -90,6 +91,7 @@ function HourCell({ day, hour, list, past, formats, mover }: CellProps) {
           <Link
             to="/"
             search={(prev) => ({ ...prev, ...slotCompose(key, formats.timeZone) })}
+            onClick={markComposeOpened}
             aria-label={calendarText.calendar_new_post_at({ when: label })}
             className="absolute inset-0 rounded-md hover:bg-accent/50 focus-visible:outline-2 focus-visible:outline-ring"
           />
