@@ -58,6 +58,8 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 
 **Errors** (ADR-0032): `transient | ambiguous | permanent{code} | duplicate{remoteId?} | rate_limited{scope, resetAt} | auth_expired | auth_revoked | app_config`.
 
+`statusFailure()` in `_kit/status-failure.ts` maps an HTTP status to an error. A provider supplies its rate-limit reading and known errors. The defaults keep unknown statuses safe: on a public step they stay `ambiguous`. Graph-based providers classify by error code in `_kit/meta-graph-call.ts` instead.
+
 - An `ambiguous` error on a step whose effect is `public` → `unconfirmed`, never a blind retry.
 - `auth_revoked` is definitive only after a confirming call with fresh credentials.
 - `app_config` (bad client secret, suspended app, X credits below zero) creates a `provider_app_incidents` row and never flags user accounts.

@@ -10,6 +10,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { unexpectedResponse } from '../_kit/failure.ts';
 import { retryAfter } from '../_kit/http.ts';
+import { statusFailure } from '../_kit/status-failure.ts';
 import { errorCode, type ResourceClient, type ResourceReply, resourceClient } from './dpop.ts';
 import { buildFacets, type Facet, facetSchema } from './facets.ts';
 import { permanent } from './identity.ts';
@@ -82,23 +83,23 @@ export function failureOf(
 ): ProviderError {
   const { status, headers } = reply.response;
   const raw = errorCode(reply.body);
-  if (status === 429)
-    return {
+  const detail = `http_${status}`;
+  return statusFailure(status, effect, {
+    rateLimited: () => ({
       kind: 'rate_limited',
       scope: rateLimitScope(headers.get('ratelimit-policy')),
       resetAt: resetAt(headers, now),
-    };
-  if (status === 401)
-    return raw === 'use_dpop_nonce'
-      ? { kind: 'transient', detail: 'dpop_nonce_rejected' }
-      : { kind: 'auth_expired' };
-  if (status >= 400 && status < 500)
-    return {
+    }),
+    unauthorized: () =>
+      raw === 'use_dpop_nonce'
+        ? { kind: 'transient', detail: 'dpop_nonce_rejected' }
+        : { kind: 'auth_expired' },
+    clientError: () => ({
       kind: 'permanent',
-      code: raw !== undefined && XRPC_ERROR.test(raw) ? raw : `http_${status}`,
-    };
-  if (effect === 'public') return { kind: 'ambiguous', detail: `http_${status}` };
-  return { kind: 'transient', detail: `http_${status}` };
+      code: raw !== undefined && XRPC_ERROR.test(raw) ? raw : detail,
+    }),
+    otherStatus: () => ({ kind: effect === 'public' ? 'ambiguous' : 'transient', detail }),
+  });
 }
 
 function successBody<T>(
