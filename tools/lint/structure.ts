@@ -95,15 +95,14 @@ export function testingLeaks(graph: ImportGraph): string[] {
 function featureFile(file: string): { feature: string; path: string } | undefined {
   const [, app, path, folder] = FEATURE_FILE.exec(file) ?? [];
   if (path === undefined || isTesting(file)) return undefined;
-  const feature = `${app}/${folder}`;
-  return WIRING_FOLDERS.has(feature) ? undefined : { feature, path };
+  return { feature: `${app}/${folder}`, path };
 }
 
 export function featureImports(graph: ImportGraph): string[] {
   const imports = new Set<string>();
   for (const [file, targets] of graph) {
     const source = featureFile(file);
-    if (source === undefined) continue;
+    if (source === undefined || WIRING_FOLDERS.has(source.feature)) continue;
     for (const target of targets.map(featureFile)) {
       if (target === undefined || target.feature === source.feature) continue;
       imports.add(`${source.feature} -> ${target.path}`);

@@ -17,10 +17,12 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, `testing.ts` and its variants, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
-- **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so the rest of a feature stays private to it.
-  - It covers production value imports. Type-only imports, tests and the wiring folders (`server/http`, `web/i18n`, `web/routes`) are outside it.
+- **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
+  - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
+  - Type-only imports, tests, imports made by wiring folders and `apps/*/src` root files are outside it, so a root file can still pass one feature's code to another.
   - A new line is a design decision: add it by hand in the PR that needs it, and say why. Prefer a target already listed, or a file that clearly owns the concept.
-  - Removing an import fails the check until its line goes too, so the list only ever shows what exists.
+  - A line covers the whole source feature, so a second file there can use a listed target without a new line.
+  - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
   - The list records today's coupling; it doesn't approve it. Each feature split should make it shorter.
 
 ## Files and modules
@@ -49,6 +51,7 @@ These rules bind new code, but existing code still breaks them:
 - Shared modules in the `apps/*/src` roots, which should each find an owner.
 - Web tests in the `apps/web/src` root, away from the code they cover.
 - `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
+- `calendar/sidebar.tsx`, `compose/channel-picker.tsx` and `post-actions/compose-dialog.tsx` import a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review.
 - Feature folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.

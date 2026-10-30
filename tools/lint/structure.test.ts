@@ -52,11 +52,14 @@ describe('the structure rules', () => {
       [app('start.ts'), [app('posts/routes.ts')]],
       ['apps/web/src/routes/post.tsx', ['apps/web/src/compose/form.tsx']],
       ['apps/web/src/inbox/list.tsx', ['apps/web/src/compose/form.tsx']],
+      ['apps/web/src/inbox/row.tsx', ['apps/web/src/routes/post.tsx']],
     ]);
     expect(featureImports(imports)).toEqual([
+      'server/posts -> http/types.ts',
       'server/posts -> queue/slots.ts',
       'server/posts -> tags/read.ts',
       'web/inbox -> compose/form.tsx',
+      'web/inbox -> routes/post.tsx',
     ]);
   });
 
