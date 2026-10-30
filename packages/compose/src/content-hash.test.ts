@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { DocError } from './canonical.ts';
 import {
   CONTENT_HASH_V,
   type ContentHashInput,
@@ -9,6 +8,7 @@ import {
   type HashMedia,
   toHex,
 } from './content-hash.ts';
+import { DocError } from './doc-error.ts';
 
 const ACCOUNT = '0197a5c2-3b4d-7e8f-9a0b-1c2d3e4f5a6b';
 const SHA_A = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';

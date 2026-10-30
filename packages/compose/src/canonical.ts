@@ -1,25 +1,9 @@
 import type { Node as PmNode } from 'prosemirror-model';
+import { DocError } from './doc-error.ts';
 import { canonicalJson } from './jcs.ts';
 import { DOC_SCHEMA_V, type DocJson, schemaFor } from './schema.ts';
 
-export type DocErrorCode = 'invalid_doc' | 'unknown_schema_version';
-
 const MAX_DEPTH = 64;
-
-const MESSAGES: Readonly<Record<DocErrorCode, string>> = {
-  invalid_doc: 'document is not valid for its schema',
-  unknown_schema_version: 'unknown document schema version',
-};
-
-export class DocError extends Error {
-  readonly code: DocErrorCode;
-
-  constructor(code: DocErrorCode, options?: ErrorOptions) {
-    super(MESSAGES[code], options);
-    this.name = 'DocError';
-    this.code = code;
-  }
-}
 
 interface MutableNode {
   type: string;

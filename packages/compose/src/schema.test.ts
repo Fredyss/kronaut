@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DocError } from './canonical.ts';
+import { DocError } from './doc-error.ts';
 import { DOC_SCHEMA_V, schemaFor, schemaV1 } from './schema.ts';
 
 describe('schemaV1', () => {

@@ -1,6 +1,7 @@
 export * from './canonical.ts';
 export * from './content-hash.ts';
 export * from './count.ts';
+export * from './doc-error.ts';
 export * from './jcs.ts';
 export * from './plain-text.ts';
 export * from './schema.ts';
