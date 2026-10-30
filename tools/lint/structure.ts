@@ -16,6 +16,7 @@ const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
 const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
+const ROUTE_FILE = /[/-]routes\.ts$/;
 
 export function isTesting(path: string): boolean {
   return /\.test\.tsx?$|(^|[/-])testing([-./]|$)/.test(path);
@@ -109,4 +110,8 @@ export function featureImports(graph: ImportGraph): string[] {
     }
   }
   return [...imports].sort();
+}
+
+export function routeImports(graph: ImportGraph): string[] {
+  return featureImports(graph).filter((line) => ROUTE_FILE.test(line));
 }

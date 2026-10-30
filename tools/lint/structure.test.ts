@@ -7,6 +7,7 @@ import {
   type ImportGraph,
   isTesting,
   repoImportGraph,
+  routeImports,
   testingLeaks,
   valueImports,
 } from './structure.ts';
@@ -30,6 +31,10 @@ describe('repo structure', () => {
 
   it('keeps testing helpers out of production code', () => {
     expect(testingLeaks(graph)).toEqual([]);
+  });
+
+  it('keeps route files out of imports between features', () => {
+    expect(routeImports(graph)).toEqual([]);
   });
 
   it('matches the declared imports between features', () => {
@@ -60,6 +65,20 @@ describe('the structure rules', () => {
       'server/posts -> tags/read.ts',
       'web/inbox -> compose/form.tsx',
       'web/inbox -> routes/post.tsx',
+    ]);
+  });
+
+  it("flags a feature that imports another feature's route file", () => {
+    const app = (target: string) => `apps/server/src/${target}`;
+    const imports: ImportGraph = new Map([
+      [app('analytics/a.ts'), [app('queue/routes.ts'), app('queue/slots.ts')]],
+      [app('tags/b.ts'), [app('media/upload-routes.ts')]],
+      [app('queue/c.ts'), [app('queue/routes.ts')]],
+      [app('http/api-routes.ts'), [app('queue/routes.ts')]],
+    ]);
+    expect(routeImports(imports)).toEqual([
+      'server/analytics -> queue/routes.ts',
+      'server/tags -> media/upload-routes.ts',
     ]);
   });
 

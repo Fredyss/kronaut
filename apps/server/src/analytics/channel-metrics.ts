@@ -6,7 +6,7 @@ import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { invalid, zodDetails } from '../posts/list.ts';
 import { pathId } from '../posts/params.ts';
 import { scopeUnit } from '../posts/units.ts';
-import { requireChannel } from '../queue/routes.ts';
+import { requireChannel } from '../queue/channel.ts';
 import { storedValue } from './store.ts';
 
 const DEFAULT_DAYS = 30;

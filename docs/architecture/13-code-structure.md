@@ -9,7 +9,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 - **One folder per product concept:** `apps/server/src/<feature>/` and `apps/web/src/<feature>/`. Name the concept first; new behaviour lands in the folder that owns it.
 - **New concept, new folder.** The `src/` root holds entrypoints and wiring only.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
-- **Route files are wiring.** `routes.ts` binds handlers; shared logic lives in a named module that other features import.
+- **Route files are wiring (checked).** `routes.ts` binds handlers; shared logic lives in a named module that other features import.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
 - **About 20 non-test files is a prompt to review a folder.** Split it when it holds distinct sub-concepts, not to reach a count. Three files sharing a prefix (`verify-*`, `sniff-*`) are a subfolder waiting to happen.
 
@@ -50,7 +50,6 @@ These rules bind new code, but existing code still breaks them:
 
 - Shared modules in the `apps/*/src` roots, which should each find an owner.
 - Web tests in the `apps/web/src` root, away from the code they cover.
-- `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
 - `calendar/sidebar.tsx`, `compose/channel-picker.tsx` and `post-actions/compose-dialog.tsx` import a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review.
