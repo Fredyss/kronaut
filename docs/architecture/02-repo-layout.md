@@ -5,34 +5,38 @@ pnpm workspace. Every package is TypeScript strict, ESM, built with `tsc -b` pro
 ```
 apps/
   server/                 src/main.ts --role=all|api|worker|media ; src/cli.ts
+                          src/<feature>/: one folder per product concept (13-code-structure.md)
                           src/entitlements/: the only place MODE is compared with 'saas' (ADR-0019)
-  web/                    Vite SPA
+  web/                    Vite SPA; src/<feature>/ as on the server, src/routes/ for pages
 packages/
   core/                   domain types, state machine, errors
   compose/                text counters, serializers, validate()            browser-safe
   contract/               defineRoute registry → openapi.json
   sdk/                    generated client (web, public API, MCP)
   i18n/                   message catalogs (en/sk/cs: the app, and the CLI apart) and compiled Paraglide modules; browser-safe; shared by web and server
-  db/                     Kysely types, migrations/, tenant-scoped repos, withTenant()
+  db/                     Kysely types, migrations/, withTenant(), sweep functions
     schema/v1.sql         normative v1 schema; migrations are tested against it
   credentials/            token vault; only the worker and the connect flow may import it
   egress/                 the only module allowed to import undici or call fetch
   media/                  storage interface, signing, validation, re-encode
   providers/
-    src/_kit/             OAuth2/PKCE, chunked upload, error mapping helpers
-    src/<id>/             manifest.ts, runtime.ts, preview.tsx?, fixtures/, runtime.test.ts
+    src/_kit/             PKCE, multipart, public send, status mapping, Meta helpers
+    src/<id>/             manifest.ts, runtime.ts, runtime.test.ts, one module per concern
                           exports: @kronaut/providers/manifests (browser-safe)
                                    @kronaut/providers/runtime  (server only)
-  ui/                     shadcn components + 6 preview archetypes
+  ui/                     shared UI primitives; network previews live in apps/web
 infra/
   compose/                compose.yaml for self-host and local dev
-tools/                    repo scripts (codegen, lint helpers, license gate)
+  docker/                 image build
+tools/                    repo scripts (lint helpers, license gate)
   biome/                  GritQL lint plugins, wired in biome.json
-  lint/                   Vitest lint tests (Biome rule self-test)
+  lint/                   Vitest lint tests (Biome rule self-test, repo structure)
 docs/
   architecture/           this spec, one chapter per concern
   adr/                    architecture decision records (normative)
+  guides/                 operator guides
   reference/              provider facts and test catalogues
+  reviews/                dated review notes
 .github/workflows/        CI
 ```
 

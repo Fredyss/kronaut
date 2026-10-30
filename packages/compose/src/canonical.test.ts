@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { canonicalizeDoc, DocError, isCanonical } from './canonical.ts';
+import { canonicalizeDoc, isCanonical } from './canonical.ts';
+import { DocError } from './doc-error.ts';
 import { canonicalJson } from './jcs.ts';
 import { schemaV1 } from './schema.ts';
 

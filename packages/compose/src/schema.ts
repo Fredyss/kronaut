@@ -1,5 +1,5 @@
 import { Schema } from 'prosemirror-model';
-import { DocError } from './canonical.ts';
+import { DocError } from './doc-error.ts';
 
 export const DOC_SCHEMA_V = 1;
 
