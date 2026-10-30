@@ -53,6 +53,8 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 - egress `http`: rate-limited, retry-aware, redacted logs.
 - `media.signedUrl()` / `media.stream()`.
 - `checkpoint()`, which persists `provider_state` after each step.
+- `beginPublicSend()` in `_kit/public-send.ts`, which runs the public `step()`, stamps `sentAt` and checkpoints it. Providers that need `sentAt` to verify call it right before the send; tests assert the order with `assertPublicSendOrder`.
+- `afterSend()` in `_kit/public-send.ts`, which wraps any read after a successful send so a failed read can't reach `plan()`.
 - `logger`.
 - Providers never touch the DB.
 

@@ -11,6 +11,7 @@ import {
 } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
+  assertPublicSendOrder,
   egressError,
   type RecordedRequest,
   type ScriptedExchange,
@@ -18,7 +19,7 @@ import {
   TEST_NOW,
   testPublishContext,
 } from '../_kit/testing.ts';
-import type { FacebookSettings } from './manifest.ts';
+import { type FacebookSettings, facebookManifest } from './manifest.ts';
 import { type FacebookCredentials, facebookRuntime } from './runtime.ts';
 
 const PAGE_ID = '1012345678901234';
@@ -170,6 +171,7 @@ describe('facebook publish: request bodies', () => {
     expect(form(calls[0])).toEqual({ message: 'Ahoj https://kronaut.example', ...signed });
     expect(calls[0]?.url).toBe(FEED);
     expect(checkpoints).toEqual([{ sentAt: SENT_AT }]);
+    assertPublicSendOrder(events, facebookManifest);
     expect(events).toEqual([
       'step:create_post',
       'checkpoint',

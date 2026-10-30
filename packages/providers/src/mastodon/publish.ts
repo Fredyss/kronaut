@@ -2,6 +2,7 @@ import type { PublishContext, PublishItem, PublishOutcome } from '@kronaut/core'
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
 import { itemPath } from '../_kit/items.ts';
+import { beginPublicSend } from '../_kit/public-send.ts';
 import { permanent } from './api.ts';
 import { httpsUrl } from './connect.ts';
 import { mastodonManifest } from './manifest.ts';
@@ -109,11 +110,7 @@ export async function publishStatus(ctx: PublishContext, input: Input): Promise<
   await ctx.step('upload_media');
   const uploaded = await uploadMedia(ctx, input, item, state);
   if (uploaded.kind === 'pending') return { kind: 'pending', pollAfterMs };
-  await ctx.step('create_status');
-  const sent = await save(ctx, {
-    ...uploaded.state,
-    sentAt: ctx.now().toString({ smallestUnit: 'millisecond' }),
-  });
+  const sent = await beginPublicSend(ctx, 'create_status', uploaded.state);
   const posted = await createStatus(ctx, input, checked, sent);
   await save(ctx, { ...sent, status: posted });
   return published(posted);

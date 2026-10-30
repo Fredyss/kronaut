@@ -1,15 +1,10 @@
-import {
-  isProviderFailure,
-  type MediaRef,
-  type PublishContext,
-  type PublishItem,
-  type PublishOutcome,
-} from '@kronaut/core';
+import type { MediaRef, PublishContext, PublishItem, PublishOutcome } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { commentOf } from '../_kit/items.ts';
 import { graphId } from '../_kit/meta-container-state.ts';
 import { multipart } from '../_kit/multipart.ts';
+import { afterSend, beginPublicSend } from '../_kit/public-send.ts';
 import { publishComment } from './comment.ts';
 import { graphCall } from './graph.ts';
 import { graphUrl } from './oauth.ts';
@@ -98,10 +93,7 @@ function feedForm(page: PageAuth, item: PublishItem, state: State): Record<strin
 
 async function permalinkOf(ctx: PublishContext, page: PageAuth, id: string): Promise<string> {
   const url = readUrl(page, id, { fields: 'id,permalink_url' });
-  const read = await graphCall(ctx, 'none', { url }, permalink).catch((error: unknown) => {
-    if (isProviderFailure(error)) return undefined;
-    throw error;
-  });
+  const read = await afterSend(() => graphCall(ctx, 'none', { url }, permalink));
   return postUrl(id, read?.permalink_url);
 }
 
@@ -113,9 +105,7 @@ export async function publishPost(ctx: PublishContext, input: Input): Promise<Pu
   const page = pageOf(input);
   let state = parseState(input.state);
   if (item.media.length > 0) state = await uploadPhotos(ctx, page, item, state);
-  await ctx.step('create_post');
-  const sent: State = { ...state, sentAt: stamp(ctx) };
-  await ctx.checkpoint(sent);
+  const sent = await beginPublicSend(ctx, 'create_post', state);
   const form = feedForm(page, item, sent);
   const init = {
     method: 'POST',
