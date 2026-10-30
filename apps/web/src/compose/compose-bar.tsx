@@ -23,7 +23,7 @@ function SubmitRow({
   readonly onRequest: (() => void) | undefined;
 }) {
   return (
-    <div className="flex flex-wrap gap-2 md:shrink-0">
+    <div className="flex shrink-0 flex-wrap gap-2">
       <Button type="submit" disabled={disabled} aria-describedby={describedBy}>
         {label}
       </Button>
@@ -55,7 +55,7 @@ function WhenSection({
   const dateId = useId();
   const timeId = useId();
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-4">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto md:self-stretch">
       <WhenFieldset
         when={when}
         dateId={dateId}
@@ -95,14 +95,20 @@ export function ComposeBar({
 }) {
   const { formError, failure, list, when, pending, approval, blocked, requestInstead } = form;
   return (
-    <div className="sticky bottom-0 flex max-h-[60%] flex-col gap-4 overflow-y-auto border-t bg-background p-5">
-      {formError === null ? null : (
-        <p role="alert" className="text-destructive text-sm">
-          {formError}
-        </p>
+    <div className="sticky bottom-0 flex max-h-[45svh] flex-col gap-3 border-t bg-background p-4 md:p-5">
+      {formError === null && failure === null ? null : (
+        <div className="flex max-h-28 shrink-0 flex-col gap-2 overflow-y-auto">
+          {formError === null ? null : (
+            <p role="alert" className="text-destructive text-sm">
+              {formError}
+            </p>
+          )}
+          {failure === null ? null : (
+            <Failure error={failure} channels={list} onReload={onReload} />
+          )}
+        </div>
       )}
-      {failure === null ? null : <Failure error={failure} channels={list} onReload={onReload} />}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex min-h-0 flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <WhenSection form={form} role={role} opened={opened} />
         <SubmitRow
           label={submitLabel(when.mode, pending, approval.requesting)}

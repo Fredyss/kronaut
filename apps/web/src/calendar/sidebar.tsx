@@ -135,6 +135,7 @@ export function CalendarSidebar({ workspaceId }: { readonly workspaceId: string 
           to="/"
           search={(prev) => ({ ...prev, compose: 'new' })}
           state={{ composeHere: true }}
+          resetScroll={false}
           aria-label={collapsed ? create : undefined}
           title={collapsed ? create : undefined}
           onMouseEnter={preloadEditor}

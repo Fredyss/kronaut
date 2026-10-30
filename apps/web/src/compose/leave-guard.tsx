@@ -1,13 +1,34 @@
 import { Button } from '@kronaut/ui';
 import { useBlocker } from '@tanstack/react-router';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { m } from '../i18n.ts';
+
+function rememberFocus(): () => void {
+  const element = document.activeElement;
+  const selection = document.getSelection();
+  const range = selection?.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+  return () => {
+    if (!(element instanceof HTMLElement) || !element.isConnected) return;
+    element.focus();
+    if (range === null || !element.contains(range.commonAncestorContainer)) return;
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  };
+}
 
 export function Discard({ onKeep, onDiscard }: { onKeep(): void; onDiscard(): void }) {
   const titleId = useId();
   const bodyId = useId();
   const keep = useRef<HTMLButtonElement>(null);
-  useEffect(() => keep.current?.focus(), []);
+  const restore = useRef(() => {});
+  useLayoutEffect(() => {
+    restore.current = rememberFocus();
+  }, []);
+  // A passive cleanup: a layout one runs while the form is still inert, and focus() does nothing.
+  useEffect(() => {
+    keep.current?.focus();
+    return () => restore.current();
+  }, []);
   return (
     <div className="absolute inset-0 z-10 flex items-start justify-center bg-background/90 pt-16">
       <div
@@ -37,17 +58,26 @@ export function Discard({ onKeep, onDiscard }: { onKeep(): void; onDiscard(): vo
 
 export function useLeaveGuard(onClose: () => void) {
   const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [asking, setAsking] = useState(false);
-  const guarded = useRef({ dirty: false, leaving: false });
+  const guarded = useRef({ dirty: false, saving: false, leaving: false });
   guarded.current.dirty = dirty;
-  const blocks = () => guarded.current.dirty && !guarded.current.leaving;
+  guarded.current.saving = saving;
+  const blocks = () =>
+    (guarded.current.dirty || guarded.current.saving) && !guarded.current.leaving;
   const blocker = useBlocker({
     shouldBlockFn: blocks,
     enableBeforeUnload: blocks,
     withResolver: true,
   });
-  const prompt = asking || blocker.status === 'blocked';
+  const blocked = blocker.status === 'blocked';
+  const { reset } = blocker;
+  useEffect(() => {
+    if (saving) reset?.();
+  }, [saving, reset]);
+  const prompt = asking || (blocked && !saving);
   const leave = () => {
+    if (guarded.current.leaving) return;
     guarded.current.leaving = true;
     setAsking(false);
     if (blocker.status === 'blocked') blocker.proceed();
@@ -58,9 +88,10 @@ export function useLeaveGuard(onClose: () => void) {
     blocker.reset?.();
   };
   const close = () => {
+    if (saving) return;
     if (prompt) keep();
     else if (dirty) setAsking(true);
     else leave();
   };
-  return { prompt, setDirty, leave, keep, close };
+  return { prompt, setDirty, setSaving, leave, keep, close };
 }

@@ -2,7 +2,8 @@
 
 - **Create and edit flows open in a dialog over the current page,** so the user keeps their place.
   - The composer dialog holds the form on the left and the live preview on the right; below `lg` they stack. Its header (title, Close) and a bottom bar stay in place while the rest scrolls.
-  - The bar holds errors, the time and the main button. Channels, content and tags scroll above it, in that order.
+  - The bar holds errors, the time and the main button. Channels, content and tags scroll above it, in that order. On a small screen the time options scroll inside the bar; errors and the main button don't.
+  - A save in progress can't be left: Close, Escape and Back wait for it, because it can't be taken back once it's sent.
   - "New post" opens it over the calendar (`?compose=new`); Edit and Duplicate open it over the page they're on (`?compose=<id>` on the calendar or the post page).
   - A link that opens it marks its history entry, so Close goes back one step. A dialog reached by a direct link closes by replacing the URL, which leaves nothing to go back to.
   - Saving a copy from a post page goes to the copy's page. Everything else closes and stays.

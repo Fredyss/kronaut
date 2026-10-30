@@ -29,21 +29,23 @@ export interface ComposeFormProps extends ComposeStart {
   readonly workspaceId: string;
   readonly role: string;
   readonly onDirtyChange?: ((dirty: boolean) => void) | undefined;
+  readonly onPendingChange?: ((pending: boolean) => void) | undefined;
   readonly onReload?: (() => void) | undefined;
 }
 
 export function ComposeForm(props: ComposeFormProps) {
-  const { workspaceId, role, onDirtyChange, onReload, ...start } = props;
+  const { workspaceId, role, onDirtyChange, onPendingChange, onReload, ...start } = props;
   const form = useComposeForm(workspaceId, start);
   const { channels, content, selected, setSelected, flagged, setLimitFlags, pending } = form;
   const { dirty } = form;
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
+  useEffect(() => onPendingChange?.(pending), [pending, onPendingChange]);
   const limitsId = useId();
 
   return (
     <form className="flex min-h-0 flex-1 flex-col" onSubmit={form.onSubmit} noValidate>
-      <div className="min-h-0 flex-1 overflow-y-auto p-5">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
+      <div className="relative min-h-0 flex-1 overflow-y-auto p-5">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
           <div className="flex min-w-0 flex-col gap-8">
             <ChannelsFieldset
               channels={channels.data}
@@ -93,6 +95,7 @@ export interface EditFormProps {
   readonly postId: string;
   readonly onDone?: ComposeStart['onDone'];
   readonly onDirtyChange?: ComposeFormProps['onDirtyChange'];
+  readonly onPendingChange?: ComposeFormProps['onPendingChange'];
 }
 
 function usableOpened(role: string, data: OpenedPostData | undefined) {
@@ -142,6 +145,7 @@ function GuardedForm({ workspaceId, role, at, tz, post }: GuardedFormProps) {
     workspaceId,
     role,
     onDirtyChange: guard.setDirty,
+    onPendingChange: guard.setSaving,
     onDone: (done: Post) => {
       saved.current = done;
       guard.leave();

@@ -23,6 +23,7 @@ function DraftLink({ post, role }: { readonly post: Summary; readonly role: stri
       to="/"
       search={(prev) => ({ ...prev, compose: post.id })}
       state={{ composeHere: true }}
+      resetScroll={false}
       className={LINK}
     >
       {text}

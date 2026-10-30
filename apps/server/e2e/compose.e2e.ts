@@ -105,8 +105,14 @@ test('opens the composer over the calendar and closes back to it', async ({ page
   await page.goto(appUrl('/?view=list'));
   await page.getByRole('link', { name: calendarEn.calendar_create_post({}), exact: true }).click();
   const dialog = page.getByRole('dialog', { name: en.post_new_title({}) });
-  await expect(dialog).toBeVisible();
+  const editor = dialog.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  await editor.click();
+  await editor.pressSequentially('x');
+  await editor.press('Escape');
+  await dialog.getByRole('button', { name: en.post_discard_keep({}) }).click();
+  await expect(editor).toBeFocused();
   await dialog.getByRole('button', { name: en.close({}) }).click();
+  await dialog.getByRole('button', { name: en.post_discard_confirm({}) }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page).toHaveURL(/\/\?view=list$/);
 });

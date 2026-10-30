@@ -111,4 +111,31 @@ describe('composer dialog', () => {
     expect(router.state.location.search).toEqual({});
     expect(back).not.toHaveBeenCalled();
   });
+
+  it('stays open when a file picker inside it is canceled', async () => {
+    const { router } = start('/?compose=new', []);
+    await screen.findByLabelText('Text');
+    const input = document.querySelector('input[type=file]');
+    if (input === null) throw new Error('no file input');
+    fireEvent(input, new Event('cancel', { bubbles: true }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(router.state.location.search).toEqual({ compose: 'new' });
+  });
+
+  it('ignores Close during a save, then closes once when it finishes', async () => {
+    const draft = stored(POST_ID, 'draft');
+    const response = Promise.withResolvers<Response>();
+    const { back, mutations } = start(`/posts/${POST_ID}`, [draft], (call) =>
+      call.method === 'PATCH' ? response.promise : undefined,
+    );
+    fireEvent.click(await screen.findByRole('link', { name: 'Edit' }));
+    await saveEdit();
+    await waitFor(() => expect(mutations()).toHaveLength(1));
+    await close();
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(back).not.toHaveBeenCalled();
+    response.resolve(Response.json(draft));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(back).toHaveBeenCalledOnce();
+  });
 });

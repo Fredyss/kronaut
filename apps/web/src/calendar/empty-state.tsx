@@ -13,6 +13,7 @@ export function EmptyState() {
         to="/"
         search={(prev) => ({ ...prev, compose: 'new' })}
         state={{ composeHere: true }}
+        resetScroll={false}
         className={buttonVariants({ className: 'mt-2' })}
         onMouseEnter={preloadEditor}
         onFocus={preloadEditor}

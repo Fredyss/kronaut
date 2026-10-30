@@ -39,6 +39,7 @@ function useDuplicate(workspaceId: string, postId: string) {
         params: { postId },
         search: { compose: post },
         state: { composeHere: true },
+        resetScroll: false,
       });
     const module = await load();
     await module.duplicatePost({ client, queryClient, workspaceId, postId, open });

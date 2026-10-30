@@ -34,6 +34,7 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
         to: '/',
         search: (current) => ({ ...current, compose: postId }),
         state: { composeHere: true },
+        resetScroll: false,
       });
     return {
       role,
@@ -80,7 +81,7 @@ export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'chil
         at={at}
         tz={tz}
         postId={compose === 'new' ? undefined : compose}
-        onClose={() => void navigate({ search: rest, replace: true })}
+        onClose={() => void navigate({ search: rest, replace: true, resetScroll: false })}
       />
     </Suspense>
   );

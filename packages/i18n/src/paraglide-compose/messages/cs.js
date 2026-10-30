@@ -317,7 +317,7 @@ export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs
 };
 
 export const compose_preview_empty = /** @type {(inputs: Compose_Preview_EmptyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Náhled se zobrazí, jakmile vyberete kanál.`)
+	return /** @type {LocalizedString} */ (`Zatím není co zobrazit v náhledu.`)
 };
 
 export const compose_refused_channel_twice = /** @type {(inputs: Compose_Refused_Channel_TwiceInputs) => LocalizedString} */ () => {

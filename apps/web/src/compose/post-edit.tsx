@@ -62,6 +62,7 @@ export function PostEdit({
         params={{ postId: post.id }}
         search={{ compose: post.id }}
         state={{ composeHere: true }}
+        resetScroll={false}
         className={buttonVariants({ variant: 'outline', size: 'sm' })}
       >
         {m.post_action_edit()}

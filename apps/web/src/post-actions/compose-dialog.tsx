@@ -41,7 +41,13 @@ export function ComposeDialog(props: ComposeDialogProps) {
   const { workspaceId, role, at, tz, postId, pagePost, onClose } = props;
   const titleId = useId();
   const { guard, onDone } = useClosing(pagePost, onClose);
-  const form = { workspaceId, role, onDone, onDirtyChange: guard.setDirty };
+  const form = {
+    workspaceId,
+    role,
+    onDone,
+    onDirtyChange: guard.setDirty,
+    onPendingChange: guard.setSaving,
+  };
   return (
     <Modal labelledBy={titleId} fill onCancel={guard.close}>
       <div className="relative flex h-full flex-col">

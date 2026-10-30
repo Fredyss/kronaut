@@ -41,8 +41,13 @@ export function Modal({
       aria-label={label}
       aria-describedby={describedBy}
       onCancel={(event) => {
+        if (event.target !== event.currentTarget) return;
         event.preventDefault();
         onCancel();
+      }}
+      onKeyDown={(event) => {
+        // ProseMirror swallows Escape, so the browser never sends the dialog its cancel.
+        if (event.key === 'Escape' && event.defaultPrevented) onCancel();
       }}
       onClose={(event) => {
         // A repeated Escape fires a cancel the browser won't let us prevent; stay open until React unmounts us.

@@ -91,6 +91,7 @@ function HourCell({ day, hour, list, past, formats, mover }: CellProps) {
             to="/"
             search={(prev) => ({ ...prev, ...slotCompose(key, formats.timeZone) })}
             state={{ composeHere: true }}
+            resetScroll={false}
             aria-label={calendarText.calendar_new_post_at({ when: label })}
             className="absolute inset-0 rounded-md hover:bg-accent/50 focus-visible:outline-2 focus-visible:outline-ring"
           />

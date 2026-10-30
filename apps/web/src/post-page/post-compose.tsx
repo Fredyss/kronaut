@@ -30,7 +30,7 @@ export function PostCompose({
         tz={undefined}
         postId={compose}
         pagePost={postId}
-        onClose={() => void navigate({ search: {}, replace: true })}
+        onClose={() => void navigate({ search: {}, replace: true, resetScroll: false })}
       />
     </Suspense>
   );

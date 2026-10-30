@@ -881,7 +881,7 @@ export const compose_no_channels = /** @type {((inputs?: Compose_No_ChannelsInpu
 /**
 * | output |
 * | --- |
-* | "Select a channel to see a preview." |
+* | "Nothing to preview yet." |
 *
 * @param {Compose_Preview_EmptyInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
