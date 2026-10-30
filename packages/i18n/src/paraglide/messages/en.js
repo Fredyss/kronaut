@@ -199,6 +199,7 @@
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
+/** @typedef {{}} Issue_Tag_UnknownInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
 /** @typedef {{}} Issue_Too_LargeInputs */
@@ -349,6 +350,16 @@
 /** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_SaveInputs */
 /** @typedef {{}} Settings_TitleInputs */
+/** @typedef {{}} Tags_AddInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_CreateInputs */
+/** @typedef {{}} Tags_ExistsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Tags_FullInputs */
+/** @typedef {{}} Tags_LabelInputs */
+/** @typedef {{}} Tags_LimitInputs */
+/** @typedef {{}} Tags_No_MatchInputs */
+/** @typedef {{}} Tags_NoneInputs */
+/** @typedef {{}} Tags_Out_Of_ScopeInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_RemoveInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
@@ -1178,6 +1189,10 @@ export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_To
 	return /** @type {LocalizedString} */ (`The video's resolution is too high for this network.`)
 };
 
+export const issue_tag_unknown = /** @type {(inputs: Issue_Tag_UnknownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This tag no longer exists. Remove it and save again.`)
+};
+
 export const issue_text_too_long = /** @type {(inputs: Issue_Text_Too_LongInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The text is too long for this network.`)
 };
@@ -1799,6 +1814,48 @@ export const settings_save = /** @type {(inputs: Settings_SaveInputs) => Localiz
 
 export const settings_title = /** @type {(inputs: Settings_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Settings`)
+};
+
+export const tags_add = /** @type {(inputs: Tags_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add a tag`)
+};
+
+export const tags_create = /** @type {(inputs: Tags_CreateInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Create tag “${i?.name}”`)
+};
+
+export const tags_exists = /** @type {(inputs: Tags_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A tag with this name already exists.`)
+};
+
+export const tags_full = /** @type {(inputs: Tags_FullInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} tag.`);
+	return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} tags.`)
+};
+
+export const tags_label = /** @type {(inputs: Tags_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tags`)
+};
+
+export const tags_limit = /** @type {(inputs: Tags_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This workspace has reached its tag limit. Delete a tag in Settings first.`)
+};
+
+export const tags_no_match = /** @type {(inputs: Tags_No_MatchInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No matching tags`)
+};
+
+export const tags_none = /** @type {(inputs: Tags_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No tags`)
+};
+
+export const tags_out_of_scope = /** @type {(inputs: Tags_Out_Of_ScopeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`You have access to only part of this workspace, so you can't create tags.`)
+};
+
+export const tags_remove = /** @type {(inputs: Tags_RemoveInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Remove tag ${i?.name}`)
 };
 
 export const technical_details = /** @type {(inputs: Technical_DetailsInputs) => LocalizedString} */ () => {

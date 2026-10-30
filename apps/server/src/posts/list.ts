@@ -1,20 +1,19 @@
 import { type DocJson, toPlainText } from '@kronaut/compose';
 import { defineRoute } from '@kronaut/contract';
-import { type AccessScope, encodePublicId } from '@kronaut/core';
+import { type AccessScope, decodePublicId, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { HttpError, type IssueDetail } from '../http/errors.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { loadPostTags, type PostTagRow, tagFields } from '../tags/read.ts';
 import { iso, type PostSummaryDto, PostSummarySchema, plainLocal } from './dto.ts';
+import { DRAFTS_DEFAULT_LIMIT, type ListFilter, ListQuery, listFilter } from './list-filter.ts';
 import { pathId } from './params.ts';
+
+export { invalid, zodDetails } from './list-filter.ts';
 
 export const RANGE_MAX_POSTS = 500;
 const EXCERPT_GRAPHEMES = 140;
-// A six-week grid that crosses a DST change is one hour longer than 42 × 24 hours.
-const RANGE_MAX_MS = (42 * 24 + 1) * 60 * 60 * 1000;
-const DRAFTS_DEFAULT_LIMIT = 50;
 
 export const postListRoute = defineRoute({
   id: 'posts.list',
@@ -23,62 +22,12 @@ export const postListRoute = defineRoute({
   auth: ['session', 'grant'],
   action: 'posts:read',
   params: z.object({ workspaceId: z.string() }),
-  query: z.object({
-    from: z.string().optional(),
-    to: z.string().optional(),
-    unscheduled: z.string().optional(),
-    limit: z.string().optional(),
-  }),
+  query: ListQuery,
   response: z.object({ items: z.array(PostSummarySchema), truncated: z.boolean() }),
   summary: 'List posts',
-  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}).`,
+  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list.`,
   tags: ['posts'],
 });
-
-const Instant = z.iso.datetime({ offset: true });
-
-const RangeQuery = z.strictObject({ from: Instant, to: Instant });
-
-const UnscheduledQuery = z.strictObject({
-  unscheduled: z.literal('true'),
-  limit: z
-    .string()
-    .regex(/^[0-9]{1,3}$/)
-    .transform(Number)
-    .pipe(z.number().int().min(1).max(100))
-    .optional(),
-});
-
-export type ListFilter =
-  | { readonly kind: 'range'; readonly from: Date; readonly to: Date }
-  | { readonly kind: 'unscheduled'; readonly limit: number };
-
-export function invalid(details: readonly IssueDetail[]): HttpError {
-  return new HttpError('unprocessable', 'The query is invalid.', { details });
-}
-
-export function zodDetails(error: z.ZodError): IssueDetail[] {
-  return error.issues.map((issue) => ({
-    path: ['query', ...issue.path.map(String)].join('.'),
-    code: issue.code,
-  }));
-}
-
-export function listFilter(query: z.output<typeof postListRoute.query>): ListFilter {
-  const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
-  if ('unscheduled' in present) {
-    const parsed = UnscheduledQuery.safeParse(present);
-    if (!parsed.success) throw invalid(zodDetails(parsed.error));
-    return { kind: 'unscheduled', limit: parsed.data.limit ?? DRAFTS_DEFAULT_LIMIT };
-  }
-  const parsed = RangeQuery.safeParse(present);
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
-  const from = Temporal.Instant.from(parsed.data.from).epochMilliseconds;
-  const to = Temporal.Instant.from(parsed.data.to).epochMilliseconds;
-  if (to <= from) throw invalid([{ path: 'query.to', code: 'range_invalid' }]);
-  if (to - from > RANGE_MAX_MS) throw invalid([{ path: 'query.to', code: 'range_too_large' }]);
-  return { kind: 'range', from: new Date(from), to: new Date(to) };
-}
 
 const SEGMENTER = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
@@ -123,10 +72,15 @@ const POST_COLUMNS = [
   'p.updated_at',
 ] as const;
 
+interface PostQuery {
+  readonly workspaceId: string;
+  readonly scope: AccessScope | null;
+  readonly tagId: string | undefined;
+}
+
 async function loadPosts(
   trx: TenantDb,
-  workspaceId: string,
-  scope: AccessScope | null,
+  { workspaceId, scope, tagId }: PostQuery,
   filter: ListFilter,
 ) {
   let query = trx
@@ -135,6 +89,18 @@ async function loadPosts(
     .where('p.workspace_id', '=', workspaceId)
     .where('p.deleted_at', 'is', null);
   if (scope !== null) query = query.where(visibleIn(scope));
+  if (tagId !== undefined) {
+    query = query.where((eb) =>
+      eb.exists(
+        eb
+          .selectFrom('post_tags as t')
+          .select('t.tag_id')
+          .whereRef('t.workspace_id', '=', 'p.workspace_id')
+          .whereRef('t.post_id', '=', 'p.id')
+          .where('t.tag_id', '=', tagId),
+      ),
+    );
+  }
   const max = filter.kind === 'range' ? RANGE_MAX_POSTS : filter.limit;
   const rows =
     filter.kind === 'range'
@@ -221,11 +187,13 @@ async function loadDestinations(trx: TenantDb, workspaceId: string, ids: readonl
 
 type DestinationRow = Awaited<ReturnType<typeof loadDestinations>>[number];
 
-function summaryOf(
-  post: PostRow,
-  main: MainRow | undefined,
-  destinations: readonly DestinationRow[],
-): PostSummaryDto {
+interface SummaryParts {
+  readonly main: MainRow | undefined;
+  readonly destinations: readonly DestinationRow[];
+  readonly tags: readonly PostTagRow[];
+}
+
+function summaryOf(post: PostRow, { main, destinations, tags }: SummaryParts): PostSummaryDto {
   return PostSummarySchema.parse({
     id: encodePublicId('post', post.id),
     version: post.version,
@@ -234,6 +202,7 @@ function summaryOf(
     scheduleMode: post.schedule_mode,
     scheduleLocal: plainLocal(post.schedule_local),
     scheduleTz: post.schedule_tz,
+    tags: tags.map(tagFields),
     updatedAt: iso(post.updated_at),
     excerpt: main === undefined ? '' : excerptOf(main.doc as unknown as DocJson),
     mediaCount: Number(main?.media_count ?? 0),
@@ -257,20 +226,27 @@ export async function listPosts(
   scope: AccessScope | null,
   filter: ListFilter,
 ): Promise<{ items: PostSummaryDto[]; truncated: boolean }> {
-  const { rows, max } = await loadPosts(trx, workspaceId, scope, filter);
+  const tagId = filter.tag === undefined ? undefined : decodePublicId('tag', filter.tag);
+  if (tagId === null) return { items: [], truncated: false };
+  const { rows, max } = await loadPosts(trx, { workspaceId, scope, tagId }, filter);
   const posts = rows.slice(0, max);
   if (posts.length === 0) return { items: [], truncated: false };
   const ids = posts.map((post) => post.id);
 
   const items = await loadMains(trx, workspaceId, ids);
   const destinations = await loadDestinations(trx, workspaceId, ids);
+  const tagsOf = await loadPostTags(trx, workspaceId, ids);
 
   const mainOf = new Map(items.map((item) => [item.post_id, item]));
   const destinationsOf = Map.groupBy(destinations, (d) => d.post_id);
   return {
     truncated: rows.length > max,
     items: posts.map((post) =>
-      summaryOf(post, mainOf.get(post.id), destinationsOf.get(post.id) ?? []),
+      summaryOf(post, {
+        main: mainOf.get(post.id),
+        destinations: destinationsOf.get(post.id) ?? [],
+        tags: tagsOf.get(post.id) ?? [],
+      }),
     ),
   };
 }

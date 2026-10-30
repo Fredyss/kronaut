@@ -43,6 +43,7 @@ function summary(destinations: ReturnType<typeof destination>[]) {
     version: 3,
     title: null,
     publishSummary: 'scheduled',
+    tags: [],
     scheduleMode: 'instant',
     scheduleLocal: '2026-10-13T09:30:00',
     scheduleTz: 'Europe/Bratislava',

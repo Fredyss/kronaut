@@ -8,6 +8,8 @@ import { appUrl, CHANNEL, TIME_ZONE } from './env.ts';
 const TEXT = 'Ahoj svet, čaká nás ťažký deň';
 const ADDED = ', zajtra bude ľahšie';
 const DRAFT = 'Koncept na neskôr';
+const TAGGED = 'Príspevok so štítkom';
+const TAG = 'Kampaň';
 
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
@@ -72,6 +74,24 @@ test('keeps a draft, then edits it from the calendar draft list', async ({ page 
   await dialog.getByRole('button', { name: en.compose_save_draft({}) }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole('link', { name: `${DRAFT}${ADDED}` })).toBeVisible();
+});
+
+test('tags a post in the composer and shows it on the calendar', async ({ page }) => {
+  const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 9 }).toString();
+  await page.goto(appUrl('/compose'));
+  await page.getByRole('textbox', { name: composeEn.compose_text_label({}) }).fill(TAGGED);
+  await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
+  await page.getByRole('combobox', { name: en.tags_add({}) }).fill(TAG);
+  await page.getByRole('option', { name: en.tags_create({ name: TAG }) }).click();
+  await expect(page.getByRole('button', { name: en.tags_remove({ name: TAG }) })).toBeVisible();
+  await page.getByRole('radio', { name: en.compose_schedule({}) }).check();
+  await page.getByLabel(en.compose_date({}), { exact: true }).fill(date);
+  await page.getByLabel(en.compose_time({}), { exact: true }).fill('12:00');
+  await page.getByRole('button', { name: en.compose_schedule({}) }).click();
+  await expect(page).toHaveURL(/\/posts\/[^/]+$/);
+
+  await page.goto(appUrl(`/?view=list&date=${date}`));
+  await expect(page.getByRole('link', { name: `Tags: ${TAG}` })).toBeVisible();
 });
 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {

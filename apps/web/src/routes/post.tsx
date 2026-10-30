@@ -19,6 +19,7 @@ import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
+import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { canceledLive, editableBy } from '../post-actions/post-editable.ts';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
@@ -29,6 +30,10 @@ const route = getRouteApi('/app/posts/$postId');
 
 const PostEdit = lazy(() =>
   import('./compose.tsx').then((module) => ({ default: module.PostEdit })),
+);
+
+const PostTags = lazy(() =>
+  import('../tags/picker.tsx').then((module) => ({ default: module.PostTags })),
 );
 
 function scheduleLine(post: Post, format: (iso: string) => string): string {
@@ -184,6 +189,9 @@ function PostStatus({
           content={<Content item={data.items[0]} />}
         />
       ) : null}
+      <Suspense fallback={null}>
+        <PostTags workspaceId={workspaceId} post={data} editable={DRAFT_ROLES.has(role)} />
+      </Suspense>
       <ApprovalSection workspaceId={workspaceId} post={data} />
       {data.seriesId === null ? null : (
         <SeriesSection workspaceId={workspaceId} seriesId={data.seriesId} />

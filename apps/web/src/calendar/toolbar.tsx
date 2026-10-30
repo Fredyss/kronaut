@@ -5,8 +5,10 @@ import type { Temporal } from 'temporal-polyfill';
 import type { CalendarView } from '../calendar-search.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
+import { keptTag } from './entries.ts';
 import type { Formats } from './formats.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';
+import { TagFilter } from './tag-filter.tsx';
 import { boundary, shift, type VisibleRange } from './time.ts';
 
 const route = getRouteApi('/app/');
@@ -108,12 +110,17 @@ interface ToolbarProps {
   readonly current: Temporal.PlainDate;
   readonly range: VisibleRange;
   readonly formats: Formats;
+  readonly workspaceId: string | undefined;
+  readonly tag: string | undefined;
 }
 
-export function CalendarToolbar({ view, current, range, formats }: ToolbarProps) {
+export function CalendarToolbar(props: ToolbarProps) {
+  const { view, current, range, formats, workspaceId, tag } = props;
   const navigate = route.useNavigate();
   const date = current.toString();
-  const pick = (next: CalendarView) => void navigate({ to: '/', search: { view: next, date } });
+  const kept = keptTag({ tag });
+  const pick = (next: CalendarView) =>
+    void navigate({ to: '/', search: { view: next, date, ...kept } });
   const [previous, next] = stepLabels(view);
   const listed = view === 'list';
   return (
@@ -125,7 +132,7 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
       >
         <Link
           to="/"
-          search={{ view, date: shift(view, current, -1).toString() }}
+          search={{ view, date: shift(view, current, -1).toString(), ...kept }}
           aria-label={previous}
           title={previous}
           className={ICON_BUTTON}
@@ -142,7 +149,7 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
         </p>
         <Link
           to="/"
-          search={{ view, date: shift(view, current, 1).toString() }}
+          search={{ view, date: shift(view, current, 1).toString(), ...kept }}
           aria-label={next}
           title={next}
           className={ICON_BUTTON}
@@ -151,13 +158,14 @@ export function CalendarToolbar({ view, current, range, formats }: ToolbarProps)
         </Link>
         <Link
           to="/"
-          search={{ view }}
+          search={{ view, ...kept }}
           className={buttonVariants({ variant: 'outline', size: 'sm' })}
         >
           {calendarText.calendar_today()}
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-2">
+        {workspaceId === undefined ? null : <TagFilter workspaceId={workspaceId} tag={tag} />}
         <Segmented
           label={calendarText.calendar_views()}
           onPick={pick}

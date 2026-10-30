@@ -66,5 +66,10 @@
   "calendar_new_post_at": "Vytvoriť príspevok: {when}",
   "calendar_entry_options": "Možnosti príspevku: {text}",
   "calendar_entry_open": "Otvoriť",
-  "calendar_entry_preview": "Náhľad"
+  "calendar_entry_preview": "Náhľad",
+  "calendar_chip_tags": "{label}. Štítky: {tags}",
+  "calendar_tag_filter": "Filtrovať podľa štítka",
+  "calendar_tags_all": "Všetky štítky",
+  "calendar_tag_gone": "Odstránený štítok",
+  "calendar_tag_current": "Vybraný štítok"
 }

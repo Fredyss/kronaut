@@ -8,6 +8,7 @@ import {
   MarkedImageError,
   refusedForApproval,
   type SubmitError,
+  type SubmitStep,
   type SubmitTarget,
 } from './submit-error.ts';
 
@@ -30,8 +31,16 @@ function uploadHeadline(error: SubmitError, nameOf: ChannelName): string {
     : composeText.compose_error_upload_channel({ position, channel });
 }
 
+function tagHeadline(step: SubmitStep): string | null {
+  if (step === 'tags') return composeText.compose_error_tags();
+  if (step === 'tags_opened') return composeText.compose_error_tags_opened();
+  return step === 'tags_unscheduled' ? composeText.compose_error_tags_unscheduled() : null;
+}
+
 function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
   const cause = error.cause;
+  const tags = tagHeadline(error.step);
+  if (tags !== null) return tags;
   if (cause instanceof MarkedImageError) {
     return composeText.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
   }

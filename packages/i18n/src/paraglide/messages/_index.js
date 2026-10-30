@@ -201,6 +201,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
+/** @typedef {{}} Issue_Tag_UnknownInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
 /** @typedef {{}} Issue_Too_LargeInputs */
@@ -351,6 +352,16 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_SaveInputs */
 /** @typedef {{}} Settings_TitleInputs */
+/** @typedef {{}} Tags_AddInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_CreateInputs */
+/** @typedef {{}} Tags_ExistsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Tags_FullInputs */
+/** @typedef {{}} Tags_LabelInputs */
+/** @typedef {{}} Tags_LimitInputs */
+/** @typedef {{}} Tags_No_MatchInputs */
+/** @typedef {{}} Tags_NoneInputs */
+/** @typedef {{}} Tags_Out_Of_ScopeInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_RemoveInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
@@ -3378,6 +3389,21 @@ export const issue_resolution_too_high = /** @type {((inputs?: Issue_Resolution_
 /**
 * | output |
 * | --- |
+* | "This tag no longer exists. Remove it and save again." |
+*
+* @param {Issue_Tag_UnknownInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_tag_unknown = /** @type {((inputs?: Issue_Tag_UnknownInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Tag_UnknownInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_tag_unknown(inputs)
+	if (locale === "cs") return __cs.issue_tag_unknown(inputs)
+	return __en.issue_tag_unknown(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The text is too long for this network." |
 *
 * @param {Issue_Text_Too_LongInputs} inputs
@@ -5639,6 +5665,157 @@ export const settings_title = /** @type {((inputs?: Settings_TitleInputs, option
 	if (locale === "sk") return __sk.settings_title(inputs)
 	if (locale === "cs") return __cs.settings_title(inputs)
 	return __en.settings_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add a tag" |
+*
+* @param {Tags_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_add = /** @type {((inputs?: Tags_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_add(inputs)
+	if (locale === "cs") return __cs.tags_add(inputs)
+	return __en.tags_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Create tag “{name}”" |
+*
+* @param {Tags_CreateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_create = /** @type {((inputs: Tags_CreateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_CreateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_create(inputs)
+	if (locale === "cs") return __cs.tags_create(inputs)
+	return __en.tags_create(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A tag with this name already exists." |
+*
+* @param {Tags_ExistsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_exists = /** @type {((inputs?: Tags_ExistsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_ExistsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_exists(inputs)
+	if (locale === "cs") return __cs.tags_exists(inputs)
+	return __en.tags_exists(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "A post can have at most {count} tag." |
+* | * | "A post can have at most {count} tags." |
+*
+* @param {Tags_FullInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_full = /** @type {((inputs: Tags_FullInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_FullInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_full(inputs)
+	if (locale === "cs") return __cs.tags_full(inputs)
+	return __en.tags_full(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Tags" |
+*
+* @param {Tags_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_label = /** @type {((inputs?: Tags_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_label(inputs)
+	if (locale === "cs") return __cs.tags_label(inputs)
+	return __en.tags_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has reached its tag limit. Delete a tag in Settings first." |
+*
+* @param {Tags_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_limit = /** @type {((inputs?: Tags_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_limit(inputs)
+	if (locale === "cs") return __cs.tags_limit(inputs)
+	return __en.tags_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No matching tags" |
+*
+* @param {Tags_No_MatchInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_no_match = /** @type {((inputs?: Tags_No_MatchInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_No_MatchInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_no_match(inputs)
+	if (locale === "cs") return __cs.tags_no_match(inputs)
+	return __en.tags_no_match(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No tags" |
+*
+* @param {Tags_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_none = /** @type {((inputs?: Tags_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_none(inputs)
+	if (locale === "cs") return __cs.tags_none(inputs)
+	return __en.tags_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "You have access to only part of this workspace, so you can't create tags." |
+*
+* @param {Tags_Out_Of_ScopeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_out_of_scope = /** @type {((inputs?: Tags_Out_Of_ScopeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_Out_Of_ScopeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_out_of_scope(inputs)
+	if (locale === "cs") return __cs.tags_out_of_scope(inputs)
+	return __en.tags_out_of_scope(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Remove tag {name}" |
+*
+* @param {Tags_RemoveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_remove = /** @type {((inputs: Tags_RemoveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_RemoveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_remove(inputs)
+	if (locale === "cs") return __cs.tags_remove(inputs)
+	return __en.tags_remove(inputs)
 });
 /**
 * | output |

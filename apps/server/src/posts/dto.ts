@@ -2,6 +2,7 @@ import { DESTINATION_STATES, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { loadPostTags, PostTagSchema, tagFields } from '../tags/read.ts';
 
 const JsonObject = z.record(z.string(), z.unknown());
 const Instant = z.iso.datetime();
@@ -47,6 +48,7 @@ export const PostSchema = z.object({
   scheduleTz: z.string().nullable(),
   seriesId: z.string().nullable(),
   evergreen: z.enum(['active', 'removed']).nullable(),
+  tags: z.array(PostTagSchema),
   publishSummary: z.enum([
     'draft',
     'in_review',
@@ -75,6 +77,7 @@ export const PostSummarySchema = PostSchema.pick({
   scheduleMode: true,
   scheduleLocal: true,
   scheduleTz: true,
+  tags: true,
   updatedAt: true,
 }).extend({
   excerpt: z.string(),
@@ -258,6 +261,7 @@ export async function findPost(
     await loadDestinations(trx, workspaceId, postId),
   );
   const items = loaded.filter((item) => item.isDefault).map(itemOf);
+  const tags = (await loadPostTags(trx, workspaceId, [postId])).get(postId) ?? [];
 
   return PostSchema.parse({
     id: encodePublicId('post', post.id),
@@ -268,6 +272,7 @@ export async function findPost(
     scheduleTz: post.schedule_tz,
     seriesId: post.series_id === null ? null : encodePublicId('series', post.series_id),
     evergreen: post.evergreen,
+    tags: tags.map(tagFields),
     publishSummary: post.publish_summary,
     items,
     variants,

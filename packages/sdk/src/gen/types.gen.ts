@@ -1738,6 +1738,7 @@ export type PostsListData = {
         to?: string;
         unscheduled?: string;
         limit?: string;
+        tag?: string;
     };
     url: '/v1/workspaces/{workspaceId}/posts';
 };
@@ -1775,6 +1776,11 @@ export type PostsListResponses = {
             scheduleLocal: string | null;
             scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
             scheduleTz: string | null;
+            tags: Array<{
+                color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+                id: string;
+                name: string;
+            }>;
             title: string | null;
             updatedAt: string;
             version: number;
@@ -1882,6 +1888,11 @@ export type PostsCreateResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -1997,6 +2008,11 @@ export type PostsGetResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2118,6 +2134,11 @@ export type PostsUpdateResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2276,6 +2297,11 @@ export type PostsRequestApprovalResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2365,6 +2391,11 @@ export type PostsCancelResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2455,6 +2486,11 @@ export type DestinationsCancelResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2545,6 +2581,11 @@ export type DestinationsMarkPublishedResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2645,6 +2686,11 @@ export type DestinationsSendAgainResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2732,6 +2778,11 @@ export type PostsDuplicateResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -2982,6 +3033,11 @@ export type PostsRescheduleResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -3091,6 +3147,11 @@ export type PostsScheduleResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -3112,6 +3173,45 @@ export type PostsScheduleResponses = {
 };
 
 export type PostsScheduleResponse = PostsScheduleResponses[keyof PostsScheduleResponses];
+
+export type PostsTagsReplaceData = {
+    body: {
+        tagIds: Array<string>;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/tags';
+};
+
+export type PostsTagsReplaceErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type PostsTagsReplaceError = PostsTagsReplaceErrors[keyof PostsTagsReplaceErrors];
+
+export type PostsTagsReplaceResponses = {
+    /**
+     * OK
+     */
+    200: {
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
+    };
+};
+
+export type PostsTagsReplaceResponse = PostsTagsReplaceResponses[keyof PostsTagsReplaceResponses];
 
 export type PostsUnscheduleData = {
     body: {
@@ -3180,6 +3280,11 @@ export type PostsUnscheduleResponses = {
         scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
         scheduleTz: string | null;
         seriesId: string | null;
+        tags: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+        }>;
         title: string | null;
         updatedAt: string;
         variants: Array<{
@@ -3410,3 +3515,145 @@ export type SystemStatusResponses = {
 };
 
 export type SystemStatusResponse = SystemStatusResponses[keyof SystemStatusResponses];
+
+export type TagsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/tags';
+};
+
+export type TagsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type TagsListError = TagsListErrors[keyof TagsListErrors];
+
+export type TagsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+            id: string;
+            name: string;
+            postCount: number;
+        }>;
+    };
+};
+
+export type TagsListResponse = TagsListResponses[keyof TagsListResponses];
+
+export type TagsCreateData = {
+    body: {
+        color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+        name: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/tags';
+};
+
+export type TagsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type TagsCreateError = TagsCreateErrors[keyof TagsCreateErrors];
+
+export type TagsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+        id: string;
+        name: string;
+        postCount: number;
+    };
+};
+
+export type TagsCreateResponse = TagsCreateResponses[keyof TagsCreateResponses];
+
+export type TagsDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        tagId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/tags/{tagId}';
+};
+
+export type TagsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type TagsDeleteError = TagsDeleteErrors[keyof TagsDeleteErrors];
+
+export type TagsDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type TagsDeleteResponse = TagsDeleteResponses[keyof TagsDeleteResponses];
+
+export type TagsUpdateData = {
+    body: {
+        color?: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+        name?: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        tagId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/tags/{tagId}';
+};
+
+export type TagsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type TagsUpdateError = TagsUpdateErrors[keyof TagsUpdateErrors];
+
+export type TagsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        color: 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'violet';
+        id: string;
+        name: string;
+        postCount: number;
+    };
+};
+
+export type TagsUpdateResponse = TagsUpdateResponses[keyof TagsUpdateResponses];

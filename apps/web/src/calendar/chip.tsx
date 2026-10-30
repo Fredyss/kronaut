@@ -4,6 +4,7 @@ import { stateLabel } from '../destinations.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
+import { TagDots } from '../tags/picker.tsx';
 import { type Entry, postText } from './entries.ts';
 import { EntryMenu } from './entry-menu.tsx';
 import type { Formats } from './formats.ts';
@@ -17,6 +18,13 @@ interface ChipProps {
   readonly mover: Mover;
   readonly draggable: boolean;
   readonly compact?: boolean | undefined;
+}
+
+function chipLabel(label: string, post: Entry['post'], locale: string): string {
+  if (post.tags.length === 0) return label;
+  const names = post.tags.map((tag) => tag.name);
+  const tags = new Intl.ListFormat(locale).format(names);
+  return calendarText.calendar_chip_tags({ label, tags });
 }
 
 function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) {
@@ -36,12 +44,13 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
           tz: ownZone,
         });
   const movable = mover.canMove(post);
+  const label = calendarText.calendar_chip_label({ time, channel, state, text });
   return (
     <div className="group/chip relative z-10 min-w-0">
       <Link
         to="/posts/$postId"
         params={{ postId: post.id }}
-        aria-label={calendarText.calendar_chip_label({ time, channel, state, text })}
+        aria-label={chipLabel(label, post, formats.locale)}
         aria-describedby={movable ? MOVE_HINT_ID : undefined}
         title={own}
         data-chip={destination.id}
@@ -63,6 +72,7 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
               className={cn('size-1.5 shrink-0 rounded-full', provider.badge)}
             />
             <span className="truncate">{text}</span>
+            <TagDots tags={post.tags} />
           </>
         ) : (
           <ChipBody
@@ -72,6 +82,7 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
             state={state}
             text={text}
             images={post.mediaCount}
+            tags={post.tags}
           />
         )}
       </Link>
@@ -87,9 +98,10 @@ interface ChipBodyProps {
   readonly state: string;
   readonly text: string;
   readonly images: number;
+  readonly tags: Entry['post']['tags'];
 }
 
-function ChipBody({ at, time, channel, state, text, images }: ChipBodyProps) {
+function ChipBody({ at, time, channel, state, text, images, tags }: ChipBodyProps) {
   return (
     <>
       <span className="flex min-w-0 items-baseline gap-1.5">
@@ -99,9 +111,10 @@ function ChipBody({ at, time, channel, state, text, images }: ChipBodyProps) {
         <span className="truncate text-muted-foreground">{channel}</span>
       </span>
       <span className="truncate">{text}</span>
-      <span className="flex flex-wrap gap-x-2 text-muted-foreground">
+      <span className="flex flex-wrap items-center gap-x-2 text-muted-foreground">
         <span>{state}</span>
         {images === 0 ? null : <span>{m.post_images({ count: images })}</span>}
+        <TagDots tags={tags} />
       </span>
     </>
   );

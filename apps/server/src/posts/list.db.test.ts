@@ -135,6 +135,7 @@ describe('posts.list', () => {
       'scheduleLocal',
       'scheduleMode',
       'scheduleTz',
+      'tags',
       'title',
       'updatedAt',
       'version',

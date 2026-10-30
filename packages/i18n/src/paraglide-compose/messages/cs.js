@@ -31,6 +31,9 @@
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
 /** @typedef {{}} Compose_Error_Now_DraftInputs */
 /** @typedef {{}} Compose_Error_Post_ChangedInputs */
+/** @typedef {{}} Compose_Error_TagsInputs */
+/** @typedef {{}} Compose_Error_Tags_OpenedInputs */
+/** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -221,6 +224,18 @@ export const compose_error_now_draft = /** @type {(inputs: Compose_Error_Now_Dra
 
 export const compose_error_post_changed = /** @type {(inputs: Compose_Error_Post_ChangedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Příspěvek se od otevření změnil. Načtěte ho znovu, abyste viděli nejnovější verzi; vaše úpravy zde se ztratí.`)
+};
+
+export const compose_error_tags = /** @type {(inputs: Compose_Error_TagsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek se uložil, ale jeho štítky ne. Další uložení to zkusí znovu.`)
+};
+
+export const compose_error_tags_opened = /** @type {(inputs: Compose_Error_Tags_OpenedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítky se neuložily, takže se při tomto uložení nic jiného nezměnilo. Další uložení to zkusí znovu.`)
+};
+
+export const compose_error_tags_unscheduled = /** @type {(inputs: Compose_Error_Tags_UnscheduledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek se uložil jako koncept, ale jeho štítky ne, takže ještě není naplánovaný. Dalším uložením to dokončíte.`)
 };
 
 export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {

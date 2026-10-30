@@ -116,5 +116,53 @@
   ],
   "system_api_ended": "Support has ended",
   "system_api_warn": "Upgrade soon",
-  "system_api_critical": "Upgrade now"
+  "system_api_critical": "Upgrade now",
+  "settings_tags_title": "Tags",
+  "settings_tags_intro": "Internal labels for finding and grouping posts. They are never published.",
+  "settings_tags_empty": "No tags yet. Add one in the composer or on a post.",
+  "settings_tag_posts": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} post",
+        "countPlural=*": "{count} posts"
+      }
+    }
+  ],
+  "settings_tag_name": "Name of tag {name}",
+  "settings_tag_color_of": "Color of tag {name}",
+  "settings_tag_color": [
+    {
+      "declarations": ["input color"],
+      "selectors": ["color"],
+      "match": {
+        "color=slate": "Slate",
+        "color=red": "Red",
+        "color=orange": "Orange",
+        "color=amber": "Amber",
+        "color=green": "Green",
+        "color=teal": "Teal",
+        "color=blue": "Blue",
+        "color=violet": "Violet",
+        "color=*": "Color"
+      }
+    }
+  ],
+  "settings_tag_delete": "Delete tag {name}",
+  "settings_tag_delete_title": "Delete tag “{name}”?",
+  "settings_tag_delete_body": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "It will be removed from {count} post.",
+        "countPlural=*": "It will be removed from {count} posts."
+      }
+    }
+  ],
+  "settings_tag_keep": "Keep tag",
+  "settings_tag_delete_confirm": "Delete tag",
+  "settings_tag_saved": "Tag saved",
+  "settings_tag_deleted": "Tag deleted"
 }

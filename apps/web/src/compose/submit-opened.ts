@@ -1,9 +1,14 @@
-import { postsGet, postsReschedule, postsUnschedule } from '@kronaut/sdk';
+import { postsGet, postsReschedule, postsTagsReplace, postsUnschedule } from '@kronaut/sdk';
 import { Temporal } from 'temporal-polyfill';
 import type { Post } from '../api.ts';
 import { idempotency, keyFor } from '../idempotency.ts';
 import type { ComposeInput, ComposeWhen, ScheduleWhen, Submitter } from './submit.ts';
-import { refusedForApproval, SubmitError, type SubmitTarget } from './submit-error.ts';
+import {
+  refusedForApproval,
+  SubmitError,
+  type SubmitStep,
+  type SubmitTarget,
+} from './submit-error.ts';
 
 type Targets = readonly SubmitTarget[];
 
@@ -36,6 +41,40 @@ export async function refresh(s: Submitter, post: Post): Promise<Post> {
   });
   s.stale = false;
   return data;
+}
+
+function tagStep(s: Submitter, when: ComposeWhen): SubmitStep {
+  if (s.opened) return 'tags_opened';
+  return when.mode === 'draft' ? 'tags' : 'tags_unscheduled';
+}
+
+// Compared with what the form last knew, not post.tags: tags don't bump the version, so someone
+// else's change would otherwise look like one to undo. They can run between any two other steps.
+export async function saveTags(
+  s: Submitter,
+  post: Post,
+  { tags: tagIds, when }: ComposeInput,
+  accounts: Targets,
+): Promise<Post> {
+  const known = new Set(s.savedTags);
+  if (known.size === tagIds.length && tagIds.every((id) => known.has(id))) return post;
+  const body = { tagIds: [...tagIds] };
+  s.tags = keyFor(s.tags, JSON.stringify({ postId: post.id, body }));
+  try {
+    const { data } = await postsTagsReplace({
+      client: s.client,
+      path: { workspaceId: s.workspaceId, postId: post.id },
+      body,
+      headers: idempotency(s.tags),
+    });
+    s.tags = null;
+    s.savedTags = tagIds;
+    const saved = { ...post, tags: data.tags };
+    if (s.draft !== null) s.draft.post = saved;
+    return saved;
+  } catch (error) {
+    throw new SubmitError(tagStep(s, when), error, accounts);
+  }
 }
 
 function toMinute(local: string): string {

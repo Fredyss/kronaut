@@ -5,6 +5,7 @@ import { type Channel, channelsQuery, type Post, postKey, postsKey } from '../ap
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
 import { useApiClient, useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
+import type { PostTag } from '../tags/tags.ts';
 import { formFingerprint } from './draft-body.ts';
 import type { OpenedForm } from './from-post.ts';
 import { useOpenedWhen } from './opened-when.ts';
@@ -25,6 +26,11 @@ import { useContents } from './use-contents.ts';
 import { resolveWhen, type WhenState } from './when.ts';
 
 type When = ReturnType<typeof resolveWhen>;
+
+function sameTags(a: readonly PostTag[], b: readonly PostTag[]): boolean {
+  const ids = new Set(a.map((tag) => tag.id));
+  return ids.size === b.length && b.every((tag) => ids.has(tag.id));
+}
 
 function withRepeat(resolved: When, { preview: result }: RepeatControl): When {
   if (!('when' in resolved) || resolved.when.mode !== 'instant') return resolved;
@@ -100,6 +106,8 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
   const [selected, setSelected] = useState<ReadonlySet<string>>(
     () => opened?.form.selected ?? new Set(),
   );
+  const [tags, setTags] = useState<readonly PostTag[]>(() => opened?.post.tags ?? []);
+  const [creating, setCreating] = useState(false);
   const list = channels.data ?? opened?.channels ?? [];
   const content = useContents(workspaceId, list, selected, opened?.form);
   const plan = toPlan(list, content, selected, opened?.post.destinations ?? []);
@@ -107,11 +115,13 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
   const [start] = useState(() =>
     opened === undefined ? undefined : { post: opened.post, fingerprint },
   );
-  const dirty =
+  const changed =
     start === undefined
       ? selected.size > 0 || !isEmpty(content.contents.base)
       : fingerprint !== start.fingerprint;
-  return { channels, list, selected, setSelected, content, plan, start, dirty };
+  const dirty = changed || !sameTags(tags, opened?.post.tags ?? []);
+  const tagField = { value: tags, set: setTags, creating, setCreating };
+  return { channels, list, selected, setSelected, content, plan, tags: tagField, start, dirty };
 }
 
 export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
@@ -129,14 +139,12 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const pending = run.isPending;
   const { locale } = useLocale();
   const flagged = [...limitFlags, ...content.unusable];
-  const stored = opened?.post.destinations ?? [];
-  const gone = goneProblem(stored, list, selected, locale);
+  const gone = goneProblem(opened?.post.destinations ?? [], list, selected, locale);
   const blocked = flagged.length > 0 || gone !== null;
   const queue = usePlanQueue(workspaceId, list, plan);
   const requesting = approval.request && when.mode !== 'draft';
-
   const send = (asRequest: boolean) => {
-    if (pending || blocked) return;
+    if (pending || blocked || form.tags.creating) return;
     const empty = emptyProblem(plan, content.contents.base);
     if (empty !== null) return setFormError(empty);
     const waiting = videoProblem(plan, content.contents.base, content.videos, locale);
@@ -149,6 +157,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     setFormError(null);
     run.mutate({
       ...planInput(plan, content),
+      tags: form.tags.value.map((tag) => tag.id),
       when: resolved.when,
       request: asRequest ? { note: approval.note.value } : null,
     });
@@ -168,6 +177,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     content,
     selected,
     setSelected,
+    tags: form.tags,
     when,
     repeat,
     formError: gone ?? formError,

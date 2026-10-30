@@ -13,6 +13,10 @@ export interface Entry {
   readonly hour: number;
 }
 
+export function keptTag({ tag }: { readonly tag?: string | undefined }) {
+  return tag === undefined ? {} : { tag };
+}
+
 export function slotKey(day: string, hour: number): string {
   return `${day}T${String(hour).padStart(2, '0')}`;
 }

@@ -113,6 +113,18 @@ SELECT pg_temp.must('TEN-04 evergreen_runs: tenant policy, app may read and inse
   AND (SELECT string_agg(x.privilege_type || '(' || att.attname || ')', ',' ORDER BY att.attname)
          FROM pg_attribute att, aclexplode(att.attacl) x
         WHERE att.attrelid = 'evergreen_runs'::regclass AND x.grantee = 'kronaut_app'::regrole) = 'UPDATE(copy_post_id)');
+SELECT pg_temp.must('TEN-04 tags: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'tags'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'tags'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'tags'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 post_tags: tenant policy, app may only read, insert and delete',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_tags'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_tags'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'post_tags'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT');
 SELECT pg_temp.must('TEN-04 post_metric_snapshots: tenant policy, app may only read and insert',
   (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_metric_snapshots'::regclass)
   AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_metric_snapshots'::regclass AND polname = 'tenant_isolation')

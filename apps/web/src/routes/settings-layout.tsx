@@ -12,6 +12,13 @@ const SECTIONS = [
   { to: '/settings/notifications', label: () => m.notifications_title() },
 ] as const;
 
+const TAGS_SECTION = {
+  to: '/settings/tags',
+  label: () => settingsText.settings_tags_title(),
+} as const;
+
+const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
+
 const SYSTEM_SECTION = {
   to: '/settings/system',
   label: () => settingsText.settings_system_title(),
@@ -24,7 +31,11 @@ const ACTIVE = { className: 'border-primary font-medium text-foreground md:bg-ac
 export function SettingsLayout() {
   const client = useApiClient();
   const me = useQuery(meQuery(client)).data;
-  const sections = canReadSystem(me) ? [...SECTIONS, SYSTEM_SECTION] : SECTIONS;
+  const sections = [
+    ...SECTIONS,
+    ...(SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '') ? [TAGS_SECTION] : []),
+    ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),
+  ];
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 md:flex-row md:gap-10 md:p-6">
       <div className="flex flex-col gap-4 md:w-48 md:shrink-0">

@@ -10,7 +10,16 @@ export interface FailedImage {
   readonly variant: number | null;
 }
 
-export type SubmitStep = 'upload' | 'unschedule' | 'create' | 'update' | 'schedule' | 'request';
+export type SubmitStep =
+  | 'upload'
+  | 'unschedule'
+  | 'create'
+  | 'update'
+  | 'tags'
+  | 'tags_opened'
+  | 'tags_unscheduled'
+  | 'schedule'
+  | 'request';
 
 export function refusedForApproval(error: unknown): boolean {
   if (errorCode(error) === 'approval_required') return true;

@@ -87,6 +87,18 @@ function start(
 
 const save = () => screen.findByRole('button', { name: 'Save draft' });
 
+const TAGS = [
+  { id: 'tag_1', name: 'Launch', color: 'teal', postCount: 1 },
+  { id: 'tag_2', name: 'Promo', color: 'red', postCount: 0 },
+];
+const TAG_FIELDS = { id: 'tag_1', name: 'Launch', color: 'teal' };
+
+const tagged: Override = (call) => {
+  if (call.path === '/v1/workspaces/ws_1/tags') return Response.json({ items: TAGS });
+  if (call.path === `${POST_PATH}/tags`) return Response.json({ tags: [] });
+  return undefined;
+};
+
 const FIXED = {
   scheduleMode: 'instant',
   scheduleLocal: '2999-03-01T09:30:00',
@@ -390,6 +402,28 @@ describe('composer edit mode', () => {
     await close();
     await waitFor(() => expect(router.state.location.search).not.toHaveProperty('compose'));
     expect(screen.queryByRole('alertdialog')).toBeNull();
+  });
+
+  it('saves the post without a tag call when the tags are unchanged', async () => {
+    const { router, mutations } = start(draft({ tags: [TAG_FIELDS] }), tagged);
+    await screen.findByRole('button', { name: 'Remove tag Launch' });
+    fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Hello again' } });
+    fireEvent.click(await save());
+
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/posts/${POST_ID}`));
+    expect(mutations().map((call) => call.method)).toEqual(['PATCH']);
+  });
+
+  it('saves only the tags when nothing else changed', async () => {
+    const { router, mutations } = start(draft({ tags: [TAG_FIELDS] }), tagged);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove tag Launch' }));
+    fireEvent.click(await save());
+
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/posts/${POST_ID}`));
+    expect(mutations().map((call) => `${call.method} ${call.path}`)).toEqual([
+      `PUT ${POST_PATH}/tags`,
+    ]);
+    expect(mutations()[0]?.body).toEqual({ tagIds: [] });
   });
 
   it('opens an editable draft from the calendar list, and links the others to the post', async () => {

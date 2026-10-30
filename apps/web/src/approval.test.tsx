@@ -34,6 +34,7 @@ function post(summary: string) {
     scheduleLocal: null,
     scheduleTz: null,
     publishSummary: summary,
+    tags: [],
     items: [{ position: 0, role: 'main', doc: {}, media: [] }],
     destinations: [],
     createdAt: '2026-10-24T07:00:00.000Z',

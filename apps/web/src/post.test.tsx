@@ -40,6 +40,7 @@ const POST = {
   scheduleLocal: '2026-10-24T10:00:00',
   scheduleTz: 'Europe/Bratislava',
   publishSummary: 'completed_partial',
+  tags: [],
   items: [
     {
       position: 0,

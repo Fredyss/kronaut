@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import type { Temporal } from 'temporal-polyfill';
-import { draftsQuery, type PostSummary, postsRangeQuery } from '../api.ts';
+import { draftsQuery, type PostList, type PostSummary, postsRangeQuery } from '../api.ts';
 import type { CalendarView } from '../calendar-search.ts';
 import { useApiClient } from '../context.ts';
 import { pollDelay } from '../destinations.ts';
@@ -42,6 +42,7 @@ interface BodyProps {
   readonly now: string;
   readonly clock: Temporal.Instant;
   readonly formats: Formats;
+  readonly tag: string | undefined;
 }
 
 export function CalendarBody(props: BodyProps) {
@@ -74,15 +75,16 @@ function CalendarContent({
   now,
   clock,
   formats,
+  tag,
   mover,
 }: BodyProps & { readonly mover: Mover }) {
   const client = useApiClient();
   useEffect(() => mover.restoreFocus());
   const posts = useQuery({
-    ...postsRangeQuery(client, workspaceId, range.from, range.to),
+    ...postsRangeQuery(client, workspaceId, range, tag),
     refetchInterval: (query) => calendarPollDelay(query.state.data?.items, Date.now()),
   });
-  const drafts = useQuery(draftsQuery(client, workspaceId));
+  const drafts = useQuery(draftsQuery(client, workspaceId, tag));
   const items = posts.data?.items;
   const entries = useMemo(() => byDay(items ?? [], formats.timeZone), [items, formats.timeZone]);
   if (posts.data === undefined) {
@@ -94,7 +96,8 @@ function CalendarContent({
       <p className="text-muted-foreground text-sm">{m.loading()}</p>
     );
   }
-  if (view === 'list' && posts.data.items.length === 0 && drafts.data?.items.length === 0) {
+  const nothing = posts.data.items.length === 0 && drafts.data?.items.length === 0;
+  if (view === 'list' && tag === undefined && nothing) {
     return <EmptyState />;
   }
   const grid = { days: range.days, entries, formats, current, now, clock, mover };
@@ -112,15 +115,26 @@ function CalendarContent({
       ) : (
         <TimeGrid {...grid} />
       )}
-      {view !== 'list' ? null : drafts.data === undefined ? (
-        drafts.isError ? (
-          <p role="alert" className="text-destructive text-sm">
-            {calendarText.calendar_load_failed()}
-          </p>
-        ) : null
-      ) : (
-        <Drafts items={drafts.data.items} formats={formats} role={role} />
-      )}
+      {view === 'list' ? <DraftsSection drafts={drafts} formats={formats} role={role} /> : null}
     </>
   );
+}
+
+function DraftsSection({
+  drafts,
+  formats,
+  role,
+}: {
+  readonly drafts: UseQueryResult<PostList>;
+  readonly formats: Formats;
+  readonly role: string;
+}) {
+  if (drafts.data !== undefined) {
+    return <Drafts items={drafts.data.items} formats={formats} role={role} />;
+  }
+  return drafts.isError ? (
+    <p role="alert" className="text-destructive text-sm">
+      {calendarText.calendar_load_failed()}
+    </p>
+  ) : null;
 }

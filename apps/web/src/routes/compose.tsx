@@ -1,7 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { useEffect, useId, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useState } from 'react';
 import { meQuery } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
@@ -20,9 +20,14 @@ import { ModeOption, WhenFieldset } from '../compose/when-fieldset.tsx';
 import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
+import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
 
 export { PostEdit } from '../compose/post-edit.tsx';
+
+const TagPicker = lazy(() =>
+  import('../tags/picker.tsx').then((module) => ({ default: module.TagPicker })),
+);
 
 const route = getRouteApi('/app/compose');
 const NOT_STORED: ReadonlySet<string> = new Set();
@@ -135,6 +140,17 @@ export function ComposeForm(props: ComposeFormProps) {
         pending={pending}
       />
 
+      <Suspense fallback={null}>
+        <TagPicker
+          workspaceId={workspaceId}
+          value={form.tags.value}
+          onChange={form.tags.set}
+          onCreating={form.tags.setCreating}
+          editable={DRAFT_ROLES.has(role)}
+          disabled={pending}
+        />
+      </Suspense>
+
       <WhenSection form={form} role={role} opened={start.opened} />
 
       {formError === null ? null : (
@@ -146,7 +162,7 @@ export function ComposeForm(props: ComposeFormProps) {
 
       <SubmitRow
         label={submitLabel(when.mode, pending, approval.requesting)}
-        disabled={pending || blocked}
+        disabled={pending || blocked || form.tags.creating}
         describedBy={blocked ? limitsId : undefined}
         onRequest={approval.offer ? requestInstead : undefined}
       />

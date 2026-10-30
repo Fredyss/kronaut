@@ -35,6 +35,7 @@ import {
 import { queueRoutes } from '../queue/routes.ts';
 import { seriesRoutes } from '../series/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
+import { tagRoutes } from '../tags/routes.ts';
 import type { PostDto } from './dto.ts';
 import { postRoutes } from './routes.ts';
 
@@ -221,6 +222,7 @@ export async function startPosts(
     ...queueRoutes(),
     ...seriesRoutes(),
     ...evergreenRoutes(),
+    ...tagRoutes(),
     ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({

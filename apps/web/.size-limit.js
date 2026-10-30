@@ -31,6 +31,7 @@ const LAZY = {
   'account settings route JS': ['settings-account', '40 KB'],
   'approval settings route JS': ['settings-approvals', '40 KB'],
   'notification settings route JS': ['settings-notifications', '40 KB'],
+  'tag settings route JS': ['settings-tags', '40 KB'],
   'system settings route JS': ['settings-system', '40 KB'],
   'notifications panel JS': ['panel', '10 KB'],
   'editor JS': ['editor', '130 KB'],
@@ -39,6 +40,7 @@ const LAZY = {
   'post actions JS': ['entry-actions', '10 KB'],
   'queue editor JS': ['queue-editor', '10 KB'],
   'followers JS': ['followers', '10 KB'],
+  'tags JS': ['picker', '10 KB'],
   'repeat control JS': ['repeat-fieldset', '5 KB'],
   ...Object.fromEntries(ROUTE_CATALOGS),
 };

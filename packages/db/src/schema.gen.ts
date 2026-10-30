@@ -674,6 +674,12 @@ export interface PostSeries {
   workspace_id: string;
 }
 
+export interface PostTags {
+  post_id: string;
+  tag_id: string;
+  workspace_id: string;
+}
+
 export interface PostVariants {
   content_language: string | null;
   created_at: Generated<Timestamp>;
@@ -861,6 +867,15 @@ export interface SocialAccounts {
   workspace_id: string;
 }
 
+export interface Tags {
+  color: string;
+  created_at: Generated<Timestamp>;
+  id: Generated<string>;
+  name: string;
+  updated_at: Generated<Timestamp>;
+  workspace_id: string;
+}
+
 export interface UsageCounters {
   count: Generated<Int8>;
   metric: string;
@@ -1014,6 +1029,7 @@ export interface DB {
   post_metric_snapshots: PostMetricSnapshots;
   post_revisions: PostRevisions;
   post_series: PostSeries;
+  post_tags: PostTags;
   post_variants: PostVariants;
   posts: Posts;
   provider_app_incidents: ProviderAppIncidents;
@@ -1028,6 +1044,7 @@ export interface DB {
   security_events: SecurityEvents;
   sessions: Sessions;
   social_accounts: SocialAccounts;
+  tags: Tags;
   usage_counters: UsageCounters;
   users: Users;
   variant_items: VariantItems;

@@ -31,6 +31,9 @@
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
 /** @typedef {{}} Compose_Error_Now_DraftInputs */
 /** @typedef {{}} Compose_Error_Post_ChangedInputs */
+/** @typedef {{}} Compose_Error_TagsInputs */
+/** @typedef {{}} Compose_Error_Tags_OpenedInputs */
+/** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -217,6 +220,18 @@ export const compose_error_now_draft = /** @type {(inputs: Compose_Error_Now_Dra
 
 export const compose_error_post_changed = /** @type {(inputs: Compose_Error_Post_ChangedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post changed after you opened it. Reload it to see the latest version; your edits here will be lost.`)
+};
+
+export const compose_error_tags = /** @type {(inputs: Compose_Error_TagsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The post was saved, but its tags weren't. Saving again tries once more.`)
+};
+
+export const compose_error_tags_opened = /** @type {(inputs: Compose_Error_Tags_OpenedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The tags weren't saved, so nothing else in this save changed. Saving again tries once more.`)
+};
+
+export const compose_error_tags_unscheduled = /** @type {(inputs: Compose_Error_Tags_UnscheduledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The post was saved as a draft, but its tags weren't, so it isn't scheduled yet. Saving again finishes it.`)
 };
 
 export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
