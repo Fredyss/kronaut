@@ -9,8 +9,8 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { unexpectedResponse } from '../_kit/failure.ts';
 import { retryAfter } from '../_kit/http.ts';
+import { failureForStatus } from '../_kit/status-failure.ts';
 import { originOf, permanent } from './api.ts';
 import type { MastodonCredentials } from './connect.ts';
 import type { MastodonSettings } from './manifest.ts';
@@ -71,20 +71,17 @@ export function failureOf(
   effect: StepEffect,
   invalid: string,
 ): ProviderFailure {
-  const { status } = response;
-  if (status === 401) return new ProviderFailure({ kind: 'auth_revoked' });
-  if (status === 429)
-    return new ProviderFailure({
-      kind: 'rate_limited',
-      scope: 'account',
-      resetAt: resetAt(response.headers, ctx.now()),
-    });
-  if (status === 422) return permanent(invalid);
-  if (status >= 400 && status < 500) return permanent(`http_${status}`);
-  if (status >= 500)
-    return new ProviderFailure({
-      kind: effect === 'public' ? 'ambiguous' : 'transient',
-      detail: `http_${status}`,
-    });
-  return unexpectedResponse(effect);
+  const { status, headers } = response;
+  return new ProviderFailure(
+    failureForStatus(status, effect, {
+      rateLimited: () => ({
+        kind: 'rate_limited',
+        scope: 'account',
+        resetAt: resetAt(headers, ctx.now()),
+      }),
+      known: () => (status === 422 ? { kind: 'permanent', code: invalid } : undefined),
+      unauthorized: () => ({ kind: 'auth_revoked' }),
+      clientError: () => ({ kind: 'permanent', code: `http_${status}` }),
+    }),
+  );
 }

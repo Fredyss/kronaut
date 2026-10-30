@@ -6,6 +6,7 @@ import {
 } from '@kronaut/core';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { failureForStatus } from '../_kit/status-failure.ts';
 
 const DUPLICATE = /duplicate/i;
 const ERROR_CODE = /^[A-Z][A-Z_]{0,63}$/;
@@ -40,14 +41,7 @@ function permanent(code: string, detail: string): ProviderError {
   return { kind: 'permanent', code, detail };
 }
 
-function rejection(
-  status: number,
-  body: Envelope | undefined,
-  now: Temporal.Instant,
-): ProviderError | undefined {
-  if (status === 401) return { kind: 'auth_revoked' };
-  if (status === 429)
-    return { kind: 'rate_limited', scope: 'account', resetAt: nextUtcMidnight(now) };
+function rejection(status: number, body: Envelope | undefined): ProviderError | undefined {
   const known = PERMANENT_STATUS.get(status);
   if (known !== undefined) return permanent(known, detailOf(status, body));
   if (status !== 422) return undefined;
@@ -64,7 +58,7 @@ function unexplained(
   const detail = detailOf(status, body);
   if (effect === 'public') return { kind: 'ambiguous', detail };
   if (status === 413) return permanent('image_too_large', detail);
-  if (status >= 500 || status === 409) return { kind: 'transient', detail };
+  if (status === 409) return { kind: 'transient', detail };
   return permanent('unexpected_status', detail);
 }
 
@@ -90,8 +84,20 @@ export function failureFromBody(
   context: { readonly effect: StepEffect; readonly now: Temporal.Instant },
 ): ProviderFailure {
   const body = parsedEnvelope(text);
+  const { effect, now } = context;
   return new ProviderFailure(
-    rejection(status, body, context.now) ?? unexplained(status, body, context.effect),
+    failureForStatus(status, effect, {
+      rateLimited: () => ({
+        kind: 'rate_limited',
+        scope: 'account',
+        resetAt: nextUtcMidnight(now),
+      }),
+      known: () => rejection(status, body),
+      unauthorized: () => ({ kind: 'auth_revoked' }),
+      clientError: () => unexplained(status, body, effect),
+      serverDetail: detailOf(status, body),
+      otherStatus: () => unexplained(status, body, effect),
+    }),
   );
 }
 
