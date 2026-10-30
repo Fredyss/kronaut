@@ -2,8 +2,8 @@ import { defineRoute } from '@kronaut/contract';
 import { encodePublicId, POST_METRICS, type PostMetric } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { PostParams, pathId } from '../posts/params.ts';
 import { postResource } from '../posts/units.ts';
 import { storedValue } from './store.ts';
 

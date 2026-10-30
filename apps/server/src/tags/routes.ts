@@ -4,11 +4,11 @@ import type { AccessScope } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { auditActor } from '../posts/audit.ts';
 import { visibleIn } from '../posts/list.ts';
-import { pathId } from '../posts/params.ts';
 import { postTagRoutes } from './post-tags.ts';
 import { BY_NAME, PostTagSchema, TAG_COLORS, tagFields } from './read.ts';
 

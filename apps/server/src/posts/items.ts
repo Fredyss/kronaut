@@ -10,7 +10,7 @@ import { decodePublicId, type ItemRole } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
-import type { Resolving } from './issues.ts';
+import type { Resolving } from './deps.ts';
 import type { PostRef } from './locks.ts';
 
 const DOC_MAX_BYTES = 65536;

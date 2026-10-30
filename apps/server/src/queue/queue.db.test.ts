@@ -1,13 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { decodePublicId, encodePublicId } from '@kronaut/core';
+import { decodePublicId, encodePublicId, resolveLocal } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addMember } from '../approvals/testing.ts';
 import type { PostDto } from '../posts/dto.ts';
-import { resolveLocal } from '../posts/freeze.ts';
 import {
   call,
   create,

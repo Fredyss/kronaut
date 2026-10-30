@@ -1,8 +1,8 @@
-import type { ApprovalStatus } from '@kronaut/core';
+import type { ApprovalStatus, Schedule } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
-import { APPROVAL_UNBOUND, type Frozen, type Schedule } from '../posts/freeze.ts';
-import { unprocessable } from '../posts/issues.ts';
+import { unprocessable } from '../http/issues.ts';
+import { APPROVAL_UNBOUND, type Frozen } from '../posts/freeze.ts';
 import type { DestinationUpdate } from '../publish/finalize.ts';
 
 export interface ApprovedSlot {

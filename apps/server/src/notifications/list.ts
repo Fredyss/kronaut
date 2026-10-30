@@ -3,10 +3,12 @@ import { defineRoute } from '@kronaut/contract';
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { issueDetails } from '../http/input.ts';
+import { invalid } from '../http/issues.ts';
+import { pathId } from '../http/params.ts';
+import { iso } from '../http/time.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { iso } from '../posts/dto.ts';
-import { excerptOf, invalid, loadMains, visibleIn, zodDetails } from '../posts/list.ts';
-import { pathId } from '../posts/params.ts';
+import { excerptOf, loadMains, visibleIn } from '../posts/list.ts';
 import { type Owner, ownerOf, ownRows, unreadCount } from './owner.ts';
 
 const DEFAULT_LIMIT = 50;
@@ -70,7 +72,7 @@ export interface ListFilter {
 function filterOf(query: z.output<typeof notificationListRoute.query>): ListFilter {
   const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
   const parsed = ListQuery.safeParse(present);
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
+  if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   return { limit: parsed.data.limit ?? DEFAULT_LIMIT, unreadOnly: parsed.data.unread === 'true' };
 }
 

@@ -2,8 +2,8 @@ import { defineRoute } from '@kronaut/contract';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import { EMAIL_GROUPS } from './groups.ts';
 import { type Owner, ownerOf } from './owner.ts';
 

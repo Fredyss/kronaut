@@ -1,7 +1,7 @@
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
-import { iso, plainLocal } from '../posts/dto.ts';
+import { iso, plainLocal } from '../http/time.ts';
 
 const Instant = z.iso.datetime();
 

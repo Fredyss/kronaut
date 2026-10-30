@@ -1,8 +1,8 @@
 import { defineRoute } from '@kronaut/contract';
 import type { Principal } from '@kronaut/core';
 import { HttpError } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import { ApprovalRequestSchema, readRequest } from './dto.ts';
 import { closeRequest, type LockedRequest, lockRequest, RequestParams } from './locked.ts';
 

@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import { HttpError } from '../http/errors.ts';
+import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { PostParams, pathId } from '../posts/params.ts';
 import { postUnits } from '../posts/units.ts';
 import { ApprovalRequestListSchema, readRequests } from './dto.ts';
 

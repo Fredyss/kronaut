@@ -1,10 +1,9 @@
-import { formatRule, type Resource, RuleError } from '@kronaut/core';
+import { formatRule, type Resource, RuleError, resolveLocal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
+import { unprocessable } from '../http/issues.ts';
 import type { RequestContext } from '../http/types.ts';
-import { resolveLocal } from '../posts/freeze.ts';
-import { unprocessable } from '../posts/issues.ts';
 import { ownerColumns } from '../posts/owner.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 

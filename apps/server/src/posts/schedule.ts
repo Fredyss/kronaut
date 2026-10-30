@@ -1,12 +1,19 @@
 import { CONTENT_HASH_V } from '@kronaut/compose';
 import { defineRoute } from '@kronaut/contract';
-import { type ApprovalStatus, PUBLISH_DEADLINE_MS, type ScopeUnit, toDate } from '@kronaut/core';
+import {
+  type ApprovalStatus,
+  PUBLISH_DEADLINE_MS,
+  type Schedule,
+  type ScopeUnit,
+  toDate,
+} from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { type Binding, bindingColumns, resolveApproval } from '../approvals/binding.ts';
 import { HttpError } from '../http/errors.ts';
+import { ExpectedVersion, InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { enqueuePublish } from '../jobs.ts';
 import type { ProviderRegistry } from '../providers.ts';
@@ -18,7 +25,7 @@ import { recordPostSettlement } from '../webhooks/events.ts';
 import type { PostRouteDeps } from './deps.ts';
 import { discardPublishProgress, type ProgressReset } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
-import { FRESH_PUBLISH, type Frozen, type Schedule } from './freeze.ts';
+import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
 import {
   bumpPost,
   type CurrentPost,
@@ -28,7 +35,6 @@ import {
   lockCurrent,
   lockDestinations,
 } from './locks.ts';
-import { ExpectedVersion, PostParams, pathId } from './params.ts';
 import {
   draftTargets,
   earliest,
@@ -40,7 +46,6 @@ import {
 } from './targets.ts';
 import { postUnits } from './units.ts';
 
-const IANA_TZ = /^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/;
 const WAITING = 'The post is waiting for approval.';
 
 export const ScheduleCommon = {
@@ -49,11 +54,6 @@ export const ScheduleCommon = {
     .array(z.string().regex(/^[a-z_]{1,64}$/))
     .max(32)
     .optional(),
-};
-
-export const InstantFields = {
-  scheduleLocal: z.iso.datetime({ local: true }),
-  scheduleTz: z.string().max(64).regex(IANA_TZ),
 };
 
 export const postScheduleRoute = defineRoute({

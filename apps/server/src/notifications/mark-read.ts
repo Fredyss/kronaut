@@ -4,8 +4,8 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError, type IssueDetail } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import { type Owner, ownerOf, unreadCount } from './owner.ts';
 
 const MAX_IDS = 100;

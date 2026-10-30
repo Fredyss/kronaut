@@ -4,8 +4,8 @@ import { requireSession } from '../auth/events.ts';
 import { readUser } from '../auth/profile.ts';
 import type { CronTask } from '../cron.ts';
 import { HttpError } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { isInstanceAdmin } from './instance-admins.ts';
 import {

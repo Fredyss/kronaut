@@ -2,9 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { canTransition, type DestinationState, type ScopeUnit } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { auditActor, writeDestinationAudit } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import type { RequestContext } from '../http/types.ts';
-import { auditActor, writeDestinationAudit } from '../posts/audit.ts';
 import {
   type CurrentPost,
   type LockedDestination,
@@ -12,7 +13,6 @@ import {
   lockDestinations,
   type PostRef,
 } from '../posts/locks.ts';
-import { pathId } from '../posts/params.ts';
 import { postUnits } from '../posts/units.ts';
 
 export const NEEDS_ACTION = ['unconfirmed', 'failed', 'blocked', 'awaiting_manual'] as const;

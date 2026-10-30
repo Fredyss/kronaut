@@ -4,8 +4,8 @@ import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import { postApprovedEvent, postRejectedEvent } from '../webhooks/events.ts';
 import { ApprovalRequestSchema, readRequest } from './dto.ts';
 import {

@@ -6,10 +6,10 @@ import {
   type RepeatRule,
   RuleError,
   type RuleSeries,
+  resolveLocal,
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
-import { resolveLocal } from '../posts/freeze.ts';
 
 function series(rule: RepeatRule, dtstart: string): RuleSeries {
   return { rule, dtstart: Temporal.PlainDateTime.from(dtstart) };

@@ -1,8 +1,8 @@
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import type { IssueDetail } from '../http/errors.ts';
+import type { Resolving } from './deps.ts';
 import type { PlacedDestination, ResolvedDestination } from './destinations.ts';
-import type { Resolving } from './issues.ts';
 import { ItemsInput, insertItems, type ResolvedItem, resolveItems } from './items.ts';
 import type { PostRef } from './locks.ts';
 

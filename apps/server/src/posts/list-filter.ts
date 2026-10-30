@@ -1,6 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { HttpError, type IssueDetail } from '../http/errors.ts';
+import { issueDetails } from '../http/input.ts';
+import { invalid } from '../http/issues.ts';
 
 export const DRAFTS_DEFAULT_LIMIT = 50;
 // A six-week grid that crosses a DST change is one hour longer than 42 × 24 hours.
@@ -33,27 +34,16 @@ export type ListFilter =
   | { readonly kind: 'range'; readonly from: Date; readonly to: Date; readonly tag?: string }
   | { readonly kind: 'unscheduled'; readonly limit: number; readonly tag?: string };
 
-export function invalid(details: readonly IssueDetail[]): HttpError {
-  return new HttpError('unprocessable', 'The query is invalid.', { details });
-}
-
-export function zodDetails(error: z.ZodError): IssueDetail[] {
-  return error.issues.map((issue) => ({
-    path: ['query', ...issue.path.map(String)].join('.'),
-    code: issue.code,
-  }));
-}
-
 export function listFilter(query: z.output<typeof ListQuery>): ListFilter {
   const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
   const tag = query.tag === undefined ? {} : { tag: query.tag };
   if ('unscheduled' in present) {
     const parsed = UnscheduledQuery.safeParse(present);
-    if (!parsed.success) throw invalid(zodDetails(parsed.error));
+    if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
     return { kind: 'unscheduled', limit: parsed.data.limit ?? DRAFTS_DEFAULT_LIMIT, ...tag };
   }
   const parsed = RangeQuery.safeParse(present);
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
+  if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const from = Temporal.Instant.from(parsed.data.from).epochMilliseconds;
   const to = Temporal.Instant.from(parsed.data.to).epochMilliseconds;
   if (to <= from) throw invalid([{ path: 'query.to', code: 'range_invalid' }]);

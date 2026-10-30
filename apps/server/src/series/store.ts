@@ -1,7 +1,6 @@
-import { occurrenceAt, parseRule, type RuleSeries } from '@kronaut/core';
+import { occurrenceAt, parseRule, type RuleSeries, resolveLocal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
-import { resolveLocal } from '../posts/freeze.ts';
 
 const SERIES_COLUMNS = [
   'id',

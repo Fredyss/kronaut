@@ -3,7 +3,7 @@ import type { Principal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
-import type { LockedDestination, PostRef } from './locks.ts';
+import type { LockedDestination, PostRef } from '../posts/locks.ts';
 
 export async function auditActor(trx: TenantDb, workspaceId: string, principal: Principal | null) {
   if (principal?.kind === 'user') {
