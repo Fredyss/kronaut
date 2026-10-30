@@ -38,6 +38,26 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Read_OnlyInputs */
 /** @typedef {{}} Settings_Required_ApprovalsInputs */
 /** @typedef {{}} Settings_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_AddInputs */
+/** @typedef {{}} Settings_Saved_Text_CancelInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
+/** @typedef {{}} Settings_Saved_Text_DeletedInputs */
+/** @typedef {{}} Settings_Saved_Text_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Edit_NamedInputs */
+/** @typedef {{}} Settings_Saved_Text_ExistsInputs */
+/** @typedef {{}} Settings_Saved_Text_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_KeepInputs */
+/** @typedef {{}} Settings_Saved_Text_LimitInputs */
+/** @typedef {{}} Settings_Saved_Text_NameInputs */
+/** @typedef {{}} Settings_Saved_Text_Name_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_TextInputs */
+/** @typedef {{}} Settings_Saved_Texts_EmptyInputs */
+/** @typedef {{}} Settings_Saved_Texts_IntroInputs */
+/** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
@@ -654,6 +674,306 @@ export const settings_saved = /** @type {((inputs?: Settings_SavedInputs, option
 	if (locale === "sk") return __sk.settings_saved(inputs)
 	if (locale === "cs") return __cs.settings_saved(inputs)
 	return __en.settings_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add saved text" |
+*
+* @param {Settings_Saved_Text_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_add = /** @type {((inputs?: Settings_Saved_Text_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_add(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_add(inputs)
+	return __en.settings_saved_text_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Saved_Text_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_cancel = /** @type {((inputs?: Settings_Saved_Text_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_cancel(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_cancel(inputs)
+	return __en.settings_saved_text_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete saved text {name}" |
+*
+* @param {Settings_Saved_Text_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_delete = /** @type {((inputs: Settings_Saved_Text_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_delete(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_delete(inputs)
+	return __en.settings_saved_text_delete(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Posts that already used it keep their text." |
+*
+* @param {Settings_Saved_Text_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_delete_body = /** @type {((inputs?: Settings_Saved_Text_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_delete_body(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_delete_body(inputs)
+	return __en.settings_saved_text_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete saved text" |
+*
+* @param {Settings_Saved_Text_Delete_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_delete_confirm = /** @type {((inputs?: Settings_Saved_Text_Delete_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Delete_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_delete_confirm(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_delete_confirm(inputs)
+	return __en.settings_saved_text_delete_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete saved text “{name}”?" |
+*
+* @param {Settings_Saved_Text_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_delete_title = /** @type {((inputs: Settings_Saved_Text_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_delete_title(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_delete_title(inputs)
+	return __en.settings_saved_text_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Text deleted" |
+*
+* @param {Settings_Saved_Text_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_deleted = /** @type {((inputs?: Settings_Saved_Text_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_deleted(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_deleted(inputs)
+	return __en.settings_saved_text_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit" |
+*
+* @param {Settings_Saved_Text_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_edit = /** @type {((inputs?: Settings_Saved_Text_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_edit(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_edit(inputs)
+	return __en.settings_saved_text_edit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit saved text {name}" |
+*
+* @param {Settings_Saved_Text_Edit_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_edit_named = /** @type {((inputs: Settings_Saved_Text_Edit_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Edit_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_edit_named(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_edit_named(inputs)
+	return __en.settings_saved_text_edit_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A saved text with this name already exists." |
+*
+* @param {Settings_Saved_Text_ExistsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_exists = /** @type {((inputs?: Settings_Saved_Text_ExistsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_ExistsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_exists(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_exists(inputs)
+	return __en.settings_saved_text_exists(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This text is empty or too long." |
+*
+* @param {Settings_Saved_Text_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_invalid = /** @type {((inputs?: Settings_Saved_Text_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_invalid(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_invalid(inputs)
+	return __en.settings_saved_text_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep saved text" |
+*
+* @param {Settings_Saved_Text_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_keep = /** @type {((inputs?: Settings_Saved_Text_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_keep(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_keep(inputs)
+	return __en.settings_saved_text_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has reached its limit of saved texts. Delete one first." |
+*
+* @param {Settings_Saved_Text_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_limit = /** @type {((inputs?: Settings_Saved_Text_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_limit(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_limit(inputs)
+	return __en.settings_saved_text_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Name" |
+*
+* @param {Settings_Saved_Text_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_name = /** @type {((inputs?: Settings_Saved_Text_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_name(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_name(inputs)
+	return __en.settings_saved_text_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This name is empty or too long." |
+*
+* @param {Settings_Saved_Text_Name_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_name_invalid = /** @type {((inputs?: Settings_Saved_Text_Name_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Name_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_name_invalid(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_name_invalid(inputs)
+	return __en.settings_saved_text_name_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Text saved" |
+*
+* @param {Settings_Saved_Text_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_saved = /** @type {((inputs?: Settings_Saved_Text_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_saved(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_saved(inputs)
+	return __en.settings_saved_text_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Text" |
+*
+* @param {Settings_Saved_Text_TextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_text = /** @type {((inputs?: Settings_Saved_Text_TextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_TextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_text(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_text(inputs)
+	return __en.settings_saved_text_text(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No saved texts yet." |
+*
+* @param {Settings_Saved_Texts_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_texts_empty = /** @type {((inputs?: Settings_Saved_Texts_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Texts_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_texts_empty(inputs)
+	if (locale === "cs") return __cs.settings_saved_texts_empty(inputs)
+	return __en.settings_saved_texts_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reusable text for the whole workspace, such as a signature or a template. Insert it while writing a post." |
+*
+* @param {Settings_Saved_Texts_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_texts_intro = /** @type {((inputs?: Settings_Saved_Texts_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Texts_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_texts_intro(inputs)
+	if (locale === "cs") return __cs.settings_saved_texts_intro(inputs)
+	return __en.settings_saved_texts_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Saved texts" |
+*
+* @param {Settings_Saved_Texts_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_texts_title = /** @type {((inputs?: Settings_Saved_Texts_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Texts_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_texts_title(inputs)
+	if (locale === "cs") return __cs.settings_saved_texts_title(inputs)
+	return __en.settings_saved_texts_title(inputs)
 });
 /**
 * | output |

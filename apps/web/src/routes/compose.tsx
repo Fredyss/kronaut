@@ -58,6 +58,7 @@ export function ComposeForm(props: ComposeFormProps) {
               pending={pending}
             />
             <ContentSection
+              workspaceId={workspaceId}
               state={content}
               flagged={flagged}
               pending={pending}

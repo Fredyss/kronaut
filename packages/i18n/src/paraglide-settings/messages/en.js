@@ -36,6 +36,26 @@
 /** @typedef {{}} Settings_Read_OnlyInputs */
 /** @typedef {{}} Settings_Required_ApprovalsInputs */
 /** @typedef {{}} Settings_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_AddInputs */
+/** @typedef {{}} Settings_Saved_Text_CancelInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
+/** @typedef {{}} Settings_Saved_Text_DeletedInputs */
+/** @typedef {{}} Settings_Saved_Text_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Edit_NamedInputs */
+/** @typedef {{}} Settings_Saved_Text_ExistsInputs */
+/** @typedef {{}} Settings_Saved_Text_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_KeepInputs */
+/** @typedef {{}} Settings_Saved_Text_LimitInputs */
+/** @typedef {{}} Settings_Saved_Text_NameInputs */
+/** @typedef {{}} Settings_Saved_Text_Name_InvalidInputs */
+/** @typedef {{}} Settings_Saved_Text_SavedInputs */
+/** @typedef {{}} Settings_Saved_Text_TextInputs */
+/** @typedef {{}} Settings_Saved_Texts_EmptyInputs */
+/** @typedef {{}} Settings_Saved_Texts_IntroInputs */
+/** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
@@ -245,6 +265,86 @@ export const settings_required_approvals = /** @type {(inputs: Settings_Required
 
 export const settings_saved = /** @type {(inputs: Settings_SavedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Approval settings saved.`)
+};
+
+export const settings_saved_text_add = /** @type {(inputs: Settings_Saved_Text_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add saved text`)
+};
+
+export const settings_saved_text_cancel = /** @type {(inputs: Settings_Saved_Text_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_saved_text_delete = /** @type {(inputs: Settings_Saved_Text_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete saved text ${i?.name}`)
+};
+
+export const settings_saved_text_delete_body = /** @type {(inputs: Settings_Saved_Text_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posts that already used it keep their text.`)
+};
+
+export const settings_saved_text_delete_confirm = /** @type {(inputs: Settings_Saved_Text_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete saved text`)
+};
+
+export const settings_saved_text_delete_title = /** @type {(inputs: Settings_Saved_Text_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete saved text “${i?.name}”?`)
+};
+
+export const settings_saved_text_deleted = /** @type {(inputs: Settings_Saved_Text_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text deleted`)
+};
+
+export const settings_saved_text_edit = /** @type {(inputs: Settings_Saved_Text_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit`)
+};
+
+export const settings_saved_text_edit_named = /** @type {(inputs: Settings_Saved_Text_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Edit saved text ${i?.name}`)
+};
+
+export const settings_saved_text_exists = /** @type {(inputs: Settings_Saved_Text_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A saved text with this name already exists.`)
+};
+
+export const settings_saved_text_invalid = /** @type {(inputs: Settings_Saved_Text_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This text is empty or too long.`)
+};
+
+export const settings_saved_text_keep = /** @type {(inputs: Settings_Saved_Text_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep saved text`)
+};
+
+export const settings_saved_text_limit = /** @type {(inputs: Settings_Saved_Text_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This workspace has reached its limit of saved texts. Delete one first.`)
+};
+
+export const settings_saved_text_name = /** @type {(inputs: Settings_Saved_Text_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Name`)
+};
+
+export const settings_saved_text_name_invalid = /** @type {(inputs: Settings_Saved_Text_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This name is empty or too long.`)
+};
+
+export const settings_saved_text_saved = /** @type {(inputs: Settings_Saved_Text_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text saved`)
+};
+
+export const settings_saved_text_text = /** @type {(inputs: Settings_Saved_Text_TextInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text`)
+};
+
+export const settings_saved_texts_empty = /** @type {(inputs: Settings_Saved_Texts_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No saved texts yet.`)
+};
+
+export const settings_saved_texts_intro = /** @type {(inputs: Settings_Saved_Texts_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Reusable text for the whole workspace, such as a signature or a template. Insert it while writing a post.`)
+};
+
+export const settings_saved_texts_title = /** @type {(inputs: Settings_Saved_Texts_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Saved texts`)
 };
 
 export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {

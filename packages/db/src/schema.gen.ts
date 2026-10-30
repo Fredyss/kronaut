@@ -822,6 +822,16 @@ export interface RevisionDestinations {
   workspace_id: string;
 }
 
+export interface SavedTexts {
+  created_at: Generated<Timestamp>;
+  doc: Json;
+  doc_schema_v: number;
+  id: Generated<string>;
+  name: string;
+  updated_at: Generated<Timestamp>;
+  workspace_id: string;
+}
+
 export interface SecurityEvents {
   detail: Json | null;
   id: Generated<string>;
@@ -1041,6 +1051,7 @@ export interface DB {
   review_link_posts: ReviewLinkPosts;
   review_links: ReviewLinks;
   revision_destinations: RevisionDestinations;
+  saved_texts: SavedTexts;
   security_events: SecurityEvents;
   sessions: Sessions;
   social_accounts: SocialAccounts;

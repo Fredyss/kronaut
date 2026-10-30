@@ -1,10 +1,11 @@
 import { Button } from '@kronaut/ui';
-import { lazy, Suspense, useId } from 'react';
+import { lazy, type RefObject, Suspense, useId, useRef } from 'react';
 import type { Channel } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { effective } from './contents.ts';
 import type { Doc } from './doc.ts';
+import type { PostEditorHandle } from './editor.tsx';
 import { type LimitItem, mainOnly, postTypeFor } from './items.ts';
 import { loadEditor, loadTextLimits } from './load.ts';
 import type { LimitTarget } from './text-limits.tsx';
@@ -23,6 +24,8 @@ export function EditorFallback() {
   );
 }
 
+type EditorFocus = (handle: RefObject<PostEditorHandle | null>) => void;
+
 interface ItemEditorProps {
   readonly id: string;
   readonly label: string;
@@ -33,10 +36,13 @@ interface ItemEditorProps {
   readonly targets: readonly LimitTarget[];
   readonly onChange: (doc: Doc) => void;
   readonly onRemove: () => void;
+  readonly onEditorFocus: EditorFocus;
 }
 
 function ItemEditor(props: ItemEditorProps) {
-  const { id, label, removeLabel, item, initial, pending, targets, onChange, onRemove } = props;
+  const { id, label, removeLabel, item, initial, pending, targets } = props;
+  const { onChange, onRemove, onEditorFocus } = props;
+  const handle = useRef<PostEditorHandle>(null);
   return (
     <li className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -54,11 +60,13 @@ function ItemEditor(props: ItemEditorProps) {
       </div>
       <Suspense fallback={<EditorFallback />}>
         <PostEditor
+          ref={handle}
           id={id}
           label={label}
           disabled={pending}
           initial={initial}
           onChange={onChange}
+          onFocus={() => onEditorFocus(handle)}
         />
       </Suspense>
       <Suspense fallback={null}>
@@ -72,14 +80,15 @@ interface ItemsSectionProps {
   readonly state: ContentsState;
   readonly targets: readonly LimitTarget[];
   readonly pending: boolean;
+  readonly onEditorFocus: EditorFocus;
 }
 
-export function ItemsSection({ state, targets, pending }: ItemsSectionProps) {
+export function ItemsSection({ state, targets, pending, onEditorFocus }: ItemsSectionProps) {
   const prefix = useId();
   const { items } = state;
   const tab = state.active ?? '';
   const { comment } = items;
-  const shared = { pending, targets };
+  const shared = { pending, targets, onEditorFocus };
   if (items.replies.length === 0 && comment === null && !items.canReply && !items.canComment) {
     return null;
   }

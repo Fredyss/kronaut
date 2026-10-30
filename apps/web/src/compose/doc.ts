@@ -77,6 +77,12 @@ export function docParagraphs(json: unknown): { readonly key: string; readonly t
   }));
 }
 
+export function docText(json: unknown): string {
+  return docParagraphs(json)
+    .map((p) => p.text)
+    .join('\n');
+}
+
 export function isBlank(doc: Doc): boolean {
   return doc.content.every((p) =>
     (p.content ?? []).every((node) => node.type === 'hardBreak' || node.text.trim() === ''),

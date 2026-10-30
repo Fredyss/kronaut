@@ -70,6 +70,11 @@
   - A duplicate, a series occurrence and an evergreen copy keep their source's tags.
   - A member restricted to some brands or channels sees only the tags used on posts they can see. The server refuses them a new tag, and the picker says why.
   - The composer saves tags first on a post it opened: a tag failure leaves the schedule alone. On a new post, a tag failure stops before scheduling, and the error says the post isn't scheduled yet. A post's tags only change if the user changed them in the form, so a save can't undo someone else's change.
+- **Saved texts:** reusable text, such as a signature or a template, kept for the whole workspace.
+  - Settings → Saved texts adds, edits and deletes them, for roles with `settings:write`. It's plain text, edited in a text box.
+  - In the composer, an "Insert saved text" select and an Insert button sit above the text box, hidden while the workspace has none. Choosing a text inserts nothing until Insert is pressed, so type-ahead and arrow keys can't change the post.
+  - It inserts at the cursor of the box last focused in the tab being edited: the text, a reply or the first comment. With no focused box, it uses the text box. With no cursor placed, it inserts at the end.
+  - Inserted text is ordinary post text: it counts toward limits, shows in the preview and can be edited. Changing or deleting a saved text doesn't change posts that already used it.
 - **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited shows an Edit button.
 - **Editing a post:** the composer opens an existing post in the dialog, from the options menu, the calendar's draft list or the post page; `/compose?post=<id>` opens it from a direct link. Changing the content, the channels or the time counts as unsaved changes.
   - **What can be edited:** a post whose destinations are all `draft`, `canceled` or `scheduled`, unless a canceled one is already live in part (the server would answer `destination_live`). A scheduled one needs a role with `posts:schedule`; otherwise `posts:draft` is enough.

@@ -33,7 +33,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 |---|---|---|
 | 1. Actors | `series`, `evergreen`, `destinations`, `media`, `meta`, `cli`, `system` | Whatever drives or reads posts from outside the editing flow |
 | 2. Flow | `posts` | Drafts, edits, freeze, scheduling, opening an approval request, starting a series |
-| 3. Steps | `approvals`, `queue`, `tags`, `publish` | One step each: decisions and bindings, free slots, labels, the destination state machine and worker |
+| 3. Steps | `approvals`, `queue`, `tags`, `saved-texts`, `publish` | One step each: decisions and bindings, free slots, labels, reusable text, the destination state machine and worker |
 | 4. Records | `analytics`, `notifications` | What the steps record |
 | 5. Policy | `approval-policy` | The approval rules that scheduling, the claim and notifications read |
 | 6. Access | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
