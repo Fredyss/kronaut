@@ -1,5 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { ConnectedAccount, CredentialKind, ProviderState } from '@kronaut/core';
+import { toDateOrNull } from '@kronaut/core';
 import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
@@ -134,10 +135,6 @@ export interface Connection {
   readonly requestId: string;
 }
 
-function toDate(instant: Temporal.Instant | undefined): Date | null {
-  return instant === undefined ? null : new Date(instant.epochMilliseconds);
-}
-
 function nfc(value: string | undefined): string | null {
   return value === undefined ? null : value.normalize('NFC');
 }
@@ -170,8 +167,8 @@ async function upsertAccount(
     provider_subject_id: account.subjectId ?? null,
     account_kind: account.accountKind,
     provider_app_id: input.providerAppId,
-    access_expires_at: toDate(account.accessExpiresAt),
-    refresh_expires_at: toDate(account.refreshExpiresAt),
+    access_expires_at: toDateOrNull(account.accessExpiresAt),
+    refresh_expires_at: toDateOrNull(account.refreshExpiresAt),
     ...(account.capabilities === undefined
       ? {}
       : { capabilities: JSON.stringify(account.capabilities) }),

@@ -1,6 +1,6 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import type { Temporal } from 'temporal-polyfill';
 import { seedPulls } from '../analytics/seed.ts';
 import { type DestinationJob, enqueuePublish, enqueueVerify } from '../jobs.ts';
 import { type ChainStep, chainStep, settleChainItems } from './chain-step.ts';
@@ -20,10 +20,6 @@ export interface PlanContext {
   readonly providerAppId: string;
   readonly credential: CredentialFence;
   readonly analytics: boolean;
-}
-
-export function toDate(instant: Temporal.Instant): Date {
-  return new Date(instant.epochMilliseconds);
 }
 
 async function applySideEffect(

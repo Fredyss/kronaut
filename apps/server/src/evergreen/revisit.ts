@@ -1,5 +1,5 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import type { Temporal } from 'temporal-polyfill';
 import { closeRequest } from '../approvals/locked.ts';
 import { plainLocal } from '../posts/dto.ts';
 import { lockCurrent } from '../posts/locks.ts';
@@ -9,10 +9,6 @@ import { postUnits } from '../posts/units.ts';
 import type { ChannelScope } from './pool.ts';
 
 const LEAD_MINUTES = 5;
-
-function toDate(instant: Temporal.Instant): Date {
-  return new Date(instant.epochMilliseconds);
-}
 
 function liveCopies(trx: TenantDb, scope: ChannelScope) {
   return trx

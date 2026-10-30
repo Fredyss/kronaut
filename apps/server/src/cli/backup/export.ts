@@ -5,6 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import type { ReadableStream as WebReadableStream } from 'node:stream/web';
+import { toDate } from '@kronaut/core';
 import { createDatabase } from '@kronaut/db';
 import { createLocalStore, isStorageKey } from '@kronaut/media';
 import { Encrypter } from 'age-encryption';
@@ -262,7 +263,7 @@ export async function exportArchive(deps: ExportDeps, out: string): Promise<Expo
   try {
     const { snapshot, dump } = await dumpDatabase(deps, join(work, DUMP_NAME));
     const manifest = await writeArchive(handle, encrypter, {
-      mtime: new Date(deps.now.epochMilliseconds),
+      mtime: toDate(deps.now),
       dump,
       mediaDir: deps.mediaDir,
       manifestFor: (media) => ({

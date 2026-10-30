@@ -52,6 +52,33 @@
       "includes": ["**", "!**/*.test.ts", "!**/packages/db/**", "!**/apps/server/e2e/**"]
     },
     {
+      "path": "./tools/biome/noWallClock.grit",
+      "includes": [
+        "**/apps/server/src/**",
+        "**/packages/**",
+        "!**/packages/sdk/**",
+        "!**/packages/ui/**",
+        "!**/*.test.ts",
+        "!**/*.test.tsx",
+        "!**/testing.ts",
+        "!**/testing/**",
+        "!**/*testing*"
+      ]
+    },
+    {
+      "path": "./tools/biome/noInstantDate.grit",
+      "includes": [
+        "**/apps/server/src/**",
+        "**/packages/**",
+        "!**/packages/core/src/time.ts",
+        "!**/*.test.ts",
+        "!**/*.test.tsx",
+        "!**/testing.ts",
+        "!**/testing/**",
+        "!**/*testing*"
+      ]
+    },
+    {
       "path": "./tools/biome/noRelativeJsImport.grit",
       "includes": ["**"]
     }

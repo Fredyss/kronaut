@@ -1,5 +1,4 @@
 import { type Keyring, openCredential, sealCredential } from '@kronaut/credentials';
-import type { Temporal } from 'temporal-polyfill';
 
 function encode(value: unknown): Buffer {
   return Buffer.from(JSON.stringify(value), 'utf8');
@@ -11,10 +10,6 @@ function decode(plaintext: Buffer): unknown {
   } finally {
     plaintext.fill(0);
   }
-}
-
-export function toDate(instant: Temporal.Instant | undefined): Date | null {
-  return instant === undefined ? null : new Date(instant.epochMilliseconds);
 }
 
 export function sealValue(

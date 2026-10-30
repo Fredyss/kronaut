@@ -1,4 +1,5 @@
 import type { PostMetric, ProviderError } from '@kronaut/core';
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -185,7 +186,7 @@ function nextPullAt(row: DueRow, outcome: PullOutcome, scope: PullScope) {
     for (const [step, hours] of pullSteps(scope.windowHours)) {
       const at = row.publishedAt.add({ hours });
       if (step > row.step && Temporal.Instant.compare(at, scope.now) > 0) {
-        return { step, at: new Date(at.epochMilliseconds) };
+        return { step, at: toDate(at) };
       }
     }
   }
@@ -236,12 +237,12 @@ export async function endPulls(
 }
 
 export function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
-  if (error?.kind !== 'rate_limited') return new Date(now.add({ hours: 1 }).epochMilliseconds);
+  if (error?.kind !== 'rate_limited') return toDate(now.add({ hours: 1 }));
   const floor = now.add({ minutes: 15 });
   const ceiling = now.add({ hours: MAX_DEFER_HOURS });
   const reset = Temporal.Instant.compare(error.resetAt, ceiling) < 0 ? error.resetAt : ceiling;
   const at = Temporal.Instant.compare(reset, floor) > 0 ? reset : floor;
-  return new Date(at.epochMilliseconds);
+  return toDate(at);
 }
 
 export async function deferPulls(

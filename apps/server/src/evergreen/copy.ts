@@ -1,3 +1,4 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { clonePost } from '../posts/clone.ts';
 import type { Schedule } from '../posts/freeze.ts';
@@ -67,7 +68,7 @@ export async function fillSlot(trx: TenantDb, fill: SlotFill) {
       evergreen_post_id: fill.pool.post_id,
       social_account_id: fill.accountId,
       copy_post_id: turn.locked.id,
-      slot_at: new Date(fill.slot.at.epochMilliseconds),
+      slot_at: toDate(fill.slot.at),
     })
     .execute();
   return outcome;

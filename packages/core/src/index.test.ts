@@ -39,5 +39,7 @@ it('re-exports the public runtime names of every module', () => {
     'occurrenceAt',
     'parseRule',
     'roleAllows',
+    'toDate',
+    'toDateOrNull',
   ]);
 });

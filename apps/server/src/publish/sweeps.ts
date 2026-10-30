@@ -1,3 +1,4 @@
+import { toDate } from '@kronaut/core';
 import type { SweepRow, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -121,7 +122,7 @@ async function reapSent(deps: SweepDeps, trx: TenantDb, ref: DestinationRef): Pr
   await transition(trx, ref, {
     state: 'verifying',
     reason: 'interrupted_after_send',
-    set: { lease_until: null, run_at: new Date(runAt.epochMilliseconds) },
+    set: { lease_until: null, run_at: toDate(runAt) },
   });
   await enqueueVerify(trx, { workspaceId, id }, runAt);
   return 'verifying';
@@ -206,7 +207,7 @@ async function reapUnsent(
     reason: planned.reason,
     set: {
       lease_until: null,
-      ...(planned.runAt === undefined ? {} : { run_at: new Date(planned.runAt.epochMilliseconds) }),
+      ...(planned.runAt === undefined ? {} : { run_at: toDate(planned.runAt) }),
     },
   });
   if (planned.state === 'retry_wait' && planned.runAt !== undefined) {

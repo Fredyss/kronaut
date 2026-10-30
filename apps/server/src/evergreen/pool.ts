@@ -1,3 +1,4 @@
+import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -10,10 +11,6 @@ export interface ChannelScope {
   readonly workspaceId: string;
   readonly accountId: string;
   readonly now: Temporal.Instant;
-}
-
-function toDate(instant: Temporal.Instant): Date {
-  return new Date(instant.epochMilliseconds);
 }
 
 export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<string[]> {
