@@ -2,7 +2,7 @@
 
 A self-hostable social media scheduler. TypeScript on Node 24, Postgres 17 as the only stateful service.
 
-**Status:** Phase 1 MVP feature-complete (ADR-0052). Next: Phase 1.1 ([Roadmap](docs/architecture/09-roadmap.md)).
+**Status:** Phase 2 in progress ([Roadmap](docs/architecture/09-roadmap.md)).
 
 ## Sources of truth (in priority order)
 
@@ -49,16 +49,18 @@ When a task conflicts with 1–3, stop and ask. Don't silently deviate.
 
 ## Code style
 
-- No code comments. The only exception is a non-obvious *why* (for example, an upstream-bug workaround).
+- Adding a file, a feature folder or an import between features: read [Code structure](docs/architecture/13-code-structure.md) first.
+- No code comments or licence headers. The only exception is a comment for a non-obvious *why* (for example, an upstream-bug workaround).
 - TS strict with `erasableSyntaxOnly` (Node runs `.ts` directly): no enums, namespaces or parameter properties. Relative imports use the `.ts` extension.
 - Biome formats and lints; match the surrounding code.
 - Size limits (Biome): 300 lines per source file (500 for tests), 60 lines and cognitive complexity 15 per function, 4 parameters. No file is exempt; split a file before it crosses a limit.
 - Don't "clean up" odd-looking constants, orderings or names without asking. Some are deliberate.
 - Package boundaries follow [Repo layout](docs/architecture/02-repo-layout.md); `apps` depend on `packages`, never the reverse.
+- Every PR gets a review in a fresh session before it counts as ready for merge.
 
 ## Commands
 
-- `pnpm check`: Biome + jscpd (≤ 1% duplication; `pnpm dup` lists the clones) + `tsc -b` + Vitest. It must pass before any task counts as done.
+- `pnpm check`: Biome + jscpd (≤ 1% duplication; `pnpm dup` lists the clones) + `tsc -b` + Vitest, including the structure rules in `tools/lint/`. It must pass before any task counts as done.
 - `pnpm format`: apply Biome fixes.
 - `pnpm typecheck`, `pnpm test`, `pnpm lint`: the parts of `check`.
 - `pnpm test:e2e`: builds the web app, then runs the Playwright smoke suite in `apps/server/e2e/` against the real server and a testcontainers Postgres. It needs Docker and a Chromium from `pnpm --filter @kronaut/server exec playwright install chromium`.

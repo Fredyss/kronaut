@@ -36,6 +36,7 @@ Go was seriously considered. It saves ~50–70 MB RSS, less than Postgres itself
 10. [Scope and risks](10-scope-and-risks.md)
 11. [Operations](11-operations.md)
 12. [Licensing](12-licensing.md)
+13. [Code structure](13-code-structure.md)
 
 ## Reference
 
