@@ -10,19 +10,15 @@ import { type Auth, BASE, expectError, type TestRequest } from '../http/testing.
 import { installJobQueue } from '../job-queue.ts';
 import {
   asUser,
-  clock,
   type MediaDb,
-  signer,
   stagingUnder,
   startMediaDb,
   type Tenant,
   uuidOf,
 } from './db-testing.ts';
-import { libraryRoutes } from './library-routes.ts';
-import { MEDIA_UPLOAD_BODY_LIMIT, mediaRoutes } from './routes.ts';
+import { MEDIA_UPLOAD_BODY_LIMIT } from './routes.ts';
 import { pngFixture } from './testing.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
-import { uploadRoutes } from './upload-routes.ts';
 
 const PART = 10;
 const WRITE_SCOPES = ['media:read', 'media:write'];
@@ -32,7 +28,7 @@ interface Probe {
   readonly method: TestRequest['method'];
   readonly write: boolean;
   readonly grants: boolean;
-  path(mediaId: string): string;
+  path(mediaId: string, part?: string): string;
   body?(): unknown;
   fresh?(): Promise<string>;
   readonly raised?: true;
@@ -136,7 +132,7 @@ const ROUTES: readonly Probe[] = [
     write: true,
     grants: true,
     raised: true,
-    path: (id) => `media/${id}/parts/1`,
+    path: (id, part = '1') => `media/${id}/parts/${part}`,
     body: () => new Uint8Array(PART),
   },
   {
@@ -151,6 +147,7 @@ const ROUTES: readonly Probe[] = [
 
 const READS = ROUTES.filter((route) => !route.write);
 const WRITES = ROUTES.filter((route) => route.write);
+const GRANTABLE_WRITES = WRITES.filter((route) => route.grants);
 const GRANTABLE = ROUTES.filter((route) => route.grants);
 const SESSION_ONLY = ROUTES.filter((route) => !route.grants);
 const IDEMPOTENT = WRITES.filter((route) => route.id !== 'media.video_part');
@@ -202,14 +199,16 @@ afterAll(async () => {
 
 describe('authentication and authorization', () => {
   it('probes every media route', () => {
-    const bound = [
-      ...mediaRoutes({ store: fx.store, signer, clock }),
-      ...libraryRoutes({ signer }),
-      ...uploadRoutes({ staging: fx.staging }),
-    ];
-    const ids = bound.map((candidate) => candidate.route.id).sort();
-    expect(ids).toHaveLength(11);
-    expect(ROUTES.map((route) => route.id).sort()).toEqual(ids);
+    const served = fx.routes
+      .filter(({ route }) => route.tags.includes('media'))
+      .map(({ route }) => `${route.id} ${route.method} ${route.path}`)
+      .sort();
+    const probed = ROUTES.map(
+      ({ id, method, path }) =>
+        `${id} ${method} /v1/workspaces/:workspaceId/${path(':mediaId', ':part')}`,
+    ).sort();
+    expect(served).toHaveLength(11);
+    expect(probed).toEqual(served);
   });
 
   it.each(ROUTES)('$id answers 401 without a credential', async (route) => {
@@ -246,18 +245,21 @@ describe('authentication and authorization', () => {
     expect(error.details).toEqual([{ path: 'authorization', code: 'not_permitted' }]);
   });
 
-  it.each(WRITES.filter((route) => route.grants))(
-    '$id refuses a grant without media:write',
-    async (route) => {
-      const { auth } = await fx.grant(a, ['media:read']);
-      const error = await expectError(await callAs(auth, a, route), 403, 'forbidden');
-      expect(error.details).toEqual([{ path: 'authorization', code: 'scope_missing' }]);
-    },
-  );
+  it.each(GRANTABLE_WRITES)('$id refuses a grant without media:write', async (route) => {
+    const { auth } = await fx.grant(a, ['media:read']);
+    const error = await expectError(await callAs(auth, a, route), 403, 'forbidden');
+    expect(error.details).toEqual([{ path: 'authorization', code: 'scope_missing' }]);
+  });
 
   it.each(READS)('$id refuses a grant restricted to a scope', async (route) => {
     const { auth } = await fx.grant(a, ['media:read', 'posts:read'], true);
     await expectError(await callAs(auth, a, route), 403, 'forbidden');
+  });
+
+  it.each(GRANTABLE_WRITES)('$id refuses a write grant restricted to a scope', async (route) => {
+    const { auth } = await fx.grant(a, WRITE_SCOPES, true);
+    const error = await expectError(await callAs(auth, a, route), 403, 'forbidden');
+    expect(error.details).toEqual([{ path: 'authorization', code: 'out_of_scope' }]);
   });
 });
 
@@ -301,6 +303,9 @@ describe('idempotency', () => {
 describe('body limits', () => {
   const overDefault = new Uint8Array(DEFAULT_MAX_BODY_BYTES + 1);
   const garbage = Buffer.alloc(DEFAULT_MAX_BODY_BYTES, 1).toString('base64');
+  const bodyOfSize = (bytes: number) => ({
+    dataBase64: 'A'.repeat(bytes - JSON.stringify({ dataBase64: '' }).length),
+  });
 
   it.each(DEFAULT_LIMITED)('$id keeps the default limit', async (route) => {
     const response = await fx.call(a, route.method, route.path(shared), { body: overDefault });
@@ -310,9 +315,10 @@ describe('body limits', () => {
   it('lets media.upload past the default limit up to its own', async () => {
     const accepted = await fx.call(a, 'POST', 'media', { body: { dataBase64: garbage } });
     await expectError(accepted, 415, 'unsupported_media_type');
-    const dataBase64 = 'A'.repeat(MEDIA_UPLOAD_BODY_LIMIT);
-    const refused = await fx.call(a, 'POST', 'media', { body: { dataBase64 } });
-    await expectError(refused, 413, 'payload_too_large');
+    const whole = bodyOfSize(MEDIA_UPLOAD_BODY_LIMIT);
+    await expectError(await fx.call(a, 'POST', 'media', { body: whole }), 400, 'invalid_request');
+    const over = bodyOfSize(MEDIA_UPLOAD_BODY_LIMIT + 1);
+    await expectError(await fx.call(a, 'POST', 'media', { body: over }), 413, 'payload_too_large');
   });
 
   it('lets media.video_part take a whole part and no more', async () => {
@@ -326,12 +332,12 @@ describe('body limits', () => {
   });
 
   it('checks the caller before reading a body past the default limit', async () => {
-    const body = { dataBase64: garbage };
+    const body = bodyOfSize(MEDIA_UPLOAD_BODY_LIMIT + 1);
     const target = url(a, 'media');
     const anonymous = await fx.app.request(target, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ dataBase64: 'A'.repeat(MEDIA_UPLOAD_BODY_LIMIT) }),
+      body: JSON.stringify(body),
     });
     await expectError(anonymous, 401, 'unauthenticated');
     await expectError(await fx.call(a, 'POST', 'media', { body, auth: viewer }), 403, 'forbidden');

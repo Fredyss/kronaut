@@ -395,6 +395,8 @@ describe('media routes', () => {
     ] as const) {
       await expectError(await read(workspaceId, mediaId), 404, 'not_found');
     }
+    const { auth: restricted } = await fx.grant(a, ['media:read'], true);
+    await expectError(await asset(a, uuidOf(image), restricted), 404, 'not_found');
     const body = {
       dataBase64: Buffer.from(pngFixture({ width: 4, height: 9 })).toString('base64'),
     };

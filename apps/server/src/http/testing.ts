@@ -18,6 +18,7 @@ import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';
 import type { AccessGate } from './access.ts';
 import { API_BODY_LIMITS, apiRoutes } from './api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './kernel.ts';
+import type { BoundRoute } from './types.ts';
 
 export const BASE = 'https://kronaut.example.test';
 export const PASSWORD = 'correct horse battery';
@@ -52,6 +53,7 @@ export interface TestInstanceOptions {
 export interface TestInstance {
   readonly app: Hono;
   readonly deps: HttpDeps;
+  readonly routes: readonly BoundRoute[];
 }
 
 export function createTestInstance({
@@ -84,7 +86,7 @@ export function createTestInstance({
     ...(access === undefined ? {} : { access }),
   };
   const routes = apiRoutes({ http: deps, store, signer, staging, keyring, providers, cronTasks });
-  return { app: createHttpApp(deps, routes), deps };
+  return { app: createHttpApp(deps, routes), deps, routes };
 }
 
 export async function createTestUser(db: Database, label: string): Promise<string> {

@@ -25,6 +25,7 @@ import {
   requestAs,
   type TestRequest,
 } from '../http/testing.ts';
+import type { BoundRoute } from '../http/types.ts';
 import { createMediaSigner } from './access.ts';
 import type { MediaAssetDto } from './dto.ts';
 import type { MediaGcDeps } from './gc.ts';
@@ -57,6 +58,7 @@ export interface MediaDb {
   readonly staging: Staging;
   readonly root: string;
   readonly app: Hono;
+  readonly routes: readonly BoundRoute[];
   readonly a: Tenant;
   readonly b: Tenant;
   auth(tenant: Tenant): Auth;
@@ -150,7 +152,7 @@ export async function startMediaDb(
   const staging = options.staging?.(root) ?? createStaging('/nonexistent');
   // No fixed clock here: auth_lookup_session checks expiry against the database's now(), so a
   // session started at NOW is dead once NOW is a week old.
-  const { app, deps } = createTestInstance({ db, store, signer, staging });
+  const { app, deps, routes } = createTestInstance({ db, store, signer, staging });
   const a = await provision(db, `${label}-a`);
   const b = await provision(db, `${label}-b`);
   const sessions = new Map<string, Auth>([
@@ -168,6 +170,7 @@ export async function startMediaDb(
     staging,
     root,
     app,
+    routes,
     a,
     b,
     auth,
