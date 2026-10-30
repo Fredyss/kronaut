@@ -106,6 +106,8 @@ test('opens the composer over the calendar and closes back to it', async ({ page
   await page.getByRole('link', { name: calendarEn.calendar_create_post({}), exact: true }).click();
   const dialog = page.getByRole('dialog', { name: en.post_new_title({}) });
   const editor = dialog.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  // A click reaches the leave guard before the next step; typed text arrives a tick after the key.
+  await dialog.getByRole('checkbox', { name: CHANNEL.displayName }).check();
   await editor.click();
   await editor.pressSequentially('x');
   await editor.press('Escape');
