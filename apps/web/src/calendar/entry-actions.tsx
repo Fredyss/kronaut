@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { lazy, type ReactNode, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, type ReactNode, Suspense, useMemo, useState } from 'react';
 import type { PostSummary } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { type EntryActions, EntryActionsContext, type EntryDialog } from './entry-menu.tsx';
@@ -29,10 +29,13 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
   const navigate = useNavigate();
   const [shown, setShown] = useState<Shown | null>(null);
   const actions = useMemo<EntryActions>(() => {
-    const open = (postId: string) => {
-      markComposeOpened();
-      return navigate({ to: '/', search: (current) => ({ ...current, compose: postId }) });
-    };
+    const open = (postId: string) =>
+      navigate({
+        to: '/',
+        search: (current) => ({ ...current, compose: postId }),
+        state: { composeHere: true },
+        resetScroll: false,
+      });
     return {
       role,
       show: (dialog, post) => setShown({ dialog, post }),
@@ -66,30 +69,10 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
   );
 }
 
-let openedHere = false;
-
-export function markComposeOpened(): void {
-  openedHere = true;
-}
-
 export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'children'>) {
   const { compose, at, tz, ...rest } = route.useSearch();
   const navigate = route.useNavigate();
-  useEffect(() => {
-    if (compose === undefined) openedHere = false;
-  }, [compose]);
-  useEffect(
-    () => () => {
-      openedHere = false;
-    },
-    [],
-  );
   if (compose === undefined) return null;
-  const close = () => {
-    if (!openedHere) return void navigate({ search: rest, replace: true });
-    openedHere = false;
-    window.history.back();
-  };
   return (
     <Suspense fallback={null}>
       <ComposeDialog
@@ -98,7 +81,7 @@ export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'chil
         at={at}
         tz={tz}
         postId={compose === 'new' ? undefined : compose}
-        onClose={close}
+        onClose={() => void navigate({ search: rest, replace: true, resetScroll: false })}
       />
     </Suspense>
   );

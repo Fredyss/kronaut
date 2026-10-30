@@ -56,4 +56,3 @@ These rules bind new code, but existing code still breaks them:
 - Shared modules that also define routes: `posts/list.ts`, `posts/schedule.ts`, `channels/disconnect.ts`, `approvals/request.ts`, `auth/profile.ts`.
 - Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review. [Scheduling flow](14-scheduling-flow.md) plans the server fix.
 - Feature folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
-- New post, edit from the post page and duplicate open the full-page composer, not a dialog.

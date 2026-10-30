@@ -3,7 +3,6 @@ import type { PostSummary } from '../api.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
 import { postText } from './entries.ts';
-import { markComposeOpened } from './entry-actions.tsx';
 import type { Formats } from './formats.ts';
 
 type Summary = PostSummary;
@@ -23,7 +22,8 @@ function DraftLink({ post, role }: { readonly post: Summary; readonly role: stri
     <Link
       to="/"
       search={(prev) => ({ ...prev, compose: post.id })}
-      onClick={markComposeOpened}
+      state={{ composeHere: true }}
+      resetScroll={false}
       className={LINK}
     >
       {text}

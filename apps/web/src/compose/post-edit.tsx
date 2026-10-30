@@ -58,8 +58,11 @@ export function PostEdit({
   return (
     <div>
       <Link
-        to="/compose"
-        search={{ post: post.id }}
+        to="/posts/$postId"
+        params={{ postId: post.id }}
+        search={{ compose: post.id }}
+        state={{ composeHere: true }}
+        resetScroll={false}
         className={buttonVariants({ variant: 'outline', size: 'sm' })}
       >
         {m.post_action_edit()}
