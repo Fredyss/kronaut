@@ -14,6 +14,8 @@ const STATIC_IMPORT =
 const DYNAMIC_IMPORT = /\bimport\(\s*'([^']+)'\s*\)/g;
 const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
+const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
+const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
 
 export function isTesting(path: string): boolean {
   return /\.test\.tsx?$|(^|[/-])testing([-./]|$)/.test(path);
@@ -88,4 +90,24 @@ export function testingLeaks(graph: ImportGraph): string[] {
       ? []
       : targets.filter(isTesting).map((target) => `${file} -> ${target}`),
   );
+}
+
+function featureFile(file: string): { feature: string; path: string } | undefined {
+  const [, app, path, folder] = FEATURE_FILE.exec(file) ?? [];
+  if (path === undefined || isTesting(file)) return undefined;
+  const feature = `${app}/${folder}`;
+  return WIRING_FOLDERS.has(feature) ? undefined : { feature, path };
+}
+
+export function featureImports(graph: ImportGraph): string[] {
+  const imports = new Set<string>();
+  for (const [file, targets] of graph) {
+    const source = featureFile(file);
+    if (source === undefined) continue;
+    for (const target of targets.map(featureFile)) {
+      if (target === undefined || target.feature === source.feature) continue;
+      imports.add(`${source.feature} -> ${target.path}`);
+    }
+  }
+  return [...imports].sort();
 }
