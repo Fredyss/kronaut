@@ -21,6 +21,7 @@ import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { canceledLive, editableBy } from '../post-actions/post-editable.ts';
+import { PostCompose } from '../post-page/post-compose.tsx';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
 import { providerUi } from '../providers.ts';
@@ -245,7 +246,10 @@ export function PostPage() {
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
       <h1 className="font-semibold text-2xl tracking-tight">{m.post_title()}</h1>
       {workspace === undefined ? null : (
-        <PostStatus workspaceId={workspace.id} postId={postId} role={workspace.role} />
+        <>
+          <PostStatus workspaceId={workspace.id} postId={postId} role={workspace.role} />
+          <PostCompose workspaceId={workspace.id} postId={postId} role={workspace.role} />
+        </>
       )}
     </section>
   );

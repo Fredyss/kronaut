@@ -5,6 +5,7 @@
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
+/** @typedef {{}} Compose_BackInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
@@ -50,6 +51,7 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Preview_EmptyInputs */
 /** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
 /** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
 /** @typedef {{}} Compose_Refused_Item_OrderInputs */
@@ -116,6 +118,10 @@ export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintIn
 
 export const compose_alt_text_label = /** @type {(inputs: Compose_Alt_Text_LabelInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Alternatívny text k obrázku ${i?.position}`)
+};
+
+export const compose_back = /** @type {(inputs: Compose_BackInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Späť`)
 };
 
 export const compose_channel_image_too_large = /** @type {(inputs: Compose_Channel_Image_Too_LargeInputs) => LocalizedString} */ (i) => {
@@ -308,6 +314,10 @@ export const compose_media_exclusive = /** @type {(inputs: Compose_Media_Exclusi
 
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zatiaľ nemáte pripojený žiadny kanál.`)
+};
+
+export const compose_preview_empty = /** @type {(inputs: Compose_Preview_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ nie je čo zobraziť v náhľade.`)
 };
 
 export const compose_refused_channel_twice = /** @type {(inputs: Compose_Refused_Channel_TwiceInputs) => LocalizedString} */ () => {

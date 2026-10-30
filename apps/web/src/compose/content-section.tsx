@@ -5,18 +5,14 @@ import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
-import { effective } from './contents.ts';
 import { ImagesSection } from './images-section.tsx';
-import { itemDocs } from './items.ts';
 import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
-import { loadEditor, loadPreview, loadTextLimits } from './load.ts';
-import type { PreviewTarget } from './preview/preview.tsx';
-import type { LimitTarget } from './text-limits.tsx';
+import { loadEditor, loadTextLimits } from './load.ts';
+import { limitTargets } from './targets.ts';
 import type { ContentsState } from './use-contents.ts';
 
 const PostEditor = lazy(loadEditor);
 const TextLimits = lazy(loadTextLimits);
-const Previews = lazy(loadPreview);
 
 interface ContentSectionProps {
   readonly state: ContentsState;
@@ -43,39 +39,6 @@ function tabsFor(state: ContentsState, flagged: readonly string[]): ContentTab[]
       problems: flagged.includes(channel.id),
     })),
   ];
-}
-
-function videoOf(state: ContentsState, channelId: string) {
-  const { video } = effective(state.contents, channelId);
-  return video === null ? undefined : state.videos.get(video.id);
-}
-
-function limitTargets(state: ContentsState): LimitTarget[] {
-  const { contents, tabs, active } = state;
-  return tabs.map((channel) => {
-    const content = effective(contents, channel.id);
-    const phase = videoOf(state, channel.id)?.phase;
-    return {
-      channel,
-      doc: content.doc,
-      media: state.mediaFor(channel.id),
-      video: phase?.kind === 'ready' ? phase.asset : null,
-      shown: active === null ? !contents.customized.has(channel.id) : channel.id === active,
-      items: itemDocs(content),
-    };
-  });
-}
-
-function previewTargets(state: ContentsState): PreviewTarget[] {
-  return limitTargets(state).flatMap(({ channel, doc, shown }) => {
-    const choice = state.choiceOf(channel);
-    if (!shown || choice.kind !== 'ok') return [];
-    const { images } = effective(state.contents, channel.id);
-    const entry = videoOf(state, channel.id);
-    const video = entry?.url ?? null;
-    const poster = entry?.poster ?? null;
-    return [{ channel, doc, images, video, poster, publishType: choice.publishType }];
-  });
 }
 
 function checkNote(tabs: readonly ContentTab[], active: string | null, locale: string) {
@@ -136,7 +99,6 @@ export function ContentSection(props: ContentSectionProps) {
   const tabs = tabsFor(state, flagged);
   const reason =
     channel === undefined ? null : channelHint(channel, state.choiceOf(channel), locale);
-  const previews = previewTargets(state);
   const targets = limitTargets(state);
   return (
     <div className="flex flex-col gap-4">
@@ -192,11 +154,6 @@ export function ContentSection(props: ContentSectionProps) {
         {editing ? <ImagesSection fileId={fileId} media={state.media} pending={pending} /> : null}
         {editing ? <ItemsSection state={state} targets={targets} pending={pending} /> : null}
         <MainOnlyNotes state={state} />
-        {previews.length === 0 ? null : (
-          <Suspense fallback={null}>
-            <Previews targets={previews} />
-          </Suspense>
-        )}
       </div>
     </div>
   );

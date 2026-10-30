@@ -2,6 +2,8 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "compose_title": "New post",
   "compose_subtitle": "Write it once, pick the channels, then publish it now or schedule it.",
+  "compose_back": "Back",
+  "compose_preview_empty": "Nothing to preview yet.",
   "compose_text_label": "Text",
   "compose_images_title": "Images",
   "compose_images_hint": [

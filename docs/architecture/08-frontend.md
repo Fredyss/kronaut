@@ -1,6 +1,13 @@
 # Frontend
 
-- **New create and edit flows open in a dialog over the current page,** so the user keeps their place. The full-page composer remains for the flows listed in [Code structure](13-code-structure.md).
+- **Create and edit flows open in a dialog over the current page,** so the user keeps their place.
+  - The composer dialog holds the form on the left and the live preview on the right; below `lg` they stack. Its header (title, Close) and a bottom bar stay in place while the rest scrolls.
+  - The bar holds errors, the time and the main button. Channels, content and tags scroll above it, in that order. On a small screen the time options scroll inside the bar; errors and the main button don't.
+  - A save in progress can't be left: Close, Escape and Back wait for it, because it can't be taken back once it's sent.
+  - "New post" opens it over the calendar (`?compose=new`); Edit and Duplicate open it over the page they're on (`?compose=<id>` on the calendar or the post page).
+  - A link that opens it marks its history entry, so Close goes back one step. A dialog reached by a direct link closes by replacing the URL, which leaves nothing to go back to.
+  - Saving a copy from a post page goes to the copy's page. Everything else closes and stays.
+  - `/compose` remains for direct links, with the same form and a Back link. Leaving it with unsaved changes asks first.
 - **Post editor with variants (ADR-0033):**
   - The default variant applies to all destinations.
   - "Customize for <network/account>" forks a full variant, with its own item list, which shows an "inherited / customized" badge and can be reset.
@@ -47,7 +54,7 @@
   - keyboard-first (j/k, n, e, d, ⇧-arrows, ⌘K)
   - the timezone shown on every time
   - optimistic drag-reschedule with an undo toast (re-approval warning when outside tolerance)
-  - **Empty slot:** in week and day view, clicking (or Enter on) a free future slot opens the composer in a dialog over the calendar, with that date and time filled in, in the shown time zone. The dialog is the compose route's own form, loaded lazily; its state is in the URL (`?compose=new&at=…&tz=…`), so Back closes it and a reload reopens it. Closing with unsaved changes asks first, by Back, Escape, the close button or leaving the page; after saving or scheduling, the dialog closes and the calendar refreshes. Past slots aren't actionable.
+  - **Empty slot:** in week and day view, clicking (or Enter on) a free future slot opens the composer in a dialog over the calendar, with that date and time filled in, in the shown time zone. The dialog's state is in the URL (`?compose=new&at=…&tz=…`), so Back closes it and a reload reopens it. Closing with unsaved changes asks first, by Back, Escape, the close button or leaving the page; after saving or scheduling, the dialog closes and the calendar refreshes. Past slots aren't actionable.
   - **Post actions:** each calendar entry has an options button, shown on hover and focus and always on touch, with a menu (keyboard-operable, `menu` role):
     - **Open** → the post page;
     - **Stats** → the post page's analytics section (only when a destination is published);
@@ -64,7 +71,7 @@
   - A member restricted to some brands or channels sees only the tags used on posts they can see. The server refuses them a new tag, and the picker says why.
   - The composer saves tags first on a post it opened: a tag failure leaves the schedule alone. On a new post, a tag failure stops before scheduling, and the error says the post isn't scheduled yet. A post's tags only change if the user changed them in the form, so a save can't undo someone else's change.
 - **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited shows an Edit button.
-- **Editing a post:** the composer opens an existing post, at `/compose?post=<id>` or, over the calendar, in the dialog at `?compose=<id>`, from the options menu or the calendar's draft list. Changing the content, the channels or the time counts as unsaved changes.
+- **Editing a post:** the composer opens an existing post in the dialog, from the options menu, the calendar's draft list or the post page; `/compose?post=<id>` opens it from a direct link. Changing the content, the channels or the time counts as unsaved changes.
   - **What can be edited:** a post whose destinations are all `draft`, `canceled` or `scheduled`, unless a canceled one is already live in part (the server would answer `destination_live`). A scheduled one needs a role with `posts:schedule`; otherwise `posts:draft` is enough.
   - **Canceled channels:** on a post with other destinations, a canceled one opens unticked, with a line naming it, so a save can't publish to it by accident. It stays canceled while the content and channels are unchanged. Saving a change removes it from the post; ticking it publishes to it again. A post that is canceled everywhere opens with all of them ticked.
   - **Nothing is lost:** the composer only opens a post it can show whole. It stays on the post page, with a line saying why, when a destination's channel isn't available, when one channel has two destinations, or when the content is a shape the composer can't show (media on a reply or comment, images next to a video, more than one video, the same media twice in one item). It also stays there when a stored publish type isn't the one the composer would choose, or a text has formatting the composer can't show. Destination settings and delivery mode the composer has no field for are sent back unchanged; settings belong to a publish type, so a media change that changes the type drops them.

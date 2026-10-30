@@ -129,7 +129,7 @@ export interface Call {
   readonly body: unknown;
 }
 
-export type Override = (call: Call, count: number) => Response | undefined;
+export type Override = (call: Call, count: number) => Response | Promise<Response> | undefined;
 
 export function policy(mode: 'none' | 'required') {
   const values = {

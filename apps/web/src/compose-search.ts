@@ -7,6 +7,17 @@ export interface ComposeSearch extends SlotSearch {
   readonly post?: string;
 }
 
+export interface PostSearch {
+  readonly compose?: string;
+}
+
+// '@tanstack/history' itself isn't a direct dependency; the router re-exports the same interface.
+declare module '@tanstack/react-router' {
+  interface HistoryState {
+    composeHere?: boolean;
+  }
+}
+
 const POST_ID = /^post_[0-9a-hjkmnp-tv-z]{26}$/;
 const LOCAL_MINUTE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 const ZONE_MAX = 64;
@@ -36,4 +47,8 @@ export function slotSearch(search: Record<string, unknown>): SlotSearch {
 export function composeSearch(search: Record<string, unknown>): ComposeSearch {
   const { post } = search;
   return { ...slotSearch(search), ...(isPostId(post) ? { post } : {}) };
+}
+
+export function postSearch({ compose }: Record<string, unknown>): PostSearch {
+  return isPostId(compose) ? { compose } : {};
 }

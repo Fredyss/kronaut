@@ -56,7 +56,11 @@ export default function Previews({ targets, empty = null, stacked = false }: Pre
       <h2 id={titleId} className="font-medium text-sm">
         {m.compose_preview_title()}
       </h2>
-      <div className={stacked ? 'grid gap-4' : 'grid gap-4 sm:grid-cols-2'}>{cards}</div>
+      <div
+        className={stacked ? 'grid grid-cols-[minmax(0,1fr)] gap-4' : 'grid gap-4 sm:grid-cols-2'}
+      >
+        {cards}
+      </div>
     </section>
   );
 }
