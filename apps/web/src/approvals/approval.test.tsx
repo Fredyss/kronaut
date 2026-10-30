@@ -4,6 +4,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 
 afterEach(cleanup);
 
@@ -129,6 +130,11 @@ function forbidden(code: string): Response {
     { status: 403 },
   );
 }
+
+warmUp(async () => {
+  mount({ canApprove: true, summary: 'in_review', requests: () => [request('open', 'usr_2', [])] });
+  await screen.findByText('0 of 2 approvals', {}, COLD);
+});
 
 describe('approval panel', () => {
   it('lets an approver approve and shows the updated count', async () => {

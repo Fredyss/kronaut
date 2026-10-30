@@ -15,6 +15,7 @@ import {
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 import { useLocaleChoice } from '../locale-choice.ts';
 import { chooseTheme } from '../theme.tsx';
 
@@ -79,6 +80,17 @@ function mount(path: string, reply: Reply = echo) {
 async function region(name: string): Promise<HTMLElement> {
   return await screen.findByRole('region', { name });
 }
+
+async function warmSection(path: string, name: string) {
+  mount(path);
+  await screen.findByRole('heading', { name, level: 2 }, COLD);
+}
+
+warmUp(
+  () => warmSection('/settings/account', 'Account'),
+  () => warmSection('/settings/notifications', 'Notifications'),
+  () => warmSection('/settings/approvals', 'Approvals'),
+);
 
 describe('settings', () => {
   it('redirects /settings to the account section', async () => {

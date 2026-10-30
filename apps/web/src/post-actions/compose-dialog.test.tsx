@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { channel, mount, type Override, post } from '../compose/testing.tsx';
+import { COLD, channel, mount, type Override, post, warmUp } from '../compose/testing.tsx';
 
 vi.mock('../compose/editor.tsx', async () => ({
   default: (await import('../compose/testing.tsx')).MockEditor,
@@ -60,6 +60,24 @@ async function saveEdit() {
   fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Changed' } });
   fireEvent.click(await screen.findByRole('button', { name: 'Save draft' }));
 }
+
+warmUp(
+  async () => {
+    start('/?compose=new', []);
+    await screen.findByRole('heading', { name: 'New post' }, COLD);
+    await screen.findByLabelText('Text', {}, COLD);
+  },
+  async () => {
+    start('/?view=list', []);
+    await screen.findByRole('link', { name: 'Create post' }, COLD);
+  },
+  async () => {
+    start(`/posts/${POST_ID}`, [stored(POST_ID, 'draft')]);
+    fireEvent.click(await screen.findByRole('link', { name: 'Edit' }, COLD));
+    await screen.findByRole('heading', { name: 'Edit post' }, COLD);
+    await screen.findByLabelText('Text', {}, COLD);
+  },
+);
 
 describe('composer dialog', () => {
   it('opens from Create post on the calendar and closes back to it', async () => {

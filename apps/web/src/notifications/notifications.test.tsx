@@ -4,6 +4,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 
 afterEach(cleanup);
 
@@ -95,6 +96,12 @@ const FOUR = [
   note('ntf_1', 'channel.needs_reauth', { postId: null, destinationId: null, excerpt: null }),
   note('ntf_0', 'post.something_new', { readAt: '2026-10-13T09:00:00.000Z', excerpt: '' }),
 ];
+
+warmUp(async () => {
+  mount({ items: [], unread: 0 });
+  fireEvent.click(await screen.findByRole('button', { name: 'Notifications' }, COLD));
+  await screen.findByRole('heading', { name: 'Notifications' }, COLD);
+});
 
 describe('notifications bell', () => {
   it.each([

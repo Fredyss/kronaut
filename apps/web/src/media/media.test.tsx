@@ -4,6 +4,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 
 afterEach(cleanup);
 
@@ -81,6 +82,11 @@ function mount() {
   render(<App router={router} queryClient={queryClient} client={client} />);
   return calls;
 }
+
+warmUp(async () => {
+  mount();
+  await screen.findByRole('button', { name: 'Image uploaded Oct 20, 2026' }, COLD);
+});
 
 describe('media library', () => {
   it('blocks deleting a used asset and keeps a grant-set AI label', async () => {

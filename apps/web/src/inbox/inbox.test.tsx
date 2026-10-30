@@ -4,6 +4,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 
 afterEach(cleanup);
 
@@ -103,6 +104,11 @@ function buttons(li: HTMLElement): string[] {
 function error(status: number, code: string, details?: object[]) {
   return Response.json({ error: { code, message: '', details } }, { status });
 }
+
+warmUp(async () => {
+  mount(listOf([item('dst_u', 'unconfirmed', 'ambiguous_response')]));
+  await screen.findByRole('link', { name: 'Hello dst_u' }, COLD);
+});
 
 describe('needs-action inbox', () => {
   it('lists each row with the actions its state allows', async () => {

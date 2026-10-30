@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { channel, MEDIA_ASSET, MEDIA_ID, mount, policy, post } from './testing.tsx';
+import { channel, MEDIA_ASSET, MEDIA_ID, mount, policy, post, warmComposer } from './testing.tsx';
 
 vi.mock('./editor.tsx', async () => ({
   default: (await import('./testing.tsx')).MockEditor,
@@ -44,6 +44,8 @@ const CREATE_BODY = {
     { accountId: 'acct_ig', publishType: 'image' },
   ],
 };
+
+warmComposer();
 
 describe('composer', () => {
   it('uploads, creates, schedules asap with idempotency keys and opens the post', async () => {

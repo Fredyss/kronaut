@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type Call, channel, mount } from './testing.tsx';
+import { type Call, channel, mount, warmComposer } from './testing.tsx';
 
 vi.mock('./editor.tsx', async () => ({
   default: (await import('./testing.tsx')).MockEditor,
@@ -51,6 +51,8 @@ const button = (name: string) => screen.getByRole('button', { name });
 const type = async (label: string, value: string) =>
   fireEvent.change(await screen.findByLabelText(label), { target: { value } });
 const creates = (calls: readonly Call[]) => calls.filter((c) => c.path === POSTS);
+
+warmComposer();
 
 describe('composer reply chains', () => {
   it('publishes the main post, two replies and a first comment in order', async () => {

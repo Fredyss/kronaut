@@ -5,6 +5,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { Temporal } from 'temporal-polyfill';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 
 vi.mock('./time.ts', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./time.ts')>()),
@@ -75,6 +76,13 @@ function mount(locale: string, url: string, items: unknown[]) {
   render(<App router={router} queryClient={queryClient} client={client} />);
   return ranges;
 }
+
+warmUp(async () => {
+  mount('en', '/?view=week&date=2026-10-14', [
+    summary([destination('a', 'bluesky', 'scheduled', '2026-10-13T07:30:00.000Z')]),
+  ]);
+  await screen.findByRole('link', { name: /Hello calendar/ }, COLD);
+});
 
 describe('calendar', () => {
   it('renders one linked chip per destination and asks for the zoned week', async () => {

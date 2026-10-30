@@ -3,7 +3,7 @@ import { toPlainText } from '@kronaut/compose/text';
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PostEditorProps } from './editor.tsx';
-import { channel, jpeg, mount, pickFiles } from './testing.tsx';
+import { channel, jpeg, mount, pickFiles, warmComposer } from './testing.tsx';
 
 vi.mock('./editor.tsx', async () => {
   const { toDoc } = await import('./doc.ts');
@@ -87,6 +87,8 @@ async function select(...names: string[]) {
 
 const card = (name: string) => screen.findByRole('article', { name });
 const textOf = (article: HTMLElement) => article.querySelector('p')?.textContent;
+
+warmComposer();
 
 describe('composer previews', () => {
   it('shows the published text on a short-feed, a pro-feed and a media-grid card', async () => {

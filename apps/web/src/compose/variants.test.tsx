@@ -1,7 +1,15 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { channel, jpeg, MEDIA_ID, mount, type Override, pickFiles } from './testing.tsx';
+import {
+  channel,
+  jpeg,
+  MEDIA_ID,
+  mount,
+  type Override,
+  pickFiles,
+  warmComposer,
+} from './testing.tsx';
 
 vi.mock('./editor.tsx', async () => ({
   default: (await import('./testing.tsx')).MockEditor,
@@ -47,6 +55,8 @@ const submitButton = () => screen.getByRole('button', { name: 'Publish now' }) a
 function created(calls: () => { path: string; body: unknown }[]) {
   return calls().find((c) => c.path === '/v1/workspaces/ws_1/posts')?.body;
 }
+
+warmComposer();
 
 describe('composer variants', () => {
   it('customizes Bluesky with shorter text so a long default can go out', async () => {
