@@ -19,7 +19,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, `testing.ts` and its variants, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
-  - Type-only imports, tests, imports made by wiring folders and `apps/*/src` root files are outside it, so a root file can still pass one feature's code to another.
+  - Type-only imports, tests, imports made by wiring folders and `apps/*/src` root files are outside it, so a root file, or a wiring file the feature already lists, can still pass one feature's code to another.
   - A new line is a design decision: add it by hand in the PR that needs it, and say why. Prefer a target already listed, or a file that clearly owns the concept.
   - A line covers the whole source feature, so a second file there can use a listed target without a new line.
   - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
