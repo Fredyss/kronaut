@@ -10,12 +10,13 @@ import {
 } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
+  assertPublicSendOrder,
   type RecordedRequest,
   type ScriptedExchange,
   scriptedHttp,
   testPublishContext,
 } from '../_kit/testing.ts';
-import type { FacebookSettings } from './manifest.ts';
+import { type FacebookSettings, facebookManifest } from './manifest.ts';
 import { type FacebookCredentials, facebookRuntime } from './runtime.ts';
 
 const PAGE_ID = '1012345678901234';
@@ -202,6 +203,7 @@ describe('facebook reel: publish', () => {
       ...signed,
     });
     expect(checkpoints).toEqual([{ video: VIDEO_ID }, uploaded, { ...uploaded, sentAt: SENT_AT }]);
+    assertPublicSendOrder(events, facebookManifest);
     expect(events.filter((event) => event.startsWith('step:'))).toEqual([
       'step:upload_video',
       'step:publish_reel',

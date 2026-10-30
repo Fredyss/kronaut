@@ -8,6 +8,7 @@ import {
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
 import { permanent } from '../_kit/meta-graph.ts';
+import { beginPublicSend } from '../_kit/public-send.ts';
 import { failureFromBody, isSuccess, linkedinFailure, readBody } from './errors.ts';
 import { escapeLittleText } from './escape.ts';
 import { videoAsync } from './manifest.ts';
@@ -126,9 +127,7 @@ async function createPost(
   { member, item, state }: Draft,
   video: boolean,
 ): Promise<PublishOutcome> {
-  await ctx.step('create_post');
-  const sent: State = { ...state, sentAt: ctx.now().toString({ smallestUnit: 'millisecond' }) };
-  await ctx.checkpoint(sent);
+  const sent = await beginPublicSend(ctx, 'create_post', state);
   const json = postBody(member.author, item, sent);
   const response = await restPost(ctx, 'public', member, { path: POSTS_PATH, json });
   if (!isSuccess(response.status)) {

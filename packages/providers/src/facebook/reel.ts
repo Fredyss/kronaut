@@ -10,6 +10,7 @@ import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
 import { graphId } from '../_kit/meta-container-state.ts';
 import { permanent } from '../_kit/meta-graph.ts';
+import { beginPublicSend } from '../_kit/public-send.ts';
 import { graphBodyFailure, graphCall } from './graph.ts';
 import { reelPolling } from './manifest.ts';
 import { GRAPH_VERSION, graphUrl } from './oauth.ts';
@@ -46,10 +47,6 @@ const reelStatus = z.looseObject({
 type ReelStatus = z.infer<typeof reelStatus>['status'];
 
 const pending: PublishOutcome = { kind: 'pending', pollAfterMs: reelPolling.pollIntervalMs };
-
-function stamp(ctx: PublishContext): string {
-  return ctx.now().toString({ smallestUnit: 'millisecond' });
-}
 
 function isDone(status: string | undefined): boolean {
   return status === 'completed' || status === 'complete';
@@ -179,8 +176,7 @@ export async function publishReel(ctx: PublishContext, input: Input): Promise<Pu
   const status = await readStatus(ctx, page, video);
   checkUploadStatus(status);
   if (!isDone(status.uploading_phase?.status)) return pending;
-  await ctx.step('publish_reel');
-  await ctx.checkpoint({ ...state, sentAt: stamp(ctx) });
+  await beginPublicSend(ctx, 'publish_reel', state);
   const url = graphUrl(`${page.id}/video_reels`, {});
   const init = formInit(finishFields(page, video, { text: item.text, ref }));
   await graphCall(ctx, 'public', { url, init }, accepted);

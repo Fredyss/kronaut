@@ -1,12 +1,14 @@
 import type { MediaRef, ProviderState, PublishContext, PublishItem } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
+  assertPublicSendOrder,
   egressError,
   type ScriptedExchange,
   scriptedHttp,
   TEST_NOW,
   testPublishContext,
 } from '../_kit/testing.ts';
+import { instagramManifest } from './manifest.ts';
 import { instagramRuntime } from './runtime.ts';
 import {
   createdAs,
@@ -61,6 +63,7 @@ describe('instagram publish', () => {
     const result = await instagramRuntime.publish(ctx, image());
     http.assertDone();
 
+    assertPublicSendOrder(events, instagramManifest);
     expect(result).toEqual({ kind: 'published', remoteId: '18000000000000009', url: PERMALINK });
     expect(form(http.calls[0])).toEqual({
       image_url: media.m1.url,
