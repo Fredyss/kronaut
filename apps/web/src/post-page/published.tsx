@@ -33,7 +33,13 @@ function useDuplicate(workspaceId: string, postId: string) {
   const [pending, setPending] = useState(false);
   const run = async () => {
     setPending(true);
-    const open = (post: string) => navigate({ to: '/compose', search: { post } });
+    const open = (post: string) =>
+      navigate({
+        to: '/posts/$postId',
+        params: { postId },
+        search: { compose: post },
+        state: { composeHere: true },
+      });
     const module = await load();
     await module.duplicatePost({ client, queryClient, workspaceId, postId, open });
     setPending(false);

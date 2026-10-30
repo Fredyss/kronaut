@@ -7,6 +7,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
+/** @typedef {{}} Compose_BackInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
@@ -52,6 +53,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Preview_EmptyInputs */
 /** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
 /** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
 /** @typedef {{}} Compose_Refused_Item_OrderInputs */
@@ -182,6 +184,21 @@ export const compose_alt_text_label = /** @type {((inputs: Compose_Alt_Text_Labe
 	if (locale === "sk") return __sk.compose_alt_text_label(inputs)
 	if (locale === "cs") return __cs.compose_alt_text_label(inputs)
 	return __en.compose_alt_text_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Back" |
+*
+* @param {Compose_BackInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_back = /** @type {((inputs?: Compose_BackInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_BackInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_back(inputs)
+	if (locale === "cs") return __cs.compose_back(inputs)
+	return __en.compose_back(inputs)
 });
 /**
 * | output |
@@ -860,6 +877,21 @@ export const compose_no_channels = /** @type {((inputs?: Compose_No_ChannelsInpu
 	if (locale === "sk") return __sk.compose_no_channels(inputs)
 	if (locale === "cs") return __cs.compose_no_channels(inputs)
 	return __en.compose_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Select a channel to see a preview." |
+*
+* @param {Compose_Preview_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_preview_empty = /** @type {((inputs?: Compose_Preview_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Preview_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_preview_empty(inputs)
+	if (locale === "cs") return __cs.compose_preview_empty(inputs)
+	return __en.compose_preview_empty(inputs)
 });
 /**
 * | output |

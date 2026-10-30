@@ -63,6 +63,13 @@ test('keeps a draft, then edits it from the calendar draft list', async ({ page 
   await page.getByRole('button', { name: en.compose_save_draft({}) }).click();
   await expect(page).toHaveURL(/\/posts\/[^/]+$/);
 
+  await page.getByRole('link', { name: en.post_action_edit({}) }).click();
+  const overPost = page.getByRole('dialog', { name: en.post_edit_title({}) });
+  await expect(overPost).toBeVisible();
+  await overPost.getByRole('button', { name: en.close({}) }).click();
+  await expect(overPost).toHaveCount(0);
+  await expect(page).toHaveURL(/\/posts\/[^/?]+$/);
+
   await page.goto(appUrl('/?view=list'));
   await page.getByRole('link', { name: DRAFT }).click();
   const dialog = page.getByRole('dialog', { name: en.post_edit_title({}) });
@@ -92,6 +99,16 @@ test('tags a post in the composer and shows it on the calendar', async ({ page }
 
   await page.goto(appUrl(`/?view=list&date=${date}`));
   await expect(page.getByRole('link', { name: `Tags: ${TAG}` })).toBeVisible();
+});
+
+test('opens the composer over the calendar and closes back to it', async ({ page }) => {
+  await page.goto(appUrl('/?view=list'));
+  await page.getByRole('link', { name: calendarEn.calendar_create_post({}), exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: en.post_new_title({}) });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: en.close({}) }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page).toHaveURL(/\/\?view=list$/);
 });
 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {

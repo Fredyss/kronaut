@@ -2,6 +2,8 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "compose_title": "Nový příspěvek",
   "compose_subtitle": "Napište ho jednou, vyberte kanály a pak ho zveřejněte hned, nebo naplánujte.",
+  "compose_back": "Zpět",
+  "compose_preview_empty": "Náhled se zobrazí, jakmile vyberete kanál.",
   "compose_text_label": "Text",
   "compose_images_title": "Obrázky",
   "compose_images_hint": [

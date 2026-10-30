@@ -1,22 +1,15 @@
-import { Button } from '@kronaut/ui';
+import { buttonVariants } from '@kronaut/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { lazy, Suspense, useEffect, useId, useState } from 'react';
-import { meQuery } from '../api.ts';
+import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
+import { meQuery, type Post } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
+import { ComposeBar } from '../compose/compose-bar.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
-import { EditNotes } from '../compose/edit-notes.tsx';
-import { Failure } from '../compose/failure.tsx';
 import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
 import { type OpenedPostData, openedPostQuery } from '../compose/opened-post.ts';
-import { REPEAT_ROLES } from '../compose/repeat.ts';
-import {
-  type ComposeStart,
-  type OpenedCompose,
-  useComposeForm,
-} from '../compose/use-compose-form.ts';
-import { submitLabel } from '../compose/when.ts';
-import { ModeOption, WhenFieldset } from '../compose/when-fieldset.tsx';
+import { PreviewPane } from '../compose/preview-pane.tsx';
+import { type ComposeStart, useComposeForm } from '../compose/use-compose-form.ts';
 import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
@@ -32,37 +25,6 @@ const TagPicker = lazy(() =>
 const route = getRouteApi('/app/compose');
 const NOT_STORED: ReadonlySet<string> = new Set();
 
-function SubmitRow({
-  label,
-  disabled,
-  describedBy,
-  onRequest,
-}: {
-  readonly label: string;
-  readonly disabled: boolean;
-  readonly describedBy: string | undefined;
-  readonly onRequest: (() => void) | undefined;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      <Button type="submit" disabled={disabled} aria-describedby={describedBy}>
-        {label}
-      </Button>
-      {onRequest === undefined ? null : (
-        <Button
-          type="button"
-          variant="outline"
-          disabled={disabled}
-          aria-describedby={describedBy}
-          onClick={onRequest}
-        >
-          {m.compose_request_approval()}
-        </Button>
-      )}
-    </div>
-  );
-}
-
 export interface ComposeFormProps extends ComposeStart {
   readonly workspaceId: string;
   readonly role: string;
@@ -70,101 +32,56 @@ export interface ComposeFormProps extends ComposeStart {
   readonly onReload?: (() => void) | undefined;
 }
 
-type FormState = ReturnType<typeof useComposeForm>;
-
-function WhenSection({
-  form,
-  role,
-  opened,
-}: {
-  readonly form: FormState;
-  readonly role: string;
-  readonly opened: OpenedCompose | undefined;
-}) {
-  const { when, pending, approval, queue, repeat } = form;
-  const dateId = useId();
-  const timeId = useId();
-  return (
-    <>
-      <WhenFieldset
-        when={when}
-        dateId={dateId}
-        timeId={timeId}
-        pending={pending}
-        note={approval.requesting ? approval.note : undefined}
-        queue={approval.request ? undefined : queue}
-        repeat={REPEAT_ROLES.has(role) && opened === undefined ? repeat : undefined}
-        extraMode={
-          <ModeOption
-            value="draft"
-            label={composeText.compose_keep_draft()}
-            when={when}
-            disabled={pending}
-          />
-        }
-      />
-      {opened === undefined ? null : (
-        <EditNotes form={opened} mode={when.mode} selected={form.selected} />
-      )}
-    </>
-  );
-}
-
 export function ComposeForm(props: ComposeFormProps) {
   const { workspaceId, role, onDirtyChange, onReload, ...start } = props;
   const form = useComposeForm(workspaceId, start);
-  const { channels, list, content, selected, setSelected, when, formError, blocked } = form;
-  const { flagged, setLimitFlags, failure, pending, onSubmit, approval, requestInstead } = form;
+  const { channels, content, selected, setSelected, flagged, setLimitFlags, pending } = form;
   const { dirty } = form;
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
   const limitsId = useId();
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit} noValidate>
-      <ContentSection
-        state={content}
-        flagged={flagged}
-        pending={pending}
+    <form className="flex min-h-0 flex-1 flex-col" onSubmit={form.onSubmit} noValidate>
+      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="flex min-w-0 flex-col gap-8">
+            <ChannelsFieldset
+              channels={channels.data}
+              failed={channels.isError}
+              mediaFor={content.mediaFor}
+              customized={(id) => content.contents.customized.has(id)}
+              stored={start.opened?.form.stored ?? NOT_STORED}
+              selected={selected}
+              setSelected={setSelected}
+              pending={pending}
+            />
+            <ContentSection
+              state={content}
+              flagged={flagged}
+              pending={pending}
+              limitsId={limitsId}
+              onIssuesChange={setLimitFlags}
+            />
+            <Suspense fallback={null}>
+              <TagPicker
+                workspaceId={workspaceId}
+                value={form.tags.value}
+                onChange={form.tags.set}
+                onCreating={form.tags.setCreating}
+                editable={DRAFT_ROLES.has(role)}
+                disabled={pending}
+              />
+            </Suspense>
+          </div>
+          <PreviewPane state={content} />
+        </div>
+      </div>
+      <ComposeBar
+        form={form}
+        role={role}
+        opened={start.opened}
         limitsId={limitsId}
-        onIssuesChange={setLimitFlags}
-      />
-
-      <ChannelsFieldset
-        channels={channels.data}
-        failed={channels.isError}
-        mediaFor={content.mediaFor}
-        customized={(id) => content.contents.customized.has(id)}
-        stored={start.opened?.form.stored ?? NOT_STORED}
-        selected={selected}
-        setSelected={setSelected}
-        pending={pending}
-      />
-
-      <Suspense fallback={null}>
-        <TagPicker
-          workspaceId={workspaceId}
-          value={form.tags.value}
-          onChange={form.tags.set}
-          onCreating={form.tags.setCreating}
-          editable={DRAFT_ROLES.has(role)}
-          disabled={pending}
-        />
-      </Suspense>
-
-      <WhenSection form={form} role={role} opened={start.opened} />
-
-      {formError === null ? null : (
-        <p role="alert" className="text-destructive text-sm">
-          {formError}
-        </p>
-      )}
-      {failure === null ? null : <Failure error={failure} channels={list} onReload={onReload} />}
-
-      <SubmitRow
-        label={submitLabel(when.mode, pending, approval.requesting)}
-        disabled={pending || blocked || form.tags.creating}
-        describedBy={blocked ? limitsId : undefined}
-        onRequest={approval.offer ? requestInstead : undefined}
+        onReload={onReload}
       />
     </form>
   );
@@ -195,7 +112,7 @@ export function EditForm({ postId, ...form }: EditFormProps) {
   useEffect(() => {
     if (refused) void navigate({ to: '/posts/$postId', params: { postId }, replace: true });
   }, [refused, navigate, postId]);
-  if (opened === null) return <p className="text-muted-foreground text-sm">{m.loading()}</p>;
+  if (opened === null) return <p className="p-5 text-muted-foreground text-sm">{m.loading()}</p>;
   return (
     <ComposeForm
       key={`${postId}:${loads}`}
@@ -206,24 +123,54 @@ export function EditForm({ postId, ...form }: EditFormProps) {
   );
 }
 
-function GuardedEdit({ workspaceId, role, postId }: Omit<EditFormProps, 'onDone'>) {
+interface GuardedFormProps {
+  readonly workspaceId: string;
+  readonly role: string;
+  readonly at: string | undefined;
+  readonly tz: string | undefined;
+  readonly post: string | undefined;
+}
+
+function GuardedForm({ workspaceId, role, at, tz, post }: GuardedFormProps) {
   const navigate = useNavigate();
+  const saved = useRef<Post | null>(null);
   const guard = useLeaveGuard(() => {
-    void navigate({ to: '/posts/$postId', params: { postId } });
+    if (saved.current === null) return;
+    void navigate({ to: '/posts/$postId', params: { postId: saved.current.id } });
   });
+  const form = {
+    workspaceId,
+    role,
+    onDirtyChange: guard.setDirty,
+    onDone: (done: Post) => {
+      saved.current = done;
+      guard.leave();
+    },
+  };
   return (
-    <div className="relative">
-      <div inert={guard.prompt}>
-        <EditForm
-          workspaceId={workspaceId}
-          role={role}
-          postId={postId}
-          onDone={guard.leave}
-          onDirtyChange={guard.setDirty}
-        />
+    <div className="relative flex min-h-0 flex-1 flex-col">
+      <div inert={guard.prompt} className="flex min-h-0 flex-1 flex-col">
+        {post === undefined ? (
+          <ComposeForm {...form} at={at} tz={tz} />
+        ) : (
+          <EditForm {...form} postId={post} />
+        )}
       </div>
       {guard.prompt ? <Discard onKeep={guard.keep} onDiscard={guard.leave} /> : null}
     </div>
+  );
+}
+
+function BackLink({ post }: { readonly post: string | undefined }) {
+  const className = buttonVariants({ variant: 'ghost', size: 'sm', className: 'self-start' });
+  return post === undefined ? (
+    <Link to="/" className={className}>
+      {composeText.compose_back()}
+    </Link>
+  ) : (
+    <Link to="/posts/$postId" params={{ postId: post }} className={className}>
+      {composeText.compose_back()}
+    </Link>
   );
 }
 
@@ -232,8 +179,9 @@ export function ComposePage() {
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
   const { at, tz, post } = route.useSearch();
   return (
-    <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
-      <header className="flex flex-col gap-1">
+    <section className="mx-auto flex w-full max-w-6xl flex-col">
+      <header className="flex flex-col gap-1 px-5 pt-6">
+        <BackLink post={post} />
         <h1 className="font-semibold text-2xl tracking-tight">
           {post === undefined ? composeText.compose_title() : m.post_edit_title()}
         </h1>
@@ -241,10 +189,8 @@ export function ComposePage() {
           <p className="text-muted-foreground text-sm">{composeText.compose_subtitle()}</p>
         ) : null}
       </header>
-      {workspace === undefined ? null : post === undefined ? (
-        <ComposeForm workspaceId={workspace.id} at={at} tz={tz} role={workspace.role} />
-      ) : (
-        <GuardedEdit workspaceId={workspace.id} role={workspace.role} postId={post} />
+      {workspace === undefined ? null : (
+        <GuardedForm workspaceId={workspace.id} role={workspace.role} at={at} tz={tz} post={post} />
       )}
     </section>
   );

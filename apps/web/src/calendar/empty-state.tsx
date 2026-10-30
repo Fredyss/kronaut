@@ -10,7 +10,9 @@ export function EmptyState() {
       <p className="text-muted-foreground text-sm">{calendarText.home_empty_body()}</p>
       <p className="text-muted-foreground text-xs">{calendarText.posts_scheduled({ count: 0 })}</p>
       <Link
-        to="/compose"
+        to="/"
+        search={(prev) => ({ ...prev, compose: 'new' })}
+        state={{ composeHere: true }}
         className={buttonVariants({ className: 'mt-2' })}
         onMouseEnter={preloadEditor}
         onFocus={preloadEditor}

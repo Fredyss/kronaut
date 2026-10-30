@@ -6,6 +6,7 @@ interface ModalProps {
   readonly label?: string;
   readonly describedBy?: string;
   readonly wide?: boolean;
+  readonly fill?: boolean;
   readonly children: ReactNode;
   onCancel(): void;
 }
@@ -16,6 +17,7 @@ export function Modal({
   label,
   describedBy,
   wide = false,
+  fill = false,
   children,
   onCancel,
 }: ModalProps) {
@@ -49,6 +51,7 @@ export function Modal({
       className={cn(
         'm-auto w-[calc(100%-2rem)] rounded-xl border bg-background p-5 text-foreground shadow-lg backdrop:bg-black/40',
         wide ? 'max-h-[calc(100svh-2rem)] max-w-3xl' : 'max-w-md',
+        fill && 'h-[calc(100svh-2rem)] max-w-6xl overflow-hidden p-0',
       )}
     >
       {children}

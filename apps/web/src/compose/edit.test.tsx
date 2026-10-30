@@ -380,7 +380,7 @@ describe('composer edit mode', () => {
   it('offers Edit on the post page of an editable post', async () => {
     start(draft(), undefined, `/posts/${POST_ID}`);
     const link = await screen.findByRole('link', { name: 'Edit' });
-    expect(link.getAttribute('href')).toBe(`/compose?post=${POST_ID}`);
+    expect(link.getAttribute('href')).toBe(`/posts/${POST_ID}?compose=${POST_ID}`);
   });
 
   it('opens over the calendar and asks before closing only after a change', async () => {

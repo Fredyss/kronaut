@@ -132,7 +132,9 @@ export function CalendarSidebar({ workspaceId }: { readonly workspaceId: string 
           </span>
         </button>
         <Link
-          to="/compose"
+          to="/"
+          search={(prev) => ({ ...prev, compose: 'new' })}
+          state={{ composeHere: true }}
           aria-label={collapsed ? create : undefined}
           title={collapsed ? create : undefined}
           onMouseEnter={preloadEditor}
