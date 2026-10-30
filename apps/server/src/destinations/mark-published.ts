@@ -1,10 +1,10 @@
 import { defineRoute } from '@kronaut/contract';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { ExpectedVersion } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { PostSchema, readPost } from '../posts/dto.ts';
 import { bumpPost, destinationRef } from '../posts/locks.ts';
-import { ExpectedVersion } from '../posts/params.ts';
 import { transition } from '../publish/finalize.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';
 import { auditResolution, DestinationParams, lockMove, lockTarget, movableTo } from './locked.ts';

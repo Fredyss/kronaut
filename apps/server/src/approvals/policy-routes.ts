@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { pathId } from '../posts/params.ts';
 import { effectivePolicy } from './policy.ts';
 import {
   ApprovalPolicySchema,

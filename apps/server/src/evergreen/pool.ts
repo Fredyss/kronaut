@@ -1,8 +1,7 @@
-import { toDate } from '@kronaut/core';
+import { type Schedule, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import type { Schedule } from '../posts/freeze.ts';
 
 export const REUSE_DAYS = 30;
 const IN_FLIGHT = ['scheduled', 'publishing', 'retry_wait', 'verifying', 'awaiting_manual'];

@@ -4,10 +4,12 @@ import { type AccessScope, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { issueDetails } from '../http/input.ts';
+import { invalid } from '../http/issues.ts';
+import { pathId } from '../http/params.ts';
+import { iso } from '../http/time.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { iso } from '../posts/dto.ts';
-import { excerptOf, invalid, loadMains, visibleIn, zodDetails } from '../posts/list.ts';
-import { pathId } from '../posts/params.ts';
+import { excerptOf, loadMains, visibleIn } from '../posts/list.ts';
 import { NEEDS_ACTION } from './locked.ts';
 
 const DEFAULT_LIMIT = 100;
@@ -66,7 +68,7 @@ const LimitQuery = z.strictObject({
 
 function limitOf(query: z.output<typeof needsActionRoute.query>): number {
   const parsed = LimitQuery.safeParse(query.limit === undefined ? {} : { limit: query.limit });
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
+  if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   return parsed.data.limit ?? DEFAULT_LIMIT;
 }
 

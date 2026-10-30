@@ -3,8 +3,11 @@ import { decodePublicId, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { type RawBuilder, sql } from 'kysely';
 import * as z from 'zod';
-import { iso, PostSummarySchema } from '../posts/dto.ts';
-import { excerptOf, invalid, loadMains, zodDetails } from '../posts/list.ts';
+import { issueDetails } from '../http/input.ts';
+import { invalid } from '../http/issues.ts';
+import { iso } from '../http/time.ts';
+import { PostSummarySchema } from '../posts/dto.ts';
+import { excerptOf, loadMains } from '../posts/list.ts';
 import type { MediaSigner } from './access.ts';
 import { LibraryAssetSchema, PREVIEW_COLUMNS, withPreviews } from './preview.ts';
 
@@ -56,7 +59,7 @@ export interface LibraryFilter {
 export function libraryFilter(query: Readonly<Record<string, string | undefined>>): LibraryFilter {
   const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
   const parsed = LibraryQuery.safeParse(present);
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
+  if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const { kind, cursor, limit } = parsed.data;
   const after = cursor === undefined ? null : decodePublicId('media', cursor);
   if (after === null && cursor !== undefined) {

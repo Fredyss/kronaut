@@ -1,7 +1,6 @@
-import { toDate } from '@kronaut/core';
+import { type Schedule, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { clonePost } from '../posts/clone.ts';
-import type { Schedule } from '../posts/freeze.ts';
 import { lockCurrent } from '../posts/locks.ts';
 import { actAs, ownerActing } from '../posts/owner.ts';
 import {

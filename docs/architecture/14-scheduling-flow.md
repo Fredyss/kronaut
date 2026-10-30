@@ -2,7 +2,7 @@
 
 Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals` or `publish`.
 
-**Status:** target. The moves below are not done yet. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
+**Status:** target. PR 1 below is done and the other moves are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
 
 ## The flow
 
@@ -60,7 +60,7 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | PR | Moves | Folder loops left |
 |---|---|---|
 | Today | | 11 folders |
-| 1. Helpers | `params.ts`, `issues.ts`, `iso`, `plainLocal`, `invalid`, `zodDetails`, `InstantFields` to `http`. `resolveLocal`, `scheduleAt`, `Schedule`, `TzResolution` to `@kronaut/core`. `posts/audit.ts` to `audit/`. | 8 folders, plus `auth` and `system` |
+| 1. Helpers | `params.ts`, `unprocessable`, `iso`, `plainLocal`, `invalid`, `InstantFields` to `http`, and `zodDetails` replaced by `issueDetails` there. `Resolving` stays in `posts`, in `deps.ts`. `resolveLocal`, `scheduleAt`, `Schedule`, `TzResolution` to `@kronaut/core`. `posts/audit.ts` to `audit/`. | 8 folders, plus `auth` and `system` |
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
 | 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, with `requestRoutes` mounted there. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |

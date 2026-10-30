@@ -1,12 +1,12 @@
 import { defineRoute } from '@kronaut/contract';
+import { writePostAudit } from '../audit/write.ts';
+import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { writePostAudit } from './audit.ts';
 import { clonePost } from './clone.ts';
 import type { PostRouteDeps } from './deps.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { lockCurrent } from './locks.ts';
 import { ownerColumns } from './owner.ts';
-import { PostParams, pathId } from './params.ts';
 import { postUnits } from './units.ts';
 
 export const postDuplicateRoute = defineRoute({

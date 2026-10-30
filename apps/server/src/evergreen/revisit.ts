@@ -1,7 +1,7 @@
 import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { closeRequest } from '../approvals/locked.ts';
-import { plainLocal } from '../posts/dto.ts';
+import { plainLocal } from '../http/time.ts';
 import { lockCurrent } from '../posts/locks.ts';
 import { actAs, ownerActing } from '../posts/owner.ts';
 import { newestRequest, type OwnerEnv, scheduleOrRequest } from '../posts/owner-schedule.ts';

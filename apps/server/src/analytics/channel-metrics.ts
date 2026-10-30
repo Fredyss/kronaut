@@ -3,9 +3,10 @@ import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { requireChannel } from '../channels/channel-ref.ts';
+import { issueDetails } from '../http/input.ts';
+import { invalid } from '../http/issues.ts';
+import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { invalid, zodDetails } from '../posts/list.ts';
-import { pathId } from '../posts/params.ts';
 import { scopeUnit } from '../posts/units.ts';
 import { storedValue } from './store.ts';
 
@@ -46,7 +47,7 @@ export function dayRange(
 ): DayRange {
   const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
   const parsed = Range.safeParse(present);
-  if (!parsed.success) throw invalid(zodDetails(parsed.error));
+  if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const to =
     parsed.data.to === undefined
       ? now.toZonedDateTimeISO('UTC').toPlainDate()

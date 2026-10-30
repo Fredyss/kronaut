@@ -38,7 +38,9 @@ it('re-exports the public runtime names of every module', () => {
     'nextOccurrence',
     'occurrenceAt',
     'parseRule',
+    'resolveLocal',
     'roleAllows',
+    'scheduleAt',
     'toDate',
     'toDateOrNull',
   ]);

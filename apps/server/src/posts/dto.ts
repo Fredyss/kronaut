@@ -1,7 +1,7 @@
 import { DESTINATION_STATES, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { iso, plainLocal } from '../http/time.ts';
 import { loadPostTags, PostTagSchema, tagFields } from '../tags/read.ts';
 
 const JsonObject = z.record(z.string(), z.unknown());
@@ -98,14 +98,6 @@ export const PostSummarySchema = PostSchema.pick({
 });
 
 export type PostSummaryDto = z.output<typeof PostSummarySchema>;
-
-export function iso(value: Date | null): string | null {
-  return value === null ? null : value.toISOString();
-}
-
-export function plainLocal(value: string | null): string | null {
-  return value === null ? null : Temporal.PlainDateTime.from(value.replace(' ', 'T')).toString();
-}
 
 async function loadPost(trx: TenantDb, workspaceId: string, postId: string) {
   return await trx
