@@ -1,7 +1,17 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { channel, MEDIA_ASSET, MEDIA_ID, mount, type Override, policy, post } from './testing.tsx';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  COLD,
+  channel,
+  MEDIA_ASSET,
+  MEDIA_ID,
+  mount,
+  type Override,
+  policy,
+  post,
+  warmUp,
+} from './testing.tsx';
 
 vi.mock('./editor.tsx', async () => ({
   default: (await import('./testing.tsx')).MockEditor,
@@ -108,20 +118,19 @@ function scheduledDraft(fields: Record<string, unknown>) {
   return draft({ publishSummary: 'scheduled', destinations, ...fields });
 }
 
-const COLD = { timeout: 20_000 };
+async function warmEditor(url: string) {
+  start(draft(), undefined, url);
+  await screen.findByLabelText('Text', {}, COLD);
+}
 
-// The first use of a lazy path pays its module load and React's 300 ms Suspense reveal
-// throttle, which can outrun the 1 s findBy limit on a busy runner.
-beforeAll(async () => {
-  for (const url of [`/compose?post=${POST_ID}`, `/?compose=${POST_ID}`]) {
-    start(draft(), undefined, url);
-    await screen.findByLabelText('Text', {}, COLD);
-    cleanup();
-  }
-  start(draft(), undefined, `/posts/${POST_ID}`);
-  await screen.findByRole('link', { name: 'Edit' }, COLD);
-  cleanup();
-}, 60_000);
+warmUp(
+  () => warmEditor(`/compose?post=${POST_ID}`),
+  () => warmEditor(`/?compose=${POST_ID}`),
+  async () => {
+    start(draft(), undefined, `/posts/${POST_ID}`);
+    await screen.findByRole('link', { name: 'Edit' }, COLD);
+  },
+);
 
 describe('composer edit mode', () => {
   it('saves an edited draft with the same media and no schedule', async () => {

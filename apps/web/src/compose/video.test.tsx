@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type Call, channel, jpeg, mount, pickFiles } from './testing.tsx';
+import { type Call, channel, jpeg, mount, pickFiles, warmComposer } from './testing.tsx';
 import { checkVideo, type VideoMeta } from './video-rules.ts';
 
 vi.mock('./editor.tsx', async () => ({
@@ -145,6 +145,8 @@ async function pickVideo(ready: Ready = {}) {
 
 const instagram = () =>
   screen.getByRole('checkbox', { name: /Ada on Instagram/ }) as HTMLInputElement;
+
+warmComposer();
 
 describe('composer video', () => {
   it('uploads a picked video, polls it to ready and publishes it as an Instagram Reel', async () => {

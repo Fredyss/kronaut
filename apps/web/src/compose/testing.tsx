@@ -1,6 +1,7 @@
 import { createApiClient } from '@kronaut/sdk';
 import { createMemoryHistory } from '@tanstack/react-router';
-import { fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { beforeAll } from 'vitest';
 import { App, createApp } from '../app.tsx';
 import { docText, textToParagraphs, toDoc } from './doc.ts';
 import type { PostEditorProps } from './editor.tsx';
@@ -96,12 +97,14 @@ export function post(summary: string, state: string) {
     tags: [],
     publishSummary: summary,
     items: [{ position: 0, role: 'main', doc: {}, media: [] }],
+    variants: [],
     destinations: CHANNELS.map((c, index) => ({
       id: `destination_${index}`,
       accountId: c.id,
       provider: c.provider,
       publishType: c.provider === 'bluesky' ? 'post' : 'image',
       deliveryMode: 'auto',
+      variant: null,
       settings: {},
       state,
       stateReason: null,
@@ -198,4 +201,32 @@ export function mount(override: Override = () => undefined, url = '/compose') {
   const { router, queryClient } = createApp(client, createMemoryHistory({ initialEntries: [url] }));
   render(<App router={router} queryClient={queryClient} client={client} />);
   return { router, queryClient, calls, mutations: () => calls.filter((c) => c.method !== 'GET') };
+}
+
+export const COLD = { timeout: 20_000 };
+
+// The first use of a lazy path pays its module load and React's 300 ms Suspense reveal
+// throttle, which can outrun the 1 s findBy limit on a busy runner.
+export function warmUp(...paths: readonly (() => Promise<unknown>)[]): void {
+  beforeAll(async () => {
+    for (const path of paths) {
+      await path();
+      cleanup();
+    }
+  }, 60_000);
+}
+
+export function warmComposer(): void {
+  warmUp(
+    async () => {
+      mount();
+      await screen.findByLabelText('Text', {}, COLD);
+      fireEvent.click(await screen.findByRole('checkbox', { name: /Ada on Bluesky/ }, COLD));
+      await screen.findByRole('article', { name: 'Ada on Bluesky' }, COLD);
+    },
+    async () => {
+      mount(undefined, '/posts/post_1');
+      await screen.findAllByText('Scheduled', {}, COLD);
+    },
+  );
 }

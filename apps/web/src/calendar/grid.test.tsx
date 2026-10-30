@@ -6,6 +6,7 @@ import { Temporal } from 'temporal-polyfill';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PostSummary } from '../api.ts';
 import { App, createApp } from '../app.tsx';
+import { COLD, warmUp } from '../compose/testing.tsx';
 import { byDay, byHour } from './entries.ts';
 import { dayDelta, instantOf, type MovablePost, movedLocal, slotLocal } from './move.ts';
 import { visibleRange } from './time.ts';
@@ -91,6 +92,13 @@ function cell(label: RegExp): HTMLElement {
   if (found === undefined) throw new Error(`no cell ${label}`);
   return found;
 }
+
+warmUp(async () => {
+  mount('/?view=week&date=2026-10-01', [
+    post('2026-10-02T14:30:00', [destination('a', '2026-10-02T12:30:00.000Z')]),
+  ]);
+  await screen.findByRole('link', { name: /Hello grid/ }, COLD);
+});
 
 describe('calendar time grid', () => {
   it('shows a week of day headers and 24 hour rows with the post in its hour', async () => {
