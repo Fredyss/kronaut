@@ -3,13 +3,13 @@ import { defineRoute } from '@kronaut/contract';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { type ChannelRef, requireChannel } from '../channels/channel-ref.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { auditActor } from '../posts/audit.ts';
 import { unprocessable } from '../posts/issues.ts';
 import { pathId } from '../posts/params.ts';
 import { InstantFields } from '../posts/schedule.ts';
 import { scopeUnit } from '../posts/units.ts';
-import { type ChannelRef, requireChannel } from './channel.ts';
 import { freeSlots, lockQueues, type QueueSlot } from './slots.ts';
 
 const PATH = '/v1/workspaces/:workspaceId/channels/:channelId/queue';
