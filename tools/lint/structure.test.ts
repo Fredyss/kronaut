@@ -15,10 +15,11 @@ describe('repo structure', () => {
   const graph = repoImportGraph(ROOT);
 
   it('sees the whole workspace', () => {
-    expect(graph.has('apps/server/src/start.ts')).toBe(true);
-    expect(graph.has('apps/web/src/app.tsx')).toBe(true);
+    expect(graph.size).toBeGreaterThan(800);
     expect(graph.has('packages/core/src/index.ts')).toBe(true);
     expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/http/api-routes.ts');
+    expect(graph.get('apps/web/src/main.tsx')).toContain('apps/web/src/app.tsx');
+    expect(graph.get('apps/server/src/posts/items.ts')).toContain('packages/compose/src/index.ts');
   });
 
   it('has no value-import cycle between files', () => {
@@ -31,16 +32,25 @@ describe('repo structure', () => {
 });
 
 describe('the structure rules', () => {
-  it('reads value imports and re-exports, and skips type-only ones', () => {
+  it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {
     const source = [
       "import { a } from './a.ts';",
       "import {\n  b,\n  type C,\n} from './b.ts';",
       "import './side-effect.ts';",
       "export { d } from './d.ts';",
       "import type { E } from './e.ts';",
-      "export type { F } from './f.ts';",
+      "export class F {}\nexport type { G } from './g.ts';",
+      "import { /* it's */ h } from './h.ts';",
+      "const lazy = () => import('./lazy.ts');",
     ].join('\n');
-    expect(valueImports(source)).toEqual(['./a.ts', './b.ts', './side-effect.ts', './d.ts']);
+    expect(valueImports(source)).toEqual([
+      './a.ts',
+      './b.ts',
+      './side-effect.ts',
+      './d.ts',
+      './h.ts',
+      './lazy.ts',
+    ]);
   });
 
   it('finds a cycle and leaves a diamond alone', () => {
@@ -64,6 +74,7 @@ describe('the structure rules', () => {
     'apps/server/src/posts/testing.ts',
     'apps/server/src/media/db-testing.ts',
     'apps/server/src/publish/testing-fake.ts',
+    'apps/server/src/testing/fake.ts',
     'apps/web/src/compose-testing.tsx',
     'apps/web/src/calendar.test.tsx',
     '@kronaut/db/testing',

@@ -1,6 +1,6 @@
 # Frontend
 
-- **Create and edit flows open in a dialog over the current page,** so the user keeps their place. Redirects are for moving between pages.
+- **New create and edit flows open in a dialog over the current page,** so the user keeps their place. The full-page composer remains for the flows listed in [Code structure](13-code-structure.md).
 - **Post editor with variants (ADR-0033):**
   - The default variant applies to all destinations.
   - "Customize for <network/account>" forks a full variant, with its own item list, which shows an "inherited / customized" badge and can be reset.

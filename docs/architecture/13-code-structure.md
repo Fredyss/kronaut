@@ -15,14 +15,14 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 ## Imports
 
-- **No value-import cycle between files (checked).** Type-only imports don't count. When two files need each other, move what they share into a third.
-- **Production code never imports testing code (checked).** That covers `*.test.ts`, `testing.ts` and its variants, and `@kronaut/*/testing`. `scripts/` and `apps/server/e2e/` are not shipped, so they may.
+- **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
+- **Production code never imports testing code (checked).** That covers `*.test.ts`, `testing.ts` and its variants, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 
 ## Files and modules
 
 - **Name a file for its concept,** in kebab-case. Catch-all names (`utils`, `helpers`, `common`, `misc`, `types`) hide the owner.
 - **Types live with their owner.**
-- **A shared module needs two users.** Abstract on the third copy, not the second.
+- **Code stays with its only user.** A module becomes shared once a second module imports it. Repeated logic gets abstracted on the third copy, not the second.
 - **Split by step or branch** when a file nears its limit, and pass more than four values as an object. The goal is a clearer owner, not a lower line count.
 
 ## Tests
@@ -44,5 +44,7 @@ These rules bind new code, but existing code still breaks them:
 - Shared modules in the `apps/*/src` roots, which should each find an owner.
 - Web tests in the `apps/web/src` root, away from the code they cover.
 - `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
-- Feature folders import each other in cycles. No new cycle between files is possible, but a new cycle between folders is not caught yet.
-- Folders above 20 files: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
+- `apps/server/src/http/types.ts` has a catch-all name.
+- Feature folders import each other in cycles. A cycle between files fails the check; a cycle between folders doesn't yet.
+- Folders above 20 non-test files: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
+- New post, edit from the post page and duplicate open the full-page composer, not a dialog.
