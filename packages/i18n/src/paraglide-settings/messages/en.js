@@ -38,6 +38,20 @@
 /** @typedef {{}} Settings_SavedInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
+/** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_DeleteInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_Delete_BodyInputs */
+/** @typedef {{}} Settings_Tag_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Delete_TitleInputs */
+/** @typedef {{}} Settings_Tag_DeletedInputs */
+/** @typedef {{}} Settings_Tag_KeepInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_NameInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_PostsInputs */
+/** @typedef {{}} Settings_Tag_SavedInputs */
+/** @typedef {{}} Settings_Tags_EmptyInputs */
+/** @typedef {{}} Settings_Tags_IntroInputs */
+/** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
@@ -239,6 +253,74 @@ export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => Loc
 
 export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`System`)
+};
+
+export const settings_tag_color = /** @type {(inputs: Settings_Tag_ColorInputs) => LocalizedString} */ (i) => {
+	if (i?.color === "slate") return /** @type {LocalizedString} */ (`Slate`);
+	if (i?.color === "red") return /** @type {LocalizedString} */ (`Red`);
+	if (i?.color === "orange") return /** @type {LocalizedString} */ (`Orange`);
+	if (i?.color === "amber") return /** @type {LocalizedString} */ (`Amber`);
+	if (i?.color === "green") return /** @type {LocalizedString} */ (`Green`);
+	if (i?.color === "teal") return /** @type {LocalizedString} */ (`Teal`);
+	if (i?.color === "blue") return /** @type {LocalizedString} */ (`Blue`);
+	if (i?.color === "violet") return /** @type {LocalizedString} */ (`Violet`);
+	return /** @type {LocalizedString} */ (`Color`)
+};
+
+export const settings_tag_color_of = /** @type {(inputs: Settings_Tag_Color_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Color of tag ${i?.name}`)
+};
+
+export const settings_tag_delete = /** @type {(inputs: Settings_Tag_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete tag ${i?.name}`)
+};
+
+export const settings_tag_delete_body = /** @type {(inputs: Settings_Tag_Delete_BodyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`It will be removed from ${i?.count} post.`);
+	return /** @type {LocalizedString} */ (`It will be removed from ${i?.count} posts.`)
+};
+
+export const settings_tag_delete_confirm = /** @type {(inputs: Settings_Tag_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete tag`)
+};
+
+export const settings_tag_delete_title = /** @type {(inputs: Settings_Tag_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete tag “${i?.name}”?`)
+};
+
+export const settings_tag_deleted = /** @type {(inputs: Settings_Tag_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tag deleted`)
+};
+
+export const settings_tag_keep = /** @type {(inputs: Settings_Tag_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep tag`)
+};
+
+export const settings_tag_name = /** @type {(inputs: Settings_Tag_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Name of tag ${i?.name}`)
+};
+
+export const settings_tag_posts = /** @type {(inputs: Settings_Tag_PostsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post`);
+	return /** @type {LocalizedString} */ (`${i?.count} posts`)
+};
+
+export const settings_tag_saved = /** @type {(inputs: Settings_Tag_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tag saved`)
+};
+
+export const settings_tags_empty = /** @type {(inputs: Settings_Tags_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No tags yet. Add one in the composer or on a post.`)
+};
+
+export const settings_tags_intro = /** @type {(inputs: Settings_Tags_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Internal labels for finding and grouping posts. They are never published.`)
+};
+
+export const settings_tags_title = /** @type {(inputs: Settings_Tags_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tags`)
 };
 
 export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => LocalizedString} */ () => {

@@ -124,5 +124,57 @@
   ],
   "system_api_ended": "Podpora už skončila",
   "system_api_warn": "Brzy aktualizujte",
-  "system_api_critical": "Aktualizujte hned"
+  "system_api_critical": "Aktualizujte hned",
+  "settings_tags_title": "Štítky",
+  "settings_tags_intro": "Interní označení pro hledání a seskupování příspěvků. Nikdy se nezveřejňují.",
+  "settings_tags_empty": "Zatím tu nejsou žádné štítky. Přidejte je v editoru nebo u příspěvku.",
+  "settings_tag_posts": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} příspěvek",
+        "countPlural=few": "{count} příspěvky",
+        "countPlural=many": "{count} příspěvku",
+        "countPlural=*": "{count} příspěvků"
+      }
+    }
+  ],
+  "settings_tag_name": "Název štítku {name}",
+  "settings_tag_color_of": "Barva štítku {name}",
+  "settings_tag_color": [
+    {
+      "declarations": ["input color"],
+      "selectors": ["color"],
+      "match": {
+        "color=slate": "Břidlicová",
+        "color=red": "Červená",
+        "color=orange": "Oranžová",
+        "color=amber": "Jantarová",
+        "color=green": "Zelená",
+        "color=teal": "Tyrkysová",
+        "color=blue": "Modrá",
+        "color=violet": "Fialová",
+        "color=*": "Barva"
+      }
+    }
+  ],
+  "settings_tag_delete": "Smazat štítek {name}",
+  "settings_tag_delete_title": "Smazat štítek „{name}“?",
+  "settings_tag_delete_body": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Odebere se z {count} příspěvku.",
+        "countPlural=few": "Odebere se ze {count} příspěvků.",
+        "countPlural=many": "Odebere se z {count} příspěvku.",
+        "countPlural=*": "Odebere se z {count} příspěvků."
+      }
+    }
+  ],
+  "settings_tag_keep": "Ponechat štítek",
+  "settings_tag_delete_confirm": "Smazat štítek",
+  "settings_tag_saved": "Štítek je uložený",
+  "settings_tag_deleted": "Štítek je smazaný"
 }

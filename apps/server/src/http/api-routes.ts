@@ -22,6 +22,7 @@ import type { ProviderRegistry } from '../providers.ts';
 import { queueRoutes } from '../queue/routes.ts';
 import { seriesRoutes } from '../series/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
+import { tagRoutes } from '../tags/routes.ts';
 import type { HttpDeps } from './kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import type { BoundRoute } from './types.ts';
@@ -60,6 +61,7 @@ export function apiRoutes({
     ...queueRoutes(),
     ...seriesRoutes(),
     ...evergreenRoutes(),
+    ...tagRoutes(),
     ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),

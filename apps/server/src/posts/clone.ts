@@ -2,6 +2,7 @@ import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
 import type { ProviderRegistry } from '../providers.ts';
+import { copyPostTags } from '../tags/read.ts';
 import { insertDraft } from './create.ts';
 import type { Owned, OwnerActing } from './owner.ts';
 
@@ -128,7 +129,7 @@ export async function clonePost(
   const { workspaceId, owner } = input;
   const source = await loadSource(trx, input);
   const { post } = source;
-  return await insertDraft(trx, deps.providers, {
+  const copyId = await insertDraft(trx, deps.providers, {
     workspaceId,
     body: bodyOf(source),
     columns: {
@@ -144,4 +145,6 @@ export async function clonePost(
     },
     authorize: (units) => deps.acting.authorize('posts:draft', { workspaceId, units }),
   });
+  await copyPostTags(trx, workspaceId, input.sourceId, copyId);
+  return copyId;
 }

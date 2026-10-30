@@ -120,19 +120,35 @@ export function postsKey(workspaceId: string) {
   return ['posts', workspaceId] as const;
 }
 
-export function postsRangeQuery(client: Client, workspaceId: string, from: string, to: string) {
+function tagQuery(tag: string | undefined) {
+  return tag === undefined ? {} : { tag };
+}
+
+export function postsRangeQuery(
+  client: Client,
+  workspaceId: string,
+  { from, to }: DayRange,
+  tag?: string,
+) {
   return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'range', from, to],
+    queryKey: [...postsKey(workspaceId), 'range', from, to, tag],
     queryFn: async () =>
-      (await postsList({ client, path: { workspaceId }, query: { from, to } })).data,
+      (await postsList({ client, path: { workspaceId }, query: { from, to, ...tagQuery(tag) } }))
+        .data,
   });
 }
 
-export function draftsQuery(client: Client, workspaceId: string) {
+export function draftsQuery(client: Client, workspaceId: string, tag?: string) {
   return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'unscheduled'],
+    queryKey: [...postsKey(workspaceId), 'unscheduled', tag],
     queryFn: async () =>
-      (await postsList({ client, path: { workspaceId }, query: { unscheduled: 'true' } })).data,
+      (
+        await postsList({
+          client,
+          path: { workspaceId },
+          query: { unscheduled: 'true', ...tagQuery(tag) },
+        })
+      ).data,
   });
 }
 

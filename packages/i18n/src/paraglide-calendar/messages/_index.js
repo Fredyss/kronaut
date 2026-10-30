@@ -3,6 +3,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Calendar_Add_ChannelInputs */
 /** @typedef {{ time: NonNullable<unknown>, channel: NonNullable<unknown>, state: NonNullable<unknown>, text: NonNullable<unknown> }} Calendar_Chip_LabelInputs */
+/** @typedef {{ label: NonNullable<unknown>, tags: NonNullable<unknown> }} Calendar_Chip_TagsInputs */
 /** @typedef {{}} Calendar_Create_PostInputs */
 /** @typedef {{}} Calendar_Day_EmptyInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
@@ -34,6 +35,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Previous_WeekInputs */
 /** @typedef {{}} Calendar_Sidebar_CollapseInputs */
 /** @typedef {{}} Calendar_Sidebar_ExpandInputs */
+/** @typedef {{}} Calendar_Tag_FilterInputs */
+/** @typedef {{}} Calendar_Tag_GoneInputs */
+/** @typedef {{}} Calendar_Tags_AllInputs */
 /** @typedef {{ tz: NonNullable<unknown> }} Calendar_Time_ZoneInputs */
 /** @typedef {{}} Calendar_TodayInputs */
 /** @typedef {{}} Calendar_TruncatedInputs */
@@ -78,6 +82,21 @@ export const calendar_chip_label = /** @type {((inputs: Calendar_Chip_LabelInput
 	if (locale === "sk") return __sk.calendar_chip_label(inputs)
 	if (locale === "cs") return __cs.calendar_chip_label(inputs)
 	return __en.calendar_chip_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{label}. Tags: {tags}" |
+*
+* @param {Calendar_Chip_TagsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_chip_tags = /** @type {((inputs: Calendar_Chip_TagsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Chip_TagsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_chip_tags(inputs)
+	if (locale === "cs") return __cs.calendar_chip_tags(inputs)
+	return __en.calendar_chip_tags(inputs)
 });
 /**
 * | output |
@@ -544,6 +563,51 @@ export const calendar_sidebar_expand = /** @type {((inputs?: Calendar_Sidebar_Ex
 	if (locale === "sk") return __sk.calendar_sidebar_expand(inputs)
 	if (locale === "cs") return __cs.calendar_sidebar_expand(inputs)
 	return __en.calendar_sidebar_expand(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Filter by tag" |
+*
+* @param {Calendar_Tag_FilterInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_tag_filter = /** @type {((inputs?: Calendar_Tag_FilterInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Tag_FilterInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_tag_filter(inputs)
+	if (locale === "cs") return __cs.calendar_tag_filter(inputs)
+	return __en.calendar_tag_filter(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Deleted tag" |
+*
+* @param {Calendar_Tag_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_tag_gone = /** @type {((inputs?: Calendar_Tag_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Tag_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_tag_gone(inputs)
+	if (locale === "cs") return __cs.calendar_tag_gone(inputs)
+	return __en.calendar_tag_gone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "All tags" |
+*
+* @param {Calendar_Tags_AllInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_tags_all = /** @type {((inputs?: Calendar_Tags_AllInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Tags_AllInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_tags_all(inputs)
+	if (locale === "cs") return __cs.calendar_tags_all(inputs)
+	return __en.calendar_tags_all(inputs)
 });
 /**
 * | output |

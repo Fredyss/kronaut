@@ -38,6 +38,20 @@
 /** @typedef {{}} Settings_SavedInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
+/** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_DeleteInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_Delete_BodyInputs */
+/** @typedef {{}} Settings_Tag_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Delete_TitleInputs */
+/** @typedef {{}} Settings_Tag_DeletedInputs */
+/** @typedef {{}} Settings_Tag_KeepInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_NameInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_PostsInputs */
+/** @typedef {{}} Settings_Tag_SavedInputs */
+/** @typedef {{}} Settings_Tags_EmptyInputs */
+/** @typedef {{}} Settings_Tags_IntroInputs */
+/** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
@@ -241,6 +255,78 @@ export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => Loc
 
 export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Systém`)
+};
+
+export const settings_tag_color = /** @type {(inputs: Settings_Tag_ColorInputs) => LocalizedString} */ (i) => {
+	if (i?.color === "slate") return /** @type {LocalizedString} */ (`Břidlicová`);
+	if (i?.color === "red") return /** @type {LocalizedString} */ (`Červená`);
+	if (i?.color === "orange") return /** @type {LocalizedString} */ (`Oranžová`);
+	if (i?.color === "amber") return /** @type {LocalizedString} */ (`Jantarová`);
+	if (i?.color === "green") return /** @type {LocalizedString} */ (`Zelená`);
+	if (i?.color === "teal") return /** @type {LocalizedString} */ (`Tyrkysová`);
+	if (i?.color === "blue") return /** @type {LocalizedString} */ (`Modrá`);
+	if (i?.color === "violet") return /** @type {LocalizedString} */ (`Fialová`);
+	return /** @type {LocalizedString} */ (`Barva`)
+};
+
+export const settings_tag_color_of = /** @type {(inputs: Settings_Tag_Color_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Barva štítku ${i?.name}`)
+};
+
+export const settings_tag_delete = /** @type {(inputs: Settings_Tag_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Smazat štítek ${i?.name}`)
+};
+
+export const settings_tag_delete_body = /** @type {(inputs: Settings_Tag_Delete_BodyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Odebere se z ${i?.count} příspěvku.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Odebere se ze ${i?.count} příspěvků.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Odebere se z ${i?.count} příspěvku.`);
+	return /** @type {LocalizedString} */ (`Odebere se z ${i?.count} příspěvků.`)
+};
+
+export const settings_tag_delete_confirm = /** @type {(inputs: Settings_Tag_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazat štítek`)
+};
+
+export const settings_tag_delete_title = /** @type {(inputs: Settings_Tag_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Smazat štítek „${i?.name}“?`)
+};
+
+export const settings_tag_deleted = /** @type {(inputs: Settings_Tag_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítek je smazaný`)
+};
+
+export const settings_tag_keep = /** @type {(inputs: Settings_Tag_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat štítek`)
+};
+
+export const settings_tag_name = /** @type {(inputs: Settings_Tag_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Název štítku ${i?.name}`)
+};
+
+export const settings_tag_posts = /** @type {(inputs: Settings_Tag_PostsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku`);
+	return /** @type {LocalizedString} */ (`${i?.count} příspěvků`)
+};
+
+export const settings_tag_saved = /** @type {(inputs: Settings_Tag_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítek je uložený`)
+};
+
+export const settings_tags_empty = /** @type {(inputs: Settings_Tags_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím tu nejsou žádné štítky. Přidejte je v editoru nebo u příspěvku.`)
+};
+
+export const settings_tags_intro = /** @type {(inputs: Settings_Tags_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Interní označení pro hledání a seskupování příspěvků. Nikdy se nezveřejňují.`)
+};
+
+export const settings_tags_title = /** @type {(inputs: Settings_Tags_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítky`)
 };
 
 export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => LocalizedString} */ () => {

@@ -199,6 +199,7 @@
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
+/** @typedef {{}} Issue_Tag_UnknownInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
 /** @typedef {{}} Issue_Too_LargeInputs */
@@ -349,6 +350,15 @@
 /** @typedef {{ date: NonNullable<unknown> }} Series_UntilInputs */
 /** @typedef {{}} Settings_SaveInputs */
 /** @typedef {{}} Settings_TitleInputs */
+/** @typedef {{}} Tags_AddInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_CreateInputs */
+/** @typedef {{}} Tags_ExistsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Tags_FullInputs */
+/** @typedef {{}} Tags_LabelInputs */
+/** @typedef {{}} Tags_LimitInputs */
+/** @typedef {{}} Tags_No_MatchInputs */
+/** @typedef {{}} Tags_NoneInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Tags_RemoveInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
@@ -1188,6 +1198,10 @@ export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_To
 	return /** @type {LocalizedString} */ (`Rozlíšenie videa je pre túto sieť príliš vysoké.`)
 };
 
+export const issue_tag_unknown = /** @type {(inputs: Issue_Tag_UnknownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento štítok už neexistuje. Odstráňte ho a uložte znova.`)
+};
+
 export const issue_text_too_long = /** @type {(inputs: Issue_Text_Too_LongInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Text je pre túto sieť príliš dlhý.`)
 };
@@ -1824,6 +1838,46 @@ export const settings_save = /** @type {(inputs: Settings_SaveInputs) => Localiz
 
 export const settings_title = /** @type {(inputs: Settings_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Nastavenia`)
+};
+
+export const tags_add = /** @type {(inputs: Tags_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať štítok`)
+};
+
+export const tags_create = /** @type {(inputs: Tags_CreateInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vytvoriť štítok „${i?.name}“`)
+};
+
+export const tags_exists = /** @type {(inputs: Tags_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítok s týmto názvom už existuje.`)
+};
+
+export const tags_full = /** @type {(inputs: Tags_FullInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítok.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítky.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítka.`);
+	return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítkov.`)
+};
+
+export const tags_label = /** @type {(inputs: Tags_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Štítky`)
+};
+
+export const tags_limit = /** @type {(inputs: Tags_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovný priestor už má maximálny počet štítkov. Najprv niektorý odstráňte v Nastaveniach.`)
+};
+
+export const tags_no_match = /** @type {(inputs: Tags_No_MatchInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Žiadny štítok nezodpovedá hľadaniu`)
+};
+
+export const tags_none = /** @type {(inputs: Tags_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bez štítkov`)
+};
+
+export const tags_remove = /** @type {(inputs: Tags_RemoveInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť štítok ${i?.name}`)
 };
 
 export const technical_details = /** @type {(inputs: Technical_DetailsInputs) => LocalizedString} */ () => {

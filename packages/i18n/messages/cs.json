@@ -544,5 +544,26 @@
         "countPlural=*": "Na síti už může být zveřejněný ({count} kanálů), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní."
       }
     }
-  ]
+  ],
+  "tags_label": "Štítky",
+  "tags_add": "Přidat štítek",
+  "tags_none": "Bez štítků",
+  "tags_remove": "Odebrat štítek {name}",
+  "tags_create": "Vytvořit štítek „{name}“",
+  "tags_no_match": "Hledání neodpovídá žádný štítek",
+  "tags_full": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Příspěvek může mít nejvýše {count} štítek.",
+        "countPlural=few": "Příspěvek může mít nejvýše {count} štítky.",
+        "countPlural=many": "Příspěvek může mít nejvýše {count} štítku.",
+        "countPlural=*": "Příspěvek může mít nejvýše {count} štítků."
+      }
+    }
+  ],
+  "tags_exists": "Štítek s tímto názvem už existuje.",
+  "tags_limit": "Tento pracovní prostor už má maximální počet štítků. Nejdřív některý smažte v Nastavení.",
+  "issue_tag_unknown": "Tento štítek už neexistuje. Odeberte ho a uložte znovu."
 }

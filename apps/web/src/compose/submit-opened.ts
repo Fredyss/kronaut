@@ -1,4 +1,4 @@
-import { postsGet, postsReschedule, postsUnschedule } from '@kronaut/sdk';
+import { postsGet, postsReschedule, postsTagsReplace, postsUnschedule } from '@kronaut/sdk';
 import { Temporal } from 'temporal-polyfill';
 import type { Post } from '../api.ts';
 import { idempotency, keyFor } from '../idempotency.ts';
@@ -36,6 +36,33 @@ export async function refresh(s: Submitter, post: Post): Promise<Post> {
   });
   s.stale = false;
   return data;
+}
+
+// Tags aren't content, so they don't bump the version: this can run between any two other steps.
+export async function saveTags(
+  s: Submitter,
+  post: Post,
+  tagIds: readonly string[],
+  accounts: Targets,
+): Promise<Post> {
+  const stored = new Set(post.tags.map((tag) => tag.id));
+  if (stored.size === tagIds.length && tagIds.every((id) => stored.has(id))) return post;
+  const body = { tagIds: [...tagIds] };
+  s.tags = keyFor(s.tags, JSON.stringify({ postId: post.id, body }));
+  try {
+    const { data } = await postsTagsReplace({
+      client: s.client,
+      path: { workspaceId: s.workspaceId, postId: post.id },
+      body,
+      headers: idempotency(s.tags),
+    });
+    s.tags = null;
+    const saved = { ...post, tags: data.tags };
+    if (s.draft !== null) s.draft.post = saved;
+    return saved;
+  } catch (error) {
+    throw new SubmitError('tags', error, accounts);
+  }
 }
 
 function toMinute(local: string): string {

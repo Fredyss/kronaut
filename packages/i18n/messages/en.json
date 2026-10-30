@@ -519,5 +519,24 @@
         "countPlural=*": "It may already be live on {count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network."
       }
     }
-  ]
+  ],
+  "tags_label": "Tags",
+  "tags_add": "Add a tag",
+  "tags_none": "No tags",
+  "tags_remove": "Remove tag {name}",
+  "tags_create": "Create tag “{name}”",
+  "tags_no_match": "No matching tags",
+  "tags_full": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "A post can have at most {count} tag.",
+        "countPlural=*": "A post can have at most {count} tags."
+      }
+    }
+  ],
+  "tags_exists": "A tag with this name already exists.",
+  "tags_limit": "This workspace has reached its tag limit. Delete a tag in Settings first.",
+  "issue_tag_unknown": "This tag no longer exists. Remove it and save again."
 }

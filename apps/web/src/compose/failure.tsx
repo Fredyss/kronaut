@@ -32,6 +32,7 @@ function uploadHeadline(error: SubmitError, nameOf: ChannelName): string {
 
 function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
   const cause = error.cause;
+  if (error.step === 'tags') return composeText.compose_error_tags();
   if (cause instanceof MarkedImageError) {
     return composeText.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
   }

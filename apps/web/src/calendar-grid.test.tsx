@@ -53,6 +53,7 @@ function post(
     scheduleMode: 'instant',
     scheduleLocal,
     scheduleTz: 'Europe/Bratislava',
+    tags: [],
     updatedAt: '2026-09-30T08:00:00.000Z',
     excerpt: 'Hello grid',
     mediaCount: 0,

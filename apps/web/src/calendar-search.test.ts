@@ -3,6 +3,15 @@ import { slotCompose, slotKey } from './calendar/entries.ts';
 import { calendarSearch } from './calendar-search.ts';
 import { composeSearch } from './compose-search.ts';
 
+describe('tag filter', () => {
+  it('keeps a public tag id and drops anything else', () => {
+    const tag = 'tag_01jbcdefghjkmnpqrstvwxyz01';
+    expect(calendarSearch({ tag })).toEqual({ tag });
+    expect(calendarSearch({ tag: 'post_01jbcdefghjkmnpqrstvwxyz01' })).toEqual({});
+    expect(calendarSearch({ tag: 'launch' })).toEqual({});
+  });
+});
+
 describe('slot to composer', () => {
   it('opens the composer at the slot in the shown time zone', () => {
     const search = slotCompose(slotKey('2026-10-01', 9), 'Europe/Bratislava');

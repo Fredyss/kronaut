@@ -1,6 +1,7 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Calendar_Add_ChannelInputs */
 /** @typedef {{ time: NonNullable<unknown>, channel: NonNullable<unknown>, state: NonNullable<unknown>, text: NonNullable<unknown> }} Calendar_Chip_LabelInputs */
+/** @typedef {{ label: NonNullable<unknown>, tags: NonNullable<unknown> }} Calendar_Chip_TagsInputs */
 /** @typedef {{}} Calendar_Create_PostInputs */
 /** @typedef {{}} Calendar_Day_EmptyInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
@@ -32,6 +33,9 @@
 /** @typedef {{}} Calendar_Previous_WeekInputs */
 /** @typedef {{}} Calendar_Sidebar_CollapseInputs */
 /** @typedef {{}} Calendar_Sidebar_ExpandInputs */
+/** @typedef {{}} Calendar_Tag_FilterInputs */
+/** @typedef {{}} Calendar_Tag_GoneInputs */
+/** @typedef {{}} Calendar_Tags_AllInputs */
 /** @typedef {{ tz: NonNullable<unknown> }} Calendar_Time_ZoneInputs */
 /** @typedef {{}} Calendar_TodayInputs */
 /** @typedef {{}} Calendar_TruncatedInputs */
@@ -53,6 +57,10 @@ export const calendar_add_channel = /** @type {(inputs: Calendar_Add_ChannelInpu
 
 export const calendar_chip_label = /** @type {(inputs: Calendar_Chip_LabelInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.time}, ${i?.channel}, ${i?.state}: ${i?.text}`)
+};
+
+export const calendar_chip_tags = /** @type {(inputs: Calendar_Chip_TagsInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.label}. Štítky: ${i?.tags}`)
 };
 
 export const calendar_create_post = /** @type {(inputs: Calendar_Create_PostInputs) => LocalizedString} */ () => {
@@ -181,6 +189,18 @@ export const calendar_sidebar_collapse = /** @type {(inputs: Calendar_Sidebar_Co
 
 export const calendar_sidebar_expand = /** @type {(inputs: Calendar_Sidebar_ExpandInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Rozbalit postranní panel`)
+};
+
+export const calendar_tag_filter = /** @type {(inputs: Calendar_Tag_FilterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filtrovat podle štítku`)
+};
+
+export const calendar_tag_gone = /** @type {(inputs: Calendar_Tag_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazaný štítek`)
+};
+
+export const calendar_tags_all = /** @type {(inputs: Calendar_Tags_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Všechny štítky`)
 };
 
 export const calendar_time_zone = /** @type {(inputs: Calendar_Time_ZoneInputs) => LocalizedString} */ (i) => {

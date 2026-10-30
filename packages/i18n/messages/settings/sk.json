@@ -124,5 +124,57 @@
   ],
   "system_api_ended": "Podpora už skončila",
   "system_api_warn": "Čoskoro aktualizujte",
-  "system_api_critical": "Aktualizujte hneď"
+  "system_api_critical": "Aktualizujte hneď",
+  "settings_tags_title": "Štítky",
+  "settings_tags_intro": "Interné označenia na hľadanie a zoskupovanie príspevkov. Nikdy sa neuverejňujú.",
+  "settings_tags_empty": "Zatiaľ tu nie sú žiadne štítky. Pridajte ich v editore alebo pri príspevku.",
+  "settings_tag_posts": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} príspevok",
+        "countPlural=few": "{count} príspevky",
+        "countPlural=many": "{count} príspevku",
+        "countPlural=*": "{count} príspevkov"
+      }
+    }
+  ],
+  "settings_tag_name": "Názov štítka {name}",
+  "settings_tag_color_of": "Farba štítka {name}",
+  "settings_tag_color": [
+    {
+      "declarations": ["input color"],
+      "selectors": ["color"],
+      "match": {
+        "color=slate": "Bridlicová",
+        "color=red": "Červená",
+        "color=orange": "Oranžová",
+        "color=amber": "Jantárová",
+        "color=green": "Zelená",
+        "color=teal": "Tyrkysová",
+        "color=blue": "Modrá",
+        "color=violet": "Fialová",
+        "color=*": "Farba"
+      }
+    }
+  ],
+  "settings_tag_delete": "Odstrániť štítok {name}",
+  "settings_tag_delete_title": "Odstrániť štítok „{name}“?",
+  "settings_tag_delete_body": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Odstráni sa z {count} príspevku.",
+        "countPlural=few": "Odstráni sa z {count} príspevkov.",
+        "countPlural=many": "Odstráni sa z {count} príspevku.",
+        "countPlural=*": "Odstráni sa z {count} príspevkov."
+      }
+    }
+  ],
+  "settings_tag_keep": "Ponechať štítok",
+  "settings_tag_delete_confirm": "Odstrániť štítok",
+  "settings_tag_saved": "Štítok je uložený",
+  "settings_tag_deleted": "Štítok je odstránený"
 }

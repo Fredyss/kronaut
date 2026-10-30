@@ -18,7 +18,7 @@ type Stub = (sent: Sent) => Response | undefined;
 
 function opened(state: string, version = 3) {
   const destination = { accountId: 'acct_a', variant: null, state };
-  return { id: 'post_1', version, publishSummary: 'draft', destinations: [destination] };
+  return { id: 'post_1', version, publishSummary: 'draft', destinations: [destination], tags: [] };
 }
 
 const asPost = (value: unknown) => value as Post;
@@ -50,6 +50,7 @@ function input(text: string, extra: Partial<ComposeInput> = {}): ComposeInput {
     ],
     when: WHEN,
     request: null,
+    tags: [],
     ...extra,
   };
 }

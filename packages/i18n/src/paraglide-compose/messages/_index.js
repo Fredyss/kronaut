@@ -33,6 +33,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
 /** @typedef {{}} Compose_Error_Now_DraftInputs */
 /** @typedef {{}} Compose_Error_Post_ChangedInputs */
+/** @typedef {{}} Compose_Error_TagsInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -570,6 +571,21 @@ export const compose_error_post_changed = /** @type {((inputs?: Compose_Error_Po
 	if (locale === "sk") return __sk.compose_error_post_changed(inputs)
 	if (locale === "cs") return __cs.compose_error_post_changed(inputs)
 	return __en.compose_error_post_changed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The post was saved, but its tags weren't. Saving again tries once more." |
+*
+* @param {Compose_Error_TagsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_tags = /** @type {((inputs?: Compose_Error_TagsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_TagsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_tags(inputs)
+	if (locale === "cs") return __cs.compose_error_tags(inputs)
+	return __en.compose_error_tags(inputs)
 });
 /**
 * | output |

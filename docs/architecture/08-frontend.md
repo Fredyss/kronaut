@@ -54,6 +54,12 @@
     - **Duplicate** → `POST …/duplicate`, then the composer on the copy;
     - **Preview** → a read-only dialog with the network preview the composer uses;
     - **Delete** → a confirm dialog; for a published post it says the post stays on the network and only leaves Kronaut. Hidden from roles without `posts:draft`.
+- **Tags:** internal labels for finding and grouping posts, separate from hashtags and never published.
+  - A tag has a name and one of eight colors. The color is only a hint, so the name is always available too (visible, or as the accessible name of a dot).
+  - The composer and the post page pick tags, and can create one by typing a new name. The post page saves at once, in any state; the composer saves them with the post.
+  - Calendar entries show up to three colored dots. The calendar filters by one tag, kept in the URL (`?tag=<id>`).
+  - Settings → Tags renames, recolors and deletes them, for roles with `settings:write`, and shows how many posts use each. Deleting one asks first and says that count.
+  - A duplicate, a series occurrence and an evergreen copy keep their source's tags.
 - **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited shows an Edit button.
 - **Editing a post:** the composer opens an existing post, at `/compose?post=<id>` or, over the calendar, in the dialog at `?compose=<id>`, from the options menu or the calendar's draft list. Changing the content, the channels or the time counts as unsaved changes.
   - **What can be edited:** a post whose destinations are all `draft`, `canceled` or `scheduled`, unless a canceled one is already live in part (the server would answer `destination_live`). A scheduled one needs a role with `posts:schedule`; otherwise `posts:draft` is enough.

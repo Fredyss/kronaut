@@ -40,6 +40,20 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_SavedInputs */
 /** @typedef {{}} Settings_SavingInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
+/** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_DeleteInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_Delete_BodyInputs */
+/** @typedef {{}} Settings_Tag_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Delete_TitleInputs */
+/** @typedef {{}} Settings_Tag_DeletedInputs */
+/** @typedef {{}} Settings_Tag_KeepInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_NameInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Tag_PostsInputs */
+/** @typedef {{}} Settings_Tag_SavedInputs */
+/** @typedef {{}} Settings_Tags_EmptyInputs */
+/** @typedef {{}} Settings_Tags_IntroInputs */
+/** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
@@ -670,6 +684,226 @@ export const settings_system_title = /** @type {((inputs?: Settings_System_Title
 	if (locale === "sk") return __sk.settings_system_title(inputs)
 	if (locale === "cs") return __cs.settings_system_title(inputs)
 	return __en.settings_system_title(inputs)
+});
+/**
+* | color | output |
+* | --- | --- |
+* | "slate" | "Slate" |
+* | "red" | "Red" |
+* | "orange" | "Orange" |
+* | "amber" | "Amber" |
+* | "green" | "Green" |
+* | "teal" | "Teal" |
+* | "blue" | "Blue" |
+* | "violet" | "Violet" |
+* | * | "Color" |
+*
+* @param {Settings_Tag_ColorInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_color = /** @type {((inputs: Settings_Tag_ColorInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_ColorInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_color(inputs)
+	if (locale === "cs") return __cs.settings_tag_color(inputs)
+	return __en.settings_tag_color(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Color of tag {name}" |
+*
+* @param {Settings_Tag_Color_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_color_of = /** @type {((inputs: Settings_Tag_Color_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_Color_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_color_of(inputs)
+	if (locale === "cs") return __cs.settings_tag_color_of(inputs)
+	return __en.settings_tag_color_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete tag {name}" |
+*
+* @param {Settings_Tag_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_delete = /** @type {((inputs: Settings_Tag_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_delete(inputs)
+	if (locale === "cs") return __cs.settings_tag_delete(inputs)
+	return __en.settings_tag_delete(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "It will be removed from {count} post." |
+* | * | "It will be removed from {count} posts." |
+*
+* @param {Settings_Tag_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_delete_body = /** @type {((inputs: Settings_Tag_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_delete_body(inputs)
+	if (locale === "cs") return __cs.settings_tag_delete_body(inputs)
+	return __en.settings_tag_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete tag" |
+*
+* @param {Settings_Tag_Delete_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_delete_confirm = /** @type {((inputs?: Settings_Tag_Delete_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_Delete_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_delete_confirm(inputs)
+	if (locale === "cs") return __cs.settings_tag_delete_confirm(inputs)
+	return __en.settings_tag_delete_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete tag “{name}”?" |
+*
+* @param {Settings_Tag_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_delete_title = /** @type {((inputs: Settings_Tag_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_delete_title(inputs)
+	if (locale === "cs") return __cs.settings_tag_delete_title(inputs)
+	return __en.settings_tag_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Tag deleted" |
+*
+* @param {Settings_Tag_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_deleted = /** @type {((inputs?: Settings_Tag_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_deleted(inputs)
+	if (locale === "cs") return __cs.settings_tag_deleted(inputs)
+	return __en.settings_tag_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep tag" |
+*
+* @param {Settings_Tag_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_keep = /** @type {((inputs?: Settings_Tag_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_keep(inputs)
+	if (locale === "cs") return __cs.settings_tag_keep(inputs)
+	return __en.settings_tag_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Name of tag {name}" |
+*
+* @param {Settings_Tag_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_name = /** @type {((inputs: Settings_Tag_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_name(inputs)
+	if (locale === "cs") return __cs.settings_tag_name(inputs)
+	return __en.settings_tag_name(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} post" |
+* | * | "{count} posts" |
+*
+* @param {Settings_Tag_PostsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_posts = /** @type {((inputs: Settings_Tag_PostsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_PostsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_posts(inputs)
+	if (locale === "cs") return __cs.settings_tag_posts(inputs)
+	return __en.settings_tag_posts(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Tag saved" |
+*
+* @param {Settings_Tag_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tag_saved = /** @type {((inputs?: Settings_Tag_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tag_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tag_saved(inputs)
+	if (locale === "cs") return __cs.settings_tag_saved(inputs)
+	return __en.settings_tag_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No tags yet. Add one in the composer or on a post." |
+*
+* @param {Settings_Tags_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tags_empty = /** @type {((inputs?: Settings_Tags_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tags_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tags_empty(inputs)
+	if (locale === "cs") return __cs.settings_tags_empty(inputs)
+	return __en.settings_tags_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Internal labels for finding and grouping posts. They are never published." |
+*
+* @param {Settings_Tags_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tags_intro = /** @type {((inputs?: Settings_Tags_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tags_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tags_intro(inputs)
+	if (locale === "cs") return __cs.settings_tags_intro(inputs)
+	return __en.settings_tags_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Tags" |
+*
+* @param {Settings_Tags_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_tags_title = /** @type {((inputs?: Settings_Tags_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Tags_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_tags_title(inputs)
+	if (locale === "cs") return __cs.settings_tags_title(inputs)
+	return __en.settings_tags_title(inputs)
 });
 /**
 * | output |

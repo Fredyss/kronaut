@@ -99,6 +99,7 @@ export function post(summary: string, state: string) {
     scheduleMode: summary === 'draft' ? 'unscheduled' : 'asap',
     scheduleLocal: null,
     scheduleTz: null,
+    tags: [],
     publishSummary: summary,
     items: [{ position: 0, role: 'main', doc: {}, media: [] }],
     destinations: CHANNELS.map((c, index) => ({
@@ -157,6 +158,7 @@ export function defaultResponse(path: string): Response {
   if (path === '/v1/workspaces/ws_1/approval-policy') return Response.json(policy('none'));
   if (path === '/v1/workspaces/ws_1/channels') return Response.json({ items: CHANNELS });
   if (path === '/v1/workspaces/ws_1/media') return Response.json(MEDIA_ASSET, { status: 201 });
+  if (path === '/v1/workspaces/ws_1/tags') return Response.json({ items: [] });
   if (path === '/v1/workspaces/ws_1/posts') {
     return Response.json(post('draft', 'draft'), { status: 201 });
   }

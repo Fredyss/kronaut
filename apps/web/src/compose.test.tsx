@@ -66,6 +66,28 @@ describe('composer', () => {
     expect(new Set(keys).size).toBe(3);
   });
 
+  it('tags a new post once it exists, and makes no tag call without tags', async () => {
+    const launch = { id: 'tag_1', name: 'Launch', color: 'teal', postCount: 0 };
+    const { router, mutations } = mount((call) => {
+      if (call.path === '/v1/workspaces/ws_1/tags') return Response.json({ items: [launch] });
+      if (call.path.endsWith('/post_1/tags')) return Response.json({ tags: [] });
+      return undefined;
+    });
+    await fillIn();
+    fireEvent.focus(await screen.findByRole('combobox', { name: 'Add a tag' }));
+    fireEvent.click(await screen.findByRole('option', { name: 'Launch' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    expect(mutations().map((c) => c.path)).toEqual([
+      '/v1/workspaces/ws_1/media',
+      '/v1/workspaces/ws_1/posts',
+      '/v1/workspaces/ws_1/posts/post_1/tags',
+      '/v1/workspaces/ws_1/posts/post_1/schedule',
+    ]);
+    expect(mutations()[2]?.body).toEqual({ tagIds: ['tag_1'] });
+  });
+
   it('sends the AI mark with the upload of an image marked AI-generated', async () => {
     const { router, mutations } = mount();
     await fillIn();

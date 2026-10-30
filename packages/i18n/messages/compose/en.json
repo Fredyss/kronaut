@@ -120,5 +120,6 @@
   "compose_edit_series_skip": "Keeping this as a draft skips this occurrence of the series.",
   "compose_edit_canceled_note": "Canceled on: {channels}. Saving a change removes these from the post; tick one to publish to it again.",
   "compose_error_channel_gone": "This post can't be saved because a channel it goes to is no longer available: {channels}.",
-  "compose_refused_part_live": "This post can't be edited because a canceled destination is already live in part."
+  "compose_refused_part_live": "This post can't be edited because a canceled destination is already live in part.",
+  "compose_error_tags": "The post was saved, but its tags weren't. Saving again tries once more."
 }

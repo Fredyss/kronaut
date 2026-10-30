@@ -62,5 +62,9 @@
   "calendar_new_post_at": "Create post: {when}",
   "calendar_entry_options": "Post options: {text}",
   "calendar_entry_open": "Open",
-  "calendar_entry_preview": "Preview"
+  "calendar_entry_preview": "Preview",
+  "calendar_chip_tags": "{label}. Tags: {tags}",
+  "calendar_tag_filter": "Filter by tag",
+  "calendar_tags_all": "All tags",
+  "calendar_tag_gone": "Deleted tag"
 }

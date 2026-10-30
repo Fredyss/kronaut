@@ -35,7 +35,14 @@ export function CalendarPage() {
     <div className="flex w-full flex-1 flex-col md:flex-row">
       <CalendarSidebar workspaceId={workspace?.id} />
       <section className="flex min-w-0 flex-1 flex-col gap-4 p-4 md:p-6">
-        <CalendarToolbar view={view} current={current} range={range} formats={formats} />
+        <CalendarToolbar
+          view={view}
+          current={current}
+          range={range}
+          formats={formats}
+          workspaceId={workspace?.id}
+          tag={search.tag}
+        />
         {workspace === undefined ? null : (
           <CalendarBody
             workspaceId={workspace.id}
@@ -46,6 +53,7 @@ export function CalendarPage() {
             now={now.toString()}
             clock={currentInstant()}
             formats={formats}
+            tag={search.tag}
           />
         )}
       </section>

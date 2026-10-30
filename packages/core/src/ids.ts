@@ -14,6 +14,7 @@ export const ID_PREFIXES = {
   approvalRequest: 'apr',
   grant: 'grant',
   series: 'ser',
+  tag: 'tag',
 } as const;
 
 export type IdKind = keyof typeof ID_PREFIXES;

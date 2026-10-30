@@ -10,7 +10,7 @@ import {
 } from 'react';
 import type { PostSummary } from '../api.ts';
 import type { CalendarView } from '../calendar-search.ts';
-import type { Entry } from './entries.ts';
+import { type Entry, keptTag } from './entries.ts';
 import {
   canLand,
   dayDelta,
@@ -128,7 +128,10 @@ export function useMover({ workspaceId, view, range, timeZone }: MoverProps) {
         if (focusId === null) return;
         focus.current = focusId;
         if (moved !== null && !range.days.some((d) => d.toString() === day)) {
-          void navigate({ to: '/', search: { view, date: day } });
+          void navigate({
+            to: '/',
+            search: (prev) => ({ view, date: day, ...keptTag(prev) }),
+          });
         }
       },
     });

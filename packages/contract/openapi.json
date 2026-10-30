@@ -6188,7 +6188,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts": {
       "get": {
-        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50).",
+        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list.",
         "operationId": "posts.list",
         "parameters": [
           {
@@ -6226,6 +6226,14 @@
           {
             "in": "query",
             "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
             "required": false,
             "schema": {
               "type": "string"
@@ -6378,6 +6386,39 @@
                               "null"
                             ]
                           },
+                          "tags": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "color": {
+                                  "enum": [
+                                    "slate",
+                                    "red",
+                                    "orange",
+                                    "amber",
+                                    "green",
+                                    "teal",
+                                    "blue",
+                                    "violet"
+                                  ],
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "color"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
                           "title": {
                             "type": [
                               "string",
@@ -6403,6 +6444,7 @@
                           "scheduleMode",
                           "scheduleLocal",
                           "scheduleTz",
+                          "tags",
                           "updatedAt",
                           "excerpt",
                           "mediaCount",
@@ -6925,6 +6967,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -7026,6 +7101,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -7418,6 +7494,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -7519,6 +7628,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -8052,6 +8162,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -8153,6 +8296,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -8855,6 +8999,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -8956,6 +9133,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -9315,6 +9493,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -9416,6 +9627,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -9783,6 +9995,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -9884,6 +10129,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -10251,6 +10497,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -10352,6 +10631,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -10776,6 +11056,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -10877,6 +11190,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -11216,6 +11530,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -11317,6 +11664,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -12255,6 +12603,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -12356,6 +12737,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -12851,6 +13233,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -12952,6 +13367,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -12989,6 +13405,141 @@
           "posts"
         ],
         "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/tags": {
+      "put": {
+        "description": "Tags are internal and never published, so this works in any state, doesn't change the post's version and leaves an approval alone. At most 20 tags, each of this workspace (422 tag_unknown at the id). 404 for a deleted post.",
+        "operationId": "posts.tags_replace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "tagIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 20,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "tagIds"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "tags"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Replace a post's tags",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:draft",
         "x-kronaut-auth": [
           "session",
           "grant"
@@ -13311,6 +13862,39 @@
                         "null"
                       ]
                     },
+                    "tags": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
                     "title": {
                       "type": [
                         "string",
@@ -13412,6 +13996,7 @@
                     "scheduleTz",
                     "seriesId",
                     "evergreen",
+                    "tags",
                     "publishSummary",
                     "items",
                     "variants",
@@ -14355,6 +14940,426 @@
           "system"
         ],
         "x-kronaut-action": "instance:read",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/tags": {
+      "get": {
+        "description": "The workspace's tags by name, with how many posts use each.",
+        "operationId": "tags.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "color": {
+                            "enum": [
+                              "slate",
+                              "red",
+                              "orange",
+                              "amber",
+                              "green",
+                              "teal",
+                              "blue",
+                              "violet"
+                            ],
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "postCount": {
+                            "maximum": 9007199254740991,
+                            "minimum": 0,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color",
+                          "postCount"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "List tags",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
+      "post": {
+        "description": "The name is trimmed and has 1–40 characters (422 tag_name_invalid). A name that differs only in case is 409 tag_exists; a workspace has at most 200 tags (409 tag_limit).",
+        "operationId": "tags.create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "color": {
+                    "enum": [
+                      "slate",
+                      "red",
+                      "orange",
+                      "amber",
+                      "green",
+                      "teal",
+                      "blue",
+                      "violet"
+                    ],
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "color"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "color": {
+                      "enum": [
+                        "slate",
+                        "red",
+                        "orange",
+                        "amber",
+                        "green",
+                        "teal",
+                        "blue",
+                        "violet"
+                      ],
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "postCount": {
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "color",
+                    "postCount"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Create a tag",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:draft",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/tags/{tagId}": {
+      "delete": {
+        "description": "Removes the tag from every post. Owners and admins only.",
+        "operationId": "tags.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tagId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Delete a tag",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "patch": {
+        "description": "The name follows the same rules as when creating a tag. Owners and admins only.",
+        "operationId": "tags.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tagId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "color": {
+                    "enum": [
+                      "slate",
+                      "red",
+                      "orange",
+                      "amber",
+                      "green",
+                      "teal",
+                      "blue",
+                      "violet"
+                    ],
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "color": {
+                      "enum": [
+                        "slate",
+                        "red",
+                        "orange",
+                        "amber",
+                        "green",
+                        "teal",
+                        "blue",
+                        "violet"
+                      ],
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "postCount": {
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "color",
+                    "postCount"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Rename or recolor a tag",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "settings:write",
         "x-kronaut-auth": [
           "session"
         ]
