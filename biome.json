@@ -56,7 +56,6 @@
       "includes": [
         "**/apps/server/src/**",
         "**/packages/**",
-        "!**/packages/compose/**",
         "!**/packages/sdk/**",
         "!**/packages/ui/**",
         "!**/*.test.ts",

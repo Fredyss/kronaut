@@ -1,5 +1,14 @@
 language js
 
-`new Date($instant.epochMilliseconds)` as $ref where {
+`new $d($arg)` as $ref where {
+  $d <: or {
+    `Date`,
+    `$_.Date`,
+    `$_?.Date`
+  },
+  $arg <: contains or {
+    `$_.epochMilliseconds`,
+    `$_?.epochMilliseconds`
+  },
   register_diagnostic(span=$ref, message="Use toDate from @kronaut/core to turn an Instant into a Date.", severity="error")
 }

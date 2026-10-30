@@ -112,7 +112,7 @@ export async function cronStatus(
 }
 
 export async function incidentStatus(trx: TenantDb, now: Temporal.Instant): Promise<Incident[]> {
-  const since = new Date(now.epochMilliseconds - INCIDENT_RECENT_DAYS * DAY_MS);
+  const since = toDate(now.subtract({ hours: INCIDENT_RECENT_DAYS * 24 }));
   const rows = await trx
     .selectFrom('provider_app_incidents as i')
     .innerJoin('provider_apps as a', 'a.id', 'i.provider_app_id')

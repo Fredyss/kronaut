@@ -1,8 +1,15 @@
 language js
 
 or {
-  `Date.now`,
-  `new Date()`
+  `$d.now`,
+  `$d?.now`,
+  `new $d()`,
+  `$d()`
 } as $ref where {
+  $d <: or {
+    `Date`,
+    `$_.Date`,
+    `$_?.Date`
+  },
   register_diagnostic(span=$ref, message="Read the clock through Temporal or an injected clock on the server (CLAUDE.md).", severity="error")
 }
