@@ -81,6 +81,8 @@ interface Seed {
 }
 
 async function notify({ userId = ownerId, postId, accountId = accountA }: Seed = {}) {
+  // uuidv7 orders only to the millisecond; each row must sort after the one before it.
+  await new Promise((resolve) => setTimeout(resolve, 2));
   const { id } = await owner.withActor(SYSTEM, (trx) =>
     trx
       .insertInto('notifications')
@@ -206,7 +208,6 @@ describe('notifications.mark_read', () => {
     await notify();
     await notify();
     await notify({ userId: otherId });
-    // uuidv7 orders only to the millisecond, so take the middle id in the database's own order.
     const [newest, middle] = (await list('?unread=true')).items.map((item) => item.id);
     expect(await markRead({ upTo: middle })).toBe(1);
     expect((await list('?unread=true')).items.map((item) => item.id)).toEqual([newest]);
@@ -215,8 +216,6 @@ describe('notifications.mark_read', () => {
 
   it('ignores a well-formed id that belongs to another user', async () => {
     const mine = await notify();
-    // uuidv7 orders only to the millisecond; theirs must sort after mine.
-    await new Promise((resolve) => setTimeout(resolve, 2));
     const theirs = await notify({ userId: otherId });
     expect(theirs).toMatch(/^ntf_/);
     expect(await markRead({ ids: [theirs] })).toBe(1);

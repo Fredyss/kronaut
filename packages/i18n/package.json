@@ -38,7 +38,7 @@
     "./config": "./i18n.config.ts"
   },
   "scripts": {
-    "i18n": "node scripts/i18n.ts"
+    "i18n": "node --no-wasm-code-gc scripts/i18n.ts"
   },
   "devDependencies": {
     "@inlang/paraglide-js": "catalog:",

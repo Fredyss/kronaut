@@ -11,6 +11,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` and `*-routes.ts` bind handlers; shared logic lives in a named module that other features import. A feature importing another feature's file with one of those names fails the check; the check goes by file name only.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
+- **Planning tools and the server folders from draft to publish follow one direction:** [Scheduling flow](14-scheduling-flow.md) sets it and says where new code goes.
 - **About 20 non-test files is a prompt to review a folder.** Split it when it holds distinct sub-concepts, not to reach a count. Three files sharing a prefix (`verify-*`, `sniff-*`) are a subfolder waiting to happen.
 
 ## Imports
@@ -53,5 +54,5 @@ These rules bind new code, but existing code still breaks them:
 - `calendar/sidebar.tsx`, `compose/channel-picker.tsx` and `post-actions/compose-dialog.tsx` import a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Shared modules that also define routes: `posts/list.ts`, `posts/schedule.ts`, `channels/disconnect.ts`, `approvals/request.ts`, `auth/profile.ts`.
-- Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review.
+- Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review. [Scheduling flow](14-scheduling-flow.md) plans the server fix.
 - Feature folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
