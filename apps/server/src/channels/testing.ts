@@ -11,25 +11,20 @@ import type { HttpClient } from '@kronaut/egress';
 import type { Hono } from 'hono';
 import { sql } from 'kysely';
 import { pino } from 'pino';
-import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
 import { hashGrantToken } from '../auth/grant.ts';
-import { authRoutes } from '../auth/routes.ts';
-import { SESSION_COOKIE } from '../auth/session.ts';
 import { activateKey, createKey } from '../cli/provider-apps.ts';
 import { loadCredential } from '../credential-store.ts';
 import type { AccessGate } from '../http/access.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
+import { BASE, createTestInstance, createTestUser, loginAs } from '../http/testing.ts';
 import { installJobQueue } from '../job-queue.ts';
-import { hashPassword } from '../password.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { FAKE_PROVIDER, type FixtureUrls, fakeManifest } from '../publish/testing.ts';
-import { channelRoutes } from './routes.ts';
+
+export { BASE } from '../http/testing.ts';
 
 export const SYSTEM: Actor = { kind: 'system' };
 const CLI: Actor = { kind: 'cli' };
-export const BASE = 'https://kronaut.example.test';
-const PASSWORD = 'correct horse battery';
 export const GRANT_TOKEN = `kro_${'c'.repeat(16)}_${'d'.repeat(32)}`;
 export const CANARY = 'CANARY_pkce_verifier';
 export const CODE = 'CODE_one_time_authorization';
@@ -49,25 +44,12 @@ export let editor: string;
 export let viewer: string;
 export const lines: string[] = [];
 
-async function createUser(label: string): Promise<string> {
-  const hash = await hashPassword(PASSWORD);
-  return await db.withActor(SYSTEM, async (trx) => {
-    const result = await sql<{ id: string }>`
-      select auth_create_user(${`${label}@example.test`}, ${`${label}@example.test`},
-                              ${label}, ${hash}, 'en') as id
-    `.execute(trx);
-    return result.rows[0]?.id ?? '';
-  });
+function createUser(label: string): Promise<string> {
+  return createTestUser(db, label);
 }
 
 async function login(label: string): Promise<string> {
-  const response = await app.request(`${BASE}/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ email: `${label}@example.test`, password: PASSWORD }),
-  });
-  const header = response.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`));
-  return header?.split(';')[0] ?? '';
+  return (await loginAs(app, label)).cookie;
 }
 
 export async function start(
@@ -157,36 +139,20 @@ export async function startConnect(
   operator = createDatabase({ connectionString: test.operatorUrl });
   keyring = createKeyring(new Map([[1, randomBytes(32)]]));
   const logger = pino({ level: 'debug' }, { write: (line: string) => lines.push(line) });
-  const deps: HttpDeps = {
-    db,
-    keys: deriveHttpKeys(randomBytes(32)),
-    logger,
-    clock: () => Temporal.Now.instant(),
-    publicBaseUrl: BASE,
-    readiness: async () => true,
-  };
   const providers = createProviderRegistry(
     [fakeManifest, ...extra.map((entry) => entry.manifest)],
     [runtime, ...extra.map((entry) => entry.runtime)],
     () => ({}) as HttpClient,
   );
-  const routes = [
-    ...authRoutes(deps),
-    ...channelRoutes({
-      db,
-      keys: deps.keys,
-      keyring,
-      providers,
-      publicBaseUrl: BASE,
-      clock: deps.clock,
-    }),
-  ];
-  app = createHttpApp(deps, routes);
+  const options = { db, keyring, providers, logger };
+  const instance = createTestInstance(options);
+  app = instance.app;
+  const { keys } = instance.deps;
   const access: AccessGate = {
     verify: async (token) =>
       token === GOOD_ASSERTION ? { ok: true } : { ok: false, reason: 'missing' },
   };
-  gated = createHttpApp({ ...deps, access }, routes);
+  gated = createTestInstance({ ...options, keys, access }).app;
 
   ownerId = await createUser('owner');
   const adminId = await createUser('admin');
@@ -232,7 +198,7 @@ export async function startConnect(
         grant_id: grantId,
         kind: 'key',
         key_id: 'c'.repeat(16),
-        token_hash: hashGrantToken(deps.keys.grant, GRANT_TOKEN),
+        token_hash: hashGrantToken(keys.grant, GRANT_TOKEN),
         hash_key_version: 1,
       })
       .execute();

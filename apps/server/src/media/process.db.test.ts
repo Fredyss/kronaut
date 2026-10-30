@@ -1,23 +1,28 @@
 import { spawnSync } from 'node:child_process';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { encodePublicId } from '@kronaut/core';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { BoundRoute, RequestContext } from '../http/types.ts';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaJob } from '../jobs.ts';
-import { asUser, type MediaDb, NOW, startMediaDb, type Tenant, uuidOf } from './db-testing.ts';
+import {
+  asUser,
+  type MediaDb,
+  stagingUnder,
+  startMediaDb,
+  type Tenant,
+  uuidOf,
+} from './db-testing.ts';
 import { findMediaAsset } from './dto.ts';
 import { type MediaProcessDeps, runMediaProcess } from './process.ts';
-import { createStaging, type Staging } from './staging.ts';
+import type { Staging } from './staging.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
-import { uploadRoutes, videoUploadRoute } from './upload-routes.ts';
+import { videoUploadRoute } from './upload-routes.ts';
 
 const hasFfmpeg = spawnSync('ffmpeg', ['-version']).status === 0;
 const CLI: Actor = { kind: 'cli' };
@@ -30,9 +35,6 @@ let deps: MediaProcessDeps;
 let a: Tenant;
 let b: Tenant;
 let samples: string;
-let createRoute: BoundRoute;
-let partRoute: BoundRoute;
-let completeRoute: BoundRoute;
 
 interface Upload {
   readonly mediaId: string;
@@ -80,18 +82,12 @@ async function audioOnly(): Promise<Uint8Array> {
 beforeAll(async () => {
   if (!hasFfmpeg) return;
   test = await startTestDatabase();
-  fx = await startMediaDb(test, 'process');
-  ({ a, b } = fx);
+  fx = await startMediaDb(test, 'process', { staging: stagingUnder });
+  ({ a, b, staging } = fx);
   owner = createDatabase({ connectionString: test.ownerUrl });
   await installJobQueue(test.ownerUrl, owner);
-  staging = createStaging(join(fx.root, '.staging'));
   samples = await mkdtemp(join(tmpdir(), 'kronaut-process-samples-'));
   deps = { db: fx.db, store: fx.store, staging, logger: pino({ level: 'silent' }) };
-  [createRoute, partRoute, completeRoute] = uploadRoutes({ staging }) as [
-    BoundRoute,
-    BoundRoute,
-    BoundRoute,
-  ];
 });
 
 afterAll(async () => {
@@ -101,29 +97,20 @@ afterAll(async () => {
   if (samples !== undefined) await rm(samples, { recursive: true, force: true });
 });
 
-function context(tenant: Tenant): RequestContext {
-  return {
-    requestId: randomUUID(),
-    principal: null,
-    session: null,
-    now: NOW,
-    logger: pino({ level: 'silent' }),
-    ipPrefix: null,
-    acceptLanguage: null,
-    tenant: (fn) => fx.db.withTenant(tenant.workspaceId, asUser(tenant), fn),
-    authorize: () => ({ kind: 'allow' }),
-    cookie: () => undefined,
-    setCookie: () => undefined,
-    clearCookie: () => undefined,
-  };
+async function send(
+  tenant: Tenant,
+  method: 'POST' | 'PUT',
+  path: string,
+  body?: unknown,
+): Promise<unknown> {
+  const response = await fx.call(tenant, method, path, { body });
+  expect(response.ok).toBe(true);
+  return await response.json();
 }
 
-function call(route: BoundRoute, tenant: Tenant, params: Record<string, string>, body?: unknown) {
-  const workspaceId = encodePublicId('workspace', tenant.workspaceId);
-  return route.handler(
-    { params: { workspaceId, ...params }, query: undefined, body },
-    context(tenant),
-  );
+async function createUpload(tenant: Tenant, bytes: number, aiGenerated = false) {
+  const body = { kind: 'video', bytes, mime: 'video/mp4', aiGenerated };
+  return videoUploadRoute.response.parse(await send(tenant, 'POST', 'media/uploads', body));
 }
 
 function asOwner<T>(fn: Parameters<Database['withActor']>[1]) {
@@ -137,19 +124,12 @@ async function row(id: string): Promise<Row> {
 }
 
 async function upload(tenant: Tenant, data: Uint8Array, aiGenerated = false): Promise<Upload> {
-  const body = videoUploadRoute.body.parse({
-    kind: 'video',
-    bytes: data.byteLength,
-    mime: 'video/mp4',
-    aiGenerated,
-  });
-  const created = await call(createRoute, tenant, {}, body);
-  const { media } = videoUploadRoute.response.parse(created.body);
+  const { media } = await createUpload(tenant, data.byteLength, aiGenerated);
   for (let part = 1; (part - 1) * VIDEO_PART_SIZE < data.byteLength; part++) {
     const chunk = data.subarray((part - 1) * VIDEO_PART_SIZE, part * VIDEO_PART_SIZE);
-    await call(partRoute, tenant, { mediaId: media.id, part: String(part) }, chunk);
+    await send(tenant, 'PUT', `media/${media.id}/parts/${part}`, chunk);
   }
-  await call(completeRoute, tenant, { mediaId: media.id });
+  await send(tenant, 'POST', `media/${media.id}/complete`);
   const id = uuidOf(media);
   return {
     mediaId: media.id,
@@ -301,9 +281,7 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
   });
 
   it('skips a row that is not processing', async () => {
-    const body = videoUploadRoute.body.parse({ kind: 'video', bytes: 10, mime: 'video/mp4' });
-    const created = await call(createRoute, a, {}, body);
-    const { media } = videoUploadRoute.response.parse(created.body);
+    const { media } = await createUpload(a, 10);
     const job = { workspaceId: a.workspaceId, id: uuidOf(media) };
     expect(await runMediaProcess(deps, job)).toBe('skipped');
     expect((await row(job.id)).state).toBe('uploading');

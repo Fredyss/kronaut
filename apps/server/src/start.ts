@@ -24,7 +24,7 @@ import {
 import { cronItems, cronTaskList, cronTasks } from './cron.ts';
 import { type Heartbeat, startHeartbeat, workerAlive } from './heartbeat.ts';
 import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/access.ts';
-import { apiRoutes } from './http/api-routes.ts';
+import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
 import { drain, listen } from './http/listen.ts';
 import { loadWebApp } from './http/web.ts';
@@ -34,9 +34,7 @@ import { createMediaAccess, createMediaSigner } from './media/access.ts';
 import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
-import { MEDIA_BODY_LIMITS } from './media/upload-routes.ts';
 import { metaLifecycleTask } from './meta/lifecycle.ts';
-import { META_BODY_LIMITS } from './meta/routes.ts';
 import { emailDeps } from './notifications/email.ts';
 import { createProviderRegistry } from './providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
@@ -232,7 +230,7 @@ async function startApi(boot: Boot): Promise<void> {
     publicBaseUrl: config.publicUrl.origin,
     instanceAdmins: config.instanceAdmins,
     readiness: async () => !state.stopping && (await workerAlive(db)),
-    routeBodyLimits: { ...MEDIA_BODY_LIMITS, ...META_BODY_LIMITS },
+    routeBodyLimits: API_BODY_LIMITS,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };
