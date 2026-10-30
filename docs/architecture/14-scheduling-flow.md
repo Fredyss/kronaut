@@ -40,14 +40,14 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 7. Identity and events | `auth`, `webhooks` | Sessions and webhook events |
 | Base | `http`, `@kronaut/core` | Request helpers, pure domain and time |
 
-`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the rule above and the loop counts below cover feature folders only: `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`.
+`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the rule above and the loop counts below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`.
 
 `publish` already never imports `posts`. That stays: the worker knows destinations, not the editing flow.
 
 ## Where new code goes
 
 - **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that calls `scheduleOrRequest` as the owner, like `evergreen`.
-- **Scheduling consults it** (a new rule on times or content): a module in tiers 3 to 5 with no import of `posts`, which `posts` calls.
+- **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts` calls.
 - **It reshapes a draft** (signatures, templates): `posts`, or its own folder below `posts` if it needs its own routes and tables.
 - **It reads or locks a post for another feature:** `post-access`.
 
@@ -64,7 +64,7 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
 | 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, with `requestRoutes` mounted there. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |
-| 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
+| 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
 
@@ -73,7 +73,7 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 - **Lock order:** the post comes first, then its destinations or approval request. Moving a function doesn't change the order it locks in.
 - **`transition` stays in `publish`.** It writes notifications, and `notifications` reads through `post-access`, so moving it down would rebuild the loop.
 - **`approvalStatus` stays in `publish/principal.ts`,** because the claim re-checks it.
-- **`posts` stays large.** It goes from 30 non-test files to 28 by PR 3. Its split into subfolders comes after PR 5, when the direction is enforced.
+- **`posts` stays large.** It goes from 30 non-test files to 28 by PR 3. Its split into subfolders comes after PR 5, when the check is in.
 
 ## Rejected
 
