@@ -1,15 +1,15 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { checkVideo, type VideoMeta } from './compose/video-rules.ts';
-import { type Call, channel, jpeg, mount, pickFiles } from './compose-testing.tsx';
+import { type Call, channel, jpeg, mount, pickFiles } from './testing.tsx';
+import { checkVideo, type VideoMeta } from './video-rules.ts';
 
-vi.mock('./compose/editor.tsx', async () => ({
-  default: (await import('./compose-testing.tsx')).MockEditor,
+vi.mock('./editor.tsx', async () => ({
+  default: (await import('./testing.tsx')).MockEditor,
 }));
 
-vi.mock('./compose/video-upload.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./compose/video-upload.ts')>()),
+vi.mock('./video-upload.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./video-upload.ts')>()),
   sleep: () => Promise.resolve(),
 }));
 

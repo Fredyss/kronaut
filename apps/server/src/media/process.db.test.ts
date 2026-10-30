@@ -10,6 +10,9 @@ import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaJob } from '../jobs.ts';
+import { findMediaAsset } from './dto.ts';
+import { type MediaProcessDeps, runMediaProcess } from './process.ts';
+import type { Staging } from './staging.ts';
 import {
   asUser,
   type MediaDb,
@@ -17,10 +20,7 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './db-testing.ts';
-import { findMediaAsset } from './dto.ts';
-import { type MediaProcessDeps, runMediaProcess } from './process.ts';
-import type { Staging } from './staging.ts';
+} from './testing/db.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
 import { videoUploadRoute } from './upload-routes.ts';
 

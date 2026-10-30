@@ -1,9 +1,9 @@
 import { createApiClient } from '@kronaut/sdk';
 import { createMemoryHistory } from '@tanstack/react-router';
 import { fireEvent, render } from '@testing-library/react';
-import { App, createApp } from './app.tsx';
-import { docParagraphs, textToParagraphs, toDoc } from './compose/doc.ts';
-import type { PostEditorProps } from './compose/editor.tsx';
+import { App, createApp } from '../app.tsx';
+import { docParagraphs, textToParagraphs, toDoc } from './doc.ts';
+import type { PostEditorProps } from './editor.tsx';
 
 export function MockEditor({ id, label, initial, onChange }: PostEditorProps) {
   return (

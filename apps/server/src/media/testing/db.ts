@@ -24,13 +24,13 @@ import {
   randomGrantToken,
   requestAs,
   type TestRequest,
-} from '../http/testing.ts';
-import type { BoundRoute } from '../http/types.ts';
-import { createMediaSigner } from './access.ts';
-import type { MediaAssetDto } from './dto.ts';
-import type { MediaGcDeps } from './gc.ts';
-import { ingestImage, prepareImage } from './ingest.ts';
-import { createStaging, type Staging } from './staging.ts';
+} from '../../http/testing.ts';
+import type { BoundRoute } from '../../http/types.ts';
+import { createMediaSigner } from '../access.ts';
+import type { MediaAssetDto } from '../dto.ts';
+import type { MediaGcDeps } from '../gc.ts';
+import { ingestImage, prepareImage } from '../ingest.ts';
+import { createStaging, type Staging } from '../staging.ts';
 
 export interface Tenant {
   readonly userId: string;

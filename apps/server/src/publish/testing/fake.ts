@@ -15,13 +15,7 @@ import type {
   VerifyOutcome,
 } from '@kronaut/core';
 import * as z from 'zod';
-import {
-  type FakeQueues,
-  fakePoll,
-  fakePublish,
-  fakeRefresh,
-  fakeVerify,
-} from './testing-fake-runtime.ts';
+import { type FakeQueues, fakePoll, fakePublish, fakeRefresh, fakeVerify } from './fake-runtime.ts';
 
 export const FAKE_PROVIDER = 'fake';
 export const FAKE_TEXT_MAX = 300;

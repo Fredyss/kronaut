@@ -4,10 +4,10 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Temporal } from 'temporal-polyfill';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { App, createApp } from './app.tsx';
+import { App, createApp } from '../app.tsx';
 
-vi.mock('./calendar/time.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./calendar/time.ts')>()),
+vi.mock('./time.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./time.ts')>()),
   browserTimeZone: () => 'Europe/Bratislava',
   browserLanguage: () => 'en-US',
   today: () => Temporal.PlainDate.from('2026-10-01'),

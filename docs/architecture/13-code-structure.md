@@ -16,7 +16,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 ## Imports
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
-- **Production code never imports testing code (checked).** That covers `*.test.ts`, `testing.ts` and its variants, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
+- **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
   - Type-only imports, tests, imports made by wiring folders and `apps/*/src` root files are outside it, so a root file, or a wiring file the feature already lists, can still pass one feature's code to another.
@@ -34,7 +34,8 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 ## Tests
 
-- **Tests sit beside the code they cover.**
+- **Tests sit beside the code they cover (checked).** A test in an `apps/*/src` root needs a file of the same name there.
+- **Testing helpers have one name (checked):** `testing.ts` or `testing.tsx`, or files in a `testing/` folder when a feature needs several.
 - **Write tests where they pay:** the [security](../reference/security-tests.md) and [reliability](../reference/reliability-tests.md) catalogues, DB triggers and RLS, state machines, non-trivial logic. Skip trivial wiring.
 - **Test routes over HTTP** through `createTestInstance` (`apps/server/src/http/testing.ts`), so tests cross the same seam as production.
 - **Prove a new check can fail.** Break the code once and watch it go red.
@@ -49,7 +50,6 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 These rules bind new code, but existing code still breaks them:
 
 - Shared modules in the `apps/*/src` roots, which should each find an owner.
-- Web tests in the `apps/web/src` root, away from the code they cover.
 - `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
 - `calendar/sidebar.tsx`, `compose/channel-picker.tsx` and `post-actions/compose-dialog.tsx` import a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.

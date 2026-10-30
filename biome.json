@@ -350,7 +350,14 @@
       "linter": { "rules": { "style": { "noExcessiveLinesPerFile": "off" } } }
     },
     {
-      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/testing.ts", "packages/db/test/**"],
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/testing.ts",
+        "**/testing.tsx",
+        "**/testing/**",
+        "packages/db/test/**"
+      ],
       "linter": {
         "rules": {
           "complexity": { "noExcessiveLinesPerFunction": "off" },

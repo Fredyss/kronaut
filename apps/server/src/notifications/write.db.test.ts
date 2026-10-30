@@ -2,7 +2,6 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { type RawBuilder, sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { flagAccount } from '../publish/incidents.ts';
-import { FAKE_PROVIDER, type Seeded } from '../publish/testing.ts';
 import {
   CLI,
   createUser,
@@ -16,7 +15,8 @@ import {
   startHarness,
   stopHarness,
   workspaceId,
-} from '../publish/testing-harness.ts';
+} from '../publish/testing/harness.ts';
+import { FAKE_PROVIDER, type Seeded } from '../publish/testing.ts';
 import { auditTransition } from '../publish/transition.ts';
 
 let test: TestDatabase;

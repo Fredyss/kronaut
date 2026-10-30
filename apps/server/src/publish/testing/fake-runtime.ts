@@ -13,7 +13,7 @@ import type {
   FakeRefresh,
   FakeRefreshCall,
   FakeVerify,
-} from './testing-fake.ts';
+} from './fake.ts';
 
 export interface FakeQueues {
   readonly calls: FakeCall[];

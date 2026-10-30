@@ -8,6 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DEFAULT_MAX_BODY_BYTES } from '../http/body.ts';
 import { type Auth, BASE, expectError, type TestRequest } from '../http/testing.ts';
 import { installJobQueue } from '../job-queue.ts';
+import { MEDIA_UPLOAD_BODY_LIMIT } from './routes.ts';
 import {
   asUser,
   type MediaDb,
@@ -15,8 +16,7 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './db-testing.ts';
-import { MEDIA_UPLOAD_BODY_LIMIT } from './routes.ts';
+} from './testing/db.ts';
 import { pngFixture } from './testing.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
 

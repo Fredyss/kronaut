@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { FAKE_TEXT_MAX, type Seeded } from './testing.ts';
 import {
   audits,
   CLI,
@@ -19,7 +18,8 @@ import {
   TEXT,
   updateDestination,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import { FAKE_TEXT_MAX, type Seeded } from './testing.ts';
 
 let test: TestDatabase;
 

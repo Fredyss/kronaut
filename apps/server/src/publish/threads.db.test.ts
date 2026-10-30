@@ -8,7 +8,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { createProviderRegistry } from '../providers.ts';
 import type { PublishDeps } from './task.ts';
 import { runPublish } from './task.ts';
-import type { Seeded } from './testing.ts';
 import {
   deps as fakeDeps,
   fixture,
@@ -19,7 +18,8 @@ import {
   stopHarness,
   updateDestination,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import type { Seeded } from './testing.ts';
 import { runVerify } from './verify.ts';
 
 const USER_ID = '7654321';

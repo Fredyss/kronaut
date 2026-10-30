@@ -4,7 +4,7 @@ import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testconta
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { migrate } from './migrate.ts';
-import { createDatabaseIn, query, recordThrough } from './migrate-testing.ts';
+import { createDatabaseIn, query, recordThrough } from './testing/migrate.ts';
 
 const TEST_DIR = join(import.meta.dirname, '..', 'test');
 const LOCK_KEY = 0x6b726f6e617574n.toString();
