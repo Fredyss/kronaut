@@ -1,20 +1,18 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { readdir } from 'node:fs/promises';
-import { type Action, encodePublicId, type Resource } from '@kronaut/core';
+import { encodePublicId } from '@kronaut/core';
 import type { Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { type MediaStore, storageKey } from '@kronaut/media';
 import { sql } from 'kysely';
-import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { RequestContext } from '../http/types.ts';
+import { type Auth, BASE, expectError, requestAs } from '../http/testing.ts';
 import {
   asUser,
   clock,
   MEDIA_BASE,
   type MediaDb,
   masterOf,
-  NOW,
   signer,
   startMediaDb,
   type Tenant,
@@ -58,6 +56,7 @@ let root: string;
 let store: MediaStore;
 let a: Tenant;
 let b: Tenant;
+let viewer: Auth;
 const ingest: MediaDb['ingest'] = (...args) => fx.ingest(...args);
 
 function rowOf(tenant: Tenant, asset: { id: string }) {
@@ -96,6 +95,7 @@ beforeAll(async () => {
   test = await startTestDatabase();
   fx = await startMediaDb(test, 'media');
   ({ db, store, root, a, b } = fx);
+  viewer = await fx.member(a, 'media-viewer', 'viewer');
 });
 
 afterAll(async () => {
@@ -285,36 +285,14 @@ describe('ingestImage', () => {
 });
 
 describe('media routes', () => {
-  function context(
-    tenant: Tenant,
-    calls: [Action, Resource][],
-    decision: ReturnType<RequestContext['authorize']> = { kind: 'allow' },
-  ): RequestContext {
-    return {
-      requestId: randomUUID(),
-      principal: {
-        kind: 'user',
-        userId: tenant.userId,
-        workspaceId: tenant.workspaceId,
-        role: 'owner',
-        canApprove: true,
-        restricted: false,
-        authenticatedAt: NOW,
-      },
-      session: null,
-      now: NOW,
-      logger: pino({ level: 'silent' }),
-      ipPrefix: null,
-      acceptLanguage: null,
-      tenant: (fn) => db.withTenant(tenant.workspaceId, asUser(tenant), fn),
-      authorize: (action, resource) => {
-        calls.push([action, resource]);
-        return decision;
-      },
-      cookie: () => undefined,
-      setCookie: () => undefined,
-      clearCookie: () => undefined,
-    };
+  function asset(tenant: Tenant, mediaId: string, auth?: Auth) {
+    const options = auth === undefined ? {} : { auth };
+    return fx.call(tenant, 'GET', `media/${mediaId}`, options);
+  }
+
+  function markAi(tenant: Tenant, mediaId: string, auth?: Auth) {
+    const options = auth === undefined ? {} : { auth };
+    return fx.call(tenant, 'POST', `media/${mediaId}/ai-generated`, options);
   }
 
   it('exposes the upload and read routes with the agreed shape', () => {
@@ -333,77 +311,39 @@ describe('media routes', () => {
     expect(mediaGetRoute).toMatchObject({ id: 'media.get', method: 'GET', action: 'media:read' });
   });
 
-  it('uploads through the handler and reads the asset back', async () => {
-    const [upload, get] = mediaRoutes({ store, signer, clock });
-    if (upload === undefined || get === undefined) throw new Error('routes missing');
-    const calls: [Action, Resource][] = [];
-    const ctx = context(a, calls);
+  it('uploads over HTTP and reads the asset back', async () => {
     const image = webpExtendedFixture(9, 9);
-    const body = mediaUploadRoute.body.parse({
-      filename: 'pic.webp',
-      dataBase64: Buffer.from(image).toString('base64'),
-    });
-    const created = await upload.handler(
-      {
-        params: { workspaceId: encodePublicId('workspace', a.workspaceId) },
-        query: undefined,
-        body,
-      },
-      ctx,
-    );
+    const body = { filename: 'pic.webp', dataBase64: Buffer.from(image).toString('base64') };
+    const created = await fx.call(a, 'POST', 'media', { body });
     expect(created.status).toBe(201);
-    const dto = mediaUploadRoute.response.parse(created.body);
+    const dto = mediaUploadRoute.response.parse(await created.json());
     expect(dto).toMatchObject({ kind: 'image', mime: 'image/webp', width: 9, height: 9 });
-    const fetched = await get.handler(
-      {
-        params: { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: dto.id },
-        query: undefined,
-        body: undefined,
-      },
-      ctx,
-    );
-    expect(fetched.body).toEqual({
+    const fetched = await asset(a, dto.id);
+    expect(await fetched.json()).toEqual({
       ...dto,
       previewUrl: expect.stringContaining(`${MEDIA_BASE}/m/`),
     });
-    expect(calls).toEqual([
-      ['media:write', { workspaceId: a.workspaceId }],
-      ['media:read', { workspaceId: a.workspaceId }],
-    ]);
-    const foreign = get.handler(
-      {
-        params: { workspaceId: encodePublicId('workspace', b.workspaceId), mediaId: dto.id },
-        query: undefined,
-        body: undefined,
-      },
-      context(b, []),
-    );
-    await expectMediaError(foreign, 'not_found', 404);
+    expect((await asset(a, dto.id, viewer)).status).toBe(200);
+    await expectError(await fx.call(a, 'POST', 'media', { body, auth: viewer }), 403, 'forbidden');
+    await expectError(await asset(a, dto.id, fx.auth(b)), 404, 'not_found');
+    await expectError(await asset(b, dto.id), 404, 'not_found');
   });
 
   it('marks an asset AI-generated, keeps the mark, and hides other workspaces', async () => {
-    const mark = mediaRoutes({ store, signer, clock }).find(
-      (bound) => bound.route === mediaMarkAiRoute,
-    );
-    if (mark === undefined) throw new Error('route missing');
-    const asset = await fx.ingest(a, webpExtendedFixture(11, 11));
-    const params = { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id };
-    const input = { params, query: undefined, body: undefined };
-    const calls: [Action, Resource][] = [];
-    const marked = await mark.handler(input, context(a, calls));
-    expect(mediaMarkAiRoute.response.parse(marked.body).aiGenerated).toBe(true);
-    expect((await mark.handler(input, context(a, []))).body).toEqual(marked.body);
-    expect(calls).toEqual([['media:write', { workspaceId: a.workspaceId }]]);
-    const foreign = {
-      ...input,
-      params: { workspaceId: encodePublicId('workspace', b.workspaceId), mediaId: asset.id },
-    };
-    await expectMediaError(mark.handler(foreign, context(b, [])), 'not_found', 404);
+    const image = await fx.ingest(a, webpExtendedFixture(11, 11));
+    const response = await markAi(a, image.id);
+    expect(response.status).toBe(200);
+    const marked = await response.json();
+    expect(mediaMarkAiRoute.response.parse(marked).aiGenerated).toBe(true);
+    expect(await (await markAi(a, image.id)).json()).toEqual(marked);
+    await expectError(await markAi(a, image.id, viewer), 403, 'forbidden');
+    await expectError(await markAi(a, image.id, fx.auth(b)), 404, 'not_found');
+    await expectError(await markAi(b, image.id), 404, 'not_found');
     const audits = await db.withTenant(a.workspaceId, asUser(a), (trx) =>
       trx
         .selectFrom('audit_events')
         .select(['action', 'actor_kind', 'actor_id', 'resource_kind'])
-        .where('resource_id', '=', uuidOf(asset))
+        .where('resource_id', '=', uuidOf(image))
         .execute(),
     );
     expect(audits).toEqual([
@@ -417,73 +357,52 @@ describe('media routes', () => {
   });
 
   it('refuses to mark a rejected asset', async () => {
-    const mark = mediaRoutes({ store, signer, clock }).find(
-      (bound) => bound.route === mediaMarkAiRoute,
-    );
-    if (mark === undefined) throw new Error('route missing');
-    const asset = await fx.ingest(a, webpExtendedFixture(13, 13));
+    const image = await fx.ingest(a, webpExtendedFixture(13, 13));
     await db.withTenant(a.workspaceId, asUser(a), (trx) =>
-      sql`update media_assets set state = 'rejected' where id = ${uuidOf(asset)}`.execute(trx),
+      sql`update media_assets set state = 'rejected' where id = ${uuidOf(image)}`.execute(trx),
     );
-    const params = { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id };
-    const marking = mark.handler({ params, query: undefined, body: undefined }, context(a, []));
-    await expectMediaError(marking, 'conflict', 409);
+    await expectError(await markAi(a, image.id), 409, 'conflict');
   });
 
   it('refuses a scoped read because media has no scope units', async () => {
-    const [, get] = mediaRoutes({ store, signer, clock });
-    if (get === undefined) throw new Error('routes missing');
-    const asset = await ingest(a, pngFixture({ width: 4, height: 9 }));
-    const scope = { brandIds: [randomUUID()], locationIds: [], socialAccountIds: [] };
-    const result = get.handler(
-      {
-        params: { workspaceId: encodePublicId('workspace', a.workspaceId), mediaId: asset.id },
-        query: undefined,
-        body: undefined,
-      },
-      context(a, [], { kind: 'allow_scoped', scope }),
-    );
-    await expectMediaError(result, 'forbidden', 403);
+    const image = await ingest(a, pngFixture({ width: 4, height: 9 }));
+    const { auth } = await fx.grant(a, ['media:read'], true);
+    const refused = await expectError(await asset(a, image.id, auth), 403, 'forbidden');
+    expect(refused.message).toBe('media is not available to restricted principals');
+    const unscoped = await fx.grant(a, ['media:read']);
+    expect((await asset(a, image.id, unscoped.auth)).status).toBe(200);
   });
 
   it('only accepts prefixed public ids and answers 404 for anything else', async () => {
-    const [upload, get] = mediaRoutes({ store, signer, clock });
-    if (upload === undefined || get === undefined) throw new Error('routes missing');
-    const asset = await ingest(a, pngFixture({ width: 4, height: 9 }));
+    const image = await ingest(a, pngFixture({ width: 4, height: 9 }));
     const ws = encodePublicId('workspace', a.workspaceId);
-    const read = (workspaceId: string, mediaId: string) => {
-      const calls: [Action, Resource][] = [];
-      const result = get.handler(
-        { params: { workspaceId, mediaId }, query: undefined, body: undefined },
-        context(a, calls),
-      );
-      return { calls, result };
-    };
-    expect((await read(ws, asset.id).result).body).toEqual({
-      ...asset,
+    const auth = fx.auth(a);
+    const read = (workspaceId: string, mediaId: string) =>
+      requestAs(fx.app, auth, {
+        method: 'GET',
+        url: `${BASE}/v1/workspaces/${workspaceId}/media/${mediaId}`,
+      });
+    expect(await (await read(ws, image.id)).json()).toEqual({
+      ...image,
       previewUrl: expect.stringContaining(`${MEDIA_BASE}/m/`),
     });
     for (const [workspaceId, mediaId] of [
-      [a.workspaceId, asset.id],
-      [ws, uuidOf(asset)],
-      [encodePublicId('post', a.workspaceId), asset.id],
-      [ws, encodePublicId('post', uuidOf(asset))],
+      [a.workspaceId, image.id],
+      [ws, uuidOf(image)],
+      [encodePublicId('post', a.workspaceId), image.id],
+      [ws, encodePublicId('post', uuidOf(image))],
       [ws, 'media_zzzzzzzzzzzzzzzzzzzzzzzzzz'],
     ] as const) {
-      const { calls, result } = read(workspaceId, mediaId);
-      await expectMediaError(result, 'not_found', 404);
-      expect(calls).toEqual([]);
+      await expectError(await read(workspaceId, mediaId), 404, 'not_found');
     }
-    const body = mediaUploadRoute.body.parse({
+    const body = {
       dataBase64: Buffer.from(pngFixture({ width: 4, height: 9 })).toString('base64'),
-    });
-    await expectMediaError(
-      upload.handler(
-        { params: { workspaceId: a.workspaceId }, query: undefined, body },
-        context(a, []),
-      ),
-      'not_found',
+    };
+    const url = `${BASE}/v1/workspaces/${a.workspaceId}/media`;
+    await expectError(
+      await requestAs(fx.app, auth, { method: 'POST', url, body }),
       404,
+      'not_found',
     );
   });
 

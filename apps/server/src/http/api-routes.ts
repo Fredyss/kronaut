@@ -14,8 +14,8 @@ import type { MediaSigner } from '../media/access.ts';
 import { libraryRoutes } from '../media/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
 import type { Staging } from '../media/staging.ts';
-import { uploadRoutes } from '../media/upload-routes.ts';
-import { metaRoutes } from '../meta/routes.ts';
+import { MEDIA_BODY_LIMITS, uploadRoutes } from '../media/upload-routes.ts';
+import { META_BODY_LIMITS, metaRoutes } from '../meta/routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
 import type { ProviderRegistry } from '../providers.ts';
@@ -26,6 +26,11 @@ import { tagRoutes } from '../tags/routes.ts';
 import type { HttpDeps } from './kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import type { BoundRoute } from './types.ts';
+
+export const API_BODY_LIMITS: Readonly<Record<string, number>> = {
+  ...MEDIA_BODY_LIMITS,
+  ...META_BODY_LIMITS,
+};
 
 export interface ApiRouteDeps {
   readonly http: HttpDeps;

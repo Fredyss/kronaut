@@ -8,23 +8,20 @@ import { sql } from 'kysely';
 import { type Logger, pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
-import { analyticsRoutes } from '../analytics/routes.ts';
-import { approvalRoutes } from '../approvals/routes.ts';
-import { hashGrantToken } from '../auth/grant.ts';
-import { passwordChangeRoutes } from '../auth/password-change.ts';
-import { profileRoutes } from '../auth/profile.ts';
-import { reauthRoutes } from '../auth/reauth.ts';
-import { authRoutes } from '../auth/routes.ts';
-import { SESSION_COOKIE } from '../auth/session.ts';
 import { saveCredential } from '../credential-store.ts';
 import { cronTasks } from '../cron.ts';
-import { destinationRoutes } from '../destinations/routes.ts';
-import { evergreenRoutes } from '../evergreen/routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
+import {
+  type Auth,
+  BASE,
+  createTestInstance,
+  createTestUser,
+  insertTestGrant,
+  loginAs,
+  randomGrantToken,
+  requestAs,
+} from '../http/testing.ts';
 import { installJobQueue } from '../job-queue.ts';
 import type { MediaAccess } from '../media-access.ts';
-import { notificationRoutes } from '../notifications/routes.ts';
-import { hashPassword } from '../password.ts';
 import { createProviderRegistry } from '../providers.ts';
 import {
   FAKE_PROVIDER,
@@ -32,29 +29,20 @@ import {
   type FixtureUrls,
   fakeProvider,
 } from '../publish/testing.ts';
-import { queueRoutes } from '../queue/routes.ts';
-import { seriesRoutes } from '../series/routes.ts';
-import { systemStatusRoutes } from '../system/routes.ts';
-import { tagRoutes } from '../tags/routes.ts';
 import type { PostDto } from './dto.ts';
-import { postRoutes } from './routes.ts';
+
+export {
+  type Auth,
+  BASE,
+  type ErrorResponse,
+  errorOf,
+  PASSWORD,
+} from '../http/testing.ts';
 
 export const SYSTEM: Actor = { kind: 'system' };
 export const CLI: Actor = { kind: 'cli' };
-export const BASE = 'https://kronaut.example.test';
-export const PASSWORD = 'correct horse battery';
 const GRANT_TOKEN = `kro_${'a'.repeat(16)}_${'b'.repeat(32)}`;
 export const TZ = 'Europe/Bratislava';
-
-export type Auth = { readonly cookie: string } | { readonly bearer: string };
-
-export interface ErrorResponse {
-  readonly error: {
-    readonly code: string;
-    readonly message: string;
-    readonly details?: { path: string; code: string }[];
-  };
-}
 
 export let keyring: Keyring;
 export let fake: FakeProvider;
@@ -78,25 +66,12 @@ export function doc(text: string) {
   return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] };
 }
 
-export async function createUser(label: string): Promise<string> {
-  const hash = await hashPassword(PASSWORD);
-  return await db.withActor(SYSTEM, async (trx) => {
-    const result = await sql<{ id: string }>`
-      select auth_create_user(${`${label}@example.test`}, ${`${label}@example.test`},
-                              ${label}, ${hash}, 'en') as id
-    `.execute(trx);
-    return result.rows[0]?.id ?? '';
-  });
+export function createUser(label: string): Promise<string> {
+  return createTestUser(db, label);
 }
 
-export async function login(label: string): Promise<Auth> {
-  const response = await app.request(`${BASE}/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ email: `${label}@example.test`, password: PASSWORD }),
-  });
-  const header = response.headers.getSetCookie().find((c) => c.startsWith(`${SESSION_COOKIE}=`));
-  return { cookie: header?.split(';')[0] ?? '' };
+export function login(label: string): Promise<Auth> {
+  return loginAs(app, label);
 }
 
 export async function insertAccount(label: string, ws: string = workspaceId): Promise<string> {
@@ -149,16 +124,8 @@ export async function callWithKey(
   auth: Auth,
   { body, key }: { readonly body?: unknown; readonly key: string },
 ): Promise<Response> {
-  const headers: Record<string, string> =
-    'cookie' in auth
-      ? { cookie: auth.cookie, origin: BASE }
-      : { authorization: `Bearer ${auth.bearer}` };
-  if (body !== undefined) headers['content-type'] = 'application/json';
-  if (method !== 'GET') headers['idempotency-key'] = key;
-  return await app.request(
-    `${BASE}/v1/workspaces/${encodePublicId('workspace', workspaceId)}/${path}`,
-    { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }) },
-  );
+  const url = `${BASE}/v1/workspaces/${encodePublicId('workspace', workspaceId)}/${path}`;
+  return await requestAs(app, auth, { method, url, body, key });
 }
 
 export async function call(
@@ -186,10 +153,6 @@ export function internal(publicId: string): string {
   return id;
 }
 
-export async function errorOf(response: Response): Promise<ErrorResponse['error']> {
-  return ((await response.json()) as ErrorResponse).error;
-}
-
 export async function startPosts(
   test: FixtureUrls,
   logger: Logger = pino({ level: 'silent' }),
@@ -198,39 +161,21 @@ export async function startPosts(
   owner = createDatabase({ connectionString: test.ownerUrl });
   db = createDatabase({ connectionString: test.appUrl });
   const operator = createDatabase({ connectionString: test.operatorUrl });
-  const deps: HttpDeps = {
-    db,
-    keys: deriveHttpKeys(randomBytes(32)),
-    logger,
-    clock,
-    publicBaseUrl: BASE,
-    readiness: async () => true,
-  };
-  grantKey = deps.keys.grant;
   await installJobQueue(test.ownerUrl, owner);
   keyring = createKeyring(new Map([[1, randomBytes(32)]]));
   fake = fakeProvider();
   providers = createProviderRegistry([fake.manifest], [fake.runtime], () => ({}) as HttpClient);
-  app = createHttpApp(deps, [
-    ...authRoutes(deps),
-    ...reauthRoutes(deps),
-    ...profileRoutes(deps),
-    ...passwordChangeRoutes(deps),
-    ...postRoutes({ providers }),
-    ...destinationRoutes({ providers }),
-    ...approvalRoutes({ providers }),
-    ...queueRoutes(),
-    ...seriesRoutes(),
-    ...evergreenRoutes(),
-    ...tagRoutes(),
-    ...analyticsRoutes(),
-    ...notificationRoutes(),
-    ...systemStatusRoutes({
-      providers,
-      cronTasks: cronTasks(true),
-      instanceAdmins: ['owner@example.test'],
-    }),
-  ]);
+  const instance = createTestInstance({
+    db,
+    keyring,
+    providers,
+    logger,
+    clock,
+    cronTasks: cronTasks(true),
+    instanceAdmins: ['owner@example.test'],
+  });
+  app = instance.app;
+  grantKey = instance.deps.keys.grant;
 
   ownerId = await createUser('owner');
   const viewerId = await createUser('viewer');
@@ -272,29 +217,12 @@ export interface GrantSpec {
 
 async function insertGrantRow(trx: TenantDb, token: string, spec: GrantSpec): Promise<void> {
   const accounts = spec.accounts ?? [];
-  const { id: grantId } = await trx
-    .insertInto('access_grants')
-    .values({
-      workspace_id: workspaceId,
-      kind: 'api_key',
-      name: 'Agent',
-      sponsor_user_id: ownerId,
-      scopes: [...spec.scopes],
-      resource_scope: spec.accounts === undefined ? 'workspace' : 'restricted',
-    })
-    .returning('id')
-    .executeTakeFirstOrThrow();
-  await trx
-    .insertInto('grant_tokens')
-    .values({
-      workspace_id: workspaceId,
-      grant_id: grantId,
-      kind: 'key',
-      key_id: token.split('_')[1] ?? '',
-      token_hash: hashGrantToken(grantKey, token),
-      hash_key_version: 1,
-    })
-    .execute();
+  const grantId = await insertTestGrant(trx, grantKey, token, {
+    workspaceId,
+    sponsorUserId: ownerId,
+    scopes: spec.scopes,
+    restricted: spec.accounts !== undefined,
+  });
   for (const account of accounts) {
     await trx
       .insertInto('access_scopes')
@@ -308,7 +236,7 @@ async function insertGrantRow(trx: TenantDb, token: string, spec: GrantSpec): Pr
 }
 
 export async function insertGrant(spec: GrantSpec): Promise<Auth> {
-  const token = `kro_${randomBytes(8).toString('hex')}_${randomBytes(24).toString('base64url')}`;
+  const token = randomGrantToken();
   await owner.withActor(CLI, (trx) => insertGrantRow(trx, token, spec));
   return { bearer: token };
 }

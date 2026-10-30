@@ -1,21 +1,18 @@
-import { randomUUID } from 'node:crypto';
 import { readdir, readFile, stat, utimes } from 'node:fs/promises';
 import { join } from 'node:path';
-import { encodePublicId } from '@kronaut/core';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronItems } from '../cron.ts';
-import type { BoundRoute, RequestContext } from '../http/types.ts';
+import { expectError } from '../http/testing.ts';
 import { installJobQueue } from '../job-queue.ts';
-import { asUser, type MediaDb, NOW, startMediaDb, type Tenant, uuidOf } from './db-testing.ts';
+import { type MediaDb, stagingUnder, startMediaDb, type Tenant, uuidOf } from './db-testing.ts';
 import { collectMedia } from './gc.ts';
-import { createStaging, type Staging } from './staging.ts';
-import { expectMediaError } from './testing.ts';
+import type { Staging } from './staging.ts';
 import { VIDEO_PART_SIZE } from './upload.ts';
-import { uploadRoutes, videoUploadRoute } from './upload-routes.ts';
+import { videoUploadRoute } from './upload-routes.ts';
 
 const CLI: Actor = { kind: 'cli' };
 const TAIL = 100;
@@ -27,19 +24,13 @@ let owner: Database;
 let staging: Staging;
 let a: Tenant;
 let b: Tenant;
-let createRoute: BoundRoute;
-let partRoute: BoundRoute;
-let completeRoute: BoundRoute;
 
 beforeAll(async () => {
   test = await startTestDatabase();
-  fx = await startMediaDb(test, 'upload');
-  ({ a, b } = fx);
+  fx = await startMediaDb(test, 'upload', { staging: stagingUnder });
+  ({ a, b, staging } = fx);
   owner = createDatabase({ connectionString: test.ownerUrl });
   await installJobQueue(test.ownerUrl, owner);
-  staging = createStaging(join(fx.root, '.staging'));
-  const routes = uploadRoutes({ staging });
-  [createRoute, partRoute, completeRoute] = routes as [BoundRoute, BoundRoute, BoundRoute];
 });
 
 afterAll(async () => {
@@ -48,61 +39,40 @@ afterAll(async () => {
   await test?.stop();
 });
 
-function context(tenant: Tenant): RequestContext {
-  return {
-    requestId: randomUUID(),
-    principal: null,
-    session: null,
-    now: NOW,
-    logger: pino({ level: 'silent' }),
-    ipPrefix: null,
-    acceptLanguage: null,
-    tenant: (fn) => fx.db.withTenant(tenant.workspaceId, asUser(tenant), fn),
-    authorize: () => ({ kind: 'allow' }),
-    cookie: () => undefined,
-    setCookie: () => undefined,
-    clearCookie: () => undefined,
-  };
+function requestCreate(tenant: Tenant, overrides: Record<string, unknown> = {}) {
+  const body = { kind: 'video', bytes: TOTAL, mime: 'video/mp4', ...overrides };
+  return fx.call(tenant, 'POST', 'media/uploads', { body });
 }
 
-const ws = (tenant: Tenant) => encodePublicId('workspace', tenant.workspaceId);
-
 async function create(tenant: Tenant, overrides: Record<string, unknown> = {}) {
-  const body = videoUploadRoute.body.parse({
-    kind: 'video',
-    bytes: TOTAL,
-    mime: 'video/mp4',
-    ...overrides,
-  });
-  const result = await createRoute.handler(
-    { params: { workspaceId: ws(tenant) }, query: undefined, body },
-    context(tenant),
-  );
-  expect(result.status).toBe(201);
-  return videoUploadRoute.response.parse(result.body);
+  const response = await requestCreate(tenant, overrides);
+  expect(response.status).toBe(201);
+  return videoUploadRoute.response.parse(await response.json());
 }
 
 function put(tenant: Tenant, mediaId: string, part: number, bytes: Uint8Array) {
-  return partRoute.handler(
-    {
-      params: { workspaceId: ws(tenant), mediaId, part: String(part) },
-      query: undefined,
-      body: bytes,
-    },
-    context(tenant),
-  );
+  return fx.call(tenant, 'PUT', `media/${mediaId}/parts/${part}`, { body: bytes });
+}
+
+async function stored(tenant: Tenant, mediaId: string, part: number, bytes: Uint8Array) {
+  const response = await put(tenant, mediaId, part, bytes);
+  expect(response.status).toBe(200);
+  return await response.json();
 }
 
 function complete(tenant: Tenant, mediaId: string) {
-  return completeRoute.handler(
-    { params: { workspaceId: ws(tenant), mediaId }, query: undefined, body: undefined },
-    context(tenant),
-  );
+  return fx.call(tenant, 'POST', `media/${mediaId}/complete`);
+}
+
+async function completed(tenant: Tenant, mediaId: string) {
+  const response = await complete(tenant, mediaId);
+  expect(response.status).toBe(200);
+  return await response.json();
 }
 
 async function putAll(tenant: Tenant, mediaId: string): Promise<void> {
-  await put(tenant, mediaId, 1, new Uint8Array(VIDEO_PART_SIZE));
-  await put(tenant, mediaId, 2, new Uint8Array(TAIL));
+  await stored(tenant, mediaId, 1, new Uint8Array(VIDEO_PART_SIZE));
+  await stored(tenant, mediaId, 2, new Uint8Array(TAIL));
 }
 
 function asOwner<T>(fn: Parameters<Database['withActor']>[1]) {
@@ -172,31 +142,36 @@ describe('create', () => {
   });
 
   it('refuses a source over 300 MB with 413 file_too_large', async () => {
-    const error = create(a, { bytes: 300_000_001 });
-    await expectMediaError(error, 'payload_too_large', 413);
-    await expect(error).rejects.toMatchObject({
-      details: [{ path: 'body.bytes', code: 'file_too_large' }],
-    });
+    const error = await expectError(
+      await requestCreate(a, { bytes: 300_000_001 }),
+      413,
+      'payload_too_large',
+    );
+    expect(error.details).toEqual([{ path: 'body.bytes', code: 'file_too_large' }]);
   });
 
   it('refuses an unsupported mime with 415 mime_unsupported', async () => {
-    const error = create(a, { mime: 'video/x-msvideo' });
-    await expectMediaError(error, 'unsupported_media_type', 415);
-    await expect(error).rejects.toMatchObject({
-      details: [{ path: 'body.mime', code: 'mime_unsupported' }],
-    });
+    const error = await expectError(
+      await requestCreate(a, { mime: 'video/x-msvideo' }),
+      415,
+      'unsupported_media_type',
+    );
+    expect(error.details).toEqual([{ path: 'body.mime', code: 'mime_unsupported' }]);
   });
 });
 
 describe('parts', () => {
   it('refuses a wrong size or an out-of-range part and discards the temp file', async () => {
     const { media } = await create(a);
-    await expectMediaError(put(a, media.id, 1, new Uint8Array(TAIL)), 'invalid_request', 400);
-    await expectMediaError(put(a, media.id, 2, new Uint8Array(TAIL + 1)), 'invalid_request', 400);
-    await expectMediaError(put(a, media.id, 3, new Uint8Array(TAIL)), 'invalid_request', 400);
-    await expect(put(a, media.id, 1, new Uint8Array(1))).rejects.toMatchObject({
-      details: [{ path: 'body', code: 'part_size' }],
-    });
+    await expectError(await put(a, media.id, 1, new Uint8Array(TAIL)), 400, 'invalid_request');
+    await expectError(await put(a, media.id, 2, new Uint8Array(TAIL + 1)), 400, 'invalid_request');
+    await expectError(await put(a, media.id, 3, new Uint8Array(TAIL)), 400, 'invalid_request');
+    const error = await expectError(
+      await put(a, media.id, 1, new Uint8Array(1)),
+      400,
+      'invalid_request',
+    );
+    expect(error.details).toEqual([{ path: 'body', code: 'part_size' }]);
     expect(await incoming()).toEqual([]);
     expect(await staging.parts((await row(media.id))?.storage_key ?? '')).toEqual(new Map());
   });
@@ -204,33 +179,34 @@ describe('parts', () => {
   it('closes an expired upload with 409 upload_closed', async () => {
     const { media } = await create(a);
     await setColumn(media.id, 'upload_expires_at', '1 minute');
-    const error = put(a, media.id, 2, new Uint8Array(TAIL));
-    await expectMediaError(error, 'conflict', 409);
-    await expect(error).rejects.toMatchObject({
-      details: [{ path: 'params.mediaId', code: 'upload_closed' }],
-    });
-    await expectMediaError(complete(a, media.id), 'conflict', 409);
+    const error = await expectError(
+      await put(a, media.id, 2, new Uint8Array(TAIL)),
+      409,
+      'conflict',
+    );
+    expect(error.details).toEqual([{ path: 'params.mediaId', code: 'upload_closed' }]);
+    await expectError(await complete(a, media.id), 409, 'conflict');
     expect(await incoming()).toEqual([]);
   });
 
   it('replaces a repeated part and refuses parts after complete', async () => {
     const { media } = await create(a);
-    const first = await put(a, media.id, 2, new Uint8Array(TAIL).fill(1));
-    expect(first.body).toEqual({ part: 2, bytes: TAIL });
-    await put(a, media.id, 2, new Uint8Array(TAIL).fill(2));
+    const first = await stored(a, media.id, 2, new Uint8Array(TAIL).fill(1));
+    expect(first).toEqual({ part: 2, bytes: TAIL });
+    await stored(a, media.id, 2, new Uint8Array(TAIL).fill(2));
     const key = (await row(media.id))?.storage_key ?? '';
-    const stored = await readFile(join(staging.directory(key), '2.part'));
-    expect(stored.every((byte) => byte === 2)).toBe(true);
-    await put(a, media.id, 1, new Uint8Array(VIDEO_PART_SIZE));
-    await complete(a, media.id);
-    await expectMediaError(put(a, media.id, 2, new Uint8Array(TAIL)), 'conflict', 409);
+    const file = await readFile(join(staging.directory(key), '2.part'));
+    expect(file.every((byte) => byte === 2)).toBe(true);
+    await stored(a, media.id, 1, new Uint8Array(VIDEO_PART_SIZE));
+    await completed(a, media.id);
+    await expectError(await put(a, media.id, 2, new Uint8Array(TAIL)), 409, 'conflict');
     expect(await incoming()).toEqual([]);
   });
 
   it('hides another workspace upload behind 404', async () => {
     const { media } = await create(a);
-    await expectMediaError(put(b, media.id, 2, new Uint8Array(TAIL)), 'not_found', 404);
-    await expectMediaError(complete(b, media.id), 'not_found', 404);
+    await expectError(await put(b, media.id, 2, new Uint8Array(TAIL)), 404, 'not_found');
+    await expectError(await complete(b, media.id), 404, 'not_found');
     expect(await incoming()).toEqual([]);
   });
 });
@@ -238,12 +214,9 @@ describe('parts', () => {
 describe('complete', () => {
   it('refuses a missing part with 409 upload_incomplete', async () => {
     const { media } = await create(a);
-    await put(a, media.id, 1, new Uint8Array(VIDEO_PART_SIZE));
-    const error = complete(a, media.id);
-    await expectMediaError(error, 'conflict', 409);
-    await expect(error).rejects.toMatchObject({
-      details: [{ path: 'params.mediaId', code: 'upload_incomplete' }],
-    });
+    await stored(a, media.id, 1, new Uint8Array(VIDEO_PART_SIZE));
+    const error = await expectError(await complete(a, media.id), 409, 'conflict');
+    expect(error.details).toEqual([{ path: 'params.mediaId', code: 'upload_incomplete' }]);
     expect((await row(media.id))?.state).toBe('uploading');
     expect(await jobs(media.id)).toEqual([]);
   });
@@ -251,15 +224,14 @@ describe('complete', () => {
   it('moves to processing, enqueues one media job and is a no-op when repeated', async () => {
     const { media } = await create(a);
     await putAll(a, media.id);
-    const done = await complete(a, media.id);
-    expect(done.body).toMatchObject({ id: media.id, state: 'processing' });
+    const done = await completed(a, media.id);
+    expect(done).toMatchObject({ id: media.id, state: 'processing' });
     expect(await row(media.id)).toMatchObject({ state: 'processing', upload_expires_at: null });
     const expected = [
       { task: 'media_process', queue: 'media', attempts: 3, key: `media:${decodeMedia(media.id)}` },
     ];
     expect(await jobs(media.id)).toEqual(expected);
-    const again = await complete(a, media.id);
-    expect(again.body).toEqual(done.body);
+    expect(await completed(a, media.id)).toEqual(done);
     expect(await jobs(media.id)).toEqual(expected);
   });
 });
@@ -276,8 +248,8 @@ describe('media gc', () => {
   it('deletes an upload older than 24 h with its staging dir, keeps a 23 h one, sweeps stale temp files', async () => {
     const old = (await create(a)).media;
     const young = (await create(b)).media;
-    await put(a, old.id, 2, new Uint8Array(TAIL));
-    await put(b, young.id, 2, new Uint8Array(TAIL));
+    await stored(a, old.id, 2, new Uint8Array(TAIL));
+    await stored(b, young.id, 2, new Uint8Array(TAIL));
     const oldKey = (await row(old.id))?.storage_key ?? '';
     const youngKey = (await row(young.id))?.storage_key ?? '';
     await setColumn(old.id, 'created_at', '25 hours');
