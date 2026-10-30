@@ -11,7 +11,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` binds handlers; shared logic lives in a named module that other features import.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
-- **Split a folder at about 20 files.** Three files sharing a prefix (`verify-*`, `sniff-*`) are a subfolder waiting to happen.
+- **About 20 non-test files is a prompt to review a folder.** Split it when it holds distinct sub-concepts, not to reach a count. Three files sharing a prefix (`verify-*`, `sniff-*`) are a subfolder waiting to happen.
 
 ## Imports
 
@@ -23,7 +23,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 - **Name a file for its concept,** in kebab-case. Catch-all names (`utils`, `helpers`, `common`, `misc`, `types`) hide the owner.
 - **Types live with their owner.**
 - **Code stays with its only user.** A module becomes shared once a second module imports it. Repeated logic gets abstracted on the third copy, not the second.
-- **Split by step or branch** when a file nears its limit, and pass more than four values as an object. The goal is a clearer owner, not a lower line count.
+- **Split by step or branch** when a file nears the Biome limit of 300 lines (500 for tests), and pass more than four values as an object. The goal is a clearer owner, not a lower line count.
 
 ## Tests
 
@@ -34,7 +34,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 ## Refactors
 
-- **A refactor keeps every result unchanged.** Pin current behaviour with tests before moving code.
+- **A refactor keeps every result unchanged:** status codes, error shapes, ordering, defaults, permissions, side effects and transaction boundaries. Pin current behaviour with tests before moving code.
 - **Keep existing differences as named policy values** rather than unifying them. Changing a result is a separate, explicit decision.
 
 ## Not checked yet
@@ -46,5 +46,5 @@ These rules bind new code, but existing code still breaks them:
 - `analytics/channel-metrics.ts` and `cli/users.ts` import another feature's `routes.ts`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Feature folders import each other in cycles. A cycle between files fails the check; a cycle between folders doesn't yet.
-- Folders above 20 non-test files: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
+- Folders above 20 non-test files, not reviewed yet: `compose`, `posts`, `publish`, `http`, `media`, `calendar`.
 - New post, edit from the post page and duplicate open the full-page composer, not a dialog.
