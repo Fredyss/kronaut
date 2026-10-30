@@ -10,7 +10,11 @@ import { type WebhookEventInput, writeWebhookEvent } from '../webhooks/events.ts
 
 export const RequestParams = z.object({ workspaceId: z.string(), requestId: z.string() });
 
-export type VoidReason = 'content_changed' | 'destinations_changed' | 'schedule_changed';
+export type VoidReason =
+  | 'content_changed'
+  | 'destinations_changed'
+  | 'schedule_changed'
+  | 'post_deleted';
 
 export type Closing =
   | { readonly state: 'approved' | 'rejected' | 'withdrawn' }

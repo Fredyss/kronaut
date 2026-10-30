@@ -84,9 +84,11 @@ function inherit(
   owners: ReadonlyMap<string, Set<string>>,
 ): boolean {
   let changed = false;
+  const routes = new Set(graph.get(ROUTER)?.dynamic ?? []);
   for (const [file, source] of graph) {
     if (file === ROUTER) continue;
-    for (const target of source.dynamic) {
+    // A route module loads its own group's catalog, whichever route opens it.
+    for (const target of source.dynamic.filter((path) => !routes.has(path))) {
       const labels = roots.get(target) ?? new Set<string>();
       roots.set(target, labels);
       changed = addAll(labels, owners.get(file) ?? []) || changed;

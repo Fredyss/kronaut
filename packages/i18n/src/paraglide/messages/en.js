@@ -40,6 +40,7 @@
 /** @typedef {{}} Approval_Void_ContentInputs */
 /** @typedef {{}} Approval_Void_DestinationsInputs */
 /** @typedef {{}} Approval_Void_PolicyInputs */
+/** @typedef {{}} Approval_Void_Post_DeletedInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
 /** @typedef {{}} Calendar_TitleInputs */
@@ -96,6 +97,7 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} CloseInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_DateInputs */
@@ -243,10 +245,29 @@
 /** @typedef {{}} Notifications_UnreadInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Password_Min_LengthInputs */
 /** @typedef {{}} Password_Too_LongInputs */
+/** @typedef {{}} Post_Action_DeleteInputs */
+/** @typedef {{}} Post_Action_DuplicateInputs */
+/** @typedef {{}} Post_Action_StatsInputs */
 /** @typedef {{}} Post_CustomizedInputs */
+/** @typedef {{}} Post_Delete_BodyInputs */
+/** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_ForbiddenInputs */
+/** @typedef {{}} Post_Delete_KeepInputs */
+/** @typedef {{}} Post_Delete_LiveInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
+/** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_UnconfirmedInputs */
+/** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
+/** @typedef {{}} Post_Discard_BodyInputs */
+/** @typedef {{}} Post_Discard_ConfirmInputs */
+/** @typedef {{}} Post_Discard_KeepInputs */
+/** @typedef {{}} Post_Discard_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
+/** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
+/** @typedef {{}} Post_Preview_EmptyInputs */
+/** @typedef {{}} Post_Preview_TitleInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Published_AtInputs */
 /** @typedef {{}} Post_Schedule_AsapInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Schedule_AtInputs */
@@ -510,6 +531,10 @@ export const approval_void_policy = /** @type {(inputs: Approval_Void_PolicyInpu
 	return /** @type {LocalizedString} */ (`The approval rules changed.`)
 };
 
+export const approval_void_post_deleted = /** @type {(inputs: Approval_Void_Post_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The post was deleted.`)
+};
+
 export const approval_void_schedule = /** @type {(inputs: Approval_Void_ScheduleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The time changed after the request.`)
 };
@@ -734,6 +759,10 @@ export const channels_subtitle = /** @type {(inputs: Channels_SubtitleInputs) =>
 
 export const channels_title = /** @type {(inputs: Channels_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Channels`)
+};
+
+export const close = /** @type {(inputs: CloseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Close`)
 };
 
 export const compose_add_to_queue = /** @type {(inputs: Compose_Add_To_QueueInputs) => LocalizedString} */ () => {
@@ -1335,12 +1364,80 @@ export const password_too_long = /** @type {(inputs: Password_Too_LongInputs) =>
 	return /** @type {LocalizedString} */ (`This password is too long.`)
 };
 
+export const post_action_delete = /** @type {(inputs: Post_Action_DeleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete`)
+};
+
+export const post_action_duplicate = /** @type {(inputs: Post_Action_DuplicateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Duplicate`)
+};
+
+export const post_action_stats = /** @type {(inputs: Post_Action_StatsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stats`)
+};
+
 export const post_customized = /** @type {(inputs: Post_CustomizedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Text customized for this channel`)
 };
 
+export const post_delete_body = /** @type {(inputs: Post_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`It leaves the calendar and every list. Scheduled channels are canceled.`)
+};
+
+export const post_delete_confirm = /** @type {(inputs: Post_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete post`)
+};
+
+export const post_delete_forbidden = /** @type {(inputs: Post_Delete_ForbiddenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your role can't cancel this post's pending channels, so you can't delete it. Ask an editor or admin.`)
+};
+
+export const post_delete_keep = /** @type {(inputs: Post_Delete_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep post`)
+};
+
+export const post_delete_live = /** @type {(inputs: Post_Delete_LiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post is being published right now. Try again once it has finished.`)
+};
+
+export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`It stays live on ${i?.count} channel: deleting removes it from Kronaut, not from the network.`);
+	return /** @type {LocalizedString} */ (`It stays live on ${i?.count} channels: deleting removes it from Kronaut, not from the network.`)
+};
+
+export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete this post?`)
+};
+
+export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network.`);
+	return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network.`)
+};
+
+export const post_deleted = /** @type {(inputs: Post_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post deleted.`)
+};
+
 export const post_destinations_title = /** @type {(inputs: Post_Destinations_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Channels`)
+};
+
+export const post_discard_body = /** @type {(inputs: Post_Discard_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`What you've written so far isn't saved.`)
+};
+
+export const post_discard_confirm = /** @type {(inputs: Post_Discard_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discard`)
+};
+
+export const post_discard_keep = /** @type {(inputs: Post_Discard_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep editing`)
+};
+
+export const post_discard_title = /** @type {(inputs: Post_Discard_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discard this post?`)
 };
 
 export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {
@@ -1349,8 +1446,20 @@ export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`${i?.count} images`)
 };
 
+export const post_new_title = /** @type {(inputs: Post_New_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New post`)
+};
+
 export const post_not_found = /** @type {(inputs: Post_Not_FoundInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post couldn't be loaded.`)
+};
+
+export const post_preview_empty = /** @type {(inputs: Post_Preview_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No preview is available for these channels.`)
+};
+
+export const post_preview_title = /** @type {(inputs: Post_Preview_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post preview`)
 };
 
 export const post_published_at = /** @type {(inputs: Post_Published_AtInputs) => LocalizedString} */ (i) => {

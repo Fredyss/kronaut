@@ -45,8 +45,8 @@ function upcoming(at: string | undefined, tz: string): Temporal.PlainDateTime | 
   }
 }
 
-export function useWhen(at?: string) {
-  const [tz] = useState(browserTimeZone);
+export function useWhen(at?: string, zone?: string) {
+  const [tz] = useState(() => zone ?? browserTimeZone());
   const [start] = useState(() => upcoming(at, tz));
   const [mode, setMode] = useState<Mode>(start === null ? 'asap' : 'instant');
   const [date, setDate] = useState(start?.toPlainDate().toString() ?? '');

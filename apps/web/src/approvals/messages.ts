@@ -30,6 +30,8 @@ export function voidReasonLabel(reason: NonNullable<ApprovalRequest['voidReason'
       return m.approval_void_schedule();
     case 'policy_changed':
       return m.approval_void_policy();
+    case 'post_deleted':
+      return m.approval_void_post_deleted();
   }
 }
 

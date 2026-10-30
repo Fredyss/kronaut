@@ -18,6 +18,7 @@ import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
+import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
 import { providerUi } from '../providers.ts';
 import { SeriesSection } from '../series/section.tsx';
@@ -31,6 +32,11 @@ function scheduleLine(post: Post, format: (iso: string) => string): string {
   return post.scheduleTz === null
     ? m.post_schedule_at({ when: format(at) })
     : m.post_schedule_at_tz({ when: format(at), tz: post.scheduleTz });
+}
+
+function publishedLine(post: Post, format: (iso: string) => string): string {
+  const at = post.destinations.flatMap((d) => d.publishedAt ?? []).sort()[0];
+  return at === undefined ? scheduleLine(post, format) : m.post_published_at({ when: format(at) });
 }
 
 type Item = Post['items'][number];
@@ -147,14 +153,26 @@ function PostStatus({
     return <p className="text-muted-foreground text-sm">{m.loading()}</p>;
   const data = post.data;
   const byId = new Map((channels.data ?? []).map((channel) => [channel.id, channel]));
+  const settled = isSettled(data);
   return (
     <>
       <div className="flex flex-wrap items-center gap-3">
         <span className="rounded-full bg-secondary px-2 py-0.5 font-medium text-sm">
           {summaryLabel(data.publishSummary)}
         </span>
-        <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
+        {settled ? null : (
+          <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
+        )}
       </div>
+      {settled ? (
+        <PublishedView
+          workspaceId={workspaceId}
+          post={data}
+          role={role}
+          time={publishedLine(data, format)}
+          content={<Content item={data.items[0]} />}
+        />
+      ) : null}
       <ApprovalSection workspaceId={workspaceId} post={data} />
       {data.seriesId === null ? null : (
         <SeriesSection workspaceId={workspaceId} seriesId={data.seriesId} />
@@ -166,9 +184,11 @@ function PostStatus({
         format={format}
         editable={EVERGREEN_ROLES.has(role)}
       />
-      <article className="flex flex-col gap-3 rounded-xl border p-4">
-        <Content item={data.items[0]} />
-      </article>
+      {settled ? null : (
+        <article className="flex flex-col gap-3 rounded-xl border p-4">
+          <Content item={data.items[0]} />
+        </article>
+      )}
       <AnalyticsSection
         workspaceId={workspaceId}
         post={data}

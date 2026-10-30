@@ -39,6 +39,7 @@ export function CalendarPage() {
         {workspace === undefined ? null : (
           <CalendarBody
             workspaceId={workspace.id}
+            role={workspace.role}
             view={view}
             range={range}
             current={current}

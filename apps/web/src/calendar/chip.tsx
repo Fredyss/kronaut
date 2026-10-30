@@ -5,6 +5,7 @@ import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
 import { type Entry, postText } from './entries.ts';
+import { EntryMenu } from './entry-menu.tsx';
 import type { Formats } from './formats.ts';
 import type { Mover } from './use-mover.ts';
 
@@ -36,43 +37,46 @@ function Chip({ entry, formats, mover, draggable, compact = false }: ChipProps) 
         });
   const movable = mover.canMove(post);
   return (
-    <Link
-      to="/posts/$postId"
-      params={{ postId: post.id }}
-      aria-label={calendarText.calendar_chip_label({ time, channel, state, text })}
-      aria-describedby={movable ? MOVE_HINT_ID : undefined}
-      title={own}
-      data-chip={destination.id}
-      draggable={movable && draggable ? true : undefined}
-      onKeyDown={(event) => mover.keyDown(event, entry)}
-      onDragStart={(event) => {
-        if (movable && draggable) mover.dragStart(event, entry);
-      }}
-      onDragEnd={mover.dragEnd}
-      className={cn(
-        'relative z-10 flex min-w-0 rounded-md border bg-card text-xs hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring',
-        compact ? 'items-center gap-1.5 px-1.5 py-0.5' : 'flex-col gap-0.5 px-2 py-1',
-      )}
-    >
-      {compact ? (
-        <>
-          <span
-            aria-hidden="true"
-            className={cn('size-1.5 shrink-0 rounded-full', provider.badge)}
+    <div className="group/chip relative z-10 min-w-0">
+      <Link
+        to="/posts/$postId"
+        params={{ postId: post.id }}
+        aria-label={calendarText.calendar_chip_label({ time, channel, state, text })}
+        aria-describedby={movable ? MOVE_HINT_ID : undefined}
+        title={own}
+        data-chip={destination.id}
+        draggable={movable && draggable ? true : undefined}
+        onKeyDown={(event) => mover.keyDown(event, entry)}
+        onDragStart={(event) => {
+          if (movable && draggable) mover.dragStart(event, entry);
+        }}
+        onDragEnd={mover.dragEnd}
+        className={cn(
+          'flex min-w-0 rounded-md border bg-card pr-7 text-xs hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring',
+          compact ? 'items-center gap-1.5 py-0.5 pl-1.5' : 'flex-col gap-0.5 py-1 pl-2',
+        )}
+      >
+        {compact ? (
+          <>
+            <span
+              aria-hidden="true"
+              className={cn('size-1.5 shrink-0 rounded-full', provider.badge)}
+            />
+            <span className="truncate">{text}</span>
+          </>
+        ) : (
+          <ChipBody
+            at={at}
+            time={time}
+            channel={channel}
+            state={state}
+            text={text}
+            images={post.mediaCount}
           />
-          <span className="truncate">{text}</span>
-        </>
-      ) : (
-        <ChipBody
-          at={at}
-          time={time}
-          channel={channel}
-          state={state}
-          text={text}
-          images={post.mediaCount}
-        />
-      )}
-    </Link>
+        )}
+      </Link>
+      <EntryMenu post={post} text={text} />
+    </div>
   );
 }
 

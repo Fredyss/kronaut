@@ -11,6 +11,7 @@ import { MOVE_HINT_ID } from './chip.tsx';
 import { Drafts } from './drafts.tsx';
 import { EmptyState } from './empty-state.tsx';
 import { byDay } from './entries.ts';
+import { CalendarCompose, EntryActionsProvider } from './entry-actions.tsx';
 import type { Formats } from './formats.ts';
 import { ListView } from './list-view.tsx';
 import { MonthGrid } from './month-view.tsx';
@@ -34,6 +35,7 @@ function calendarPollDelay(items: readonly Summary[] | undefined, now: number): 
 
 interface BodyProps {
   readonly workspaceId: string;
+  readonly role: string;
   readonly view: CalendarView;
   readonly range: VisibleRange;
   readonly current: Temporal.PlainDate;
@@ -43,11 +45,11 @@ interface BodyProps {
 }
 
 export function CalendarBody(props: BodyProps) {
-  const { workspaceId, view, range, formats } = props;
+  const { workspaceId, role, view, range, formats } = props;
   const { mover, moves } = useMover({ workspaceId, view, range, timeZone: formats.timeZone });
   const moved = moves.moved;
   return (
-    <>
+    <EntryActionsProvider workspaceId={workspaceId} role={role}>
       <CalendarContent {...props} mover={mover} />
       <p id={MOVE_HINT_ID} hidden>
         {calendarText.calendar_move_hint()}
@@ -58,7 +60,8 @@ export function CalendarBody(props: BodyProps) {
         onUndo={moves.undo}
         onDismiss={moves.dismiss}
       />
-    </>
+      <CalendarCompose workspaceId={workspaceId} role={role} />
+    </EntryActionsProvider>
   );
 }
 

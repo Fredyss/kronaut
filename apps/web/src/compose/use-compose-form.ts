@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
-import { type Channel, channelsQuery, errorCode, postKey, postsKey } from '../api.ts';
+import { type Channel, channelsQuery, errorCode, type Post, postKey, postsKey } from '../api.ts';
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
 import { useApiClient, useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
@@ -34,7 +34,7 @@ function withRepeat(resolved: When, { preview: result }: RepeatControl): When {
     : { when: { ...resolved.when, repeat: result.repeat } };
 }
 
-function usePublish(workspaceId: string) {
+function usePublish(workspaceId: string, onDone: ((post: Post) => void) | undefined) {
   const client = useApiClient();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -44,6 +44,7 @@ function usePublish(workspaceId: string) {
     onSuccess: async (post) => {
       await queryClient.invalidateQueries({ queryKey: postsKey(workspaceId) });
       queryClient.setQueryData(postKey(workspaceId, post.id), post);
+      if (onDone !== undefined) return onDone(post);
       await navigate({ to: '/posts/$postId', params: { postId: post.id } });
     },
     onError: () => queryClient.invalidateQueries({ queryKey: postsKey(workspaceId) }),
@@ -147,13 +148,19 @@ function usePlanQueue(workspaceId: string, list: readonly Channel[], plan: Plan)
   );
 }
 
-export function useComposeForm(workspaceId: string, at?: string) {
+export interface ComposeStart {
+  readonly at?: string | undefined;
+  readonly tz?: string | undefined;
+  readonly onDone?: ((post: Post) => void) | undefined;
+}
+
+export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const client = useApiClient();
   const channels = useQuery(channelsQuery(client, workspaceId));
-  const { run, failure } = usePublish(workspaceId);
+  const { run, failure } = usePublish(workspaceId, start.onDone);
   const approval = useApprovalMode(workspaceId, failure);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
-  const when = useWhen(at);
+  const when = useWhen(start.at, start.tz);
   const repeat = useRepeatControl(when.date);
   const [formError, setFormError] = useState<string | null>(null);
   const [limitFlags, setLimitFlags] = useState<readonly string[]>([]);
@@ -213,5 +220,6 @@ export function useComposeForm(workspaceId: string, at?: string) {
     approval,
     requestInstead,
     queue,
+    dirty: selected.size > 0 || !isEmpty(content.contents.base),
   };
 }

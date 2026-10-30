@@ -653,7 +653,7 @@ export type ApprovalsDecideResponses = {
         requiredApprovals: number;
         resolvedAt: string | null;
         state: 'open' | 'approved' | 'rejected' | 'voided' | 'withdrawn' | 'revoked';
-        voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | null;
+        voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | 'post_deleted' | null;
     };
 };
 
@@ -709,7 +709,7 @@ export type ApprovalsWithdrawResponses = {
         requiredApprovals: number;
         resolvedAt: string | null;
         state: 'open' | 'approved' | 'rejected' | 'voided' | 'withdrawn' | 'revoked';
-        voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | null;
+        voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | 'post_deleted' | null;
     };
 };
 
@@ -1904,6 +1904,37 @@ export type PostsCreateResponses = {
 
 export type PostsCreateResponse = PostsCreateResponses[keyof PostsCreateResponses];
 
+export type PostsDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}';
+};
+
+export type PostsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type PostsDeleteError = PostsDeleteErrors[keyof PostsDeleteErrors];
+
+export type PostsDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type PostsDeleteResponse = PostsDeleteResponses[keyof PostsDeleteResponses];
+
 export type PostsGetData = {
     body?: never;
     path: {
@@ -2157,7 +2188,7 @@ export type PostsApprovalRequestsResponses = {
             requiredApprovals: number;
             resolvedAt: string | null;
             state: 'open' | 'approved' | 'rejected' | 'voided' | 'withdrawn' | 'revoked';
-            voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | null;
+            voidReason: 'content_changed' | 'destinations_changed' | 'schedule_changed' | 'policy_changed' | 'post_deleted' | null;
         }>;
     };
 };
@@ -2635,6 +2666,93 @@ export type DestinationsSendAgainResponses = {
 };
 
 export type DestinationsSendAgainResponse = DestinationsSendAgainResponses[keyof DestinationsSendAgainResponses];
+
+export type PostsDuplicateData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/duplicate';
+};
+
+export type PostsDuplicateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type PostsDuplicateError = PostsDuplicateErrors[keyof PostsDuplicateErrors];
+
+export type PostsDuplicateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        createdAt: string;
+        destinations: Array<{
+            accountId: string;
+            deliveryMode: 'auto' | 'reminder';
+            id: string;
+            lastErrorCode: string | null;
+            provider: string;
+            publishType: string;
+            publishedAt: string | null;
+            remoteUrl: string | null;
+            scheduledAt: string | null;
+            settings: {
+                [key: string]: unknown;
+            };
+            state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
+            stateReason: string | null;
+            variant: number | null;
+            version: number;
+        }>;
+        evergreen: 'active' | 'removed' | null;
+        id: string;
+        items: Array<{
+            doc: {
+                [key: string]: unknown;
+            };
+            media: Array<{
+                altText: string | null;
+                mediaId: string;
+                position: number;
+            }>;
+            position: number;
+            role: 'main' | 'thread' | 'comment';
+        }>;
+        publishSummary: 'draft' | 'in_review' | 'scheduled' | 'in_progress' | 'needs_action' | 'completed_all' | 'completed_partial' | 'completed_failed' | 'canceled';
+        scheduleLocal: string | null;
+        scheduleMode: 'unscheduled' | 'asap' | 'instant' | 'local_per_destination';
+        scheduleTz: string | null;
+        seriesId: string | null;
+        title: string | null;
+        updatedAt: string;
+        variants: Array<{
+            items: Array<{
+                doc: {
+                    [key: string]: unknown;
+                };
+                media: Array<{
+                    altText: string | null;
+                    mediaId: string;
+                    position: number;
+                }>;
+                position: number;
+                role: 'main' | 'thread' | 'comment';
+            }>;
+        }>;
+        version: number;
+    };
+};
+
+export type PostsDuplicateResponse = PostsDuplicateResponses[keyof PostsDuplicateResponses];
 
 export type EvergreenUnmarkData = {
     body?: never;

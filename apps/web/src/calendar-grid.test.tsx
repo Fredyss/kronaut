@@ -130,8 +130,15 @@ describe('calendar time grid', () => {
     await screen.findByRole('table');
     expect(within(cell(/at 11:00/)).queryByRole('link')).toBeNull();
     fireEvent.click(within(cell(/at 2:00\sPM/)).getByRole('link', { name: /^Create post: / }));
-    await waitFor(() => expect(router.state.location.pathname).toBe('/compose'));
-    expect(router.state.location.search).toEqual({ at: '2026-10-01T14:00' });
+    await waitFor(() =>
+      expect(router.state.location.search).toMatchObject({
+        compose: 'new',
+        at: '2026-10-01T14:00',
+      }),
+    );
+    expect(router.state.location.pathname).toBe('/');
+    expect(router.state.location.search).toMatchObject({ view: 'day', date: '2026-10-01' });
+    expect(await screen.findByRole('heading', { name: 'New post' })).toBeDefined();
   });
 
   it('drops a post on another day and hour, keeping its minutes', async () => {

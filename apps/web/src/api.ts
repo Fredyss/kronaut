@@ -174,6 +174,7 @@ export function notificationsQuery(client: Client, workspaceId: string) {
     refetchOnWindowFocus: true,
   });
 }
+
 export const ANALYTICS_ROLES: ReadonlySet<string> = new Set([
   'owner',
   'admin',

@@ -1,3 +1,4 @@
+import * as calendarEn from '@kronaut/i18n/calendar/messages/en';
 import * as composeEn from '@kronaut/i18n/compose/messages/en';
 import * as en from '@kronaut/i18n/messages/en';
 import { expect, test } from '@playwright/test';
@@ -27,6 +28,13 @@ test('schedules a post a week ahead and keeps it after a reload', async ({ page 
   await expect(chip).toContainText(en.provider_bluesky({}));
   await page.reload();
   await expect(chip).toContainText(en.destination_state_scheduled({}));
+
+  await page
+    .getByRole('button', { name: calendarEn.calendar_entry_options({ text: TEXT }) })
+    .click();
+  await page.getByRole('menuitem', { name: en.post_action_delete({}) }).click();
+  await page.getByRole('button', { name: en.post_delete_confirm({}) }).click();
+  await expect(chip).toHaveCount(0);
 });
 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {

@@ -63,5 +63,8 @@
   "calendar_sidebar_expand": "Rozbalit postranní panel",
   "calendar_layout": "Rozložení",
   "calendar_layout_grid": "Mřížka",
-  "calendar_new_post_at": "Vytvořit příspěvek: {when}"
+  "calendar_new_post_at": "Vytvořit příspěvek: {when}",
+  "calendar_entry_options": "Možnosti příspěvku: {text}",
+  "calendar_entry_open": "Otevřít",
+  "calendar_entry_preview": "Náhled"
 }

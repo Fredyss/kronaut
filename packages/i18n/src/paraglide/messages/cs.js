@@ -40,6 +40,7 @@
 /** @typedef {{}} Approval_Void_ContentInputs */
 /** @typedef {{}} Approval_Void_DestinationsInputs */
 /** @typedef {{}} Approval_Void_PolicyInputs */
+/** @typedef {{}} Approval_Void_Post_DeletedInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
 /** @typedef {{}} Calendar_TitleInputs */
@@ -96,6 +97,7 @@
 /** @typedef {{}} Channels_Server_UnreachableInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} CloseInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_DateInputs */
@@ -243,10 +245,29 @@
 /** @typedef {{}} Notifications_UnreadInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Password_Min_LengthInputs */
 /** @typedef {{}} Password_Too_LongInputs */
+/** @typedef {{}} Post_Action_DeleteInputs */
+/** @typedef {{}} Post_Action_DuplicateInputs */
+/** @typedef {{}} Post_Action_StatsInputs */
 /** @typedef {{}} Post_CustomizedInputs */
+/** @typedef {{}} Post_Delete_BodyInputs */
+/** @typedef {{}} Post_Delete_ConfirmInputs */
+/** @typedef {{}} Post_Delete_ForbiddenInputs */
+/** @typedef {{}} Post_Delete_KeepInputs */
+/** @typedef {{}} Post_Delete_LiveInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_PublishedInputs */
+/** @typedef {{}} Post_Delete_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Post_Delete_UnconfirmedInputs */
+/** @typedef {{}} Post_DeletedInputs */
 /** @typedef {{}} Post_Destinations_TitleInputs */
+/** @typedef {{}} Post_Discard_BodyInputs */
+/** @typedef {{}} Post_Discard_ConfirmInputs */
+/** @typedef {{}} Post_Discard_KeepInputs */
+/** @typedef {{}} Post_Discard_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
+/** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
+/** @typedef {{}} Post_Preview_EmptyInputs */
+/** @typedef {{}} Post_Preview_TitleInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Published_AtInputs */
 /** @typedef {{}} Post_Schedule_AsapInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Schedule_AtInputs */
@@ -514,6 +535,10 @@ export const approval_void_policy = /** @type {(inputs: Approval_Void_PolicyInpu
 	return /** @type {LocalizedString} */ (`Pravidla schvalování se změnila.`)
 };
 
+export const approval_void_post_deleted = /** @type {(inputs: Approval_Void_Post_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek byl smazán.`)
+};
+
 export const approval_void_schedule = /** @type {(inputs: Approval_Void_ScheduleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Čas se po žádosti změnil.`)
 };
@@ -740,6 +765,10 @@ export const channels_subtitle = /** @type {(inputs: Channels_SubtitleInputs) =>
 
 export const channels_title = /** @type {(inputs: Channels_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Kanály`)
+};
+
+export const close = /** @type {(inputs: CloseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zavřít`)
 };
 
 export const compose_add_to_queue = /** @type {(inputs: Compose_Add_To_QueueInputs) => LocalizedString} */ () => {
@@ -1351,12 +1380,84 @@ export const password_too_long = /** @type {(inputs: Password_Too_LongInputs) =>
 	return /** @type {LocalizedString} */ (`Heslo je příliš dlouhé.`)
 };
 
+export const post_action_delete = /** @type {(inputs: Post_Action_DeleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazat`)
+};
+
+export const post_action_duplicate = /** @type {(inputs: Post_Action_DuplicateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Duplikovat`)
+};
+
+export const post_action_stats = /** @type {(inputs: Post_Action_StatsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Statistiky`)
+};
+
 export const post_customized = /** @type {(inputs: Post_CustomizedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Text upravený pro tento kanál`)
 };
 
+export const post_delete_body = /** @type {(inputs: Post_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zmizí z kalendáře i ze všech seznamů. Naplánované kanály se zruší.`)
+};
+
+export const post_delete_confirm = /** @type {(inputs: Post_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazat příspěvek`)
+};
+
+export const post_delete_forbidden = /** @type {(inputs: Post_Delete_ForbiddenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vaše role nemůže zrušit čekající kanály tohoto příspěvku, takže ho nemůžete smazat. Požádejte editora nebo administrátora.`)
+};
+
+export const post_delete_keep = /** @type {(inputs: Post_Delete_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat`)
+};
+
+export const post_delete_live = /** @type {(inputs: Post_Delete_LiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek se právě zveřejňuje. Zkuste to znovu, až se dokončí.`)
+};
+
+export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Na síti zůstává zveřejněný (${i?.count} kanál). Smazáním zmizí jen z Kronautu, ne ze sítě.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Na síti zůstává zveřejněný (${i?.count} kanály). Smazáním zmizí jen z Kronautu, ne ze sítě.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Na síti zůstává zveřejněný (${i?.count} kanálu). Smazáním zmizí jen z Kronautu, ne ze sítě.`);
+	return /** @type {LocalizedString} */ (`Na síti zůstává zveřejněný (${i?.count} kanálů). Smazáním zmizí jen z Kronautu, ne ze sítě.`)
+};
+
+export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazat tento příspěvek?`)
+};
+
+export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanál), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanály), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanálu), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`);
+	return /** @type {LocalizedString} */ (`Na síti už může být zveřejněný (${i?.count} kanálů), Kronaut to nedokázal ověřit. Smazání ho ze sítě neodstraní.`)
+};
+
+export const post_deleted = /** @type {(inputs: Post_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek je smazaný.`)
+};
+
 export const post_destinations_title = /** @type {(inputs: Post_Destinations_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Kanály`)
+};
+
+export const post_discard_body = /** @type {(inputs: Post_Discard_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`To, co jste zatím napsali, se neuloží.`)
+};
+
+export const post_discard_confirm = /** @type {(inputs: Post_Discard_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zahodit`)
+};
+
+export const post_discard_keep = /** @type {(inputs: Post_Discard_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pokračovat v úpravách`)
+};
+
+export const post_discard_title = /** @type {(inputs: Post_Discard_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zahodit tento příspěvek?`)
 };
 
 export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {
@@ -1367,8 +1468,20 @@ export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedSt
 	return /** @type {LocalizedString} */ (`${i?.count} obrázků`)
 };
 
+export const post_new_title = /** @type {(inputs: Post_New_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nový příspěvek`)
+};
+
 export const post_not_found = /** @type {(inputs: Post_Not_FoundInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Příspěvek se nepodařilo načíst.`)
+};
+
+export const post_preview_empty = /** @type {(inputs: Post_Preview_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pro tyto kanály není náhled k dispozici.`)
+};
+
+export const post_preview_title = /** @type {(inputs: Post_Preview_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Náhled příspěvku`)
 };
 
 export const post_published_at = /** @type {(inputs: Post_Published_AtInputs) => LocalizedString} */ (i) => {

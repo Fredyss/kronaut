@@ -476,5 +476,44 @@
   "analytics_as_of": "As of {when}",
   "channels_followers": "Followers: {value}",
   "channels_followers_change": "{change} in 30 days",
-  "channels_insights_reconnect": "Reconnect to add insights"
+  "approval_void_post_deleted": "The post was deleted.",
+  "close": "Close",
+  "post_action_stats": "Stats",
+  "post_action_duplicate": "Duplicate",
+  "post_action_delete": "Delete",
+  "post_delete_title": "Delete this post?",
+  "post_delete_body": "It leaves the calendar and every list. Scheduled channels are canceled.",
+  "post_delete_published": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "It stays live on {count} channel: deleting removes it from Kronaut, not from the network.",
+        "countPlural=*": "It stays live on {count} channels: deleting removes it from Kronaut, not from the network."
+      }
+    }
+  ],
+  "post_delete_confirm": "Delete post",
+  "post_delete_keep": "Keep post",
+  "post_delete_live": "This post is being published right now. Try again once it has finished.",
+  "post_deleted": "Post deleted.",
+  "post_preview_title": "Post preview",
+  "post_preview_empty": "No preview is available for these channels.",
+  "post_new_title": "New post",
+  "post_discard_title": "Discard this post?",
+  "post_discard_body": "What you've written so far isn't saved.",
+  "post_discard_confirm": "Discard",
+  "post_discard_keep": "Keep editing",
+  "channels_insights_reconnect": "Reconnect to add insights",
+  "post_delete_forbidden": "Your role can't cancel this post's pending channels, so you can't delete it. Ask an editor or admin.",
+  "post_delete_unconfirmed": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "It may already be live on {count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network.",
+        "countPlural=*": "It may already be live on {count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network."
+      }
+    }
+  ]
 }

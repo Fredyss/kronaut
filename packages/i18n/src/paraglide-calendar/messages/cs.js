@@ -6,6 +6,9 @@
 /** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
 /** @typedef {{}} Calendar_DraftsInputs */
 /** @typedef {{}} Calendar_Drafts_EmptyInputs */
+/** @typedef {{}} Calendar_Entry_OpenInputs */
+/** @typedef {{ text: NonNullable<unknown> }} Calendar_Entry_OptionsInputs */
+/** @typedef {{}} Calendar_Entry_PreviewInputs */
 /** @typedef {{}} Calendar_LayoutInputs */
 /** @typedef {{}} Calendar_Layout_GridInputs */
 /** @typedef {{}} Calendar_Load_FailedInputs */
@@ -70,6 +73,18 @@ export const calendar_drafts = /** @type {(inputs: Calendar_DraftsInputs) => Loc
 
 export const calendar_drafts_empty = /** @type {(inputs: Calendar_Drafts_EmptyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Žádné koncepty.`)
+};
+
+export const calendar_entry_open = /** @type {(inputs: Calendar_Entry_OpenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Otevřít`)
+};
+
+export const calendar_entry_options = /** @type {(inputs: Calendar_Entry_OptionsInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Možnosti příspěvku: ${i?.text}`)
+};
+
+export const calendar_entry_preview = /** @type {(inputs: Calendar_Entry_PreviewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Náhled`)
 };
 
 export const calendar_layout = /** @type {(inputs: Calendar_LayoutInputs) => LocalizedString} */ () => {

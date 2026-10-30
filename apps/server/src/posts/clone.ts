@@ -10,8 +10,7 @@ export interface CloneInput {
   readonly sourceId: string;
   readonly origin: 'recurrence' | 'duplicate';
   readonly owner: Owned;
-  readonly local: Temporal.PlainDateTime;
-  readonly timezone: string;
+  readonly at: { readonly local: Temporal.PlainDateTime; readonly timezone: string } | null;
   readonly seriesId: string | null;
   readonly accountId?: string;
 }
@@ -112,9 +111,18 @@ function tainted(source: Source): boolean {
   return source.post.agent_dirty || source.destinations.some((d) => d.agent_content);
 }
 
+function scheduleOf(at: CloneInput['at']) {
+  if (at === null) return { schedule_mode: 'unscheduled' } as const;
+  return {
+    schedule_mode: 'instant',
+    schedule_local: at.local.toString(),
+    schedule_tz: at.timezone,
+  } as const;
+}
+
 export async function clonePost(
   trx: TenantDb,
-  deps: { readonly providers: ProviderRegistry; readonly acting: OwnerActing },
+  deps: { readonly providers: ProviderRegistry; readonly acting: Pick<OwnerActing, 'authorize'> },
   input: CloneInput,
 ): Promise<string> {
   const { workspaceId, owner } = input;
@@ -130,9 +138,7 @@ export async function clonePost(
       brand_id: post.brand_id,
       location_id: post.location_id,
       campaign_id: post.campaign_id,
-      schedule_mode: 'instant',
-      schedule_local: input.local.toString(),
-      schedule_tz: input.timezone,
+      ...scheduleOf(input.at),
       series_id: input.seriesId,
       agent_dirty: tainted(source),
     },

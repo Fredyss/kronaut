@@ -1,13 +1,13 @@
 import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { useId } from 'react';
+import { useEffect, useId } from 'react';
 import { meQuery } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
 import { Failure } from '../compose/failure.tsx';
 import { REPEAT_ROLES } from '../compose/repeat.ts';
-import { useComposeForm } from '../compose/use-compose-form.ts';
+import { type ComposeStart, useComposeForm } from '../compose/use-compose-form.ts';
 import { submitLabel } from '../compose/when.ts';
 import { WhenFieldset } from '../compose/when-fieldset.tsx';
 import { useApiClient } from '../context.ts';
@@ -47,15 +47,13 @@ function SubmitRow({
   );
 }
 
-function Composer({
-  workspaceId,
-  at,
-  canRepeat,
-}: {
+export interface ComposeFormProps extends ComposeStart {
   readonly workspaceId: string;
-  readonly at?: string | undefined;
-  readonly canRepeat: boolean;
-}) {
+  readonly role: string;
+  readonly onDirtyChange?: ((dirty: boolean) => void) | undefined;
+}
+
+export function ComposeForm({ workspaceId, role, onDirtyChange, ...start }: ComposeFormProps) {
   const {
     channels,
     list,
@@ -74,7 +72,9 @@ function Composer({
     approval,
     requestInstead,
     queue,
-  } = useComposeForm(workspaceId, at);
+    dirty,
+  } = useComposeForm(workspaceId, start);
+  useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
   const dateId = useId();
   const timeId = useId();
   const limitsId = useId();
@@ -106,7 +106,7 @@ function Composer({
         pending={pending}
         note={approval.request ? approval.note : undefined}
         queue={approval.request ? undefined : queue}
-        repeat={canRepeat ? repeat : undefined}
+        repeat={REPEAT_ROLES.has(role) ? repeat : undefined}
       />
 
       {formError === null ? null : (
@@ -129,7 +129,7 @@ function Composer({
 export function ComposePage() {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
-  const { at } = route.useSearch();
+  const { at, tz } = route.useSearch();
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
       <header className="flex flex-col gap-1">
@@ -137,7 +137,7 @@ export function ComposePage() {
         <p className="text-muted-foreground text-sm">{composeText.compose_subtitle()}</p>
       </header>
       {workspace === undefined ? null : (
-        <Composer workspaceId={workspace.id} at={at} canRepeat={REPEAT_ROLES.has(workspace.role)} />
+        <ComposeForm workspaceId={workspace.id} at={at} tz={tz} role={workspace.role} />
       )}
     </section>
   );

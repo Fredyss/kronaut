@@ -8,6 +8,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ when: NonNullable<unknown> }} Calendar_Draft_UpdatedInputs */
 /** @typedef {{}} Calendar_DraftsInputs */
 /** @typedef {{}} Calendar_Drafts_EmptyInputs */
+/** @typedef {{}} Calendar_Entry_OpenInputs */
+/** @typedef {{ text: NonNullable<unknown> }} Calendar_Entry_OptionsInputs */
+/** @typedef {{}} Calendar_Entry_PreviewInputs */
 /** @typedef {{}} Calendar_LayoutInputs */
 /** @typedef {{}} Calendar_Layout_GridInputs */
 /** @typedef {{}} Calendar_Load_FailedInputs */
@@ -150,6 +153,51 @@ export const calendar_drafts_empty = /** @type {((inputs?: Calendar_Drafts_Empty
 	if (locale === "sk") return __sk.calendar_drafts_empty(inputs)
 	if (locale === "cs") return __cs.calendar_drafts_empty(inputs)
 	return __en.calendar_drafts_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Open" |
+*
+* @param {Calendar_Entry_OpenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_entry_open = /** @type {((inputs?: Calendar_Entry_OpenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Entry_OpenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_entry_open(inputs)
+	if (locale === "cs") return __cs.calendar_entry_open(inputs)
+	return __en.calendar_entry_open(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post options: {text}" |
+*
+* @param {Calendar_Entry_OptionsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_entry_options = /** @type {((inputs: Calendar_Entry_OptionsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Entry_OptionsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_entry_options(inputs)
+	if (locale === "cs") return __cs.calendar_entry_options(inputs)
+	return __en.calendar_entry_options(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Preview" |
+*
+* @param {Calendar_Entry_PreviewInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_entry_preview = /** @type {((inputs?: Calendar_Entry_PreviewInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Entry_PreviewInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_entry_preview(inputs)
+	if (locale === "cs") return __cs.calendar_entry_preview(inputs)
+	return __en.calendar_entry_preview(inputs)
 });
 /**
 * | output |

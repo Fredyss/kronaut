@@ -17,6 +17,10 @@ export function slotKey(day: string, hour: number): string {
   return `${day}T${String(hour).padStart(2, '0')}`;
 }
 
+export function slotCompose(key: string, tz: string) {
+  return { compose: 'new', at: `${key}:00`, tz } as const;
+}
+
 export function byDay(items: readonly Summary[], timeZone: string): Map<string, Entry[]> {
   const days = new Map<string, Entry[]>();
   for (const post of items) {
