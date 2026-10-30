@@ -112,6 +112,8 @@ describe('the structure rules', () => {
     'apps/server/src/publish/testing-fake.ts',
     'apps/server/src/testing/fake.ts',
     'apps/web/src/compose-testing.tsx',
+    'apps/web/src/compose/grid.testing.ts',
+    'apps/web/src/compose/grid_testing.ts',
     'apps/web/src/calendar.test.tsx',
     '@kronaut/db/testing',
   ])('treats %s as testing code', (path) => {

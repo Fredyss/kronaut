@@ -20,7 +20,7 @@ const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
 
 export function isTesting(path: string): boolean {
-  return /\.test\.tsx?$|(^|[/-])testing([-./]|$)/.test(path);
+  return /\.test\.tsx?$|(^|[/._-])testing([-./_]|$)/.test(path);
 }
 
 export function valueImports(source: string): string[] {

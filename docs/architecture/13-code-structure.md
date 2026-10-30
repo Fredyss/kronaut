@@ -34,7 +34,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 ## Tests
 
-- **Tests sit beside the code they cover (checked).** A test in an `apps/*/src` root needs a file of the same name there.
+- **Tests sit beside the code they cover.** A test in an `apps/*/src` root needs a file of the same name there (checked); elsewhere this is for review.
 - **Testing helpers have one name (checked):** `testing.ts` or `testing.tsx`, or files in a `testing/` folder when a feature needs several.
 - **Write tests where they pay:** the [security](../reference/security-tests.md) and [reliability](../reference/reliability-tests.md) catalogues, DB triggers and RLS, state machines, non-trivial logic. Skip trivial wiring.
 - **Test routes over HTTP** through `createTestInstance` (`apps/server/src/http/testing.ts`), so tests cross the same seam as production.
