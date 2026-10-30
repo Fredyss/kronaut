@@ -1,25 +1,25 @@
 import {
   type Client,
-  mediaUpload,
   type PostsCreateData,
   postsCreate,
   postsGet,
   postsRequestApproval,
   postsSchedule,
+  postsUnschedule,
   postsUpdate,
 } from '@kronaut/sdk';
-import { errorStatus, type Post } from '../api.ts';
+import { type Destination, errorStatus, type Post } from '../api.ts';
 import { approvalBody } from '../approvals/queries.ts';
 import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import type { Repeat } from '../series/rule-text.ts';
-import { distinctImages } from './contents.ts';
 import type { Doc } from './doc.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';
-import { toBase64 } from './media.ts';
+import { SubmitError, type SubmitTarget } from './submit-error.ts';
+import { type UploadCache, uploadMedia } from './submit-media.ts';
 
 export interface ComposeImage {
   readonly id: string;
-  readonly file: File;
+  readonly file: File | null;
   readonly altText: string;
   readonly aiGenerated: boolean;
 }
@@ -36,9 +36,11 @@ export interface ComposeDestination {
   readonly accountId: string;
   readonly publishType: string;
   readonly variant: number | null;
+  readonly settings?: Destination['settings'];
+  readonly deliveryMode?: Destination['deliveryMode'];
 }
 
-export type ComposeWhen =
+export type ScheduleWhen =
   | { readonly mode: 'asap' }
   | { readonly mode: 'queue' }
   | {
@@ -48,50 +50,14 @@ export type ComposeWhen =
       readonly repeat?: Repeat;
     };
 
+export type ComposeWhen = { readonly mode: 'draft' } | ScheduleWhen;
+
 export interface ComposeInput {
   readonly content: ComposeContent;
   readonly variants: readonly ComposeContent[];
   readonly destinations: readonly ComposeDestination[];
   readonly when: ComposeWhen;
   readonly request: { readonly note: string } | null;
-}
-
-export interface SubmitTarget {
-  readonly accountId: string;
-  readonly variant: number | null;
-}
-
-export interface FailedImage {
-  readonly index: number;
-  readonly variant: number | null;
-}
-
-export type SubmitStep = 'upload' | 'create' | 'update' | 'schedule' | 'request';
-
-export class MarkedImageError extends Error {
-  constructor() {
-    super('the image is already marked as AI-generated');
-    this.name = 'MarkedImageError';
-  }
-}
-
-export class SubmitError extends Error {
-  readonly step: SubmitStep;
-  readonly destinations: readonly SubmitTarget[];
-  readonly image: FailedImage | null;
-
-  constructor(
-    step: SubmitStep,
-    cause: unknown,
-    destinations: readonly SubmitTarget[],
-    image: FailedImage | null = null,
-  ) {
-    super(`compose ${step} failed`, { cause });
-    this.name = 'SubmitError';
-    this.step = step;
-    this.destinations = destinations;
-    this.image = image;
-  }
 }
 
 interface PendingCreate extends Keyed {
@@ -111,65 +77,49 @@ interface NextDraft {
   readonly fingerprint: string;
 }
 
-interface UploadEntry {
-  readonly key: string;
-  uploaded: { readonly id: string; readonly marked: boolean } | null;
+export interface OpenedPost {
+  readonly post: Post;
+  readonly fingerprint: string;
 }
 
 interface Submitter {
   readonly client: Client;
   readonly workspaceId: string;
-  readonly uploads: Map<string, UploadEntry>;
+  readonly uploads: UploadCache;
+  readonly opened: boolean;
   create: PendingCreate | null;
   update: Keyed | null;
   draft: { readonly fingerprint: string; post: Post } | null;
+  unschedule: Keyed | null;
+  unscheduled: boolean;
   schedule: Keyed | null;
   stale: boolean;
 }
 
-async function upload(
+async function unschedule(
   s: Submitter,
-  image: ComposeImage,
-  failed: FailedImage,
-  targets: readonly SubmitTarget[],
-) {
-  const cacheKey = image.aiGenerated ? `${image.id}:ai` : image.id;
-  const entry = s.uploads.get(cacheKey) ?? { key: crypto.randomUUID(), uploaded: null };
-  s.uploads.set(cacheKey, entry);
+  post: Post,
+  accounts: readonly SubmitTarget[],
+): Promise<Post> {
+  const body = { expectedVersion: post.version };
+  s.unschedule = keyFor(s.unschedule, JSON.stringify({ postId: post.id, body }));
   try {
-    entry.uploaded ??= await send(s, image, entry.key);
+    const { data } = await postsUnschedule({
+      client: s.client,
+      path: { workspaceId: s.workspaceId, postId: post.id },
+      body,
+      headers: idempotency(s.unschedule),
+    });
+    s.unschedule = null;
+    s.unscheduled = true;
+    return data;
   } catch (error) {
-    throw new SubmitError('upload', error, targets, failed);
+    throw new SubmitError('unschedule', error, accounts);
   }
-  if (entry.uploaded.marked && !image.aiGenerated) {
-    throw new SubmitError('upload', new MarkedImageError(), targets, failed);
-  }
-  return entry.uploaded.id;
 }
 
-async function send(s: Submitter, image: ComposeImage, key: string) {
-  const filename = image.file.name === '' ? {} : { filename: image.file.name.slice(0, 255) };
-  const { data } = await mediaUpload({
-    client: s.client,
-    path: { workspaceId: s.workspaceId },
-    body: {
-      ...filename,
-      dataBase64: await toBase64(image.file),
-      ...(image.aiGenerated ? { aiGenerated: true } : {}),
-    },
-    headers: { 'Idempotency-Key': key },
-  });
-  return { id: data.id, marked: data.aiGenerated };
-}
-
-async function uploadMedia(s: Submitter, input: ComposeInput, targets: readonly SubmitTarget[]) {
-  const ids = new Map<string, string>();
-  const lists = [input.content, ...input.variants].map((content) => content.images);
-  for (const { image, content, index } of distinctImages(lists)) {
-    const variant = content === 0 ? null : content - 1;
-    ids.set(image.id, await upload(s, image, { index, variant }, targets));
-  }
-  return ids;
+function isScheduled(post: Post): boolean {
+  return post.destinations.some((destination) => destination.state === 'scheduled');
 }
 
 async function ensureDraft(
@@ -180,6 +130,9 @@ async function ensureDraft(
   const body = draftBody(input, await uploadMedia(s, input, accounts));
   const fingerprint = JSON.stringify(body);
   const next = { body, fingerprint };
+  if (s.opened && s.draft !== null && isScheduled(s.draft.post)) {
+    s.draft.post = await unschedule(s, s.draft.post, accounts);
+  }
   if (s.draft?.fingerprint === fingerprint) return s.draft.post;
   if (s.draft !== null) return await updateDraft(s, s.draft.post, next, accounts);
   if (s.create !== null && s.create.fingerprint !== fingerprint && s.create.ambiguous) {
@@ -234,7 +187,7 @@ async function patchDraft(s: Submitter, current: Post, next: NextDraft): Promise
       s.update = null;
       return data;
     } catch (error) {
-      if (errorStatus(error) !== 409 || attempt > 0) throw error;
+      if (errorStatus(error) !== 409 || attempt > 0 || s.opened) throw error;
       post = await refresh(s, post);
     }
   }
@@ -249,7 +202,7 @@ async function updateDraft(
   try {
     return await patchDraft(s, s.stale ? await refresh(s, current) : current, next);
   } catch (error) {
-    if (errorStatus(error) === 409) s.stale = true;
+    if (errorStatus(error) === 409 && !s.opened) s.stale = true;
     throw new SubmitError('update', error, accounts);
   }
 }
@@ -263,47 +216,72 @@ async function refresh(s: Submitter, post: Post): Promise<Post> {
   return data;
 }
 
-async function finish(s: Submitter, post: Post, input: ComposeInput): Promise<Post> {
+async function finish(
+  s: Submitter,
+  post: Post,
+  when: ScheduleWhen,
+  request: ComposeInput['request'],
+): Promise<Post> {
   const path = { workspaceId: s.workspaceId, postId: post.id };
-  if (input.request !== null) {
-    const body = approvalBody(post.version, input.when, input.request.note);
+  if (request !== null) {
+    const body = approvalBody(post.version, when, request.note);
     s.schedule = keyFor(s.schedule, JSON.stringify({ postId: post.id, request: body }));
     const headers = idempotency(s.schedule);
     return (await postsRequestApproval({ client: s.client, path, body, headers })).data;
   }
-  const body = { expectedVersion: post.version, ...input.when };
+  const body = { expectedVersion: post.version, ...when };
   s.schedule = keyFor(s.schedule, JSON.stringify({ postId: post.id, body }));
   const headers = idempotency(s.schedule);
   return (await postsSchedule({ client: s.client, path, body, headers })).data;
 }
 
-export function createSubmitter(client: Client, workspaceId: string): Submit {
+async function publish(s: Submitter, input: ComposeInput): Promise<Post> {
+  const accounts = input.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
+  let post = await ensureDraft(s, input, accounts);
+  const { when } = input;
+  if (when.mode === 'draft') return post;
+  const posted = post.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
+  try {
+    if (s.stale) post = await refresh(s, post);
+    if (s.draft !== null) s.draft.post = post;
+    if (!s.opened && post.publishSummary !== 'draft') return post;
+    const data = await finish(s, post, when, input.request);
+    s.draft = null;
+    s.schedule = null;
+    return data;
+  } catch (error) {
+    if (errorStatus(error) === 409 && !s.opened) s.stale = true;
+    throw new SubmitError(input.request === null ? 'schedule' : 'request', error, posted);
+  }
+}
+
+// A canceled destination only returns to draft through a PATCH, and schedule skips it otherwise.
+function openedDraft({ post, fingerprint }: OpenedPost) {
+  const canceled = post.destinations.some((destination) => destination.state === 'canceled');
+  return { fingerprint: canceled ? '' : fingerprint, post };
+}
+
+export function createSubmitter(client: Client, workspaceId: string, opened?: OpenedPost): Submit {
   const s: Submitter = {
     client,
     workspaceId,
     uploads: new Map(),
+    opened: opened !== undefined,
     create: null,
     update: null,
-    draft: null,
+    draft: opened === undefined ? null : openedDraft(opened),
+    unschedule: null,
+    unscheduled: false,
     schedule: null,
     stale: false,
   };
 
   return async function submit(input) {
-    const accounts = input.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
-    let post = await ensureDraft(s, input, accounts);
-    const posted = post.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
     try {
-      if (s.stale) post = await refresh(s, post);
-      if (s.draft !== null) s.draft.post = post;
-      if (post.publishSummary !== 'draft') return post;
-      const data = await finish(s, post, input);
-      s.draft = null;
-      s.schedule = null;
-      return data;
+      return await publish(s, input);
     } catch (error) {
-      if (errorStatus(error) === 409) s.stale = true;
-      throw new SubmitError(input.request === null ? 'schedule' : 'request', error, posted);
+      if (error instanceof SubmitError) error.unscheduled = s.unscheduled;
+      throw error;
     }
   };
 }

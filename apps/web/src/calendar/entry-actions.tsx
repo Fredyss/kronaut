@@ -28,19 +28,22 @@ export function EntryActionsProvider({ workspaceId, role, children }: ProviderPr
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [shown, setShown] = useState<Shown | null>(null);
-  const actions = useMemo<EntryActions>(
-    () => ({
+  const actions = useMemo<EntryActions>(() => {
+    const open = (postId: string) => {
+      markComposeOpened();
+      return navigate({ to: '/', search: (current) => ({ ...current, compose: postId }) });
+    };
+    return {
       role,
       show: (dialog, post) => setShown({ dialog, post }),
       duplicate: (post) => {
-        const open = (postId: string) => navigate({ to: '/posts/$postId', params: { postId } });
         void load().then((module) =>
           module.duplicatePost({ client, queryClient, workspaceId, postId: post.id, open }),
         );
       },
-    }),
-    [client, queryClient, navigate, workspaceId, role],
-  );
+      edit: (post) => void open(post.id),
+    };
+  }, [client, queryClient, navigate, workspaceId, role]);
   const close = () => setShown(null);
   return (
     <EntryActionsContext.Provider value={actions}>
@@ -73,9 +76,15 @@ export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'chil
   const { compose, at, tz, ...rest } = route.useSearch();
   const navigate = route.useNavigate();
   useEffect(() => {
-    if (compose !== 'new') openedHere = false;
+    if (compose === undefined) openedHere = false;
   }, [compose]);
-  if (compose !== 'new') return null;
+  useEffect(
+    () => () => {
+      openedHere = false;
+    },
+    [],
+  );
+  if (compose === undefined) return null;
   const close = () => {
     if (!openedHere) return void navigate({ search: rest, replace: true });
     openedHere = false;
@@ -83,7 +92,14 @@ export function CalendarCompose({ workspaceId, role }: Omit<ProviderProps, 'chil
   };
   return (
     <Suspense fallback={null}>
-      <ComposeDialog workspaceId={workspaceId} role={role} at={at} tz={tz} onClose={close} />
+      <ComposeDialog
+        workspaceId={workspaceId}
+        role={role}
+        at={at}
+        tz={tz}
+        postId={compose === 'new' ? undefined : compose}
+        onClose={close}
+      />
     </Suspense>
   );
 }

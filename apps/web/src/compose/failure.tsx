@@ -1,9 +1,10 @@
 import { ApiRequestError } from '@kronaut/sdk';
+import { Button } from '@kronaut/ui';
 import { type Channel, errorCode, errorDetails, errorStatus } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { destinationIndex, issueMessage } from './issues.ts';
-import { MarkedImageError, type SubmitError, type SubmitTarget } from './submit.ts';
+import { MarkedImageError, type SubmitError, type SubmitTarget } from './submit-error.ts';
 
 const VARIANT_PATH = /(?:^|\.)variants\.(\d+)(?:\.|$)/;
 
@@ -49,13 +50,16 @@ function uploadReason(error: SubmitError): string | null {
 export function Failure({
   error,
   channels,
+  onReload,
 }: {
   readonly error: SubmitError;
   readonly channels: readonly Channel[];
+  readonly onReload?: (() => void) | undefined;
 }) {
   const details = errorDetails(error.cause);
   const reason = uploadReason(error);
   const code = error.cause instanceof ApiRequestError ? error.cause.code : null;
+  const changed = onReload !== undefined && code === 'version_conflict';
   const nameOf: ChannelName = (target) =>
     channels.find((channel) => channel.id === target?.accountId)?.displayName ?? null;
   const channelName = (path: string): string | null => {
@@ -69,8 +73,18 @@ export function Failure({
       role="alert"
       className="flex flex-col gap-2 rounded-lg border border-destructive/40 p-4 text-sm"
     >
-      <p className="font-medium text-destructive">{failureHeadline(error, nameOf)}</p>
+      <p className="font-medium text-destructive">
+        {changed ? composeText.compose_error_post_changed() : failureHeadline(error, nameOf)}
+      </p>
       {reason === null ? null : <p>{reason}</p>}
+      {error.unscheduled && !changed ? <p>{composeText.compose_error_now_draft()}</p> : null}
+      {changed ? (
+        <div>
+          <Button type="button" size="sm" variant="outline" onClick={onReload}>
+            {composeText.compose_reload_post()}
+          </Button>
+        </div>
+      ) : null}
       {details.length === 0 ? null : (
         <ul className="list-disc pl-5">
           {details.map((detail) => {

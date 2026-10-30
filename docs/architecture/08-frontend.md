@@ -50,10 +50,18 @@
   - **Post actions:** each calendar entry has an options button, shown on hover and focus and always on touch, with a menu (keyboard-operable, `menu` role):
     - **Open** → the post page;
     - **Stats** → the post page's analytics section (only when a destination is published);
-    - **Duplicate** → `POST …/duplicate`, then the copy's post page (the composer opens existing posts once it has an edit mode);
+    - **Edit** → the composer on this post (see "Editing a post"); only when it can be edited and the role allows it;
+    - **Duplicate** → `POST …/duplicate`, then the composer on the copy;
     - **Preview** → a read-only dialog with the network preview the composer uses;
     - **Delete** → a confirm dialog; for a published post it says the post stays on the network and only leaves Kronaut. Hidden from roles without `posts:draft`.
-- **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited keeps the composer.
+- **Post page:** a post with a published destination shows its content read-only on the left and the network preview on the right, with the time, Stats, Duplicate and Delete below. A post that can still be edited shows an Edit button.
+- **Editing a post:** the composer opens an existing post, at `/compose?post=<id>` or, over the calendar, in the dialog at `?compose=<id>`, from the options menu or the calendar's draft list. Changing the content, the channels or the time counts as unsaved changes.
+  - **What can be edited:** a post whose destinations are all `draft`, `canceled` or `scheduled`. A scheduled one needs a role with `posts:schedule`; otherwise `posts:draft` is enough.
+  - **Nothing is lost:** the composer only opens a post it can show whole. It stays on the post page, with a line saying why, when a destination's channel isn't available, when one channel has two destinations, or when the content is a shape the composer can't show (media on a reply or comment, images next to a video, more than one video, the same media twice in one item). It also stays there when a stored publish type isn't the one the composer would choose, or a text has formatting the composer can't show. Destination settings and delivery mode the composer has no field for are sent back unchanged; settings belong to a publish type, so a media change that changes the type drops them.
+  - **When:** a new choice, "Keep as draft", saves without scheduling; a new post offers it too. A post with no scheduled destination opens on it, so opening a draft to fix a typo can't publish it. A scheduled post opens on its fixed time. A post scheduled per destination opens on "Add to queue", with a line saying that saving takes the next free slots; where approval hides the queue, it opens on "Keep as draft". Repeat isn't offered: a series starts from a new post. On a series post, a line says the series schedules a draft again at its next time.
+  - **Saving a scheduled post:** nothing changes on the server until Save. Then the composer uploads new media, unschedules, saves and schedules again, in that order. If a later step fails, the post is a draft and the error says so; saving again continues from there.
+  - **Conflicts:** an edit is based on the version that was opened. A `version_conflict` is never retried, because that would overwrite someone else's change: the composer says the post changed and offers to reload it. Unchanged content isn't sent, so changing only the time doesn't touch an approval request.
+  - **Approvals:** on a post in review, a line says that saving changed content withdraws the open request. The server voids it (04).
 - **Autosave:** IndexedDB on every change (1 s debounce) + server revision; a multi-tab conflict banner.
 - **Budgets** (gzipped, CI `size-limit`):
   - shell + calendar ≤ 150 KB

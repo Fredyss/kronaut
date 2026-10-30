@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
+import { lazy, Suspense } from 'react';
 import { AnalyticsSection } from '../analytics/section.tsx';
 import {
   ANALYTICS_ROLES,
@@ -18,12 +19,17 @@ import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
+import { editableBy } from '../post-actions/permissions.ts';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
 import { providerUi } from '../providers.ts';
 import { SeriesSection } from '../series/section.tsx';
 
 const route = getRouteApi('/app/posts/$postId');
+
+const PostEdit = lazy(() =>
+  import('./compose.tsx').then((module) => ({ default: module.PostEdit })),
+);
 
 function scheduleLine(post: Post, format: (iso: string) => string): string {
   const at = post.destinations.flatMap((d) => d.scheduledAt ?? []).sort()[0] ?? null;
@@ -164,6 +170,11 @@ function PostStatus({
           <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
         )}
       </div>
+      {editableBy(role, data) ? (
+        <Suspense fallback={null}>
+          <PostEdit workspaceId={workspaceId} post={data} />
+        </Suspense>
+      ) : null}
       {settled ? (
         <PublishedView
           workspaceId={workspaceId}

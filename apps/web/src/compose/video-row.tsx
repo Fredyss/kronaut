@@ -5,7 +5,7 @@ import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { MAX_ALT_TEXT } from './media.ts';
 import type { VideoSlot } from './use-media.ts';
-import { isMarked, type VideoPhase } from './use-video.ts';
+import { isMarked, type VideoEntry, type VideoPhase } from './use-video.ts';
 import { formatDuration, rejectionText } from './video-text.ts';
 
 function PhaseStatus({
@@ -67,6 +67,23 @@ function PhaseStatus({
   );
 }
 
+function VideoThumb({ entry, name }: { readonly entry: VideoEntry; readonly name: string }) {
+  const label = composeText.compose_video_preview({ name });
+  if (entry.url !== null) {
+    return (
+      <video
+        src={entry.url}
+        muted
+        preload="metadata"
+        aria-label={label}
+        className="size-24 rounded-md bg-muted object-cover"
+      />
+    );
+  }
+  if (entry.poster === null) return <div aria-hidden className="size-24 rounded-md bg-muted" />;
+  return <img src={entry.poster} alt={label} className="size-24 rounded-md object-cover" />;
+}
+
 export function VideoRow({
   video,
   disabled,
@@ -78,17 +95,12 @@ export function VideoRow({
   const aiHintId = useId();
   const { entry } = video;
   const marked = isMarked(entry);
+  const name = entry.file?.name ?? composeText.compose_video_existing();
   return (
     <div className="flex flex-wrap items-start gap-3 rounded-lg border p-3">
-      <video
-        src={entry.url}
-        muted
-        preload="metadata"
-        aria-label={composeText.compose_video_preview({ name: entry.file.name })}
-        className="size-24 rounded-md bg-muted object-cover"
-      />
+      <VideoThumb entry={entry} name={name} />
       <div className="flex min-w-48 flex-1 flex-col gap-2">
-        <p className="break-all font-medium text-sm">{entry.file.name}</p>
+        <p className="break-all font-medium text-sm">{name}</p>
         <PhaseStatus phase={entry.phase} disabled={disabled} onRetry={video.retry} />
         <Label htmlFor={altId}>{composeText.compose_video_alt_label()}</Label>
         <textarea
@@ -107,7 +119,7 @@ export function VideoRow({
           <input
             type="checkbox"
             checked={marked || entry.aiGenerated}
-            disabled={disabled || marked}
+            disabled={disabled || marked || entry.file === null}
             aria-describedby={aiHintId}
             onChange={(event) => video.setAi(event.currentTarget.checked)}
             className="size-4 accent-primary"

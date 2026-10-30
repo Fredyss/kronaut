@@ -1,4 +1,3 @@
-import { mediaGet } from '@kronaut/sdk';
 import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
@@ -8,6 +7,7 @@ import type { PreviewTarget } from '../compose/preview/preview.tsx';
 import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
 import { Modal } from './modal.tsx';
+import { postMediaQuery } from './post-media.ts';
 
 const Previews = lazy(() => import('../compose/preview/preview.tsx'));
 
@@ -25,26 +25,10 @@ interface Thumb {
 
 function useThumbs(workspaceId: string, post: Post): ReadonlyMap<string, Thumb> {
   const client = useApiClient();
-  const ids = [
-    ...new Set(
-      [...post.items, ...post.variants.flatMap((v) => v.items)].flatMap((item) =>
-        item.media.map((media) => media.mediaId),
-      ),
-    ),
-  ].sort();
-  const thumbs = useQuery({
-    queryKey: ['media', workspaceId, 'previews', ...ids],
-    queryFn: async () =>
-      await Promise.all(
-        ids.map(async (mediaId) => {
-          const { data } = await mediaGet({ client, path: { workspaceId, mediaId } });
-          return [mediaId, { url: data.previewUrl, video: data.kind === 'video' }] as const;
-        }),
-      ),
-    enabled: ids.length > 0,
-    staleTime: 30 * 60_000,
-  });
-  return new Map(thumbs.data ?? []);
+  const assets = useQuery(postMediaQuery(client, workspaceId, post)).data ?? [];
+  return new Map(
+    assets.map((asset) => [asset.id, { url: asset.previewUrl, video: asset.kind === 'video' }]),
+  );
 }
 
 function targetsOf(

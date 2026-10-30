@@ -13,7 +13,7 @@ import { createPortal } from 'react-dom';
 import { ANALYTICS_ROLES, type PostSummary } from '../api.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
-import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
+import { canDelete, canDuplicate, editableBy } from '../post-actions/permissions.ts';
 import { MoreIcon } from './icons.tsx';
 
 export type EntryDialog = 'preview' | 'delete';
@@ -22,6 +22,7 @@ export interface EntryActions {
   readonly role: string;
   show(dialog: EntryDialog, post: PostSummary): void;
   duplicate(post: PostSummary): void;
+  edit(post: PostSummary): void;
 }
 
 export const EntryActionsContext = createContext<EntryActions | null>(null);
@@ -146,6 +147,16 @@ export function EntryMenu({ post, text }: { readonly post: PostSummary; readonly
             >
               {m.post_action_stats()}
             </Link>
+          ) : null}
+          {editableBy(actions.role, post) ? (
+            <button
+              type="button"
+              role="menuitem"
+              className={ITEM}
+              onClick={pick(() => actions.edit(post))}
+            >
+              {m.post_action_edit()}
+            </button>
           ) : null}
           {canDuplicate(actions.role) ? (
             <button

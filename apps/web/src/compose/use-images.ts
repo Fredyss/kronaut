@@ -5,6 +5,8 @@ import { fileProblem, MAX_IMAGE_BYTES, MAX_IMAGES, thumbnail } from './media.ts'
 
 type ImageList = readonly PickedImage[];
 
+type NewImage = PickedImage & { readonly file: File };
+
 export interface ImageTarget {
   readonly images: ImageList;
   readonly edit: (change: (images: ImageList) => ImageList) => void;
@@ -32,7 +34,7 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
 
   const pick = (files: readonly File[]): string[] => {
     const found: string[] = [];
-    const accepted: PickedImage[] = [];
+    const accepted: NewImage[] = [];
     const room = MAX_IMAGES - images.length;
     for (const file of files) {
       const problem = fileProblem(file);
@@ -46,6 +48,7 @@ export function useImages({ images, edit, setThumb }: ImageTarget) {
         accepted.push({
           id: crypto.randomUUID(),
           file,
+          facts: file,
           thumb: null,
           altText: '',
           aiGenerated: false,

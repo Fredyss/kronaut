@@ -1,5 +1,5 @@
 import { Input, Label } from '@kronaut/ui';
-import { lazy, Suspense, useId } from 'react';
+import { lazy, type ReactNode, Suspense, useId } from 'react';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { issueMessage } from './issues.ts';
@@ -26,6 +26,7 @@ interface WhenFieldsetProps {
   readonly note?: NoteState | undefined;
   readonly queue?: QueueChoice | undefined;
   readonly repeat?: RepeatControl | undefined;
+  readonly extraMode?: ReactNode;
 }
 
 function NoteField({ note, pending }: { readonly note: NoteState; readonly pending: boolean }) {
@@ -53,7 +54,7 @@ interface ModeOptionProps {
   readonly disabled: boolean;
 }
 
-function ModeOption({ value, label, when, disabled }: ModeOptionProps) {
+export function ModeOption({ value, label, when, disabled }: ModeOptionProps) {
   return (
     <label className="flex items-center gap-2">
       <input
@@ -100,7 +101,7 @@ function QueueLines({ queue, all }: { readonly queue: QueueChoice; readonly all:
 }
 
 export function WhenFieldset(props: WhenFieldsetProps) {
-  const { when, dateId, timeId, pending, note, queue, repeat } = props;
+  const { when, dateId, timeId, pending, note, queue, repeat, extraMode } = props;
   const { mode, date, setDate, time, setTime, tz } = when;
   return (
     <fieldset className="flex flex-col gap-3">
@@ -116,6 +117,7 @@ export function WhenFieldset(props: WhenFieldsetProps) {
             disabled={pending || queue.empty !== undefined}
           />
         )}
+        {extraMode}
       </div>
       {queue === undefined ? null : <QueueLines queue={queue} all={mode === 'queue'} />}
       {mode === 'instant' ? (

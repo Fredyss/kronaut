@@ -6,6 +6,8 @@ import { Temporal } from 'temporal-polyfill';
 import { appUrl, CHANNEL, TIME_ZONE } from './env.ts';
 
 const TEXT = 'Ahoj svet, čaká nás ťažký deň';
+const ADDED = ', zajtra bude ľahšie';
+const DRAFT = 'Koncept na neskôr';
 
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
@@ -32,9 +34,44 @@ test('schedules a post a week ahead and keeps it after a reload', async ({ page 
   await page
     .getByRole('button', { name: calendarEn.calendar_entry_options({ text: TEXT }) })
     .click();
+  await page.getByRole('menuitem', { name: en.post_action_edit({}) }).click();
+  const dialog = page.getByRole('dialog', { name: en.post_edit_title({}) });
+  const editor = dialog.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  await expect(editor).toHaveText(TEXT);
+  await editor.click();
+  await editor.pressSequentially(ADDED);
+  await dialog.getByRole('button', { name: en.compose_schedule({}) }).click();
+  await expect(dialog).toHaveCount(0);
+  const edited = page.getByRole('link', { name: `${TEXT}${ADDED}` });
+  await expect(edited).toContainText(en.destination_state_scheduled({}));
+
+  await page
+    .getByRole('button', { name: calendarEn.calendar_entry_options({ text: `${TEXT}${ADDED}` }) })
+    .click();
   await page.getByRole('menuitem', { name: en.post_action_delete({}) }).click();
   await page.getByRole('button', { name: en.post_delete_confirm({}) }).click();
-  await expect(chip).toHaveCount(0);
+  await expect(edited).toHaveCount(0);
+});
+
+test('keeps a draft, then edits it from the calendar draft list', async ({ page }) => {
+  await page.goto(appUrl('/compose'));
+  await page.getByRole('textbox', { name: composeEn.compose_text_label({}) }).fill(DRAFT);
+  await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
+  await page.getByRole('radio', { name: composeEn.compose_keep_draft({}) }).check();
+  await page.getByRole('button', { name: en.compose_save_draft({}) }).click();
+  await expect(page).toHaveURL(/\/posts\/[^/]+$/);
+
+  await page.goto(appUrl('/?view=list'));
+  await page.getByRole('link', { name: DRAFT }).click();
+  const dialog = page.getByRole('dialog', { name: en.post_edit_title({}) });
+  const editor = dialog.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  await expect(editor).toHaveText(DRAFT);
+  await expect(dialog.getByRole('radio', { name: composeEn.compose_keep_draft({}) })).toBeChecked();
+  await editor.click();
+  await editor.pressSequentially(ADDED);
+  await dialog.getByRole('button', { name: en.compose_save_draft({}) }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole('link', { name: `${DRAFT}${ADDED}` })).toBeVisible();
 });
 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {

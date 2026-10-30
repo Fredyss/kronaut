@@ -19,12 +19,17 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{}} Compose_Edit_Queue_NoteInputs */
+/** @typedef {{}} Compose_Edit_Review_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_NoteInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
+/** @typedef {{}} Compose_Error_Now_DraftInputs */
+/** @typedef {{}} Compose_Error_Post_ChangedInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -37,9 +42,21 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
+/** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Item_OrderInputs */
+/** @typedef {{}} Compose_Refused_Many_VideosInputs */
+/** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Publish_TypeInputs */
+/** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
+/** @typedef {{}} Compose_Refused_Reply_MediaInputs */
+/** @typedef {{}} Compose_Refused_Rich_ContentInputs */
+/** @typedef {{}} Compose_Reload_PostInputs */
 /** @typedef {{}} Compose_Remove_CommentInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
@@ -54,6 +71,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Alt_LabelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ExistingInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{}} Compose_Video_LimitInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
@@ -342,6 +360,51 @@ export const compose_customized = /** @type {((inputs?: Compose_CustomizedInputs
 /**
 * | output |
 * | --- |
+* | "Saving takes the next free slots in each channel's queue." |
+*
+* @param {Compose_Edit_Queue_NoteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_edit_queue_note = /** @type {((inputs?: Compose_Edit_Queue_NoteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Edit_Queue_NoteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_edit_queue_note(inputs)
+	if (locale === "cs") return __cs.compose_edit_queue_note(inputs)
+	return __en.compose_edit_queue_note(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Saving changed content withdraws the open approval request." |
+*
+* @param {Compose_Edit_Review_NoteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_edit_review_note = /** @type {((inputs?: Compose_Edit_Review_NoteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Edit_Review_NoteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_edit_review_note(inputs)
+	if (locale === "cs") return __cs.compose_edit_review_note(inputs)
+	return __en.compose_edit_review_note(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The series schedules a draft again at its next time." |
+*
+* @param {Compose_Edit_Series_NoteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_edit_series_note = /** @type {((inputs?: Compose_Edit_Series_NoteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Edit_Series_NoteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_edit_series_note(inputs)
+	if (locale === "cs") return __cs.compose_edit_series_note(inputs)
+	return __en.compose_edit_series_note(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Image {position} is already marked as AI-generated in this workspace, and the mark can't be removed yet. Tick “Image {position} is AI-generated” to post it, ..." |
 *
 * @param {Compose_Error_Ai_MarkedInputs} inputs
@@ -428,6 +491,36 @@ export const compose_error_no_channel = /** @type {((inputs?: Compose_Error_No_C
 	if (locale === "sk") return __sk.compose_error_no_channel(inputs)
 	if (locale === "cs") return __cs.compose_error_no_channel(inputs)
 	return __en.compose_error_no_channel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The post is now a draft. Saving again continues from there." |
+*
+* @param {Compose_Error_Now_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_now_draft = /** @type {((inputs?: Compose_Error_Now_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Now_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_now_draft(inputs)
+	if (locale === "cs") return __cs.compose_error_now_draft(inputs)
+	return __en.compose_error_now_draft(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post changed after you opened it. Reload it to see the latest version; your edits here will be lost." |
+*
+* @param {Compose_Error_Post_ChangedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_post_changed = /** @type {((inputs?: Compose_Error_Post_ChangedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Post_ChangedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_post_changed(inputs)
+	if (locale === "cs") return __cs.compose_error_post_changed(inputs)
+	return __en.compose_error_post_changed(inputs)
 });
 /**
 * | output |
@@ -614,6 +707,21 @@ export const compose_inherits = /** @type {((inputs?: Compose_InheritsInputs, op
 /**
 * | output |
 * | --- |
+* | "Keep as draft" |
+*
+* @param {Compose_Keep_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_keep_draft = /** @type {((inputs?: Compose_Keep_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Keep_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_keep_draft(inputs)
+	if (locale === "cs") return __cs.compose_keep_draft(inputs)
+	return __en.compose_keep_draft(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "{channel} will publish the main post only." |
 *
 * @param {Compose_Main_OnlyInputs} inputs
@@ -655,6 +763,171 @@ export const compose_no_channels = /** @type {((inputs?: Compose_No_ChannelsInpu
 	if (locale === "sk") return __sk.compose_no_channels(inputs)
 	if (locale === "cs") return __cs.compose_no_channels(inputs)
 	return __en.compose_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because it goes to the same channel twice." |
+*
+* @param {Compose_Refused_Channel_TwiceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_channel_twice = /** @type {((inputs?: Compose_Refused_Channel_TwiceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Channel_TwiceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_channel_twice(inputs)
+	if (locale === "cs") return __cs.compose_refused_channel_twice(inputs)
+	return __en.compose_refused_channel_twice(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because one of its channels isn't available." |
+*
+* @param {Compose_Refused_Channel_UnavailableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_channel_unavailable = /** @type {((inputs?: Compose_Refused_Channel_UnavailableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Channel_UnavailableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_channel_unavailable(inputs)
+	if (locale === "cs") return __cs.compose_refused_channel_unavailable(inputs)
+	return __en.compose_refused_channel_unavailable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because its items are in an order the composer can't show." |
+*
+* @param {Compose_Refused_Item_OrderInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_item_order = /** @type {((inputs?: Compose_Refused_Item_OrderInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Item_OrderInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_item_order(inputs)
+	if (locale === "cs") return __cs.compose_refused_item_order(inputs)
+	return __en.compose_refused_item_order(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because it has more than one video." |
+*
+* @param {Compose_Refused_Many_VideosInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_many_videos = /** @type {((inputs?: Compose_Refused_Many_VideosInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Many_VideosInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_many_videos(inputs)
+	if (locale === "cs") return __cs.compose_refused_many_videos(inputs)
+	return __en.compose_refused_many_videos(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because some of its media isn't available." |
+*
+* @param {Compose_Refused_Media_UnavailableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_media_unavailable = /** @type {((inputs?: Compose_Refused_Media_UnavailableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Media_UnavailableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_media_unavailable(inputs)
+	if (locale === "cs") return __cs.compose_refused_media_unavailable(inputs)
+	return __en.compose_refused_media_unavailable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because it has images next to a video." |
+*
+* @param {Compose_Refused_Mixed_MediaInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_mixed_media = /** @type {((inputs?: Compose_Refused_Mixed_MediaInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Mixed_MediaInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_mixed_media(inputs)
+	if (locale === "cs") return __cs.compose_refused_mixed_media(inputs)
+	return __en.compose_refused_mixed_media(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because its publish type isn't the one the composer would choose." |
+*
+* @param {Compose_Refused_Publish_TypeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_publish_type = /** @type {((inputs?: Compose_Refused_Publish_TypeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Publish_TypeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_publish_type(inputs)
+	if (locale === "cs") return __cs.compose_refused_publish_type(inputs)
+	return __en.compose_refused_publish_type(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because it uses the same media twice." |
+*
+* @param {Compose_Refused_Repeated_MediaInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_repeated_media = /** @type {((inputs?: Compose_Refused_Repeated_MediaInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Repeated_MediaInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_repeated_media(inputs)
+	if (locale === "cs") return __cs.compose_refused_repeated_media(inputs)
+	return __en.compose_refused_repeated_media(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because a reply or comment has media." |
+*
+* @param {Compose_Refused_Reply_MediaInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_reply_media = /** @type {((inputs?: Compose_Refused_Reply_MediaInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Reply_MediaInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_reply_media(inputs)
+	if (locale === "cs") return __cs.compose_refused_reply_media(inputs)
+	return __en.compose_refused_reply_media(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because its text has formatting the composer can't show." |
+*
+* @param {Compose_Refused_Rich_ContentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_rich_content = /** @type {((inputs?: Compose_Refused_Rich_ContentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Rich_ContentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_rich_content(inputs)
+	if (locale === "cs") return __cs.compose_refused_rich_content(inputs)
+	return __en.compose_refused_rich_content(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Reload the post" |
+*
+* @param {Compose_Reload_PostInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_reload_post = /** @type {((inputs?: Compose_Reload_PostInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Reload_PostInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_reload_post(inputs)
+	if (locale === "cs") return __cs.compose_reload_post(inputs)
+	return __en.compose_reload_post(inputs)
 });
 /**
 * | output |
@@ -865,6 +1138,21 @@ export const compose_video_bad_type = /** @type {((inputs: Compose_Video_Bad_Typ
 	if (locale === "sk") return __sk.compose_video_bad_type(inputs)
 	if (locale === "cs") return __cs.compose_video_bad_type(inputs)
 	return __en.compose_video_bad_type(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Video already in this post" |
+*
+* @param {Compose_Video_ExistingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_video_existing = /** @type {((inputs?: Compose_Video_ExistingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Video_ExistingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_video_existing(inputs)
+	if (locale === "cs") return __cs.compose_video_existing(inputs)
+	return __en.compose_video_existing(inputs)
 });
 /**
 * | output |

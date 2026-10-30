@@ -17,12 +17,17 @@
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{}} Compose_Edit_Queue_NoteInputs */
+/** @typedef {{}} Compose_Edit_Review_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_NoteInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
 /** @typedef {{}} Compose_Error_No_ChannelInputs */
+/** @typedef {{}} Compose_Error_Now_DraftInputs */
+/** @typedef {{}} Compose_Error_Post_ChangedInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
@@ -35,9 +40,21 @@
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Images_LimitInputs */
 /** @typedef {{}} Compose_Images_TitleInputs */
 /** @typedef {{}} Compose_InheritsInputs */
+/** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
+/** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Item_OrderInputs */
+/** @typedef {{}} Compose_Refused_Many_VideosInputs */
+/** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
+/** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Publish_TypeInputs */
+/** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
+/** @typedef {{}} Compose_Refused_Reply_MediaInputs */
+/** @typedef {{}} Compose_Refused_Rich_ContentInputs */
+/** @typedef {{}} Compose_Reload_PostInputs */
 /** @typedef {{}} Compose_Remove_CommentInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Remove_ReplyInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Reply_LabelInputs */
@@ -52,6 +69,7 @@
 /** @typedef {{}} Compose_Video_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Video_Alt_LabelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_Bad_TypeInputs */
+/** @typedef {{}} Compose_Video_ExistingInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Video_HintInputs */
 /** @typedef {{}} Compose_Video_LimitInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Video_PreviewInputs */
@@ -145,6 +163,18 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 	return /** @type {LocalizedString} */ (`Přizpůsobeno`)
 };
 
+export const compose_edit_queue_note = /** @type {(inputs: Compose_Edit_Queue_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložením se použijí nejbližší volné termíny ve frontě každého kanálu.`)
+};
+
+export const compose_edit_review_note = /** @type {(inputs: Compose_Edit_Review_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložením změněného obsahu se stáhne otevřená žádost o schválení.`)
+};
+
+export const compose_edit_series_note = /** @type {(inputs: Compose_Edit_Series_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Série koncept znovu naplánuje na svůj další termín.`)
+};
+
 export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Obrázek ${i?.position} je v tomto pracovním prostoru už označený jako vytvořený pomocí AI a toto označení zatím nejde odstranit. Pokud ho chcete zveřejnit, zaškrtněte „Obrázek ${i?.position} je vytvořený pomocí AI“, nebo použijte jiný obrázek.`)
 };
@@ -167,6 +197,14 @@ export const compose_error_fix = /** @type {(inputs: Compose_Error_FixInputs) =>
 
 export const compose_error_no_channel = /** @type {(inputs: Compose_Error_No_ChannelInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vyberte alespoň jeden kanál.`)
+};
+
+export const compose_error_now_draft = /** @type {(inputs: Compose_Error_Now_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek je teď koncept. Dalším uložením budete pokračovat.`)
+};
+
+export const compose_error_post_changed = /** @type {(inputs: Compose_Error_Post_ChangedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek se od otevření změnil. Načtěte ho znovu, abyste viděli nejnovější verzi; vaše úpravy zde se ztratí.`)
 };
 
 export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
@@ -225,6 +263,10 @@ export const compose_inherits = /** @type {(inputs: Compose_InheritsInputs) => L
 	return /** @type {LocalizedString} */ (`Používá obsah ze záložky Všechny kanály.`)
 };
 
+export const compose_keep_draft = /** @type {(inputs: Compose_Keep_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat jako koncept`)
+};
+
 export const compose_main_only = /** @type {(inputs: Compose_Main_OnlyInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel} zveřejní jen hlavní příspěvek.`)
 };
@@ -235,6 +277,50 @@ export const compose_media_exclusive = /** @type {(inputs: Compose_Media_Exclusi
 
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zatím nemáte připojený žádný kanál.`)
+};
+
+export const compose_refused_channel_twice = /** @type {(inputs: Compose_Refused_Channel_TwiceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože míří dvakrát do stejného kanálu.`)
+};
+
+export const compose_refused_channel_unavailable = /** @type {(inputs: Compose_Refused_Channel_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože jeden z jeho kanálů není dostupný.`)
+};
+
+export const compose_refused_item_order = /** @type {(inputs: Compose_Refused_Item_OrderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože jeho části jsou v pořadí, které editor neumí zobrazit.`)
+};
+
+export const compose_refused_many_videos = /** @type {(inputs: Compose_Refused_Many_VideosInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože má více než jedno video.`)
+};
+
+export const compose_refused_media_unavailable = /** @type {(inputs: Compose_Refused_Media_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože některá jeho média nejsou dostupná.`)
+};
+
+export const compose_refused_mixed_media = /** @type {(inputs: Compose_Refused_Mixed_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože má obrázky spolu s videem.`)
+};
+
+export const compose_refused_publish_type = /** @type {(inputs: Compose_Refused_Publish_TypeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože jeho typ zveřejnění není ten, který by zvolil editor.`)
+};
+
+export const compose_refused_repeated_media = /** @type {(inputs: Compose_Refused_Repeated_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože používá stejné médium dvakrát.`)
+};
+
+export const compose_refused_reply_media = /** @type {(inputs: Compose_Refused_Reply_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože odpověď nebo komentář obsahuje média.`)
+};
+
+export const compose_refused_rich_content = /** @type {(inputs: Compose_Refused_Rich_ContentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvek nejde upravit, protože text má formátování, které editor neumí zobrazit.`)
+};
+
+export const compose_reload_post = /** @type {(inputs: Compose_Reload_PostInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Znovu načíst příspěvek`)
 };
 
 export const compose_remove_comment = /** @type {(inputs: Compose_Remove_CommentInputs) => LocalizedString} */ () => {
@@ -291,6 +377,10 @@ export const compose_video_alt_label = /** @type {(inputs: Compose_Video_Alt_Lab
 
 export const compose_video_bad_type = /** @type {(inputs: Compose_Video_Bad_TypeInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.name}: přidat jde jen videa MP4, QuickTime a WebM.`)
+};
+
+export const compose_video_existing = /** @type {(inputs: Compose_Video_ExistingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Video, které už je v tomto příspěvku`)
 };
 
 export const compose_video_hint = /** @type {(inputs: Compose_Video_HintInputs) => LocalizedString} */ (i) => {

@@ -17,8 +17,9 @@ export type VideoPhase =
   | { readonly kind: 'error' };
 
 export interface VideoEntry {
-  readonly file: File;
-  readonly url: string;
+  readonly file: File | null;
+  readonly url: string | null;
+  readonly poster: string | null;
   readonly aiGenerated: boolean;
   readonly aiFailed: boolean;
   readonly phase: VideoPhase;
@@ -118,9 +119,9 @@ function newSlot(url: string, ai: boolean): Slot {
   return { controller: new AbortController(), url, ai, mediaId: null, marking: null, marked: null };
 }
 
-export function useVideos(workspaceId: string, inUse: readonly string[]) {
+export function useVideos(workspaceId: string, inUse: readonly string[], seed?: VideoRegistry) {
   const client = useApiClient();
-  const [entries, setEntries] = useState<VideoRegistry>(new Map());
+  const [entries, setEntries] = useState<VideoRegistry>(seed ?? new Map());
   const [slots] = useState(() => new Map<string, Slot>());
   const patch: Patch = (id, change) =>
     setEntries((current) => {
@@ -158,16 +159,15 @@ export function useVideos(workspaceId: string, inUse: readonly string[]) {
     const id = crypto.randomUUID();
     const slot = newSlot(URL.createObjectURL(file), false);
     const phase: VideoPhase = { kind: 'uploading', sent: 0, total: file.size };
-    setEntries((current) =>
-      new Map(current).set(id, { file, url: slot.url, aiGenerated: false, aiFailed: false, phase }),
-    );
+    const entry = { file, url: slot.url, poster: null, aiGenerated: false, aiFailed: false, phase };
+    setEntries((current) => new Map(current).set(id, entry));
     start(u, id, file, slot);
     return id;
   };
   const retry = (id: string) => {
     const entry = entries.get(id);
     const old = slots.get(id);
-    if (entry === undefined || old === undefined) return;
+    if (entry?.file === undefined || entry.file === null || old === undefined) return;
     old.controller.abort();
     patch(id, withPhase({ kind: 'uploading', sent: 0, total: entry.file.size }));
     start(u, id, entry.file, newSlot(old.url, entry.aiGenerated));
