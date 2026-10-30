@@ -17,11 +17,14 @@
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
 /** @typedef {{}} Compose_Edit_Queue_NoteInputs */
 /** @typedef {{}} Compose_Edit_Review_NoteInputs */
 /** @typedef {{}} Compose_Edit_Series_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
@@ -50,6 +53,7 @@
 /** @typedef {{}} Compose_Refused_Many_VideosInputs */
 /** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
 /** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Part_LiveInputs */
 /** @typedef {{}} Compose_Refused_Publish_TypeInputs */
 /** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
 /** @typedef {{}} Compose_Refused_Reply_MediaInputs */
@@ -159,6 +163,10 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 	return /** @type {LocalizedString} */ (`Customized`)
 };
 
+export const compose_edit_canceled_note = /** @type {(inputs: Compose_Edit_Canceled_NoteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Canceled on: ${i?.channels}. Saving a change removes these from the post; tick one to publish to it again.`)
+};
+
 export const compose_edit_queue_note = /** @type {(inputs: Compose_Edit_Queue_NoteInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Saving takes the next free slots in each channel's queue.`)
 };
@@ -168,7 +176,11 @@ export const compose_edit_review_note = /** @type {(inputs: Compose_Edit_Review_
 };
 
 export const compose_edit_series_note = /** @type {(inputs: Compose_Edit_Series_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The series schedules a draft again at its next time.`)
+	return /** @type {LocalizedString} */ (`The series schedules this draft at that time.`)
+};
+
+export const compose_edit_series_skip = /** @type {(inputs: Compose_Edit_Series_SkipInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keeping this as a draft skips this occurrence of the series.`)
 };
 
 export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
@@ -177,6 +189,10 @@ export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_Mark
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post needs an approval before it can be scheduled.`)
+};
+
+export const compose_error_channel_gone = /** @type {(inputs: Compose_Error_Channel_GoneInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`This post can't be saved because a channel it goes to is no longer available: ${i?.channels}.`)
 };
 
 export const compose_error_empty = /** @type {(inputs: Compose_Error_EmptyInputs) => LocalizedString} */ () => {
@@ -293,6 +309,10 @@ export const compose_refused_media_unavailable = /** @type {(inputs: Compose_Ref
 
 export const compose_refused_mixed_media = /** @type {(inputs: Compose_Refused_Mixed_MediaInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post can't be edited because it has images next to a video.`)
+};
+
+export const compose_refused_part_live = /** @type {(inputs: Compose_Refused_Part_LiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post can't be edited because a canceled destination is already live in part.`)
 };
 
 export const compose_refused_publish_type = /** @type {(inputs: Compose_Refused_Publish_TypeInputs) => LocalizedString} */ () => {

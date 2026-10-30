@@ -54,7 +54,7 @@ function input(text: string, extra: Partial<ComposeInput> = {}): ComposeInput {
   };
 }
 
-function harness(state: string, stub: Stub = () => undefined) {
+function harness(state: string, stub: Stub = () => undefined, fields: object = {}) {
   const sent: Sent[] = [];
   const client = createApiClient({
     baseUrl: 'http://kronaut.test',
@@ -75,7 +75,8 @@ function harness(state: string, stub: Stub = () => undefined) {
     },
   });
   const fingerprint = formFingerprint(input('Hello'));
-  const submit = createSubmitter(client, 'ws_1', { post: asPost(opened(state)), fingerprint });
+  const post = asPost({ ...opened(state), ...fields });
+  const submit = createSubmitter(client, 'ws_1', { post, fingerprint });
   return { sent, submit, lines: () => sent.map((call) => call.line) };
 }
 
@@ -160,6 +161,157 @@ describe('saving an opened post', () => {
       `POST ${POST_PATH}/schedule`,
     ]);
     expect(sent[2]?.body.expectedVersion).toBe(4);
+  });
+});
+
+describe('saving next to a canceled destination', () => {
+  const canceled = { accountId: 'acct_b', variant: null, state: 'canceled' };
+  const mixed = { destinations: [opened('draft').destinations[0], canceled] };
+  const own = input('Hello').destinations;
+  const ticked = [...own, { accountId: 'acct_b', publishType: 'post', variant: null }];
+
+  it('leaves it canceled while nothing changed, on Keep as draft too', async () => {
+    const { submit, lines } = harness('draft', undefined, mixed);
+    await submit(input('Hello', { when: { mode: 'draft' } }));
+    expect(lines()).toEqual([]);
+    await submit(input('Hello'));
+    expect(lines()).toEqual([`POST ${POST_PATH}/schedule`]);
+  });
+
+  it('removes it with a changed save', async () => {
+    const { submit, sent } = harness('draft', undefined, mixed);
+    await submit(input('Edited', { when: { mode: 'draft' } }));
+    expect(sent.map((call) => call.line)).toEqual([`PATCH ${POST_PATH}`]);
+    expect(sent[0]?.body.destinations).toMatchObject([{ accountId: 'acct_a' }]);
+  });
+
+  it('brings it back when ticked', async () => {
+    const { submit, sent } = harness('draft', undefined, mixed);
+    await submit(input('Hello', { destinations: ticked, when: { mode: 'draft' } }));
+    expect(sent.map((call) => call.line)).toEqual([`PATCH ${POST_PATH}`]);
+    expect(sent[0]?.body.destinations).toMatchObject([
+      { accountId: 'acct_a' },
+      { accountId: 'acct_b' },
+    ]);
+  });
+});
+
+describe('changing only the time of a scheduled post', () => {
+  const FIXED = {
+    scheduleMode: 'instant',
+    scheduleLocal: '2999-03-01T09:30:00',
+    scheduleTz: 'Europe/Vienna',
+  };
+  const at = (scheduleLocal: string): ComposeWhen => ({
+    mode: 'instant',
+    scheduleLocal,
+    scheduleTz: 'Europe/Vienna',
+  });
+  const moved = at('2999-03-02T10:45');
+  const note = { note: 'please' };
+  const outside = () => {
+    const details = [{ path: 'body.scheduleLocal', code: 'outside_approved_schedule' }];
+    const error = { code: 'unprocessable', message: '', details };
+    return Response.json({ error }, { status: 422 });
+  };
+  const refusing = ({ line }: Sent) => (line.endsWith('/reschedule') ? outside() : undefined);
+
+  it('writes nothing when nothing changed', async () => {
+    const { submit, lines } = harness('scheduled', undefined, FIXED);
+    await submit(input('Hello', { when: at('2999-03-01T09:30') }));
+    expect(lines()).toEqual([]);
+  });
+
+  it('writes nothing for an unchanged queue post', async () => {
+    const queued = { scheduleMode: 'local_per_destination' };
+    const { submit, lines } = harness('scheduled', undefined, queued);
+    await submit(input('Hello', { when: { mode: 'queue' } }));
+    expect(lines()).toEqual([]);
+  });
+
+  it('reschedules without unscheduling or requesting approval', async () => {
+    const { submit, sent } = harness('scheduled', undefined, FIXED);
+    await submit(input('Hello', { when: moved, request: note }));
+    expect(sent).toEqual([
+      {
+        line: `POST ${POST_PATH}/reschedule`,
+        body: {
+          expectedVersion: 3,
+          scheduleLocal: '2999-03-02T10:45',
+          scheduleTz: 'Europe/Vienna',
+        },
+      },
+    ]);
+  });
+
+  it('reschedules a queue post given a fixed time', async () => {
+    const queued = { scheduleMode: 'local_per_destination' };
+    const { submit, lines } = harness('scheduled', undefined, queued);
+    await submit(input('Hello', { when: moved }));
+    expect(lines()).toEqual([`POST ${POST_PATH}/reschedule`]);
+  });
+
+  it('keeps the unschedule flow when the content changed too', async () => {
+    const { submit, lines } = harness('scheduled', undefined, FIXED);
+    await submit(input('Edited', { when: moved }));
+    expect(lines()).toEqual([
+      `POST ${POST_PATH}/unschedule`,
+      `PATCH ${POST_PATH}`,
+      `POST ${POST_PATH}/schedule`,
+    ]);
+  });
+
+  it('surfaces a time outside the approved schedule, then runs the request from there', async () => {
+    const { submit, lines } = harness('scheduled', refusing, FIXED);
+    const error = await submit(input('Hello', { when: moved })).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ step: 'schedule', unscheduled: false });
+    expect(lines()).toEqual([`POST ${POST_PATH}/reschedule`]);
+
+    await submit(input('Hello', { when: moved, request: note }));
+    expect(lines().slice(1)).toEqual([
+      `POST ${POST_PATH}/unschedule`,
+      `POST ${POST_PATH}/approval-requests`,
+    ]);
+  });
+
+  it('tries a reschedule again for a different time', async () => {
+    const { submit, lines } = harness('scheduled', refusing, FIXED);
+    await submit(input('Hello', { when: moved })).catch(() => undefined);
+    const later = at('2999-03-03T10:45');
+    await submit(input('Hello', { when: later, request: note })).catch(() => undefined);
+    expect(lines()).toEqual([`POST ${POST_PATH}/reschedule`, `POST ${POST_PATH}/reschedule`]);
+  });
+});
+
+describe('keeping a draft after a schedule that may have committed', () => {
+  const timedOut = () =>
+    Response.json({ error: { code: 'unavailable', message: '' } }, { status: 503 });
+
+  it('reads the post first and unschedules what committed', async () => {
+    const { submit, sent, lines } = harness('draft', ({ line }) => {
+      if (line.endsWith('/schedule')) return timedOut();
+      return line.startsWith('GET') ? Response.json(opened('scheduled', 9)) : undefined;
+    });
+    await submit(input('Hello')).catch(() => undefined);
+    await submit(input('Hello', { when: { mode: 'draft' } }));
+    expect(lines()).toEqual([
+      `POST ${POST_PATH}/schedule`,
+      `GET ${POST_PATH}`,
+      `POST ${POST_PATH}/unschedule`,
+    ]);
+    expect(sent[2]?.body.expectedVersion).toBe(9);
+  });
+
+  it('reads only once, and not at all without a pending schedule', async () => {
+    const { submit, lines } = harness('draft', ({ line }) =>
+      line.endsWith('/schedule') ? timedOut() : undefined,
+    );
+    await submit(input('Hello', { when: { mode: 'draft' } }));
+    expect(lines()).toEqual([]);
+    await submit(input('Hello')).catch(() => undefined);
+    await submit(input('Hello', { when: { mode: 'draft' } }));
+    await submit(input('Hello', { when: { mode: 'draft' } }));
+    expect(lines()).toEqual([`POST ${POST_PATH}/schedule`, `GET ${POST_PATH}`]);
   });
 });
 

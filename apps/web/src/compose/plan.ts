@@ -1,5 +1,6 @@
 import type { Channel, Destination } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
+import { providerUi } from '../providers.ts';
 import { choiceFor } from './choice.ts';
 import { type Content, effective } from './contents.ts';
 import { isBlank } from './doc.ts';
@@ -44,6 +45,20 @@ export function toPlan(
     plan.destinations.push({ accountId: channel.id, publishType, variant, ...carried });
   }
   return { ...plan, usesDefault: plan.destinations.some((d) => d.variant === null) };
+}
+
+export function goneProblem(
+  stored: Kept,
+  list: readonly Channel[],
+  selected: ReadonlySet<string>,
+  locale: string,
+): string | null {
+  const gone = stored
+    .filter((d) => selected.has(d.accountId) && !list.some((c) => c.id === d.accountId))
+    .map((d) => providerUi(d.provider).name());
+  if (gone.length === 0) return null;
+  const channels = new Intl.ListFormat(locale).format(gone);
+  return composeText.compose_error_channel_gone({ channels });
 }
 
 export function isEmpty(content: Content): boolean {

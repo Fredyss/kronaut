@@ -19,11 +19,14 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
 /** @typedef {{}} Compose_Edit_Queue_NoteInputs */
 /** @typedef {{}} Compose_Edit_Review_NoteInputs */
 /** @typedef {{}} Compose_Edit_Series_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
@@ -52,6 +55,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Refused_Many_VideosInputs */
 /** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
 /** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Part_LiveInputs */
 /** @typedef {{}} Compose_Refused_Publish_TypeInputs */
 /** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
 /** @typedef {{}} Compose_Refused_Reply_MediaInputs */
@@ -360,6 +364,21 @@ export const compose_customized = /** @type {((inputs?: Compose_CustomizedInputs
 /**
 * | output |
 * | --- |
+* | "Canceled on: {channels}. Saving a change removes these from the post; tick one to publish to it again." |
+*
+* @param {Compose_Edit_Canceled_NoteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_edit_canceled_note = /** @type {((inputs: Compose_Edit_Canceled_NoteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Edit_Canceled_NoteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_edit_canceled_note(inputs)
+	if (locale === "cs") return __cs.compose_edit_canceled_note(inputs)
+	return __en.compose_edit_canceled_note(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Saving takes the next free slots in each channel's queue." |
 *
 * @param {Compose_Edit_Queue_NoteInputs} inputs
@@ -390,7 +409,7 @@ export const compose_edit_review_note = /** @type {((inputs?: Compose_Edit_Revie
 /**
 * | output |
 * | --- |
-* | "The series schedules a draft again at its next time." |
+* | "The series schedules this draft at that time." |
 *
 * @param {Compose_Edit_Series_NoteInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -401,6 +420,21 @@ export const compose_edit_series_note = /** @type {((inputs?: Compose_Edit_Serie
 	if (locale === "sk") return __sk.compose_edit_series_note(inputs)
 	if (locale === "cs") return __cs.compose_edit_series_note(inputs)
 	return __en.compose_edit_series_note(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keeping this as a draft skips this occurrence of the series." |
+*
+* @param {Compose_Edit_Series_SkipInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_edit_series_skip = /** @type {((inputs?: Compose_Edit_Series_SkipInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Edit_Series_SkipInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_edit_series_skip(inputs)
+	if (locale === "cs") return __cs.compose_edit_series_skip(inputs)
+	return __en.compose_edit_series_skip(inputs)
 });
 /**
 * | output |
@@ -431,6 +465,21 @@ export const compose_error_approval_required = /** @type {((inputs?: Compose_Err
 	if (locale === "sk") return __sk.compose_error_approval_required(inputs)
 	if (locale === "cs") return __cs.compose_error_approval_required(inputs)
 	return __en.compose_error_approval_required(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be saved because a channel it goes to is no longer available: {channels}." |
+*
+* @param {Compose_Error_Channel_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_channel_gone = /** @type {((inputs: Compose_Error_Channel_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Channel_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_channel_gone(inputs)
+	if (locale === "cs") return __cs.compose_error_channel_gone(inputs)
+	return __en.compose_error_channel_gone(inputs)
 });
 /**
 * | output |
@@ -853,6 +902,21 @@ export const compose_refused_mixed_media = /** @type {((inputs?: Compose_Refused
 	if (locale === "sk") return __sk.compose_refused_mixed_media(inputs)
 	if (locale === "cs") return __cs.compose_refused_mixed_media(inputs)
 	return __en.compose_refused_mixed_media(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This post can't be edited because a canceled destination is already live in part." |
+*
+* @param {Compose_Refused_Part_LiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_refused_part_live = /** @type {((inputs?: Compose_Refused_Part_LiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Refused_Part_LiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_refused_part_live(inputs)
+	if (locale === "cs") return __cs.compose_refused_part_live(inputs)
+	return __en.compose_refused_part_live(inputs)
 });
 /**
 * | output |

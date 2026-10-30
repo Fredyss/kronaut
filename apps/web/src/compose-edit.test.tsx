@@ -87,6 +87,18 @@ function start(
 
 const save = () => screen.findByRole('button', { name: 'Save draft' });
 
+const FIXED = {
+  scheduleMode: 'instant',
+  scheduleLocal: '2999-03-01T09:30:00',
+  scheduleTz: 'Europe/Vienna',
+};
+
+function outsideSchedule() {
+  const details = [{ path: 'body.scheduleLocal', code: 'outside_approved_schedule' }];
+  const error = { code: 'unprocessable', message: '', details };
+  return Response.json({ error }, { status: 422 });
+}
+
 function scheduledDraft(fields: Record<string, unknown>) {
   const destinations = draft().destinations.map((d) => ({ ...d, state: 'scheduled' }));
   return draft({ publishSummary: 'scheduled', destinations, ...fields });
@@ -171,12 +183,7 @@ describe('composer edit mode', () => {
   });
 
   it('shows that a failed save left the post a draft', async () => {
-    const scheduled = scheduledDraft({
-      scheduleMode: 'instant',
-      scheduleLocal: '2999-03-01T09:30:00',
-      scheduleTz: 'Europe/Vienna',
-    });
-    start(scheduled, (call) => {
+    start(scheduledDraft(FIXED), (call) => {
       if (call.path.endsWith('/unschedule')) return Response.json({ ...draft(), version: 5 });
       if (call.method !== 'PATCH') return undefined;
       return Response.json({ error: { code: 'unavailable', message: '' } }, { status: 503 });
@@ -188,10 +195,142 @@ describe('composer edit mode', () => {
     await screen.findByText('The post is now a draft. Saving again continues from there.');
   });
 
-  it('notes an open approval request and a series', async () => {
-    start(draft({ publishSummary: 'in_review', seriesId: 'ser_1' }));
+  it('says a conflict after the unschedule left the post a draft', async () => {
+    start(scheduledDraft(FIXED), (call) => {
+      if (call.path.endsWith('/unschedule')) return Response.json({ ...draft(), version: 5 });
+      if (call.method !== 'PATCH') return undefined;
+      return Response.json({ error: { code: 'version_conflict', message: '' } }, { status: 409 });
+    });
+    fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Mine' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Schedule' }));
+    await screen.findByText(/This post changed after you opened it/);
+    screen.getByText('The post is now a draft. Saving again continues from there.');
+  });
+
+  it('notes an open approval request and a series draft with a planned time', async () => {
+    start(
+      draft({
+        publishSummary: 'in_review',
+        seriesId: 'ser_1',
+        scheduleLocal: '2999-03-01T09:30:00',
+      }),
+    );
     await screen.findByText('Saving changed content withdraws the open approval request.');
-    await screen.findByText('The series schedules a draft again at its next time.');
+    await screen.findByText('The series schedules this draft at that time.');
+  });
+
+  it('adds no series line to a draft without a planned time', async () => {
+    start(draft({ seriesId: 'ser_1' }));
+    await screen.findByLabelText('Text');
+    expect(screen.queryByText(/series/)).toBeNull();
+  });
+
+  it('warns that a scheduled series post kept as a draft is skipped', async () => {
+    start(scheduledDraft({ ...FIXED, seriesId: 'ser_1' }));
+    await screen.findByLabelText('Text');
+    expect(screen.queryByText(/series/)).toBeNull();
+    fireEvent.click(await screen.findByRole('radio', { name: 'Keep as draft' }));
+    await screen.findByText(/skips this occurrence of the series/);
+  });
+
+  it('opens a canceled channel unticked, and a tick brings it back', async () => {
+    const [first, second] = draft().destinations;
+    const destinations = [first, { ...second, state: 'canceled' }];
+    const { mutations, router } = start(draft({ destinations }));
+    await screen.findByText(/Canceled on: Ada on Threads/);
+    const threads = (await screen.findByRole('checkbox', {
+      name: /Ada on Threads/,
+    })) as HTMLInputElement;
+    expect(threads.checked).toBe(false);
+    fireEvent.click(threads);
+    expect(screen.queryByText(/Canceled on/)).toBeNull();
+    fireEvent.click(await save());
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/posts/${POST_ID}`));
+    expect(mutations()[0]?.body).toMatchObject({
+      destinations: [{ accountId: 'acct_bsky' }, { accountId: 'acct_th' }],
+    });
+  });
+
+  it('blocks Save on a stored channel that stops working, until it is unticked', async () => {
+    const { queryClient, mutations } = start(draft());
+    await screen.findByLabelText('Text');
+    const [bluesky, threads] = CHANNELS;
+    queryClient.setQueryData(
+      ['channels', 'ws_1'],
+      [bluesky, { ...threads, status: 'disconnected' }],
+    );
+    const box = (await screen.findByRole('checkbox', {
+      name: /Ada on Threads/,
+    })) as HTMLInputElement;
+    await waitFor(async () => expect(((await save()) as HTMLButtonElement).disabled).toBe(true));
+    expect(box.checked).toBe(true);
+    expect(box.disabled).toBe(false);
+    fireEvent.click(box);
+    await waitFor(async () => expect(((await save()) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(await save());
+    await waitFor(() => expect(mutations().length).toBe(1));
+    expect(mutations()[0]?.body).toMatchObject({ destinations: [{ accountId: 'acct_bsky' }] });
+  });
+
+  it('blocks Save with an error when a stored channel is gone', async () => {
+    const { queryClient, mutations } = start(draft());
+    await screen.findByLabelText('Text');
+    queryClient.setQueryData(['channels', 'ws_1'], CHANNELS.slice(0, 1));
+    await screen.findByText(/a channel it goes to is no longer available: Instagram/);
+    expect(((await save()) as HTMLButtonElement).disabled).toBe(true);
+    expect(mutations()).toEqual([]);
+  });
+
+  it('moves a time-only change without an approval request', async () => {
+    const { mutations, router } = start(scheduledDraft(FIXED), (call) => {
+      if (call.path.endsWith('/approval-policy')) return Response.json(policy('required'));
+      return call.path.endsWith('/reschedule') ? Response.json(scheduledDraft(FIXED)) : undefined;
+    });
+    fireEvent.change(await screen.findByLabelText('Time'), { target: { value: '10:45' } });
+    fireEvent.click(await screen.findByRole('button', { name: 'Request approval' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe(`/posts/${POST_ID}`));
+    expect(mutations().map((call) => call.path)).toEqual([`${POST_PATH}/reschedule`]);
+  });
+
+  it('offers a request when the new time is outside the approved schedule', async () => {
+    const { mutations } = start(scheduledDraft(FIXED), (call) => {
+      if (call.path.endsWith('/reschedule')) return outsideSchedule();
+      if (!call.path.endsWith('/unschedule')) return undefined;
+      return Response.json({ ...draft(), version: 5 });
+    });
+    fireEvent.change(await screen.findByLabelText('Time'), { target: { value: '10:45' } });
+    fireEvent.click(await screen.findByRole('button', { name: 'Schedule' }));
+    await screen.findByText(/outside the approved window/);
+    fireEvent.click(await screen.findByRole('button', { name: 'Request approval' }));
+    await waitFor(() =>
+      expect(mutations().map((call) => call.path)).toEqual([
+        `${POST_PATH}/reschedule`,
+        `${POST_PATH}/unschedule`,
+        `${POST_PATH}/approval-requests`,
+      ]),
+    );
+  });
+
+  it('guards the page against leaving unsaved changes', async () => {
+    const { router } = start(draft());
+    fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Mine' } });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save draft' })).toBeDefined());
+    void router.navigate({ to: '/channels' });
+    await screen.findByRole('alertdialog');
+    fireEvent.click(screen.getByRole('button', { name: 'Keep editing' }));
+    await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
+    expect(router.state.location.pathname).toBe('/compose');
+    void router.navigate({ to: '/channels' });
+    fireEvent.click(await screen.findByRole('button', { name: 'Discard' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/channels'));
+  });
+
+  it('refuses a canceled destination that is live in part, with the reason', async () => {
+    const [first, second] = draft().destinations;
+    const live = { ...second, state: 'canceled', remoteUrl: 'https://threads.test/1' };
+    start(draft({ destinations: [first, live] }), undefined, `/posts/${POST_ID}`);
+    await screen.findByText(/a canceled destination is already live in part/);
+    expect(screen.queryByRole('link', { name: 'Edit' })).toBeNull();
   });
 
   it('opens a post scheduled per destination on the queue, with its note', async () => {
@@ -220,12 +359,7 @@ describe('composer edit mode', () => {
   });
 
   it('asks before closing after a time-only change', async () => {
-    const scheduled = scheduledDraft({
-      scheduleMode: 'instant',
-      scheduleLocal: '2999-03-01T09:30:00',
-      scheduleTz: 'Europe/Vienna',
-    });
-    start(scheduled, undefined, `/?compose=${POST_ID}`);
+    start(scheduledDraft(FIXED), undefined, `/?compose=${POST_ID}`);
     fireEvent.change(await screen.findByLabelText('Time'), { target: { value: '10:45' } });
     fireEvent.click(await screen.findByRole('button', { name: 'Close' }));
     await screen.findByRole('alertdialog');

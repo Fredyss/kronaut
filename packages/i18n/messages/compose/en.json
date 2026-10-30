@@ -96,7 +96,7 @@
   "compose_refused_repeated_media": "This post can't be edited because it uses the same media twice.",
   "compose_refused_media_unavailable": "This post can't be edited because some of its media isn't available.",
   "compose_refused_item_order": "This post can't be edited because its items are in an order the composer can't show.",
-  "compose_edit_series_note": "The series schedules a draft again at its next time.",
+  "compose_edit_series_note": "The series schedules this draft at that time.",
   "compose_refused_publish_type": "This post can't be edited because its publish type isn't the one the composer would choose.",
   "compose_refused_rich_content": "This post can't be edited because its text has formatting the composer can't show.",
   "compose_tabs_label": "Content for each channel",
@@ -116,5 +116,9 @@
   "compose_check_content": "Check the content for {channels}.",
   "compose_error_empty_channel": "Write some text or add an image for {channel}.",
   "compose_error_upload_channel": "Image {position} for {channel} couldn't be uploaded.",
-  "compose_error_approval_required": "This post needs an approval before it can be scheduled."
+  "compose_error_approval_required": "This post needs an approval before it can be scheduled.",
+  "compose_edit_series_skip": "Keeping this as a draft skips this occurrence of the series.",
+  "compose_edit_canceled_note": "Canceled on: {channels}. Saving a change removes these from the post; tick one to publish to it again.",
+  "compose_error_channel_gone": "This post can't be saved because a channel it goes to is no longer available: {channels}.",
+  "compose_refused_part_live": "This post can't be edited because a canceled destination is already live in part."
 }

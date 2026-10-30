@@ -4,7 +4,12 @@ import { type Channel, errorCode, errorDetails, errorStatus } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { destinationIndex, issueMessage } from './issues.ts';
-import { MarkedImageError, type SubmitError, type SubmitTarget } from './submit-error.ts';
+import {
+  MarkedImageError,
+  refusedForApproval,
+  type SubmitError,
+  type SubmitTarget,
+} from './submit-error.ts';
 
 const VARIANT_PATH = /(?:^|\.)variants\.(\d+)(?:\.|$)/;
 
@@ -31,6 +36,9 @@ function failureHeadline(error: SubmitError, nameOf: ChannelName): string {
     return composeText.compose_error_ai_marked({ position: (error.image?.index ?? 0) + 1 });
   }
   if (error.step === 'upload') return uploadHeadline(error, nameOf);
+  if (refusedForApproval(cause) && errorDetails(cause).length > 0) {
+    return m.approval_outside_schedule();
+  }
   if (errorDetails(cause).length > 0) return composeText.compose_error_fix();
   if (errorCode(cause) === 'approval_required')
     return composeText.compose_error_approval_required();
@@ -56,7 +64,7 @@ export function Failure({
   readonly channels: readonly Channel[];
   readonly onReload?: (() => void) | undefined;
 }) {
-  const details = errorDetails(error.cause);
+  const details = refusedForApproval(error.cause) ? [] : errorDetails(error.cause);
   const reason = uploadReason(error);
   const code = error.cause instanceof ApiRequestError ? error.cause.code : null;
   const changed = onReload !== undefined && code === 'version_conflict';
@@ -77,7 +85,7 @@ export function Failure({
         {changed ? composeText.compose_error_post_changed() : failureHeadline(error, nameOf)}
       </p>
       {reason === null ? null : <p>{reason}</p>}
-      {error.unscheduled && !changed ? <p>{composeText.compose_error_now_draft()}</p> : null}
+      {error.unscheduled ? <p>{composeText.compose_error_now_draft()}</p> : null}
       {changed ? (
         <div>
           <Button type="button" size="sm" variant="outline" onClick={onReload}>

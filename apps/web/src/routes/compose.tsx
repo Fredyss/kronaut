@@ -5,7 +5,9 @@ import { useEffect, useId, useState } from 'react';
 import { meQuery } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
+import { EditNotes } from '../compose/edit-notes.tsx';
 import { Failure } from '../compose/failure.tsx';
+import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
 import { type OpenedPostData, openedPostQuery } from '../compose/opened-post.ts';
 import { REPEAT_ROLES } from '../compose/repeat.ts';
 import {
@@ -13,16 +15,17 @@ import {
   type OpenedCompose,
   useComposeForm,
 } from '../compose/use-compose-form.ts';
-import { type Mode, submitLabel } from '../compose/when.ts';
+import { submitLabel } from '../compose/when.ts';
 import { ModeOption, WhenFieldset } from '../compose/when-fieldset.tsx';
 import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
-import { editableBy } from '../post-actions/permissions.ts';
+import { editableBy } from '../post-actions/post-editable.ts';
 
 export { PostEdit } from '../compose/post-edit.tsx';
 
 const route = getRouteApi('/app/compose');
+const NOT_STORED: ReadonlySet<string> = new Set();
 
 function SubmitRow({
   label,
@@ -62,20 +65,6 @@ export interface ComposeFormProps extends ComposeStart {
   readonly onReload?: (() => void) | undefined;
 }
 
-function EditNotes({ form, mode }: { readonly form: OpenedCompose; readonly mode: Mode }) {
-  const queued = form.form.when.mode === 'queue' && mode === 'queue';
-  const review = form.post.publishSummary === 'in_review';
-  const series = form.post.seriesId !== null;
-  if (!queued && !review && !series) return null;
-  return (
-    <div className="flex flex-col gap-1 text-muted-foreground text-sm">
-      {queued ? <p>{composeText.compose_edit_queue_note()}</p> : null}
-      {review ? <p>{composeText.compose_edit_review_note()}</p> : null}
-      {series ? <p>{composeText.compose_edit_series_note()}</p> : null}
-    </div>
-  );
-}
-
 type FormState = ReturnType<typeof useComposeForm>;
 
 function WhenSection({
@@ -109,7 +98,9 @@ function WhenSection({
           />
         }
       />
-      {opened === undefined ? null : <EditNotes form={opened} mode={when.mode} />}
+      {opened === undefined ? null : (
+        <EditNotes form={opened} mode={when.mode} selected={form.selected} />
+      )}
     </>
   );
 }
@@ -138,6 +129,7 @@ export function ComposeForm(props: ComposeFormProps) {
         failed={channels.isError}
         mediaFor={content.mediaFor}
         customized={(id) => content.contents.customized.has(id)}
+        stored={start.opened?.form.stored ?? NOT_STORED}
         selected={selected}
         setSelected={setSelected}
         pending={pending}
@@ -198,6 +190,27 @@ export function EditForm({ postId, ...form }: EditFormProps) {
   );
 }
 
+function GuardedEdit({ workspaceId, role, postId }: Omit<EditFormProps, 'onDone'>) {
+  const navigate = useNavigate();
+  const guard = useLeaveGuard(() => {
+    void navigate({ to: '/posts/$postId', params: { postId } });
+  });
+  return (
+    <div className="relative">
+      <div inert={guard.prompt}>
+        <EditForm
+          workspaceId={workspaceId}
+          role={role}
+          postId={postId}
+          onDone={guard.leave}
+          onDirtyChange={guard.setDirty}
+        />
+      </div>
+      {guard.prompt ? <Discard onKeep={guard.keep} onDiscard={guard.leave} /> : null}
+    </div>
+  );
+}
+
 export function ComposePage() {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
@@ -215,7 +228,7 @@ export function ComposePage() {
       {workspace === undefined ? null : post === undefined ? (
         <ComposeForm workspaceId={workspace.id} at={at} tz={tz} role={workspace.role} />
       ) : (
-        <EditForm workspaceId={workspace.id} role={workspace.role} postId={post} />
+        <GuardedEdit workspaceId={workspace.id} role={workspace.role} postId={post} />
       )}
     </section>
   );

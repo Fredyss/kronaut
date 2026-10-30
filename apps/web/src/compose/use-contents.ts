@@ -71,6 +71,8 @@ export function useContents(
       selected.has(channel.id) &&
       (choiceOf(channel).kind === 'ok' || contents.customized.has(channel.id)),
   );
+  const stored = seed?.stored;
+  const keeps = (id: string) => contents.customized.has(id) || stored?.has(id) === true;
   const shown = active !== null && tabs.some((channel) => channel.id === active) ? active : null;
   if (shown !== active) setActive(shown);
   const target = shown !== null && contents.customized.has(shown) ? shown : null;
@@ -98,7 +100,10 @@ export function useContents(
     videos: videos.entries,
     mediaFor,
     choiceOf,
-    unusable: tabs.filter((channel) => choiceOf(channel).kind !== 'ok').map(({ id }) => id),
+    unusable: list
+      .filter(({ id }) => selected.has(id) && keeps(id))
+      .filter((channel) => choiceOf(channel).kind !== 'ok')
+      .map(({ id }) => id),
   };
 }
 

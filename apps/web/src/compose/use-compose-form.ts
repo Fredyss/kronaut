@@ -1,18 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
-import { type Channel, channelsQuery, errorCode, type Post, postKey, postsKey } from '../api.ts';
+import { type Channel, channelsQuery, type Post, postKey, postsKey } from '../api.ts';
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
 import { useApiClient, useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import { formFingerprint } from './draft-body.ts';
 import type { OpenedForm } from './from-post.ts';
 import { useOpenedWhen } from './opened-when.ts';
-import { emptyProblem, isEmpty, type Plan, planInput, toPlan, videoProblem } from './plan.ts';
+import {
+  emptyProblem,
+  goneProblem,
+  isEmpty,
+  type Plan,
+  planInput,
+  toPlan,
+  videoProblem,
+} from './plan.ts';
 import { useQueueChoice } from './queue-choice.ts';
 import { type RepeatControl, useRepeatControl } from './repeat.ts';
 import { type ComposeInput, createSubmitter, type OpenedPost } from './submit.ts';
-import { SubmitError } from './submit-error.ts';
+import { refusedForApproval, SubmitError } from './submit-error.ts';
 import { useContents } from './use-contents.ts';
 import { resolveWhen, type WhenState } from './when.ts';
 
@@ -58,8 +66,7 @@ function useApprovalMode(workspaceId: string, failure: SubmitError | null) {
   const [forced, setForced] = useState(false);
   const [note, setNote] = useState('');
   const request = forced || approvalRequired(policy.data, null);
-  const offer =
-    !request && failure?.step === 'schedule' && errorCode(failure.cause) === 'approval_required';
+  const offer = !request && failure?.step === 'schedule' && refusedForApproval(failure.cause);
   return { request, offer, force: () => setForced(true), note: { value: note, set: setNote } };
 }
 
@@ -122,7 +129,9 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const pending = run.isPending;
   const { locale } = useLocale();
   const flagged = [...limitFlags, ...content.unusable];
-  const blocked = flagged.length > 0;
+  const stored = opened?.post.destinations ?? [];
+  const gone = goneProblem(stored, list, selected, locale);
+  const blocked = flagged.length > 0 || gone !== null;
   const queue = usePlanQueue(workspaceId, list, plan);
   const requesting = approval.request && when.mode !== 'draft';
 
@@ -161,7 +170,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     setSelected,
     when,
     repeat,
-    formError,
+    formError: gone ?? formError,
     blocked,
     flagged,
     setLimitFlags,

@@ -200,5 +200,5 @@ export function mount(override: Override = () => undefined, url = '/compose') {
   });
   const { router, queryClient } = createApp(client, createMemoryHistory({ initialEntries: [url] }));
   render(<App router={router} queryClient={queryClient} client={client} />);
-  return { router, calls, mutations: () => calls.filter((c) => c.method !== 'GET') };
+  return { router, queryClient, calls, mutations: () => calls.filter((c) => c.method !== 'GET') };
 }

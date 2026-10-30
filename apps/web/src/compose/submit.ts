@@ -2,10 +2,8 @@ import {
   type Client,
   type PostsCreateData,
   postsCreate,
-  postsGet,
   postsRequestApproval,
   postsSchedule,
-  postsUnschedule,
   postsUpdate,
 } from '@kronaut/sdk';
 import { type Destination, errorStatus, type Post } from '../api.ts';
@@ -16,6 +14,7 @@ import type { Doc } from './doc.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';
 import { SubmitError, type SubmitTarget } from './submit-error.ts';
 import { type UploadCache, uploadMedia } from './submit-media.ts';
+import { isScheduled, moveOpened, refresh, settlePending, unschedule } from './submit-opened.ts';
 
 export interface ComposeImage {
   readonly id: string;
@@ -82,7 +81,7 @@ export interface OpenedPost {
   readonly fingerprint: string;
 }
 
-interface Submitter {
+export interface Submitter {
   readonly client: Client;
   readonly workspaceId: string;
   readonly uploads: UploadCache;
@@ -93,43 +92,16 @@ interface Submitter {
   unschedule: Keyed | null;
   unscheduled: boolean;
   schedule: Keyed | null;
+  refusedMove: string | null;
   stale: boolean;
-}
-
-async function unschedule(
-  s: Submitter,
-  post: Post,
-  accounts: readonly SubmitTarget[],
-): Promise<Post> {
-  const body = { expectedVersion: post.version };
-  s.unschedule = keyFor(s.unschedule, JSON.stringify({ postId: post.id, body }));
-  try {
-    const { data } = await postsUnschedule({
-      client: s.client,
-      path: { workspaceId: s.workspaceId, postId: post.id },
-      body,
-      headers: idempotency(s.unschedule),
-    });
-    s.unschedule = null;
-    s.unscheduled = true;
-    return data;
-  } catch (error) {
-    throw new SubmitError('unschedule', error, accounts);
-  }
-}
-
-function isScheduled(post: Post): boolean {
-  return post.destinations.some((destination) => destination.state === 'scheduled');
 }
 
 async function ensureDraft(
   s: Submitter,
-  input: ComposeInput,
+  next: NextDraft,
   accounts: readonly SubmitTarget[],
 ): Promise<Post> {
-  const body = draftBody(input, await uploadMedia(s, input, accounts));
-  const fingerprint = JSON.stringify(body);
-  const next = { body, fingerprint };
+  const { body, fingerprint } = next;
   if (s.opened && s.draft !== null && isScheduled(s.draft.post)) {
     s.draft.post = await unschedule(s, s.draft.post, accounts);
   }
@@ -207,15 +179,6 @@ async function updateDraft(
   }
 }
 
-async function refresh(s: Submitter, post: Post): Promise<Post> {
-  const { data } = await postsGet({
-    client: s.client,
-    path: { workspaceId: s.workspaceId, postId: post.id },
-  });
-  s.stale = false;
-  return data;
-}
-
 async function finish(
   s: Submitter,
   post: Post,
@@ -237,8 +200,13 @@ async function finish(
 
 async function publish(s: Submitter, input: ComposeInput): Promise<Post> {
   const accounts = input.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
-  let post = await ensureDraft(s, input, accounts);
+  const body = draftBody(input, await uploadMedia(s, input, accounts));
+  const next = { body, fingerprint: JSON.stringify(body) };
   const { when } = input;
+  await settlePending(s, when, accounts);
+  const moved = await moveOpened(s, input, next.fingerprint, accounts);
+  if (moved !== null) return moved;
+  let post = await ensureDraft(s, next, accounts);
   if (when.mode === 'draft') return post;
   const posted = post.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
   try {
@@ -255,9 +223,9 @@ async function publish(s: Submitter, input: ComposeInput): Promise<Post> {
   }
 }
 
-// A canceled destination only returns to draft through a PATCH, and schedule skips it otherwise.
+// A post canceled everywhere only returns to draft through a PATCH, and schedule skips it otherwise.
 function openedDraft({ post, fingerprint }: OpenedPost) {
-  const canceled = post.destinations.some((destination) => destination.state === 'canceled');
+  const canceled = post.destinations.every((destination) => destination.state === 'canceled');
   return { fingerprint: canceled ? '' : fingerprint, post };
 }
 
@@ -273,6 +241,7 @@ export function createSubmitter(client: Client, workspaceId: string, opened?: Op
     unschedule: null,
     unscheduled: false,
     schedule: null,
+    refusedMove: null,
     stale: false,
   };
 

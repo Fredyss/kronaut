@@ -13,7 +13,8 @@ import { createPortal } from 'react-dom';
 import { ANALYTICS_ROLES, type PostSummary } from '../api.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
-import { canDelete, canDuplicate, editableBy } from '../post-actions/permissions.ts';
+import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
+import { editableBy } from '../post-actions/post-editable.ts';
 import { MoreIcon } from './icons.tsx';
 
 export type EntryDialog = 'preview' | 'delete';

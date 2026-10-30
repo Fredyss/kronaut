@@ -104,7 +104,7 @@
   "compose_refused_repeated_media": "Príspevok sa nedá upraviť, pretože používa to isté médium dvakrát.",
   "compose_refused_media_unavailable": "Príspevok sa nedá upraviť, pretože niektoré jeho médiá nie sú dostupné.",
   "compose_refused_item_order": "Príspevok sa nedá upraviť, pretože jeho časti sú v poradí, ktoré editor nevie zobraziť.",
-  "compose_edit_series_note": "Séria koncept znova naplánuje na svoj ďalší termín.",
+  "compose_edit_series_note": "Séria tento koncept naplánuje na tento termín.",
   "compose_refused_publish_type": "Príspevok sa nedá upraviť, pretože jeho typ zverejnenia nie je ten, ktorý by zvolil editor.",
   "compose_refused_rich_content": "Príspevok sa nedá upraviť, pretože text má formátovanie, ktoré editor nevie zobraziť.",
   "compose_tabs_label": "Obsah pre jednotlivé kanály",
@@ -124,5 +124,9 @@
   "compose_check_content": "Skontrolujte obsah pre {channels}.",
   "compose_error_empty_channel": "Pre {channel} napíšte text alebo pridajte obrázok.",
   "compose_error_upload_channel": "Obrázok {position} pre {channel} sa nepodarilo nahrať.",
-  "compose_error_approval_required": "Príspevok treba pred naplánovaním schváliť."
+  "compose_error_approval_required": "Príspevok treba pred naplánovaním schváliť.",
+  "compose_edit_series_skip": "Ak príspevok ponecháte ako koncept, tento výskyt série sa preskočí.",
+  "compose_edit_canceled_note": "Zrušené pre: {channels}. Uložením zmeny sa z príspevku odstránia; zaškrtnutím na kanál znova publikujete.",
+  "compose_error_channel_gone": "Príspevok sa nedá uložiť, pretože jeden z jeho kanálov už nie je dostupný: {channels}.",
+  "compose_refused_part_live": "Príspevok sa nedá upraviť, pretože zrušené umiestnenie je už čiastočne zverejnené."
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Channel, Post } from '../api.ts';
-import { editableBy } from '../post-actions/permissions.ts';
+import { editableBy } from '../post-actions/post-editable.ts';
 import type { MediaAsset } from '../post-actions/post-media.ts';
 import { effective } from './contents.ts';
 import { docParagraphs } from './doc.ts';
@@ -216,9 +216,38 @@ describe('fromPost', () => {
   });
 });
 
+describe('canceled destinations', () => {
+  const canceled = (accountId: string, publishType = 'post') =>
+    destination(accountId, null, publishType, 'canceled');
+
+  it('opens one next to other destinations unticked, without its channel checks', () => {
+    const destinations = [destination('acct_a'), canceled('acct_b', 'reel'), canceled('acct_gone')];
+    const result = form(open({ destinations }));
+    expect([...result.selected]).toEqual(['acct_a']);
+    expect(result.canceled).toEqual(['acct_b', 'acct_gone']);
+    expect([...result.stored]).toEqual(['acct_a', 'acct_b', 'acct_gone']);
+  });
+
+  it('opens a post canceled everywhere ticked, with its channel checks', () => {
+    const everywhere = [canceled('acct_a'), canceled('acct_b')];
+    const result = form(open({ destinations: everywhere }));
+    expect([...result.selected]).toEqual(['acct_a', 'acct_b']);
+    expect(result.canceled).toEqual([]);
+    const gone = open({ destinations: [canceled('acct_a'), canceled('acct_gone')] });
+    expect(gone).toEqual({ ok: false, reason: 'channel_unavailable' });
+  });
+});
+
 describe('editableBy', () => {
   const states = (...list: readonly string[]) => ({
-    destinations: list.map((state) => ({ state })),
+    destinations: list.map((state) => ({ state, remoteUrl: null, publishedAt: null })),
+  });
+
+  it('refuses a canceled destination that is live in part', () => {
+    const live = { state: 'canceled', remoteUrl: 'https://x.test/1', publishedAt: null };
+    const dated = { state: 'canceled', remoteUrl: null, publishedAt: '2026-10-24T08:00:00.000Z' };
+    expect(editableBy('owner', { destinations: [live] })).toBe(false);
+    expect(editableBy('owner', { destinations: [dated] })).toBe(false);
   });
 
   it('needs a destination, all draft, canceled or scheduled', () => {

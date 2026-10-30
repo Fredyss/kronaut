@@ -5,6 +5,7 @@ import { channelsQuery, type Post } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
+import { canceledLive } from '../post-actions/post-editable.ts';
 import { postMediaQuery } from '../post-actions/post-media.ts';
 import { fromPost, type Refusal } from './from-post.ts';
 
@@ -43,6 +44,11 @@ export function PostEdit({
   const client = useApiClient();
   const channels = useQuery(channelsQuery(client, workspaceId)).data;
   const assets = useQuery(postMediaQuery(client, workspaceId, post)).data;
+  if (canceledLive(post)) {
+    return (
+      <p className="text-muted-foreground text-sm">{composeText.compose_refused_part_live()}</p>
+    );
+  }
   if (channels === undefined || assets === undefined) return null;
   const byId = new Map(assets.map((asset) => [asset.id, asset]));
   const result = fromPost(post, byId, channels);

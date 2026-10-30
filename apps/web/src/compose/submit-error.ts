@@ -1,3 +1,5 @@
+import { detailCodes, errorCode } from '../api.ts';
+
 export interface SubmitTarget {
   readonly accountId: string;
   readonly variant: number | null;
@@ -9,6 +11,11 @@ export interface FailedImage {
 }
 
 export type SubmitStep = 'upload' | 'unschedule' | 'create' | 'update' | 'schedule' | 'request';
+
+export function refusedForApproval(error: unknown): boolean {
+  if (errorCode(error) === 'approval_required') return true;
+  return detailCodes(error).includes('outside_approved_schedule');
+}
 
 export class MarkedImageError extends Error {
   constructor() {

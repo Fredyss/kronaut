@@ -17,11 +17,14 @@
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
 /** @typedef {{}} Compose_Edit_Queue_NoteInputs */
 /** @typedef {{}} Compose_Edit_Review_NoteInputs */
 /** @typedef {{}} Compose_Edit_Series_NoteInputs */
+/** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
 /** @typedef {{}} Compose_Error_FixInputs */
@@ -50,6 +53,7 @@
 /** @typedef {{}} Compose_Refused_Many_VideosInputs */
 /** @typedef {{}} Compose_Refused_Media_UnavailableInputs */
 /** @typedef {{}} Compose_Refused_Mixed_MediaInputs */
+/** @typedef {{}} Compose_Refused_Part_LiveInputs */
 /** @typedef {{}} Compose_Refused_Publish_TypeInputs */
 /** @typedef {{}} Compose_Refused_Repeated_MediaInputs */
 /** @typedef {{}} Compose_Refused_Reply_MediaInputs */
@@ -163,6 +167,10 @@ export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) 
 	return /** @type {LocalizedString} */ (`Prispôsobené`)
 };
 
+export const compose_edit_canceled_note = /** @type {(inputs: Compose_Edit_Canceled_NoteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Zrušené pre: ${i?.channels}. Uložením zmeny sa z príspevku odstránia; zaškrtnutím na kanál znova publikujete.`)
+};
+
 export const compose_edit_queue_note = /** @type {(inputs: Compose_Edit_Queue_NoteInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Uložením sa použijú najbližšie voľné termíny vo fronte každého kanála.`)
 };
@@ -172,7 +180,11 @@ export const compose_edit_review_note = /** @type {(inputs: Compose_Edit_Review_
 };
 
 export const compose_edit_series_note = /** @type {(inputs: Compose_Edit_Series_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Séria koncept znova naplánuje na svoj ďalší termín.`)
+	return /** @type {LocalizedString} */ (`Séria tento koncept naplánuje na tento termín.`)
+};
+
+export const compose_edit_series_skip = /** @type {(inputs: Compose_Edit_Series_SkipInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ak príspevok ponecháte ako koncept, tento výskyt série sa preskočí.`)
 };
 
 export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_MarkedInputs) => LocalizedString} */ (i) => {
@@ -181,6 +193,10 @@ export const compose_error_ai_marked = /** @type {(inputs: Compose_Error_Ai_Mark
 
 export const compose_error_approval_required = /** @type {(inputs: Compose_Error_Approval_RequiredInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Príspevok treba pred naplánovaním schváliť.`)
+};
+
+export const compose_error_channel_gone = /** @type {(inputs: Compose_Error_Channel_GoneInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Príspevok sa nedá uložiť, pretože jeden z jeho kanálov už nie je dostupný: ${i?.channels}.`)
 };
 
 export const compose_error_empty = /** @type {(inputs: Compose_Error_EmptyInputs) => LocalizedString} */ () => {
@@ -301,6 +317,10 @@ export const compose_refused_media_unavailable = /** @type {(inputs: Compose_Ref
 
 export const compose_refused_mixed_media = /** @type {(inputs: Compose_Refused_Mixed_MediaInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Príspevok sa nedá upraviť, pretože má obrázky spolu s videom.`)
+};
+
+export const compose_refused_part_live = /** @type {(inputs: Compose_Refused_Part_LiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevok sa nedá upraviť, pretože zrušené umiestnenie je už čiastočne zverejnené.`)
 };
 
 export const compose_refused_publish_type = /** @type {(inputs: Compose_Refused_Publish_TypeInputs) => LocalizedString} */ () => {

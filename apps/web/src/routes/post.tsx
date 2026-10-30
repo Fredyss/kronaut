@@ -19,7 +19,7 @@ import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
-import { editableBy } from '../post-actions/permissions.ts';
+import { canceledLive, editableBy } from '../post-actions/post-editable.ts';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
 import { providerUi } from '../providers.ts';
@@ -170,7 +170,7 @@ function PostStatus({
           <span className="text-muted-foreground text-sm">{scheduleLine(data, format)}</span>
         )}
       </div>
-      {editableBy(role, data) ? (
+      {editableBy(role, data) || canceledLive(data) ? (
         <Suspense fallback={null}>
           <PostEdit workspaceId={workspaceId} post={data} />
         </Suspense>

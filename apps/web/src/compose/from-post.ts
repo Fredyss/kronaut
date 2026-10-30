@@ -22,6 +22,8 @@ export type Refusal =
 export interface OpenedForm {
   readonly contents: Contents;
   readonly selected: ReadonlySet<string>;
+  readonly canceled: readonly string[];
+  readonly stored: ReadonlySet<string>;
   readonly videos: VideoRegistry;
   readonly when: WhenStart;
 }
@@ -107,6 +109,11 @@ function toContents(post: Post, assets: Assets): Contents | Refusal {
   return { base, customized };
 }
 
+function sentDestinations({ destinations }: Post) {
+  const active = destinations.filter((destination) => destination.state !== 'canceled');
+  return active.length > 0 ? active : destinations;
+}
+
 function destinationProblem(
   post: Post,
   channels: readonly Channel[],
@@ -114,7 +121,7 @@ function destinationProblem(
 ): Refusal | null {
   const accounts = post.destinations.map((destination) => destination.accountId);
   if (new Set(accounts).size !== accounts.length) return 'channel_twice';
-  for (const { accountId, publishType } of post.destinations) {
+  for (const { accountId, publishType } of sentDestinations(post)) {
     const channel = channels.find((candidate) => candidate.id === accountId);
     if (channel === undefined) return 'channel_unavailable';
     const { images, video } = effective(contents, accountId);
@@ -163,9 +170,13 @@ export function fromPost(post: Post, assets: Assets, channels: readonly Channel[
   if (typeof contents === 'string') return { ok: false, reason: contents };
   const problem = destinationProblem(post, channels, contents);
   if (problem !== null) return { ok: false, reason: problem };
+  const accounts = post.destinations.map((destination) => destination.accountId);
+  const sent = new Set(sentDestinations(post).map((destination) => destination.accountId));
   const form = {
     contents,
-    selected: new Set(post.destinations.map((destination) => destination.accountId)),
+    selected: sent,
+    canceled: accounts.filter((accountId) => !sent.has(accountId)),
+    stored: new Set(accounts),
     videos: toVideos(assets, contents),
     when: startWhen(post),
   };
