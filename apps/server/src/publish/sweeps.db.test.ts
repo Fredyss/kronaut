@@ -4,7 +4,6 @@ import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { enqueuePublish } from '../jobs.ts';
 import { reapLeases, sweepDue } from './sweeps.ts';
-import type { Seeded } from './testing.ts';
 import {
   audits,
   CLI,
@@ -21,7 +20,8 @@ import {
   strand,
   updateDestination,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import type { Seeded } from './testing.ts';
 
 let test: TestDatabase;
 

@@ -6,6 +6,7 @@ import {
   findCycles,
   type ImportGraph,
   isTesting,
+  misplacedTests,
   repoImportGraph,
   routeImports,
   testingLeaks,
@@ -35,6 +36,10 @@ describe('repo structure', () => {
 
   it('keeps route files out of imports between features', () => {
     expect(routeImports(graph)).toEqual([]);
+  });
+
+  it('keeps tests beside their code and one name for testing helpers', () => {
+    expect(misplacedTests(graph)).toEqual([]);
   });
 
   it('matches the declared imports between features', () => {
@@ -126,10 +131,34 @@ describe('the structure rules', () => {
     'apps/server/src/publish/testing-fake.ts',
     'apps/server/src/testing/fake.ts',
     'apps/web/src/compose-testing.tsx',
+    'apps/web/src/compose/grid.testing.ts',
+    'apps/web/src/compose/grid_testing.ts',
     'apps/web/src/calendar.test.tsx',
     '@kronaut/db/testing',
   ])('treats %s as testing code', (path) => {
     expect(isTesting(path)).toBe(true);
+  });
+
+  it('flags root tests with no subject and helpers named any other way', () => {
+    const files = [
+      'apps/web/src/theme.tsx',
+      'apps/web/src/theme.test.tsx',
+      'apps/server/src/config.ts',
+      'apps/server/src/config.db.test.ts',
+      'apps/web/src/compose.test.tsx',
+      'apps/web/src/compose/form.test.tsx',
+      'apps/server/src/posts/testing.ts',
+      'apps/server/src/publish/testing/fake.ts',
+      'apps/web/src/compose/testing.tsx',
+      'apps/server/src/media/db-testing.ts',
+      'apps/server/src/publish/testing-fake.ts',
+    ];
+    const graph: ImportGraph = new Map(files.map((file) => [file, []]));
+    expect(misplacedTests(graph)).toEqual([
+      'apps/web/src/compose.test.tsx',
+      'apps/server/src/media/db-testing.ts',
+      'apps/server/src/publish/testing-fake.ts',
+    ]);
   });
 
   it('flags a production file that imports testing code', () => {

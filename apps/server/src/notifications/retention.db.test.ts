@@ -6,7 +6,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CRON_TASKS, cronTaskList } from '../cron.ts';
-import { idleMediaGc } from '../media/db-testing.ts';
+import { idleMediaGc } from '../media/testing/db.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
 import { NOTIFICATION_RETENTION_DAYS, purgeNotifications } from './retention.ts';
 

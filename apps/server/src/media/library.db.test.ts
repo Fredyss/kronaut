@@ -10,6 +10,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { expectError } from '../http/testing.ts';
 import type { ResolvedItem } from '../posts/items.ts';
 import { insertVariant } from '../posts/variants.ts';
+import { collectMedia } from './gc.ts';
+import { ingestImage, prepareImage } from './ingest.ts';
+import { removeIfUnreferenced } from './key-lock.ts';
+import { mediaClearAiRoute, mediaListRoute, mediaUsageRoute } from './library-routes.ts';
+import { finishMedia, StoredObjectMissing } from './process-finish.ts';
+import { createStaging } from './staging.ts';
 import {
   asUser,
   MEDIA_BASE,
@@ -18,13 +24,7 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './db-testing.ts';
-import { collectMedia } from './gc.ts';
-import { ingestImage, prepareImage } from './ingest.ts';
-import { removeIfUnreferenced } from './key-lock.ts';
-import { mediaClearAiRoute, mediaListRoute, mediaUsageRoute } from './library-routes.ts';
-import { finishMedia, StoredObjectMissing } from './process-finish.ts';
-import { createStaging } from './staging.ts';
+} from './testing/db.ts';
 import { jpegFixture, pngFixture } from './testing.ts';
 
 let test: TestDatabase;

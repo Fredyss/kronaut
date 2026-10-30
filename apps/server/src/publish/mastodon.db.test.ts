@@ -9,7 +9,6 @@ import { refreshCapabilities } from '../channels/capabilities-refresh.ts';
 import { createProviderRegistry } from '../providers.ts';
 import type { PublishDeps } from './task.ts';
 import { runPublish } from './task.ts';
-import type { Seeded } from './testing.ts';
 import {
   CLI,
   deps as fakeDeps,
@@ -22,7 +21,8 @@ import {
   updateDestination,
   verifyRunAt,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import type { Seeded } from './testing.ts';
 import { runVerify } from './verify.ts';
 
 const HOST = 'social.example.test';

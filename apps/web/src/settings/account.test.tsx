@@ -14,9 +14,9 @@ import {
 } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { App, createApp } from './app.tsx';
-import { useLocaleChoice } from './locale-choice.ts';
-import { chooseTheme } from './theme.tsx';
+import { App, createApp } from '../app.tsx';
+import { useLocaleChoice } from '../locale-choice.ts';
+import { chooseTheme } from '../theme.tsx';
 
 afterEach(() => {
   cleanup();

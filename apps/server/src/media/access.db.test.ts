@@ -4,6 +4,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import type { MediaStore } from '@kronaut/media';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createMediaAccess } from './access.ts';
+import { createMediaServer } from './server.ts';
 import {
   asUser,
   clock,
@@ -13,8 +14,7 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './db-testing.ts';
-import { createMediaServer } from './server.ts';
+} from './testing/db.ts';
 import { jpegFixture, pngFixture } from './testing.ts';
 
 let test: TestDatabase;

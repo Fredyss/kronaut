@@ -33,7 +33,7 @@ import {
   stopPosts,
   TZ,
 } from '../posts/testing.ts';
-import { FAKE_TEXT_MAX } from '../publish/testing-fake.ts';
+import { FAKE_TEXT_MAX } from '../publish/testing/fake.ts';
 import { advanceSeries } from './advance.ts';
 
 const logger = pino({ level: 'silent' });

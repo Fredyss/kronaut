@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { channel, jpeg, MEDIA_ID, mount, type Override, pickFiles } from './compose-testing.tsx';
+import { channel, jpeg, MEDIA_ID, mount, type Override, pickFiles } from './testing.tsx';
 
-vi.mock('./compose/editor.tsx', async () => ({
-  default: (await import('./compose-testing.tsx')).MockEditor,
+vi.mock('./editor.tsx', async () => ({
+  default: (await import('./testing.tsx')).MockEditor,
 }));
 
 afterEach(() => {

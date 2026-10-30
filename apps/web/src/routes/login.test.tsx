@@ -3,8 +3,8 @@ import { createApiClient } from '@kronaut/sdk';
 import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { App, createApp } from './app.tsx';
-import { safeNext } from './next.ts';
+import { App, createApp } from '../app.tsx';
+import { safeNext } from '../next.ts';
 
 afterEach(cleanup);
 

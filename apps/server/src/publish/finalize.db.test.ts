@@ -3,7 +3,6 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { BACKOFF_BASE_MS } from './backoff.ts';
-import type { Seeded } from './testing.ts';
 import {
   audits,
   CLI,
@@ -17,7 +16,8 @@ import {
   startHarness,
   stopHarness,
   updateDestination,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import type { Seeded } from './testing.ts';
 
 let test: TestDatabase;
 

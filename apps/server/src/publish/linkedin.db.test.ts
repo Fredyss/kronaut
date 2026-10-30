@@ -9,7 +9,6 @@ import { sealAppSecret } from '../credential-store.ts';
 import { createProviderRegistry } from '../providers.ts';
 import type { PublishDeps } from './task.ts';
 import { runPublish } from './task.ts';
-import type { Seeded } from './testing.ts';
 import {
   CLI,
   deps as fakeDeps,
@@ -22,7 +21,8 @@ import {
   stopHarness,
   updateDestination,
   workspaceId,
-} from './testing-harness.ts';
+} from './testing/harness.ts';
+import type { Seeded } from './testing.ts';
 import { runVerify } from './verify.ts';
 
 const SUB = 'aB3_x-9Q';

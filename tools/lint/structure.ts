@@ -17,9 +17,11 @@ const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
 const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
 const ROUTE_FILE = /[/-]routes\.ts$/;
+const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
+const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
 
 export function isTesting(path: string): boolean {
-  return /\.test\.tsx?$|(^|[/-])testing([-./]|$)/.test(path);
+  return /\.test\.tsx?$|(^|[/._-])testing([-./_]|$)/.test(path);
 }
 
 export function valueImports(source: string): string[] {
@@ -91,6 +93,17 @@ export function testingLeaks(graph: ImportGraph): string[] {
       ? []
       : targets.filter(isTesting).map((target) => `${file} -> ${target}`),
   );
+}
+
+export function misplacedTests(graph: ImportGraph): string[] {
+  return [...graph.keys()].filter((file) => {
+    const [, subject] = SRC_ROOT_TEST.exec(file) ?? [];
+    if (subject !== undefined) {
+      const stem = join(dirname(file), subject);
+      return !graph.has(`${stem}.ts`) && !graph.has(`${stem}.tsx`);
+    }
+    return isTesting(file) && !file.includes('.test.') && !HELPER_NAME.test(file);
+  });
 }
 
 function featureFile(file: string): { feature: string; path: string } | undefined {

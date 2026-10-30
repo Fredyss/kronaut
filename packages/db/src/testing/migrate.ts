@@ -1,6 +1,6 @@
 import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
-import { loadMigrations } from './migrate.ts';
+import { loadMigrations } from '../migrate.ts';
 
 export async function createDatabaseIn(
   container: StartedPostgreSqlContainer,
