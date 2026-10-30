@@ -31,7 +31,13 @@ function reportFailure(error: unknown): void {
   if (errorStatus(error) !== 401) toast(tagError(error), 'destructive');
 }
 
-function useTagWrites(workspaceId: string, tagId: string) {
+function focusNeighbour(row: HTMLElement | null): void {
+  const sibling = row?.nextElementSibling ?? row?.previousElementSibling;
+  const target = sibling?.querySelector('button') ?? row?.closest<HTMLElement>('[tabindex="-1"]');
+  target?.focus();
+}
+
+function useTagWrites(workspaceId: string, tagId: string, onDeleted: () => void) {
   const client = useApiClient();
   const queryClient = useQueryClient();
   const path = { workspaceId, tagId };
@@ -54,22 +60,43 @@ function useTagWrites(workspaceId: string, tagId: string) {
       const headers = idempotency(keyFor(null, tagId));
       await tagsDelete({ client, path, headers });
     },
-    onSuccess: () => toast(settingsText.settings_tag_deleted()),
+    onSuccess: () => {
+      toast(settingsText.settings_tag_deleted());
+      onDeleted();
+    },
     onError: reportFailure,
     onSettled: settled,
   });
   return { update, remove };
 }
 
-function NameField({ tag, onRename }: { readonly tag: Tag; onRename(name: string): void }) {
+function NameField({
+  tag,
+  onRename,
+}: {
+  readonly tag: Tag;
+  onRename(name: string, onRefused: () => void): void;
+}) {
   const [name, setName] = useState(tag.name);
+  const [stored, setStored] = useState(tag.name);
+  const sent = useRef<string | null>(null);
+  if (stored !== tag.name) {
+    setStored(tag.name);
+    setName(tag.name);
+  }
   const commit = () => {
     const next = name.normalize('NFC').trim();
-    if (next === '' || next === tag.name) setName(tag.name);
-    else onRename(next);
+    if (next === '' || next === tag.name) return setName(tag.name);
+    if (next === sent.current) return;
+    sent.current = next;
+    setName(next);
+    onRename(next, () => {
+      sent.current = null;
+      setName(tag.name);
+    });
   };
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') event.currentTarget.blur();
+    if (event.key === 'Enter') commit();
   };
   return (
     <input
@@ -134,12 +161,16 @@ function DeleteTag({
 }
 
 function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; readonly tag: Tag }) {
-  const { update, remove } = useTagWrites(workspaceId, tag.id);
+  const row = useRef<HTMLLIElement>(null);
+  const { update, remove } = useTagWrites(workspaceId, tag.id, () => focusNeighbour(row.current));
   const [asking, setAsking] = useState(false);
   return (
-    <li className="flex flex-wrap items-center gap-3 px-6 py-3">
+    <li ref={row} className="flex flex-wrap items-center gap-3 px-6 py-3">
       <TagDots tags={[tag]} />
-      <NameField key={tag.name} tag={tag} onRename={(name) => update.mutate({ name })} />
+      <NameField
+        tag={tag}
+        onRename={(name, onRefused) => update.mutate({ name }, { onError: onRefused })}
+      />
       <select
         aria-label={settingsText.settings_tag_color_of({ name: tag.name })}
         value={tag.color}
@@ -232,9 +263,11 @@ export function TagSettingsPage() {
       title={settingsText.settings_tags_title()}
       intro={settingsText.settings_tags_intro()}
     >
-      {workspace === undefined ? null : (
-        <TagList workspaceId={workspace.id} role={workspace.role} />
-      )}
+      <div tabIndex={-1} className="flex flex-col gap-6 outline-none">
+        {workspace === undefined ? null : (
+          <TagList workspaceId={workspace.id} role={workspace.role} />
+        )}
+      </div>
     </SettingsPage>
   );
 }

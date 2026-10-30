@@ -97,6 +97,7 @@ export interface Submitter {
   create: PendingCreate | null;
   update: Keyed | null;
   tags: Keyed | null;
+  savedTags: readonly string[];
   draft: { readonly fingerprint: string; post: Post } | null;
   unschedule: Keyed | null;
   unscheduled: boolean;
@@ -213,9 +214,10 @@ async function publish(s: Submitter, input: ComposeInput): Promise<Post> {
   const next = { body, fingerprint: JSON.stringify(body) };
   const { when } = input;
   await settlePending(s, when, accounts);
+  if (s.opened && s.draft !== null) await saveTags(s, s.draft.post, input, accounts);
   const moved = await moveOpened(s, input, next.fingerprint, accounts);
-  if (moved !== null) return await saveTags(s, moved, input.tags, accounts);
-  let post = await saveTags(s, await ensureDraft(s, next, accounts), input.tags, accounts);
+  if (moved !== null) return moved;
+  let post = await saveTags(s, await ensureDraft(s, next, accounts), input, accounts);
   if (when.mode === 'draft') return post;
   const posted = post.destinations.map(({ accountId, variant }) => ({ accountId, variant }));
   try {
@@ -247,6 +249,7 @@ export function createSubmitter(client: Client, workspaceId: string, opened?: Op
     create: null,
     update: null,
     tags: null,
+    savedTags: opened?.post.tags.map((tag) => tag.id) ?? [],
     draft: opened === undefined ? null : openedDraft(opened),
     unschedule: null,
     unscheduled: false,

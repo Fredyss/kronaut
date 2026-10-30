@@ -33,6 +33,7 @@
 /** @typedef {{}} Calendar_Previous_WeekInputs */
 /** @typedef {{}} Calendar_Sidebar_CollapseInputs */
 /** @typedef {{}} Calendar_Sidebar_ExpandInputs */
+/** @typedef {{}} Calendar_Tag_CurrentInputs */
 /** @typedef {{}} Calendar_Tag_FilterInputs */
 /** @typedef {{}} Calendar_Tag_GoneInputs */
 /** @typedef {{}} Calendar_Tags_AllInputs */
@@ -189,6 +190,10 @@ export const calendar_sidebar_collapse = /** @type {(inputs: Calendar_Sidebar_Co
 
 export const calendar_sidebar_expand = /** @type {(inputs: Calendar_Sidebar_ExpandInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Rozbalit postranní panel`)
+};
+
+export const calendar_tag_current = /** @type {(inputs: Calendar_Tag_CurrentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vybraný štítek`)
 };
 
 export const calendar_tag_filter = /** @type {(inputs: Calendar_Tag_FilterInputs) => LocalizedString} */ () => {

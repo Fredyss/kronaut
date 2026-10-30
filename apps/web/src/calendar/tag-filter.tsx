@@ -17,7 +17,9 @@ export function TagFilter({ workspaceId, tag }: TagFilterProps) {
   const client = useApiClient();
   const navigate = route.useNavigate();
   const tags = useQuery(tagsQuery(client, workspaceId)).data;
-  const gone = tag !== undefined && tags?.some((item) => item.id === tag) === false;
+  const known = tags?.some((item) => item.id === tag) === true;
+  const fallback =
+    tags === undefined ? calendarText.calendar_tag_current() : calendarText.calendar_tag_gone();
   const choose = (value: string) =>
     void navigate({
       to: '/',
@@ -34,7 +36,7 @@ export function TagFilter({ workspaceId, tag }: TagFilterProps) {
       className={SELECT}
     >
       <option value="">{calendarText.calendar_tags_all()}</option>
-      {gone ? <option value={tag}>{calendarText.calendar_tag_gone()}</option> : null}
+      {tag === undefined || known ? null : <option value={tag}>{fallback}</option>}
       {tags?.map((item) => (
         <option key={item.id} value={item.id}>
           {item.name}

@@ -1057,7 +1057,7 @@ export const systemStatus = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * List tags
  *
- * The workspace's tags by name, with how many posts use each.
+ * The workspace's tags by name, with how many posts use each. A restricted principal gets only the tags used on posts it can see.
  */
 export const tagsList = <ThrowOnError extends boolean = true>(options: Options<TagsListData, ThrowOnError>): RequestResult<TagsListResponses, TagsListErrors, ThrowOnError> => (options.client ?? client).get<TagsListResponses, TagsListErrors, ThrowOnError>({
     security: [{

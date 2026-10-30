@@ -360,6 +360,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Tags_LimitInputs */
 /** @typedef {{}} Tags_No_MatchInputs */
 /** @typedef {{}} Tags_NoneInputs */
+/** @typedef {{}} Tags_Out_Of_ScopeInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Tags_RemoveInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
@@ -5785,6 +5786,21 @@ export const tags_none = /** @type {((inputs?: Tags_NoneInputs, options?: { loca
 	if (locale === "sk") return __sk.tags_none(inputs)
 	if (locale === "cs") return __cs.tags_none(inputs)
 	return __en.tags_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "You have access to only part of this workspace, so you can't create tags." |
+*
+* @param {Tags_Out_Of_ScopeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const tags_out_of_scope = /** @type {((inputs?: Tags_Out_Of_ScopeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Tags_Out_Of_ScopeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.tags_out_of_scope(inputs)
+	if (locale === "cs") return __cs.tags_out_of_scope(inputs)
+	return __en.tags_out_of_scope(inputs)
 });
 /**
 * | output |

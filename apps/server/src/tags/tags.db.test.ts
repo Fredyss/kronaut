@@ -8,6 +8,7 @@ import type { PostDto } from '../posts/dto.ts';
 import {
   type Auth,
   accountA,
+  accountB,
   BASE,
   CLI,
   call,
@@ -17,6 +18,7 @@ import {
   draft,
   errorOf,
   fake,
+  insertGrant,
   internal,
   keyring,
   login,
@@ -151,6 +153,12 @@ describe('the tag list', () => {
     expect(empty.status).toBe(422);
   });
 
+  it('changes only the fields it was sent', async () => {
+    const tag = await newTag('Kept name');
+    const response = await call('PATCH', `tags/${tag.id}`, ownerAuth, { color: 'violet' });
+    expect(await response.json()).toMatchObject({ name: 'Kept name', color: 'violet' });
+  });
+
   it('renames and recolors, and refuses a taken name', async () => {
     const tag = await newTag('Old name');
     await newTag('Taken name');
@@ -269,6 +277,46 @@ describe('a post and its tags', () => {
     const response = await call('POST', `posts/${source.id}/duplicate`, ownerAuth);
     expect(response.status).toBe(201);
     expect(((await response.json()) as PostDto).tags.map((item) => item.id)).toEqual([tag.id]);
+  });
+});
+
+describe('a restricted principal', () => {
+  it('lists only tags on posts it can see, and can create none', async () => {
+    const [seen, hidden, unused, deleted] = [
+      await newTag('Seen'),
+      await newTag('Hidden'),
+      await newTag('Unused'),
+      await newTag('On a deleted post'),
+    ];
+    const [mine, others, gone] = [
+      await create(ownerAuth, draft(accountA)),
+      await create(ownerAuth, draft(accountB)),
+      await create(ownerAuth, draft(accountA)),
+    ];
+    await setTags(mine, [seen.id]);
+    await setTags(others, [hidden.id]);
+    await setTags(gone, [deleted.id]);
+    await call('DELETE', `posts/${gone.id}`, ownerAuth);
+    const auth = await insertGrant({ scopes: ['posts:read', 'posts:draft'], accounts: [accountA] });
+
+    const { items } = (await (await call('GET', 'tags', auth)).json()) as { items: TagDto[] };
+    const names = items.map((tag) => tag.name);
+    expect(names).toContain('Seen');
+    expect(names).not.toContain('Hidden');
+    expect(names).not.toContain('Unused');
+    expect(names).not.toContain('On a deleted post');
+    expect(items.find((tag) => tag.id === seen.id)?.postCount).toBe(1);
+    const all = (await (await call('GET', 'tags', ownerAuth)).json()) as { items: TagDto[] };
+    expect(all.items.map((tag) => tag.id)).toEqual(
+      expect.arrayContaining([seen.id, hidden.id, unused.id, deleted.id]),
+    );
+
+    const created = await call('POST', 'tags', auth, { name: 'Refused', color: 'red' });
+    expect(created.status).toBe(403);
+    expect(await errorOf(created)).toMatchObject({
+      code: 'forbidden',
+      details: [{ path: 'authorization', code: 'out_of_scope' }],
+    });
   });
 });
 

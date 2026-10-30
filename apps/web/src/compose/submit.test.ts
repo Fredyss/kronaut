@@ -55,7 +55,7 @@ function input(text: string, extra: Partial<ComposeInput> = {}): ComposeInput {
   };
 }
 
-function harness(state: string, stub: Stub = () => undefined, fields: object = {}) {
+function stubbed(stub: Stub) {
   const sent: Sent[] = [];
   const client = createApiClient({
     baseUrl: 'http://kronaut.test',
@@ -75,6 +75,11 @@ function harness(state: string, stub: Stub = () => undefined, fields: object = {
       return Response.json(opened('draft', 5));
     },
   });
+  return { client, sent };
+}
+
+function harness(state: string, stub: Stub = () => undefined, fields: object = {}) {
+  const { client, sent } = stubbed(stub);
   const fingerprint = formFingerprint(input('Hello'));
   const post = asPost({ ...opened(state), ...fields });
   const submit = createSubmitter(client, 'ws_1', { post, fingerprint });
@@ -313,6 +318,87 @@ describe('keeping a draft after a schedule that may have committed', () => {
     await submit(input('Hello', { when: { mode: 'draft' } }));
     await submit(input('Hello', { when: { mode: 'draft' } }));
     expect(lines()).toEqual([`POST ${POST_PATH}/schedule`, `GET ${POST_PATH}`]);
+  });
+});
+
+describe('saving tags', () => {
+  const ADA = { id: 'tag_1', name: 'Ada', color: 'teal' };
+  const LOVELACE = { id: 'tag_2', name: 'Lovelace', color: 'red' };
+  const tagged = { tags: [ADA] };
+  const TAGS_PATH = `PUT ${POST_PATH}/tags`;
+  const tagsDown = ({ line }: Sent) =>
+    line === TAGS_PATH
+      ? Response.json({ error: { code: 'unavailable', message: '' } }, { status: 503 })
+      : undefined;
+
+  function newPost(stub: Stub) {
+    const { client, sent } = stubbed(stub);
+    return {
+      submit: createSubmitter(client, 'ws_1'),
+      lines: () => sent.map((call) => call.line),
+    };
+  }
+
+  it('stops a new post before scheduling when they fail, and finishes it on the next save', async () => {
+    let failing = true;
+    const { submit, lines } = newPost((sent) => (failing ? tagsDown(sent) : undefined));
+    const form = input('Hello', { tags: ['tag_1'] });
+    const error = await submit(form).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ step: 'tags_unscheduled' });
+    expect(lines()).toEqual(['POST /v1/workspaces/ws_1/posts', TAGS_PATH]);
+
+    failing = false;
+    await submit(form);
+    expect(lines().slice(2)).toEqual([TAGS_PATH, `POST ${POST_PATH}/schedule`]);
+  });
+
+  it('says only the tags failed on a new draft', async () => {
+    const { submit } = newPost(tagsDown);
+    const form = input('Hello', { tags: ['tag_1'], when: { mode: 'draft' } });
+    const error = await submit(form).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ step: 'tags' });
+  });
+
+  it('saves them first on a scheduled post, and leaves the schedule alone when they fail', async () => {
+    const { submit, lines } = harness('scheduled', tagsDown, tagged);
+    const form = input('Edited', { tags: ['tag_2'] });
+    const error = await submit(form).catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ step: 'tags_opened', unscheduled: false });
+    expect(lines()).toEqual([TAGS_PATH]);
+  });
+
+  it('runs before the other steps of an opened post', async () => {
+    const { submit, lines } = harness('scheduled', undefined, tagged);
+    await submit(input('Edited', { tags: ['tag_2'] }));
+    expect(lines()).toEqual([
+      TAGS_PATH,
+      `POST ${POST_PATH}/unschedule`,
+      `PATCH ${POST_PATH}`,
+      `POST ${POST_PATH}/schedule`,
+    ]);
+  });
+
+  it('leaves tags alone that changed on the server but not in the form', async () => {
+    const both = { ...opened('draft', 5), tags: [ADA, LOVELACE] };
+    const { submit, lines } = harness(
+      'draft',
+      ({ line }) => (line.startsWith('PATCH') ? Response.json(both) : undefined),
+      tagged,
+    );
+    await submit(input('Edited', { tags: ['tag_1'] }));
+    expect(lines()).toEqual([`PATCH ${POST_PATH}`, `POST ${POST_PATH}/schedule`]);
+  });
+
+  it('sends a change once, whatever the next save does', async () => {
+    const { submit, lines } = harness('draft', ({ line }) =>
+      line.endsWith('/schedule')
+        ? Response.json({ error: { code: 'unavailable', message: '' } }, { status: 503 })
+        : undefined,
+    );
+    const form = input('Hello', { tags: ['tag_1'] });
+    await submit(form).catch(() => undefined);
+    await submit(form).catch(() => undefined);
+    expect(lines().filter((line) => line === TAGS_PATH)).toHaveLength(1);
   });
 });
 

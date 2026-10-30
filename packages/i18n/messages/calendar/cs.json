@@ -70,5 +70,6 @@
   "calendar_chip_tags": "{label}. Štítky: {tags}",
   "calendar_tag_filter": "Filtrovat podle štítku",
   "calendar_tags_all": "Všechny štítky",
-  "calendar_tag_gone": "Smazaný štítek"
+  "calendar_tag_gone": "Smazaný štítek",
+  "calendar_tag_current": "Vybraný štítek"
 }

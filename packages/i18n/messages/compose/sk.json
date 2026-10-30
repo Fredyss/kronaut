@@ -129,5 +129,7 @@
   "compose_edit_canceled_note": "Zrušené pre: {channels}. Uložením zmeny sa z príspevku odstránia; zaškrtnutím na kanál znova publikujete.",
   "compose_error_channel_gone": "Príspevok sa nedá uložiť, pretože jeden z jeho kanálov už nie je dostupný: {channels}.",
   "compose_refused_part_live": "Príspevok sa nedá upraviť, pretože zrušené umiestnenie je už čiastočne zverejnené.",
-  "compose_error_tags": "Príspevok sa uložil, ale jeho štítky nie. Ďalšie uloženie to skúsi znova."
+  "compose_error_tags": "Príspevok sa uložil, ale jeho štítky nie. Ďalšie uloženie to skúsi znova.",
+  "compose_error_tags_opened": "Štítky sa neuložili, takže sa pri tomto uložení nič iné nezmenilo. Ďalšie uloženie to skúsi znova.",
+  "compose_error_tags_unscheduled": "Príspevok sa uložil ako koncept, ale jeho štítky nie, takže ešte nie je naplánovaný. Ďalším uložením to dokončíte."
 }

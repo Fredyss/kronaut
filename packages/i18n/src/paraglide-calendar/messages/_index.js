@@ -35,6 +35,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Previous_WeekInputs */
 /** @typedef {{}} Calendar_Sidebar_CollapseInputs */
 /** @typedef {{}} Calendar_Sidebar_ExpandInputs */
+/** @typedef {{}} Calendar_Tag_CurrentInputs */
 /** @typedef {{}} Calendar_Tag_FilterInputs */
 /** @typedef {{}} Calendar_Tag_GoneInputs */
 /** @typedef {{}} Calendar_Tags_AllInputs */
@@ -563,6 +564,21 @@ export const calendar_sidebar_expand = /** @type {((inputs?: Calendar_Sidebar_Ex
 	if (locale === "sk") return __sk.calendar_sidebar_expand(inputs)
 	if (locale === "cs") return __cs.calendar_sidebar_expand(inputs)
 	return __en.calendar_sidebar_expand(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Selected tag" |
+*
+* @param {Calendar_Tag_CurrentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_tag_current = /** @type {((inputs?: Calendar_Tag_CurrentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Tag_CurrentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_tag_current(inputs)
+	if (locale === "cs") return __cs.calendar_tag_current(inputs)
+	return __en.calendar_tag_current(inputs)
 });
 /**
 * | output |

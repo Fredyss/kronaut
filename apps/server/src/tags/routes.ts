@@ -32,7 +32,8 @@ export const tagListRoute = defineRoute({
   params: WorkspaceParams,
   response: z.object({ items: z.array(TagSchema) }),
   summary: 'List tags',
-  description: "The workspace's tags by name, with how many posts use each.",
+  description:
+    "The workspace's tags by name, with how many posts use each. A restricted principal gets only the tags used on posts it can see.",
   tags: ['posts'],
 });
 
@@ -209,10 +210,14 @@ async function updateTag(
   const name = body.name === undefined ? current.name : tagName(body.name);
   const color = body.color ?? current.color;
   if (name === current.name && color === current.color) return current;
+  const fields = {
+    ...(body.name === undefined ? {} : { name }),
+    ...(body.color === undefined ? {} : { color }),
+  };
   await uniquely(() =>
     trx
       .updateTable('tags')
-      .set({ name, color, updated_at: sql`now()` })
+      .set({ ...fields, updated_at: sql`now()` })
       .where('workspace_id', '=', ref.workspaceId)
       .where('id', '=', ref.tagId)
       .execute(),
@@ -243,7 +248,8 @@ export function tagRoutes(): BoundRoute[] {
       const rows = await ctx.tenant((trx) =>
         tagRows(trx, workspaceId, scope).orderBy(BY_NAME).orderBy('t.id').execute(),
       );
-      return { body: { items: rows.map(tagDto) } };
+      const shown = scope === null ? rows : rows.filter((row) => Number(row.post_count) > 0);
+      return { body: { items: shown.map(tagDto) } };
     }),
     bindRoute(tagCreateRoute, async ({ params, body }, ctx) => {
       const workspaceId = pathId('workspace', params.workspaceId);

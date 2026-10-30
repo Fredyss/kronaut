@@ -66,5 +66,6 @@
   "calendar_chip_tags": "{label}. Tags: {tags}",
   "calendar_tag_filter": "Filter by tag",
   "calendar_tags_all": "All tags",
-  "calendar_tag_gone": "Deleted tag"
+  "calendar_tag_gone": "Deleted tag",
+  "calendar_tag_current": "Selected tag"
 }

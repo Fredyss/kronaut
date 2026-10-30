@@ -14947,7 +14947,7 @@
     },
     "/v1/workspaces/{workspaceId}/tags": {
       "get": {
-        "description": "The workspace's tags by name, with how many posts use each.",
+        "description": "The workspace's tags by name, with how many posts use each. A restricted principal gets only the tags used on posts it can see.",
         "operationId": "tags.list",
         "parameters": [
           {

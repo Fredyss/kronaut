@@ -358,6 +358,7 @@
 /** @typedef {{}} Tags_LimitInputs */
 /** @typedef {{}} Tags_No_MatchInputs */
 /** @typedef {{}} Tags_NoneInputs */
+/** @typedef {{}} Tags_Out_Of_ScopeInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Tags_RemoveInputs */
 /** @typedef {{}} Technical_DetailsInputs */
 /** @typedef {{}} Theme_DarkInputs */
@@ -1847,6 +1848,10 @@ export const tags_no_match = /** @type {(inputs: Tags_No_MatchInputs) => Localiz
 
 export const tags_none = /** @type {(inputs: Tags_NoneInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`No tags`)
+};
+
+export const tags_out_of_scope = /** @type {(inputs: Tags_Out_Of_ScopeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`You have access to only part of this workspace, so you can't create tags.`)
 };
 
 export const tags_remove = /** @type {(inputs: Tags_RemoveInputs) => LocalizedString} */ (i) => {

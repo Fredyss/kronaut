@@ -3,7 +3,12 @@ import { Temporal } from 'temporal-polyfill';
 import type { Post } from '../api.ts';
 import { idempotency, keyFor } from '../idempotency.ts';
 import type { ComposeInput, ComposeWhen, ScheduleWhen, Submitter } from './submit.ts';
-import { refusedForApproval, SubmitError, type SubmitTarget } from './submit-error.ts';
+import {
+  refusedForApproval,
+  SubmitError,
+  type SubmitStep,
+  type SubmitTarget,
+} from './submit-error.ts';
 
 type Targets = readonly SubmitTarget[];
 
@@ -38,15 +43,21 @@ export async function refresh(s: Submitter, post: Post): Promise<Post> {
   return data;
 }
 
-// Tags aren't content, so they don't bump the version: this can run between any two other steps.
+function tagStep(s: Submitter, when: ComposeWhen): SubmitStep {
+  if (s.opened) return 'tags_opened';
+  return when.mode === 'draft' ? 'tags' : 'tags_unscheduled';
+}
+
+// Compared with what the form last knew, not post.tags: tags don't bump the version, so someone
+// else's change would otherwise look like one to undo. They can run between any two other steps.
 export async function saveTags(
   s: Submitter,
   post: Post,
-  tagIds: readonly string[],
+  { tags: tagIds, when }: ComposeInput,
   accounts: Targets,
 ): Promise<Post> {
-  const stored = new Set(post.tags.map((tag) => tag.id));
-  if (stored.size === tagIds.length && tagIds.every((id) => stored.has(id))) return post;
+  const known = new Set(s.savedTags);
+  if (known.size === tagIds.length && tagIds.every((id) => known.has(id))) return post;
   const body = { tagIds: [...tagIds] };
   s.tags = keyFor(s.tags, JSON.stringify({ postId: post.id, body }));
   try {
@@ -57,11 +68,12 @@ export async function saveTags(
       headers: idempotency(s.tags),
     });
     s.tags = null;
+    s.savedTags = tagIds;
     const saved = { ...post, tags: data.tags };
     if (s.draft !== null) s.draft.post = saved;
     return saved;
   } catch (error) {
-    throw new SubmitError('tags', error, accounts);
+    throw new SubmitError(tagStep(s, when), error, accounts);
   }
 }
 

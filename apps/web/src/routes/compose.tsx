@@ -145,6 +145,7 @@ export function ComposeForm(props: ComposeFormProps) {
           workspaceId={workspaceId}
           value={form.tags.value}
           onChange={form.tags.set}
+          onCreating={form.tags.setCreating}
           editable={DRAFT_ROLES.has(role)}
           disabled={pending}
         />
@@ -161,7 +162,7 @@ export function ComposeForm(props: ComposeFormProps) {
 
       <SubmitRow
         label={submitLabel(when.mode, pending, approval.requesting)}
-        disabled={pending || blocked}
+        disabled={pending || blocked || form.tags.creating}
         describedBy={blocked ? limitsId : undefined}
         onRequest={approval.offer ? requestInstead : undefined}
       />

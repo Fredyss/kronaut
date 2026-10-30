@@ -107,6 +107,7 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
     () => opened?.form.selected ?? new Set(),
   );
   const [tags, setTags] = useState<readonly PostTag[]>(() => opened?.post.tags ?? []);
+  const [creating, setCreating] = useState(false);
   const list = channels.data ?? opened?.channels ?? [];
   const content = useContents(workspaceId, list, selected, opened?.form);
   const plan = toPlan(list, content, selected, opened?.post.destinations ?? []);
@@ -119,7 +120,7 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
       ? selected.size > 0 || !isEmpty(content.contents.base)
       : fingerprint !== start.fingerprint;
   const dirty = changed || !sameTags(tags, opened?.post.tags ?? []);
-  const tagField = { value: tags, set: setTags };
+  const tagField = { value: tags, set: setTags, creating, setCreating };
   return { channels, list, selected, setSelected, content, plan, tags: tagField, start, dirty };
 }
 
@@ -143,7 +144,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const queue = usePlanQueue(workspaceId, list, plan);
   const requesting = approval.request && when.mode !== 'draft';
   const send = (asRequest: boolean) => {
-    if (pending || blocked) return;
+    if (pending || blocked || form.tags.creating) return;
     const empty = emptyProblem(plan, content.contents.base);
     if (empty !== null) return setFormError(empty);
     const waiting = videoProblem(plan, content.contents.base, content.videos, locale);

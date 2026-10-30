@@ -16,6 +16,8 @@ export type SubmitStep =
   | 'create'
   | 'update'
   | 'tags'
+  | 'tags_opened'
+  | 'tags_unscheduled'
   | 'schedule'
   | 'request';
 
