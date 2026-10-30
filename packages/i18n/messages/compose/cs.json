@@ -133,5 +133,6 @@
   "compose_refused_part_live": "Příspěvek nejde upravit, protože zrušené umístění je už částečně zveřejněné.",
   "compose_error_tags": "Příspěvek se uložil, ale jeho štítky ne. Další uložení to zkusí znovu.",
   "compose_error_tags_opened": "Štítky se neuložily, takže se při tomto uložení nic jiného nezměnilo. Další uložení to zkusí znovu.",
-  "compose_error_tags_unscheduled": "Příspěvek se uložil jako koncept, ale jeho štítky ne, takže ještě není naplánovaný. Dalším uložením to dokončíte."
+  "compose_error_tags_unscheduled": "Příspěvek se uložil jako koncept, ale jeho štítky ne, takže ještě není naplánovaný. Dalším uložením to dokončíte.",
+  "compose_insert_saved_text": "Vložit uložený text"
 }

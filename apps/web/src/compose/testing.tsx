@@ -2,7 +2,7 @@ import { createApiClient } from '@kronaut/sdk';
 import { createMemoryHistory } from '@tanstack/react-router';
 import { fireEvent, render } from '@testing-library/react';
 import { App, createApp } from '../app.tsx';
-import { docParagraphs, textToParagraphs, toDoc } from './doc.ts';
+import { docText, textToParagraphs, toDoc } from './doc.ts';
 import type { PostEditorProps } from './editor.tsx';
 
 export function MockEditor({ id, label, initial, onChange }: PostEditorProps) {
@@ -10,13 +10,7 @@ export function MockEditor({ id, label, initial, onChange }: PostEditorProps) {
     <textarea
       id={id}
       aria-label={label}
-      defaultValue={
-        initial === undefined
-          ? ''
-          : docParagraphs(initial)
-              .map((p) => p.text)
-              .join('\n')
-      }
+      defaultValue={initial === undefined ? '' : docText(initial)}
       onChange={(event) =>
         onChange(toDoc({ type: 'doc', content: textToParagraphs(event.currentTarget.value) }))
       }
@@ -159,6 +153,7 @@ export function defaultResponse(path: string): Response {
   if (path === '/v1/workspaces/ws_1/channels') return Response.json({ items: CHANNELS });
   if (path === '/v1/workspaces/ws_1/media') return Response.json(MEDIA_ASSET, { status: 201 });
   if (path === '/v1/workspaces/ws_1/tags') return Response.json({ items: [] });
+  if (path === '/v1/workspaces/ws_1/saved-texts') return Response.json({ items: [] });
   if (path === '/v1/workspaces/ws_1/posts') {
     return Response.json(post('draft', 'draft'), { status: 201 });
   }

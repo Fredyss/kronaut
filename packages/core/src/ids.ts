@@ -15,6 +15,7 @@ export const ID_PREFIXES = {
   grant: 'grant',
   series: 'ser',
   tag: 'tag',
+  savedText: 'stx',
 } as const;
 
 export type IdKind = keyof typeof ID_PREFIXES;

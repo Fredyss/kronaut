@@ -30,6 +30,7 @@ const ALL = [
   '0019_analytics_reach',
   '0020_approval_void_post_deleted',
   '0021_tags',
+  '0022_saved_texts',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -119,7 +120,7 @@ describe('migrate', () => {
       'select version, name, sha256 from kronaut_meta.migrations order by version',
     );
     expect(rows.map((row) => row.version)).toEqual([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
     ]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);

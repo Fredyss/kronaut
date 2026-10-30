@@ -3,12 +3,18 @@ import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Fragment, Slice } from '@tiptap/pm/model';
+import { Selection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { EditorContent, type JSONContent, useEditor } from '@tiptap/react';
-import { useLayoutEffect, useRef } from 'react';
+import { type Ref, useImperativeHandle, useLayoutEffect, useRef } from 'react';
 import { type Doc, EMPTY_DOC, textToParagraphs, toDoc } from './doc.ts';
 
+export interface PostEditorHandle {
+  readonly insertText: (text: string) => void;
+}
+
 export interface PostEditorProps {
+  readonly ref?: Ref<PostEditorHandle>;
   readonly id: string;
   readonly label: string;
   readonly disabled?: boolean;
@@ -45,6 +51,7 @@ const plainTextOnly = {
 };
 
 export default function PostEditor({
+  ref,
   id,
   label,
   disabled = false,
@@ -55,6 +62,7 @@ export default function PostEditor({
   useLayoutEffect(() => {
     changed.current = onChange;
   }, [onChange]);
+  const cursorPlaced = useRef(false);
   const editor = useEditor({
     extensions: [Document, Paragraph, Text, HardBreak],
     content: structuredClone(initial) as JSONContent,
@@ -72,8 +80,25 @@ export default function PostEditor({
       },
       handleDOMEvents: plainTextOnly,
     },
+    onFocus: () => {
+      cursorPlaced.current = true;
+    },
     onUpdate: ({ editor: current }) => changed.current(toDoc(current.getJSON())),
   });
+  useImperativeHandle(
+    ref,
+    () => ({
+      insertText(text) {
+        const { view } = editor;
+        if (!cursorPlaced.current) {
+          view.dispatch(view.state.tr.setSelection(Selection.atEnd(view.state.doc)));
+        }
+        insertPlainText(view, text);
+        view.focus();
+      },
+    }),
+    [editor],
+  );
   useLayoutEffect(() => {
     editor.setEditable(!disabled, false);
   }, [editor, disabled]);

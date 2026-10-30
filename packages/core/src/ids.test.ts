@@ -52,6 +52,7 @@ describe('ID_PREFIXES', () => {
       grant: 'grant',
       series: 'ser',
       tag: 'tag',
+      savedText: 'stx',
     });
   });
 

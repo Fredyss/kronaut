@@ -1,6 +1,7 @@
 import * as calendarEn from '@kronaut/i18n/calendar/messages/en';
 import * as composeEn from '@kronaut/i18n/compose/messages/en';
 import * as en from '@kronaut/i18n/messages/en';
+import * as settingsEn from '@kronaut/i18n/settings/messages/en';
 import { expect, test } from '@playwright/test';
 import { Temporal } from 'temporal-polyfill';
 import { appUrl, CHANNEL, TIME_ZONE } from './env.ts';
@@ -10,6 +11,8 @@ const ADDED = ', zajtra bude ľahšie';
 const DRAFT = 'Koncept na neskôr';
 const TAGGED = 'Príspevok so štítkom';
 const TAG = 'Kampaň';
+const SAVED_NAME = 'Podpis';
+const SAVED_TEXT = ' S pozdravom, tím';
 
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
@@ -99,6 +102,25 @@ test('tags a post in the composer and shows it on the calendar', async ({ page }
 
   await page.goto(appUrl(`/?view=list&date=${date}`));
   await expect(page.getByRole('link', { name: `Tags: ${TAG}` })).toBeVisible();
+});
+
+test('saves a text in settings and inserts it in the composer', async ({ page }) => {
+  await page.goto(appUrl('/settings/saved-texts'));
+  const main = page.getByRole('main');
+  await main.getByRole('button', { name: settingsEn.settings_saved_text_add({}) }).click();
+  await main.getByLabel(settingsEn.settings_saved_text_name({}), { exact: true }).fill(SAVED_NAME);
+  await main.getByLabel(settingsEn.settings_saved_text_text({}), { exact: true }).fill(SAVED_TEXT);
+  await main.getByRole('button', { name: en.settings_save({}) }).click();
+  await expect(main.getByText(SAVED_TEXT)).toBeVisible();
+
+  await page.goto(appUrl('/compose'));
+  const editor = page.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  await editor.fill(TEXT);
+  const menu = page.getByRole('combobox', { name: composeEn.compose_insert_saved_text({}) });
+  await menu.selectOption({ label: SAVED_NAME });
+  await expect(editor).toHaveText(`${TEXT}${SAVED_TEXT}`);
+  await expect(menu).toHaveValue('');
+  await expect(editor).toBeFocused();
 });
 
 test('opens the composer over the calendar and closes back to it', async ({ page }) => {

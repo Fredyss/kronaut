@@ -17,6 +17,11 @@ const TAGS_SECTION = {
   label: () => settingsText.settings_tags_title(),
 } as const;
 
+const SAVED_TEXTS_SECTION = {
+  to: '/settings/saved-texts',
+  label: () => settingsText.settings_saved_texts_title(),
+} as const;
+
 const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 const SYSTEM_SECTION = {
@@ -34,6 +39,7 @@ export function SettingsLayout() {
   const sections = [
     ...SECTIONS,
     ...(SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '') ? [TAGS_SECTION] : []),
+    SAVED_TEXTS_SECTION,
     ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),
   ];
   return (

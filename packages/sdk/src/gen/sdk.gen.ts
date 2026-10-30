@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import { type Client, type ClientMeta, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client/index.ts';
-import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
+import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -987,6 +987,74 @@ export const postsUnschedule = <ThrowOnError extends boolean = true>(options: Op
             type: 'apiKey'
         }, { scheme: 'bearer', type: 'http' }],
     url: '/v1/workspaces/{workspaceId}/posts/{postId}/unschedule',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List saved texts
+ *
+ * The workspace's saved texts by name.
+ */
+export const savedTextsList = <ThrowOnError extends boolean = true>(options: Options<SavedTextsListData, ThrowOnError>): RequestResult<SavedTextsListResponses, SavedTextsListErrors, ThrowOnError> => (options.client ?? client).get<SavedTextsListResponses, SavedTextsListErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/saved-texts',
+    ...options
+});
+
+/**
+ * Create a saved text
+ *
+ * The name is trimmed and has 1–60 characters (422 saved_text_name_invalid). The doc holds plain paragraphs of 1–2000 characters (422 saved_text_invalid). A name that differs only in case is 409 saved_text_exists; a workspace has at most 100 saved texts (409 saved_text_limit). Owners and admins only.
+ */
+export const savedTextsCreate = <ThrowOnError extends boolean = true>(options: Options<SavedTextsCreateData, ThrowOnError>): RequestResult<SavedTextsCreateResponses, SavedTextsCreateErrors, ThrowOnError> => (options.client ?? client).post<SavedTextsCreateResponses, SavedTextsCreateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/saved-texts',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete a saved text
+ *
+ * Posts that already used the text keep theirs. Owners and admins only.
+ */
+export const savedTextsDelete = <ThrowOnError extends boolean = true>(options: Options<SavedTextsDeleteData, ThrowOnError>): RequestResult<SavedTextsDeleteResponses, SavedTextsDeleteErrors, ThrowOnError> => (options.client ?? client).delete<SavedTextsDeleteResponses, SavedTextsDeleteErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/saved-texts/{savedTextId}',
+    ...options
+});
+
+/**
+ * Update a saved text
+ *
+ * The name and doc follow the same rules as when creating one. Posts that already used the text keep theirs. Owners and admins only.
+ */
+export const savedTextsUpdate = <ThrowOnError extends boolean = true>(options: Options<SavedTextsUpdateData, ThrowOnError>): RequestResult<SavedTextsUpdateResponses, SavedTextsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<SavedTextsUpdateResponses, SavedTextsUpdateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/saved-texts/{savedTextId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
