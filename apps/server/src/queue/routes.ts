@@ -3,7 +3,7 @@ import { defineRoute } from '@kronaut/contract';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { HttpError } from '../http/errors.ts';
+import { type ChannelRef, requireChannel } from '../channels/channel-ref.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { auditActor } from '../posts/audit.ts';
 import { unprocessable } from '../posts/issues.ts';
@@ -64,27 +64,11 @@ export const channelQueueUpdateRoute = defineRoute({
   tags: ['channels'],
 });
 
-interface ChannelRef {
-  readonly workspaceId: string;
-  readonly accountId: string;
-}
-
 function channelRef(params: z.output<typeof QueueParams>): ChannelRef {
   return {
     workspaceId: pathId('workspace', params.workspaceId),
     accountId: pathId('socialAccount', params.channelId),
   };
-}
-
-export async function requireChannel(trx: TenantDb, { workspaceId, accountId }: ChannelRef) {
-  const account = await trx
-    .selectFrom('social_accounts')
-    .select(['id', 'brand_id', 'location_id'])
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', accountId)
-    .executeTakeFirst();
-  if (account === undefined) throw new HttpError('not_found', 'Not found.');
-  return account;
 }
 
 function slotKey(slot: QueueSlot): string {

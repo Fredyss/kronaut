@@ -7,6 +7,7 @@ import type { HttpDeps } from '../http/kernel.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { checkPassword, hashPassword, verifyPassword } from '../password.ts';
 import { isInstanceAdmin } from '../system/instance-admins.ts';
+import { EMAIL_MAX_LENGTH, normalizeEmail } from './email.ts';
 import { recordEvent, requireSession } from './events.ts';
 import { readUser, SESSION_INVALID, UserSchema } from './profile.ts';
 import { passwordBinding, RESET_TOKEN_MAX_LENGTH, verifyResetToken } from './reset-token.ts';
@@ -18,7 +19,6 @@ import {
   SESSION_COOKIE,
 } from './session.ts';
 
-export const EMAIL_MAX_LENGTH = 320;
 export const LOGIN_PASSWORD_MAX_LENGTH = 1024;
 
 const INVALID_CREDENTIALS = 'The email or password is incorrect.';
@@ -36,10 +36,6 @@ interface WorkspaceRow {
   name: string;
   role: string;
   can_approve: boolean;
-}
-
-export function normalizeEmail(email: string): string {
-  return email.trim().normalize('NFC').toLowerCase();
 }
 
 export const loginRoute = defineRoute({

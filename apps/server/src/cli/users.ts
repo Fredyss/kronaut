@@ -2,8 +2,8 @@ import { actorSetting, type Database, type TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
+import { EMAIL_MAX_LENGTH, normalizeEmail } from '../auth/email.ts';
 import { issueResetToken } from '../auth/reset-token.ts';
-import { EMAIL_MAX_LENGTH, normalizeEmail } from '../auth/routes.ts';
 import { revokeAllSessions } from '../auth/session.ts';
 import { CommandError, UsageError } from './errors.ts';
 

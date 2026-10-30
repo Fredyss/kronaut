@@ -2,11 +2,11 @@ import { defineRoute } from '@kronaut/contract';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { requireChannel } from '../channels/channel-ref.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { invalid, zodDetails } from '../posts/list.ts';
 import { pathId } from '../posts/params.ts';
 import { scopeUnit } from '../posts/units.ts';
-import { requireChannel } from '../queue/routes.ts';
 import { storedValue } from './store.ts';
 
 const DEFAULT_DAYS = 30;
