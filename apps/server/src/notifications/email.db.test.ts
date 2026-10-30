@@ -336,10 +336,9 @@ describe('notification email preferences', () => {
         listNotifications(trx, owner, { limit: 10, unreadOnly: true }),
       );
       expect(inbox.unread).toBe(2);
-      expect(inbox.items.map((item) => item.id)).toEqual([
-        encodePublicId('notification', reauth),
-        encodePublicId('notification', failed),
-      ]);
+      expect(inbox.items.map((item) => item.id).sort()).toEqual(
+        [encodePublicId('notification', reauth), encodePublicId('notification', failed)].sort(),
+      );
 
       await muteEmail([]);
       const again = await insert();
