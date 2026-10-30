@@ -20,6 +20,7 @@ import {
 } from './meta-container-state.ts';
 import { type MetaGraph, NotReady } from './meta-graph-call.ts';
 import type { Recovered } from './meta-recover.ts';
+import { afterSend, beginPublicSend } from './public-send.ts';
 
 const FINISHED_LAG = Temporal.Duration.from({ minutes: 2 });
 
@@ -83,19 +84,16 @@ function readStatus<I extends MetaInput>(
   });
 }
 
-async function permalinkOf<I extends MetaInput>(
+function permalinkOf<I extends MetaInput>(
   { ctx, api, input }: Job<I>,
   id: string,
 ): Promise<string | undefined> {
-  try {
+  return afterSend(async () => {
     const url = api.graph.versioned(id, input, { fields: 'permalink' });
     const response = await send(ctx, 'none', url, { headers: { accept: 'application/json' } });
     if (response.status !== 200) return undefined;
     return (await readJson(response, permalinkOnly, 'none')).permalink;
-  } catch (error) {
-    if (isProviderFailure(error)) return undefined;
-    throw error;
-  }
+  });
 }
 
 async function publishContainer<I extends MetaInput>(
@@ -105,9 +103,7 @@ async function publishContainer<I extends MetaInput>(
 ): Promise<PublishOutcome> {
   const { ctx, api, input } = job;
   await api.beforePublish?.(ctx, input);
-  await ctx.step('publish_container');
-  const sent: State = { ...state, sentAt: ctx.now().toString({ smallestUnit: 'millisecond' }) };
-  await ctx.checkpoint(sent);
+  const sent = await beginPublicSend(ctx, 'publish_container', state);
   const result = await api.graph.call(ctx, {
     effect: 'public',
     url: api.graph.versioned(`${input.credentials.userId}/${api.publishPath}`, input),

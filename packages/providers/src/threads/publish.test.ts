@@ -8,12 +8,14 @@ import {
 } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
+  assertPublicSendOrder,
   egressError,
   type ScriptedExchange,
   scriptedHttp,
   TEST_NOW,
   testPublishContext,
 } from '../_kit/testing.ts';
+import { threadsManifest } from './manifest.ts';
 import { threadsRuntime } from './runtime.ts';
 import {
   CONTAINER,
@@ -168,6 +170,7 @@ describe('threads publish: status and publishing', () => {
     ]);
     expect(result).toEqual({ kind: 'published', remoteId: POST_ID, url: PERMALINK });
     expect(checkpoints).toEqual([{ container: CONTAINER, sentAt: SENT_AT }]);
+    assertPublicSendOrder(events, threadsManifest);
     expect(events.filter((event) => event.startsWith('step:'))).toEqual(['step:publish_container']);
   });
 

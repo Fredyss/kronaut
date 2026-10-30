@@ -1,12 +1,14 @@
 import type { MediaRef, PublishItem } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import {
+  assertPublicSendOrder,
   egressError,
   type ScriptedExchange,
   scriptedHttp,
   TEST_NOW,
   testPublishContext,
 } from '../_kit/testing.ts';
+import { mastodonManifest } from './manifest.ts';
 import { idempotencyKey } from './publish-state.ts';
 import { mastodonRuntime } from './runtime.ts';
 import {
@@ -63,6 +65,7 @@ describe('mastodon publish', () => {
       ['media_ids[]', '202'],
     ]);
     expect(resumed.calls[1]?.headers['idempotency-key']).toBe(KEY);
+    assertPublicSendOrder(second.events, mastodonManifest);
     expect(second.events).toEqual([
       'step:upload_media',
       `request:GET ${ORIGIN}/api/v1/media/201`,

@@ -4,6 +4,7 @@ import type {
   ProviderHttp,
   ProviderHttpResponse,
   ProviderLogger,
+  ProviderManifest,
   ProviderState,
   PublishContext,
   StepEffect,
@@ -123,6 +124,25 @@ export const TEST_NOW = Temporal.Instant.from('2026-10-21T12:00:00Z');
 
 export function testBaseContext(http: ProviderHttp, now = TEST_NOW): BaseContext {
   return { http, logger: silentLogger, signal: new AbortController().signal, now: () => now };
+}
+
+function declaredSteps(manifest: ProviderManifest) {
+  return manifest.postTypes.flatMap((type) => [...type.steps, ...(type.comment?.steps ?? [])]);
+}
+
+export function assertPublicSendOrder(events: readonly string[], manifest: ProviderManifest): void {
+  const steps = declaredSteps(manifest);
+  const undeclared = events.filter(
+    (event) => event.startsWith('step:') && !steps.some((step) => event === `step:${step.id}`),
+  );
+  if (undeclared.length > 0) throw new Error(`undeclared steps: ${undeclared.join(', ')}`);
+  const at = events.findIndex((event) =>
+    steps.some((step) => step.effect === 'public' && event === `step:${step.id}`),
+  );
+  if (at === -1) throw new Error('no public step ran');
+  const [saved, request] = events.slice(at + 1);
+  if (saved !== 'checkpoint' || request?.startsWith('request:POST ') !== true)
+    throw new Error(`public step must checkpoint, then send: ${events.slice(at).join(', ')}`);
 }
 
 export interface TestMedia {

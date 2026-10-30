@@ -1,6 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
-import { egressError, type ScriptedExchange } from '../_kit/testing.ts';
+import { assertPublicSendOrder, egressError, type ScriptedExchange } from '../_kit/testing.ts';
+import { linkedinManifest } from './manifest.ts';
 import {
   AUTHOR,
   json,
@@ -40,6 +41,7 @@ const put = (n: number, extra: Partial<ScriptedExchange> = {}): ScriptedExchange
 describe('linkedin publish: request bodies', () => {
   it('posts escaped text-only commentary with the versioned Rest.li headers', async () => {
     const { result, calls, checkpoints, events } = await run(main('Ahoj #svet (test)'), [post()]);
+    assertPublicSendOrder(events, linkedinManifest);
     expect(result).toEqual({
       kind: 'published',
       remoteId: SHARE,
