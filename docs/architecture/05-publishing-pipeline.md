@@ -95,7 +95,7 @@
 | `duplicate` | `published` if a remoteId is known, otherwise `verifying` |
 | `ambiguous` before `public_send_at` | `retry_wait/interrupted_safe` |
 | `ambiguous` after `public_send_at` | `verifying` → the manifest's `verify.mode` decides `published` or `unconfirmed`. Verifiers: Mastodon reads the account's recent statuses (`list_recent_match`, read-only; matched on the uploaded media ids, else the plain text), Bluesky deterministic rkey, IG/Threads container status (`status_by_ref`). Every Mastodon send carries an `Idempotency-Key` derived from the destination and item position (kept 1 h by the server), so a re-send within the hour returns the original status instead of a duplicate |
-| A read fails after a successful send | Never reaches `plan()`: the provider wraps the read in `afterSend()`, so the destination still ends `published`, without the link |
+| A read fails after a successful send | Never reaches `plan()`: the provider wraps the read in `afterSend()`, so the destination still ends `published`, at worst without the permalink |
 
 ## Lease reaper
 

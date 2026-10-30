@@ -53,14 +53,17 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 - egress `http`: rate-limited, retry-aware, redacted logs.
 - `media.signedUrl()` / `media.stream()`.
 - `checkpoint()`, which persists `provider_state` after each step.
-- `beginPublicSend()` in `_kit/public-send.ts`, which runs the public `step()`, stamps `sentAt` and checkpoints it. Providers that need `sentAt` to verify call it right before the send; tests assert the order with `assertPublicSendOrder`.
-- `afterSend()` in `_kit/public-send.ts`, which wraps any read after a successful send so a failed read can't reach `plan()`.
 - `logger`.
 - Providers never touch the DB.
 
+**Kit helpers** (`_kit/public-send.ts`)
+
+- `beginPublicSend()` runs the public `step()`, stamps `sentAt` and checkpoints it. Call it right before the send, unless the step's retry is already safe, as with Bluesky's deterministic rkey or a checkpoint after the send. Tests assert the order with `assertPublicSendOrder`.
+- `afterSend()` wraps any read after a successful send, so a failed read can't reach `plan()`.
+
 **Errors** (ADR-0032): `transient | ambiguous | permanent{code} | duplicate{remoteId?} | rate_limited{scope, resetAt} | auth_expired | auth_revoked | app_config`.
 
-`statusFailure()` in `_kit/status-failure.ts` maps an HTTP status to an error. A provider supplies its rate-limit reading and known errors. The defaults keep unknown statuses safe: on a public step they stay `ambiguous`. Graph-based providers classify by error code in `_kit/meta-graph-call.ts` instead.
+`failureForStatus()` in `_kit/status-failure.ts` maps an HTTP status to an error. A provider supplies its rate-limit reading and known errors. The defaults keep unknown statuses safe: on a public step they stay `ambiguous`. Graph-based providers classify by error code instead, in `_kit/meta-graph-call.ts` and `facebook/graph.ts`.
 
 - An `ambiguous` error on a step whose effect is `public` → `unconfirmed`, never a blind retry.
 - `auth_revoked` is definitive only after a confirming call with fresh credentials.

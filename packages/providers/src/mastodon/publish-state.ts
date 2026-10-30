@@ -10,7 +10,7 @@ import {
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { retryAfter } from '../_kit/http.ts';
-import { statusFailure } from '../_kit/status-failure.ts';
+import { failureForStatus } from '../_kit/status-failure.ts';
 import { originOf, permanent } from './api.ts';
 import type { MastodonCredentials } from './connect.ts';
 import type { MastodonSettings } from './manifest.ts';
@@ -73,7 +73,7 @@ export function failureOf(
 ): ProviderFailure {
   const { status, headers } = response;
   return new ProviderFailure(
-    statusFailure(status, effect, {
+    failureForStatus(status, effect, {
       rateLimited: () => ({
         kind: 'rate_limited',
         scope: 'account',

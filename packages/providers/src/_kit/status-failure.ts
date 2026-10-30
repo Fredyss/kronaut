@@ -1,6 +1,8 @@
 import type { ProviderError, StepEffect } from '@kronaut/core';
 import { unexpectedResponse } from './failure.ts';
 
+const RETRYABLE_CLIENT_STATUS: ReadonlySet<number> = new Set([408, 425]);
+
 export interface StatusPolicy {
   readonly rateLimited: () => ProviderError;
   readonly known?: () => ProviderError | undefined;
@@ -12,12 +14,12 @@ export interface StatusPolicy {
 
 function unknownClientError(status: number, effect: StepEffect): ProviderError {
   const detail = `http_${status}`;
-  return effect === 'public'
-    ? { kind: 'ambiguous', detail }
-    : { kind: 'permanent', code: 'unexpected_status', detail };
+  if (effect === 'public') return { kind: 'ambiguous', detail };
+  if (RETRYABLE_CLIENT_STATUS.has(status)) return { kind: 'transient', detail };
+  return { kind: 'permanent', code: 'unexpected_status', detail };
 }
 
-export function statusFailure(
+export function failureForStatus(
   status: number,
   effect: StepEffect,
   policy: StatusPolicy,

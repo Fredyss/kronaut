@@ -10,7 +10,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { unexpectedResponse } from '../_kit/failure.ts';
 import { retryAfter } from '../_kit/http.ts';
-import { statusFailure } from '../_kit/status-failure.ts';
+import { failureForStatus } from '../_kit/status-failure.ts';
 import { errorCode, type ResourceClient, type ResourceReply, resourceClient } from './dpop.ts';
 import { buildFacets, type Facet, facetSchema } from './facets.ts';
 import { permanent } from './identity.ts';
@@ -84,7 +84,7 @@ export function failureOf(
   const { status, headers } = reply.response;
   const raw = errorCode(reply.body);
   const detail = `http_${status}`;
-  return statusFailure(status, effect, {
+  return failureForStatus(status, effect, {
     rateLimited: () => ({
       kind: 'rate_limited',
       scope: rateLimitScope(headers.get('ratelimit-policy')),

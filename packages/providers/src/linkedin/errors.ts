@@ -6,7 +6,7 @@ import {
 } from '@kronaut/core';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { statusFailure } from '../_kit/status-failure.ts';
+import { failureForStatus } from '../_kit/status-failure.ts';
 
 const DUPLICATE = /duplicate/i;
 const ERROR_CODE = /^[A-Z][A-Z_]{0,63}$/;
@@ -86,7 +86,7 @@ export function failureFromBody(
   const body = parsedEnvelope(text);
   const { effect, now } = context;
   return new ProviderFailure(
-    statusFailure(status, effect, {
+    failureForStatus(status, effect, {
       rateLimited: () => ({
         kind: 'rate_limited',
         scope: 'account',
