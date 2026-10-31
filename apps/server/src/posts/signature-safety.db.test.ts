@@ -191,6 +191,20 @@ describe('agent authorship across a signature change', () => {
     expect(second?.unsigned_hash).toEqual(first?.content_hash);
     expect(second?.content_hash).not.toEqual(first?.content_hash);
   });
+
+  it('survives a re-freeze of a signed revision that has no unsigned hash', async () => {
+    await sign((await savedText('Podpis')).id);
+    const post = await rejectedAgentPost(await insertGrant({ scopes: AGENT_SCOPES }));
+    await owner.withActor(SYSTEM, async (trx) => {
+      await sql`set local session_replication_role = replica`.execute(trx);
+      await trx
+        .updateTable('revision_destinations')
+        .set({ unsigned_hash: null })
+        .where('post_id', '=', internal(post.id))
+        .execute();
+    });
+    await expectRefused(await asap(post), post);
+  });
 });
 
 async function inState(post: PostDto, state: Needed) {

@@ -11,6 +11,7 @@ BEGIN
      AND publish_type = NEW.publish_type AND post_version < NEW.post_version
    ORDER BY post_version DESC LIMIT 1;
   NEW.agent_authored := (coalesce(tainted, false) AND prev_hash IS DISTINCT FROM NEW.content_hash)
-                     OR (coalesce(prev_flag, false) AND prev_unsigned = coalesce(NEW.unsigned_hash, NEW.content_hash));
+                     OR (coalesce(prev_flag, false) AND (prev_hash = NEW.content_hash
+                         OR prev_unsigned = coalesce(NEW.unsigned_hash, NEW.content_hash)));
   RETURN NEW;
 END $$;
