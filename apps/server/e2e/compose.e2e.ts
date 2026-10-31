@@ -15,6 +15,12 @@ const SAVED_NAME = 'Podpis';
 const SAVED_TEXT = ' S pozdravom, tím';
 const SIGNED_NAME = 'Pätička';
 const SIGNED_TEXT = 'Váš tím Kronaut';
+// A string because this project has no DOM lib; it runs in the page.
+const PASTE_STRAY = `(() => {
+  const clipboardData = new DataTransfer();
+  clipboardData.setData('text/plain', 'Stray');
+  document.activeElement.dispatchEvent(new ClipboardEvent('paste', { clipboardData, cancelable: true }));
+})()`;
 
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
@@ -125,6 +131,9 @@ test('saves a text in settings and inserts it in the composer', async ({ page })
   await expect(editor).toHaveText(`${TEXT}${SAVED_TEXT}`);
   await expect(menu).toHaveValue('');
   await expect(editor).toBeFocused();
+
+  await editor.press('ControlOrMeta+z');
+  await expect(editor).toHaveText(TEXT);
 });
 
 test('adds a channel signature to the preview and the scheduled post', async ({ page }) => {
@@ -174,6 +183,27 @@ test('opens the composer over the calendar and closes back to it', async ({ page
   await dialog.getByRole('button', { name: en.post_discard_confirm({}) }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page).toHaveURL(/\/\?view=list$/);
+});
+
+test('undoes a stray paste from the keyboard and still guards the text', async ({ page }) => {
+  await page.goto(appUrl('/?view=list'));
+  await page.getByRole('link', { name: calendarEn.calendar_create_post({}), exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: en.post_new_title({}) });
+  const editor = dialog.getByRole('textbox', { name: composeEn.compose_text_label({}) });
+  await editor.click();
+  await editor.pressSequentially('Keep');
+  await expect(editor).toHaveText('Keep');
+  await page.evaluate(PASTE_STRAY);
+  await expect(editor).toHaveText('KeepStray');
+
+  await editor.press('ControlOrMeta+z');
+  await expect(editor).toHaveText('Keep');
+  await editor.press('Escape');
+  await dialog.getByRole('button', { name: en.post_discard_keep({}) }).click();
+  await expect(editor).toBeFocused();
+
+  await editor.press('ControlOrMeta+Shift+z');
+  await expect(editor).toHaveText('KeepStray');
 });
 
 test('counts the text against Bluesky and blocks a post over its limit', async ({ page }) => {
