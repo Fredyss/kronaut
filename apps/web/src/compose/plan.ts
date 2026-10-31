@@ -42,7 +42,8 @@ export function toPlan(
     const variant = custom ? plan.variants.length - 1 : null;
     const { publishType } = choice;
     const carried = kept(stored, channel.id, publishType);
-    plan.destinations.push({ accountId: channel.id, publishType, variant, ...carried });
+    const skip = state.skipped.has(channel.id) ? { skipSignature: true } : {};
+    plan.destinations.push({ accountId: channel.id, publishType, variant, ...carried, ...skip });
   }
   return { ...plan, usesDefault: plan.destinations.some((d) => d.variant === null) };
 }

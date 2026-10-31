@@ -71,6 +71,7 @@ export function destinationRows(trx: TenantDb, workspaceId: string, postId: stri
       'delivery_mode',
       'settings',
       'variant_id',
+      'skip_signature',
       'frozen_post_version',
       'approval_request_id',
       'cancel_requested_at',

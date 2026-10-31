@@ -178,6 +178,18 @@ Phase 0 rules:
 
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
 
+## Channel signature
+
+A channel may have one saved text as its signature. It's added when the post is frozen, so shared text stays shared and no variant is forked.
+
+- **Freeze:** the destination snapshot gains an optional `signature` doc, read from the channel's saved text at freeze. `SNAPSHOT_V` stays 1, and the key is left out when there's no signature, so older rows parse and hash as before.
+- **Render:** `resolveDestination` appends it to the `main` item as new paragraphs after the text. The content hash, preflight, the approval comparison and publishing all read that result, so `CONTENT_HASH_V` doesn't change. Thread items can be skipped, so only the `main` item gets it.
+- **Blank text:** a `main` item with no text gets no signature, so a signature can't make an empty post valid.
+- **Opt-out:** `post_destinations.skip_signature`, set through a destination's `skipSignature`. A duplicate, a series occurrence and an evergreen copy keep the flag and use the channel's signature at their own freeze.
+- **Frozen is frozen:** changing or removing a signature leaves a frozen destination alone, and the re-hash at claim still matches. Rescheduling freezes again and takes the current one; if that changes the hash, the approval rules apply as for any content change.
+- **Read copy:** `post_destinations.frozen_signature` holds the same doc for reading, so the post page shows what was frozen. A draft under review isn't frozen on its row, so `approval_request_destinations.frozen_signature` holds the copy for an open request, and an approver sees that one. The snapshot stays the source for hashing and publishing.
+- **Agents:** a grant changing `skip_signature` marks the post `agent_dirty`, and `trg_dest_guard` refuses the change on a frozen destination without a new freeze.
+
 ## Reply chains
 
 The engine publishes a destination's items one at a time, in position order, one claim and one `publish` call each, with `retry_wait/chain_next` between items ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)). Every `destination_item` has its own state:

@@ -34,13 +34,14 @@ function toItems(content: ComposeContent, ids: ReadonlyMap<string, string>): Dra
 }
 
 function toDestination(destination: ComposeDestination) {
-  const { accountId, publishType, variant, settings, deliveryMode } = destination;
+  const { accountId, publishType, variant, settings, deliveryMode, skipSignature } = destination;
   return {
     accountId,
     publishType,
     ...(settings === undefined ? {} : { settings }),
     ...(deliveryMode === undefined ? {} : { deliveryMode }),
     ...(variant === null ? {} : { variant }),
+    ...(skipSignature === undefined ? {} : { skipSignature }),
   };
 }
 

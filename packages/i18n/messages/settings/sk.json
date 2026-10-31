@@ -196,5 +196,17 @@
   "settings_saved_text_exists": "Uložený text s týmto názvom už existuje.",
   "settings_saved_text_limit": "Tento pracovný priestor dosiahol limit uložených textov. Najprv niektorý odstráňte.",
   "settings_saved_text_name_invalid": "Tento názov je prázdny alebo príliš dlhý.",
-  "settings_saved_text_invalid": "Tento text je prázdny alebo príliš dlhý."
+  "settings_saved_text_invalid": "Tento text je prázdny alebo príliš dlhý.",
+  "settings_saved_text_delete_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál príde o tento podpis.",
+        "countPlural=few": "{count} kanály prídu o tento podpis.",
+        "countPlural=many": "{count} kanála príde o tento podpis.",
+        "countPlural=*": "{count} kanálov príde o tento podpis."
+      }
+    }
+  ]
 }

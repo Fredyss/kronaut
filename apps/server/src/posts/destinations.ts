@@ -15,6 +15,7 @@ const DestinationInput = z.object({
   settings: z.record(z.string(), z.unknown()).optional(),
   deliveryMode: z.enum(['auto', 'reminder']).optional(),
   variant: z.number().int().min(0).nullable().optional(),
+  skipSignature: z.boolean().optional(),
 });
 
 export const DestinationsInput = z.array(DestinationInput).superRefine((list, ctx) => {
@@ -38,6 +39,7 @@ export interface ResolvedDestination {
   readonly settings: Record<string, unknown>;
   readonly deliveryMode: 'auto' | 'reminder';
   readonly variant: number | null;
+  readonly skipSignature: boolean;
 }
 
 export interface PlacedDestination extends ResolvedDestination {
@@ -69,6 +71,7 @@ function resolvedOf(
     settings,
     deliveryMode: d.deliveryMode ?? 'auto',
     variant: d.variant ?? null,
+    skipSignature: d.skipSignature ?? false,
   };
 }
 
@@ -195,6 +198,7 @@ export async function insertDestinations(
         publish_type: d.publishType,
         delivery_mode: d.deliveryMode,
         settings: JSON.stringify(d.settings),
+        skip_signature: d.skipSignature,
         selection_source: 'manual',
         account_label: d.accountLabel,
       })),
@@ -238,6 +242,7 @@ export async function replaceDestinations(
         settings: JSON.stringify(d.settings),
         delivery_mode: d.deliveryMode,
         variant_id: d.variantId,
+        skip_signature: d.skipSignature,
         ...(row.frozen_post_version === null ? {} : UNFROZEN),
         ...(row.state === 'canceled'
           ? { state: 'draft', state_reason: null, version: sql<number>`version + 1` }

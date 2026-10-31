@@ -27,6 +27,7 @@ const CHANNEL = {
   accessExpiresAt: null,
   connectedAt: '2026-10-01T08:00:00.000Z',
   lastErrorCode: null,
+  signature: null,
 };
 
 const PAGE_A = `acct_${'a'.repeat(26)}`;

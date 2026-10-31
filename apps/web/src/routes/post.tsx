@@ -12,7 +12,7 @@ import {
   postQuery,
 } from '../api.ts';
 import { ApprovalSection } from '../approvals/panel.tsx';
-import { docParagraphs } from '../compose/doc.ts';
+import { docParagraphs, docText, isBlank, toDoc } from '../compose/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { useApiClient } from '../context.ts';
 import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
@@ -21,6 +21,7 @@ import { useFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { canceledLive, editableBy } from '../post-actions/post-editable.ts';
+import { shownSignature } from '../post-actions/post-signature.ts';
 import { PostCompose } from '../post-page/post-compose.tsx';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { summaryLabel } from '../post-summary.ts';
@@ -71,18 +72,30 @@ function Content({ item }: { readonly item: Item | undefined }) {
   );
 }
 
+function signatureText(
+  destination: Destination,
+  channel: Channel | undefined,
+  main: Item | undefined,
+) {
+  const signature = shownSignature(destination, channel);
+  return signature === null || isBlank(toDoc(main?.doc)) ? null : docText(signature);
+}
+
 function DestinationRow({
   destination,
   channel,
+  main,
   custom,
   format,
 }: {
   readonly destination: Destination;
   readonly channel: Channel | undefined;
+  readonly main: Item | undefined;
   readonly custom: Item | undefined;
   readonly format: (iso: string) => string;
 }) {
   const link = httpsUrl(destination.remoteUrl);
+  const signature = signatureText(destination, channel, custom ?? main);
   const error = destination.lastErrorCode;
   return (
     <li className="flex flex-wrap items-start gap-3 rounded-xl border p-4">
@@ -119,6 +132,11 @@ function DestinationRow({
               <p className="mt-1 font-mono text-xs">{error}</p>
             </details>
           </div>
+        )}
+        {signature === null ? null : (
+          <p className="whitespace-pre-wrap break-words text-muted-foreground text-sm">
+            {m.post_signature({ text: signature })}
+          </p>
         )}
         {custom === undefined ? null : (
           <details className="text-sm">
@@ -224,6 +242,7 @@ function PostStatus({
               key={destination.id}
               destination={destination}
               channel={byId.get(destination.accountId)}
+              main={data.items[0]}
               custom={
                 destination.variant === null
                   ? undefined

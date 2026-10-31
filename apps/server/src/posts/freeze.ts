@@ -44,6 +44,7 @@ export const UNFROZEN: UpdateObject<DB, 'post_destinations'> = {
   frozen_post_version: null,
   content_hash: null,
   content_hash_v: null,
+  frozen_signature: null,
   brand_id_at_freeze: null,
   location_id_at_freeze: null,
   scheduled_local: null,
@@ -70,11 +71,13 @@ export interface FreezeTarget {
   readonly deliveryMode: string;
   readonly settings: unknown;
   readonly variantId: string | null;
+  readonly skipSignature: boolean;
 }
 
 export interface Frozen {
   readonly id: string;
   readonly contentHash: Buffer;
+  readonly signature: unknown;
   readonly agentAuthored: boolean;
   readonly preflight: readonly ValidationIssue[];
   readonly ackedCodes: readonly string[];
@@ -102,6 +105,13 @@ function preflightFailed(details: readonly IssueDetail[]): HttpError {
 
 type Content = Awaited<ReturnType<typeof loadContent>>;
 
+interface AccountFacts {
+  readonly capabilities: unknown;
+  readonly signature: unknown;
+}
+
+type Accounts = ReadonlyMap<string, AccountFacts>;
+
 interface Checked {
   readonly p: Prepared;
   readonly resolved: ReturnType<typeof resolveDestination>;
@@ -112,6 +122,7 @@ interface Hashed {
   readonly p: Prepared;
   readonly issues: readonly ValidationIssue[];
   readonly hash: Buffer;
+  readonly signature: unknown;
 }
 
 function prepareTargets(
@@ -141,7 +152,17 @@ function prepareTargets(
   return prepared;
 }
 
-function snapshotOf(input: FreezeInput, { variants, items, media }: Content, prepared: Prepared[]) {
+function signatureField({ skipSignature, socialAccountId }: FreezeTarget, accounts: Accounts) {
+  const signature = skipSignature ? null : (accounts.get(socialAccountId)?.signature ?? null);
+  return signature === null ? {} : { signature };
+}
+
+function snapshotOf(
+  input: FreezeInput,
+  { variants, items, media }: Content,
+  prepared: Prepared[],
+  accounts: Accounts,
+) {
   const { postId, postVersion } = input;
   const used = new Set(prepared.map((p) => p.variantId));
   return RevisionSnapshotSchema.parse({
@@ -171,29 +192,33 @@ function snapshotOf(input: FreezeInput, { variants, items, media }: Content, pre
       variantId: p.variantId,
       deliveryMode: p.target.deliveryMode,
       settings: p.settings,
+      ...signatureField(p.target, accounts),
     })),
   });
 }
 
 type Snapshot = ReturnType<typeof snapshotOf>;
 
-async function accountCapabilities(trx: TenantDb, input: FreezeInput) {
+async function loadAccounts(trx: TenantDb, input: FreezeInput): Promise<Accounts> {
   const ids = [...new Set(input.targets.map((target) => target.socialAccountId))];
-  if (ids.length === 0) return new Map<string, unknown>();
+  if (ids.length === 0) return new Map();
   const rows = await trx
-    .selectFrom('social_accounts')
-    .select(['id', 'capabilities'])
-    .where('workspace_id', '=', input.workspaceId)
-    .where('id', 'in', ids)
+    .selectFrom('social_accounts as a')
+    .leftJoin('saved_texts as s', (join) =>
+      join.onRef('s.workspace_id', '=', 'a.workspace_id').onRef('s.id', '=', 'a.saved_text_id'),
+    )
+    .select(['a.id', 'a.capabilities', 's.doc as signature'])
+    .where('a.workspace_id', '=', input.workspaceId)
+    .where('a.id', 'in', ids)
     .execute();
-  return new Map<string, unknown>(rows.map((row) => [row.id, row.capabilities]));
+  return new Map(rows.map(({ id, ...facts }) => [id, facts]));
 }
 
 function preflight(
   input: FreezeInput,
   snapshot: Snapshot,
   prepared: Prepared[],
-  capabilities: ReadonlyMap<string, unknown>,
+  accounts: Accounts,
 ): Checked[] {
   const details: IssueDetail[] = [];
   const checked = prepared.map((p) => {
@@ -203,7 +228,7 @@ function preflight(
       p.entry.manifest,
       publishType,
       draftItems(resolved),
-      capabilities.get(socialAccountId),
+      accounts.get(socialAccountId)?.capabilities,
     );
     for (const issue of issues) {
       if (!WARNING_CODES.has(issue.code) || !input.acknowledged.has(issue.code)) {
@@ -261,19 +286,21 @@ export async function freeze(
   const content = await loadContent(trx, input);
   const fallback = content.variants.find((variant) => variant.is_default)?.id;
   const prepared = prepareTargets(providers, input, fallback);
-  const snapshot = snapshotOf(input, content, prepared);
-  const checked = preflight(input, snapshot, prepared, await accountCapabilities(trx, input));
+  const accounts = await loadAccounts(trx, input);
+  const snapshot = snapshotOf(input, content, prepared, accounts);
+  const checked = preflight(input, snapshot, prepared, accounts);
 
   const hashed = await Promise.all(
     checked.map(async ({ p, resolved, issues }) => ({
       p,
       issues,
       hash: Buffer.from(await contentHash(contentHashInput(resolved))),
+      signature: resolved.destination.signature ?? null,
     })),
   );
   const rows = await insertRevision(trx, input, snapshot, hashed);
 
-  return hashed.map(({ p, issues, hash }) => {
+  return hashed.map(({ p, issues, hash, signature }) => {
     const row = rows.find(
       (r) =>
         r.social_account_id === p.target.socialAccountId && r.publish_type === p.target.publishType,
@@ -282,6 +309,7 @@ export async function freeze(
     return {
       id: p.target.id,
       contentHash: hash,
+      signature,
       agentAuthored: row.agent_authored,
       preflight: issues,
       ackedCodes: [...new Set(issues.map((issue) => issue.code))].sort(),

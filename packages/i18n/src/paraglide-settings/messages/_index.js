@@ -42,6 +42,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Saved_Text_CancelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Saved_Text_Delete_ChannelsInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
 /** @typedef {{}} Settings_Saved_Text_DeletedInputs */
@@ -734,6 +735,22 @@ export const settings_saved_text_delete_body = /** @type {((inputs?: Settings_Sa
 	if (locale === "sk") return __sk.settings_saved_text_delete_body(inputs)
 	if (locale === "cs") return __cs.settings_saved_text_delete_body(inputs)
 	return __en.settings_saved_text_delete_body(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} channel loses it as its signature." |
+* | * | "{count} channels lose it as their signature." |
+*
+* @param {Settings_Saved_Text_Delete_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_saved_text_delete_channels = /** @type {((inputs: Settings_Saved_Text_Delete_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Saved_Text_Delete_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_saved_text_delete_channels(inputs)
+	if (locale === "cs") return __cs.settings_saved_text_delete_channels(inputs)
+	return __en.settings_saved_text_delete_channels(inputs)
 });
 /**
 * | output |

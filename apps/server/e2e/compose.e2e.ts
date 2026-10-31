@@ -13,6 +13,8 @@ const TAGGED = 'Príspevok so štítkom';
 const TAG = 'Kampaň';
 const SAVED_NAME = 'Podpis';
 const SAVED_TEXT = ' S pozdravom, tím';
+const SIGNED_NAME = 'Pätička';
+const SIGNED_TEXT = 'Váš tím Kronaut';
 
 test('schedules a post a week ahead and keeps it after a reload', async ({ page }) => {
   const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 7 }).toString();
@@ -123,6 +125,37 @@ test('saves a text in settings and inserts it in the composer', async ({ page })
   await expect(editor).toHaveText(`${TEXT}${SAVED_TEXT}`);
   await expect(menu).toHaveValue('');
   await expect(editor).toBeFocused();
+});
+
+test('adds a channel signature to the preview and the scheduled post', async ({ page }) => {
+  const date = Temporal.Now.plainDateISO(TIME_ZONE).add({ days: 10 }).toString();
+  await page.goto(appUrl('/settings/saved-texts'));
+  const main = page.getByRole('main');
+  await main.getByRole('button', { name: settingsEn.settings_saved_text_add({}) }).click();
+  await main.getByLabel(settingsEn.settings_saved_text_name({}), { exact: true }).fill(SIGNED_NAME);
+  await main.getByLabel(settingsEn.settings_saved_text_text({}), { exact: true }).fill(SIGNED_TEXT);
+  await main.getByRole('button', { name: en.settings_save({}), exact: true }).click();
+  await expect(main.getByText(SIGNED_TEXT)).toBeVisible();
+
+  await page.goto(appUrl('/channels'));
+  const signature = page.getByRole('combobox', { name: en.channels_signature({}) });
+  await signature.selectOption({ label: SIGNED_NAME });
+  await expect(signature).not.toHaveValue('');
+
+  await page.goto(appUrl('/compose'));
+  await page.getByRole('textbox', { name: composeEn.compose_text_label({}) }).fill(TEXT);
+  await page.getByRole('checkbox', { name: CHANNEL.displayName }).check();
+  await expect(page.getByText(SIGNED_TEXT)).toBeVisible();
+  await page.getByRole('radio', { name: en.compose_schedule({}) }).check();
+  await page.getByLabel(en.compose_date({}), { exact: true }).fill(date);
+  await page.getByLabel(en.compose_time({}), { exact: true }).fill('14:00');
+  await page.getByRole('button', { name: en.compose_schedule({}) }).click();
+  await expect(page).toHaveURL(/\/posts\/[^/]+$/);
+  await expect(page.getByText(SIGNED_TEXT)).toBeVisible();
+
+  await page.goto(appUrl('/channels'));
+  await signature.selectOption({ label: en.channels_signature_none({}) });
+  await expect(signature).toHaveValue('');
 });
 
 test('opens the composer over the calendar and closes back to it', async ({ page }) => {

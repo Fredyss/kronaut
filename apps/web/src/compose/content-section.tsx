@@ -10,6 +10,7 @@ import { ImagesSection } from './images-section.tsx';
 import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
 import { loadEditor, loadTextLimits } from './load.ts';
 import { SavedTextMenu } from './saved-text-menu.tsx';
+import { SignatureToggle } from './signature-toggle.tsx';
 import { limitTargets } from './targets.ts';
 import type { ContentsState } from './use-contents.ts';
 
@@ -190,6 +191,7 @@ export function ContentSection(props: ContentSectionProps) {
               focused.current = null;
             }}
           />
+          <SignatureToggle state={state} channel={channel} pending={pending} />
           <Suspense fallback={null}>
             <TextLimits
               targets={targets}

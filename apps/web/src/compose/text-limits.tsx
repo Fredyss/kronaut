@@ -67,9 +67,9 @@ function targetFor(target: LimitTarget): Target[] {
   const { channel, doc, video, shown } = target;
   const postType = postTypeFor(channel, target.media);
   if (postType === undefined) return [];
-  const key = JSON.stringify([postType.text, postType.maxLinks, postType.video]);
-  const issues = video === null ? [] : checkVideo(postType.video, video);
   const text = toPlainText(doc);
+  const key = JSON.stringify([postType.text, postType.maxLinks, postType.video, text]);
+  const issues = video === null ? [] : checkVideo(postType.video, video);
   const main: Target = {
     channel,
     rules: mainRules(postType),

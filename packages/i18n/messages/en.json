@@ -539,5 +539,10 @@
   "tags_exists": "A tag with this name already exists.",
   "tags_out_of_scope": "You have access to only part of this workspace, so you can't create tags.",
   "tags_limit": "This workspace has reached its tag limit. Delete a tag in Settings first.",
-  "issue_tag_unknown": "This tag no longer exists. Remove it and save again."
+  "issue_tag_unknown": "This tag no longer exists. Remove it and save again.",
+  "channels_signature": "Signature",
+  "channels_signature_none": "None",
+  "channels_signature_named": "Signature: {name}",
+  "channels_signature_saved": "Signature saved",
+  "post_signature": "Signature: {text}"
 }

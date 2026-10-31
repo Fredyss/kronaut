@@ -24,6 +24,7 @@ export interface OpenedForm {
   readonly selected: ReadonlySet<string>;
   readonly canceled: readonly string[];
   readonly stored: ReadonlySet<string>;
+  readonly skipSignature: ReadonlySet<string>;
   readonly videos: VideoRegistry;
   readonly when: WhenStart;
 }
@@ -177,6 +178,9 @@ export function fromPost(post: Post, assets: Assets, channels: readonly Channel[
     selected: sent,
     canceled: accounts.filter((accountId) => !sent.has(accountId)),
     stored: new Set(accounts),
+    skipSignature: new Set(
+      post.destinations.filter((d) => d.skipSignature).map((d) => d.accountId),
+    ),
     videos: toVideos(assets, contents),
     when: startWhen(post),
   };

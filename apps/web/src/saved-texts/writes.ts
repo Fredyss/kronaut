@@ -1,7 +1,7 @@
 import { savedTextsCreate, savedTextsDelete, savedTextsUpdate } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { errorStatus } from '../api.ts';
+import { channelsKey, errorStatus } from '../api.ts';
 import { useApiClient } from '../context.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { idempotency, keyFor } from '../idempotency.ts';
@@ -19,7 +19,11 @@ function reportFailure(error: unknown): void {
 
 function useInvalidate(workspaceId: string) {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: savedTextsKey(workspaceId) });
+  return () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: savedTextsKey(workspaceId) }),
+      queryClient.invalidateQueries({ queryKey: channelsKey(workspaceId) }),
+    ]);
 }
 
 export function useCreateSavedText(workspaceId: string, onDone: () => void) {

@@ -121,6 +121,7 @@ async function insertRequest(trx: TenantDb, ctx: Requester, o: Opening): Promise
         shown_local: schedule?.local.toString() ?? null,
         shown_tz: schedule?.tz ?? null,
         tolerance_min: schedule === null ? null : policy.rescheduleToleranceMin,
+        frozen_signature: f.signature === null ? null : JSON.stringify(f.signature),
       })),
     )
     .execute();

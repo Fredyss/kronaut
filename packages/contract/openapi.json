@@ -2458,6 +2458,37 @@
                           "provider": {
                             "type": "string"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "doc": {
+                                    "additionalProperties": {},
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "type": "object"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name",
+                                  "doc"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
                           "status": {
                             "enum": [
                               "active",
@@ -2488,7 +2519,8 @@
                           "lastErrorCode",
                           "postTypes",
                           "preview",
-                          "insights"
+                          "insights",
+                          "signature"
                         ],
                         "type": "object"
                       },
@@ -3192,6 +3224,134 @@
           }
         ],
         "summary": "Replace a channel's queue",
+        "tags": [
+          "channels"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/channels/{channelId}/saved-text": {
+      "put": {
+        "description": "A saved text added after the main text of every post frozen for this channel, or null for none. Posts already frozen keep theirs. An unknown saved text is 422. Owners and admins only.",
+        "operationId": "channels.set_signature",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "savedTextId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "savedTextId"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "signature": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "doc": {
+                              "additionalProperties": {},
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "type": "object"
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "doc"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "signature"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Set a channel's signature",
         "tags": [
           "channels"
         ],
@@ -6548,6 +6708,9 @@
                           },
                           "type": "object"
                         },
+                        "skipSignature": {
+                          "type": "boolean"
+                        },
                         "variant": {
                           "anyOf": [
                             {
@@ -6781,6 +6944,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -6835,7 +7018,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -7308,6 +7494,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -7362,7 +7568,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -7731,6 +7940,9 @@
                           },
                           "type": "object"
                         },
+                        "skipSignature": {
+                          "type": "boolean"
+                        },
                         "variant": {
                           "anyOf": [
                             {
@@ -7976,6 +8188,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -8030,7 +8262,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -8813,6 +9048,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -8867,7 +9122,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -9307,6 +9565,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -9361,7 +9639,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -9809,6 +10090,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -9863,7 +10164,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -10311,6 +10615,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -10365,7 +10689,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -10870,6 +11197,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -10924,7 +11271,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -11344,6 +11694,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -11398,7 +11768,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -12417,6 +12790,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -12471,7 +12864,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -13047,6 +13443,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -13101,7 +13517,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -13676,6 +14095,26 @@
                             },
                             "type": "object"
                           },
+                          "signature": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "signatureHeld": {
+                            "type": "boolean"
+                          },
+                          "skipSignature": {
+                            "type": "boolean"
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -13730,7 +14169,10 @@
                           "remoteUrl",
                           "publishedAt",
                           "lastErrorCode",
-                          "variant"
+                          "variant",
+                          "skipSignature",
+                          "signature",
+                          "signatureHeld"
                         ],
                         "type": "object"
                       },
@@ -14042,7 +14484,7 @@
     },
     "/v1/workspaces/{workspaceId}/saved-texts": {
       "get": {
-        "description": "The workspace's saved texts by name.",
+        "description": "The workspace's saved texts by name, each with how many channels use it.",
         "operationId": "saved_texts.list",
         "parameters": [
           {
@@ -14065,6 +14507,11 @@
                       "items": {
                         "additionalProperties": false,
                         "properties": {
+                          "channelCount": {
+                            "maximum": 9007199254740991,
+                            "minimum": 0,
+                            "type": "integer"
+                          },
                           "doc": {
                             "additionalProperties": {},
                             "propertyNames": {
@@ -14082,7 +14529,8 @@
                         "required": [
                           "id",
                           "name",
-                          "doc"
+                          "doc",
+                          "channelCount"
                         ],
                         "type": "object"
                       },
@@ -14237,7 +14685,7 @@
     },
     "/v1/workspaces/{workspaceId}/saved-texts/{savedTextId}": {
       "delete": {
-        "description": "Posts that already used the text keep theirs. Owners and admins only.",
+        "description": "Channels using the text lose their signature; posts that already used it keep theirs. Owners and admins only.",
         "operationId": "saved_texts.delete",
         "parameters": [
           {
