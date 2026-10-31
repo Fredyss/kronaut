@@ -29,6 +29,7 @@ import {
   type FixtureUrls,
   fakeProvider,
 } from '../publish/testing.ts';
+import { parseSnapshot, publishItems, resolveDestination } from '../snapshot.ts';
 import type { PostDto } from './dto.ts';
 
 export {
@@ -309,4 +310,53 @@ export async function jobRunAt(destinationId: string): Promise<Date | undefined>
     `.execute(trx),
   );
   return result.rows[0]?.run_at;
+}
+
+let savedTextSerial = 0;
+
+export async function savedText(text: string): Promise<{ readonly id: string }> {
+  savedTextSerial += 1;
+  const response = await call('POST', 'saved-texts', ownerAuth, {
+    name: `Text ${savedTextSerial}`,
+    doc: doc(text),
+  });
+  expect(response.status).toBe(201);
+  return (await response.json()) as { id: string };
+}
+
+export function signCall(savedTextId: string | null, accountId: string) {
+  return call('PUT', `channels/${accountId}/saved-text`, ownerAuth, { savedTextId });
+}
+
+export async function sign(savedTextId: string | null, accountId: string = accountA) {
+  expect((await signCall(savedTextId, accountId)).status).toBe(200);
+}
+
+export async function fetched(post: PostDto) {
+  return (await (await call('GET', `posts/${post.id}`, ownerAuth)).json()) as PostDto;
+}
+
+export async function rendered(post: PostDto) {
+  const { snapshot } = await owner.withActor(SYSTEM, (trx) =>
+    trx
+      .selectFrom('post_destinations as d')
+      .innerJoin('post_revisions as r', (join) =>
+        join
+          .onRef('r.workspace_id', '=', 'd.workspace_id')
+          .onRef('r.post_id', '=', 'd.post_id')
+          .onRef('r.post_version', '=', 'd.frozen_post_version'),
+      )
+      .select('r.snapshot')
+      .where('d.post_id', '=', internal(post.id))
+      .executeTakeFirstOrThrow(),
+  );
+  const parsed = parseSnapshot(snapshot);
+  const [destination] = parsed.destinations;
+  if (destination === undefined) throw new Error('the snapshot has no destination');
+  const key = { socialAccountId: destination.socialAccountId, publishType: 'post' };
+  return { destination, items: publishItems(resolveDestination(parsed, key)) };
+}
+
+export function texts({ items }: Awaited<ReturnType<typeof rendered>>) {
+  return items.map((item) => item.text);
 }

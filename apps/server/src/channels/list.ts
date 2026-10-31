@@ -81,6 +81,7 @@ export const channelListRoute = defineRoute({
   params: z.object({ workspaceId: z.string() }),
   response: z.object({ items: z.array(ChannelSchema) }),
   summary: 'List the connected channels',
+  description: 'A key without posts:read gets signature: null on every channel.',
   tags: ['channels'],
 });
 
@@ -154,11 +155,16 @@ function insightsGranted(capabilities: unknown): boolean {
   return insightsCapability.safeParse(capabilities).success;
 }
 
+interface ChannelListOptions {
+  readonly scope: AccessScope | null;
+  readonly hideSignatures: boolean;
+}
+
 export async function listChannels(
   trx: TenantDb,
   workspaceId: string,
-  scope: AccessScope | null,
   providers: ProviderRegistry,
+  { scope, hideSignatures }: ChannelListOptions,
 ): Promise<z.output<typeof ChannelSchema>[]> {
   let query = trx
     .selectFrom('social_accounts')
@@ -191,7 +197,7 @@ export async function listChannels(
   const signatures = await loadSignatures(
     trx,
     workspaceId,
-    rows.flatMap((row) => row.saved_text_id ?? []),
+    hideSignatures ? [] : rows.flatMap((row) => row.saved_text_id ?? []),
   );
   return rows.map((row) => {
     const entry = providers.get(row.provider);

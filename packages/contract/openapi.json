@@ -2062,6 +2062,7 @@
     },
     "/v1/workspaces/{workspaceId}/channels": {
       "get": {
+        "description": "A key without posts:read gets signature: null on every channel.",
         "operationId": "channels.list",
         "parameters": [
           {

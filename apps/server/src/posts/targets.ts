@@ -132,6 +132,7 @@ export async function freezeTargets(
       settings: row.settings,
       variantId: row.variant_id,
       skipSignature: row.skip_signature,
+      held: row.state === 'draft' ? null : { signature: row.frozen_signature },
     })),
     acknowledged: new Set(scope.body.acknowledgedCodes ?? []),
     reason: scope.reason ?? 'schedule',

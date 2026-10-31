@@ -20,7 +20,12 @@ function bindList(deps: ChannelRouteDeps) {
     if (workspaceId === null) throw new HttpError('not_found', 'Not found.');
     const decision = ctx.authorize('channels:read', { workspaceId });
     const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
-    const items = await ctx.tenant((trx) => listChannels(trx, workspaceId, scope, deps.providers));
+    const hideSignatures =
+      ctx.principal?.kind === 'grant' && !ctx.principal.scopes.includes('posts:read');
+    const options = { scope, hideSignatures };
+    const items = await ctx.tenant((trx) =>
+      listChannels(trx, workspaceId, deps.providers, options),
+    );
     return { body: { items } };
   });
 }
