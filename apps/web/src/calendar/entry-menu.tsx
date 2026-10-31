@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -55,11 +56,33 @@ interface PopupProps {
   onClose(refocus: boolean): void;
 }
 
+const GAP = 4;
+const MARGIN = 8;
+
+interface Place {
+  readonly top: number;
+  readonly maxHeight?: number;
+}
+
+// The menu never covers its button: a second click of a double-click would land on an item.
+function placeMenu(button: DOMRect, height: number): Place {
+  const below = window.innerHeight - button.bottom - GAP - MARGIN;
+  const above = button.top - GAP - MARGIN;
+  const up = height > below && above > below;
+  const room = up ? above : below;
+  const top = up ? button.top - GAP - Math.min(height, room) : button.bottom + GAP;
+  return { top, maxHeight: room };
+}
+
 function Popup({ id, anchor, label, children, onClose }: PopupProps) {
   const menu = useRef<HTMLDivElement>(null);
   const closing = useRef(onClose);
   closing.current = onClose;
   const [rect] = useState(() => anchor.getBoundingClientRect());
+  const [place, setPlace] = useState<Place>({ top: rect.bottom + GAP });
+  useLayoutEffect(() => {
+    setPlace(placeMenu(rect, menu.current?.offsetHeight ?? 0));
+  }, [rect]);
   useEffect(() => {
     menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus({ preventScroll: true });
     const away = (event: PointerEvent) => {
@@ -67,13 +90,16 @@ function Popup({ id, anchor, label, children, onClose }: PopupProps) {
       if (!menu.current?.contains(target) && !anchor.contains(target)) closing.current(false);
     };
     const leave = () => closing.current(false);
+    const scrolled = (event: Event) => {
+      if (!menu.current?.contains(event.target as Node)) leave();
+    };
     document.addEventListener('pointerdown', away);
     window.addEventListener('resize', leave);
-    window.addEventListener('scroll', leave, true);
+    window.addEventListener('scroll', scrolled, true);
     return () => {
       document.removeEventListener('pointerdown', away);
       window.removeEventListener('resize', leave);
-      window.removeEventListener('scroll', leave, true);
+      window.removeEventListener('scroll', scrolled, true);
     };
   }, [anchor]);
   return createPortal(
@@ -83,8 +109,8 @@ function Popup({ id, anchor, label, children, onClose }: PopupProps) {
       role="menu"
       aria-label={label}
       tabIndex={-1}
-      style={{ top: rect.bottom + 4, right: Math.max(window.innerWidth - rect.right, 8) }}
-      className="fixed z-50 flex min-w-40 flex-col rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
+      style={{ ...place, right: Math.max(window.innerWidth - rect.right, MARGIN) }}
+      className="fixed z-50 flex min-w-40 flex-col overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
       onKeyDown={(event) => {
         if (event.key === 'Escape' || event.key === 'Tab') {
           event.preventDefault();
