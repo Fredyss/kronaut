@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -60,6 +61,11 @@ function Popup({ id, anchor, label, children, onClose }: PopupProps) {
   const closing = useRef(onClose);
   closing.current = onClose;
   const [rect] = useState(() => anchor.getBoundingClientRect());
+  const [top, setTop] = useState(rect.bottom + 4);
+  useLayoutEffect(() => {
+    const height = menu.current?.offsetHeight ?? 0;
+    if (rect.bottom + 4 + height > window.innerHeight) setTop(Math.max(rect.top - 4 - height, 8));
+  }, [rect]);
   useEffect(() => {
     menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus({ preventScroll: true });
     const away = (event: PointerEvent) => {
@@ -83,7 +89,7 @@ function Popup({ id, anchor, label, children, onClose }: PopupProps) {
       role="menu"
       aria-label={label}
       tabIndex={-1}
-      style={{ top: rect.bottom + 4, right: Math.max(window.innerWidth - rect.right, 8) }}
+      style={{ top, right: Math.max(window.innerWidth - rect.right, 8) }}
       className="fixed z-50 flex min-w-40 flex-col rounded-md border bg-popover p-1 text-popover-foreground shadow-lg"
       onKeyDown={(event) => {
         if (event.key === 'Escape' || event.key === 'Tab') {
