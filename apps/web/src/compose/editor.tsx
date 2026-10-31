@@ -2,6 +2,8 @@ import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
+import { UndoRedo } from '@tiptap/extensions/undo-redo';
+import { closeHistory } from '@tiptap/pm/history';
 import { Fragment, Slice } from '@tiptap/pm/model';
 import { Selection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
@@ -30,7 +32,10 @@ function insertPlainText(view: EditorView, text: string, at?: number): void {
     at === undefined
       ? view.state.tr.replaceSelection(slice)
       : view.state.tr.replaceRange(at, at, slice);
-  view.dispatch(tr.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste'));
+  // Without this, an insert right after typing joins the typing's undo step and takes it along.
+  view.dispatch(
+    closeHistory(tr.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste')),
+  );
 }
 
 // ProseMirror parses pasted or dropped HTML through innerHTML, which Trusted Types blocks; only plain text is read.
@@ -66,7 +71,7 @@ export default function PostEditor({
   }, [onChange]);
   const cursorPlaced = useRef(false);
   const editor = useEditor({
-    extensions: [Document, Paragraph, Text, HardBreak],
+    extensions: [Document, Paragraph, Text, HardBreak, UndoRedo],
     content: structuredClone(initial) as JSONContent,
     injectCSS: false,
     immediatelyRender: true,
