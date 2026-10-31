@@ -1,4 +1,5 @@
 import {
+  appendSignature,
   type ContentHashInput,
   canonicalizeDoc,
   type DraftItem,
@@ -48,6 +49,7 @@ export const DestinationSnapshotSchema = z.object({
   variantId: z.uuid(),
   deliveryMode: z.enum(['auto', 'reminder']),
   settings: z.unknown(),
+  signature: z.unknown().optional(),
 });
 
 export const RevisionSnapshotSchema = z.object({
@@ -89,6 +91,20 @@ export interface ResolvedDestination {
   readonly items: readonly ItemSnapshot[];
 }
 
+function signed(items: readonly ItemSnapshot[], signature: unknown): ItemSnapshot[] {
+  return items.map((item) =>
+    item.role === 'main'
+      ? {
+          ...item,
+          doc: appendSignature(
+            canonicalizeDoc(item.doc, item.docSchemaV),
+            canonicalizeDoc(signature, item.docSchemaV),
+          ),
+        }
+      : item,
+  );
+}
+
 export function resolveDestination(
   snapshot: RevisionSnapshot,
   key: DestinationKey,
@@ -101,7 +117,12 @@ export function resolveDestination(
   const variant = snapshot.variants.find((v) => v.id === destination.variantId);
   if (variant === undefined) throw new SnapshotError('variant_missing');
   const items = [...variant.items].sort((a, b) => a.position - b.position);
-  return { destination, variant, items };
+  const { signature } = destination;
+  return {
+    destination,
+    variant,
+    items: signature === undefined ? items : signed(items, signature),
+  };
 }
 
 export function contentHashInput(resolved: ResolvedDestination): ContentHashInput {

@@ -82,6 +82,7 @@ function EditableRow({
       {open === 'delete' ? (
         <DeleteSavedText
           name={name}
+          channelCount={savedText.channelCount}
           pending={remove.isPending}
           onCancel={close}
           onConfirm={() => remove.mutate(undefined, { onSettled: close })}

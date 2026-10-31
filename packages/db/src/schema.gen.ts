@@ -149,6 +149,7 @@ export interface ApprovalPolicies {
 export interface ApprovalRequestDestinations {
   content_hash: Buffer;
   destination_id: string;
+  frozen_signature: Json | null;
   request_id: string;
   schedule_bound: boolean;
   shown_local: string | null;
@@ -573,6 +574,7 @@ export interface PostDestinations {
   delivery_mode: Generated<string>;
   frozen_at: Timestamp | null;
   frozen_post_version: number | null;
+  frozen_signature: Json | null;
   id: Generated<string>;
   last_error_code: string | null;
   last_error_message: string | null;
@@ -598,6 +600,7 @@ export interface PostDestinations {
   selection_source: string;
   settings: Generated<Json>;
   settings_v: Generated<number>;
+  skip_signature: Generated<boolean>;
   social_account_id: string;
   source_group_id: string | null;
   state: Generated<string>;
@@ -870,6 +873,7 @@ export interface SocialAccounts {
   provider_app_id: string;
   provider_subject_id: string | null;
   refresh_expires_at: Timestamp | null;
+  saved_text_id: string | null;
   status: Generated<string>;
   status_changed_at: Generated<Timestamp>;
   status_reason: string | null;

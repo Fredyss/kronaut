@@ -3,6 +3,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Compose_Add_CommentInputs */
 /** @typedef {{}} Compose_Add_ReplyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Add_SignatureInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -125,6 +126,21 @@ export const compose_add_reply = /** @type {((inputs?: Compose_Add_ReplyInputs, 
 	if (locale === "sk") return __sk.compose_add_reply(inputs)
 	if (locale === "cs") return __cs.compose_add_reply(inputs)
 	return __en.compose_add_reply(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add signature “{name}”" |
+*
+* @param {Compose_Add_SignatureInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_add_signature = /** @type {((inputs: Compose_Add_SignatureInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Add_SignatureInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_add_signature(inputs)
+	if (locale === "cs") return __cs.compose_add_signature(inputs)
+	return __en.compose_add_signature(inputs)
 });
 /**
 * | output |

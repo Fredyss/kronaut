@@ -11,6 +11,13 @@ interface ModalProps {
   onCancel(): void;
 }
 
+const OPEN_SELECT = 'select:open';
+
+// Escape that closes a select's list also reaches the dialog as a cancel, which would close the form.
+function selectIsOpen(dialog: HTMLDialogElement): boolean {
+  return CSS.supports(`selector(${OPEN_SELECT})`) && dialog.querySelector(OPEN_SELECT) !== null;
+}
+
 // The native modal dialog makes the page behind it inert and keeps Tab inside, so no trap is needed.
 export function Modal({
   labelledBy,
@@ -43,7 +50,7 @@ export function Modal({
       onCancel={(event) => {
         if (event.target !== event.currentTarget) return;
         event.preventDefault();
-        onCancel();
+        if (!selectIsOpen(event.currentTarget)) onCancel();
       }}
       onKeyDown={(event) => {
         // ProseMirror swallows Escape, so the browser never sends the dialog its cancel.

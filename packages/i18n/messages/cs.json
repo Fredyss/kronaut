@@ -566,5 +566,10 @@
   "tags_exists": "Štítek s tímto názvem už existuje.",
   "tags_out_of_scope": "Máte přístup jen k části tohoto pracovního prostoru, proto nemůžete vytvářet štítky.",
   "tags_limit": "Tento pracovní prostor už má maximální počet štítků. Nejdřív některý smažte v Nastavení.",
-  "issue_tag_unknown": "Tento štítek už neexistuje. Odeberte ho a uložte znovu."
+  "issue_tag_unknown": "Tento štítek už neexistuje. Odeberte ho a uložte znovu.",
+  "channels_signature": "Podpis",
+  "channels_signature_none": "Žádný",
+  "channels_signature_named": "Podpis: {name}",
+  "channels_signature_saved": "Podpis je uložený",
+  "post_signature": "Podpis: {text}"
 }

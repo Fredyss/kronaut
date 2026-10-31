@@ -16,6 +16,7 @@ import { type ConnectRequest, connectError } from '../channels/connect-option.ts
 import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
 import { QUEUE_ROLES } from '../channels/queue.ts';
 import { SearchToasts } from '../channels/search-toasts.tsx';
+import { ChannelSignature } from '../channels/signature.tsx';
 import { useApiClient, useLocale } from '../context.ts';
 import { httpsUrl } from '../destinations.ts';
 import { m } from '../i18n.ts';
@@ -185,6 +186,7 @@ function ChannelCard(props: CardProps) {
             </Suspense>
           )}
         </div>
+        <ChannelSignature channel={channel} />
       </div>
       <CardActions {...props} panel={panel} setPanel={setPanel} />
       {onDisconnect === null || panel !== 'confirm' ? null : (

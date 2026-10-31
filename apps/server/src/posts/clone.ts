@@ -58,7 +58,7 @@ async function loadSource(trx: TenantDb, input: CloneInput) {
   const destinations = await trx
     .selectFrom('post_destinations')
     .select(['social_account_id', 'publish_type', 'delivery_mode', 'settings', 'variant_id'])
-    .select('agent_content')
+    .select(['skip_signature', 'agent_content'])
     .where('workspace_id', '=', workspaceId)
     .where('post_id', '=', postId)
     .$if(accountId !== undefined, (qb) => qb.where('social_account_id', '=', accountId as string))
@@ -102,6 +102,7 @@ function bodyOf(source: Source) {
         deliveryMode: d.delivery_mode as 'auto' | 'reminder',
         settings: d.settings as Doc,
         variant: index < 0 ? null : index,
+        skipSignature: d.skip_signature,
       };
     }),
   };

@@ -40,6 +40,7 @@
 /** @typedef {{}} Settings_Saved_Text_CancelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Saved_Text_Delete_ChannelsInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
 /** @typedef {{}} Settings_Saved_Text_DeletedInputs */
@@ -281,6 +282,12 @@ export const settings_saved_text_delete = /** @type {(inputs: Settings_Saved_Tex
 
 export const settings_saved_text_delete_body = /** @type {(inputs: Settings_Saved_Text_Delete_BodyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Posts that already used it keep their text.`)
+};
+
+export const settings_saved_text_delete_channels = /** @type {(inputs: Settings_Saved_Text_Delete_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel loses it as its signature.`);
+	return /** @type {LocalizedString} */ (`${i?.count} channels lose it as their signature.`)
 };
 
 export const settings_saved_text_delete_confirm = /** @type {(inputs: Settings_Saved_Text_Delete_ConfirmInputs) => LocalizedString} */ () => {

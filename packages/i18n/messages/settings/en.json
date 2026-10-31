@@ -184,5 +184,15 @@
   "settings_saved_text_exists": "A saved text with this name already exists.",
   "settings_saved_text_limit": "This workspace has reached its limit of saved texts. Delete one first.",
   "settings_saved_text_name_invalid": "This name is empty or too long.",
-  "settings_saved_text_invalid": "This text is empty or too long."
+  "settings_saved_text_invalid": "This text is empty or too long.",
+  "settings_saved_text_delete_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} channel loses it as its signature.",
+        "countPlural=*": "{count} channels lose it as their signature."
+      }
+    }
+  ]
 }

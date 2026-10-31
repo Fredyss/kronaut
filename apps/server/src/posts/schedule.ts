@@ -147,6 +147,7 @@ function scheduledColumns(
     frozen_post_version: version,
     content_hash: f.contentHash,
     content_hash_v: CONTENT_HASH_V,
+    frozen_signature: f.signature === null ? null : JSON.stringify(f.signature),
     agent_content: f.agentAuthored,
     brand_id_at_freeze: locked.brand_id,
     location_id_at_freeze: locked.location_id,
