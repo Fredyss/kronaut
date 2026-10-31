@@ -5,6 +5,7 @@ import { type BoundRoute, bindRoute } from '../http/types.ts';
 import {
   createSavedText,
   deleteSavedText,
+  listedSavedTextDto,
   listSavedTexts,
   NAME_MAX,
   type SavedTextRef,
@@ -21,6 +22,9 @@ const WorkspaceParams = z.object({ workspaceId: z.string() });
 const SavedTextParams = z.object({ workspaceId: z.string(), savedTextId: z.string() });
 const Doc = z.record(z.string(), z.unknown());
 const SavedTextSchema = z.object({ id: z.string(), name: z.string(), doc: Doc });
+const ListedSavedTextSchema = SavedTextSchema.extend({
+  channelCount: z.number().int().nonnegative(),
+});
 
 export const savedTextListRoute = defineRoute({
   id: 'saved_texts.list',
@@ -29,9 +33,9 @@ export const savedTextListRoute = defineRoute({
   auth: ['session', 'grant'],
   action: 'posts:read',
   params: WorkspaceParams,
-  response: z.object({ items: z.array(SavedTextSchema) }),
+  response: z.object({ items: z.array(ListedSavedTextSchema) }),
   summary: 'List saved texts',
-  description: "The workspace's saved texts by name.",
+  description: "The workspace's saved texts by name, each with how many channels use it.",
   tags: ['posts'],
 });
 
@@ -78,7 +82,8 @@ export const savedTextDeleteRoute = defineRoute({
   status: 204,
   idempotency: true,
   summary: 'Delete a saved text',
-  description: 'Posts that already used the text keep theirs. Owners and admins only.',
+  description:
+    'Channels using the text lose their signature; posts that already used it keep theirs. Owners and admins only.',
   tags: ['posts'],
 });
 
@@ -99,7 +104,8 @@ export function savedTextRoutes(): BoundRoute[] {
       const workspaceId = pathId('workspace', params.workspaceId);
       ctx.authorize('posts:read', { workspaceId });
       const rows = await ctx.tenant((trx) => listSavedTexts(trx, workspaceId));
-      return { body: { items: rows.map(savedTextBody) } };
+      const items = rows.map((row) => ListedSavedTextSchema.parse(listedSavedTextDto(row)));
+      return { body: { items } };
     }),
     bindRoute(savedTextCreateRoute, async ({ params, body }, ctx) => {
       const workspaceId = pathId('workspace', params.workspaceId);

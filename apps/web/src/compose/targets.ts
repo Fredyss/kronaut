@@ -1,3 +1,4 @@
+import { appendSignature } from '@kronaut/compose/text';
 import { effective } from './contents.ts';
 import { itemDocs } from './items.ts';
 import type { PreviewTarget } from './preview/preview.tsx';
@@ -16,7 +17,7 @@ export function limitTargets(state: ContentsState): LimitTarget[] {
     const phase = videoOf(state, channel.id)?.phase;
     return {
       channel,
-      doc: content.doc,
+      doc: appendSignature(content.doc, state.signatureOf(channel)),
       media: state.mediaFor(channel.id),
       video: phase?.kind === 'ready' ? phase.asset : null,
       shown: active === null ? !contents.customized.has(channel.id) : channel.id === active,

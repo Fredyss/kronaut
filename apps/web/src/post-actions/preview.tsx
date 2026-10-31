@@ -1,3 +1,4 @@
+import { appendSignature } from '@kronaut/compose/text';
 import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
@@ -8,6 +9,7 @@ import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
 import { Modal } from './modal.tsx';
 import { postMediaQuery } from './post-media.ts';
+import { shownSignature } from './post-signature.ts';
 
 const Previews = lazy(() => import('../compose/preview/preview.tsx'));
 
@@ -53,7 +55,7 @@ function targetsOf(
     return [
       {
         channel,
-        doc: item.doc as unknown as Doc,
+        doc: appendSignature(item.doc as unknown as Doc, shownSignature(destination, channel)),
         images,
         video: null,
         poster,

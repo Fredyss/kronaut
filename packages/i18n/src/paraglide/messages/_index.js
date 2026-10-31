@@ -97,6 +97,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Server_Rate_LimitedInputs */
 /** @typedef {{}} Channels_Server_RejectedInputs */
 /** @typedef {{}} Channels_Server_UnreachableInputs */
+/** @typedef {{}} Channels_SignatureInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Signature_NamedInputs */
+/** @typedef {{}} Channels_Signature_NoneInputs */
+/** @typedef {{}} Channels_Signature_SavedInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
 /** @typedef {{}} CloseInputs */
@@ -281,6 +285,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Post_Schedule_At_TzInputs */
 /** @typedef {{}} Post_Schedule_NoneInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Scheduled_AtInputs */
+/** @typedef {{ text: NonNullable<unknown> }} Post_SignatureInputs */
 /** @typedef {{}} Post_Summary_CanceledInputs */
 /** @typedef {{}} Post_Summary_Completed_AllInputs */
 /** @typedef {{}} Post_Summary_Completed_FailedInputs */
@@ -1822,6 +1827,66 @@ export const channels_server_unreachable = /** @type {((inputs?: Channels_Server
 	if (locale === "sk") return __sk.channels_server_unreachable(inputs)
 	if (locale === "cs") return __cs.channels_server_unreachable(inputs)
 	return __en.channels_server_unreachable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Signature" |
+*
+* @param {Channels_SignatureInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_signature = /** @type {((inputs?: Channels_SignatureInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_SignatureInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_signature(inputs)
+	if (locale === "cs") return __cs.channels_signature(inputs)
+	return __en.channels_signature(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Signature: {name}" |
+*
+* @param {Channels_Signature_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_signature_named = /** @type {((inputs: Channels_Signature_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Signature_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_signature_named(inputs)
+	if (locale === "cs") return __cs.channels_signature_named(inputs)
+	return __en.channels_signature_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "None" |
+*
+* @param {Channels_Signature_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_signature_none = /** @type {((inputs?: Channels_Signature_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Signature_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_signature_none(inputs)
+	if (locale === "cs") return __cs.channels_signature_none(inputs)
+	return __en.channels_signature_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Signature saved" |
+*
+* @param {Channels_Signature_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_signature_saved = /** @type {((inputs?: Channels_Signature_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Signature_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_signature_saved(inputs)
+	if (locale === "cs") return __cs.channels_signature_saved(inputs)
+	return __en.channels_signature_saved(inputs)
 });
 /**
 * | output |
@@ -4591,6 +4656,21 @@ export const post_scheduled_at = /** @type {((inputs: Post_Scheduled_AtInputs, o
 	if (locale === "sk") return __sk.post_scheduled_at(inputs)
 	if (locale === "cs") return __cs.post_scheduled_at(inputs)
 	return __en.post_scheduled_at(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Signature: {text}" |
+*
+* @param {Post_SignatureInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_signature = /** @type {((inputs: Post_SignatureInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_SignatureInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_signature(inputs)
+	if (locale === "cs") return __cs.post_signature(inputs)
+	return __en.post_signature(inputs)
 });
 /**
 * | output |

@@ -265,6 +265,7 @@ describe('channel listing', () => {
       'preview',
       'profileUrl',
       'provider',
+      'signature',
       'status',
       'statusReason',
     ]);

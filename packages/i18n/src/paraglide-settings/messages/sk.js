@@ -40,6 +40,7 @@
 /** @typedef {{}} Settings_Saved_Text_CancelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_DeleteInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Saved_Text_Delete_ChannelsInputs */
 /** @typedef {{}} Settings_Saved_Text_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Saved_Text_Delete_TitleInputs */
 /** @typedef {{}} Settings_Saved_Text_DeletedInputs */
@@ -283,6 +284,14 @@ export const settings_saved_text_delete = /** @type {(inputs: Settings_Saved_Tex
 
 export const settings_saved_text_delete_body = /** @type {(inputs: Settings_Saved_Text_Delete_BodyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Príspevky, ktoré ho už použili, si svoj text ponechajú.`)
+};
+
+export const settings_saved_text_delete_channels = /** @type {(inputs: Settings_Saved_Text_Delete_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál príde o tento podpis.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály prídu o tento podpis.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanála príde o tento podpis.`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálov príde o tento podpis.`)
 };
 
 export const settings_saved_text_delete_confirm = /** @type {(inputs: Settings_Saved_Text_Delete_ConfirmInputs) => LocalizedString} */ () => {

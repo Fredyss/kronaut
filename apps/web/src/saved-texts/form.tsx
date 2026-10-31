@@ -92,11 +92,13 @@ export function SavedTextForm({
 
 export function DeleteSavedText({
   name,
+  channelCount,
   pending,
   onCancel,
   onConfirm,
 }: {
   readonly name: string;
+  readonly channelCount: number;
   readonly pending: boolean;
   onCancel(): void;
   onConfirm(): void;
@@ -120,6 +122,9 @@ export function DeleteSavedText({
       </h3>
       <p id={bodyId} className="text-muted-foreground text-sm">
         {settingsText.settings_saved_text_delete_body()}
+        {channelCount === 0
+          ? null
+          : ` ${settingsText.settings_saved_text_delete_channels({ count: channelCount })}`}
       </p>
       <div className="flex flex-wrap justify-end gap-2">
         <Button ref={keep} type="button" variant="ghost" onClick={onCancel}>

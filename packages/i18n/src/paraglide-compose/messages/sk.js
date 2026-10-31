@@ -1,6 +1,7 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Compose_Add_CommentInputs */
 /** @typedef {{}} Compose_Add_ReplyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Add_SignatureInputs */
 /** @typedef {{}} Compose_Ai_Generated_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Ai_Generated_LabelInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
@@ -100,6 +101,10 @@ export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs
 
 export const compose_add_reply = /** @type {(inputs: Compose_Add_ReplyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pridať odpoveď`)
+};
+
+export const compose_add_signature = /** @type {(inputs: Compose_Add_SignatureInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Pridať podpis „${i?.name}“`)
 };
 
 export const compose_ai_generated_hint = /** @type {(inputs: Compose_Ai_Generated_HintInputs) => LocalizedString} */ () => {

@@ -3,6 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { iso, plainLocal } from '../http/time.ts';
 import { loadPostTags, PostTagSchema, tagFields } from '../tags/read.ts';
+import { loadDestinations } from './destinations-read.ts';
 
 const JsonObject = z.record(z.string(), z.unknown());
 const Instant = z.iso.datetime();
@@ -35,6 +36,9 @@ export const PostDestinationSchema = z.object({
   publishedAt: Instant.nullable(),
   lastErrorCode: z.string().nullable(),
   variant: z.number().int().nonnegative().nullable(),
+  skipSignature: z.boolean(),
+  signature: JsonObject.nullable(),
+  signatureHeld: z.boolean(),
 });
 
 export const PostVariantSchema = z.object({ items: z.array(PostItemSchema) });
@@ -166,56 +170,6 @@ async function loadItems(trx: TenantDb, workspaceId: string, postId: string) {
         position: m.position,
         altText: m.alt_text,
       })),
-  }));
-}
-
-async function loadDestinations(trx: TenantDb, workspaceId: string, postId: string) {
-  const destinations = await trx
-    .selectFrom('post_destinations as d')
-    .innerJoin('social_accounts as a', (join) =>
-      join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
-    )
-    .leftJoin('post_variants as v', (join) =>
-      join.onRef('v.workspace_id', '=', 'd.workspace_id').onRef('v.id', '=', 'd.variant_id'),
-    )
-    .select([
-      'd.id',
-      'd.variant_id',
-      'v.is_default',
-      'd.social_account_id',
-      'd.provider',
-      'd.publish_type',
-      'd.delivery_mode',
-      'd.settings',
-      'd.state',
-      'd.state_reason',
-      'd.version',
-      'd.scheduled_at',
-      'd.remote_url',
-      'd.published_at',
-      'd.last_error_code',
-    ])
-    .where('d.workspace_id', '=', workspaceId)
-    .where('d.post_id', '=', postId)
-    .orderBy('a.created_at')
-    .orderBy('a.id')
-    .orderBy('d.publish_type')
-    .execute();
-  return destinations.map((d) => ({
-    variantId: d.is_default === false ? d.variant_id : null,
-    id: encodePublicId('destination', d.id),
-    accountId: encodePublicId('socialAccount', d.social_account_id),
-    provider: d.provider,
-    publishType: d.publish_type,
-    deliveryMode: d.delivery_mode,
-    settings: d.settings,
-    state: d.state,
-    stateReason: d.state_reason,
-    version: d.version,
-    scheduledAt: iso(d.scheduled_at),
-    remoteUrl: d.remote_url,
-    publishedAt: iso(d.published_at),
-    lastErrorCode: d.last_error_code,
   }));
 }
 

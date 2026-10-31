@@ -797,6 +797,13 @@ export type ChannelsListResponses = {
             preview: 'short-feed' | 'pro-feed' | 'media-grid' | 'vertical-video' | 'chat' | 'article';
             profileUrl: string | null;
             provider: string;
+            signature: {
+                doc: {
+                    [key: string]: unknown;
+                };
+                id: string;
+                name: string;
+            } | null;
             status: 'active' | 'needs_reauth' | 'disabled' | 'disconnected';
             statusReason: string | null;
         }>;
@@ -1024,6 +1031,47 @@ export type ChannelsQueueUpdateResponses = {
 };
 
 export type ChannelsQueueUpdateResponse = ChannelsQueueUpdateResponses[keyof ChannelsQueueUpdateResponses];
+
+export type ChannelsSetSignatureData = {
+    body: {
+        savedTextId: string | null;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/saved-text';
+};
+
+export type ChannelsSetSignatureErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSetSignatureError = ChannelsSetSignatureErrors[keyof ChannelsSetSignatureErrors];
+
+export type ChannelsSetSignatureResponses = {
+    /**
+     * OK
+     */
+    200: {
+        signature: {
+            doc: {
+                [key: string]: unknown;
+            };
+            id: string;
+            name: string;
+        } | null;
+    };
+};
+
+export type ChannelsSetSignatureResponse = ChannelsSetSignatureResponses[keyof ChannelsSetSignatureResponses];
 
 export type MediaListData = {
     body?: never;
@@ -1800,6 +1848,7 @@ export type PostsCreateData = {
             settings?: {
                 [key: string]: unknown;
             };
+            skipSignature?: boolean;
             variant?: number | null;
         }>;
         items: Array<{
@@ -1864,6 +1913,11 @@ export type PostsCreateResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -1984,6 +2038,11 @@ export type PostsGetResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2044,6 +2103,7 @@ export type PostsUpdateData = {
             settings?: {
                 [key: string]: unknown;
             };
+            skipSignature?: boolean;
             variant?: number | null;
         }>;
         expectedVersion: number;
@@ -2110,6 +2170,11 @@ export type PostsUpdateResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2273,6 +2338,11 @@ export type PostsRequestApprovalResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2367,6 +2437,11 @@ export type PostsCancelResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2462,6 +2537,11 @@ export type DestinationsCancelResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2557,6 +2637,11 @@ export type DestinationsMarkPublishedResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2662,6 +2747,11 @@ export type DestinationsSendAgainResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2754,6 +2844,11 @@ export type PostsDuplicateResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3009,6 +3104,11 @@ export type PostsRescheduleResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3123,6 +3223,11 @@ export type PostsScheduleResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3256,6 +3361,11 @@ export type PostsUnscheduleResponses = {
             settings: {
                 [key: string]: unknown;
             };
+            signature: {
+                [key: string]: unknown;
+            } | null;
+            signatureHeld: boolean;
+            skipSignature: boolean;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3331,6 +3441,7 @@ export type SavedTextsListResponses = {
      */
     200: {
         items: Array<{
+            channelCount: number;
             doc: {
                 [key: string]: unknown;
             };

@@ -44,6 +44,7 @@ export interface ComposeDestination {
   readonly variant: number | null;
   readonly settings?: Destination['settings'];
   readonly deliveryMode?: Destination['deliveryMode'];
+  readonly skipSignature?: boolean;
 }
 
 export type ScheduleWhen =

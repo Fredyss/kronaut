@@ -131,6 +131,7 @@ export async function freezeTargets(
       deliveryMode: row.delivery_mode,
       settings: row.settings,
       variantId: row.variant_id,
+      skipSignature: row.skip_signature,
     })),
     acknowledged: new Set(scope.body.acknowledgedCodes ?? []),
     reason: scope.reason ?? 'schedule',

@@ -16,6 +16,7 @@ function destination(images: number) {
   const facts = Array.from({ length: images }, () => ({ size: 1, type: 'image/jpeg' }));
   const state = {
     contents: EMPTY_CONTENTS satisfies Contents,
+    skipped: new Set<string>(),
     mediaFor: () => ({ images: facts, video: false }),
   } as unknown as ContentsState;
   return toPlan([CHANNEL], state, new Set([CHANNEL.id]), [STORED]).destinations[0];

@@ -76,6 +76,7 @@ export function channel(id: string, provider: string, displayName: string) {
     lastErrorCode: null,
     postTypes: RULES[provider] ?? [],
     preview: PREVIEWS[provider] ?? 'short-feed',
+    signature: null,
   };
 }
 

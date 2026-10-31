@@ -58,7 +58,7 @@ function sharedLazyChunks(shell) {
 const shell = shellChunks();
 
 export default [
-  { name: 'shell JS', path: shell, limit: '135 KB', gzip: true },
+  { name: 'shell JS', path: shell, limit: '140 KB', gzip: true },
   ...Object.entries(LAZY).map(([name, [prefix, limit]]) => ({
     name,
     path: `${ASSETS}/${prefix}-*.js`,

@@ -95,6 +95,10 @@
 /** @typedef {{}} Channels_Server_Rate_LimitedInputs */
 /** @typedef {{}} Channels_Server_RejectedInputs */
 /** @typedef {{}} Channels_Server_UnreachableInputs */
+/** @typedef {{}} Channels_SignatureInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Signature_NamedInputs */
+/** @typedef {{}} Channels_Signature_NoneInputs */
+/** @typedef {{}} Channels_Signature_SavedInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
 /** @typedef {{}} CloseInputs */
@@ -279,6 +283,7 @@
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Post_Schedule_At_TzInputs */
 /** @typedef {{}} Post_Schedule_NoneInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Scheduled_AtInputs */
+/** @typedef {{ text: NonNullable<unknown> }} Post_SignatureInputs */
 /** @typedef {{}} Post_Summary_CanceledInputs */
 /** @typedef {{}} Post_Summary_Completed_AllInputs */
 /** @typedef {{}} Post_Summary_Completed_FailedInputs */
@@ -772,6 +777,22 @@ export const channels_server_rejected = /** @type {(inputs: Channels_Server_Reje
 
 export const channels_server_unreachable = /** @type {(inputs: Channels_Server_UnreachableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`K tomuto serveru sa nepodarilo pripojiť. Skúste to neskôr.`)
+};
+
+export const channels_signature = /** @type {(inputs: Channels_SignatureInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Podpis`)
+};
+
+export const channels_signature_named = /** @type {(inputs: Channels_Signature_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Podpis: ${i?.name}`)
+};
+
+export const channels_signature_none = /** @type {(inputs: Channels_Signature_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Žiadny`)
+};
+
+export const channels_signature_saved = /** @type {(inputs: Channels_Signature_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Podpis sa uložil`)
 };
 
 export const channels_subtitle = /** @type {(inputs: Channels_SubtitleInputs) => LocalizedString} */ () => {
@@ -1541,6 +1562,10 @@ export const post_schedule_none = /** @type {(inputs: Post_Schedule_NoneInputs) 
 
 export const post_scheduled_at = /** @type {(inputs: Post_Scheduled_AtInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Termín: ${i?.when}`)
+};
+
+export const post_signature = /** @type {(inputs: Post_SignatureInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Podpis: ${i?.text}`)
 };
 
 export const post_summary_canceled = /** @type {(inputs: Post_Summary_CanceledInputs) => LocalizedString} */ () => {

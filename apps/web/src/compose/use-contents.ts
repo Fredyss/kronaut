@@ -18,6 +18,7 @@ import type { OpenedForm } from './from-post.ts';
 import { itemSupport, itemsState, postTypeFor } from './items.ts';
 import { useImages } from './use-images.ts';
 import { useMedia } from './use-media.ts';
+import { useSignatures } from './use-signatures.ts';
 import { useVideos, type VideosState } from './use-video.ts';
 
 function videoIds(contents: Contents): string[] {
@@ -71,6 +72,7 @@ export function useContents(
       selected.has(channel.id) &&
       (choiceOf(channel).kind === 'ok' || contents.customized.has(channel.id)),
   );
+  const signatures = useSignatures(seed);
   const stored = seed?.stored;
   const keeps = (id: string) => contents.customized.has(id) || stored?.has(id) === true;
   const shown = active !== null && tabs.some((channel) => channel.id === active) ? active : null;
@@ -87,6 +89,7 @@ export function useContents(
 
   return {
     contents,
+    ...signatures,
     tabs,
     active: shown,
     select: setActive,

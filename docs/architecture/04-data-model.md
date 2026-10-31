@@ -85,10 +85,11 @@ Phase 0 ships only what the publishing gate needs; the editor, variants, threads
 | `PATCH /tags/:tagId` | `settings:write` | `{name?, color?}`; the same name rules |
 | `DELETE /tags/:tagId` | `settings:write` | 204; removes the tag from every post |
 | `PUT /posts/:postId/tags` | `posts:draft` | `{tagIds}`, at most 20, replaces the post's tags and returns them. Works in any state, published included: tags are never published, so this doesn't bump `posts.version`, freeze anything or touch an approval. A deleted post is 404 |
-| `GET /saved-texts` | `posts:read` | The workspace's saved texts (`id`, `name`, `doc`), by name |
+| `GET /saved-texts` | `posts:read` | The workspace's saved texts (`id`, `name`, `doc`, `channelCount`), by name |
 | `POST /saved-texts` | `settings:write` | 201. `{name, doc}`. `name` is 1–60 characters, NFC, trimmed; a name that differs only in case is 409 `saved_text_exists`. `doc` holds plain paragraphs of 1–2000 characters. At most 100 per workspace (409 `saved_text_limit`) |
 | `PATCH /saved-texts/:savedTextId` | `settings:write` | `{name?, doc?}`; the same rules |
-| `DELETE /saved-texts/:savedTextId` | `settings:write` | 204 |
+| `DELETE /saved-texts/:savedTextId` | `settings:write` | 204. Channels using it lose their signature; frozen posts keep theirs |
+| `PUT /channels/:channelId/saved-text` | `settings:write` | `{savedTextId}`, or `null` to clear it, sets the channel's signature (`social_accounts.saved_text_id`) and writes the audit event `channel.signature_updated`. An unknown or foreign id is 422. The channel list returns `signature: {id, name, doc}` or `null`. See [Channel signature](05-publishing-pipeline.md#channel-signature) |
 | `POST /posts/:postId/schedule` | `posts:schedule` | `instant` (`scheduleLocal` + `scheduleTz`) or `asap`. Under a `required` policy the post's newest `approved` request must have shown every destination the content just frozen (same hash), else 403 `approval_required`; a bound schedule must keep its time zone and stay within the tolerance, else 422 `outside_approved_schedule`. 409 while a request is open. Reschedule and send-again keep a destination's binding while its request is still `approved` |
 | `POST /posts/:postId/unschedule` | `posts:schedule` | `scheduled`/`retry_wait` → `draft/unscheduled`. Returning to draft, and every schedule, starts a fresh publish: `attempt_count`, `provider_state`, the claimed attempt, the last error and `destination_items` are reset |
 | `POST /posts/:postId/cancel` | `posts:cancel` | Every destination that never sent goes to `canceled/user_canceled`; a `publishing` one gets `cancel_requested_at`. `unconfirmed`, `verifying` and `published` stay as they are |

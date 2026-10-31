@@ -58,9 +58,13 @@ export function errorCode(error: unknown): string {
   return error instanceof ApiRequestError ? error.code : 'internal';
 }
 
+export function channelsKey(workspaceId: string) {
+  return ['channels', workspaceId] as const;
+}
+
 export function channelsQuery(client: Client, workspaceId: string) {
   return queryOptions({
-    queryKey: ['channels', workspaceId],
+    queryKey: channelsKey(workspaceId),
     queryFn: async () => (await channelsList({ client, path: { workspaceId } })).data.items,
   });
 }

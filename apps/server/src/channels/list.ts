@@ -11,6 +11,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import type { ProviderEntry, ProviderRegistry } from '../providers.ts';
+import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
 const Instant = z.iso.datetime();
 
@@ -68,6 +69,7 @@ export const ChannelSchema = z.object({
   postTypes: z.array(PostTypeRulesSchema),
   preview: z.enum(PREVIEW_ARCHETYPES),
   insights: z.boolean(),
+  signature: SignatureSchema.nullable(),
 });
 
 export const channelListRoute = defineRoute({
@@ -173,6 +175,7 @@ export async function listChannels(
       'created_at',
       'last_error_code',
       'capabilities',
+      'saved_text_id',
     ])
     .where('workspace_id', '=', workspaceId);
   if (scope !== null) {
@@ -185,6 +188,11 @@ export async function listChannels(
     );
   }
   const rows = await query.orderBy('created_at').orderBy('id').execute();
+  const signatures = await loadSignatures(
+    trx,
+    workspaceId,
+    rows.flatMap((row) => row.saved_text_id ?? []),
+  );
   return rows.map((row) => {
     const entry = providers.get(row.provider);
     return ChannelSchema.parse({
@@ -202,6 +210,7 @@ export async function listChannels(
       postTypes: postTypes(entry, row.capabilities),
       preview: entry?.manifest.preview ?? 'short-feed',
       insights: insightsGranted(row.capabilities),
+      signature: signatures.get(row.saved_text_id ?? '') ?? null,
     });
   });
 }

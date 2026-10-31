@@ -36,16 +36,29 @@ export function listSavedTexts(trx: TenantDb, workspaceId: string) {
   return trx
     .selectFrom('saved_texts')
     .select(COLUMNS)
+    .select((eb) =>
+      eb
+        .selectFrom('social_accounts as a')
+        .select(eb.fn.countAll<string>().as('n'))
+        .whereRef('a.workspace_id', '=', 'saved_texts.workspace_id')
+        .whereRef('a.saved_text_id', '=', 'saved_texts.id')
+        .as('channel_count'),
+    )
     .where('workspace_id', '=', workspaceId)
     .orderBy(sql`lower(name)`)
     .orderBy('id')
     .execute();
 }
 
-type SavedTextRow = Awaited<ReturnType<typeof listSavedTexts>>[number];
+type ListedSavedText = Awaited<ReturnType<typeof listSavedTexts>>[number];
+type SavedTextRow = Omit<ListedSavedText, 'channel_count'>;
 
 export function savedTextDto(row: SavedTextRow) {
   return { id: encodePublicId('savedText', row.id), name: row.name, doc: row.doc };
+}
+
+export function listedSavedTextDto(row: ListedSavedText) {
+  return { ...savedTextDto(row), channelCount: Number(row.channel_count ?? 0) };
 }
 
 function savedTextName(value: string): string {

@@ -5,5 +5,6 @@ export * from './doc-error.ts';
 export * from './jcs.ts';
 export * from './plain-text.ts';
 export * from './schema.ts';
+export * from './signature.ts';
 export * from './text.ts';
 export * from './validate.ts';

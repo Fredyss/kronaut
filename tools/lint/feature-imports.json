@@ -155,6 +155,7 @@
   "web/calendar -> routes/channels.tsx",
   "web/calendar -> tags/picker.tsx",
   "web/channels -> approvals/password-dialog.tsx",
+  "web/channels -> saved-texts/saved-texts.ts",
   "web/compose -> approvals/queries.ts",
   "web/compose -> channels/queue.ts",
   "web/compose -> i18n/compose.ts",
