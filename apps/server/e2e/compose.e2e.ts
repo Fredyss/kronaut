@@ -56,9 +56,14 @@ test('schedules a post a week ahead and keeps it after a reload', async ({ page 
   const edited = page.getByRole('link', { name: `${TEXT}${ADDED}` });
   await expect(edited).toContainText(en.destination_state_scheduled({}));
 
-  await page
-    .getByRole('button', { name: calendarEn.calendar_entry_options({ text: `${TEXT}${ADDED}` }) })
-    .click();
+  const options = page.getByRole('button', {
+    name: calendarEn.calendar_entry_options({ text: `${TEXT}${ADDED}` }),
+  });
+  await options.scrollIntoViewIfNeeded();
+  const box = await options.boundingBox();
+  // Too low for the menu to fit below, on any weekday.
+  await page.setViewportSize({ width: 1280, height: Math.ceil((box?.y ?? 0) + 54) });
+  await options.click();
   await page.getByRole('menuitem', { name: en.post_action_delete({}) }).click();
   await page.getByRole('button', { name: en.post_delete_confirm({}) }).click();
   await expect(edited).toHaveCount(0);
