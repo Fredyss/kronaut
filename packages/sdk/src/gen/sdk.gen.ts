@@ -286,6 +286,8 @@ export const approvalsWithdraw = <ThrowOnError extends boolean = true>(options: 
 
 /**
  * List the connected channels
+ *
+ * A key without posts:read gets signature: null on every channel.
  */
 export const channelsList = <ThrowOnError extends boolean = true>(options: Options<ChannelsListData, ThrowOnError>): RequestResult<ChannelsListResponses, ChannelsListErrors, ThrowOnError> => (options.client ?? client).get<ChannelsListResponses, ChannelsListErrors, ThrowOnError>({
     security: [{

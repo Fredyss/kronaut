@@ -14,7 +14,7 @@ import {
 } from '../approvals/testing.ts';
 import { publishDeps, runPublish } from '../publish/task.ts';
 import { fakeManifest } from '../publish/testing.ts';
-import { contentHashInput, parseSnapshot, publishItems, resolveDestination } from '../snapshot.ts';
+import { contentHashInput, parseSnapshot, resolveDestination } from '../snapshot.ts';
 import type { PostDto } from './dto.ts';
 import {
   accountA,
@@ -28,6 +28,7 @@ import {
   draft,
   errorOf,
   fake,
+  fetched,
   inMinutes,
   insertGrant,
   internal,
@@ -37,23 +38,23 @@ import {
   ownerAuth,
   providers,
   readyMedia,
+  rendered,
   SYSTEM,
+  savedText,
   scheduleCall,
   scheduled,
+  sign,
+  signCall,
   startPosts,
   stopPosts,
   TZ,
+  texts,
   viewerAuth,
   workspaceId,
 } from './testing.ts';
 
-interface Text {
-  readonly id: string;
-}
-
 let test: TestDatabase;
 let approver: Member;
-let serial = 0;
 
 beforeAll(async () => {
   test = await startTestDatabase();
@@ -76,24 +77,6 @@ afterEach(() => {
   fake.configureChain({});
 });
 
-async function savedText(text: string): Promise<Text> {
-  serial += 1;
-  const response = await call('POST', 'saved-texts', ownerAuth, {
-    name: `Text ${serial}`,
-    doc: doc(text),
-  });
-  expect(response.status).toBe(201);
-  return (await response.json()) as Text;
-}
-
-function signCall(savedTextId: string | null, accountId: string) {
-  return call('PUT', `channels/${accountId}/saved-text`, ownerAuth, { savedTextId });
-}
-
-async function sign(savedTextId: string | null, accountId: string = accountA) {
-  expect((await signCall(savedTextId, accountId)).status).toBe(200);
-}
-
 function row(post: PostDto) {
   return owner.withActor(SYSTEM, (trx) =>
     trx
@@ -102,27 +85,6 @@ function row(post: PostDto) {
       .where('post_id', '=', internal(post.id))
       .executeTakeFirstOrThrow(),
   );
-}
-
-async function rendered(post: PostDto) {
-  const { frozen_post_version: version } = await row(post);
-  const { snapshot } = await owner.withActor(SYSTEM, (trx) =>
-    trx
-      .selectFrom('post_revisions')
-      .select('snapshot')
-      .where('post_id', '=', internal(post.id))
-      .where('post_version', '=', version ?? 0)
-      .executeTakeFirstOrThrow(),
-  );
-  const parsed = parseSnapshot(snapshot);
-  const [destination] = parsed.destinations;
-  if (destination === undefined) throw new Error('the snapshot has no destination');
-  const key = { socialAccountId: destination.socialAccountId, publishType: 'post' };
-  return { destination, items: publishItems(resolveDestination(parsed, key)) };
-}
-
-function texts({ items }: Awaited<ReturnType<typeof rendered>>) {
-  return items.map((item) => item.text);
 }
 
 async function publishNow(post: PostDto) {
@@ -324,10 +286,6 @@ describe('channel signature at freeze', () => {
   });
 });
 
-async function fetched(post: PostDto) {
-  return (await (await call('GET', `posts/${post.id}`, ownerAuth)).json()) as PostDto;
-}
-
 describe('channel signature under review', () => {
   beforeEach(async () => {
     await setPolicy({ mode: 'required', allow_self_approval: false, reschedule_tolerance_min: 0 });
@@ -426,7 +384,7 @@ describe('channel signature route', () => {
       doc: doc('Podpis'),
     });
     const list = (await (await call('GET', 'saved-texts', ownerAuth)).json()) as {
-      readonly items: readonly (Text & { readonly channelCount: number })[];
+      readonly items: readonly { readonly id: string; readonly channelCount: number }[];
     };
     expect(list.items.find((t) => t.id === id)?.channelCount).toBe(2);
   });

@@ -70,7 +70,7 @@ export async function loadDestinations(trx: TenantDb, workspaceId: string, postI
     publishedAt: iso(d.published_at),
     lastErrorCode: d.last_error_code,
     skipSignature: d.skip_signature,
-    signature: d.frozen_signature ?? d.requested_signature,
+    signature: d.requested_id === null ? d.frozen_signature : d.requested_signature,
     signatureHeld: d.state !== 'draft' || d.requested_id !== null,
   }));
 }

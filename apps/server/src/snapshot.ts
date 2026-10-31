@@ -91,6 +91,10 @@ export interface ResolvedDestination {
   readonly items: readonly ItemSnapshot[];
 }
 
+function byPosition(variant: VariantSnapshot): ItemSnapshot[] {
+  return [...variant.items].sort((a, b) => a.position - b.position);
+}
+
 function signed(items: readonly ItemSnapshot[], signature: unknown): ItemSnapshot[] {
   return items.map((item) =>
     item.role === 'main'
@@ -116,7 +120,7 @@ export function resolveDestination(
   if (destination === undefined) throw new SnapshotError('destination_missing');
   const variant = snapshot.variants.find((v) => v.id === destination.variantId);
   if (variant === undefined) throw new SnapshotError('variant_missing');
-  const items = [...variant.items].sort((a, b) => a.position - b.position);
+  const items = byPosition(variant);
   const { signature } = destination;
   return {
     destination,
@@ -148,6 +152,10 @@ export function contentHashInput(resolved: ResolvedDestination): ContentHashInpu
     ),
     settings: destination.settings,
   };
+}
+
+export function unsignedHashInput(resolved: ResolvedDestination): ContentHashInput {
+  return contentHashInput({ ...resolved, items: byPosition(resolved.variant) });
 }
 
 function mediaRef(m: MediaSnapshot): MediaRef {

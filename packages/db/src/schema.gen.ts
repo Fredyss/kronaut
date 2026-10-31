@@ -821,6 +821,7 @@ export interface RevisionDestinations {
   post_version: number;
   publish_type: string;
   social_account_id: string;
+  unsigned_hash: Buffer | null;
   variant_id: string;
   workspace_id: string;
 }

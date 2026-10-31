@@ -17,6 +17,7 @@ import {
   RevisionSnapshotSchema,
   resolveDestination,
   SNAPSHOT_V,
+  unsignedHashInput,
 } from '../snapshot.ts';
 import { loadContent, mediaSnapshot } from './content.ts';
 
@@ -72,6 +73,7 @@ export interface FreezeTarget {
   readonly settings: unknown;
   readonly variantId: string | null;
   readonly skipSignature: boolean;
+  readonly held: { readonly signature: unknown } | null;
 }
 
 export interface Frozen {
@@ -118,11 +120,9 @@ interface Checked {
   readonly issues: readonly ValidationIssue[];
 }
 
-interface Hashed {
-  readonly p: Prepared;
-  readonly issues: readonly ValidationIssue[];
+interface Hashed extends Checked {
   readonly hash: Buffer;
-  readonly signature: unknown;
+  readonly unsignedHash: Buffer | null;
 }
 
 function prepareTargets(
@@ -152,8 +152,10 @@ function prepareTargets(
   return prepared;
 }
 
-function signatureField({ skipSignature, socialAccountId }: FreezeTarget, accounts: Accounts) {
-  const signature = skipSignature ? null : (accounts.get(socialAccountId)?.signature ?? null);
+function signatureField(target: FreezeTarget, accounts: Accounts) {
+  const { held, skipSignature, socialAccountId } = target;
+  const current = skipSignature ? null : (accounts.get(socialAccountId)?.signature ?? null);
+  const signature = held === null ? current : held.signature;
   return signature === null ? {} : { signature };
 }
 
@@ -264,7 +266,7 @@ async function insertRevision(
   return await trx
     .insertInto('revision_destinations')
     .values(
-      hashed.map(({ p, hash }) => ({
+      hashed.map(({ p, hash, unsignedHash }) => ({
         workspace_id: workspaceId,
         post_id: postId,
         post_version: postVersion,
@@ -272,6 +274,7 @@ async function insertRevision(
         publish_type: p.target.publishType,
         variant_id: p.variantId,
         content_hash: hash,
+        unsigned_hash: unsignedHash,
       })),
     )
     .returning(['social_account_id', 'publish_type', 'agent_authored'])
@@ -291,16 +294,18 @@ export async function freeze(
   const checked = preflight(input, snapshot, prepared, accounts);
 
   const hashed = await Promise.all(
-    checked.map(async ({ p, resolved, issues }) => ({
-      p,
-      issues,
-      hash: Buffer.from(await contentHash(contentHashInput(resolved))),
-      signature: resolved.destination.signature ?? null,
+    checked.map(async (entry) => ({
+      ...entry,
+      hash: Buffer.from(await contentHash(contentHashInput(entry.resolved))),
+      unsignedHash:
+        entry.resolved.destination.signature === undefined
+          ? null
+          : Buffer.from(await contentHash(unsignedHashInput(entry.resolved))),
     })),
   );
   const rows = await insertRevision(trx, input, snapshot, hashed);
 
-  return hashed.map(({ p, issues, hash, signature }) => {
+  return hashed.map(({ p, resolved, issues, hash }) => {
     const row = rows.find(
       (r) =>
         r.social_account_id === p.target.socialAccountId && r.publish_type === p.target.publishType,
@@ -309,7 +314,7 @@ export async function freeze(
     return {
       id: p.target.id,
       contentHash: hash,
-      signature,
+      signature: resolved.destination.signature ?? null,
       agentAuthored: row.agent_authored,
       preflight: issues,
       ackedCodes: [...new Set(issues.map((issue) => issue.code))].sort(),

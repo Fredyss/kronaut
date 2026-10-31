@@ -186,9 +186,9 @@ A channel may have one saved text as its signature. It's added when the post is 
 - **Render:** `resolveDestination` appends it to the `main` item as new paragraphs after the text. The content hash, preflight, the approval comparison and publishing all read that result, so `CONTENT_HASH_V` doesn't change. Thread items can be skipped, so only the `main` item gets it.
 - **Blank text:** a `main` item with no text gets no signature, so a signature can't make an empty post valid.
 - **Opt-out:** `post_destinations.skip_signature`, set through a destination's `skipSignature`. A duplicate, a series occurrence and an evergreen copy keep the flag and use the channel's signature at their own freeze.
-- **Frozen is frozen:** changing or removing a signature leaves a frozen destination alone, and the re-hash at claim still matches. Rescheduling freezes again and takes the current one; if that changes the hash, the approval rules apply as for any content change.
-- **Read copy:** `post_destinations.frozen_signature` holds the same doc for reading, so the post page shows what was frozen. A draft under review isn't frozen on its row, so `approval_request_destinations.frozen_signature` holds the copy for an open request, and an approver sees that one. The snapshot stays the source for hashing and publishing.
-- **Agents:** a grant changing `skip_signature` marks the post `agent_dirty`, and `trg_dest_guard` refuses the change on a frozen destination without a new freeze.
+- **Frozen is frozen:** changing or removing a signature leaves a frozen destination alone, and the re-hash at claim still matches. Rescheduling freezes again and takes the current one; if that changes the hash, the approval rules apply as for any content change. Send again keeps the frozen signature, so its hash and binding hold.
+- **Read copy:** `post_destinations.frozen_signature` holds the same doc for reading, so the post page shows what was frozen. A draft under review isn't frozen on its row, so `approval_request_destinations.frozen_signature` holds the copy for an open request, and an approver sees that one. The snapshot stays the source for hashing and publishing, and send again reads `frozen_signature` to freeze the same text again.
+- **Agents:** a grant changing `skip_signature` marks the post `agent_dirty`, and `trg_dest_guard` refuses the change on a frozen destination without a new freeze. A signature change doesn't clear agent authorship, because `revision_destinations.unsigned_hash` is what the sticky check compares.
 
 ## Reply chains
 
