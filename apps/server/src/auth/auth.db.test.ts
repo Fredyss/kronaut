@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { encodePublicId } from '@kronaut/core';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
@@ -21,6 +22,7 @@ const PASSWORD = 'correct horse battery';
 
 let test: TestDatabase;
 let db: Database;
+let root: Database;
 let app: Hono;
 let resetKey: Uint8Array;
 let userId: string;
@@ -29,6 +31,7 @@ let workspaceId: string;
 beforeAll(async () => {
   test = await startTestDatabase();
   db = createDatabase({ connectionString: test.appUrl });
+  root = createDatabase({ connectionString: test.ownerUrl });
   const hash = await hashPassword(PASSWORD);
   userId = await db.withActor(SYSTEM, async (trx) => {
     const result = await sql<{ id: string }>`
@@ -56,7 +59,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db?.destroy();
+  await Promise.all([db?.destroy(), root?.destroy()]);
   await test?.stop();
 });
 
@@ -66,11 +69,11 @@ function sessionCookie(response: Response): string {
   return header.split(';')[0] ?? '';
 }
 
-async function login(password = PASSWORD): Promise<Response> {
+async function login(password = PASSWORD, email = ` ${EMAIL.toUpperCase()} `): Promise<Response> {
   return await app.request(`${BASE}/v1/auth/login`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ email: ` ${EMAIL.toUpperCase()} `, password }),
+    body: JSON.stringify({ email, password }),
   });
 }
 
@@ -154,11 +157,69 @@ async function postReset(token: string, password = NEW_PASSWORD): Promise<Respon
   });
 }
 
+function loginFailures(userId: string | null) {
+  return root.withActor(SYSTEM, (trx) =>
+    trx
+      .selectFrom('security_events')
+      .select('detail')
+      .where('kind', '=', 'auth.login_failed')
+      .where('user_id', userId === null ? 'is' : '=', userId)
+      .execute(),
+  );
+}
+
+function passwordHashOf(id: string) {
+  return root.withActor(SYSTEM, async (trx) => {
+    const { password_hash } = await trx
+      .selectFrom('users')
+      .select('password_hash')
+      .where('id', '=', id)
+      .executeTakeFirstOrThrow();
+    return password_hash;
+  });
+}
+
 async function rejection(response: Response): Promise<unknown> {
   expect(response.status).toBe(400);
   const { error } = (await response.json()) as { error: Record<string, unknown> };
   return { code: error.code, message: error.message };
 }
+
+describe('signing in', () => {
+  it('refuses an unknown email like a wrong password', async () => {
+    const response = await login(PASSWORD, 'nobody@example.test');
+    expect(response.status).toBe(401);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'unauthenticated', message: 'The email or password is incorrect.' },
+    });
+    expect(await loginFailures(null)).toEqual([{ detail: { reason: 'invalid_credentials' } }]);
+  });
+
+  it('refuses the right password on an account with two-factor sign-in', async () => {
+    const user = await createResetUser('second-factor');
+    await root.withActor(SYSTEM, (trx) =>
+      trx
+        .updateTable('users')
+        .set({
+          totp_secret_ciphertext: randomBytes(32),
+          totp_nonce: randomBytes(12),
+          totp_wrapped_dek: randomBytes(40),
+          totp_kek_version: 1,
+        })
+        .where('id', '=', user.id)
+        .execute(),
+    );
+    const response = await login(PASSWORD, 'second-factor@example.test');
+    expect(response.status).toBe(401);
+    expect(response.headers.getSetCookie()).toEqual([]);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'unauthenticated', message: 'The email or password is incorrect.' },
+    });
+    expect(await loginFailures(user.id)).toEqual([
+      { detail: { reason: 'two_factor_unavailable' } },
+    ]);
+  });
+});
 
 describe('password reset link', () => {
   it('works only once', async () => {
@@ -204,5 +265,37 @@ describe('password reset link', () => {
     expect(body.error.code).toBe('unprocessable');
     expect(body.error.details).toEqual([{ path: 'password', code: 'too_short' }]);
     expect((await postReset(token)).status).toBe(204);
+  });
+
+  it('rejects a link for an erased account', async () => {
+    const user = await createResetUser('erased');
+    const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
+    await root.withActor(SYSTEM, (trx) =>
+      trx
+        .updateTable('users')
+        .set({ email: null, email_normalized: null, erased_at: sql`now()` })
+        .where('id', '=', user.id)
+        .execute(),
+    );
+    expect(await rejection(await postReset(token))).toEqual(RESET_REJECTED);
+  });
+
+  it('loses to a password change that lands between its read and its update', async () => {
+    const user = await createResetUser('raced');
+    const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
+    const winner = await hashPassword('the password that won');
+    const [pending] = await db.withActor({ kind: 'user', id: user.id }, async (trx) => {
+      await trx
+        .updateTable('users')
+        .set({ password_hash: winner })
+        .where('id', '=', user.id)
+        .execute();
+      const calls = [postReset(token)];
+      await sleep(300);
+      return calls;
+    });
+    if (pending === undefined) throw new Error('no reset call');
+    expect(await rejection(await pending)).toEqual(RESET_REJECTED);
+    expect(await passwordHashOf(user.id)).toBe(winner);
   });
 });
