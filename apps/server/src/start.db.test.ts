@@ -184,6 +184,34 @@ describe('startServer', () => {
     }
   });
 
+  it('registers its job workers on a connection named for the session', async () => {
+    const server = await startServer(config('worker', 'start-jobs'), { logger, onFailure, env });
+    try {
+      const row = await owner.withActor({ kind: 'cli' }, (trx) =>
+        trx
+          .selectFrom('worker_heartbeats')
+          .select(['job_session', 'job_pool_id'])
+          .where('worker_id', '=', 'start-jobs')
+          .executeTakeFirstOrThrow(),
+      );
+      expect(row.job_pool_id).toMatch(/^pool-/);
+      await vi.waitFor(
+        async () => {
+          const { rows } = await owner.withActor({ kind: 'cli' }, (trx) =>
+            sql<{ count: number }>`
+              select count(*)::int as count from pg_stat_activity
+               where application_name = ${`kronaut-jobs-${row.job_session}`}
+            `.execute(trx),
+          );
+          expect(rows[0]?.count).toBeGreaterThan(0);
+        },
+        { timeout: 5_000, interval: 50 },
+      );
+    } finally {
+      await server.stop();
+    }
+  });
+
   it('reports a job runner that stops on its own', async () => {
     const exitCode = process.exitCode;
     const failures: unknown[] = [];

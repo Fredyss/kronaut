@@ -996,6 +996,8 @@ export interface WebhookEvents {
 
 export interface WorkerHeartbeats {
   app_version: string;
+  job_pool_id: string | null;
+  job_session: string | null;
   role: string;
   seen_at: Timestamp;
   started_at: Timestamp;

@@ -312,7 +312,7 @@ describe('kronaut export / import', () => {
     expect(exported.manifest).toMatchObject({
       format: 1,
       created_at: '2026-10-23T09:30:00.000Z',
-      schema_version: 26,
+      schema_version: 27,
       kek_versions: [1],
       media: { files: 2, bytes: 71_234, skipped: 0 },
     });
