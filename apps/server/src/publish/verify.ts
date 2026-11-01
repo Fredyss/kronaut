@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import type { Task } from 'graphile-worker';
 import { sql } from 'kysely';
 import * as z from 'zod';
-import { type DestinationJob, enqueueVerify } from '../jobs.ts';
+import { type DestinationJob, enqueueVerify } from '../jobs/jobs.ts';
 import { applyPlan } from './apply.ts';
 import { jsonb } from './chain.ts';
 import { lockPost, SYSTEM } from './lock.ts';

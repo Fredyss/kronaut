@@ -2,7 +2,7 @@ import type { ProviderManifest } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import type { RefreshableCredential } from '../credential-store.ts';
+import type { RefreshableCredential } from '../credentials/credential-store.ts';
 import { notifyFor } from '../notifications/write.ts';
 import { channelExpiringEvent, writeWebhookEvent } from '../webhooks/events.ts';
 import { openChannelIncident } from './incidents.ts';

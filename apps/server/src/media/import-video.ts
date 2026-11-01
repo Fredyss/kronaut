@@ -1,6 +1,6 @@
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { Logger } from 'pino';
-import type { MediaJob } from '../jobs.ts';
+import type { MediaJob } from '../jobs/jobs.ts';
 import { markImportDone } from './import-store.ts';
 import { internalId } from './routes.ts';
 import type { Staging } from './staging.ts';

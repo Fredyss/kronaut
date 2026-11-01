@@ -15,7 +15,7 @@ import { type Binding, bindingColumns, resolveApproval } from '../approvals/bind
 import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { enqueuePublish } from '../jobs.ts';
+import { enqueuePublish } from '../jobs/jobs.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { type DestinationUpdate, transition } from '../publish/finalize.ts';
 import { approvalStatus } from '../publish/principal.ts';

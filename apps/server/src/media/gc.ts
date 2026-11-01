@@ -2,7 +2,7 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
-import { type MediaJob, mediaJobKey } from '../jobs.ts';
+import { type MediaJob, mediaJobKey } from '../jobs/jobs.ts';
 import { settleExpiredImport } from './import-store.ts';
 import { lockStorageKeys, removeIfUnreferenced } from './key-lock.ts';
 import { referenced } from './library.ts';

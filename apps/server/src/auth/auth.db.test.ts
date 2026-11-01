@@ -8,7 +8,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
-import { hashPassword } from '../password.ts';
+import { hashPassword } from './password.ts';
 import { issueResetToken } from './reset-token.ts';
 import { authRoutes } from './routes.ts';
 import { SESSION_COOKIE } from './session.ts';

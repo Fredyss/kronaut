@@ -1,7 +1,7 @@
 import type { Database } from '@kronaut/db';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import type { ProviderRegistry } from './providers.ts';
+import type { ProviderRegistry } from '../providers.ts';
 
 const WORKSPACE_PAGE = 1000;
 

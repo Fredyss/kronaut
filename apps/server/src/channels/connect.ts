@@ -6,7 +6,7 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { saveCredential } from '../credential-store.ts';
+import { saveCredential } from '../credentials/credential-store.ts';
 import { channelReconnectedEvent, writeWebhookEvent } from '../webhooks/events.ts';
 
 export const STATE_TTL_SECONDS = 600;

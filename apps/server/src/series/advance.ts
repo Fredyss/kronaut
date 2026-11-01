@@ -4,8 +4,8 @@ import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
+import { type JobDeps, sweepCron } from '../jobs/workspace-sweep.ts';
 import { actAs, OwnerLost } from '../posts/owner.ts';
-import { type JobDeps, sweepCron } from '../workspace-sweep.ts';
 import { type StepOutcome, stepSeries } from './step.ts';
 import { type SeriesRow, seriesRows } from './store.ts';
 

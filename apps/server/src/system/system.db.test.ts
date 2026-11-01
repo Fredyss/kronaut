@@ -3,7 +3,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addMember, type Member } from '../approvals/testing.ts';
-import { CRON_TASKS } from '../cron.ts';
+import { CRON_TASKS } from '../jobs/cron-tasks.ts';
 import {
   accountA,
   accountB,

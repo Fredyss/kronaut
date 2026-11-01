@@ -1,7 +1,11 @@
 import type { Database } from '@kronaut/db';
 import { MEDIA_URL_MAX_TTL_SECONDS, type MediaStore, signMediaPath } from '@kronaut/media';
 import type { Temporal } from 'temporal-polyfill';
-import type { MediaAccess } from '../media-access.ts';
+
+export interface MediaAccess {
+  signedUrl(workspaceId: string, assetId: string, ttlSeconds: number): Promise<string>;
+  read(workspaceId: string, assetId: string): Promise<Uint8Array>;
+}
 
 export interface MediaAccessDeps {
   readonly db: Database;

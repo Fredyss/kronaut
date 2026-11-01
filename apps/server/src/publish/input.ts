@@ -7,7 +7,7 @@ import type {
   PublishItem,
 } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import { loadCredential, loadProviderApp } from '../credential-store.ts';
+import { loadCredential, loadProviderApp } from '../credentials/credential-store.ts';
 import type { ProviderEntry } from '../providers.ts';
 import {
   draftItems,

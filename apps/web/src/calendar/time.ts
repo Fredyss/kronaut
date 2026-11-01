@@ -1,6 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
-import type { CalendarView } from '../calendar-search.ts';
 import type { Locale } from '../i18n.ts';
+import type { CalendarView } from './search.ts';
 
 const MONDAY = 1;
 const MONTH_DAYS = 42;

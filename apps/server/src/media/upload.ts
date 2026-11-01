@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { RequestContext } from '../http/types.ts';
-import { enqueueMediaProcess } from '../jobs.ts';
+import { enqueueMediaProcess } from '../jobs/jobs.ts';
 import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { grantAiLock, originalName } from './ingest.ts';

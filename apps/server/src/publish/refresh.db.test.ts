@@ -6,7 +6,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { activateKey, createKey } from '../cli/provider-apps.ts';
-import { loadCredential } from '../credential-store.ts';
+import { loadCredential } from '../credentials/credential-store.ts';
 import { refreshCredential, refreshExpiring } from './refresh.ts';
 import { runPublish } from './task.ts';
 import { type PublishFixture, type Seeded, startPublishFixture } from './testing.ts';

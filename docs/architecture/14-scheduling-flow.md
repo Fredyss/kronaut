@@ -38,6 +38,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 5. Policy | `approval-policy` | The approval rules that scheduling, the claim and notifications read |
 | 6. Access | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
 | 7. Identity and events | `auth`, `webhooks` | Sessions and webhook events |
+| 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
 | Base | `http`, `@kronaut/core` | Request helpers, pure domain and time |
 
 `http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the rule above and the loop counts below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`.

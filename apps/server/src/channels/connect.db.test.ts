@@ -13,7 +13,7 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createKey } from '../cli/provider-apps.ts';
-import { loadCredential, saveCredential } from '../credential-store.ts';
+import { loadCredential, saveCredential } from '../credentials/credential-store.ts';
 import { FAKE_PROVIDER, fakeManifest } from '../publish/testing.ts';
 import { stateKey } from './connect.ts';
 import {

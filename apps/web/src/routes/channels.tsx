@@ -17,6 +17,7 @@ import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/
 import { QUEUE_ROLES } from '../channels/queue.ts';
 import { SearchToasts } from '../channels/search-toasts.tsx';
 import { ChannelSignature } from '../channels/signature.tsx';
+import { statusLabel } from '../channels/status-label.ts';
 import { useApiClient, useLocale } from '../context.ts';
 import { httpsUrl } from '../destinations.ts';
 import { m } from '../i18n.ts';
@@ -36,19 +37,6 @@ export interface ChannelsSearch {
 }
 
 const route = getRouteApi('/app/channels');
-
-export function statusLabel(status: Channel['status']): string {
-  switch (status) {
-    case 'active':
-      return m.channel_status_active();
-    case 'needs_reauth':
-      return m.channel_status_needs_reauth();
-    case 'disabled':
-      return m.channel_status_disabled();
-    case 'disconnected':
-      return m.channel_status_disconnected();
-  }
-}
 
 const HANDLE_HOST = /^@[^@\s]+@([^@\s]+)$/;
 

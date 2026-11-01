@@ -4,12 +4,12 @@ import { Link } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type Channel, channelsQuery } from '../api.ts';
+import { statusLabel } from '../channels/status-label.ts';
 import { preloadEditor } from '../compose/load.ts';
 import { useApiClient, useLocale } from '../context.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';
-import { statusLabel } from '../routes/channels.tsx';
 import { ChevronsLeft, Plus } from './icons.tsx';
 
 const STORAGE_KEY = 'kronaut.calendar.sidebar';

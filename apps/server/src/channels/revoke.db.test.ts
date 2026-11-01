@@ -3,7 +3,7 @@ import { ProviderFailure } from '@kronaut/core';
 import type { Actor } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import type { RevokeJob } from '../jobs.ts';
+import type { RevokeJob } from '../jobs/jobs.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
 import { runRevoke } from './revoke.ts';
 

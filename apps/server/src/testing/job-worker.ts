@@ -2,9 +2,9 @@ import { createDatabase } from '@kronaut/db';
 import { run } from 'graphile-worker';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { startHeartbeat } from '../heartbeat.ts';
-import { openJobSession, registerJobWorkers } from '../job-locks.ts';
-import { SILENT_JOB_LOGGER } from '../job-queue.ts';
+import { startHeartbeat } from '../jobs/heartbeat.ts';
+import { openJobSession, registerJobWorkers } from '../jobs/job-locks.ts';
+import { SILENT_JOB_LOGGER } from '../jobs/job-queue.ts';
 
 const url = process.env.JOB_WORKER_DATABASE_URL ?? '';
 const workerId = process.env.JOB_WORKER_ID ?? '';

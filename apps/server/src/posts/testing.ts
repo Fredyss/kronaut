@@ -8,7 +8,7 @@ import { sql } from 'kysely';
 import { type Logger, pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
-import { saveCredential } from '../credential-store.ts';
+import { saveCredential } from '../credentials/credential-store.ts';
 import { cronTasks } from '../cron.ts';
 import {
   type Auth,
@@ -20,8 +20,8 @@ import {
   randomGrantToken,
   requestAs,
 } from '../http/testing.ts';
-import { installJobQueue } from '../job-queue.ts';
-import type { MediaAccess } from '../media-access.ts';
+import { installJobQueue } from '../jobs/job-queue.ts';
+import type { MediaAccess } from '../media/access.ts';
 import { createProviderRegistry } from '../providers.ts';
 import {
   FAKE_PROVIDER,

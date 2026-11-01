@@ -2,7 +2,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { enqueuePublish } from '../jobs.ts';
+import { enqueuePublish } from '../jobs/jobs.ts';
 import { reapLeases, sweepDue } from './sweeps.ts';
 import {
   audits,

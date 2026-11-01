@@ -8,9 +8,9 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { CompactSign, compactVerify, importJWK } from 'jose';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { loadProviderApp } from '../credential-store.ts';
+import { loadProviderApp } from '../credentials/credential-store.ts';
+import { loadSigningKeys } from '../credentials/signing-keys.ts';
 import { type PublishFixture, startPublishFixture } from '../publish/testing.ts';
-import { loadSigningKeys } from '../signing-keys.ts';
 
 const execFileAsync = promisify(execFile);
 const SYSTEM: Actor = { kind: 'system' };

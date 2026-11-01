@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { CRON_INTERVAL_MS, type CronTask } from '../cron.ts';
+import { CRON_INTERVAL_MS, type CronTask } from '../jobs/cron-tasks.ts';
 
 export const SLO_TARGETS = { onTimePct: 99.5, duplicates: 0, unconfirmedPct: 0.5 } as const;
 

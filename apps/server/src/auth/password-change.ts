@@ -10,8 +10,8 @@ import {
   type RequestContext,
   type SessionInfo,
 } from '../http/types.ts';
-import { checkPassword, hashPassword } from '../password.ts';
 import { recordEvent, requireSession } from './events.ts';
+import { checkPassword, hashPassword } from './password.ts';
 import {
   actorOf,
   LOCKED_OUT,

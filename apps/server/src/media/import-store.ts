@@ -3,7 +3,7 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { enqueueMediaImport, type MediaJob } from '../jobs.ts';
+import { enqueueMediaImport, type MediaJob } from '../jobs/jobs.ts';
 import { takeWindowQuota } from '../quota/window-quota.ts';
 import { findMediaAsset, MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';

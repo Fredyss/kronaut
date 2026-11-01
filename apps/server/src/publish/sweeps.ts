@@ -2,7 +2,7 @@ import { toDate } from '@kronaut/core';
 import type { SweepRow, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { enqueuePublish, enqueueVerify, ensurePublishJob, ensureVerifyJob } from '../jobs.ts';
+import { enqueuePublish, enqueueVerify, ensurePublishJob, ensureVerifyJob } from '../jobs/jobs.ts';
 import { currentLaterItem, failedReason, failLaterItem } from './chain-step.ts';
 import { lockPost, SYSTEM } from './lock.ts';
 import { firstCheckAt, retry } from './plan.ts';

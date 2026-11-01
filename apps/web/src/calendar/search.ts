@@ -1,4 +1,4 @@
-import { isPostId, type SlotSearch, slotSearch } from './compose-search.ts';
+import { isPostId, type SlotSearch, slotSearch } from '../compose/search.ts';
 
 export const CALENDAR_VIEWS = ['day', 'week', 'month', 'list'] as const;
 

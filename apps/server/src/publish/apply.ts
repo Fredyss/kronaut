@@ -2,7 +2,7 @@ import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { seedPulls } from '../analytics/seed.ts';
-import { type DestinationJob, enqueuePublish, enqueueVerify } from '../jobs.ts';
+import { type DestinationJob, enqueuePublish, enqueueVerify } from '../jobs/jobs.ts';
 import { type ChainStep, chainStep, settleChainItems } from './chain-step.ts';
 import { type CredentialFence, flagAccount, flagApp } from './incidents.ts';
 import type { Plan, SideEffect } from './plan.ts';
