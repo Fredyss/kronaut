@@ -5,7 +5,12 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { quickAddJob, run } from 'graphile-worker';
 import { sql } from 'kysely';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { openJobSession, registerJobWorkers, releaseDeadJobWorkers } from './job-locks.ts';
+import {
+  type JobSession,
+  openJobSession,
+  registerJobWorkers,
+  releaseDeadJobWorkers,
+} from './job-locks.ts';
 import { installJobQueue, SILENT_JOB_LOGGER } from './job-queue.ts';
 
 const CLI = { kind: 'cli' } as const;
@@ -15,15 +20,26 @@ const LONG_MS = 30_000;
 let test: TestDatabase;
 let owner: Database;
 let app: Database;
+let reader: JobSession;
+let readerDb: Database;
+let closeReader = (): void => {};
+let readerOpen: Promise<void>;
 
 beforeAll(async () => {
   test = await startTestDatabase();
   owner = createDatabase({ connectionString: test.ownerUrl });
   app = createDatabase({ connectionString: test.appUrl });
   await installJobQueue(test.ownerUrl, owner);
+  reader = openJobSession(test.appUrl);
+  readerDb = createDatabase({ connectionString: reader.connectionString });
+  readerOpen = readerDb.withActor(CLI, () => new Promise((resolve) => (closeReader = resolve)));
+  await vi.waitFor(async () => expect(await connections(reader.id)).toBe(1));
 });
 
 afterAll(async () => {
+  closeReader();
+  await readerOpen;
+  await readerDb?.destroy();
   await app?.destroy();
   await owner?.destroy();
   await test?.stop();
@@ -118,6 +134,10 @@ function lockHolder(jobKey: string): Promise<string | null | undefined> {
   });
 }
 
+function sweep(staleAfterSeconds?: number): Promise<string[]> {
+  return releaseDeadJobWorkers(app, reader, staleAfterSeconds);
+}
+
 async function ranByFreshWorker(expected: string): Promise<string[]> {
   const ran: string[] = [];
   const record = (name: string) => async () => {
@@ -150,13 +170,13 @@ describe('dead job workers', () => {
       await addJob('tick', { queueName, jobKey: `${queueName}:next` });
       await kill(worker);
 
-      expect(await releaseDeadJobWorkers(app)).toEqual([]);
+      expect(await sweep()).toEqual([]);
       expect(await lockHolder(held)).not.toBeNull();
 
       await age(worker.id);
       const pool = (await heartbeat(worker.id)).job_pool_id;
       expect(await lockHolder(held)).toBe(pool);
-      expect(await releaseDeadJobWorkers(app, 0)).toEqual([pool]);
+      expect(await sweep(0)).toEqual([pool]);
       expect(await lockHolder(held)).toBeNull();
       expect(await heartbeat(worker.id)).toEqual({ job_session: null, job_pool_id: null });
 
@@ -172,14 +192,14 @@ describe('dead job workers', () => {
     const holder = await lockHolder('live:held');
     try {
       await age(worker.id);
-      expect(await releaseDeadJobWorkers(app, 0)).toEqual([]);
+      expect(await sweep(0)).toEqual([]);
       expect(holder).not.toBeNull();
       expect(await lockHolder('live:held')).toBe(holder);
     } finally {
       await kill(worker);
     }
     await age(worker.id);
-    await releaseDeadJobWorkers(app, 0);
+    await sweep(0);
   }, 60_000);
 
   it('gives workers the full window after a Postgres restart', async () => {
@@ -188,9 +208,9 @@ describe('dead job workers', () => {
     await worker.saw('RUNNING');
     await kill(worker);
     await age(worker.id);
-    expect(await releaseDeadJobWorkers(app, 3600)).toEqual([]);
+    expect(await sweep(3600)).toEqual([]);
     expect(await lockHolder('restart:held')).not.toBeNull();
-    expect(await releaseDeadJobWorkers(app, 0)).toHaveLength(1);
+    expect(await sweep(0)).toHaveLength(1);
   }, 60_000);
 
   it('does not run a spent job again', async () => {
@@ -199,7 +219,7 @@ describe('dead job workers', () => {
     await worker.saw('RUNNING');
     await kill(worker);
     await age(worker.id);
-    await releaseDeadJobWorkers(app, 0);
+    await sweep(0);
     expect(await lockHolder('spent')).toBeNull();
 
     await addJob('tick', { jobKey: 'after-spent' });
@@ -212,7 +232,7 @@ describe('dead job workers', () => {
     await worker.saw('RUNNING');
     await kill(worker);
 
-    await registerJobWorkers(app, worker.id, openJobSession(test.appUrl));
+    expect(await registerJobWorkers(app, worker.id, reader)).toBe(true);
 
     expect(await lockHolder('restarted:held')).toBeNull();
   }, 60_000);
@@ -223,10 +243,25 @@ describe('dead job workers', () => {
     await worker.saw('RUNNING');
     const holder = await lockHolder('shared:held');
     try {
-      await registerJobWorkers(app, worker.id, openJobSession(test.appUrl));
+      await registerJobWorkers(app, worker.id, reader);
       expect(await lockHolder('shared:held')).toBe(holder);
     } finally {
       worker.child.kill('SIGKILL');
     }
+  }, 60_000);
+
+  it('keeps every lock when it cannot see its own session', async () => {
+    const worker = await startWorker();
+    await addJob('hang', { queueName: 'blind', jobKey: 'blind:held' });
+    await worker.saw('RUNNING');
+    const holder = await lockHolder('blind:held');
+    await kill(worker);
+    await age(worker.id);
+
+    const blind = openJobSession(test.appUrl);
+    expect(await releaseDeadJobWorkers(app, blind, 0)).toEqual([]);
+    expect(await registerJobWorkers(app, worker.id, blind)).toBe(false);
+
+    expect(await lockHolder('blind:held')).toBe(holder);
   }, 60_000);
 });

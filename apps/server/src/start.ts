@@ -28,7 +28,7 @@ import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
 import { drain, listen } from './http/listen.ts';
 import { loadWebApp } from './http/web.ts';
-import { type LockSweep, openJobSession, registerJobWorkers, startLockSweep } from './job-locks.ts';
+import { type LockSweep, openJobSession, startJobLocks } from './job-locks.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess, createMediaSigner } from './media/access.ts';
@@ -228,8 +228,7 @@ async function startWorker(boot: Boot): Promise<void> {
     () => stoppedOnItsOwn(new Error('job runner stopped')),
     (err: unknown) => stoppedOnItsOwn(err),
   );
-  await registerJobWorkers(db, config.workerId, session);
-  state.lockSweep = startLockSweep(db, logger);
+  state.lockSweep = await startJobLocks(db, config.workerId, session, logger);
 }
 
 async function startApi(boot: Boot): Promise<void> {
