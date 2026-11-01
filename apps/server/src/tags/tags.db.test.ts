@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { decodePublicId, encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
@@ -169,6 +170,33 @@ describe('the tag list', () => {
     expect(await renamed.json()).toMatchObject({ name: 'New name', color: 'blue' });
     const taken = await call('PATCH', `tags/${tag.id}`, ownerAuth, { name: 'taken NAME' });
     expect(taken.status).toBe(409);
+  });
+
+  it('neither writes nor audits an update that changes nothing', async () => {
+    const tag = await newTag('Unchanged');
+    const same = { name: tag.name, color: tag.color };
+    const response = await call('PATCH', `tags/${tag.id}`, ownerAuth, same);
+    expect(await response.json()).toMatchObject(same);
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select('action')
+        .where('resource_id', '=', decodePublicId('tag', tag.id) ?? '')
+        .execute(),
+    );
+    expect(audit).toEqual([{ action: 'tag.created' }]);
+  });
+
+  it('does not find an unknown tag or one of another workspace', async () => {
+    const unknown = encodePublicId('tag', randomUUID());
+    for (const id of [unknown, foreignTag]) {
+      const renamed = await call('PATCH', `tags/${id}`, ownerAuth, { name: 'Renamed' });
+      expect(renamed.status).toBe(404);
+      expect((await errorOf(renamed)).message).toBe('Tag not found.');
+      const deleted = await call('DELETE', `tags/${id}`, ownerAuth);
+      expect(deleted.status).toBe(404);
+      expect((await errorOf(deleted)).message).toBe('Tag not found.');
+    }
   });
 
   it('removes a deleted tag from its posts', async () => {
