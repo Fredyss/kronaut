@@ -265,6 +265,8 @@ describe('dead job workers', () => {
     expect(await releaseDeadJobWorkers(app, blind, 0)).toEqual([]);
     expect(await registerJobWorkers(app, worker.id, blind)).toBe(false);
 
+    expect(await heartbeat(worker.id)).toEqual({ job_session: null, job_pool_id: null });
+    expect(await sweep(0)).toEqual([]);
     expect(await lockHolder('blind:held')).toBe(holder);
   }, 60_000);
 

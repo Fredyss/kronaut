@@ -102,7 +102,8 @@ function poolIdsOf(rows: readonly Pools[]): string[] {
 // A restarted container keeps its worker id, so its row still names the previous process. The new
 // process already wrote the heartbeat, so only the connection is left to go by, and
 // KRONAUT_WORKER_ID must be unique per process.
-// Resolves false when this worker can't see its own session, so it can never release a lock.
+// Resolves false when this worker can't see its own session: it can never release a lock, and it
+// publishes no session, since a peer that can see would take the hidden one for a dead worker.
 export async function registerJobWorkers(
   db: Database,
   workerId: string,
@@ -120,7 +121,11 @@ export async function registerJobWorkers(
     }
     await trx
       .updateTable('worker_heartbeats')
-      .set({ job_session: session.id, job_pool_id: session.poolId })
+      .set(
+        trusted
+          ? { job_session: session.id, job_pool_id: session.poolId }
+          : { job_session: null, job_pool_id: null },
+      )
       .where('worker_id', '=', workerId)
       .execute();
   });
