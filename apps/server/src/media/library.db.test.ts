@@ -228,6 +228,7 @@ describe('media library', () => {
     );
     expect(summary).toEqual({
       expired: 0,
+      lost: 0,
       purged: 1,
       skipped: 1,
       orphaned: 0,

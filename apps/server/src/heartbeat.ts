@@ -57,7 +57,7 @@ export async function startHeartbeat(options: HeartbeatOptions): Promise<Heartbe
     await options.db.withActor(SYSTEM, (trx) =>
       trx
         .updateTable('worker_heartbeats')
-        .set({ seen_at: sql<Date>`'epoch'` })
+        .set({ seen_at: sql<Date>`'epoch'`, job_session: null, job_pool_id: null })
         .where('worker_id', '=', options.workerId)
         .execute(),
     );

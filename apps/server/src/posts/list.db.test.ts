@@ -141,10 +141,12 @@ describe('posts.list', () => {
       'version',
     ]);
     expect(item).toMatchObject({ excerpt: 'V kalendári', mediaCount: 0 });
-    expect(item?.destinations.map((d) => [d.id, d.scheduledAt])).toEqual([
-      [inside?.id, '2031-03-03T09:00:00.000Z'],
-      [outside?.id, '2031-04-01T09:00:00.000Z'],
-    ]);
+    expect(new Map(item?.destinations.map((d) => [d.id, d.scheduledAt]))).toEqual(
+      new Map([
+        [inside?.id, '2031-03-03T09:00:00.000Z'],
+        [outside?.id, '2031-04-01T09:00:00.000Z'],
+      ]),
+    );
     expect(Object.keys(item?.destinations[0] ?? {}).sort()).toEqual([
       'accountId',
       'id',

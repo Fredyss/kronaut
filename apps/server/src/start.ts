@@ -28,6 +28,7 @@ import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
 import { drain, listen } from './http/listen.ts';
 import { loadWebApp } from './http/web.ts';
+import { type LockSweep, openJobSession, startJobLocks } from './job-locks.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess, createMediaSigner } from './media/access.ts';
@@ -112,6 +113,7 @@ async function startMedia(config: ServerConfig, clock: Clock): Promise<StartedSe
 
 interface Running {
   heartbeat: Heartbeat | null;
+  lockSweep: LockSweep | null;
   runner: Runner | null;
   runnerStopped: boolean;
   poolDraining: boolean;
@@ -145,13 +147,17 @@ async function stopAll(db: Database, state: Running): Promise<void> {
   state.stopping = true;
   state.access?.stop();
   try {
-    const { heartbeat, http, runner } = state;
+    const { heartbeat, http, lockSweep, runner } = state;
     const steps = await Promise.allSettled([
-      heartbeat?.stop(),
+      lockSweep?.stop(),
       http === null ? undefined : drain(http),
       runner === null ? undefined : stopRunner(state, runner),
     ]);
-    const failed = steps.find((step): step is PromiseRejectedResult => step.status === 'rejected');
+    // a draining worker still holds its locks, so its heartbeat has to outlive the runner
+    const expired = await Promise.allSettled([heartbeat?.stop()]);
+    const failed = [...steps, ...expired].find(
+      (step): step is PromiseRejectedResult => step.status === 'rejected',
+    );
     if (failed !== undefined) throw failed.reason;
   } finally {
     state.mailer?.close();
@@ -186,8 +192,10 @@ async function startWorker(boot: Boot): Promise<void> {
   state.mailer = email?.mailer ?? null;
   const importHttp = createHttpClient(MEDIA_IMPORT_EGRESS);
 
+  const session = openJobSession(boot.databaseUrl);
   const jobs = await run({
-    connectionString: boot.databaseUrl,
+    connectionString: session.connectionString,
+    events: session.events,
     concurrency: WORKER_CONCURRENCY,
     logger: jobLogger(logger),
     noHandleSignals: true,
@@ -220,6 +228,7 @@ async function startWorker(boot: Boot): Promise<void> {
     () => stoppedOnItsOwn(new Error('job runner stopped')),
     (err: unknown) => stoppedOnItsOwn(err),
   );
+  state.lockSweep = await startJobLocks(db, config.workerId, session, logger);
 }
 
 async function startApi(boot: Boot): Promise<void> {
@@ -277,6 +286,7 @@ export async function startServer(
   });
   const state: Running = {
     heartbeat: null,
+    lockSweep: null,
     runner: null,
     runnerStopped: false,
     poolDraining: false,

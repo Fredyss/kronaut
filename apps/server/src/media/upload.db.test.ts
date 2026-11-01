@@ -264,6 +264,7 @@ describe('media gc', () => {
       ),
     ).toEqual({
       expired: 1,
+      lost: 0,
       purged: 0,
       orphaned: 0,
       skipped: 0,
@@ -277,5 +278,35 @@ describe('media gc', () => {
     await expect(stat(staging.directory(oldKey))).rejects.toMatchObject({ code: 'ENOENT' });
     expect((await row(young.id))?.state).toBe('uploading');
     expect(await staging.parts(youngKey)).toEqual(new Map([[2, TAIL]]));
+  });
+
+  it('rejects a video whose job is spent and keeps one that is still queued', async () => {
+    const queued = async (tenant: Tenant) => {
+      const { media } = await create(tenant);
+      await putAll(tenant, media.id);
+      await completed(tenant, media.id);
+      await asOwner(async (trx) => {
+        await sql`set local session_replication_role = replica`.execute(trx);
+        await sql`update media_assets set updated_at = now() - interval '2 hours'
+                   where id = ${decodeMedia(media.id)}`.execute(trx);
+      });
+      return media.id;
+    };
+    const lost = await queued(a);
+    const waiting = await queued(b);
+    const key = (await row(lost))?.storage_key ?? '';
+    await asOwner((trx) =>
+      sql`update graphile_worker._private_jobs set attempts = max_attempts
+           where key = ${`media:${decodeMedia(lost)}`}`.execute(trx),
+    );
+    const summary = await collectMedia(fx.db, {
+      staging,
+      store: fx.store,
+      logger: pino({ level: 'silent' }),
+    });
+    expect(JSON.parse(summary)).toMatchObject({ lost: 1, skipped: 1 });
+    expect((await row(lost))?.state).toBe('rejected');
+    await expect(stat(staging.directory(key))).rejects.toMatchObject({ code: 'ENOENT' });
+    expect((await row(waiting))?.state).toBe('processing');
   });
 });
