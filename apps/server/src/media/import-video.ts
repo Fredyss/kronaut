@@ -17,7 +17,6 @@ export interface ImportVideoDeps {
 export interface ImportedVideo {
   readonly actor: Actor;
   readonly aiGenerated: boolean;
-  readonly filename: string | undefined;
   readonly mime: string;
   readonly headBytes: number;
   readonly parts: AsyncIterable<Uint8Array>;
@@ -32,7 +31,6 @@ async function openUpload(trx: TenantDb, job: MediaJob, video: ImportedVideo) {
   const { media } = await createVideoUpload(trx, job.workspaceId, {
     bytes: video.headBytes,
     mime: video.mime,
-    filename: video.filename,
     aiGenerated: video.aiGenerated,
   });
   const mediaId = internalId('media', media.id);

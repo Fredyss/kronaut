@@ -7,9 +7,10 @@ import { enqueueMediaImport, type MediaJob } from '../jobs.ts';
 import { takeWindowQuota } from '../quota/window-quota.ts';
 import { findMediaAsset, MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';
-import { IMPORT_ERRORS, type ImportError } from './import-failure.ts';
+import { IMPORT_ERRORS, type ImportError, refuseImport } from './import-failure.ts';
 
 export const MEDIA_IMPORTS_PER_HOUR = 500;
+export const MEDIA_IMPORTS_MAX_OPEN = 500;
 const QUOTA_WINDOW_SECONDS = 60 * 60;
 const OPEN_STATES = ['pending', 'fetching'];
 const SYSTEM: Actor = { kind: 'system' };
@@ -47,19 +48,32 @@ function toDto(row: {
   return MediaImportSchema.parse({ ...row, id: encodePublicId('mediaImport', row.id) });
 }
 
+function tooManyImports(): HttpError {
+  return new HttpError('rate_limited', 'Too many imports were started recently. Try again later.');
+}
+
+async function countOpen(trx: TenantDb, workspaceId: string): Promise<number> {
+  const { open } = await trx
+    .selectFrom('media_imports')
+    .select(sql<string>`count(*)`.as('open'))
+    .where('workspace_id', '=', workspaceId)
+    .where('state', 'in', OPEN_STATES)
+    .executeTakeFirstOrThrow();
+  return Number(open);
+}
+
 export async function createImport(
   trx: TenantDb,
   workspaceId: string,
   input: NewImport,
 ): Promise<MediaImportDto> {
+  if ((await countOpen(trx, workspaceId)) >= MEDIA_IMPORTS_MAX_OPEN) throw tooManyImports();
   const allowed = await takeWindowQuota(trx, {
     key: importBucketKey(workspaceId),
     capacity: MEDIA_IMPORTS_PER_HOUR,
     windowSeconds: QUOTA_WINDOW_SECONDS,
   });
-  if (!allowed) {
-    throw new HttpError('rate_limited', 'Too many imports were started recently. Try again later.');
-  }
+  if (!allowed) throw tooManyImports();
   const row = await trx
     .insertInto('media_imports')
     .values({
@@ -129,7 +143,7 @@ function openImport(trx: TenantDb, job: MediaJob) {
 }
 
 export async function markImportDone(trx: TenantDb, job: MediaJob, mediaId: string): Promise<void> {
-  await openImport(trx, job)
+  const { numUpdatedRows } = await openImport(trx, job)
     .set({
       state: 'done',
       url: null,
@@ -137,7 +151,8 @@ export async function markImportDone(trx: TenantDb, job: MediaJob, mediaId: stri
       finished_at: sql<Date>`now()`,
       updated_at: sql<Date>`now()`,
     })
-    .execute();
+    .executeTakeFirst();
+  if (numUpdatedRows === 0n) throw refuseImport('stalled');
 }
 
 async function markImportFailed(trx: TenantDb, job: MediaJob, kind: ImportError): Promise<void> {
@@ -165,7 +180,9 @@ export async function settleExpiredImport(
       .selectFrom('media_imports')
       .select([
         'state',
-        sql<boolean>`created_at < now() - interval '24 hours'`.as('stale'),
+        sql<boolean>`case state when 'pending' then created_at < now() - interval '7 days'
+                                when 'fetching' then updated_at < now() - interval '24 hours'
+                                else false end`.as('stale'),
         sql<boolean>`coalesce(finished_at < now() - interval '7 days', false)`.as('expired'),
       ])
       .where('workspace_id', '=', job.workspaceId)

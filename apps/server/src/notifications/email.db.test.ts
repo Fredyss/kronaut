@@ -9,8 +9,9 @@ import * as sk from '@kronaut/i18n/messages/sk';
 import type { JobHelpers } from 'graphile-worker';
 import { type RawBuilder, sql } from 'kysely';
 import { pino } from 'pino';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CRON_TASKS, cronItems, cronTaskList } from '../cron.ts';
+import { recordCronRun } from '../cron-run.ts';
 import { idleMediaGc } from '../media/testing/db.ts';
 import {
   type PublishFixture,
@@ -397,9 +398,28 @@ describe('pending notifications', () => {
 describe('notification email registration', () => {
   const urls = { publicUrl: new URL(`${BASE_URL}/`) };
 
-  it('keeps every cron task on one queue', () => {
-    const queues = new Set(cronItems(true).map((item) => item.options.queueName));
-    expect([...queues]).toEqual(['cron']);
+  it('skips a cron task while its last run is still going', async () => {
+    let runs = 0;
+    let finish = (_detail: string) => {};
+    const slow = recordCronRun(fixture.db, 'overlap_probe', () => {
+      runs++;
+      return new Promise<string>((resolve) => {
+        finish = resolve;
+      });
+    });
+    await vi.waitFor(() => expect(runs).toBe(1));
+    await recordCronRun(fixture.db, 'overlap_probe', async () => {
+      runs++;
+      return '';
+    });
+    expect(runs).toBe(1);
+    finish('');
+    await slow;
+    await recordCronRun(fixture.db, 'overlap_probe', async () => {
+      runs++;
+      return '';
+    });
+    expect(runs).toBe(2);
   });
 
   it('registers nothing without SMTP', () => {

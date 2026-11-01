@@ -12,7 +12,12 @@ import { installJobQueue, jobLogger } from '../job-queue.ts';
 import { JOBS } from '../jobs.ts';
 import { collectMedia } from './gc.ts';
 import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
-import { importBucketKey, MEDIA_IMPORTS_PER_HOUR } from './import-store.ts';
+import {
+  failImport,
+  importBucketKey,
+  MEDIA_IMPORTS_MAX_OPEN,
+  MEDIA_IMPORTS_PER_HOUR,
+} from './import-store.ts';
 import { type MediaDb, stagingUnder, startMediaDb, type Tenant } from './testing/db.ts';
 import {
   capturedLogger,
@@ -20,6 +25,7 @@ import {
   importRow,
   LINK,
   type Reply,
+  type ScriptedHttp,
   SYSTEM,
   scriptedHttp,
   startImport,
@@ -172,6 +178,23 @@ describe('creating an import', () => {
     expect(bucket.window_secs).toBe(3600);
   });
 
+  it('refuses a new import at the open limit', async () => {
+    await owner.withActor(CLI, (trx) =>
+      sql`insert into media_imports (workspace_id, url)
+          select ${b.workspaceId}, ${LINK} from generate_series(1, ${MEDIA_IMPORTS_MAX_OPEN})`.execute(
+        trx,
+      ),
+    );
+    const response = await fx.call(b, 'POST', 'media/imports', {
+      body: { url: LINK },
+      key: 'open-import-1',
+    });
+    await owner.withActor(CLI, (trx) =>
+      trx.deleteFrom('media_imports').where('workspace_id', '=', b.workspaceId).execute(),
+    );
+    await expectError(response, 429, 'rate_limited');
+  });
+
   it('enforces the scope and keeps imports inside their workspace', async () => {
     const readOnly = await fx.grant(a, ['media:read']);
     const denied = await fx.call(a, 'POST', 'media/imports', {
@@ -212,7 +235,7 @@ describe('running an import', () => {
       ai_locked: true,
       uploaded_by_grant_id: grant.id,
       uploaded_by_user_id: null,
-      original_name: 'photo.jpg',
+      original_name: null,
     });
     const read = await fx.call(a, 'GET', `media/imports/${started.publicId}`);
     expect(await read.json()).toMatchObject({ state: 'done', media: { kind: 'image' } });
@@ -241,7 +264,7 @@ describe('running an import', () => {
       kind: 'video',
       state: 'processing',
       bytes: String(body.byteLength),
-      original_name: 'clip.mp4',
+      original_name: null,
       uploaded_by_user_id: a.userId,
     });
     const key = asset?.storage_key ?? '';
@@ -354,24 +377,31 @@ describe('running an import', () => {
     }
   });
 
-  it('keeps a filename only when it is a real media file name', async () => {
-    const names = [
-      ['photo%20one.jpg', 'photo one.jpg'],
-      ['aGVsbG8tdG9rZW4', null],
-      ['bad%E0%A4%A.png', null],
-      ['line%0Abreak.png', null],
-      ['SHOUT.PNG', 'SHOUT.PNG'],
-    ] as const;
-    for (const [segment, expected] of names) {
-      const url = `https://cdn.example.test/files/${segment}`;
-      const { job } = await startImport(fx, b, { url });
-      const png = pngFixture({ width: 3 + names.findIndex(([s]) => s === segment), height: 1 });
-      await runMediaImport(deps(scriptedHttp({ chunks: [png] })), job);
-      const row = await importRow(fx.db, job);
-      expect(row?.state).toBe('done');
-      const asset = await assetOf(b.workspaceId, row?.media_id ?? null);
-      expect(asset?.original_name).toBe(expected);
-    }
+  it('hands the shutdown signal to the download', async () => {
+    const { job } = await startImport(fx, a);
+    const http = scriptedHttp({ error: new Error('aborted') });
+    const { signal } = new AbortController();
+    await expect(runMediaImport(deps(http), job, false, signal)).rejects.toThrow(/^fetch_failed$/);
+    expect(http.signals).toEqual([signal]);
+    expect(await importRow(fx.db, job)).toMatchObject({ state: 'fetching', url: LINK });
+  });
+
+  it('keeps no asset when GC stalled the import during the download', async () => {
+    const { job } = await startImport(fx, a);
+    const http = scriptedHttp({ chunks: [pngFixture({ width: 31, height: 31 })] });
+    const stalling: ScriptedHttp = {
+      ...http,
+      async request(url, init) {
+        await failImport(fx.db, job, 'stalled');
+        return await http.request(url, init);
+      },
+    };
+    expect(await runMediaImport(deps(stalling), job)).toBe('failed');
+    expect(await importRow(fx.db, job)).toMatchObject({ error: 'stalled', media_id: null });
+    const width = await owner.withActor(CLI, (trx) =>
+      trx.selectFrom('media_assets').select('id').where('width', '=', 31).execute(),
+    );
+    expect(width).toEqual([]);
   });
 });
 
@@ -442,11 +472,12 @@ describe('garbage collection', () => {
       (out) => JSON.parse(out) as { importsStalled: number; importsDeleted: number },
     );
 
-  async function age(id: string, values: { created: string; finished?: string }) {
+  async function age(id: string, values: { created: string; finished?: string; updated?: string }) {
     await owner.withActor(CLI, (trx) =>
       sql`
         update media_imports
            set created_at = now() - ${values.created}::interval,
+               updated_at = now() - ${values.updated ?? '0'}::interval,
                finished_at = case when finished_at is null then null
                                   else now() - ${values.finished ?? '0'}::interval end
          where id = ${id}
@@ -454,24 +485,33 @@ describe('garbage collection', () => {
     );
   }
 
-  it('stalls open imports past 24 h and deletes finished ones past 7 days', async () => {
+  it('stalls lost imports, keeps a backlog and deletes finished ones past 7 days', async () => {
     const stuck = await startImport(fx, a);
+    const lost = await startImport(fx, a);
+    const waiting = await startImport(fx, a);
     const fresh = await startImport(fx, a);
     const old = await startImport(fx, a);
     const recent = await startImport(fx, a);
     await runMediaImport(deps(scriptedHttp({ status: 404 })), old.job);
     await runMediaImport(deps(scriptedHttp({ status: 404 })), recent.job);
-    await age(stuck.job.id, { created: '25 hours' });
+    await expect(
+      runMediaImport(deps(scriptedHttp({ status: 503 })), stuck.job, false),
+    ).rejects.toThrow();
+    await age(stuck.job.id, { created: '25 hours', updated: '25 hours' });
+    await age(lost.job.id, { created: '8 days' });
+    await age(waiting.job.id, { created: '25 hours' });
     await age(old.job.id, { created: '9 days', finished: '8 days' });
     await age(recent.job.id, { created: '9 days', finished: '6 days' });
 
-    expect(await gc()).toMatchObject({ importsStalled: 1, importsDeleted: 1 });
+    expect(await gc()).toMatchObject({ importsStalled: 2, importsDeleted: 1 });
 
     expect(await importRow(fx.db, stuck.job)).toMatchObject({
       state: 'failed',
       error: 'stalled',
       url: null,
     });
+    expect(await importRow(fx.db, lost.job)).toMatchObject({ state: 'failed', error: 'stalled' });
+    expect(await importRow(fx.db, waiting.job)).toMatchObject({ state: 'pending', url: LINK });
     expect(await importRow(fx.db, fresh.job)).toMatchObject({ state: 'pending', url: LINK });
     expect(await importRow(fx.db, old.job)).toBeUndefined();
     expect(await importRow(fx.db, recent.job)).toMatchObject({ state: 'failed' });

@@ -17,7 +17,9 @@ CREATE TABLE media_imports (
   CHECK ((state = 'failed') = (error IS NOT NULL))
 );
 
-CREATE INDEX ix_media_imports_created ON media_imports (created_at);
+CREATE INDEX ix_media_imports_open ON media_imports (workspace_id) WHERE state IN ('pending','fetching');
+
+CREATE INDEX ix_media_imports_media ON media_imports (workspace_id, media_id) WHERE media_id IS NOT NULL;
 
 ALTER TABLE media_imports ENABLE ROW LEVEL SECURITY;
 
@@ -31,8 +33,9 @@ RETURNS TABLE (workspace_id uuid, id uuid)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_temp AS $$
   SELECT i.workspace_id, i.id FROM media_imports i
    WHERE NOT instance_paused()
-     AND i.created_at < now() - interval '24 hours'
-     AND (i.state IN ('pending','fetching') OR i.finished_at < now() - interval '7 days')
+     AND ((i.state = 'pending' AND i.created_at < now() - interval '7 days')
+       OR (i.state = 'fetching' AND i.updated_at < now() - interval '24 hours')
+       OR i.finished_at < now() - interval '7 days')
    ORDER BY i.workspace_id, i.id LIMIT least(greatest(p_limit, 0), 1000)
 $$;
 

@@ -20,6 +20,7 @@ export interface Reply {
 
 export interface ScriptedHttp extends HttpClient {
   readonly urls: string[];
+  readonly signals: (AbortSignal | undefined)[];
   discarded: number;
 }
 
@@ -47,9 +48,11 @@ export function scriptedHttp(...replies: readonly Reply[]): ScriptedHttp {
   const pending = [...replies];
   const http: ScriptedHttp = {
     urls: [],
+    signals: [],
     discarded: 0,
-    async request(url) {
+    async request(url, init) {
       http.urls.push(String(url));
+      http.signals.push(init?.signal);
       const reply = pending.shift();
       if (reply === undefined) throw new Error('no reply is scripted');
       if (reply.error !== undefined) throw reply.error;

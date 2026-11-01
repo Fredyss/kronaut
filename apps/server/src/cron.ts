@@ -5,6 +5,7 @@ import type { Logger } from 'pino';
 import { pullAnalytics } from './analytics/pull.ts';
 import { refreshCapabilities } from './channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './channels/retention.ts';
+import { recordCronRun } from './cron-run.ts';
 import { fillEvergreen } from './evergreen/fill.ts';
 import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
@@ -38,11 +39,9 @@ export const CRON_TASKS = {
 export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
 
 const SYSTEM: Actor = { kind: 'system' };
-const CRON_QUEUE = 'cron';
 const DAY_MS = 86_400_000;
 const AUDIT_BATCH = 10_000;
 const AUDIT_MAX_BATCHES = 100;
-const DETAIL_MAX = 500;
 const MINUTE_MS = 60_000;
 
 const CRON_ITEMS: readonly CronItem[] = [
@@ -167,46 +166,12 @@ function registeredItems(email: boolean): CronItem[] {
   return CRON_ITEMS.filter((item) => email || item.task !== CRON_TASKS.notificationEmail);
 }
 
-// One queue keeps a slow task from overlapping its own next run now that the worker runs in
-// parallel; a second notification_email run would send the same mail twice.
 export function cronItems(email: boolean): ParsedCronItem[] {
-  return parseCronItems(
-    registeredItems(email).map((item) => ({
-      ...item,
-      options: { ...item.options, queueName: CRON_QUEUE },
-    })),
-  );
+  return parseCronItems(registeredItems(email));
 }
 
 export function cronTasks(email: boolean): CronTask[] {
   return registeredItems(email).map((item) => item.task as CronTask);
-}
-
-export async function recordCronRun(
-  db: Database,
-  task: string,
-  run: () => Promise<string>,
-): Promise<void> {
-  const { id } = await db.withActor(SYSTEM, (trx) =>
-    trx.insertInto('cron_runs').values({ task }).returning('id').executeTakeFirstOrThrow(),
-  );
-  let outcome: 'ok' | 'error' = 'error';
-  let detail = '';
-  try {
-    detail = await run();
-    outcome = 'ok';
-  } catch (err) {
-    detail = err instanceof Error ? err.message : 'failed';
-    throw err;
-  } finally {
-    await db.withActor(SYSTEM, (trx) =>
-      trx
-        .updateTable('cron_runs')
-        .set({ finished_at: sql<Date>`now()`, outcome, detail: detail.slice(0, DETAIL_MAX) })
-        .where('id', '=', id)
-        .execute(),
-    );
-  }
 }
 
 export async function maintainAuditPartitions(db: Database, logger: Logger): Promise<string> {

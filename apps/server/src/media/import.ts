@@ -6,7 +6,7 @@ import type { Logger } from 'pino';
 import * as z from 'zod';
 import type { MediaJob } from '../jobs.ts';
 import { badStatus, classifyImportFailure, refuseImport } from './import-failure.ts';
-import { exactParts, importFilename } from './import-parts.ts';
+import { exactParts } from './import-parts.ts';
 import { type ClaimedImport, claimImport, failImport, markImportDone } from './import-store.ts';
 import { importVideo } from './import-video.ts';
 import { ingestImage, prepareImage } from './ingest.ts';
@@ -49,8 +49,7 @@ async function importImage(
   claim: ClaimedImport,
   bytes: Uint8Array,
 ): Promise<void> {
-  const filename = importFilename(claim.url);
-  const prepared = await prepareImage({ bytes, ...(filename === undefined ? {} : { filename }) });
+  const prepared = await prepareImage({ bytes });
   await deps.db.withTenant(job.workspaceId, claim.actor, async (trx) => {
     const target = { workspaceId: job.workspaceId, aiGenerated: claim.aiGenerated };
     const asset = await ingestImage(trx, deps.store, target, prepared);
@@ -82,17 +81,23 @@ async function storeBody(
   await importVideo(deps, job, {
     actor: claim.actor,
     aiGenerated: claim.aiGenerated,
-    filename: importFilename(claim.url),
     mime,
     headBytes: head.byteLength,
     parts: all(),
   });
 }
 
-async function download(deps: MediaImportDeps, job: MediaJob): Promise<MediaImportOutcome> {
+async function download(
+  deps: MediaImportDeps,
+  job: MediaJob,
+  signal: AbortSignal | undefined,
+): Promise<MediaImportOutcome> {
   const claim = await claimImport(deps.db, job);
   if (claim === null) return 'skipped';
-  const response = await deps.http.request(claim.url, { headers: REQUEST_HEADERS });
+  const response = await deps.http.request(claim.url, {
+    headers: REQUEST_HEADERS,
+    ...(signal === undefined ? {} : { signal }),
+  });
   try {
     if (response.status !== 200) throw badStatus(response.status);
     await storeBody(deps, job, claim, response);
@@ -108,9 +113,10 @@ export async function runMediaImport(
   deps: MediaImportDeps,
   job: MediaJob,
   final = true,
+  signal?: AbortSignal,
 ): Promise<MediaImportOutcome> {
   try {
-    return await download(deps, job);
+    return await download(deps, job, signal);
   } catch (error) {
     const { kind, retryable } = classifyImportFailure(error);
     const code = (error as NodeJS.ErrnoException | undefined)?.code;
@@ -136,6 +142,6 @@ export function mediaImportTask(deps: MediaImportDeps): Task {
       return;
     }
     const final = helpers.job.attempts >= helpers.job.max_attempts;
-    await runMediaImport(deps, parsed.data, final);
+    await runMediaImport(deps, parsed.data, final, helpers.abortSignal);
   };
 }
