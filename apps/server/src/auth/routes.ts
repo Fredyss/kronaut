@@ -1,6 +1,5 @@
 import { defineRoute } from '@kronaut/contract';
 import { encodePublicId, SELF_ACTION } from '@kronaut/core';
-import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import type { HttpDeps } from '../http/kernel.ts';
@@ -18,25 +17,12 @@ import {
   SESSION_ABSOLUTE_MS,
   SESSION_COOKIE,
 } from './session.ts';
+import { lookupLogin, readPasswordHash, readUserWorkspaces, replacePasswordHash } from './store.ts';
 
 export const LOGIN_PASSWORD_MAX_LENGTH = 1024;
 
 const INVALID_CREDENTIALS = 'The email or password is incorrect.';
 const INVALID_RESET_LINK = 'The link is invalid or has expired.';
-
-interface LoginRow {
-  user_id: string;
-  password_hash: string | null;
-  totp_enabled: boolean;
-}
-
-interface WorkspaceRow {
-  workspace_id: string;
-  organization_id: string;
-  name: string;
-  role: string;
-  can_approve: boolean;
-}
 
 export const loginRoute = defineRoute({
   id: 'auth.login',
@@ -104,10 +90,7 @@ export type AuthDeps = Pick<HttpDeps, 'db' | 'keys' | 'instanceAdmins'>;
 function bindLogin(deps: AuthDeps) {
   return bindRoute(loginRoute, async ({ body }, ctx) => {
     const email = normalizeEmail(body.email);
-    const account = await deps.db.withActor({ kind: 'system' }, async (trx) => {
-      const result = await sql<LoginRow>`select * from auth_login_lookup(${email})`.execute(trx);
-      return result.rows[0];
-    });
+    const account = await deps.db.withActor({ kind: 'system' }, (trx) => lookupLogin(trx, email));
     const verified = await verifyPassword(account?.password_hash ?? null, body.password);
     if (account === undefined || !verified || account.totp_enabled) {
       const reason = verified ? 'two_factor_unavailable' : 'invalid_credentials';
@@ -152,12 +135,7 @@ function bindPasswordReset(deps: AuthDeps) {
     if (verified === null) throw new HttpError('invalid_request', INVALID_RESET_LINK);
     const { userId } = verified;
     await deps.db.withActor({ kind: 'user', id: userId }, async (trx) => {
-      const user = await trx
-        .selectFrom('users')
-        .select('password_hash')
-        .where('id', '=', userId)
-        .where('erased_at', 'is', null)
-        .executeTakeFirst();
+      const user = await readPasswordHash(trx, userId);
       if (user === undefined || !passwordBinding(user.password_hash).equals(verified.binding)) {
         throw new HttpError('invalid_request', INVALID_RESET_LINK);
       }
@@ -167,16 +145,11 @@ function bindPasswordReset(deps: AuthDeps) {
           details: [{ path: 'password', code: problem }],
         });
       }
-      const updated = await trx
-        .updateTable('users')
-        .set({ password_hash: await hashPassword(body.password) })
-        .where('id', '=', userId)
-        .where('erased_at', 'is', null)
-        .where(sql<boolean>`password_hash is not distinct from ${user.password_hash}`)
-        .executeTakeFirst();
-      if (updated.numUpdatedRows !== 1n) {
-        throw new HttpError('invalid_request', INVALID_RESET_LINK);
-      }
+      const replaced = await replacePasswordHash(trx, userId, {
+        from: user.password_hash,
+        to: await hashPassword(body.password),
+      });
+      if (!replaced) throw new HttpError('invalid_request', INVALID_RESET_LINK);
       await revokeAllSessions(trx, userId);
       await recordEvent(trx, ctx, { kind: 'user.password_reset', userId, detail: {} });
     });
@@ -191,10 +164,7 @@ function bindMe(deps: AuthDeps) {
       { kind: 'user', id: session.userId },
       async (trx) => {
         const row = await readUser(trx, session.userId);
-        const result = await sql<WorkspaceRow>`
-          select * from auth_user_workspaces(${session.userId})
-        `.execute(trx);
-        return { user: row, workspaces: result.rows };
+        return { user: row, workspaces: await readUserWorkspaces(trx, session.userId) };
       },
     );
     if (user === undefined) {
