@@ -11,7 +11,7 @@ import { type RawBuilder, sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cronItems, cronTaskList } from '../cron.ts';
-import { recordCronRun } from '../cron-run.ts';
+import { recordCronRun } from '../jobs/cron-run.ts';
 import { CRON_TASKS } from '../jobs/cron-tasks.ts';
 import { idleMediaGc } from '../media/testing/db.ts';
 import {

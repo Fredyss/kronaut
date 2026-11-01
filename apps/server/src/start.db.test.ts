@@ -12,7 +12,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { ServerConfig, ServerRole } from './config.ts';
-import { recordCronRun } from './cron-run.ts';
+import { recordCronRun } from './jobs/cron-run.ts';
 import { CRON_TASKS } from './jobs/cron-tasks.ts';
 import { startHeartbeat } from './jobs/heartbeat.ts';
 import { installJobQueue, jobLogger } from './jobs/job-queue.ts';
