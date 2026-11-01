@@ -6,7 +6,7 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { bindRoute } from '../http/types.ts';
-import { enqueueRevoke } from '../jobs.ts';
+import { enqueueRevoke } from '../jobs/jobs.ts';
 import type { ProviderRegistry } from '../providers.ts';
 
 export const channelDisconnectRoute = defineRoute({

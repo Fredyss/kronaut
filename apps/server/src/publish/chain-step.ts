@@ -2,7 +2,7 @@ import type { StateReason } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import type { DestinationJob } from '../jobs.ts';
+import type { DestinationJob } from '../jobs/jobs.ts';
 import { chainBefore, currentItem, type ItemRow, jsonb, selectItems } from './chain.ts';
 import type { Plan } from './plan.ts';
 

@@ -7,6 +7,7 @@ import { refreshCapabilities } from './channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './channels/retention.ts';
 import { recordCronRun } from './cron-run.ts';
 import { fillEvergreen } from './evergreen/fill.ts';
+import { CRON_TASKS, type CronTask, DAY_MS } from './jobs/cron-tasks.ts';
 import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
@@ -17,32 +18,9 @@ import { advanceSeries } from './series/advance.ts';
 import { purgeInstanceRetention } from './system/instance-retention.ts';
 import { checkApiVersionSunsets } from './system/sunset.ts';
 
-export const CRON_TASKS = {
-  accountCapabilitiesRefresh: 'account_capabilities_refresh',
-  analyticsPull: 'analytics_pull',
-  apiVersionSunset: 'api_version_sunset',
-  auditMaintenance: 'audit_maintenance',
-  credentialRefresh: 'credential_refresh',
-  credentialRetention: 'credential_retention',
-  evergreenFill: 'evergreen_fill',
-  instanceRetention: 'instance_retention',
-  mediaGc: 'media_gc',
-  notificationEmail: 'notification_email',
-  notificationRetention: 'notification_retention',
-  publishDueSweep: 'publish_due_sweep',
-  publishLeaseReaper: 'publish_lease_reaper',
-  publishReconcile: 'publish_reconcile',
-  seriesAdvance: 'series_advance',
-  tzRecompute: 'tz_recompute',
-} as const;
-
-export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
-
 const SYSTEM: Actor = { kind: 'system' };
-const DAY_MS = 86_400_000;
 const AUDIT_BATCH = 10_000;
 const AUDIT_MAX_BATCHES = 100;
-const MINUTE_MS = 60_000;
 
 const CRON_ITEMS: readonly CronItem[] = [
   {
@@ -142,25 +120,6 @@ const CRON_ITEMS: readonly CronItem[] = [
     options: { backfillPeriod: 0, maxAttempts: 1 },
   },
 ];
-
-export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
-  [CRON_TASKS.accountCapabilitiesRefresh]: DAY_MS,
-  [CRON_TASKS.analyticsPull]: 15 * MINUTE_MS,
-  [CRON_TASKS.apiVersionSunset]: DAY_MS,
-  [CRON_TASKS.auditMaintenance]: DAY_MS,
-  [CRON_TASKS.credentialRefresh]: 5 * MINUTE_MS,
-  [CRON_TASKS.credentialRetention]: DAY_MS,
-  [CRON_TASKS.evergreenFill]: 60 * MINUTE_MS,
-  [CRON_TASKS.instanceRetention]: DAY_MS,
-  [CRON_TASKS.mediaGc]: 60 * MINUTE_MS,
-  [CRON_TASKS.notificationEmail]: MINUTE_MS,
-  [CRON_TASKS.notificationRetention]: DAY_MS,
-  [CRON_TASKS.publishDueSweep]: MINUTE_MS,
-  [CRON_TASKS.publishLeaseReaper]: MINUTE_MS,
-  [CRON_TASKS.publishReconcile]: 10 * MINUTE_MS,
-  [CRON_TASKS.seriesAdvance]: 5 * MINUTE_MS,
-  [CRON_TASKS.tzRecompute]: 60 * MINUTE_MS,
-};
 
 function registeredItems(email: boolean): CronItem[] {
   return CRON_ITEMS.filter((item) => email || item.task !== CRON_TASKS.notificationEmail);

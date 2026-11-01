@@ -7,7 +7,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DEFAULT_MAX_BODY_BYTES } from '../http/body.ts';
 import { type Auth, BASE, expectError, type TestRequest } from '../http/testing.ts';
-import { installJobQueue } from '../job-queue.ts';
+import { installJobQueue } from '../jobs/job-queue.ts';
 import { MEDIA_UPLOAD_BODY_LIMIT } from './routes.ts';
 import {
   asUser,

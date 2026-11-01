@@ -11,7 +11,7 @@ import { expect } from 'vitest';
 import { hashGrantToken } from '../auth/grant.ts';
 import { hashPassword } from '../auth/password.ts';
 import { SESSION_COOKIE } from '../auth/session.ts';
-import type { CronTask } from '../cron.ts';
+import type { CronTask } from '../jobs/cron-tasks.ts';
 import { createMediaSigner, type MediaSigner } from '../media/access.ts';
 import { createStaging, type Staging } from '../media/staging.ts';
 import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';

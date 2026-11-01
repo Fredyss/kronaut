@@ -8,8 +8,8 @@ import { sql } from 'kysely';
 import pino from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { expectError } from '../http/testing.ts';
-import { installJobQueue, jobLogger } from '../job-queue.ts';
-import { JOBS } from '../jobs.ts';
+import { installJobQueue, jobLogger } from '../jobs/job-queue.ts';
+import { JOBS } from '../jobs/jobs.ts';
 import { collectMedia } from './gc.ts';
 import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
 import {

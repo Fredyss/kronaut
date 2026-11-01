@@ -8,7 +8,7 @@ import type {
 } from '@kronaut/core';
 import type { JsonObject, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import type { DestinationJob } from '../jobs.ts';
+import type { DestinationJob } from '../jobs/jobs.ts';
 
 const SETTLED_ITEM_STATES: ReadonlySet<string> = new Set(['confirmed', 'skipped']);
 

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { PostTypeSpec, PublishItem } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import type { DestinationJob } from '../jobs.ts';
+import type { DestinationJob } from '../jobs/jobs.ts';
 import { frozenSkips } from './chain.ts';
 
 function sha256(text: string): Buffer {

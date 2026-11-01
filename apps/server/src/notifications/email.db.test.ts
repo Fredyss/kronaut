@@ -10,8 +10,9 @@ import type { JobHelpers } from 'graphile-worker';
 import { type RawBuilder, sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CRON_TASKS, cronItems, cronTaskList } from '../cron.ts';
+import { cronItems, cronTaskList } from '../cron.ts';
 import { recordCronRun } from '../cron-run.ts';
+import { CRON_TASKS } from '../jobs/cron-tasks.ts';
 import { idleMediaGc } from '../media/testing/db.ts';
 import {
   type PublishFixture,

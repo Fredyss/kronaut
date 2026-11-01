@@ -20,7 +20,7 @@ import {
   randomGrantToken,
   requestAs,
 } from '../http/testing.ts';
-import { installJobQueue } from '../job-queue.ts';
+import { installJobQueue } from '../jobs/job-queue.ts';
 import type { MediaAccess } from '../media/access.ts';
 import { createProviderRegistry } from '../providers.ts';
 import {

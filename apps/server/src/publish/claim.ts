@@ -10,7 +10,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { seedsPulls } from '../analytics/seed.ts';
-import { type DestinationJob, enqueuePublish } from '../jobs.ts';
+import { type DestinationJob, enqueuePublish } from '../jobs/jobs.ts';
 import type { ProviderEntry } from '../providers.ts';
 import { currentInput, selectItems } from './chain.ts';
 import { type ClaimAccount, checkAccess, checkContent, type Inputs } from './claim-checks.ts';

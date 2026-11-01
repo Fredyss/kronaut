@@ -17,7 +17,7 @@ import { activateKey, createKey } from '../cli/provider-apps.ts';
 import { loadCredential } from '../credential-store.ts';
 import type { AccessGate } from '../http/access.ts';
 import { BASE, createTestInstance, createTestUser, loginAs } from '../http/testing.ts';
-import { installJobQueue } from '../job-queue.ts';
+import { installJobQueue } from '../jobs/job-queue.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { FAKE_PROVIDER, type FixtureUrls, fakeManifest } from '../publish/testing.ts';
 

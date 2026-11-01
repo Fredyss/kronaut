@@ -16,7 +16,7 @@ import {
 import type { Task } from 'graphile-worker';
 import type { Logger } from 'pino';
 import * as z from 'zod';
-import type { MediaJob } from '../jobs.ts';
+import type { MediaJob } from '../jobs/jobs.ts';
 import { removeIfUnreferenced } from './key-lock.ts';
 import {
   finishMedia,

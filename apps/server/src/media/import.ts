@@ -4,7 +4,7 @@ import type { MediaStore } from '@kronaut/media';
 import type { Task } from 'graphile-worker';
 import type { Logger } from 'pino';
 import * as z from 'zod';
-import type { MediaJob } from '../jobs.ts';
+import type { MediaJob } from '../jobs/jobs.ts';
 import { badStatus, classifyImportFailure, refuseImport } from './import-failure.ts';
 import { exactParts } from './import-parts.ts';
 import { type ClaimedImport, claimImport, failImport, markImportDone } from './import-store.ts';

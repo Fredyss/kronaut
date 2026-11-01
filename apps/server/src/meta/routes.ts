@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { loadProviderApp } from '../credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { enqueueMetaLifecycle } from '../jobs.ts';
+import { enqueueMetaLifecycle } from '../jobs/jobs.ts';
 import {
   newConfirmationCode,
   requestHash,

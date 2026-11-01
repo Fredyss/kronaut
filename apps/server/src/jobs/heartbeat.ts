@@ -2,7 +2,7 @@ import type { Actor, Database } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import type { ServerRole } from './config.ts';
+import type { ServerRole } from '../config.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const HEARTBEAT_INTERVAL_MS = 15_000;

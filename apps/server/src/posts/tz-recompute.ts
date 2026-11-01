@@ -3,7 +3,7 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { enqueuePublish } from '../jobs.ts';
+import { enqueuePublish } from '../jobs/jobs.ts';
 
 const TASK = 'tz_recompute';
 const WORKSPACE_PAGE = 1000;

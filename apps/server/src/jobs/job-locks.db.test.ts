@@ -17,7 +17,7 @@ import {
 import { installJobQueue, SILENT_JOB_LOGGER } from './job-queue.ts';
 
 const CLI = { kind: 'cli' } as const;
-const WORKER_ENTRY = new URL('./testing/job-worker.ts', import.meta.url).pathname;
+const WORKER_ENTRY = new URL('../testing/job-worker.ts', import.meta.url).pathname;
 const LONG_MS = 30_000;
 
 let test: TestDatabase;

@@ -4,7 +4,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { seedsPulls } from '../analytics/seed.ts';
-import type { DestinationJob } from '../jobs.ts';
+import type { DestinationJob } from '../jobs/jobs.ts';
 import { PROVIDER_EGRESS } from '../providers.ts';
 import { applyPlan, type PlanContext } from './apply.ts';
 import { currentItem, selectItems } from './chain.ts';
