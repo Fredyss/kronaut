@@ -27,6 +27,7 @@ let db: Database;
 let root: Database;
 let operator: Database;
 let app: Hono;
+let freshApp: () => Hono;
 const lines: string[] = [];
 const workspaces: string[] = [];
 const accounts: Record<string, string> = {};
@@ -174,10 +175,12 @@ beforeAll(async () => {
   const keys = deriveHttpKeys(randomBytes(32));
   const deps = { db, keyring, subjectKey: keys.metaSubject, publicBaseUrl: BASE };
   const http = { db, keys, logger, clock: () => Temporal.Now.instant(), publicBaseUrl: BASE };
-  app = createHttpApp(
-    { ...http, readiness: async () => true, routeBodyLimits: META_BODY_LIMITS },
-    metaRoutes(deps),
-  );
+  freshApp = () =>
+    createHttpApp(
+      { ...http, readiness: async () => true, routeBodyLimits: META_BODY_LIMITS },
+      metaRoutes(deps),
+    );
+  app = freshApp();
   await provisionWorkspaces();
   for (const fixture of [
     {
@@ -364,6 +367,35 @@ describe('meta data deletion', () => {
       status_reason: 'data_deletion_requested',
       credentials: 0,
     });
+  });
+
+  it('refuses a network without exactly one usable app', async () => {
+    const refused = async (provider: string, secret: string) => {
+      const response = await freshApp().request(`${BASE}/v1/meta/${provider}/deletion`, {
+        method: 'POST',
+        headers: FORM,
+        body: new URLSearchParams({ signed_request: sign(payload(), secret) }).toString(),
+      });
+      expect(response.status).toBe(400);
+      expect(await response.json()).toMatchObject({
+        error: { code: 'invalid_request', message: 'The signed request is invalid.' },
+      });
+    };
+    await root.withActor(CLI, (trx) =>
+      trx
+        .updateTable('provider_apps')
+        .set({ status: 'disabled' })
+        .where('provider', '=', 'threads')
+        .execute(),
+    );
+    await refused('threads', TH_SECRET);
+    await root.withActor(CLI, (trx) =>
+      trx
+        .insertInto('provider_apps')
+        .values({ provider: 'facebook', client_id: 'second' })
+        .execute(),
+    );
+    await refused('facebook', FB_SECRET);
   });
 
   it('never logs the signed request, the user id or a secret', () => {
