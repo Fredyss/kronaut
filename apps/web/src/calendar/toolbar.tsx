@@ -2,12 +2,12 @@ import { buttonVariants, cn } from '@kronaut/ui';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import type { Temporal } from 'temporal-polyfill';
-import type { CalendarView } from '../calendar-search.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';
 import { keptTag } from './entries.ts';
 import type { Formats } from './formats.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';
+import type { CalendarView } from './search.ts';
 import { TagFilter } from './tag-filter.tsx';
 import { boundary, shift, type VisibleRange } from './time.ts';
 

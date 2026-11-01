@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react';
 import type { PostSummary } from '../api.ts';
-import type { CalendarView } from '../calendar-search.ts';
 import { type Entry, keptTag } from './entries.ts';
 import {
   canLand,
@@ -21,6 +20,7 @@ import {
   slotLocal,
   useMove,
 } from './move.ts';
+import type { CalendarView } from './search.ts';
 import { dayOf, type VisibleRange } from './time.ts';
 
 const route = getRouteApi('/app/');

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import type { CalendarSearch } from '../calendar-search.ts';
 import { useApiClient } from '../context.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { SELECT } from '../locale-select.tsx';
 import { tagsQuery } from '../tags/picker.tsx';
+import type { CalendarSearch } from './search.ts';
 
 const route = getRouteApi('/app/');
 

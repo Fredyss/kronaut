@@ -51,7 +51,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 These rules bind new code, but existing code still breaks them:
 
 - Shared modules in the `apps/*/src` roots, which should each find an owner.
-- `calendar/sidebar.tsx`, `compose/channel-picker.tsx` and `post-actions/compose-dialog.tsx` import a file from `web/routes`.
+- `post-actions/compose-dialog.tsx` imports a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Shared modules that also define routes: `posts/list.ts`, `posts/schedule.ts`, `channels/disconnect.ts`, `approvals/request.ts`, `auth/profile.ts`.
 - Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review. [Scheduling flow](14-scheduling-flow.md) plans the server fix.

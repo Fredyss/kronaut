@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { slotCompose, slotKey } from './calendar/entries.ts';
-import { calendarSearch } from './calendar-search.ts';
-import { composeSearch } from './compose-search.ts';
+import { composeSearch } from '../compose/search.ts';
+import { slotCompose, slotKey } from './entries.ts';
+import { calendarSearch } from './search.ts';
 
 describe('tag filter', () => {
   it('keeps a public tag id and drops anything else', () => {

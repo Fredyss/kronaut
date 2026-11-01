@@ -8,7 +8,7 @@ import { pino } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { saveCredential } from '../credential-store.ts';
 import { installJobQueue } from '../job-queue.ts';
-import type { MediaAccess } from '../media-access.ts';
+import type { MediaAccess } from '../media/access.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { contentHashInput, resolveDestination } from '../snapshot.ts';
 import { type PublishDeps, publishDeps } from './task.ts';

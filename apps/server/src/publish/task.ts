@@ -8,7 +8,7 @@ import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import type { DestinationJob } from '../jobs.ts';
-import type { MediaAccess } from '../media-access.ts';
+import type { MediaAccess } from '../media/access.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import type { RandomInt } from './backoff.ts';
 import { claim } from './claim.ts';

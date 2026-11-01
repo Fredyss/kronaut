@@ -10,8 +10,8 @@ import {
   type RequestContext,
   type SessionInfo,
 } from '../http/types.ts';
-import { verifyPassword } from '../password.ts';
 import { recordEvent, requireSession } from './events.ts';
+import { verifyPassword } from './password.ts';
 import { SESSION_INVALID } from './profile.ts';
 import { type AuthDeps, LOGIN_PASSWORD_MAX_LENGTH } from './routes.ts';
 import { revokeSession } from './session.ts';
