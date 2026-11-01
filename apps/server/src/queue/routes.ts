@@ -1,16 +1,15 @@
-import { randomUUID } from 'node:crypto';
 import { defineRoute } from '@kronaut/contract';
 import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { auditActor } from '../audit/write.ts';
 import { type ChannelRef, requireChannel } from '../channels/channel-ref.ts';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { scopeUnit } from '../posts/units.ts';
 import { freeSlots, lockQueues, type QueueSlot } from './slots.ts';
+import { auditQueueUpdate, replaceSlots } from './store.ts';
 
 const PATH = '/v1/workspaces/:workspaceId/channels/:channelId/queue';
 const MAX_SLOTS = 56;
@@ -120,40 +119,9 @@ async function replaceQueue(trx: TenantDb, ctx: RequestContext, ref: ChannelRef,
   const slots = parseSlots(body);
   const timezone = slots.length === 0 ? null : canonicalZone(body.timezone);
   await lockQueues(trx, [ref.accountId]);
-  await trx
-    .deleteFrom('queue_slots')
-    .where('workspace_id', '=', ref.workspaceId)
-    .where('social_account_id', '=', ref.accountId)
-    .execute();
-  if (timezone !== null) {
-    await trx
-      .insertInto('queue_slots')
-      .values(
-        slots.map((slot) => ({
-          workspace_id: ref.workspaceId,
-          social_account_id: ref.accountId,
-          weekday: slot.weekday,
-          local_time: slot.time.toString({ smallestUnit: 'minute' }),
-          timezone,
-        })),
-      )
-      .execute();
-  }
-  await trx
-    .insertInto('audit_events')
-    .values({
-      workspace_id: ref.workspaceId,
-      ...(await auditActor(trx, ref.workspaceId, ctx.principal)),
-      action: 'channel.queue_updated',
-      resource_kind: 'social_account',
-      resource_id: ref.accountId,
-      social_account_ids: [ref.accountId],
-      outcome: 'ok',
-      args_summary: JSON.stringify({ timezone, slots: slots.length }),
-      correlation_id: randomUUID(),
-      request_id: ctx.requestId,
-    })
-    .execute();
+  const change = { timezone, slots };
+  await replaceSlots(trx, ref, change);
+  await auditQueueUpdate(trx, ctx, ref, change);
 }
 
 export function queueRoutes(): BoundRoute[] {
