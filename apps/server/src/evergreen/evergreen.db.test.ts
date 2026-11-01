@@ -14,6 +14,7 @@ import {
   db,
   doc,
   draft,
+  errorOf,
   grantAuth,
   insertAccount,
   internal,
@@ -177,6 +178,44 @@ describe('the evergreen pool', () => {
       { action: 'evergreen.unmarked', actor_kind: 'user' },
       { action: 'evergreen.marked', actor_kind: 'grant' },
     ]);
+  });
+
+  it('does not unmark a post that was never marked, and does not find a deleted one', async () => {
+    const post = await create(ownerAuth, draft(await insertAccount('eg-missing')));
+    const never = await evergreen('DELETE', post);
+    expect(never.status).toBe(404);
+    expect((await errorOf(never)).message).toBe('The post is not evergreen.');
+    await call('DELETE', `posts/${post.id}`, ownerAuth);
+    const gone = await evergreen('GET', post);
+    expect(gone.status).toBe(404);
+    expect((await errorOf(gone)).message).toBe('Post not found.');
+  });
+
+  it('changes nothing when it unmarks a removed post', async () => {
+    const post = await pooled(await insertAccount('eg-twice'));
+    expect((await evergreen('DELETE', post)).status).toBe(200);
+    expect(await (await evergreen('DELETE', post)).json()).toMatchObject({ state: 'removed' });
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select('action')
+        .where('resource_id', '=', internal(post.id))
+        .orderBy('occurred_at')
+        .orderBy('id')
+        .execute(),
+    );
+    expect(audit.map((row) => row.action)).toEqual(['evergreen.marked', 'evergreen.unmarked']);
+  });
+
+  it('reports a deleted copy without its post id', async () => {
+    const channel = await insertAccount('eg-deleted-copy');
+    const post = await pooled(channel);
+    const copy = await create(ownerAuth, draft(channel));
+    await call('DELETE', `posts/${copy.id}`, ownerAuth);
+    await usedBefore(post, channel, 1, copy);
+    expect(await (await evergreen('GET', post)).json()).toMatchObject({
+      recent: [{ channelId: channel, copyPostId: null }],
+    });
   });
 });
 
