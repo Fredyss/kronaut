@@ -66,6 +66,10 @@ function respond(url: string, { status = 200, json }: Reply): EgressResponse {
     bytes: async () => new TextEncoder().encode(text),
     text: async () => text,
     json: async () => JSON.parse(text),
+    async *chunks() {
+      yield new TextEncoder().encode(text);
+    },
+    discard() {},
   };
 }
 

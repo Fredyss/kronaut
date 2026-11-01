@@ -53,6 +53,7 @@ describe('ID_PREFIXES', () => {
       series: 'ser',
       tag: 'tag',
       savedText: 'stx',
+      mediaImport: 'mimp',
     });
   });
 

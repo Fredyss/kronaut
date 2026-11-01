@@ -268,6 +268,8 @@ describe('media gc', () => {
       orphaned: 0,
       skipped: 0,
       incoming: 1,
+      importsStalled: 0,
+      importsDeleted: 0,
     });
     expect(await incoming()).toEqual([fresh.slice(-32)]);
     await staging.discard(fresh);

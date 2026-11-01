@@ -125,6 +125,12 @@ SELECT pg_temp.must('TEN-04 saved_texts: tenant policy, app may read and write',
   AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
          FROM pg_class c, aclexplode(c.relacl) a
         WHERE c.oid = 'saved_texts'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 media_imports: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'media_imports'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'media_imports'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'media_imports'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
 SELECT pg_temp.must('TEN-04 post_tags: tenant policy, app may only read, insert and delete',
   (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_tags'::regclass)
   AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_tags'::regclass AND polname = 'tenant_isolation')
@@ -179,6 +185,7 @@ INSERT INTO expected_definer VALUES
   ('sweep_expiring_credentials(interval,integer)', true, false),
   ('sweep_due_webhook_deliveries(integer)', true, false),
   ('sweep_media_gc(integer)', true, false),
+  ('sweep_media_imports(integer)', true, false),
   ('sweep_workspaces(uuid,integer)', true, false),
   ('purge_instance_retention(integer)', true, false),
   ('maintain_audit_partitions(integer)', true, false),
@@ -365,6 +372,7 @@ SELECT pg_temp.must('AR-03 credential sweep empty while paused',
   NOT EXISTS (SELECT 1 FROM sweep_expiring_credentials(interval '7 days', 10)));
 SELECT pg_temp.must('AR-03 webhook sweep empty while paused', NOT EXISTS (SELECT 1 FROM sweep_due_webhook_deliveries(10)));
 SELECT pg_temp.must('AR-03 media GC empty while paused', NOT EXISTS (SELECT 1 FROM sweep_media_gc(10)));
+SELECT pg_temp.must('AR-03 media import sweep empty while paused', NOT EXISTS (SELECT 1 FROM sweep_media_imports(10)));
 SELECT pg_temp.must('AR-03 DB-local workspace sweep still runs', EXISTS (SELECT 1 FROM sweep_workspaces(NULL, 10)));
 SELECT pg_temp.must('AR-03 quarantine sweep lists past-due unsent rows, never publishing ones',
   (SELECT count(*) FROM sweep_quarantine_destinations(5000)) = 1000

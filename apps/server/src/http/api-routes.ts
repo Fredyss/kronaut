@@ -11,6 +11,7 @@ import type { CronTask } from '../cron.ts';
 import { destinationRoutes } from '../destinations/routes.ts';
 import { evergreenRoutes } from '../evergreen/routes.ts';
 import type { MediaSigner } from '../media/access.ts';
+import { importRoutes } from '../media/import-routes.ts';
 import { libraryRoutes } from '../media/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
 import type { Staging } from '../media/staging.ts';
@@ -61,6 +62,7 @@ export function apiRoutes({
     ...mediaRoutes({ store, signer, clock: http.clock }),
     ...libraryRoutes({ signer }),
     ...uploadRoutes({ staging }),
+    ...importRoutes(),
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),
     ...approvalRoutes({ providers }),

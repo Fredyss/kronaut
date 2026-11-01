@@ -76,6 +76,10 @@ function certsServer(initial: Served | Error) {
         bytes: async () => raw,
         text: async () => new TextDecoder().decode(raw),
         json: async () => current.body,
+        async *chunks() {
+          yield raw;
+        },
+        discard() {},
       };
     },
     fetch: () => Promise.reject(new Error('fetch is not used')),
@@ -209,6 +213,10 @@ describe('Cloudflare Access verifier', () => {
               bytes: async () => raw,
               text: async () => new TextDecoder().decode(raw),
               json: async () => served.body,
+              async *chunks() {
+                yield raw;
+              },
+              discard() {},
             });
           });
         }),

@@ -3897,6 +3897,576 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/media/imports": {
+      "post": {
+        "description": "Takes an `https` link of up to 2048 characters and answers at once; poll `media.import_get` for the result. The file type comes from the bytes. Images follow the upload limits; a video goes on to the usual conversion, so a finished import can show an asset that is still `processing`. At most 500 imports per workspace per hour. The link is never returned.",
+        "operationId": "media.import_create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "aiGenerated": {
+                    "type": "boolean"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "url_blocked",
+                            "fetch_failed",
+                            "timed_out",
+                            "file_too_large",
+                            "unsupported_type",
+                            "file_corrupt",
+                            "stalled"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "pattern": "^mimp_[0-9a-hjkmnp-tv-z]{26}$",
+                      "type": "string"
+                    },
+                    "media": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "aiGenerated": {
+                              "type": "boolean"
+                            },
+                            "altText": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "bytes": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                              "type": "string"
+                            },
+                            "duplicateOf": {
+                              "anyOf": [
+                                {
+                                  "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "durationMs": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "frameRate": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "height": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "id": {
+                              "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "image",
+                                "video"
+                              ],
+                              "type": "string"
+                            },
+                            "mime": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rejectedReason": {
+                              "anyOf": [
+                                {
+                                  "enum": [
+                                    "video_stream_missing",
+                                    "video_too_short",
+                                    "video_too_long",
+                                    "video_unreadable",
+                                    "video_too_large",
+                                    "video_duplicate"
+                                  ],
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "sha256": {
+                              "anyOf": [
+                                {
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "state": {
+                              "enum": [
+                                "uploading",
+                                "quarantined",
+                                "processing",
+                                "ready",
+                                "rejected"
+                              ],
+                              "type": "string"
+                            },
+                            "width": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "mime",
+                            "bytes",
+                            "width",
+                            "height",
+                            "durationMs",
+                            "frameRate",
+                            "sha256",
+                            "state",
+                            "aiGenerated",
+                            "altText",
+                            "createdAt",
+                            "rejectedReason",
+                            "duplicateOf"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "pending",
+                        "fetching",
+                        "done",
+                        "failed"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "state",
+                    "error",
+                    "media"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Import media from a link",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:write",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/media/imports/{importId}": {
+      "get": {
+        "operationId": "media.import_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "importId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "error": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "url_blocked",
+                            "fetch_failed",
+                            "timed_out",
+                            "file_too_large",
+                            "unsupported_type",
+                            "file_corrupt",
+                            "stalled"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "pattern": "^mimp_[0-9a-hjkmnp-tv-z]{26}$",
+                      "type": "string"
+                    },
+                    "media": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "aiGenerated": {
+                              "type": "boolean"
+                            },
+                            "altText": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "bytes": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                              "type": "string"
+                            },
+                            "duplicateOf": {
+                              "anyOf": [
+                                {
+                                  "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "durationMs": {
+                              "anyOf": [
+                                {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "frameRate": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "height": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "id": {
+                              "pattern": "^media_[0-9a-hjkmnp-tv-z]{26}$",
+                              "type": "string"
+                            },
+                            "kind": {
+                              "enum": [
+                                "image",
+                                "video"
+                              ],
+                              "type": "string"
+                            },
+                            "mime": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "rejectedReason": {
+                              "anyOf": [
+                                {
+                                  "enum": [
+                                    "video_stream_missing",
+                                    "video_too_short",
+                                    "video_too_long",
+                                    "video_unreadable",
+                                    "video_too_large",
+                                    "video_duplicate"
+                                  ],
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "sha256": {
+                              "anyOf": [
+                                {
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "state": {
+                              "enum": [
+                                "uploading",
+                                "quarantined",
+                                "processing",
+                                "ready",
+                                "rejected"
+                              ],
+                              "type": "string"
+                            },
+                            "width": {
+                              "anyOf": [
+                                {
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991,
+                                  "type": "integer"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "mime",
+                            "bytes",
+                            "width",
+                            "height",
+                            "durationMs",
+                            "frameRate",
+                            "sha256",
+                            "state",
+                            "aiGenerated",
+                            "altText",
+                            "createdAt",
+                            "rejectedReason",
+                            "duplicateOf"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "pending",
+                        "fetching",
+                        "done",
+                        "failed"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "state",
+                    "error",
+                    "media"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Get a media import",
+        "tags": [
+          "media"
+        ],
+        "x-kronaut-action": "media:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/media/uploads": {
       "post": {
         "description": "Accepts MP4, QuickTime or WebM up to 300 MB. Send every part with `media.video_part`, then call `media.video_complete` before `expiresAt` (24 h).",

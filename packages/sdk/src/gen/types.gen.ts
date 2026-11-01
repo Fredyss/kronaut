@@ -1175,6 +1175,109 @@ export type MediaUploadResponses = {
 
 export type MediaUploadResponse = MediaUploadResponses[keyof MediaUploadResponses];
 
+export type MediaImportCreateData = {
+    body: {
+        aiGenerated?: boolean;
+        url: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/imports';
+};
+
+export type MediaImportCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaImportCreateError = MediaImportCreateErrors[keyof MediaImportCreateErrors];
+
+export type MediaImportCreateResponses = {
+    /**
+     * OK
+     */
+    202: {
+        error: 'url_blocked' | 'fetch_failed' | 'timed_out' | 'file_too_large' | 'unsupported_type' | 'file_corrupt' | 'stalled' | null;
+        id: string;
+        media: {
+            aiGenerated: boolean;
+            altText: string | null;
+            bytes: number | null;
+            createdAt: string;
+            duplicateOf: string | null;
+            durationMs: number | null;
+            frameRate: number | null;
+            height: number | null;
+            id: string;
+            kind: 'image' | 'video';
+            mime: string | null;
+            rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+            sha256: string | null;
+            state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+            width: number | null;
+        } | null;
+        state: 'pending' | 'fetching' | 'done' | 'failed';
+    };
+};
+
+export type MediaImportCreateResponse = MediaImportCreateResponses[keyof MediaImportCreateResponses];
+
+export type MediaImportGetData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        importId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/media/imports/{importId}';
+};
+
+export type MediaImportGetErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type MediaImportGetError = MediaImportGetErrors[keyof MediaImportGetErrors];
+
+export type MediaImportGetResponses = {
+    /**
+     * OK
+     */
+    200: {
+        error: 'url_blocked' | 'fetch_failed' | 'timed_out' | 'file_too_large' | 'unsupported_type' | 'file_corrupt' | 'stalled' | null;
+        id: string;
+        media: {
+            aiGenerated: boolean;
+            altText: string | null;
+            bytes: number | null;
+            createdAt: string;
+            duplicateOf: string | null;
+            durationMs: number | null;
+            frameRate: number | null;
+            height: number | null;
+            id: string;
+            kind: 'image' | 'video';
+            mime: string | null;
+            rejectedReason: 'video_stream_missing' | 'video_too_short' | 'video_too_long' | 'video_unreadable' | 'video_too_large' | 'video_duplicate' | null;
+            sha256: string | null;
+            state: 'uploading' | 'quarantined' | 'processing' | 'ready' | 'rejected';
+            width: number | null;
+        } | null;
+        state: 'pending' | 'fetching' | 'done' | 'failed';
+    };
+};
+
+export type MediaImportGetResponse = MediaImportGetResponses[keyof MediaImportGetResponses];
+
 export type MediaVideoUploadData = {
     body: {
         aiGenerated?: boolean;

@@ -13,6 +13,7 @@ export interface Sweeps {
   quarantineDestinations(limit?: number): Promise<SweepRow[]>;
   expiringCredentials(withinSeconds: number, limit?: number): Promise<SweepRow[]>;
   mediaGc(limit?: number): Promise<SweepRow[]>;
+  mediaImports(limit?: number): Promise<SweepRow[]>;
   workspaces(after: string | null, limit?: number): Promise<string[]>;
 }
 
@@ -84,6 +85,13 @@ export function createSweeps(db: Kysely<DB>): Sweeps {
       const n = checkLimit(limit);
       const result = await sql<RawSweepRow>`
         select workspace_id, media_asset_id as id from sweep_media_gc(${n})
+      `.execute(db);
+      return toRows(result.rows);
+    },
+    async mediaImports(limit = MAX_LIMIT) {
+      const n = checkLimit(limit);
+      const result = await sql<RawSweepRow>`
+        select workspace_id, id from sweep_media_imports(${n})
       `.execute(db);
       return toRows(result.rows);
     },

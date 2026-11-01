@@ -6,6 +6,7 @@ import { sealAppSecret } from '../credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
 import type { ProviderEntry } from '../providers.ts';
+import { takeWindowQuota } from '../quota/window-quota.ts';
 import { type ChannelRouteDeps, providerContext, redirectUri, SYSTEM } from './deps.ts';
 
 export const REGISTRATIONS_PER_HOUR = 10;
@@ -37,23 +38,12 @@ export async function selectInstanceAppId(trx: TenantDb, app: InstanceApp): Prom
   return row?.id ?? null;
 }
 
-export async function takeRegistration(trx: TenantDb, workspaceId: string): Promise<boolean> {
-  const result = await sql<{ key: string }>`
-    insert into rate_buckets as b (key, kind, capacity, tokens, window_start, window_secs)
-    values (${registrationBucketKey(workspaceId)}, 'window_quota', ${REGISTRATIONS_PER_HOUR},
-            ${REGISTRATIONS_PER_HOUR - 1}, now(), ${REGISTRATION_WINDOW_SECONDS})
-    on conflict (key) do update set
-      tokens = case when b.window_start + make_interval(secs => b.window_secs) <= now()
-                    then excluded.capacity - 1 else b.tokens - 1 end,
-      window_start = case when b.window_start + make_interval(secs => b.window_secs) <= now()
-                          then now() else b.window_start end,
-      capacity = excluded.capacity,
-      window_secs = excluded.window_secs,
-      updated_at = now()
-    where b.window_start + make_interval(secs => b.window_secs) <= now() or b.tokens >= 1
-    returning b.key
-  `.execute(trx);
-  return result.rows.length === 1;
+export function takeRegistration(trx: TenantDb, workspaceId: string): Promise<boolean> {
+  return takeWindowQuota(trx, {
+    key: registrationBucketKey(workspaceId),
+    capacity: REGISTRATIONS_PER_HOUR,
+    windowSeconds: REGISTRATION_WINDOW_SECONDS,
+  });
 }
 
 interface NewInstanceApp extends InstanceApp {

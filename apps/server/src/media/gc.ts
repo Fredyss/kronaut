@@ -2,6 +2,7 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
+import { settleExpiredImport } from './import-store.ts';
 import { lockStorageKeys, removeIfUnreferenced } from './key-lock.ts';
 import { referenced } from './library.ts';
 import type { Staging } from './staging.ts';
@@ -99,7 +100,15 @@ async function removeObjects(
 
 export async function collectMedia(db: Database, deps: MediaGcDeps): Promise<string> {
   const { staging } = deps;
-  const counts = { expired: 0, purged: 0, skipped: 0, orphaned: 0, incoming: 0 };
+  const counts = {
+    expired: 0,
+    purged: 0,
+    skipped: 0,
+    orphaned: 0,
+    incoming: 0,
+    importsStalled: 0,
+    importsDeleted: 0,
+  };
   for (const { workspaceId, id } of await db.sweeps.mediaGc(MEDIA_GC_BATCH)) {
     const key = await expireUpload(db, workspaceId, id);
     if (key !== null) {
@@ -116,5 +125,10 @@ export async function collectMedia(db: Database, deps: MediaGcDeps): Promise<str
     counts.orphaned += await removeObjects(db, deps, workspaceId, keys);
   }
   counts.incoming = await staging.sweepIncoming(INCOMING_MAX_AGE_MS);
+  for (const { workspaceId, id } of await db.sweeps.mediaImports(MEDIA_GC_BATCH)) {
+    const outcome = await settleExpiredImport(db, { workspaceId, id });
+    if (outcome === 'stalled') counts.importsStalled++;
+    if (outcome === 'deleted') counts.importsDeleted++;
+  }
   return JSON.stringify(counts);
 }

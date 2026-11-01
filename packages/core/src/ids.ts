@@ -16,6 +16,7 @@ export const ID_PREFIXES = {
   series: 'ser',
   tag: 'tag',
   savedText: 'stx',
+  mediaImport: 'mimp',
 } as const;
 
 export type IdKind = keyof typeof ID_PREFIXES;

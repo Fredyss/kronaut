@@ -226,7 +226,15 @@ describe('media library', () => {
     const summary = JSON.parse(
       await collectMedia(fx.db, { staging, store: fx.store, logger: pino({ level: 'silent' }) }),
     );
-    expect(summary).toEqual({ expired: 0, purged: 1, skipped: 1, orphaned: 0, incoming: 0 });
+    expect(summary).toEqual({
+      expired: 0,
+      purged: 1,
+      skipped: 1,
+      orphaned: 0,
+      incoming: 0,
+      importsStalled: 0,
+      importsDeleted: 0,
+    });
 
     const left = await tenant((trx) =>
       trx

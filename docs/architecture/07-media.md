@@ -13,6 +13,15 @@
   - The `init` call is the public step. SELF_ONLY posts never return a post id (`verify.mode=none`).
 - **Video** (ADR-0054): chunked upload in 8 MiB parts, at most 300 MB; a background job converts each video with ffmpeg into one H.264/AAC MP4 master that every network publishes unchanged. Range requests are served for video.
 - **Upload** (ADR-0054): images are one JSON request. A video goes through `POST …/media/uploads`, one raw `PUT …/media/:mediaId/parts/:n` per 8 MiB part and `POST …/media/:mediaId/complete`, which queues the conversion. Parts are staged as files under `<data>/media/.staging/<key>/`, and an unfinished upload expires after 24 h.
+- **Import from a link:** `POST …/media/imports` with an `https` URL answers 202 at once, and `GET …/media/imports/:importId` reports `pending`, `fetching`, `done` or `failed` plus the asset.
+  - A job downloads the file through `packages/egress` (any public host, port 443, 5 redirects, 300 MB, 10 minutes in all) and reads the type from the bytes, never from the file name or `Content-Type`.
+  - An image goes through the same re-encode and 8 MiB limit as an upload. A video is staged in 8 MiB parts and queued for the same conversion, so `done` can show an asset that is still `processing`.
+  - The job acts as the member or grant that asked, so the uploader and the AI lock match a normal upload. The asset keeps no file name from the link, which could hold a token too.
+  - The URL can hold a token. It lives only on the `media_imports` row, is cleared when the import ends, and never reaches a response, a log or a job payload.
+  - Only a network failure or a 5xx or 429 answer is retried, 3 attempts in all. A timeout isn't, so a slow host costs one 10-minute slot at most. A worker shutting down aborts the download, and the job retries.
+  - At most 500 imports per workspace per hour, the size of one CSV file, and 500 open at once.
+  - Queue `media-import` runs one at a time across the instance, apart from the conversions. The worker runs 4 jobs at once, so imports and conversions always leave 2 slots free. All workspaces share this queue, so a hosted service needs per-workspace fairness first.
+  - GC fails an import that waited 7 days, or that is still fetching 24 h after its last claim, and removes finished rows after 7 days.
 - **Masters and renditions:**
   - Masters are immutable once ready and identified by sha256, which approval hashes reference.
   - Per-provider renditions (resize, transcode, crop in per-mille) are derived and cached.
@@ -20,6 +29,7 @@
   - originals 30 d after their last reference
   - renditions 7 d after last use
   - unfinished uploads 24 h after they started, staged parts included
+  - imports 7 d after they ended
   - Thumbnails at 256/768 px AVIF/WebP are kept for the library.
   - Deleted assets: the job re-checks inside `withTenant()` that no `item_media` or `destination_media` row references the asset, then removes the original, its renditions and the row. A re-upload of the same file within the 30 days revives the soft-deleted row instead.
 - **Library** (Phase 1.1):

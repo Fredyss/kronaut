@@ -39,6 +39,7 @@ let fx: MediaDb;
 let a: Tenant;
 let b: Tenant;
 let shared: string;
+let sharedImport: string;
 let viewer: Auth;
 let width = 20;
 
@@ -64,6 +65,13 @@ async function filledUpload(): Promise<string> {
   const response = await fx.call(a, 'PUT', `media/${mediaId}/parts/1`, { body: part });
   expect(response.status).toBe(200);
   return mediaId;
+}
+
+async function openImport(): Promise<string> {
+  const body = { url: 'https://cdn.example.test/photo.jpg' };
+  const response = await fx.call(a, 'POST', 'media/imports', { body });
+  expect(response.status).toBe(202);
+  return ((await response.json()) as { id: string }).id;
 }
 
 const ROUTES: readonly Probe[] = [
@@ -143,6 +151,21 @@ const ROUTES: readonly Probe[] = [
     path: (id) => `media/${id}/complete`,
     fresh: filledUpload,
   },
+  {
+    id: 'media.import_create',
+    method: 'POST',
+    write: true,
+    grants: true,
+    path: () => 'media/imports',
+    body: () => ({ url: 'https://cdn.example.test/photo.jpg' }),
+  },
+  {
+    id: 'media.import_get',
+    method: 'GET',
+    write: false,
+    grants: true,
+    path: (id) => `media/imports/${id === ':mediaId' ? ':importId' : sharedImport}`,
+  },
 ];
 
 const READS = ROUTES.filter((route) => !route.write);
@@ -189,6 +212,7 @@ beforeAll(async () => {
   await installJobQueue(test.ownerUrl, owner);
   await owner.destroy();
   shared = await freshImage();
+  sharedImport = await openImport();
   viewer = await fx.member(a, 'routes-viewer', 'viewer');
 });
 
@@ -207,7 +231,7 @@ describe('authentication and authorization', () => {
       ({ id, method, path }) =>
         `${id} ${method} /v1/workspaces/:workspaceId/${path(':mediaId', ':part')}`,
     ).sort();
-    expect(served).toHaveLength(11);
+    expect(served).toHaveLength(13);
     expect(probed).toEqual(served);
   });
 
