@@ -2,7 +2,7 @@ import { ProviderFailure } from '@kronaut/core';
 import type { Keyring } from '@kronaut/credentials';
 import type { Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import { sealAppSecret } from '../credential-store.ts';
+import { sealAppSecret } from '../credentials/credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
 import type { ProviderEntry } from '../providers.ts';

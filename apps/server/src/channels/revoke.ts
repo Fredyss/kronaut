@@ -2,7 +2,7 @@ import type { Actor } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import type { Task } from 'graphile-worker';
 import * as z from 'zod';
-import { loadCredentialById, loadProviderApp } from '../credential-store.ts';
+import { loadCredentialById, loadProviderApp } from '../credentials/credential-store.ts';
 import type { RevokeJob } from '../jobs/jobs.ts';
 import { createBaseContext, PROVIDER_EGRESS, type ProviderEntry } from '../providers.ts';
 import type { PublishDeps } from '../publish/task.ts';

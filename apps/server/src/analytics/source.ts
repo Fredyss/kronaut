@@ -8,7 +8,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
 import type { ChannelRef } from '../channels/channel-ref.ts';
-import { loadCredential, loadProviderApp } from '../credential-store.ts';
+import { loadCredential, loadProviderApp } from '../credentials/credential-store.ts';
 import type { ProviderEntry } from '../providers.ts';
 import type { RefreshDeps } from '../publish/refresh.ts';
 

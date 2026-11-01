@@ -3,8 +3,8 @@ import type { Actor, Database } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { STATE_TTL_SECONDS } from '../channels/connect.ts';
-import { sealAppSecret } from '../credential-store.ts';
-import { createSigningKey } from '../signing-keys.ts';
+import { sealAppSecret } from '../credentials/credential-store.ts';
+import { createSigningKey } from '../credentials/signing-keys.ts';
 import { CommandError } from './errors.ts';
 
 const CLI: Actor = { kind: 'cli' };

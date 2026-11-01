@@ -3,7 +3,7 @@ import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { loadProviderApp } from '../credential-store.ts';
+import { loadProviderApp } from '../credentials/credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { enqueueMetaLifecycle } from '../jobs/jobs.ts';

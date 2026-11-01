@@ -15,7 +15,7 @@ import { pino } from 'pino';
 import tar from 'tar-stream';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { loadCredential, saveCredential, sealAppSecret } from '../credential-store.ts';
+import { loadCredential, saveCredential, sealAppSecret } from '../credentials/credential-store.ts';
 import { type ExportResult, exportArchive } from './backup/export.ts';
 import { type ImportDeps, importArchive } from './backup/import.ts';
 import { type PgLauncher, type PgTools, spawnPgTools } from './backup/pg-tools.ts';

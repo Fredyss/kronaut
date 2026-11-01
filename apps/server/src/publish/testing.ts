@@ -6,7 +6,7 @@ import type { HttpClient } from '@kronaut/egress';
 import { sql } from 'kysely';
 import { pino } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { saveCredential } from '../credential-store.ts';
+import { saveCredential } from '../credentials/credential-store.ts';
 import { installJobQueue } from '../jobs/job-queue.ts';
 import type { MediaAccess } from '../media/access.ts';
 import { createProviderRegistry } from '../providers.ts';

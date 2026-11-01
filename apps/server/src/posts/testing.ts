@@ -8,7 +8,7 @@ import { sql } from 'kysely';
 import { type Logger, pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
-import { saveCredential } from '../credential-store.ts';
+import { saveCredential } from '../credentials/credential-store.ts';
 import { cronTasks } from '../cron.ts';
 import {
   type Auth,

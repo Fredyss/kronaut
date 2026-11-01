@@ -9,7 +9,11 @@ import type {
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
-import { loadCredentialById, loadProviderApp, persistRefreshed } from '../credential-store.ts';
+import {
+  loadCredentialById,
+  loadProviderApp,
+  persistRefreshed,
+} from '../credentials/credential-store.ts';
 import type { ProviderEntry } from '../providers.ts';
 import { resolveExpiring } from './incidents.ts';
 import { SYSTEM } from './lock.ts';

@@ -4,7 +4,7 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import type { HttpClient } from '@kronaut/egress';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { loadCredential } from '../credential-store.ts';
+import { loadCredential } from '../credentials/credential-store.ts';
 import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';
 import { refreshExpiring } from './refresh.ts';
 import { fakeProvider, type PublishFixture, startPublishFixture } from './testing.ts';
