@@ -121,13 +121,17 @@ export function ensureVerifyJob(
   return addVerifyJob(trx, destination, runAt, 'preserve_run_at');
 }
 
+export function mediaJobKey(mediaId: string): string {
+  return `media:${mediaId}`;
+}
+
 export async function enqueueMediaProcess(trx: TenantDb, job: MediaJob): Promise<void> {
   const payload = JSON.stringify({ workspaceId: job.workspaceId, id: job.id });
   await sql`
     select graphile_worker.add_job(${JOBS.mediaProcess}, ${payload}::json,
       queue_name := 'media',
       max_attempts := ${MEDIA_PROCESS_ATTEMPTS},
-      job_key := ${`media:${job.id}`},
+      job_key := ${mediaJobKey(job.id)},
       job_key_mode := 'preserve_run_at')
   `.execute(trx);
 }

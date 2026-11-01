@@ -4,7 +4,10 @@ import { createDatabase, type Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { quickAddJob, run } from 'graphile-worker';
 import { sql } from 'kysely';
+import pino from 'pino';
+import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { startHeartbeat } from './heartbeat.ts';
 import {
   type JobSession,
   openJobSession,
@@ -202,7 +205,7 @@ describe('dead job workers', () => {
     await sweep(0);
   }, 60_000);
 
-  it('gives workers the full window after a Postgres restart', async () => {
+  it('waits until it has seen its own session for the full window', async () => {
     const worker = await startWorker();
     await addJob('hang', { queueName: 'restart', jobKey: 'restart:held' });
     await worker.saw('RUNNING');
@@ -264,4 +267,20 @@ describe('dead job workers', () => {
 
     expect(await lockHolder('blind:held')).toBe(holder);
   }, 60_000);
+
+  it('clears the session on a clean stop', async () => {
+    const workerId = randomUUID();
+    const beat = await startHeartbeat({
+      db: app,
+      logger: pino({ level: 'silent' }),
+      workerId,
+      role: 'worker',
+      appVersion: '0.0.0',
+      startedAt: Temporal.Now.instant(),
+    });
+    await registerJobWorkers(app, workerId, reader);
+    expect((await heartbeat(workerId)).job_session).toBe(reader.id);
+    await beat.stop();
+    expect(await heartbeat(workerId)).toEqual({ job_session: null, job_pool_id: null });
+  });
 });

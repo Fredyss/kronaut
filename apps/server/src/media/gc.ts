@@ -2,9 +2,11 @@ import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
+import { type MediaJob, mediaJobKey } from '../jobs.ts';
 import { settleExpiredImport } from './import-store.ts';
 import { lockStorageKeys, removeIfUnreferenced } from './key-lock.ts';
 import { referenced } from './library.ts';
+import { rejectMedia } from './process-finish.ts';
 import type { Staging } from './staging.ts';
 
 export const MEDIA_GC_BATCH = 500;
@@ -36,6 +38,37 @@ async function expireUpload(db: Database, workspaceId: string, id: string): Prom
       .execute();
     return row.storage_key;
   });
+}
+
+// A worker killed on the job's last attempt never reaches rejectMedia, and such a video can't be
+// published. A running job counts as live even on that attempt, since attempts rises at the claim.
+async function lostVideoKey(db: Database, { workspaceId, id }: MediaJob): Promise<string | null> {
+  return await db.withTenant(workspaceId, SYSTEM, async (trx) => {
+    const row = await trx
+      .selectFrom('media_assets')
+      .select('storage_key')
+      .where('workspace_id', '=', workspaceId)
+      .where('id', '=', id)
+      .where('state', '=', 'processing')
+      .where('updated_at', '<', sql<Date>`now() - interval '1 hour'`)
+      .executeTakeFirst();
+    if (row === undefined) return null;
+    const { rows } = await sql<{ live: boolean }>`
+      select exists (
+        select 1 from graphile_worker.jobs
+         where key = ${mediaJobKey(id)} and (attempts < max_attempts or locked_at is not null)
+      ) as live
+    `.execute(trx);
+    return rows[0]?.live === true ? null : row.storage_key;
+  });
+}
+
+async function rejectLostVideo(db: Database, staging: Staging, job: MediaJob): Promise<boolean> {
+  const key = await lostVideoKey(db, job);
+  if (key === null) return false;
+  await rejectMedia(db, job, 'video_unreadable');
+  await staging.remove(key);
+  return true;
 }
 
 function expiredDeleted(trx: TenantDb, workspaceId: string, id: string) {
@@ -102,6 +135,7 @@ export async function collectMedia(db: Database, deps: MediaGcDeps): Promise<str
   const { staging } = deps;
   const counts = {
     expired: 0,
+    lost: 0,
     purged: 0,
     skipped: 0,
     orphaned: 0,
@@ -114,6 +148,10 @@ export async function collectMedia(db: Database, deps: MediaGcDeps): Promise<str
     if (key !== null) {
       await staging.remove(key);
       counts.expired++;
+      continue;
+    }
+    if (await rejectLostVideo(db, staging, { workspaceId, id })) {
+      counts.lost++;
       continue;
     }
     const keys = await purgeDeleted(db, workspaceId, id);

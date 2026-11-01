@@ -29,6 +29,7 @@
   - originals 30 d after their last reference
   - renditions 7 d after last use
   - unfinished uploads 24 h after they started, staged parts included
+  - videos still `processing` an hour after they were queued with no job left: rejected, staged parts included
   - imports 7 d after they ended
   - Thumbnails at 256/768 px AVIF/WebP are kept for the library.
   - Deleted assets: the job re-checks inside `withTenant()` that no `item_media` or `destination_media` row references the asset, then removes the original, its renditions and the row. A re-upload of the same file within the 30 days revives the soft-deleted row instead.
