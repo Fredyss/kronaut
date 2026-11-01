@@ -8,6 +8,7 @@ export const JOBS = {
   refreshCredential: 'refresh_credential',
   revokeCredential: 'revoke_credential',
   mediaProcess: 'media_process',
+  mediaImport: 'media_import',
   metaLifecycle: 'meta_lifecycle',
 } as const;
 
@@ -36,6 +37,7 @@ export interface MediaJob {
 
 export const REVOKE_ATTEMPTS = 8;
 export const MEDIA_PROCESS_ATTEMPTS = 3;
+export const MEDIA_IMPORT_ATTEMPTS = 3;
 export const META_LIFECYCLE_ATTEMPTS = 8;
 
 export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promise<void> {
@@ -126,6 +128,17 @@ export async function enqueueMediaProcess(trx: TenantDb, job: MediaJob): Promise
       queue_name := 'media',
       max_attempts := ${MEDIA_PROCESS_ATTEMPTS},
       job_key := ${`media:${job.id}`},
+      job_key_mode := 'preserve_run_at')
+  `.execute(trx);
+}
+
+export async function enqueueMediaImport(trx: TenantDb, job: MediaJob): Promise<void> {
+  const payload = JSON.stringify({ workspaceId: job.workspaceId, id: job.id });
+  await sql`
+    select graphile_worker.add_job(${JOBS.mediaImport}, ${payload}::json,
+      queue_name := 'media-import',
+      max_attempts := ${MEDIA_IMPORT_ATTEMPTS},
+      job_key := ${`media-import:${job.id}`},
       job_key_mode := 'preserve_run_at')
   `.execute(trx);
 }

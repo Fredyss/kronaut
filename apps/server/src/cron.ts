@@ -38,6 +38,7 @@ export const CRON_TASKS = {
 export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
 
 const SYSTEM: Actor = { kind: 'system' };
+const CRON_QUEUE = 'cron';
 const DAY_MS = 86_400_000;
 const AUDIT_BATCH = 10_000;
 const AUDIT_MAX_BATCHES = 100;
@@ -166,8 +167,15 @@ function registeredItems(email: boolean): CronItem[] {
   return CRON_ITEMS.filter((item) => email || item.task !== CRON_TASKS.notificationEmail);
 }
 
+// One queue keeps a slow task from overlapping its own next run now that the worker runs in
+// parallel; a second notification_email run would send the same mail twice.
 export function cronItems(email: boolean): ParsedCronItem[] {
-  return parseCronItems(registeredItems(email));
+  return parseCronItems(
+    registeredItems(email).map((item) => ({
+      ...item,
+      options: { ...item.options, queueName: CRON_QUEUE },
+    })),
+  );
 }
 
 export function cronTasks(email: boolean): CronTask[] {

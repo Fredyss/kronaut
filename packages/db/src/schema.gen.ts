@@ -489,6 +489,21 @@ export interface MediaAssets {
   workspace_id: string;
 }
 
+export interface MediaImports {
+  ai_generated: Generated<boolean>;
+  created_at: Generated<Timestamp>;
+  error: string | null;
+  finished_at: Timestamp | null;
+  id: Generated<string>;
+  media_id: string | null;
+  requested_by_grant_id: string | null;
+  requested_by_user_id: string | null;
+  state: Generated<string>;
+  updated_at: Generated<Timestamp>;
+  url: string | null;
+  workspace_id: string;
+}
+
 export interface MediaRenditions {
   bytes: Int8;
   created_at: Generated<Timestamp>;
@@ -1035,6 +1050,7 @@ export interface DB {
   item_media: ItemMedia;
   locations: Locations;
   media_assets: MediaAssets;
+  media_imports: MediaImports;
   media_renditions: MediaRenditions;
   memberships: Memberships;
   meta_lifecycle_requests: MetaLifecycleRequests;

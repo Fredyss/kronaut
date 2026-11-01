@@ -138,6 +138,53 @@ describe('streamed bodies', () => {
   });
 });
 
+describe('chunks', () => {
+  it('yields the body as it arrives', async () => {
+    const { client } = clientFor({ respond: true, chunks: ['abc', 'def'], complete: true });
+    const response = await client.request(URL_);
+    let text = '';
+    for await (const chunk of response.chunks()) text += new TextDecoder().decode(chunk);
+    expect(text).toBe('abcdef');
+  });
+
+  it('enforces the cap while streaming', async () => {
+    const { client } = clientFor({
+      respond: true,
+      chunks: ['a'.repeat(600), 'b'.repeat(600)],
+      complete: true,
+    });
+    const response = await client.request(URL_);
+    const reading = (async () => {
+      for await (const _ of response.chunks());
+    })();
+    expect(await errorOf(reading)).toMatchObject({ code: 'response_too_large' });
+  });
+
+  it('shares the single-use guard with the other readers', async () => {
+    const { client } = clientFor({ respond: true, chunks: ['abc'], complete: true });
+    const first = await client.request(URL_);
+    first.chunks();
+    await expect(first.text()).rejects.toThrow(TypeError);
+    const second = await client.request(URL_);
+    expect(await second.text()).toBe('abc');
+    expect(() => second.chunks()).toThrow(TypeError);
+    second.discard();
+  });
+
+  it('discards an unread body so its deadline never fires', async () => {
+    const { client, dispatcher } = clientFor({
+      respond: true,
+      chunks: ['partial'],
+      complete: false,
+    });
+    const response = await client.request(URL_);
+    response.discard();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(dispatcher.aborts).toHaveLength(1);
+    expect(dispatcher.aborts[0]).not.toMatchObject({ code: 'timeout' });
+  });
+});
+
 describe('total timeout', () => {
   it('fails while the body is stalled mid-transfer', async () => {
     const { client, dispatcher } = clientFor({

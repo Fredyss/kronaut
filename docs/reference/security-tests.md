@@ -39,6 +39,7 @@
   - `INJ-02 mcp_untrusted_envelope`
 - **Network and files:**
   - `NET-01 ssrf_suite`
+  - `NET-02 media_import_url_private` (a link to a private or loopback address fails as `url_blocked` with nothing fetched)
   - `FILE-01 upload_polyglot_and_traversal`
   - `HOOK-01 inbound_webhook_forge_replay`
 - **CI:** `CI-01 fork_pr_no_secrets`

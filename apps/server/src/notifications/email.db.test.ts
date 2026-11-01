@@ -397,6 +397,11 @@ describe('pending notifications', () => {
 describe('notification email registration', () => {
   const urls = { publicUrl: new URL(`${BASE_URL}/`) };
 
+  it('keeps every cron task on one queue', () => {
+    const queues = new Set(cronItems(true).map((item) => item.options.queueName));
+    expect([...queues]).toEqual(['cron']);
+  });
+
   it('registers nothing without SMTP', () => {
     expect(emailDeps({ ...urls, smtp: null }, fixture.db, silent)).toBeNull();
     expect(cronItems(false).map((item) => item.task)).not.toContain(CRON_TASKS.notificationEmail);

@@ -31,6 +31,7 @@ import { loadWebApp } from './http/web.ts';
 import { jobLogger } from './job-queue.ts';
 import { JOBS } from './jobs.ts';
 import { createMediaAccess, createMediaSigner } from './media/access.ts';
+import { MEDIA_IMPORT_EGRESS, mediaImportTask } from './media/import.ts';
 import { mediaProcessTask } from './media/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
@@ -47,6 +48,7 @@ const APP_VERSION = (
 ).version;
 
 const SYSTEM: Actor = { kind: 'system' };
+const WORKER_CONCURRENCY = 4;
 
 export interface StartOptions {
   readonly logger: Logger;
@@ -182,9 +184,11 @@ async function startWorker(boot: Boot): Promise<void> {
   const verify = verifyTask(publishing);
   const email = emailDeps(config, db, logger);
   state.mailer = email?.mailer ?? null;
+  const importHttp = createHttpClient(MEDIA_IMPORT_EGRESS);
 
   const jobs = await run({
     connectionString: boot.databaseUrl,
+    concurrency: WORKER_CONCURRENCY,
     logger: jobLogger(logger),
     noHandleSignals: true,
     taskList: {
@@ -193,6 +197,7 @@ async function startWorker(boot: Boot): Promise<void> {
       [JOBS.verify]: verify,
       [JOBS.revokeCredential]: revokeTask(publishing),
       [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
+      [JOBS.mediaImport]: mediaImportTask({ db, store, staging, http: importHttp, logger }),
       [JOBS.metaLifecycle]: metaLifecycleTask({ db, logger }),
     },
     parsedCronItems: cronItems(email !== null),

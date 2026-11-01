@@ -8,6 +8,8 @@ export interface EgressResponse {
   bytes(): Promise<Uint8Array>;
   text(): Promise<string>;
   json(): Promise<unknown>;
+  chunks(): AsyncIterable<Uint8Array>;
+  discard(): void;
 }
 
 async function collect(chunks: AsyncIterable<Uint8Array>): Promise<Uint8Array> {
@@ -28,13 +30,14 @@ async function collect(chunks: AsyncIterable<Uint8Array>): Promise<Uint8Array> {
 
 export function toEgressResponse(raw: RawResponse): EgressResponse {
   let used = false;
-  const read = async (): Promise<Uint8Array> => {
+  const claim = (): AsyncIterable<Uint8Array> => {
     if (used) {
       throw new TypeError('response body already read');
     }
     used = true;
-    return collect(raw.chunks);
+    return raw.chunks;
   };
+  const read = async (): Promise<Uint8Array> => collect(claim());
   return {
     status: raw.status,
     headers: raw.headers,
@@ -43,5 +46,7 @@ export function toEgressResponse(raw: RawResponse): EgressResponse {
     bytes: read,
     text: async () => new TextDecoder().decode(await read()),
     json: async () => JSON.parse(new TextDecoder().decode(await read())),
+    chunks: claim,
+    discard: raw.discard,
   };
 }
