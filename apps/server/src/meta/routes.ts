@@ -1,19 +1,21 @@
 import { defineRoute } from '@kronaut/contract';
 import type { Keyring } from '@kronaut/credentials';
-import type { Actor, Database, TenantDb } from '@kronaut/db';
+import type { Actor, Database } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { loadProviderApp } from '../credentials/credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { enqueueMetaLifecycle } from '../jobs/jobs.ts';
-import {
-  newConfirmationCode,
-  requestHash,
-  subjectHmac,
-  verifySignedRequest,
-} from './signed-request.ts';
+import { verifySignedRequest } from './signed-request.ts';
 import { statusLocale, statusText } from './status.ts';
+import {
+  type Incoming,
+  insertRequest,
+  type Received,
+  readDeletionRequest,
+  usableAppId,
+} from './store.ts';
 
 const META_BODY_LIMIT = 8 * 1024;
 const META_PROVIDERS: ReadonlySet<string> = new Set(['facebook', 'instagram', 'threads']);
@@ -81,34 +83,7 @@ export const META_BODY_LIMITS: Readonly<Record<string, number>> = {
   [metaDeauthorizeRoute.id]: META_BODY_LIMIT,
 };
 
-interface Received {
-  readonly id: string;
-  readonly kind: string;
-  readonly provider: string;
-  readonly confirmation_code: string | null;
-  readonly completed_at: Date | null;
-}
-
-interface Incoming {
-  readonly provider: string;
-  readonly kind: 'deletion' | 'deauthorize';
-  readonly signedRequest: string;
-}
-
 type SecretLookup = (provider: string) => Promise<string | null>;
-
-async function usableAppId(trx: TenantDb, provider: string): Promise<string | null> {
-  const rows = await trx
-    .selectFrom('provider_apps')
-    .select('id')
-    .where('provider', '=', provider)
-    .where('status', '<>', 'disabled')
-    .where('instance_host', '=', '')
-    .limit(2)
-    .execute();
-  const [only] = rows;
-  return rows.length === 1 && only !== undefined ? only.id : null;
-}
 
 async function appSecret(deps: MetaRouteDeps, provider: string): Promise<string | null> {
   const app = await deps.db.withActor(SYSTEM, async (trx) => {
@@ -134,37 +109,6 @@ function cachedSecrets(deps: MetaRouteDeps): SecretLookup {
   };
 }
 
-async function insertRequest(
-  trx: TenantDb,
-  values: Incoming & { readonly userId: string; readonly subjectKey: Uint8Array },
-): Promise<Received> {
-  const hash = requestHash(values.signedRequest);
-  const columns = ['id', 'kind', 'provider', 'confirmation_code', 'completed_at'] as const;
-  const inserted = await trx
-    .insertInto('meta_lifecycle_requests')
-    .values({
-      provider: values.provider,
-      kind: values.kind,
-      request_hash: hash,
-      subject_hmac: subjectHmac(values.subjectKey, values.userId),
-      subject_id: values.userId,
-      confirmation_code: values.kind === 'deletion' ? newConfirmationCode() : null,
-    })
-    .onConflict((oc) => oc.columns(['provider', 'kind', 'request_hash']).doNothing())
-    .returning(columns)
-    .executeTakeFirst();
-  return (
-    inserted ??
-    (await trx
-      .selectFrom('meta_lifecycle_requests')
-      .select(columns)
-      .where('provider', '=', values.provider)
-      .where('kind', '=', values.kind)
-      .where('request_hash', '=', hash)
-      .executeTakeFirstOrThrow())
-  );
-}
-
 async function receive(
   deps: MetaRouteDeps,
   secretFor: SecretLookup,
@@ -183,13 +127,7 @@ async function receive(
 
 async function deletionStatus(deps: MetaRouteDeps, code: string) {
   if (!CONFIRMATION_CODE.test(code)) return null;
-  const row = await deps.db.withActor(SYSTEM, (trx) =>
-    trx
-      .selectFrom('meta_lifecycle_requests')
-      .select(['completed_at', 'matched'])
-      .where('confirmation_code', '=', code)
-      .executeTakeFirst(),
-  );
+  const row = await deps.db.withActor(SYSTEM, (trx) => readDeletionRequest(trx, code));
   return row === undefined ? null : { completedAt: row.completed_at, matched: row.matched };
 }
 

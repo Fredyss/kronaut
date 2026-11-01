@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { decodePublicId, encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
@@ -140,6 +141,21 @@ function occurrences(post: PostDto) {
       .execute(),
   );
 }
+
+describe('a series that does not exist', () => {
+  it('is not found', async () => {
+    const missing = encodePublicId('series', randomUUID());
+    const responses = [
+      await call('GET', `series/${missing}`, ownerAuth),
+      await call('POST', `series/${missing}/stop`, ownerAuth),
+      await call('POST', `series/${missing}/resume`, ownerAuth),
+    ];
+    expect(responses.map((response) => response.status)).toEqual([404, 404, 404]);
+    expect(await Promise.all(responses.map(errorOf))).toEqual(
+      responses.map(() => expect.objectContaining({ code: 'not_found', message: 'Not found.' })),
+    );
+  });
+});
 
 describe('creating a series', () => {
   it('stores the rule and links occurrence 1', async () => {
