@@ -1,7 +1,7 @@
 import { buttonVariants } from '@kronaut/ui';
 import { useSyncExternalStore } from 'react';
-import { Icon } from './icon.tsx';
-import { m } from './locale/i18n.ts';
+import { m } from '../locale/i18n.ts';
+import { Icon } from '../ui/icon.tsx';
 
 export const THEMES = ['system', 'light', 'dark'] as const;
 

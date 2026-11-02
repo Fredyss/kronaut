@@ -6,12 +6,12 @@ import { useId } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { isUnauthenticated } from '../api/errors.ts';
 import { meQuery } from '../api/me.ts';
-import { useDisclosure } from '../disclosure.ts';
 import { m } from '../locale/i18n.ts';
 import { LocaleSelect } from '../locale/select.tsx';
 import { NotificationsBell } from '../notifications/bell.tsx';
 import { Rail } from '../shell/rail.tsx';
-import { ThemeToggle } from '../theme.tsx';
+import { ThemeToggle } from '../theme/theme.tsx';
+import { useDisclosure } from '../ui/disclosure.ts';
 
 function LocaleSwitch() {
   const id = useId();

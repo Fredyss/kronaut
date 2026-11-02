@@ -1,5 +1,5 @@
-import { Icon } from '../icon.tsx';
 import { KindIcon } from '../media/kind-icon.tsx';
+import { Icon } from '../ui/icon.tsx';
 
 const SIZE = 'size-5';
 

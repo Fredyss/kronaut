@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { needsActionQuery } from '../api.ts';
-import { CountBadge } from '../count-badge.tsx';
 import { m } from '../locale/i18n.ts';
+import { CountBadge } from '../ui/count-badge.tsx';
 
 export function InboxBadge({ workspaceId }: { readonly workspaceId: string }) {
   const client = useApiClient();
