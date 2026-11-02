@@ -109,6 +109,8 @@ describe('the structure rules', () => {
       [app('auth/session.ts'), [app('channels/b.ts'), app('http/errors.ts')]],
       [app('http/api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
       [app('queue/a.test.ts'), [app('posts/a.ts')]],
+      [app('queue/testing.ts'), [app('posts/a.ts')]],
+      [app('queue/a.ts'), [app('queue/slots.ts')]],
       [app('posts/b.ts'), [app('queue/a.ts'), web('compose/form.tsx')]],
       [web('compose/form.tsx'), [web('calendar/grid.tsx')]],
       [web('calendar/grid.tsx'), [web('compose/dialog.tsx'), app('posts/dto.ts')]],

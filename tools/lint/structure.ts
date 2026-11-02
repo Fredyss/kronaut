@@ -151,17 +151,17 @@ function folderNode(file: string, app: string): string | undefined {
 }
 
 export function folderCycles(graph: ImportGraph, app: string): string[][] {
-  const folders = new Map<string, string[]>();
+  const folders = new Map<string, Set<string>>();
   for (const [file, targets] of graph) {
     const from = folderNode(file, app);
     if (from === undefined) continue;
-    const edges = folders.get(from) ?? [];
+    const edges = folders.get(from) ?? new Set();
     folders.set(from, edges);
     for (const to of targets.map((target) => folderNode(target, app))) {
-      if (to !== undefined && to !== from) edges.push(to);
+      if (to !== undefined && to !== from) edges.add(to);
     }
   }
-  return findCycles(folders);
+  return findCycles(new Map([...folders].map(([folder, edges]) => [folder, [...edges]])));
 }
 
 export function baseLeaks(graph: ImportGraph): string[] {

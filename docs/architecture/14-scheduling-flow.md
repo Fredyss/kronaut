@@ -42,7 +42,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
 | Base | `http`, `@kronaut/core` | Request helpers, pure domain and time |
 
-`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the rule above and the loop counts below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`.
+`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the loop counts for PRs 1 to 4 below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`. The check from PR 5 keeps each `http` file and `src` root file as its own node instead, so a loop through one of them fails too. Measured that way, `main` before PR 5 still had only `auth` and `system`.
 
 `publish` already never imports `posts`. That stays: the worker knows destinations, not the editing flow.
 
