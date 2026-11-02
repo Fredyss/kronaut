@@ -2,7 +2,7 @@
 
 Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals` or `publish`.
 
-**Status:** target. PRs 1 to 3 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
+**Status:** target. PRs 1 to 4 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
 
 ## The flow
 
@@ -71,7 +71,7 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |
 | 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
 
-After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measure `approvals` and `notifications`, plus `auth` and `system`, as planned.
+After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measured `approvals` and `notifications`, plus `auth` and `system`. After PR 4 only `auth` and `system` are left, as planned.
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
 

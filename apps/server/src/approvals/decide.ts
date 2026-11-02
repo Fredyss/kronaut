@@ -3,6 +3,7 @@ import type { UserPrincipal } from '@kronaut/core';
 import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { type EffectivePolicy, effectivePolicy } from '../approval-policy/policy.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
@@ -15,7 +16,6 @@ import {
   lockRequest,
   RequestParams,
 } from './locked.ts';
-import { type EffectivePolicy, effectivePolicy } from './policy.ts';
 
 const DECISION_UNIQUE = 'approval_decisions_workspace_id_request_id_user_id_key';
 
