@@ -17,8 +17,8 @@ import { ExpectedVersion, InstantFields, PostParams, pathId } from '../http/para
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { enqueuePublish } from '../jobs/jobs.ts';
 import type { ProviderRegistry } from '../providers.ts';
-import { type DestinationUpdate, transition } from '../publish/finalize.ts';
 import { approvalStatus } from '../publish/principal.ts';
+import { type DestinationUpdate, transition } from '../publish/transition.ts';
 import { RepeatInput } from '../series/repeat.ts';
 import { startSeries } from '../series/start.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';

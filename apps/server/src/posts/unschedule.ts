@@ -6,7 +6,7 @@ import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { dequeuePublish } from '../jobs/jobs.ts';
-import { transition } from '../publish/finalize.ts';
+import { transition } from '../publish/transition.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';
 import { discardPublishProgress, refuseLive } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';

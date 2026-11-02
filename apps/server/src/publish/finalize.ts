@@ -10,8 +10,6 @@ import { type Plan, plan, type RunResult } from './plan.ts';
 import type { PublishDeps } from './task.ts';
 import type { DestinationRef } from './transition.ts';
 
-export { type DestinationRef, type DestinationUpdate, transition } from './transition.ts';
-
 const FINALIZE_TRIES = 3;
 const RETRYABLE_SQLSTATES: ReadonlySet<string> = new Set(['40P01', '40001']);
 

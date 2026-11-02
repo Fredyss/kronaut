@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import { unprocessable } from '../http/issues.ts';
 import { APPROVAL_UNBOUND, type Frozen } from '../posts/freeze.ts';
-import type { DestinationUpdate } from '../publish/finalize.ts';
+import type { DestinationUpdate } from '../publish/transition.ts';
 
 export interface ApprovedSlot {
   readonly shownLocal: string;

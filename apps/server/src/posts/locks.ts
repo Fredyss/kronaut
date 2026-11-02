@@ -1,8 +1,8 @@
 import type { DB, TenantDb } from '@kronaut/db';
 import { sql, type UpdateObject } from 'kysely';
 import { HttpError } from '../http/errors.ts';
-import type { DestinationRef } from '../publish/finalize.ts';
 import { type LockedPost, lockPost } from '../publish/lock.ts';
+import type { DestinationRef } from '../publish/transition.ts';
 
 export interface PostRef {
   readonly workspaceId: string;
