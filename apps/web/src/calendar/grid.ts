@@ -1,6 +1,6 @@
 import type { Temporal } from 'temporal-polyfill';
+import type { Formats } from '../locale/formats.ts';
 import type { Entry } from './entries.ts';
-import type { Formats } from './formats.ts';
 import type { Mover } from './use-mover.ts';
 
 export const DROP_OVER = 'outline-2 outline-dashed outline-ring bg-accent/60';

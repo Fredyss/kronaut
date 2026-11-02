@@ -1,5 +1,6 @@
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import type { Channel } from '../../channels/queries.ts';
+import type { Doc } from '../../posts/doc.ts';
 import type { OpenedForm } from '../from-post.ts';
 import { useImages } from '../media/use-images.ts';
 import { useMedia } from '../media/use-media.ts';
@@ -17,7 +18,6 @@ import {
   effective,
   reset,
 } from './contents.ts';
-import type { Doc } from './doc.ts';
 import { itemSupport, itemsState, postTypeFor } from './items.ts';
 import { useSignatures } from './use-signatures.ts';
 

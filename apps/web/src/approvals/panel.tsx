@@ -1,19 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { type Me, meQuery } from '../api/me.ts';
+import {
+  approvalPolicyQuery,
+  approvalRequired,
+  type PolicyResponse,
+  policyForPost,
+} from '../approval-policy/queries.ts';
 import { m } from '../locale/i18n.ts';
 import type { Post } from '../posts/queries.ts';
 import type { PostScope } from './actions.ts';
 import { RequestApproval, ScheduleApproved, ScheduleUnbound } from './follow-up.tsx';
 import { DecideActions, WithdrawAction } from './open-actions.tsx';
-import {
-  type ApprovalRequest,
-  approvalPolicyQuery,
-  approvalRequestsQuery,
-  approvalRequired,
-  type PolicyResponse,
-  policyForPost,
-} from './queries.ts';
+import { type ApprovalRequest, approvalRequestsQuery } from './queries.ts';
 import { boundSlot, RequestSummary } from './summary.tsx';
 
 interface Viewer {

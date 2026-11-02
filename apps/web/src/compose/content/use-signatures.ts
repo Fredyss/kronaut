@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Channel } from '../../channels/queries.ts';
+import { type Doc, toDoc } from '../../posts/doc.ts';
 import type { OpenedForm } from '../from-post.ts';
-import { type Doc, toDoc } from './doc.ts';
 
 const NONE: ReadonlySet<string> = new Set();
 

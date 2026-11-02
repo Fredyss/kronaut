@@ -1,13 +1,13 @@
 import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { m as calendarText } from '../i18n/calendar.ts';
+import type { Formats } from '../locale/formats.ts';
 import { m } from '../locale/i18n.ts';
 import { stateLabel } from '../posts/destinations.ts';
 import { providerUi } from '../providers/ui.ts';
 import { TagDots } from '../tags/picker.tsx';
 import { type Entry, postText } from './entries.ts';
 import { EntryMenu } from './entry-menu.tsx';
-import type { Formats } from './formats.ts';
 import type { Mover } from './use-mover.ts';
 
 export const MOVE_HINT_ID = 'calendar-move-hint';

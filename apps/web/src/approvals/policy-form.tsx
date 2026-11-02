@@ -13,9 +13,13 @@ import { useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import {
+  approvalPolicyKey,
+  type PolicyResponse,
+  type PolicyValues,
+} from '../approval-policy/queries.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
-import { approvalPolicyKey, type PolicyResponse, type PolicyValues } from './queries.ts';
 
 const APPROVAL_COUNTS = [1, 2, 3, 4, 5] as const;
 const TOLERANCE_MAX = 525_600;

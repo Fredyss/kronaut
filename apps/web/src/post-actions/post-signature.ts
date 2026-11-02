@@ -1,5 +1,5 @@
 import type { Channel } from '../channels/queries.ts';
-import type { Doc } from '../compose/content/doc.ts';
+import type { Doc } from '../posts/doc.ts';
 import type { Destination } from '../posts/queries.ts';
 
 export function shownSignature(destination: Destination, channel: Channel | undefined): Doc | null {

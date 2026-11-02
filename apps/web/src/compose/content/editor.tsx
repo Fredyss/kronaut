@@ -9,7 +9,7 @@ import { Selection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { EditorContent, type JSONContent, useEditor } from '@tiptap/react';
 import { type Ref, useImperativeHandle, useLayoutEffect, useRef } from 'react';
-import { type Doc, EMPTY_DOC, textToParagraphs, toDoc } from './doc.ts';
+import { type Doc, EMPTY_DOC, textToParagraphs, toDoc } from '../../posts/doc.ts';
 
 export interface PostEditorHandle {
   readonly insertText: (text: string) => void;

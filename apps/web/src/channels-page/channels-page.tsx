@@ -7,25 +7,25 @@ import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { useApiClient } from '../api/client.ts';
 import { errorStatus } from '../api/errors.ts';
 import { meQuery } from '../api/me.ts';
+import { AddChannelDialog } from '../channels/add-channel.tsx';
+import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
+import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
+import { type Channel, channelsQuery, connectableQuery } from '../channels/queries.ts';
+import { QUEUE_ROLES } from '../channels/queue.ts';
+import { SearchToasts } from '../channels/search-toasts.tsx';
+import { statusLabel } from '../channels/status-label.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
 import { httpsUrl } from '../posts/destinations.ts';
 import { providerUi } from '../providers/ui.ts';
-import { AddChannelDialog } from './add-channel.tsx';
-import { type ConnectRequest, connectError } from './connect-option.tsx';
-import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from './disconnect.tsx';
-import { type Channel, channelsQuery, connectableQuery } from './queries.ts';
-import { QUEUE_ROLES } from './queue.ts';
-import { SearchToasts } from './search-toasts.tsx';
-import { ChannelSignature } from './signature.tsx';
-import { statusLabel } from './status-label.ts';
+import { ChannelSignature } from '../saved-texts/channel-signature.tsx';
 
 const Followers = lazy(() =>
-  import('./followers.tsx').then((module) => ({ default: module.Followers })),
+  import('../channels/followers.tsx').then((module) => ({ default: module.Followers })),
 );
 
 const QueueEditor = lazy(() =>
-  import('./queue-editor.tsx').then((module) => ({ default: module.QueueEditor })),
+  import('../channels/queue-editor.tsx').then((module) => ({ default: module.QueueEditor })),
 );
 
 export interface ChannelsSearch {

@@ -1,10 +1,10 @@
 import type { Channel } from '../../channels/queries.ts';
 import { m as composeText } from '../../i18n/compose.ts';
+import { isBlank } from '../../posts/doc.ts';
 import type { Destination } from '../../posts/queries.ts';
 import { providerUi } from '../../providers/ui.ts';
 import { choiceFor } from '../content/choice.ts';
 import { type Content, effective } from '../content/contents.ts';
-import { isBlank } from '../content/doc.ts';
 import type { ContentsState } from '../content/use-contents.ts';
 import { blankItemProblem } from '../issues.ts';
 import type { VideoRegistry } from '../media/use-video.ts';

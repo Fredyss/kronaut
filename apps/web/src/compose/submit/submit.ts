@@ -8,10 +8,10 @@ import {
 } from '@kronaut/sdk';
 import { errorStatus } from '../../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../../api/idempotency.ts';
-import { approvalBody } from '../../approvals/queries.ts';
+import type { Doc } from '../../posts/doc.ts';
 import type { Destination, Post } from '../../posts/queries.ts';
 import type { Repeat } from '../../series/rule-text.ts';
-import type { Doc } from '../content/doc.ts';
+import { approvalBody } from './approval-body.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';
 import { SubmitError, type SubmitTarget } from './submit-error.ts';
 import { type UploadCache, uploadMedia } from './submit-media.ts';

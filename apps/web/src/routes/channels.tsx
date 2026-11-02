@@ -1,1 +1,1 @@
-export { ChannelsPage, type ChannelsSearch } from '../channels/channels-page.tsx';
+export { ChannelsPage, type ChannelsSearch } from '../channels-page/channels-page.tsx';

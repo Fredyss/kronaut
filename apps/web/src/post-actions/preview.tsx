@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { type Channel, channelsQuery } from '../channels/queries.ts';
-import type { Doc } from '../compose/content/doc.ts';
 import type { PreviewTarget } from '../compose/preview/preview.tsx';
 import { m } from '../locale/i18n.ts';
+import type { Doc } from '../posts/doc.ts';
+import { postMediaQuery } from '../posts/post-media.ts';
 import { type Post, postQuery } from '../posts/queries.ts';
-import { postMediaQuery } from './post-media.ts';
 import { shownSignature } from './post-signature.ts';
 
 const Previews = lazy(() => import('../compose/preview/preview.tsx'));

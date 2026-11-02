@@ -1,34 +1,8 @@
 import { Temporal } from 'temporal-polyfill';
-import type { Locale } from '../locale/i18n.ts';
 import type { CalendarView } from './search.ts';
 
-const MONDAY = 1;
 const MONTH_DAYS = 42;
 const WEEK_DAYS = 7;
-
-interface WeekInfoSource {
-  getWeekInfo?(): { readonly firstDay?: number };
-  readonly weekInfo?: { readonly firstDay?: number };
-}
-
-export function browserTimeZone(): string {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone;
-}
-
-export function browserLanguage(): string | undefined {
-  return typeof navigator === 'undefined' ? undefined : navigator.language;
-}
-
-export function firstDayOfWeek(locale: Locale, language: string | undefined): number {
-  if (locale !== 'en' || language === undefined) return MONDAY;
-  try {
-    const tag = new Intl.Locale(language) as unknown as WeekInfoSource;
-    const first = (tag.getWeekInfo?.() ?? tag.weekInfo)?.firstDay;
-    return first !== undefined && first >= 1 && first <= 7 ? first : MONDAY;
-  } catch {
-    return MONDAY;
-  }
-}
 
 export function parseDate(value: string | undefined): Temporal.PlainDate | null {
   if (value === undefined) return null;

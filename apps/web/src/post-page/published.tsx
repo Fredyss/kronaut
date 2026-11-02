@@ -6,7 +6,7 @@ import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { ANALYTICS_ID, useMetricsRows } from '../analytics/section.tsx';
 import { useApiClient } from '../api/client.ts';
 import { m } from '../locale/i18n.ts';
-import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
+import { canDelete, canDuplicate } from '../posts/permissions.ts';
 import type { Post } from '../posts/queries.ts';
 
 const load = () => import('../post-actions/entry-actions.tsx');

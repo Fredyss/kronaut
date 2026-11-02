@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type Doc, textToParagraphs } from '../content/doc.ts';
+import { type Doc, textToParagraphs } from '../../posts/doc.ts';
 import { draftBody } from './draft-body.ts';
 import type { ComposeContent } from './submit.ts';
 

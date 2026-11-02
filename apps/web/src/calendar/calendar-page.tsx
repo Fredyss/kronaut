@@ -3,19 +3,12 @@ import { getRouteApi } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
+import { browserLanguage, browserTimeZone, firstDayOfWeek } from '../locale/browser.ts';
 import { useLocale } from '../locale/context.ts';
+import { useFormats } from '../locale/formats.ts';
 import { CalendarBody } from './body.tsx';
-import { useFormats } from './formats.ts';
 import { CalendarSidebar } from './sidebar.tsx';
-import {
-  browserLanguage,
-  browserTimeZone,
-  currentInstant,
-  firstDayOfWeek,
-  parseDate,
-  today,
-  visibleRange,
-} from './time.ts';
+import { currentInstant, parseDate, today, visibleRange } from './time.ts';
 import { CalendarToolbar } from './toolbar.tsx';
 
 const route = getRouteApi('/app/');

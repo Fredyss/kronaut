@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { type Doc, textToParagraphs } from '../../posts/doc.ts';
 import {
   type Contents,
   customize,
@@ -10,7 +11,6 @@ import {
   type PickedImage,
   reset,
 } from './contents.ts';
-import { type Doc, textToParagraphs } from './doc.ts';
 
 function doc(text: string): Doc {
   return { type: 'doc', content: textToParagraphs(text) };
