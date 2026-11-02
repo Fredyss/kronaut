@@ -12,7 +12,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   BASE,
   call,

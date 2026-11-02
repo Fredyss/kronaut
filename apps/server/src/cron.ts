@@ -11,7 +11,7 @@ import { CRON_TASKS, type CronTask, DAY_MS } from './jobs/cron-tasks.ts';
 import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
-import { recomputeTimes } from './posts/tz-recompute.ts';
+import { recomputeTimes } from './posts/schedule/tz-recompute.ts';
 import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
 import { advanceSeries } from './series/advance.ts';

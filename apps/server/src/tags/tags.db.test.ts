@@ -4,8 +4,8 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { openRequestOf, requested } from '../approvals/testing.ts';
-import type { PostDto } from '../posts/dto.ts';
+import { openRequestOf } from '../approvals/testing.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   type Auth,
   accountA,
@@ -28,6 +28,7 @@ import {
   ownerAuth,
   ownerId,
   providers,
+  requested,
   SYSTEM,
   scheduled,
   startPosts,

@@ -6,8 +6,8 @@ import { closeRequest } from '../approvals/locked.ts';
 import { plainLocal } from '../http/time.ts';
 import { lockCurrent } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
-import { clonePost } from '../posts/clone.ts';
-import { actAs, ownerActing } from '../posts/owner.ts';
+import { clonePost } from '../posts/draft/clone.ts';
+import { actAs, ownerActing } from '../posts/owner/owner.ts';
 import {
   type LocalAt,
   needsRequest,
@@ -17,7 +17,7 @@ import {
   requestAsOwner,
   scheduleAsOwner,
   scheduleOrRequest,
-} from '../posts/owner-schedule.ts';
+} from '../posts/owner/owner-schedule.ts';
 import {
   latestOccurrence,
   type Occurrence,

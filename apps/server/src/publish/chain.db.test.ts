@@ -3,7 +3,7 @@ import type { MediaLimits } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { restartPublishProgress } from '../posts/destinations.ts';
+import { restartPublishProgress } from '../posts/draft/destinations.ts';
 import { MAX_ATTEMPTS } from './plan.ts';
 import { reapLeases } from './sweeps.ts';
 import {

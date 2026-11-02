@@ -4,8 +4,8 @@ import { closeRequest } from '../approvals/locked.ts';
 import { plainLocal } from '../http/time.ts';
 import { lockCurrent } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
-import { actAs, ownerActing } from '../posts/owner.ts';
-import { newestRequest, type OwnerEnv, scheduleOrRequest } from '../posts/owner-schedule.ts';
+import { actAs, ownerActing } from '../posts/owner/owner.ts';
+import { newestRequest, type OwnerEnv, scheduleOrRequest } from '../posts/owner/owner-schedule.ts';
 import type { ChannelScope } from './pool.ts';
 
 const LEAD_MINUTES = 5;
