@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import { HttpError } from '../http/errors.ts';
 import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { postUnits } from '../posts/units.ts';
+import { postUnits } from '../post-access/units.ts';
 import { ApprovalRequestListSchema, readRequests } from './dto.ts';
 
 export const approvalListRoute = defineRoute({

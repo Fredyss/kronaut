@@ -16,16 +16,6 @@ import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { enqueuePublish } from '../jobs/jobs.ts';
-import type { ProviderRegistry } from '../providers.ts';
-import { type DestinationUpdate, transition } from '../publish/finalize.ts';
-import { approvalStatus } from '../publish/principal.ts';
-import { RepeatInput } from '../series/repeat.ts';
-import { startSeries } from '../series/start.ts';
-import { recordPostSettlement } from '../webhooks/events.ts';
-import type { PostRouteDeps } from './deps.ts';
-import { discardPublishProgress, type ProgressReset } from './destinations.ts';
-import { PostSchema, readPost } from './dto.ts';
-import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
 import {
   bumpPost,
   type CurrentPost,
@@ -34,7 +24,18 @@ import {
   type LockedDestination,
   lockCurrent,
   lockDestinations,
-} from './locks.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
+import type { ProviderRegistry } from '../providers.ts';
+import { approvalStatus } from '../publish/principal.ts';
+import { type DestinationUpdate, transition } from '../publish/transition.ts';
+import { RepeatInput } from '../series/repeat.ts';
+import { startSeries } from '../series/start.ts';
+import { recordPostSettlement } from '../webhooks/events.ts';
+import type { PostRouteDeps } from './deps.ts';
+import { discardPublishProgress, type ProgressReset } from './destinations.ts';
+import { PostSchema, readPost } from './dto.ts';
+import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
 import {
   draftTargets,
   earliest,
@@ -44,7 +45,6 @@ import {
   type Target,
   targetSchedules,
 } from './targets.ts';
-import { postUnits } from './units.ts';
 
 const WAITING = 'The post is waiting for approval.';
 

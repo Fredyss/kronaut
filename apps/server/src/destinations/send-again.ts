@@ -4,10 +4,10 @@ import * as z from 'zod';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
+import type { LockedDestination } from '../post-access/locks.ts';
 import type { PostRouteDeps } from '../posts/deps.ts';
 import { restartPublishProgress } from '../posts/destinations.ts';
 import { PostSchema, readPost } from '../posts/dto.ts';
-import type { LockedDestination } from '../posts/locks.ts';
 import {
   authorizeSchedule,
   ScheduleCommon,

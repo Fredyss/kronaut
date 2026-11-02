@@ -5,8 +5,8 @@ import { sql } from 'kysely';
 import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
+import { postUnits } from '../post-access/units.ts';
 import { ownerColumns } from '../posts/owner.ts';
-import { postUnits } from '../posts/units.ts';
 
 export const RECENT = 10;
 

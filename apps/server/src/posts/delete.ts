@@ -6,10 +6,10 @@ import { writePostAudit } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { bumpPost, lockCurrent, lockDestinations } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { CANCELABLE } from './cancel.ts';
 import { cancelLocked } from './cancel-locked.ts';
-import { bumpPost, lockCurrent, lockDestinations } from './locks.ts';
-import { postUnits } from './units.ts';
 
 const LIVE: ReadonlySet<string> = new Set(['publishing', 'retry_wait', 'verifying']);
 

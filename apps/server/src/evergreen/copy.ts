@@ -1,7 +1,8 @@
 import { type Schedule, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
+import { lockCurrent } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { clonePost } from '../posts/clone.ts';
-import { lockCurrent } from '../posts/locks.ts';
 import { actAs, ownerActing } from '../posts/owner.ts';
 import {
   needsRequest,
@@ -10,7 +11,6 @@ import {
   requestAsOwner,
   scheduleOrRequest,
 } from '../posts/owner-schedule.ts';
-import { postUnits } from '../posts/units.ts';
 import type { PoolRow } from './pool.ts';
 
 export interface SlotFill {

@@ -9,7 +9,7 @@ import { invalid } from '../http/issues.ts';
 import { pathId } from '../http/params.ts';
 import { iso } from '../http/time.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { excerptOf, loadMains, visibleIn } from '../posts/list.ts';
+import { excerptOf, loadMains, visibleIn } from '../post-access/reads.ts';
 import { NEEDS_ACTION } from './locked.ts';
 
 const DEFAULT_LIMIT = 100;

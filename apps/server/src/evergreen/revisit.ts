@@ -2,10 +2,10 @@ import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { closeRequest } from '../approvals/locked.ts';
 import { plainLocal } from '../http/time.ts';
-import { lockCurrent } from '../posts/locks.ts';
+import { lockCurrent } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { actAs, ownerActing } from '../posts/owner.ts';
 import { newestRequest, type OwnerEnv, scheduleOrRequest } from '../posts/owner-schedule.ts';
-import { postUnits } from '../posts/units.ts';
 import type { ChannelScope } from './pool.ts';
 
 const LEAD_MINUTES = 5;

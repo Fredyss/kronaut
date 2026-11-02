@@ -3,9 +3,9 @@ import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { bumpPost } from '../post-access/locks.ts';
 import { cancelLocked } from '../posts/cancel-locked.ts';
 import { PostSchema, readPost } from '../posts/dto.ts';
-import { bumpPost } from '../posts/locks.ts';
 import { DestinationParams, fromOf, lockMove, lockTarget, movableTo } from './locked.ts';
 
 const CANCELABLE = movableTo('canceled');

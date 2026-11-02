@@ -4,8 +4,9 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { closeRequest } from '../approvals/locked.ts';
 import { plainLocal } from '../http/time.ts';
+import { lockCurrent } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { clonePost } from '../posts/clone.ts';
-import { lockCurrent } from '../posts/locks.ts';
 import { actAs, ownerActing } from '../posts/owner.ts';
 import {
   type LocalAt,
@@ -17,7 +18,6 @@ import {
   scheduleAsOwner,
   scheduleOrRequest,
 } from '../posts/owner-schedule.ts';
-import { postUnits } from '../posts/units.ts';
 import {
   latestOccurrence,
   type Occurrence,

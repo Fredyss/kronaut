@@ -1,5 +1,5 @@
 import type { TenantDb } from '@kronaut/db';
-import type { PostRef } from './locks.ts';
+import type { PostRef } from '../post-access/locks.ts';
 
 export async function loadContent(trx: TenantDb, input: PostRef) {
   const { workspaceId, postId } = input;

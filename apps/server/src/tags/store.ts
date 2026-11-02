@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
-import { visibleIn } from '../posts/list.ts';
+import { visibleIn } from '../post-access/reads.ts';
 import { BY_NAME } from './read.ts';
 
 export const NAME_MAX = 40;

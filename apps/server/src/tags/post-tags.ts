@@ -7,8 +7,8 @@ import type { IssueDetail } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { lockCurrent, type PostRef } from '../posts/locks.ts';
-import { postUnits } from '../posts/units.ts';
+import { lockCurrent, type PostRef } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { loadPostTags, PostTagSchema, tagFields } from './read.ts';
 
 const MAX_POST_TAGS = 20;

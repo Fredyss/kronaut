@@ -2,15 +2,13 @@ import { toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
+import { lockPost, SYSTEM } from '../post-access/lock.ts';
 import { applyPlan } from './apply.ts';
 import { jsonb } from './chain.ts';
 import type { Claimed } from './claim.ts';
-import { lockPost, SYSTEM } from './lock.ts';
 import { type Plan, plan, type RunResult } from './plan.ts';
 import type { PublishDeps } from './task.ts';
 import type { DestinationRef } from './transition.ts';
-
-export { type DestinationRef, type DestinationUpdate, transition } from './transition.ts';
 
 const FINALIZE_TRIES = 3;
 const RETRYABLE_SQLSTATES: ReadonlySet<string> = new Set(['40P01', '40001']);

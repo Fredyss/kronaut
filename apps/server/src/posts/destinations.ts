@@ -3,11 +3,11 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
+import type { PostRef } from '../post-access/locks.ts';
+import { scopeUnit } from '../post-access/units.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import type { Resolving } from './deps.ts';
 import { UNFROZEN } from './freeze.ts';
-import type { PostRef } from './locks.ts';
-import { scopeUnit } from './units.ts';
 
 const DestinationInput = z.object({
   accountId: z.string(),

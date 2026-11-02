@@ -4,7 +4,7 @@ import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { postResource } from '../posts/units.ts';
+import { postResource } from '../post-access/units.ts';
 import { storedValue } from './store.ts';
 
 const SNAPSHOT_CAP = 500;

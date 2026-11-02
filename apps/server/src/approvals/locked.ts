@@ -4,8 +4,8 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { notifyFor } from '../notifications/write.ts';
-import { type CurrentPost, lockCurrent } from '../posts/locks.ts';
-import { postUnits } from '../posts/units.ts';
+import { type CurrentPost, lockCurrent } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import { type WebhookEventInput, writeWebhookEvent } from '../webhooks/events.ts';
 
 export const RequestParams = z.object({ workspaceId: z.string(), requestId: z.string() });

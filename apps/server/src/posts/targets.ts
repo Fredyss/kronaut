@@ -4,10 +4,10 @@ import type { UpdateObject } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
+import type { CurrentPost, LockedDestination } from '../post-access/locks.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { queueSchedules } from '../queue/slots.ts';
 import { type Frozen, freeze } from './freeze.ts';
-import type { CurrentPost, LockedDestination } from './locks.ts';
 
 const PAST_GRACE_SECONDS = 60;
 const DRAFT_ONLY: ReadonlySet<string> = new Set(['draft']);
