@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion } from '../http/params.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 import { type EffectivePolicy, policyOf } from './policy.ts';
 
 export const PolicyValues = z.object({

@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { bindRoute } from '../http/types.ts';
+import { bindRoute } from '../http/request.ts';
 import { selectAppId } from './connect.ts';
 import { type ChannelRouteDeps, loadApp, oauthEntry, PROVIDER_ID, SYSTEM } from './deps.ts';
 

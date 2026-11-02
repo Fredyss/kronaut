@@ -14,7 +14,7 @@ import { guardSession } from '../auth/session-guard.ts';
 import { createStaging } from '../media/staging.ts';
 import { createProviderRegistry } from '../providers/providers.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, routeRegistry } from './pipeline/kernel.ts';
-import { type BoundRoute, bindRoute } from './types.ts';
+import { type BoundRoute, bindRoute } from './request.ts';
 
 const unusedDb: Database = {
   withTenant: () => Promise.reject(new Error('database not available in unit tests')),

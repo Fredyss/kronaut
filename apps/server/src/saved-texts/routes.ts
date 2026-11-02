@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import {
   createSavedText,
   deleteSavedText,

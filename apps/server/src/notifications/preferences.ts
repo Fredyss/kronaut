@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { EMAIL_GROUPS } from './groups.ts';
 import { type Owner, ownerOf } from './owner.ts';
 

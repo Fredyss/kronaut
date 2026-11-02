@@ -5,7 +5,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { bindRoute } from '../http/types.ts';
+import { bindRoute } from '../http/request.ts';
 import { enqueueRevoke } from '../jobs/jobs.ts';
 import type { ProviderRegistry } from '../providers/providers.ts';
 

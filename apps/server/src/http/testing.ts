@@ -18,7 +18,7 @@ import { createStaging, type Staging } from '../media/staging.ts';
 import { createProviderRegistry, type ProviderRegistry } from '../providers/providers.ts';
 import type { AccessGate } from './caller/access.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './pipeline/kernel.ts';
-import type { BoundRoute } from './types.ts';
+import type { BoundRoute } from './request.ts';
 
 export const BASE = 'https://kronaut.example.test';
 export const PASSWORD = 'correct horse battery';

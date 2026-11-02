@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
 import { authenticate } from '../../auth/authenticate.ts';
 import { guardSession } from '../../auth/session-guard.ts';
-import { bindRoute } from '../types.ts';
+import { bindRoute } from '../request.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
 
 const unusedDb: Database = {

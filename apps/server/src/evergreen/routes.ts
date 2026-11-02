@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { PostParams, pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../http/request.ts';
 import { lockCurrent } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
 import {

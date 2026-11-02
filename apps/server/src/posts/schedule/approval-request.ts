@@ -11,7 +11,7 @@ import { announce } from '../../approvals/locked.ts';
 import { HttpError } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
 import { InstantFields, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/request.ts';
 import {
   bumpPost,
   type CurrentPost,

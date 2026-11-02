@@ -8,7 +8,7 @@ import type { guardSession } from '../../auth/session-guard.ts';
 import { purposeKey } from '../../crypto/crypto.ts';
 import { DEFAULT_MAX_BODY_BYTES } from '../body.ts';
 import type { AccessGate } from '../caller/access.ts';
-import type { BoundRoute } from '../types.ts';
+import type { BoundRoute } from '../request.ts';
 import type { WebApp } from '../web.ts';
 import { type Kernel, pipeline } from './pipeline.ts';
 import { routeRegistry } from './registry.ts';

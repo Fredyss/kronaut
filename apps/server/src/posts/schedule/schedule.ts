@@ -14,7 +14,7 @@ import * as z from 'zod';
 import { type Binding, bindingColumns, resolveApproval } from '../../approvals/binding.ts';
 import { HttpError } from '../../http/errors.ts';
 import { ExpectedVersion, InstantFields, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/request.ts';
 import { enqueuePublish } from '../../jobs/jobs.ts';
 import {
   bumpPost,

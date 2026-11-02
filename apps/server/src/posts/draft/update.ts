@@ -5,7 +5,7 @@ import { closeRequest, type VoidReason } from '../../approvals/locked.ts';
 import { HttpError, type IssueDetail } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
 import { pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { bumpPost, checkVersion, lockCurrent, type PostRef } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
 import { recordPostSettlement } from '../../webhooks/events.ts';

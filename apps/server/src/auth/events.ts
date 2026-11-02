@@ -1,6 +1,6 @@
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../http/errors.ts';
-import type { RequestContext, SessionInfo } from '../http/types.ts';
+import type { RequestContext, SessionInfo } from '../http/request.ts';
 
 export interface SecurityEvent {
   readonly kind: string;

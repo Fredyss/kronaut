@@ -1,6 +1,6 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { MediaError } from '../errors.ts';
 import { internalId } from '../routes.ts';
 import { createImport, findImport, MediaImportSchema } from './import-store.ts';

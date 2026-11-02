@@ -12,7 +12,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 
 export const NAME_MAX = 60;
 export const TEXT_MAX = 2000;

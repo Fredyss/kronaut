@@ -9,8 +9,8 @@ import { authenticate } from '../../auth/authenticate.ts';
 import { guardSession } from '../../auth/session-guard.ts';
 import type { AccessGate } from '../caller/access.ts';
 import { denyError } from '../errors.ts';
+import { type BoundRoute, bindRoute } from '../request.ts';
 import { systemRoutes } from '../system-routes.ts';
-import { type BoundRoute, bindRoute } from '../types.ts';
 import { accessExempt, createHttpApp, deriveHttpKeys, type HttpDeps } from './kernel.ts';
 import { createRouter } from './router.ts';
 

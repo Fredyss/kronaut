@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import { writePostAudit } from '../../audit/write.ts';
 import { PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { lockCurrent } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
 import type { PostRouteDeps } from '../deps.ts';

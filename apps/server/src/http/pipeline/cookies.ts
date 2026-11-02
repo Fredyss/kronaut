@@ -1,4 +1,4 @@
-import type { CookieOptions } from '../types.ts';
+import type { CookieOptions } from '../request.ts';
 
 export const REVIEW_COOKIE = '__Host-kronaut_review';
 

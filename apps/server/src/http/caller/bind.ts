@@ -4,7 +4,7 @@ import type { Database } from '@kronaut/db';
 import type { Authn } from '../../auth/authenticate.ts';
 import { HttpError } from '../errors.ts';
 import { scoped } from '../pipeline/registry.ts';
-import type { SessionInfo } from '../types.ts';
+import type { SessionInfo } from '../request.ts';
 import { bindGrant, bindUser } from './principal.ts';
 
 export interface Binding {

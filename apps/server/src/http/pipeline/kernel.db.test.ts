@@ -15,7 +15,7 @@ import { authRoutes } from '../../auth/routes.ts';
 import { SESSION_COOKIE } from '../../auth/session.ts';
 import { guardSession } from '../../auth/session-guard.ts';
 import { HttpError } from '../errors.ts';
-import { bindRoute } from '../types.ts';
+import { bindRoute } from '../request.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
 
 const SYSTEM: Actor = { kind: 'system' };

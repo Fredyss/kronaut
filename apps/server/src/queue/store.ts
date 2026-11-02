@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { TenantDb } from '@kronaut/db';
 import { auditActor } from '../audit/write.ts';
 import type { ChannelRef } from '../channels/channel-ref.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 import type { QueueSlot } from './slots.ts';
 
 interface QueueChange {

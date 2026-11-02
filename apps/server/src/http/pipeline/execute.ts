@@ -2,7 +2,7 @@ import type { Route } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import { HttpError } from '../errors.ts';
 import { issueDetails } from '../input.ts';
-import type { BoundRoute, RequestContext, RouteHeaders, RouteInput } from '../types.ts';
+import type { BoundRoute, RequestContext, RouteHeaders, RouteInput } from '../request.ts';
 import { type RequestState, settle } from './context.ts';
 
 export interface Outcome {

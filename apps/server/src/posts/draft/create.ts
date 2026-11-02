@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { HttpError, type IssueDetail } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
 import { pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import type { ProviderRegistry } from '../../providers/providers.ts';
 import type { PostRouteDeps } from '../deps.ts';
 import { PostSchema, readPost } from '../read/dto.ts';

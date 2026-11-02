@@ -4,7 +4,7 @@ import type { TenantDb } from '@kronaut/db';
 import { locales } from '@kronaut/i18n/runtime';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { requireSession } from './events.ts';
 import type { AuthDeps } from './routes.ts';
 

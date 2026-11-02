@@ -2,7 +2,7 @@ import type { Route } from '@kronaut/contract';
 import type { AccessScope, Principal } from '@kronaut/core';
 import { bind, type TenantTarget, tenantOf } from '../caller/bind.ts';
 import { parseInput, readLimited } from '../input.ts';
-import type { SessionInfo } from '../types.ts';
+import type { SessionInfo } from '../request.ts';
 import { createContext, preauthorize, type RequestState } from './context.ts';
 import { parseCookies } from './cookies.ts';
 import { type Execution, execute, type Outcome } from './execute.ts';

@@ -9,7 +9,7 @@ import {
   bindRoute,
   type RequestContext,
   type SessionInfo,
-} from '../http/types.ts';
+} from '../http/request.ts';
 import { recordEvent, requireSession } from './events.ts';
 import { checkPassword, hashPassword } from './password.ts';
 import {

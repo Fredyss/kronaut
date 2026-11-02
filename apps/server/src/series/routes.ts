@@ -5,7 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../http/request.ts';
 import { ownerColumns } from '../posts/owner/owner.ts';
 import { RepeatInput, repeatOf } from '../posts/schedule/repeat.ts';
 import {

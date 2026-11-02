@@ -1,4 +1,4 @@
-import type { BoundRoute } from '../http/types.ts';
+import type { BoundRoute } from '../http/request.ts';
 import type { PostRouteDeps } from './deps.ts';
 import { createRoutes } from './draft/create.ts';
 import { deleteRoutes } from './draft/delete.ts';
