@@ -33,7 +33,7 @@ A feature in tiers 1 to 7 imports another feature only through a line in [`featu
 
 ## Base folders
 
-`api`, `locale`, `providers` and `ui` value-import only packages, their own files and each other (checked). `providers` became one in this PR: `providers/ui.ts` reads only `locale`.
+`api`, `locale`, `providers` and `ui` value-import only packages, their own files and each other (checked). `providers` qualifies because `providers/ui.ts` reads only `locale`.
 
 `locale` holds everything about the reader's language and clock: messages, `useFormat` and `useFormats`, and in `locale/browser.ts` the browser's time zone, language and first day of the week.
 

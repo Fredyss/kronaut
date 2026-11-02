@@ -8,8 +8,8 @@ import type { PreviewTarget } from '../compose/preview/preview.tsx';
 import { m } from '../locale/i18n.ts';
 import type { Doc } from '../posts/doc.ts';
 import { postMediaQuery } from '../posts/post-media.ts';
+import { shownSignature } from '../posts/post-signature.ts';
 import { type Post, postQuery } from '../posts/queries.ts';
-import { shownSignature } from './post-signature.ts';
 
 const Previews = lazy(() => import('../compose/preview/preview.tsx'));
 
