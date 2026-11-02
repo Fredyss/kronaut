@@ -84,10 +84,11 @@ function inherit(
   owners: ReadonlyMap<string, Set<string>>,
 ): boolean {
   let changed = false;
-  const routes = new Set(graph.get(ROUTER)?.dynamic ?? []);
+  const lazy = graph.get(ROUTER)?.dynamic ?? [];
+  const routes = new Set([...lazy, ...lazy.flatMap((route) => graph.get(route)?.static ?? [])]);
   for (const [file, source] of graph) {
     if (file === ROUTER) continue;
-    // A route module loads its own group's catalog, whichever route opens it.
+    // A route module, or the page it re-exports, loads its own group's catalog, whichever route opens it.
     for (const target of source.dynamic.filter((path) => !routes.has(path))) {
       const labels = roots.get(target) ?? new Set<string>();
       roots.set(target, labels);
