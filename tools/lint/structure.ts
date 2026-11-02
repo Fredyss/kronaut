@@ -16,6 +16,9 @@ const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
 const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
+const BASE_FOLDERS = new Set(['web/api', 'web/locale', 'web/ui']);
+const WEB_ROOT_FILE = /^apps\/web\/src\/[^/]+$/;
+const WEB_ENTRYPOINTS = new Set(['apps/web/src/app.tsx', 'apps/web/src/main.tsx']);
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
@@ -119,10 +122,32 @@ export function featureImports(graph: ImportGraph): string[] {
     if (source === undefined || WIRING_FOLDERS.has(source.feature)) continue;
     for (const target of targets.map(featureFile)) {
       if (target === undefined || target.feature === source.feature) continue;
+      if (BASE_FOLDERS.has(target.feature)) continue;
       imports.add(`${source.feature} -> ${target.path}`);
     }
   }
   return [...imports].sort();
+}
+
+export function baseLeaks(graph: ImportGraph): string[] {
+  return [...graph]
+    .flatMap(([file, targets]) => {
+      const source = featureFile(file);
+      if (source === undefined || !BASE_FOLDERS.has(source.feature)) return [];
+      return targets
+        .filter((target) => {
+          const feature = featureFile(target)?.feature;
+          return feature !== undefined && feature !== source.feature && !BASE_FOLDERS.has(feature);
+        })
+        .map((target) => `${file} -> ${target}`);
+    })
+    .sort();
+}
+
+export function rootFiles(graph: ImportGraph): string[] {
+  return [...graph.keys()]
+    .filter((file) => WEB_ROOT_FILE.test(file) && !isTesting(file) && !WEB_ENTRYPOINTS.has(file))
+    .sort();
 }
 
 export function routeImports(graph: ImportGraph): string[] {
