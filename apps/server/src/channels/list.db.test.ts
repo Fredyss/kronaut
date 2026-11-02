@@ -11,10 +11,12 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { authenticate } from '../auth/authenticate.ts';
 import { hashGrantToken } from '../auth/grant.ts';
 import { hashPassword } from '../auth/password.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { SESSION_COOKIE } from '../auth/session.ts';
+import { guardSession } from '../auth/session-guard.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/pipeline/kernel.ts';
 import { createProviderRegistry } from '../providers/providers.ts';
 import { FAKE_PROVIDER, fakeManifest } from '../publish/testing.ts';
@@ -129,6 +131,8 @@ beforeAll(async () => {
     clock: () => Temporal.Now.instant(),
     publicBaseUrl: BASE,
     readiness: async () => true,
+    authenticate,
+    guardSession,
   };
   const ids = [FAKE_PROVIDER, DISABLED, MISSING, KEY_PENDING];
   const providers = createProviderRegistry(

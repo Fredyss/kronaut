@@ -6,7 +6,9 @@ import type { Database } from '@kronaut/db';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, describe, expect, it } from 'vitest';
+import { authenticate } from '../auth/authenticate.ts';
 import { authRoutes } from '../auth/routes.ts';
+import { guardSession } from '../auth/session-guard.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './pipeline/kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import { loadWebApp, webCsp } from './web.ts';
@@ -35,6 +37,8 @@ function app(web: boolean) {
     clock: () => Temporal.Now.instant(),
     publicBaseUrl: 'https://kronaut.example.test',
     readiness: async () => true,
+    authenticate,
+    guardSession,
     ...(web ? { web: loadWebApp(root, MEDIA) } : {}),
   };
   return createHttpApp(deps, [...systemRoutes(deps), ...authRoutes(deps)]);

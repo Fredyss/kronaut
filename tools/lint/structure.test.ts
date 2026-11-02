@@ -26,7 +26,7 @@ describe('repo structure', () => {
   it('sees the whole workspace', () => {
     expect(graph.size).toBeGreaterThan(800);
     expect(graph.has('packages/core/src/index.ts')).toBe(true);
-    expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/http/api-routes.ts');
+    expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/api-routes.ts');
     expect(graph.get('apps/web/src/main.tsx')).toContain('apps/web/src/app.tsx');
     expect(graph.get('apps/server/src/posts/draft/items.ts')).toContain(
       'packages/compose/src/index.ts',
@@ -82,17 +82,16 @@ describe('the structure rules', () => {
     const imports: ImportGraph = new Map([
       [app('posts/a.ts'), [app('posts/b.ts'), app('tags/read.ts'), app('tags/read.ts')]],
       [app('posts/c.ts'), [app('tags/read.ts'), app('queue/slots.ts'), app('config.ts')]],
-      [app('posts/d.ts'), [app('http/types.ts'), 'packages/core/src/index.ts']],
+      [app('posts/d.ts'), [app('http/errors.ts'), 'packages/core/src/index.ts']],
       [app('posts/a.test.ts'), [app('queue/routes.ts')]],
       [app('posts/testing.ts'), [app('queue/routes.ts')]],
-      [app('http/api-routes.ts'), [app('posts/routes.ts')]],
+      [app('api-routes.ts'), [app('posts/routes.ts')]],
       [app('start.ts'), [app('posts/routes.ts')]],
       ['apps/web/src/routes/post.tsx', ['apps/web/src/compose/form.tsx']],
       ['apps/web/src/inbox/list.tsx', ['apps/web/src/compose/form.tsx']],
       ['apps/web/src/inbox/row.tsx', ['apps/web/src/routes/post.tsx']],
     ]);
     expect(featureImports(imports)).toEqual([
-      'server/posts -> http/types.ts',
       'server/posts -> queue/slots.ts',
       'server/posts -> tags/read.ts',
       'web/inbox -> compose/form.tsx',
@@ -100,7 +99,7 @@ describe('the structure rules', () => {
     ]);
   });
 
-  it('finds a loop between folders of one app, also through wiring and root files', () => {
+  it('finds a loop between folders of one app, also through http and root files', () => {
     const app = (target: string) => `apps/server/src/${target}`;
     const web = (target: string) => `apps/web/src/${target}`;
     const imports: ImportGraph = new Map([
@@ -111,10 +110,10 @@ describe('the structure rules', () => {
       [app('media/import/fetch.ts'), [app('tags/list.ts')]],
       [app('series/a.ts'), [app('cron.ts')]],
       [app('cron.ts'), [app('series/b.ts')]],
-      [app('channels/a.ts'), [app('http/authenticate.ts')]],
-      [app('http/authenticate.ts'), [app('auth/session.ts')]],
+      [app('channels/a.ts'), [app('http/caller/authenticate.ts')]],
+      [app('http/caller/authenticate.ts'), [app('auth/session.ts')]],
       [app('auth/session.ts'), [app('channels/b.ts'), app('http/errors.ts')]],
-      [app('http/api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
+      [app('api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
       [app('queue/a.test.ts'), [app('posts/a.ts')]],
       [app('queue/testing.ts'), [app('posts/a.ts')]],
       [app('queue/a.ts'), [app('queue/slots.ts')]],
@@ -126,7 +125,7 @@ describe('the structure rules', () => {
       ['approvals', 'notifications', 'posts'],
       ['media', 'tags'],
       ['cron.ts', 'series'],
-      ['auth', 'channels', 'http/authenticate.ts'],
+      ['auth', 'channels', 'http'],
     ]);
     expect(folderCycles(imports, 'web')).toEqual([['calendar', 'compose']]);
   });
@@ -137,7 +136,7 @@ describe('the structure rules', () => {
       [app('analytics/a.ts'), [app('queue/routes.ts'), app('queue/slots.ts')]],
       [app('tags/b.ts'), [app('media/upload-routes.ts')]],
       [app('queue/c.ts'), [app('queue/routes.ts')]],
-      [app('http/api-routes.ts'), [app('queue/routes.ts')]],
+      [app('api-routes.ts'), [app('queue/routes.ts')]],
     ]);
     expect(routeImports(imports)).toEqual([
       'server/analytics -> queue/routes.ts',
@@ -157,15 +156,18 @@ describe('the structure rules', () => {
       [server('crypto/crypto.ts'), [server('auth/session.ts'), server('config/config.ts')]],
       [server('config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
       [server('providers/providers.test.ts'), [server('posts/list.ts')]],
+      [server('http/web.ts'), [server('config/config.ts'), server('auth/session.ts')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
       'apps/server/src/config/config.ts -> apps/server/src/start.ts',
       'apps/server/src/crypto/crypto.ts -> apps/server/src/auth/session.ts',
+      'apps/server/src/http/web.ts -> apps/server/src/auth/session.ts',
       'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
       'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
       'server/crypto -> auth/session.ts',
+      'server/http -> auth/session.ts',
       'server/posts -> api/errors.ts',
       'web/inbox -> posts/queries.ts',
       'web/ui -> compose/form.tsx',

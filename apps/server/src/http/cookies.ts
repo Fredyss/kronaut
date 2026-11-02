@@ -1,5 +1,7 @@
 import type { CookieOptions } from './types.ts';
 
+export const REVIEW_COOKIE = '__Host-kronaut_review';
+
 const HOST_PREFIX = '__Host-';
 const COOKIE_NAME = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
 const COOKIE_VALUE = /^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]*$/;

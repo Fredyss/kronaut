@@ -8,9 +8,11 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { apiRoutes } from '../api-routes.ts';
+import { authenticate } from '../auth/authenticate.ts';
+import { guardSession } from '../auth/session-guard.ts';
 import { createStaging } from '../media/staging.ts';
 import { createProviderRegistry } from '../providers/providers.ts';
-import { apiRoutes } from './api-routes.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, routeRegistry } from './pipeline/kernel.ts';
 import { type BoundRoute, bindRoute } from './types.ts';
 
@@ -28,6 +30,8 @@ const deps: HttpDeps = {
   clock: () => Temporal.Now.instant(),
   publicBaseUrl: 'https://kronaut.example.test',
   readiness: async () => true,
+  authenticate,
+  guardSession,
 };
 
 const workspaceProbe = defineRoute({

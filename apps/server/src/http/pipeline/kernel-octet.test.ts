@@ -5,6 +5,8 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { authenticate } from '../../auth/authenticate.ts';
+import { guardSession } from '../../auth/session-guard.ts';
 import { bindRoute } from '../types.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
 
@@ -37,6 +39,8 @@ function setup() {
       clock: () => Temporal.Instant.from('2026-10-21T10:00:00Z'),
       publicBaseUrl: 'https://kronaut.example.test',
       readiness: async () => true,
+      authenticate,
+      guardSession,
       maxBodyBytes: 1024,
       routeBodyLimits: { 'probe.part': 4096 },
     },

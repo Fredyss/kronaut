@@ -15,10 +15,11 @@ const DYNAMIC_IMPORT = /\bimport\(\s*(?:'([^']+)'|`([^`$]+)`)\s*\)/g;
 const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
-const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
+const WIRING_FOLDERS = new Set(['web/i18n', 'web/routes']);
 const BASE_FOLDERS = new Set([
   'server/config',
   'server/crypto',
+  'server/http',
   'server/providers',
   'web/api',
   'web/locale',
