@@ -211,7 +211,10 @@ describe('the structure rules', () => {
     const many = (folder: string, count: number, ext = 'ts') =>
       Array.from({ length: count }, (_, i) => `${folder}/f${i}.${ext}`);
     const files = [
-      ...many('apps/server/src/posts', 26),
+      ...many('apps/server/src/posts', 26, 'tsx'),
+      ...many('packages/i18n/src/paraglide-cli', 26),
+      ...many('packages/db/src/gen', 26),
+      ...many('apps/server/src/jobs', 26, 'gen.ts'),
       ...many('apps/web/src/compose', 24, 'tsx'),
       'apps/web/src/compose/index.ts',
       'apps/web/src/compose/form.test.tsx',
