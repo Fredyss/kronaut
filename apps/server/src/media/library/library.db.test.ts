@@ -7,15 +7,14 @@ import { storageKey } from '@kronaut/media';
 import { sql } from 'kysely';
 import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { expectError } from '../http/testing.ts';
-import type { ResolvedItem } from '../posts/draft/items.ts';
-import { insertVariant } from '../posts/draft/variants.ts';
-import { collectMedia } from './gc.ts';
-import { ingestImage, prepareImage } from './ingest.ts';
-import { removeIfUnreferenced } from './key-lock.ts';
-import { mediaClearAiRoute, mediaListRoute, mediaUsageRoute } from './library-routes.ts';
-import { finishMedia, StoredObjectMissing } from './process-finish.ts';
-import { createStaging } from './staging.ts';
+import { expectError } from '../../http/testing.ts';
+import type { ResolvedItem } from '../../posts/draft/items.ts';
+import { insertVariant } from '../../posts/draft/variants.ts';
+import { collectMedia } from '../gc.ts';
+import { ingestImage, prepareImage } from '../ingest.ts';
+import { removeIfUnreferenced } from '../key-lock.ts';
+import { finishMedia, StoredObjectMissing } from '../process/process-finish.ts';
+import { createStaging } from '../staging.ts';
 import {
   asUser,
   MEDIA_BASE,
@@ -24,8 +23,9 @@ import {
   startMediaDb,
   type Tenant,
   uuidOf,
-} from './testing/db.ts';
-import { jpegFixture, pngFixture } from './testing.ts';
+} from '../testing/db.ts';
+import { jpegFixture, pngFixture } from '../testing.ts';
+import { mediaClearAiRoute, mediaListRoute, mediaUsageRoute } from './library-routes.ts';
 
 let test: TestDatabase;
 let fx: MediaDb;

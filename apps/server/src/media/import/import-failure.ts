@@ -1,5 +1,5 @@
 import { EgressError, type EgressErrorCode } from '@kronaut/egress';
-import { MediaError } from './errors.ts';
+import { MediaError } from '../errors.ts';
 
 export const IMPORT_ERRORS = [
   'url_blocked',

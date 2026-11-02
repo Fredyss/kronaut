@@ -18,7 +18,7 @@ import {
   uuidOf,
 } from './testing/db.ts';
 import { pngFixture } from './testing.ts';
-import { VIDEO_PART_SIZE } from './upload.ts';
+import { VIDEO_PART_SIZE } from './upload/upload.ts';
 
 const PART = 10;
 const WRITE_SCOPES = ['media:read', 'media:write'];

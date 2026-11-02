@@ -4,8 +4,8 @@ import type { EgressResponse, HttpClient } from '@kronaut/egress';
 import pino, { type Logger } from 'pino';
 import { expect } from 'vitest';
 import type { Auth } from '../../http/testing.ts';
-import type { MediaImportDeps } from '../import.ts';
-import { mediaImportCreateRoute } from '../import-routes.ts';
+import type { MediaImportDeps } from '../import/import.ts';
+import { mediaImportCreateRoute } from '../import/import-routes.ts';
 import type { MediaDb, Tenant } from './db.ts';
 
 export const SYSTEM: Actor = { kind: 'system' };

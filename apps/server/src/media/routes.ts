@@ -8,8 +8,8 @@ import type { MediaSigner } from './access.ts';
 import { MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { ingestImage, MEDIA_IMAGE_MAX_BYTES, prepareImage } from './ingest.ts';
-import { auditMedia } from './library-edit.ts';
-import { markAiGenerated } from './mark-ai.ts';
+import { auditMedia } from './library/library-edit.ts';
+import { markAiGenerated } from './library/mark-ai.ts';
 import { findLibraryAsset, LibraryAssetSchema } from './preview.ts';
 
 export const MEDIA_UPLOAD_ROUTE_ID = 'media.upload';

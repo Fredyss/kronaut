@@ -2,8 +2,8 @@ import { createHash } from 'node:crypto';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
-import type { MediaJob } from '../jobs/jobs.ts';
-import { lockStorageKeys } from './key-lock.ts';
+import type { MediaJob } from '../../jobs/jobs.ts';
+import { lockStorageKeys } from '../key-lock.ts';
 
 export type RejectedReason =
   | 'video_stream_missing'

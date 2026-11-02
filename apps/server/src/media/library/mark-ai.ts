@@ -1,8 +1,8 @@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import type { RequestContext } from '../http/types.ts';
-import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
-import { MediaError } from './errors.ts';
+import type { RequestContext } from '../../http/types.ts';
+import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from '../dto.ts';
+import { MediaError } from '../errors.ts';
 import { auditMedia } from './library-edit.ts';
 
 export interface MarkTarget {

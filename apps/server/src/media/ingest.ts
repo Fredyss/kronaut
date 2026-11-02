@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
 import { MediaError } from './errors.ts';
 import { lockStorageKeys } from './key-lock.ts';
-import { type ImageFormat, type SniffedImage, sniffImage } from './sniff.ts';
+import { type ImageFormat, type SniffedImage, sniffImage } from './sniff/sniff.ts';
 
 export const MEDIA_IMAGE_MAX_BYTES = 8 * 1024 * 1024;
 const ORIGINAL_NAME_MAX = 255;

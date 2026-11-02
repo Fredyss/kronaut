@@ -7,18 +7,11 @@ import { runOnce } from 'graphile-worker';
 import { sql } from 'kysely';
 import pino from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { expectError } from '../http/testing.ts';
-import { installJobQueue, jobLogger } from '../jobs/job-queue.ts';
-import { JOBS } from '../jobs/jobs.ts';
-import { collectMedia } from './gc.ts';
-import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
-import {
-  failImport,
-  importBucketKey,
-  MEDIA_IMPORTS_MAX_OPEN,
-  MEDIA_IMPORTS_PER_HOUR,
-} from './import-store.ts';
-import { type MediaDb, stagingUnder, startMediaDb, type Tenant } from './testing/db.ts';
+import { expectError } from '../../http/testing.ts';
+import { installJobQueue, jobLogger } from '../../jobs/job-queue.ts';
+import { JOBS } from '../../jobs/jobs.ts';
+import { collectMedia } from '../gc.ts';
+import { type MediaDb, stagingUnder, startMediaDb, type Tenant } from '../testing/db.ts';
 import {
   capturedLogger,
   importDeps,
@@ -29,9 +22,16 @@ import {
   SYSTEM,
   scriptedHttp,
   startImport,
-} from './testing/import.ts';
-import { pngFixture } from './testing.ts';
-import { VIDEO_PART_SIZE } from './upload.ts';
+} from '../testing/import.ts';
+import { pngFixture } from '../testing.ts';
+import { VIDEO_PART_SIZE } from '../upload/upload.ts';
+import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
+import {
+  failImport,
+  importBucketKey,
+  MEDIA_IMPORTS_MAX_OPEN,
+  MEDIA_IMPORTS_PER_HOUR,
+} from './import-store.ts';
 
 const CLI: Actor = { kind: 'cli' };
 const CANARY = 'CANARY_import_token_31337';

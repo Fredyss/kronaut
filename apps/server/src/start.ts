@@ -32,8 +32,8 @@ import { type LockSweep, openJobSession, startJobLocks } from './jobs/job-locks.
 import { jobLogger } from './jobs/job-queue.ts';
 import { JOBS } from './jobs/jobs.ts';
 import { createMediaAccess, createMediaSigner } from './media/access.ts';
-import { MEDIA_IMPORT_EGRESS, mediaImportTask } from './media/import.ts';
-import { mediaProcessTask } from './media/process.ts';
+import { MEDIA_IMPORT_EGRESS, mediaImportTask } from './media/import/import.ts';
+import { mediaProcessTask } from './media/process/process.ts';
 import { createMediaServer } from './media/server.ts';
 import { stagingIn } from './media/staging.ts';
 import { metaLifecycleTask } from './meta/lifecycle.ts';
