@@ -48,7 +48,7 @@ Each file in `routes/` and `i18n/` is a node of its own in the folder check, so 
 
 ## Route files
 
-A route file re-exports the page its route loads, and nothing else (checked: it holds only `export { … } from` lines). The one exception, `locale-root.tsx`, may not import `@tanstack/react-query` or `api/client.ts` (checked). The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, reading through a feature's query options:
+A route file re-exports the page its route loads, and nothing else. Two checks hold this: a route file other than the locale gate `locale-root.tsx` holds only `export { … } from` lines, and no route file imports or re-exports `@tanstack/react-query` or `api/client.ts`. The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, reading through a feature's query options:
 
 ```tsx
 // app.tsx
@@ -68,7 +68,7 @@ const systemSettingsRoute = createRoute({
 export { SystemSettingsPage } from '../system/settings-page.tsx';
 ```
 
-The route file stays because Vite names a lazy chunk after the module it loads, and [`.size-limit.js`](../../apps/web/.size-limit.js) budgets each route by that name. When a feature also loads a page lazily, as `post-actions` and `post-page` load the composer, the route's chunk becomes a small facade and the page gets a chunk of its own, named after its file; `compose-*` covers both.
+The route file stays because Vite names a lazy chunk after the module it loads, and [`.size-limit.js`](../../apps/web/.size-limit.js) budgets each route by that name. When a feature also loads a page lazily, as `post-actions` and `post-page` load the composer, the route's chunk becomes a small facade and the page gets a chunk of its own, named after its file. Each budget names its chunks exactly, so the composer entry lists both `compose` and `compose-page`; a new page chunk like that needs adding to its entry, or it counts as shared lazy.
 
 A page reads its own search and params with `getRouteApi`, as before.
 

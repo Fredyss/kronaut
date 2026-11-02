@@ -259,6 +259,8 @@ describe('the structure rules', () => {
         "import { InboxPage } from '../inbox/inbox-page.tsx';\nexport { InboxPage };",
       ],
       [web('routes/post.tsx'), "export * from '../post-page/post-page.tsx';"],
+      [web('routes/channels.tsx'), "export type { ChannelsSearch } from '../channels-page/a.tsx';"],
+      [web('routes/shell.tsx'), "// the shell\nexport { AppShell } from '../shell/app-shell.tsx';"],
       [
         web('routes/media.tsx'),
         "export { MediaPage } from '../media/media-page.tsx';\nconst x = 1;",
@@ -271,6 +273,7 @@ describe('the structure rules', () => {
       'apps/web/src/routes/inbox.tsx',
       'apps/web/src/routes/media.tsx',
       'apps/web/src/routes/post.tsx',
+      'apps/web/src/routes/shell.tsx',
     ]);
   });
 
