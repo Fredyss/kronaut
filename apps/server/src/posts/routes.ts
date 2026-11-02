@@ -9,7 +9,7 @@ import { listRoutes } from './read/list.ts';
 import { approvalRequestRoutes } from './schedule/approval-request.ts';
 import { cancelRoutes } from './schedule/cancel.ts';
 import { rescheduleRoutes } from './schedule/reschedule.ts';
-import { scheduleRoutes } from './schedule/schedule.ts';
+import { scheduleRoutes } from './schedule/schedule-routes.ts';
 import { unscheduleRoutes } from './schedule/unschedule.ts';
 
 export function postRoutes(deps: PostRouteDeps): BoundRoute[] {

@@ -5,7 +5,7 @@ import { policyRoutes } from './approval-policy/policy-routes.ts';
 import { approvalRoutes } from './approvals/routes.ts';
 import { authenticate } from './auth/authenticate.ts';
 import { passwordChangeRoutes } from './auth/password-change.ts';
-import { profileRoutes } from './auth/profile.ts';
+import { profileRoutes } from './auth/profile-routes.ts';
 import { reauthRoutes } from './auth/reauth.ts';
 import { authRoutes } from './auth/routes.ts';
 import { guardSession } from './auth/session-guard.ts';
