@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
 import { migrate } from './migrate.ts';
 
@@ -15,6 +15,16 @@ function loginUrl(ownerUrl: string, username: string, password: string): string 
   url.username = username;
   url.password = password;
   return url.toString();
+}
+
+async function stopContainer(container: StartedPostgreSqlContainer): Promise<void> {
+  try {
+    await container.stop();
+  } catch (error) {
+    // Docker can still report the container as running right after stop returns, so the remove gets a 409; stop() only caches success, so a second call removes it.
+    if ((error as { statusCode?: number }).statusCode !== 409) throw error;
+    await container.stop();
+  }
 }
 
 export async function startTestDatabase(): Promise<TestDatabase> {
@@ -42,12 +52,10 @@ export async function startTestDatabase(): Promise<TestDatabase> {
       ownerUrl,
       appUrl: loginUrl(ownerUrl, 'kronaut_app_login', appPassword),
       operatorUrl: loginUrl(ownerUrl, 'kronaut_operator_login', operatorPassword),
-      stop: async () => {
-        await container.stop();
-      },
+      stop: () => stopContainer(container),
     };
   } catch (error) {
-    await container.stop();
+    await stopContainer(container);
     throw error;
   }
 }
