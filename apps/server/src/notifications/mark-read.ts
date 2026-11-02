@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError, type IssueDetail } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { type Owner, ownerOf, unreadCount } from './owner.ts';
 
 const MAX_IDS = 100;

@@ -1,4 +1,4 @@
-import type { BoundRoute } from '../http/types.ts';
+import type { BoundRoute } from '../http/request.ts';
 import type { PostRouteDeps } from '../posts/deps.ts';
 import { destinationCancelRoutes } from './cancel.ts';
 import { markPublishedRoutes } from './mark-published.ts';

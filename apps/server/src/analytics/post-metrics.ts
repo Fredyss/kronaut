@@ -3,7 +3,7 @@ import { encodePublicId, POST_METRICS, type PostMetric } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { PostParams, pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { postResource } from '../post-access/units.ts';
 import { storedValue } from './store.ts';
 

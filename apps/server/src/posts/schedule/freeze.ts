@@ -11,7 +11,7 @@ import type { DB, TenantDb } from '@kronaut/db';
 import { sql, type UpdateObject } from 'kysely';
 import { APPROVAL_UNBOUND } from '../../approvals/binding.ts';
 import { HttpError, type IssueDetail } from '../../http/errors.ts';
-import type { ProviderEntry, ProviderRegistry } from '../../providers.ts';
+import type { ProviderEntry, ProviderRegistry } from '../../providers/providers.ts';
 import {
   contentHashInput,
   draftItems,
@@ -19,7 +19,7 @@ import {
   resolveDestination,
   SNAPSHOT_V,
   unsignedHashInput,
-} from '../../snapshot.ts';
+} from '../../publish/snapshot.ts';
 import { loadContent, mediaSnapshot } from './content.ts';
 
 // A new schedule is a new publish. Checkpoints and the attempt budget belong to the previous one.

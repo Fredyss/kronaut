@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { type EffectivePolicy, effectivePolicy } from '../approval-policy/policy.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../http/request.ts';
 import { postApprovedEvent, postRejectedEvent } from '../webhooks/events.ts';
 import { ApprovalRequestSchema, readRequest } from './dto.ts';
 import {

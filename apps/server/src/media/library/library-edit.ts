@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { auditActor } from '../../audit/write.ts';
 import { HttpError } from '../../http/errors.ts';
-import type { RequestContext } from '../../http/types.ts';
+import type { RequestContext } from '../../http/request.ts';
 import { ALT_TEXT_MAX } from '../dto.ts';
 import { MediaError } from '../errors.ts';
 import { referenced } from './library.ts';

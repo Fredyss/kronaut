@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { TenantDb } from '@kronaut/db';
 import { auditActor, writeDestinationAudit } from '../../audit/write.ts';
-import type { RequestContext } from '../../http/types.ts';
+import type { RequestContext } from '../../http/request.ts';
 import { dequeuePublish } from '../../jobs/jobs.ts';
 import { destinationRef, type LockedDestination, type PostRef } from '../../post-access/locks.ts';
 import { transition } from '../../publish/transition.ts';

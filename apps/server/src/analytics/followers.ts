@@ -7,7 +7,7 @@ import {
 import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { ChannelRef } from '../channels/channel-ref.ts';
-import { createBaseContext, type ProviderEntry } from '../providers.ts';
+import { createBaseContext, type ProviderEntry } from '../providers/providers.ts';
 import {
   errorFields,
   metricValue,

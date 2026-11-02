@@ -34,7 +34,7 @@ import {
   viewerAuth,
   workspaceId,
 } from '../posts/testing.ts';
-import { createProviderRegistry } from '../providers.ts';
+import { createProviderRegistry } from '../providers/providers.ts';
 import { publishDeps, runPublish } from '../publish/task.ts';
 import { pullAnalytics } from './pull.ts';
 

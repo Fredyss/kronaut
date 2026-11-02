@@ -4,7 +4,7 @@ import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { HttpError } from '../../http/errors.ts';
 import { ExpectedVersion, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/request.ts';
 import { dequeuePublish } from '../../jobs/jobs.ts';
 import {
   bumpPost,

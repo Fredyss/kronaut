@@ -9,7 +9,7 @@ import { type Actor, actorSetting, type TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../http/errors.ts';
-import type { RequestContext } from '../../http/types.ts';
+import type { RequestContext } from '../../http/request.ts';
 import { schedulerPrincipal } from '../../publish/principal.ts';
 
 export class OwnerLost extends Error {

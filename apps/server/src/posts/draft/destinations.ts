@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { HttpError } from '../../http/errors.ts';
 import type { PostRef } from '../../post-access/locks.ts';
 import { scopeUnit } from '../../post-access/units.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import type { Resolving } from '../deps.ts';
 import { UNFROZEN } from '../schedule/freeze.ts';
 

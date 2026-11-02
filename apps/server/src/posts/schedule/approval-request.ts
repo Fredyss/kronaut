@@ -11,7 +11,7 @@ import { announce } from '../../approvals/locked.ts';
 import { HttpError } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
 import { InstantFields, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/request.ts';
 import {
   bumpPost,
   type CurrentPost,
@@ -20,7 +20,7 @@ import {
   lockDestinations,
 } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { postApprovalRequestedEvent } from '../../webhooks/events.ts';
 import type { PostRouteDeps } from '../deps.ts';
 import { PostSchema, readPost } from '../read/dto.ts';

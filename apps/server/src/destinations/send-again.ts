@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import type { LockedDestination } from '../post-access/locks.ts';
 import type { PostRouteDeps } from '../posts/deps.ts';
 import { restartPublishProgress } from '../posts/draft/destinations.ts';

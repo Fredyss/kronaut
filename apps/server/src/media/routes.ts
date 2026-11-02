@@ -3,7 +3,7 @@ import { decodePublicId, type IdKind } from '@kronaut/core';
 import type { MediaStore } from '@kronaut/media';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import type { MediaSigner } from './access.ts';
 import { MediaAssetSchema } from './dto.ts';
 import { MediaError } from './errors.ts';

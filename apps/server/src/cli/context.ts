@@ -3,7 +3,7 @@ import { CredentialError, keyringFromEnv } from '@kronaut/credentials';
 import { createDatabase, type Database } from '@kronaut/db';
 import { type CliLocale, type CliMessages, cliLocale, cliMessages } from '@kronaut/i18n/cli';
 import { pino } from 'pino';
-import { requireEnv } from '../config.ts';
+import { requireEnv } from '../config/config.ts';
 import { CommandError, UsageError } from './errors.ts';
 
 export const logger = pino({ base: null });

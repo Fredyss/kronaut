@@ -2,7 +2,7 @@ import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { parseArgs } from 'node:util';
 import { Temporal } from 'temporal-polyfill';
-import { envValue, requireEnv } from '../config.ts';
+import { envValue, requireEnv } from '../config/config.ts';
 import { type ExportDeps, exportArchive } from './backup/export.ts';
 import { importArchive } from './backup/import.ts';
 import { spawnPgTools } from './backup/pg-tools.ts';

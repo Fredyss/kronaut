@@ -9,11 +9,13 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { authenticate } from '../../auth/authenticate.ts';
 import { hashPassword } from '../../auth/password.ts';
 import { authRoutes } from '../../auth/routes.ts';
 import { SESSION_COOKIE } from '../../auth/session.ts';
+import { guardSession } from '../../auth/session-guard.ts';
 import { HttpError } from '../errors.ts';
-import { bindRoute } from '../types.ts';
+import { bindRoute } from '../request.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
@@ -91,6 +93,8 @@ beforeAll(async () => {
     clock: () => NOW,
     publicBaseUrl: BASE,
     readiness: async () => true,
+    authenticate,
+    guardSession,
   };
   const insertBrand = (slug: string) =>
     sql`insert into brands (workspace_id, name, slug) values (${workspaceId}, ${slug}, ${slug})`;

@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import { SELF_ACTION } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
-import { bindRoute } from '../types.ts';
+import { bindRoute } from '../request.ts';
 import { routeRegistry } from './registry.ts';
 
 describe('startup checks', () => {

@@ -7,8 +7,8 @@ import { Temporal } from 'temporal-polyfill';
 import { persistConnection } from '../src/channels/connect.ts';
 import { registerBluesky } from '../src/cli/provider-apps.ts';
 import { createOwner } from '../src/cli/users.ts';
-import type { Env } from '../src/config.ts';
-import { purposeKey } from '../src/crypto.ts';
+import type { Env } from '../src/config/config.ts';
+import { purposeKey } from '../src/crypto/crypto.ts';
 import { CHANNEL, OWNER, TIME_ZONE } from './env.ts';
 
 export interface SeedInput {

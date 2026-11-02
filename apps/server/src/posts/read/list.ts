@@ -4,8 +4,8 @@ import { type AccessScope, decodePublicId, encodePublicId } from '@kronaut/core'
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { pathId } from '../../http/params.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { iso, plainLocal } from '../../http/time.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
 import { excerptOf, loadMains, visibleIn } from '../../post-access/reads.ts';
 import { loadPostTags, type PostTagRow, tagFields } from '../../tags/read.ts';
 import { type PostSummaryDto, PostSummarySchema } from './dto.ts';

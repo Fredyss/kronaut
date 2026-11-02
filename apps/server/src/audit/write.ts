@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Principal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../http/errors.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 import type { LockedDestination, PostRef } from '../post-access/locks.ts';
 
 export async function auditActor(trx: TenantDb, workspaceId: string, principal: Principal | null) {

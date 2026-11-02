@@ -1,7 +1,7 @@
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { copyPostTags } from '../../tags/read.ts';
 import type { Owned, OwnerActing } from '../owner/owner.ts';
 import { insertDraft } from './create.ts';

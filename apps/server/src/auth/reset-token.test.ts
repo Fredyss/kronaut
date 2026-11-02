@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
-import { purposeKey } from '../crypto.ts';
+import { purposeKey } from '../crypto/crypto.ts';
 import { issueResetToken, passwordBinding, verifyResetToken } from './reset-token.ts';
 
 const KEY = purposeKey(randomBytes(32), 'reset-token/v1');

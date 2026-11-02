@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { HttpError } from '../../http/errors.ts';
 import { pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { postUnits } from '../../post-access/units.ts';
 import { PostSchema, readPost } from './dto.ts';
 

@@ -6,7 +6,7 @@ import type { Temporal } from 'temporal-polyfill';
 import { seedsPulls } from '../../analytics/seed.ts';
 import type { DestinationJob } from '../../jobs/jobs.ts';
 import { lockPost } from '../../post-access/lock.ts';
-import { PROVIDER_EGRESS } from '../../providers.ts';
+import { PROVIDER_EGRESS } from '../../providers/providers.ts';
 import { applyPlan, type PlanContext } from '../apply.ts';
 import { currentItem, selectItems } from '../chain.ts';
 import { unconfirmedIfBlocked } from '../plan.ts';

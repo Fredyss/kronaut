@@ -1,4 +1,4 @@
-import type { BoundRoute } from '../http/types.ts';
+import type { BoundRoute } from '../http/request.ts';
 import { bindChannelMetrics } from './channel-metrics.ts';
 import { bindPostMetrics } from './post-metrics.ts';
 

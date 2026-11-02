@@ -2,8 +2,8 @@ import { defineRoute } from '@kronaut/contract';
 import { decodePublicId, isProviderFailure, type ProviderApp } from '@kronaut/core';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { bindRoute, type RequestContext } from '../http/types.ts';
-import type { ProviderEntry } from '../providers.ts';
+import { bindRoute, type RequestContext } from '../http/request.ts';
+import type { ProviderEntry } from '../providers/providers.ts';
 import {
   newState,
   sealPending,

@@ -1,5 +1,4 @@
 import { CONTENT_HASH_V } from '@kronaut/compose';
-import { defineRoute } from '@kronaut/contract';
 import {
   type ApprovalStatus,
   PUBLISH_DEADLINE_MS,
@@ -13,29 +12,22 @@ import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { type Binding, bindingColumns, resolveApproval } from '../../approvals/binding.ts';
 import { HttpError } from '../../http/errors.ts';
-import { ExpectedVersion, InstantFields, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { ExpectedVersion, InstantFields } from '../../http/params.ts';
+import type { RequestContext } from '../../http/request.ts';
 import { enqueuePublish } from '../../jobs/jobs.ts';
 import {
   bumpPost,
   type CurrentPost,
-  checkVersion,
   destinationRef,
   type LockedDestination,
-  lockCurrent,
-  lockDestinations,
 } from '../../post-access/locks.ts';
-import { postUnits } from '../../post-access/units.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { approvalStatus } from '../../publish/principal.ts';
 import { type DestinationUpdate, transition } from '../../publish/transition.ts';
 import { recordPostSettlement } from '../../webhooks/events.ts';
-import type { PostRouteDeps } from '../deps.ts';
 import { discardPublishProgress, type ProgressReset } from '../draft/destinations.ts';
-import { PostSchema, readPost } from '../read/dto.ts';
 import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
 import { RepeatInput } from './repeat.ts';
-import { startSeries } from './series-start.ts';
 import {
   draftTargets,
   earliest,
@@ -56,32 +48,18 @@ export const ScheduleCommon = {
     .optional(),
 };
 
-export const postScheduleRoute = defineRoute({
-  id: 'posts.schedule',
-  method: 'POST',
-  path: '/v1/workspaces/:workspaceId/posts/:postId/schedule',
-  auth: ['session', 'grant'],
-  action: 'posts:schedule',
-  params: PostParams,
-  body: z.discriminatedUnion('mode', [
-    z.object({
-      ...ScheduleCommon,
-      mode: z.literal('instant'),
-      ...InstantFields,
-      repeat: RepeatInput.optional(),
-    }),
-    z.strictObject({ ...ScheduleCommon, mode: z.literal('asap') }),
-    z.strictObject({ ...ScheduleCommon, mode: z.literal('queue') }),
-  ]),
-  response: PostSchema,
-  idempotency: true,
-  summary: 'Schedule a post',
-  description:
-    "Freezes every draft destination and schedules it, at a local time in a time zone, as soon as possible, or at the next free slot of each destination's channel queue (422 queue_empty or queue_full names the channel). With repeat (instant only) the post becomes occurrence 1 of a series that starts at that local time (422 invalid_repeat; 409 when the post is already in a series).",
-  tags: ['posts'],
-});
+export const ScheduleInput = z.discriminatedUnion('mode', [
+  z.object({
+    ...ScheduleCommon,
+    mode: z.literal('instant'),
+    ...InstantFields,
+    repeat: RepeatInput.optional(),
+  }),
+  z.strictObject({ ...ScheduleCommon, mode: z.literal('asap') }),
+  z.strictObject({ ...ScheduleCommon, mode: z.literal('queue') }),
+]);
 
-type ScheduleBody = z.output<typeof postScheduleRoute.body>;
+type ScheduleBody = z.output<typeof ScheduleInput>;
 
 export type ScheduleActor = Pick<RequestContext, 'principal' | 'now' | 'authorize'>;
 
@@ -227,35 +205,4 @@ export async function scheduleLocked(
   }
   await recordPostSettlement(trx, workspaceId, postId);
   return version;
-}
-
-export function scheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
-  return [
-    bindRoute(postScheduleRoute, async ({ params, body }, ctx) => {
-      const workspaceId = pathId('workspace', params.workspaceId);
-      const postId = pathId('post', params.postId);
-      const post = await ctx.tenant(async (trx) => {
-        const locked = await lockCurrent(trx, workspaceId, postId);
-        const units = await postUnits(trx, workspaceId, locked);
-        const auth = await authorizeSchedule(trx, ctx, { workspaceId, locked, units });
-        checkVersion(locked, body.expectedVersion);
-        const rows = await lockDestinations(trx, workspaceId, postId);
-        const run: ScheduleRun = {
-          providers: deps.providers,
-          now: ctx.now,
-          workspaceId,
-          locked,
-          auth,
-          body,
-        };
-        await scheduleLocked(trx, run, rows);
-        if (body.mode === 'instant' && body.repeat !== undefined) {
-          const resource = { workspaceId, postId, units };
-          await startSeries(trx, ctx, { resource, body, repeat: body.repeat });
-        }
-        return await readPost(trx, workspaceId, postId);
-      });
-      return { body: post };
-    }),
-  ];
 }

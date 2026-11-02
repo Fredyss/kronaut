@@ -11,7 +11,7 @@ import type { Actor, TenantDb } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import { Temporal } from 'temporal-polyfill';
 import { sweepCron } from '../jobs/workspace-sweep.ts';
-import { createBaseContext, type ProviderEntry } from '../providers.ts';
+import { createBaseContext, type ProviderEntry } from '../providers/providers.ts';
 import { pullFollowers } from './followers.ts';
 import { stepInside, windowHoursOf } from './seed.ts';
 import {

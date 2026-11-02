@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import { sql } from 'kysely';
 import * as z from 'zod';
 import { ExpectedVersion } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { bumpPost, destinationRef } from '../post-access/locks.ts';
 import { PostSchema, readPost } from '../posts/read/dto.ts';
 import { transition } from '../publish/transition.ts';

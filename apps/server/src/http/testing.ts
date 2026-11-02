@@ -8,17 +8,17 @@ import { sql } from 'kysely';
 import { type Logger, pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { expect } from 'vitest';
+import { API_BODY_LIMITS, API_SIGN_IN, apiRoutes } from '../api-routes.ts';
 import { hashGrantToken } from '../auth/grant.ts';
 import { hashPassword } from '../auth/password.ts';
 import { SESSION_COOKIE } from '../auth/session.ts';
 import type { CronTask } from '../jobs/cron-tasks.ts';
 import { createMediaSigner, type MediaSigner } from '../media/access.ts';
 import { createStaging, type Staging } from '../media/staging.ts';
-import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';
-import { API_BODY_LIMITS, apiRoutes } from './api-routes.ts';
+import { createProviderRegistry, type ProviderRegistry } from '../providers/providers.ts';
 import type { AccessGate } from './caller/access.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './pipeline/kernel.ts';
-import type { BoundRoute } from './types.ts';
+import type { BoundRoute } from './request.ts';
 
 export const BASE = 'https://kronaut.example.test';
 export const PASSWORD = 'correct horse battery';
@@ -82,6 +82,7 @@ export function createTestInstance({
     publicBaseUrl: BASE,
     instanceAdmins,
     readiness: async () => true,
+    ...API_SIGN_IN,
     routeBodyLimits: API_BODY_LIMITS,
     ...(access === undefined ? {} : { access }),
   };

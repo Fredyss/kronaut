@@ -8,15 +8,15 @@ import type {
 } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { loadCredential, loadProviderApp } from '../credentials/credential-store.ts';
-import type { ProviderEntry } from '../providers.ts';
+import type { ProviderEntry } from '../providers/providers.ts';
+import type { CurrentInput } from './chain.ts';
 import {
   draftItems,
   parseSnapshot,
   publishItems,
   type ResolvedDestination,
   resolveDestination,
-} from '../snapshot.ts';
-import type { CurrentInput } from './chain.ts';
+} from './snapshot.ts';
 import type { PublishDeps } from './task.ts';
 
 export interface InputAccount {

@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import * as z from 'zod';
 import { HttpError } from '../../http/errors.ts';
 import { ExpectedVersion, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import {
   bumpPost,
   checkVersion,

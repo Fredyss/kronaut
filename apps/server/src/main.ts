@@ -1,6 +1,6 @@
 import { installGlobalDispatcher } from '@kronaut/egress';
 import { pino } from 'pino';
-import { ConfigError, loadServerConfig, type ServerConfig } from './config.ts';
+import { ConfigError, loadServerConfig, type ServerConfig } from './config/config.ts';
 import { startServer } from './start.ts';
 
 const SHUTDOWN_TIMEOUT_MS = 30_000;

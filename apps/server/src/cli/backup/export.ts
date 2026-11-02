@@ -13,7 +13,7 @@ import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import tar from 'tar-stream';
 import type { Temporal } from 'temporal-polyfill';
-import { ConfigError } from '../../config.ts';
+import { ConfigError } from '../../config/config.ts';
 import { CommandError } from '../errors.ts';
 import {
   ARCHIVE_FORMAT,
