@@ -1,5 +1,5 @@
 import type { BoundRoute } from '../http/types.ts';
-import { requestRoutes } from './approval-request.ts';
+import { approvalRequestRoutes } from './approval-request.ts';
 import { cancelRoutes } from './cancel.ts';
 import { createRoutes } from './create.ts';
 import { deleteRoutes } from './delete.ts';
@@ -24,6 +24,6 @@ export function postRoutes(deps: PostRouteDeps): BoundRoute[] {
     ...cancelRoutes(),
     ...deleteRoutes(),
     ...duplicateRoutes(deps),
-    ...requestRoutes(deps),
+    ...approvalRequestRoutes(deps),
   ];
 }

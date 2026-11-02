@@ -160,7 +160,7 @@ export async function openApprovalRequest(
   return requestId;
 }
 
-export function requestRoutes(deps: PostRouteDeps): BoundRoute[] {
+export function approvalRequestRoutes(deps: PostRouteDeps): BoundRoute[] {
   return [
     bindRoute(requestApprovalRoute, async ({ params, body }, ctx) => {
       const workspaceId = pathId('workspace', params.workspaceId);
