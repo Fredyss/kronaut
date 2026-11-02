@@ -26,9 +26,17 @@ const BASE_FOLDERS = new Set([
   'web/ui',
 ]);
 const SRC_ROOT_FILE = /^apps\/(?:server|web)\/src\/[^/]+$/;
-const WEB_ROOT_FILE = /^apps\/web\/src\/[^/]+$/;
 const TEST_FILE = /\.test\.tsx?$/;
-const WEB_ENTRYPOINTS = new Set(['apps/web/src/app.tsx', 'apps/web/src/main.tsx']);
+const ROOT_ENTRYPOINTS = new Set([
+  'apps/server/src/api-routes.ts',
+  'apps/server/src/cli.ts',
+  'apps/server/src/cron.ts',
+  'apps/server/src/main.ts',
+  'apps/server/src/openapi.ts',
+  'apps/server/src/start.ts',
+  'apps/web/src/app.tsx',
+  'apps/web/src/main.tsx',
+]);
 const CREDENTIAL_PACKAGE = /^(?:packages\/credentials\/|@kronaut\/credentials(?:\/|$))/;
 const CREDENTIAL_STORES = /^apps\/server\/src\/credentials\//;
 const SERVER_ENTRYPOINTS = new Set(['apps/server/src/start.ts', 'apps/server/src/openapi.ts']);
@@ -195,7 +203,7 @@ export function baseLeaks(graph: ImportGraph): string[] {
 export function rootFiles(graph: ImportGraph): string[] {
   return [...graph.keys()]
     .filter(
-      (file) => WEB_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !WEB_ENTRYPOINTS.has(file),
+      (file) => SRC_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !ROOT_ENTRYPOINTS.has(file),
     )
     .sort();
 }

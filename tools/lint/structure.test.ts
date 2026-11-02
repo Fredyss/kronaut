@@ -62,7 +62,7 @@ describe('repo structure', () => {
     expect(baseLeaks(graph)).toEqual([]);
   });
 
-  it('keeps only entrypoints in the web src root', () => {
+  it('keeps only entrypoints and wiring in the src roots', () => {
     expect(rootFiles(graph)).toEqual([]);
   });
 
@@ -202,7 +202,7 @@ describe('the structure rules', () => {
     ]);
   });
 
-  it('flags a shared module in the web src root', () => {
+  it('flags a shared module in a src root', () => {
     const files = [
       'apps/web/src/app.tsx',
       'apps/web/src/main.tsx',
@@ -211,9 +211,18 @@ describe('the structure rules', () => {
       'apps/web/src/testing.tsx',
       'apps/web/src/compose/form.tsx',
       'apps/server/src/config.ts',
+      'apps/server/src/main.ts',
+      'apps/server/src/api-routes.ts',
+      'apps/server/src/start.db.test.ts',
+      'apps/server/src/posts/routes.ts',
+      'packages/core/src/index.ts',
     ];
     const graph: ImportGraph = new Map(files.map((file) => [file, []]));
-    expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts', 'apps/web/src/testing.tsx']);
+    expect(rootFiles(graph)).toEqual([
+      'apps/server/src/config.ts',
+      'apps/web/src/foo.ts',
+      'apps/web/src/testing.tsx',
+    ]);
   });
 
   it('flags a source directory with more than 25 counted files', () => {
