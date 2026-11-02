@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import { setTimeout } from 'node:timers/promises';
+import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
 import { migrate } from './migrate.ts';
 
@@ -15,6 +16,23 @@ function loginUrl(ownerUrl: string, username: string, password: string): string 
   url.username = username;
   url.password = password;
   return url.toString();
+}
+
+const STOP_ATTEMPTS = 3;
+const STOP_RETRY_MS = 500;
+
+// Docker can still report the container as running right after stop returns, so the remove gets a 409; stop() only caches success, so a later call removes it.
+async function stopContainer(container: StartedPostgreSqlContainer): Promise<void> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await container.stop();
+      return;
+    } catch (error) {
+      const conflict = (error as { statusCode?: number }).statusCode === 409;
+      if (!conflict || attempt === STOP_ATTEMPTS) throw error;
+      await setTimeout(STOP_RETRY_MS * attempt);
+    }
+  }
 }
 
 export async function startTestDatabase(): Promise<TestDatabase> {
@@ -42,12 +60,10 @@ export async function startTestDatabase(): Promise<TestDatabase> {
       ownerUrl,
       appUrl: loginUrl(ownerUrl, 'kronaut_app_login', appPassword),
       operatorUrl: loginUrl(ownerUrl, 'kronaut_operator_login', operatorPassword),
-      stop: async () => {
-        await container.stop();
-      },
+      stop: () => stopContainer(container),
     };
   } catch (error) {
-    await container.stop();
+    await stopContainer(container).catch(() => undefined);
     throw error;
   }
 }
