@@ -3,11 +3,11 @@ import { useId } from 'react';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../locale/i18n.ts';
 import { EditNotes } from './edit-notes.tsx';
-import { Failure } from './failure.tsx';
-import { REPEAT_ROLES } from './repeat.ts';
+import { Failure } from './submit/failure.tsx';
 import type { OpenedCompose, useComposeForm } from './use-compose-form.ts';
-import { submitLabel } from './when.ts';
-import { ModeOption, WhenFieldset } from './when-fieldset.tsx';
+import { REPEAT_ROLES } from './when/repeat.ts';
+import { submitLabel } from './when/when.ts';
+import { ModeOption, WhenFieldset } from './when/when-fieldset.tsx';
 
 type FormState = ReturnType<typeof useComposeForm>;
 

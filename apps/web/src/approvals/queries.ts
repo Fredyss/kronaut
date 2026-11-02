@@ -7,7 +7,7 @@ import {
 } from '@kronaut/sdk';
 import { type QueryClient, queryOptions } from '@tanstack/react-query';
 import { detailCodes, errorCode } from '../api/errors.ts';
-import type { ComposeWhen } from '../compose/submit.ts';
+import type { ComposeWhen } from '../compose/submit/submit.ts';
 import { notificationsKey } from '../notifications/queries.ts';
 import { postKey, postsKey } from '../posts/queries.ts';
 

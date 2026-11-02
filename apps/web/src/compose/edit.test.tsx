@@ -13,7 +13,7 @@ import {
   warmUp,
 } from './testing.tsx';
 
-vi.mock('./editor.tsx', async () => ({
+vi.mock('./content/editor.tsx', async () => ({
   default: (await import('./testing.tsx')).MockEditor,
 }));
 

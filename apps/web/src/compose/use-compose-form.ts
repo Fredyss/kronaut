@@ -8,9 +8,9 @@ import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
 import { type Post, postKey, postsKey } from '../posts/queries.ts';
 import type { PostTag } from '../tags/tags.ts';
-import { formFingerprint } from './draft-body.ts';
+import { useContents } from './content/use-contents.ts';
 import type { OpenedForm } from './from-post.ts';
-import { useOpenedWhen } from './opened-when.ts';
+import { formFingerprint } from './submit/draft-body.ts';
 import {
   emptyProblem,
   goneProblem,
@@ -19,13 +19,13 @@ import {
   planInput,
   toPlan,
   videoProblem,
-} from './plan.ts';
-import { useQueueChoice } from './queue-choice.ts';
-import { type RepeatControl, useRepeatControl } from './repeat.ts';
-import { type ComposeInput, createSubmitter, type OpenedPost } from './submit.ts';
-import { refusedForApproval, SubmitError } from './submit-error.ts';
-import { useContents } from './use-contents.ts';
-import { resolveWhen, type WhenState } from './when.ts';
+} from './submit/plan.ts';
+import { type ComposeInput, createSubmitter, type OpenedPost } from './submit/submit.ts';
+import { refusedForApproval, SubmitError } from './submit/submit-error.ts';
+import { useOpenedWhen } from './when/opened-when.ts';
+import { useQueueChoice } from './when/queue-choice.ts';
+import { type RepeatControl, useRepeatControl } from './when/repeat.ts';
+import { resolveWhen, type WhenState } from './when/when.ts';
 
 type When = ReturnType<typeof resolveWhen>;
 

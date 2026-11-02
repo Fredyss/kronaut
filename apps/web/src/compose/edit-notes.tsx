@@ -3,7 +3,7 @@ import { useLocale } from '../locale/context.ts';
 import type { Post } from '../posts/queries.ts';
 import { providerUi } from '../providers/ui.ts';
 import type { OpenedCompose } from './use-compose-form.ts';
-import type { Mode } from './when.ts';
+import type { Mode } from './when/when.ts';
 
 function seriesLine({ seriesId, scheduleLocal, destinations }: Post, mode: Mode): string | null {
   if (seriesId === null) return null;

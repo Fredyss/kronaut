@@ -7,7 +7,7 @@ import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
 import { ApprovalSection } from '../approvals/panel.tsx';
 import { type Channel, channelsQuery } from '../channels/queries.ts';
-import { docParagraphs, docText, isBlank, toDoc } from '../compose/doc.ts';
+import { docParagraphs, docText, isBlank, toDoc } from '../compose/content/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../locale/format.ts';
