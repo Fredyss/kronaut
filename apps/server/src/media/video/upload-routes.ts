@@ -1,14 +1,14 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { MediaAssetSchema } from './dto.ts';
+import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { MediaAssetSchema } from '../dto.ts';
 import {
   FilenameSchema,
   internalId,
   MEDIA_UPLOAD_BODY_LIMIT,
   MEDIA_UPLOAD_ROUTE_ID,
-} from './routes.ts';
-import type { Staging } from './staging.ts';
+} from '../routes.ts';
+import type { Staging } from '../staging.ts';
 import { completeUpload, createVideoUpload, receivePart, VIDEO_PART_SIZE } from './upload.ts';
 
 export const VIDEO_PART_ROUTE_ID = 'media.video_part';

@@ -1,9 +1,11 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import type { MediaSigner } from './access.ts';
-import { ALT_TEXT_MAX, findMediaAsset } from './dto.ts';
-import { MediaError } from './errors.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import type { MediaSigner } from '../access.ts';
+import { ALT_TEXT_MAX, findMediaAsset } from '../dto.ts';
+import { MediaError } from '../errors.ts';
+import { findLibraryAsset, LibraryAssetSchema } from '../preview.ts';
+import { internalId } from '../routes.ts';
 import {
   LIBRARY_DEFAULT_LIMIT,
   LIBRARY_MAX_LIMIT,
@@ -15,8 +17,6 @@ import {
   usageOf,
 } from './library.ts';
 import { clearAiGenerated, normalizeAltText, softDelete, updateAltText } from './library-edit.ts';
-import { findLibraryAsset, LibraryAssetSchema } from './preview.ts';
-import { internalId } from './routes.ts';
 
 const WORKSPACE = z.object({ workspaceId: z.string() });
 const ASSET = z.object({ workspaceId: z.string(), mediaId: z.string() });

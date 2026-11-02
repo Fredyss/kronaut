@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { detectImageFormat, sniffImage } from './sniff.ts';
 import {
   bytes,
   jpegFixture,
@@ -16,7 +15,8 @@ import {
   vp8xChunk,
   webpExtendedFixture,
   webpFile,
-} from './testing.ts';
+} from '../testing.ts';
+import { detectImageFormat, sniffImage } from './sniff.ts';
 
 function sniffed(input: Uint8Array) {
   const result = sniffImage(input);

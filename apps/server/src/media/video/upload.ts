@@ -1,12 +1,12 @@
 import { randomBytes } from 'node:crypto';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import type { RequestContext } from '../http/types.ts';
-import { enqueueMediaProcess } from '../jobs/jobs.ts';
-import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from './dto.ts';
-import { MediaError } from './errors.ts';
-import { grantAiLock, originalName } from './ingest.ts';
-import type { Staging } from './staging.ts';
+import type { RequestContext } from '../../http/types.ts';
+import { enqueueMediaProcess } from '../../jobs/jobs.ts';
+import { MEDIA_ASSET_COLUMNS, type MediaAssetDto, toMediaAssetDto } from '../dto.ts';
+import { MediaError } from '../errors.ts';
+import { grantAiLock, originalName } from '../ingest.ts';
+import type { Staging } from '../staging.ts';
 
 export const VIDEO_MAX_BYTES = 300 * 1000 * 1000;
 export const VIDEO_PART_SIZE = 8 * 1024 * 1024;
