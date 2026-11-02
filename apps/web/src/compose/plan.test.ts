@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Channel, Destination } from '../api.ts';
+import type { Channel } from '../api.ts';
+import type { Destination } from '../posts/queries.ts';
 import { type Contents, EMPTY_CONTENTS } from './contents.ts';
 import { toPlan } from './plan.ts';
 import type { ContentsState } from './use-contents.ts';

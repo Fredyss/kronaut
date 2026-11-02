@@ -5,9 +5,9 @@ import { useCallback, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { useApiClient } from '../api/client.ts';
 import { detailCodes, errorCode, errorStatus } from '../api/errors.ts';
-import { type Post, type PostList, type PostSummary, postsKey } from '../api.ts';
-import { BUSY } from '../destinations.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
+import { BUSY } from '../posts/destinations.ts';
+import { type Post, type PostList, type PostSummary, postsKey } from '../posts/queries.ts';
 import { currentInstant, today } from './time.ts';
 
 const ATTEMPTS = 2;

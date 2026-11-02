@@ -1,6 +1,6 @@
 import { createApiClient } from '@kronaut/sdk';
 import { describe, expect, it } from 'vitest';
-import type { Post } from '../api.ts';
+import type { Post } from '../posts/queries.ts';
 import { EMPTY_DOC } from './doc.ts';
 import { formFingerprint } from './draft-body.ts';
 import { type ComposeInput, type ComposeWhen, createSubmitter } from './submit.ts';

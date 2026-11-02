@@ -3,8 +3,8 @@ import { toast } from '@kronaut/ui';
 import type { QueryClient } from '@tanstack/react-query';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, keyFor } from '../api/idempotency.ts';
-import { postKey, postsKey } from '../api.ts';
 import { apiErrorMessage } from '../locale/i18n.ts';
+import { postKey, postsKey } from '../posts/queries.ts';
 
 export interface DuplicateRun {
   readonly client: Client;

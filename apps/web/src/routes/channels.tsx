@@ -14,9 +14,9 @@ import { QUEUE_ROLES } from '../channels/queue.ts';
 import { SearchToasts } from '../channels/search-toasts.tsx';
 import { ChannelSignature } from '../channels/signature.tsx';
 import { statusLabel } from '../channels/status-label.ts';
-import { httpsUrl } from '../destinations.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
+import { httpsUrl } from '../posts/destinations.ts';
 import { providerUi } from '../providers.ts';
 
 const Followers = lazy(() =>

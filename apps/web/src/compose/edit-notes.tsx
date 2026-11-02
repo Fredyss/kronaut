@@ -1,6 +1,6 @@
-import type { Post } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { useLocale } from '../locale/context.ts';
+import type { Post } from '../posts/queries.ts';
 import { providerUi } from '../providers.ts';
 import type { OpenedCompose } from './use-compose-form.ts';
 import type { Mode } from './when.ts';

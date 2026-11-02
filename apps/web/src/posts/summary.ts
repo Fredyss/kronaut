@@ -1,5 +1,5 @@
-import type { Post } from './api.ts';
-import { m } from './locale/i18n.ts';
+import { m } from '../locale/i18n.ts';
+import type { Post } from './queries.ts';
 
 export function summaryLabel(summary: Post['publishSummary']): string {
   switch (summary) {

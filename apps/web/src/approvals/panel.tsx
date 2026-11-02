@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { type Me, meQuery } from '../api/me.ts';
-import type { Post } from '../api.ts';
 import { m } from '../locale/i18n.ts';
+import type { Post } from '../posts/queries.ts';
 import type { PostScope } from './actions.ts';
 import { RequestApproval, ScheduleApproved, ScheduleUnbound } from './follow-up.tsx';
 import { DecideActions, WithdrawAction } from './open-actions.tsx';

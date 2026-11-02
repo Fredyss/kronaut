@@ -1,8 +1,8 @@
 import { type Client, type TagsListResponse, tagsList } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
 import { errorCode } from '../api/errors.ts';
-import type { Post } from '../api.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
+import type { Post } from '../posts/queries.ts';
 
 export type PostTag = Post['tags'][number];
 export type Tag = TagsListResponse['items'][number];

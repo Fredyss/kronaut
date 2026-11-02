@@ -4,7 +4,6 @@ import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
-import type { Post } from '../api.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ComposeBar } from '../compose/compose-bar.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
@@ -16,6 +15,7 @@ import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../locale/i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
+import type { Post } from '../posts/queries.ts';
 
 export { PostEdit } from '../compose/post-edit.tsx';
 

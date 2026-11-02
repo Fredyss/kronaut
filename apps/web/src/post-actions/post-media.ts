@@ -1,7 +1,7 @@
 import { type Client, type MediaGetResponse, mediaGet } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
 import { errorStatus } from '../api/errors.ts';
-import type { Post } from '../api.ts';
+import type { Post } from '../posts/queries.ts';
 
 export type MediaAsset = MediaGetResponse;
 

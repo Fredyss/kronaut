@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { lazy, type ReactNode, Suspense, useMemo, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
-import type { PostSummary } from '../api.ts';
+import type { PostSummary } from '../posts/queries.ts';
 import { type EntryActions, EntryActionsContext, type EntryDialog } from './entry-menu.tsx';
 
 const load = () => import('../post-actions/entry-actions.tsx');

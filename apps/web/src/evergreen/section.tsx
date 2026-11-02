@@ -12,8 +12,9 @@ import { useId, useRef } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
-import { type Channel, type Post, postKey } from '../api.ts';
+import type { Channel } from '../api.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
+import { type Post, postKey } from '../posts/queries.ts';
 
 export const EVERGREEN_ROLES: ReadonlySet<string> = new Set(['owner', 'admin', 'editor']);
 

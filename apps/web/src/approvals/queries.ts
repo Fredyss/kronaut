@@ -7,8 +7,9 @@ import {
 } from '@kronaut/sdk';
 import { type QueryClient, queryOptions } from '@tanstack/react-query';
 import { detailCodes, errorCode } from '../api/errors.ts';
-import { notificationsKey, postKey, postsKey } from '../api.ts';
+import { notificationsKey } from '../api.ts';
 import type { ComposeWhen } from '../compose/submit.ts';
+import { postKey, postsKey } from '../posts/queries.ts';
 
 export type PolicyResponse = ApprovalsPolicyResponse;
 

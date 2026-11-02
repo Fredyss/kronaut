@@ -9,7 +9,7 @@ import { m as mediaText } from '../i18n/media.ts';
 import { useLocale } from '../locale/context.ts';
 import { useFormat } from '../locale/format.ts';
 import { m } from '../locale/i18n.ts';
-import { summaryLabel } from '../post-summary.ts';
+import { summaryLabel } from '../posts/summary.ts';
 import { formatBytes, kindLabel } from './format.ts';
 import { type LibraryAsset, type UsagePost, usageQuery } from './queries.ts';
 import { AiBadge } from './tile.tsx';

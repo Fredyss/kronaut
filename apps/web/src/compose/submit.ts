@@ -8,8 +8,8 @@ import {
 } from '@kronaut/sdk';
 import { errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
-import type { Destination, Post } from '../api.ts';
 import { approvalBody } from '../approvals/queries.ts';
+import type { Destination, Post } from '../posts/queries.ts';
 import type { Repeat } from '../series/rule-text.ts';
 import type { Doc } from './doc.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';

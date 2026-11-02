@@ -1,5 +1,6 @@
-import type { Channel, Destination } from '../api.ts';
+import type { Channel } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
+import type { Destination } from '../posts/queries.ts';
 import { providerUi } from '../providers.ts';
 import { choiceFor } from './choice.ts';
 import { type Content, effective } from './contents.ts';

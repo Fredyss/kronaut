@@ -8,23 +8,11 @@ import {
   destinationsNeedsAction,
   type NotificationsListResponse,
   notificationsList,
-  type PostsGetResponse,
-  type PostsListResponse,
-  postsGet,
-  postsList,
 } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
-import { NEEDS_ACTION_POLL_MS } from './destinations.ts';
+import { NEEDS_ACTION_POLL_MS } from './posts/destinations.ts';
 
 export type Channel = ChannelsListResponse['items'][number];
-
-export type Post = PostsGetResponse;
-
-export type Destination = Post['destinations'][number];
-
-export type PostList = PostsListResponse;
-
-export type PostSummary = PostList['items'][number];
 
 export type NeedsAction = DestinationsNeedsActionResponse;
 
@@ -64,53 +52,6 @@ export function channelMetricsQuery(
     queryKey: ['channel-metrics', workspaceId, channelId, query.from, query.to],
     queryFn: async () =>
       (await analyticsChannelMetrics({ client, path: { workspaceId, channelId }, query })).data,
-  });
-}
-
-export function postKey(workspaceId: string, postId: string) {
-  return ['posts', workspaceId, postId] as const;
-}
-
-export function postQuery(client: Client, workspaceId: string, postId: string) {
-  return queryOptions({
-    queryKey: postKey(workspaceId, postId),
-    queryFn: async () => (await postsGet({ client, path: { workspaceId, postId } })).data,
-  });
-}
-
-export function postsKey(workspaceId: string) {
-  return ['posts', workspaceId] as const;
-}
-
-function tagQuery(tag: string | undefined) {
-  return tag === undefined ? {} : { tag };
-}
-
-export function postsRangeQuery(
-  client: Client,
-  workspaceId: string,
-  { from, to }: DayRange,
-  tag?: string,
-) {
-  return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'range', from, to, tag],
-    queryFn: async () =>
-      (await postsList({ client, path: { workspaceId }, query: { from, to, ...tagQuery(tag) } }))
-        .data,
-  });
-}
-
-export function draftsQuery(client: Client, workspaceId: string, tag?: string) {
-  return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'unscheduled', tag],
-    queryFn: async () =>
-      (
-        await postsList({
-          client,
-          path: { workspaceId },
-          query: { unscheduled: 'true', ...tagQuery(tag) },
-        })
-      ).data,
   });
 }
 
