@@ -38,6 +38,7 @@ Use this table before you create a file or move one.
 ## Imports
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
+- **No import loop between server feature folders, `http` files and `src` root files (checked).** The check builds a folder graph from production value imports, where each `http` file and `src` root file is a node of its own. So a loop through `http/authenticate.ts` or `cron.ts` fails, while `api-routes.ts` mounting every feature doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) sets the tiers that keep it so; the check catches loops only, not imports against the tier order.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
@@ -88,6 +89,6 @@ These rules bind new code, but existing code still breaks them:
 - `post-actions/compose-dialog.tsx` imports a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Modules other features import that also define routes: `posts/schedule.ts`, `channels/disconnect.ts`, `auth/profile.ts`.
-- Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review. [Scheduling flow](14-scheduling-flow.md) plans the server fix. The web loop spans 8 folders (`approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions`, `saved-texts`); a web chapter will set its direction.
+- Web feature folders import each other in a loop. A loop between server folders fails the check; between web folders, the declared list only makes a new one visible in review. The web loop spans 8 folders (`approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions`, `saved-texts`); a web chapter will set its direction.
 - Directories above 25 source files: `web/compose` (51), `server/media` (31), `server/posts` (30), `server/http` (29), `server/publish` (26). Each gets its own split; the check lands with the last one.
 - Shared UI outside its home: `settings/card.tsx` is a primitive used by `system`, `approvals` and `routes`; `settings/switch.tsx` is used by `routes`; `approvals/password-dialog.tsx` is used by `channels` and `media`; the select styling is a `SELECT` class string in `locale/select.tsx`, used by 7 other files, plus an inline copy in `approvals/policy-form.tsx`. `post-actions/modal.tsx` is a primitive too, though only `post-actions` uses it so far.

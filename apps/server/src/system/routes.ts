@@ -1,13 +1,13 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { requireSession } from '../auth/events.ts';
+import { isInstanceAdmin } from '../auth/instance-admins.ts';
 import { readUser } from '../auth/profile.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import type { CronTask } from '../jobs/cron-tasks.ts';
 import type { ProviderRegistry } from '../providers.ts';
-import { isInstanceAdmin } from './instance-admins.ts';
 import {
   CronStatusSchema,
   cronStatus,

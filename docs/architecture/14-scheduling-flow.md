@@ -2,7 +2,7 @@
 
 Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals`, `approval-policy` or `publish`.
 
-**Status:** target. PRs 1 to 4 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
+**Status:** done. All five PRs below are done, and `pnpm check` keeps the server folders free of loops. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
 
 ## The flow
 
@@ -42,7 +42,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
 | Base | `http`, `@kronaut/core` | Request helpers, pure domain and time |
 
-`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the rule above and the loop counts below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`.
+`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `authenticate.ts` and `session-guard.ts` read `auth`. So the loop counts for PRs 1 to 4 below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`. The check from PR 5 keeps each `http` file and `src` root file as its own node instead, so a loop through one of them fails too. Measured that way, `main` before PR 5 still had only `auth` and `system`.
 
 `publish` already never imports `posts`. That stays: the worker knows destinations, not the editing flow.
 
@@ -69,9 +69,9 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
 | 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, as `approval-request.ts`, `series-start.ts` and `repeat.ts`. `approvalRequestRoutes` is mounted from `posts` and `approvals/routes.ts` stops mounting it; otherwise `approvals` still imports `posts` and the loop stays. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. It sits beside `approvals`, not inside it: `approvals` still imports `notifications`, so a subfolder would keep the loop. | `auth` and `system` |
-| 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
+| 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle. It keeps each `http` and `src` root file as its own node, so `api-routes.ts` mounting every feature isn't a loop, but a loop through `authenticate.ts` or `cron.ts` is. | None, and `pnpm check` keeps it so |
 
-After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measured `approvals` and `notifications`, plus `auth` and `system`. After PR 4 only `auth` and `system` are left, as planned.
+After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measured `approvals` and `notifications`, plus `auth` and `system`. After PR 4 only `auth` and `system` were left, and after PR 5 there are none.
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
 
@@ -80,7 +80,7 @@ After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `p
 - **Lock order:** the post comes first, then its destinations or approval request. Moving a function doesn't change the order it locks in.
 - **`transition` stays in `publish`.** It writes notifications, and `notifications` reads through `post-access`, so moving it down would rebuild the loop.
 - **`approvalStatus` stays in `publish/principal.ts`,** because the claim re-checks it.
-- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and 27 after PR 2. PR 3 brought in 3, so it has 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so its split into subfolders comes after PR 5, when the loop check is in.
+- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and 27 after PR 2. PR 3 brought in 3, so it has 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so it gets split into subfolders next, with the loop check in place.
 
 ## Rejected
 
