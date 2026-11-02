@@ -9,17 +9,18 @@ Which way imports run between the server folders that carry a post from draft to
 ```text
 draft ──> pick a time ──> freeze ──> approval ──> scheduled ──> publish ──> analytics
            (queue)        (posts)   (approvals)                 (publish)
-             ^
-             └── series and evergreen re-enter here, acting as the post's owner
+                             ^
+                             └── series and evergreen re-enter here, acting as the post's owner,
+                                 through scheduleOrRequest in posts/owner-schedule.ts
 ```
 
 ## The problem
 
-Files have no import cycle, but folders do: 11 of them form one loop. Most links carry no scheduling logic:
+Files have no import cycle, but folders do. Measured at `e58af2a`, before PR 1, 11 of them formed one loop. Most links carry no scheduling logic:
 
 - **Generic helpers live in `posts`.** `pathId`, `unprocessable`, `iso` and `zodDetails` tie `notifications`, `analytics` and `system` to `posts`, and `system` brings in `auth` and `channels`.
 - **Row access is split.** `lockPost` is in `publish`, `lockCurrent` and `postUnits` are in `posts`, and every feature needs them.
-- **Three folders have two halves.** `queue`, `series` and `approvals` each hold rules that scheduling consults and flows that call scheduling:
+- **Two folders have two halves.** `series` and `approvals` each hold rules that scheduling consults and flows that call scheduling (`queue` imports `posts` only for row access and the time helpers, both covered below):
   - `series/start.ts` sits below `posts/schedule.ts`; `series/step.ts` sits above it.
   - `approvals/binding.ts` sits below it; `approvals/request.ts` is its twin.
 - **`freeze.ts` also holds the time helpers.** `queue`, `series` and `evergreen` import it only for `resolveLocal` or `Schedule`.
@@ -47,12 +48,15 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 
 ## Where new code goes
 
-- **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that calls `scheduleOrRequest` as the owner, like `evergreen`.
+- **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that schedules as the owner through `posts/owner-schedule.ts`, like `evergreen`.
 - **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts` calls.
 - **It reshapes a draft** (signatures, templates): `posts`, or its own folder below `posts` if it needs its own routes and tables.
 - **It reads or locks a post for another feature:** `post-access`.
 
-Every time and approval decision keeps going through `scheduleLocked` or `openApprovalRequest`, so a new entry point inherits freeze, binding and the audit trail.
+Every time and approval decision keeps going through `scheduleLocked` or `openApprovalRequest`, so a new entry point inherits freeze, binding and the audit trail. An owner acting on its own, such as a series step or an evergreen copy, goes through `posts/owner-schedule.ts`:
+- `needsRequest` comes first. It says yes when the policy asks for approval or an agent wrote the content (`agent_dirty`), and the owner then opens a request with `requestAsOwner`.
+- Otherwise `scheduleOrRequest` schedules, and falls back to a request when scheduling still needs approval.
+- `scheduleOrRequest` alone skips the agent check. Only a post whose newest request is already approved goes straight to it.
 
 ## Moves
 
@@ -63,7 +67,7 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | Today | | 11 folders |
 | 1. Helpers | `params.ts`, `unprocessable`, `iso`, `plainLocal`, `invalid`, `InstantFields` to `http`, and `zodDetails` replaced by `issueDetails` there. `Resolving` stays in `posts`, in `deps.ts`. `resolveLocal`, `scheduleAt`, `Schedule`, `TzResolution` to `@kronaut/core`. `posts/audit.ts` to `audit/`. | 8 folders, plus `auth` and `system` |
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
-| 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, with `requestRoutes` mounted there. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
+| 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`. `requestRoutes` is mounted from `posts` and `approvals/routes.ts` stops mounting it; otherwise `approvals` still imports `posts` and the loop stays. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |
 | 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
 
@@ -76,7 +80,7 @@ After PR 2 the folder loops measure 5 folders, `approvals`, `notifications`, `po
 - **Lock order:** the post comes first, then its destinations or approval request. Moving a function doesn't change the order it locks in.
 - **`transition` stays in `publish`.** It writes notifications, and `notifications` reads through `post-access`, so moving it down would rebuild the loop.
 - **`approvalStatus` stays in `publish/principal.ts`,** because the claim re-checks it.
-- **`posts` stays large.** It goes from 30 non-test files to 28 by PR 3. Its split into subfolders comes after PR 5, when the check is in.
+- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and has 27 after PR 2. PR 3 brings in 3, so it ends PR 3 at 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so its split into subfolders comes after PR 5, when the loop check is in.
 
 ## Rejected
 
@@ -87,4 +91,4 @@ After PR 2 the folder loops measure 5 folders, `approvals`, `notifications`, `po
 
 ## Out of scope
 
-The web knot `compose`, `approvals`, `channels`, `post-actions` needs its own look.
+The web loop needs its own look. Measured after the web root moved into owner folders, it spans 8 folders: `approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions` and `saved-texts`.

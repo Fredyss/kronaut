@@ -11,7 +11,7 @@ interface PackageJson {
 
 const STATIC_IMPORT =
   /^(?:import|export)\s+(?!type\b)(?:(?:[\w$]+\s*,?\s*)?(?:\{[^{}]*\}|\*(?:\s+as\s+[\w$]+)?)?\s*from\s+)?'([^']+)'/gm;
-const DYNAMIC_IMPORT = /\bimport\(\s*'([^']+)'\s*\)/g;
+const DYNAMIC_IMPORT = /\bimport\(\s*(?:'([^']+)'|`([^`$]+)`)\s*\)/g;
 const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
@@ -20,6 +20,18 @@ const BASE_FOLDERS = new Set(['web/api', 'web/locale', 'web/ui']);
 const WEB_ROOT_FILE = /^apps\/web\/src\/[^/]+$/;
 const TEST_FILE = /\.test\.tsx?$/;
 const WEB_ENTRYPOINTS = new Set(['apps/web/src/app.tsx', 'apps/web/src/main.tsx']);
+const CREDENTIAL_PACKAGE = /^(?:packages\/credentials\/|@kronaut\/credentials(?:\/|$))/;
+const CREDENTIAL_STORES = /^apps\/server\/src\/credentials\//;
+const SERVER_ENTRYPOINTS = new Set(['apps/server/src/start.ts', 'apps/server/src/openapi.ts']);
+const KEYRING_USERS = new Set(['server/credentials', 'server/cli']);
+const CREDENTIAL_READERS = new Set([
+  'server/credentials',
+  'server/publish',
+  'server/channels',
+  'server/analytics',
+  'server/meta',
+  'server/cli',
+]);
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
@@ -30,7 +42,7 @@ export function isTesting(path: string): boolean {
 
 export function valueImports(source: string): string[] {
   return [...source.matchAll(STATIC_IMPORT), ...source.matchAll(DYNAMIC_IMPORT)].flatMap(
-    (match) => match[1] ?? [],
+    (match) => match[1] ?? match[2] ?? [],
   );
 }
 
@@ -150,6 +162,26 @@ export function rootFiles(graph: ImportGraph): string[] {
   return [...graph.keys()]
     .filter(
       (file) => WEB_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !WEB_ENTRYPOINTS.has(file),
+    )
+    .sort();
+}
+
+function mayImport(file: string, target: string): boolean {
+  const feature = featureFile(file)?.feature ?? '';
+  if (CREDENTIAL_PACKAGE.test(target))
+    return SERVER_ENTRYPOINTS.has(file) || KEYRING_USERS.has(feature);
+  if (CREDENTIAL_STORES.test(target)) return CREDENTIAL_READERS.has(feature);
+  return true;
+}
+
+export function credentialLeaks(graph: ImportGraph): string[] {
+  return [...graph]
+    .flatMap(([file, targets]) =>
+      isTesting(file) || NOT_SHIPPED.test(file) || file.startsWith('packages/credentials/')
+        ? []
+        : targets
+            .filter((target) => !mayImport(file, target))
+            .map((target) => `${file} -> ${target}`),
     )
     .sort();
 }

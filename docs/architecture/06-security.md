@@ -92,7 +92,7 @@
   - **Keys:** fetched at boot, and boot fails without them. They are refetched hourly, and immediately on an unknown `kid` (at most once per 60 s); a failed refetch keeps the last good set.
   - **Identity:** Access is an outer gate only. The session or grant is still required, and the Access identity is not matched to the user.
 - **Owner mode:**
-  - The registration route is registered only when entitlements enables registration; the `MODE` check lives in `apps/server/src/entitlements/`.
+  - The registration route is registered only when entitlements enables registration; the `MODE` check will live in `apps/server/src/entitlements/` (planned; there's no registration route or `MODE` check yet).
   - `kronaut user create --owner --email <e> --name <n> --workspace <name> --timezone <tz>` creates the owner without a password, provisions the organization and workspace (`provision_organization`), and prints the same one-time link as a reset.
   - `kronaut user reset-password <email>` prints a 15-min one-time link and revokes every session of the user. No CLI command takes a password, on argv or stdin.
   - **The one-time link** is `<KRONAUT_PUBLIC_URL>/reset-password#token=…`; `POST /v1/auth/password {token, password}` (public) consumes it, and the web page comes with the Phase 1 UI.
