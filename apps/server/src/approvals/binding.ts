@@ -1,9 +1,18 @@
 import type { ApprovalStatus, Schedule } from '@kronaut/core';
-import type { TenantDb } from '@kronaut/db';
+import type { DB, TenantDb } from '@kronaut/db';
+import type { UpdateObject } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { unprocessable } from '../http/issues.ts';
-import { APPROVAL_UNBOUND, type Frozen } from '../posts/freeze.ts';
+import type { Frozen } from '../posts/freeze.ts';
 import type { DestinationUpdate } from '../publish/transition.ts';
+
+export const APPROVAL_UNBOUND: UpdateObject<DB, 'post_destinations'> = {
+  approval_request_id: null,
+  approval_schedule_bound: null,
+  approved_scheduled_local: null,
+  approved_scheduled_tz: null,
+  approved_tolerance_min: null,
+};
 
 export interface ApprovedSlot {
   readonly shownLocal: string;

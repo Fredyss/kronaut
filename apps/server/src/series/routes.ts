@@ -7,7 +7,7 @@ import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { ownerColumns } from '../posts/owner.ts';
-import { RepeatInput, repeatOf } from './repeat.ts';
+import { RepeatInput, repeatOf } from '../posts/repeat.ts';
 import {
   changeSeries,
   findSeries,

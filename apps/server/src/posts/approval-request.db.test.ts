@@ -2,7 +2,20 @@ import { decodePublicId, encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import {
+  addMember,
+  destinationsOf,
+  type Member,
+  notificationsFor,
+  openRequestOf,
+  requestCall,
+  requested,
+  requestsOf,
+  setPolicy,
+  webhookEventsOf,
+  withdrawCall,
+} from '../approvals/testing.ts';
+import type { PostDto } from './dto.ts';
 import {
   accountA,
   accountB,
@@ -20,19 +33,6 @@ import {
   startPosts,
   stopPosts,
   TZ,
-} from '../posts/testing.ts';
-import {
-  addMember,
-  destinationsOf,
-  type Member,
-  notificationsFor,
-  openRequestOf,
-  requestCall,
-  requested,
-  requestsOf,
-  setPolicy,
-  webhookEventsOf,
-  withdrawCall,
 } from './testing.ts';
 
 let test: TestDatabase;

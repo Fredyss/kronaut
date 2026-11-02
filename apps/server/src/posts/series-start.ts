@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import type { RequestContext } from '../http/types.ts';
-import { ownerColumns } from '../posts/owner.ts';
+import { ownerColumns } from './owner.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 
 export interface SeriesStart {

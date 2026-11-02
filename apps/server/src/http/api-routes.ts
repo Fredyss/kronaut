@@ -65,7 +65,7 @@ export function apiRoutes({
     ...importRoutes(),
     ...postRoutes({ providers }),
     ...destinationRoutes({ providers }),
-    ...approvalRoutes({ providers }),
+    ...approvalRoutes(),
     ...queueRoutes(),
     ...seriesRoutes(),
     ...evergreenRoutes(),
