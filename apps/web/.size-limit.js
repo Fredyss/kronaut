@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 
 const ASSETS = 'dist/web/assets';
+const HASHED = /^-[\w-]{8}\.js$/;
 
 // Only what index.html loads is the shell; chunks shared by lazy routes arrive later and are budgeted apart.
 // The preloaded English catalog is budgeted with the other catalogs.
@@ -22,7 +23,7 @@ const LAZY = {
   'en messages JS': ['en', '12 KB'],
   'sk messages JS': ['sk', '13 KB'],
   'cs messages JS': ['cs', '13 KB'],
-  'composer route JS': ['compose', '40 KB'],
+  'composer route JS': [['compose', 'compose-page'], '40 KB'],
   'post status route JS': ['post', '40 KB'],
   'calendar route JS': ['calendar', '40 KB'],
   'inbox route JS': ['inbox', '40 KB'],
@@ -46,25 +47,32 @@ const LAZY = {
   ...Object.fromEntries(ROUTE_CATALOGS),
 };
 
+const ASSET_FILES = readdirSync(ASSETS).filter((file) => file.endsWith('.js'));
+
+// A glob like post-*.js would also catch post-media-*.js, so match the chunk name exactly.
+function namedChunks(names) {
+  return ASSET_FILES.filter((file) =>
+    [names].flat().some((name) => file.startsWith(name) && HASHED.test(file.slice(name.length))),
+  ).map((file) => `${ASSETS}/${file}`);
+}
+
 function sharedLazyChunks(shell) {
-  const named = Object.values(LAZY).map(([prefix]) => `${prefix}-`);
-  return readdirSync(ASSETS)
-    .filter((file) => file.endsWith('.js'))
-    .map((file) => `${ASSETS}/${file}`)
-    .filter((path) => !shell.includes(path))
-    .filter((path) => !named.some((prefix) => path.startsWith(`${ASSETS}/${prefix}`)));
+  const named = Object.values(LAZY).flatMap(([names]) => namedChunks(names));
+  return ASSET_FILES.map((file) => `${ASSETS}/${file}`).filter(
+    (path) => !shell.includes(path) && !named.includes(path),
+  );
 }
 
 const shell = shellChunks();
 
 export default [
   { name: 'shell JS', path: shell, limit: '140 KB', gzip: true },
-  ...Object.entries(LAZY).map(([name, [prefix, limit]]) => ({
+  ...Object.entries(LAZY).map(([name, [names, limit]]) => ({
     name,
-    path: `${ASSETS}/${prefix}-*.js`,
+    path: namedChunks(names),
     limit,
     gzip: true,
   })),
-  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '30 KB', gzip: true },
+  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '31 KB', gzip: true },
   { name: 'CSS', path: `${ASSETS}/*.css`, limit: '25 KB', gzip: true },
 ];

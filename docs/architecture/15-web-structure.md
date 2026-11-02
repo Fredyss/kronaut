@@ -40,7 +40,7 @@ A feature in tiers 1 to 7 imports another feature only through a line in [`featu
 ## Wiring
 
 - **`app.tsx`** builds the route tree: paths, `validateSearch`, `beforeLoad`, and which route file each route loads, lazily unless the page is in the shell. It also creates the query client and the router.
-- **`routes/`** holds one file per page, which re-exports that page from its feature, plus `locale-root.tsx` (the locale gate around the router) and `not-found.tsx`.
+- **`routes/`** holds one file per page, which re-exports that page from its feature, including `not-found.tsx` (from `shell/`), plus `locale-root.tsx`, the locale gate around the router.
 - **`i18n/`** holds the message catalogs of the route groups (`compose`, `calendar`, `media`, `inbox`, `settings`). A file imports a group only if every route that loads it belongs to that group (checked by `i18n/route-catalogs.test.ts`).
 - **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files (checked).
 
@@ -48,7 +48,7 @@ Each file in `routes/` and `i18n/` is a node of its own in the folder check, so 
 
 ## Route files
 
-A route file re-exports the page its route loads, and nothing else (checked: it may not import `@tanstack/react-query` or `api/client.ts`). The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, reading through a feature's query options:
+A route file re-exports the page its route loads, and nothing else (checked: it holds only `export { … } from` lines). The one exception, `locale-root.tsx`, may not import `@tanstack/react-query` or `api/client.ts` (checked). The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, reading through a feature's query options:
 
 ```tsx
 // app.tsx
