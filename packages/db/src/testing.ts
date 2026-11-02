@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { setTimeout } from 'node:timers/promises';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
 import { migrate } from './migrate.ts';
@@ -17,13 +18,20 @@ function loginUrl(ownerUrl: string, username: string, password: string): string 
   return url.toString();
 }
 
+const STOP_ATTEMPTS = 3;
+const STOP_RETRY_MS = 500;
+
+// Docker can still report the container as running right after stop returns, so the remove gets a 409; stop() only caches success, so a later call removes it.
 async function stopContainer(container: StartedPostgreSqlContainer): Promise<void> {
-  try {
-    await container.stop();
-  } catch (error) {
-    // Docker can still report the container as running right after stop returns, so the remove gets a 409; stop() only caches success, so a second call removes it.
-    if ((error as { statusCode?: number }).statusCode !== 409) throw error;
-    await container.stop();
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await container.stop();
+      return;
+    } catch (error) {
+      const conflict = (error as { statusCode?: number }).statusCode === 409;
+      if (!conflict || attempt === STOP_ATTEMPTS) throw error;
+      await setTimeout(STOP_RETRY_MS * attempt);
+    }
   }
 }
 
@@ -55,7 +63,7 @@ export async function startTestDatabase(): Promise<TestDatabase> {
       stop: () => stopContainer(container),
     };
   } catch (error) {
-    await stopContainer(container);
+    await stopContainer(container).catch(() => undefined);
     throw error;
   }
 }
