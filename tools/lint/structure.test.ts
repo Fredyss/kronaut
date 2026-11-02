@@ -6,6 +6,7 @@ import {
   credentialLeaks,
   featureImports,
   findCycles,
+  folderCycles,
   type ImportGraph,
   isTesting,
   misplacedTests,
@@ -50,6 +51,10 @@ describe('repo structure', () => {
     expect(featureImports(graph)).toEqual((JSON.parse(declared) as string[]).sort());
   });
 
+  it('has no import loop between server feature folders', () => {
+    expect(folderCycles(featureImports(graph), 'server')).toEqual([]);
+  });
+
   it('keeps base folders free of feature imports', () => {
     expect(baseLeaks(graph)).toEqual([]);
   });
@@ -86,6 +91,22 @@ describe('the structure rules', () => {
       'web/inbox -> compose/form.tsx',
       'web/inbox -> routes/post.tsx',
     ]);
+  });
+
+  it('finds a loop between folders of one app from the declared imports', () => {
+    const imports = [
+      'server/posts -> approvals/binding.ts',
+      'server/approvals -> notifications/write.ts',
+      'server/notifications -> posts/dto.ts',
+      'server/notifications -> http/errors.ts',
+      'server/series -> posts/owner.ts',
+      'server/tags -> media/import/fetch.ts',
+      'web/compose -> calendar/grid.tsx',
+      'web/calendar -> compose/form.tsx',
+    ];
+    expect(folderCycles(imports, 'server')).toEqual([['approvals', 'notifications', 'posts']]);
+    expect(folderCycles(imports, 'web')).toEqual([['calendar', 'compose']]);
+    expect(folderCycles(imports.slice(1), 'server')).toEqual([]);
   });
 
   it("flags a feature that imports another feature's route file", () => {

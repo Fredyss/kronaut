@@ -142,6 +142,19 @@ export function featureImports(graph: ImportGraph): string[] {
   return [...imports].sort();
 }
 
+export function folderCycles(imports: readonly string[], app: string): string[][] {
+  const folders = new Map<string, string[]>();
+  for (const line of imports) {
+    const [source = '', target = ''] = line.split(' -> ');
+    const [sourceApp, from] = source.split('/');
+    if (sourceApp !== app || from === undefined) continue;
+    const to = target.split('/')[0] ?? '';
+    folders.set(from, [...(folders.get(from) ?? []), to]);
+    if (!folders.has(to)) folders.set(to, []);
+  }
+  return findCycles(folders);
+}
+
 export function baseLeaks(graph: ImportGraph): string[] {
   return [...graph]
     .flatMap(([file, targets]) => {
