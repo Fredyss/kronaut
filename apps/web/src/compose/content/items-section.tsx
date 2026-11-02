@@ -3,11 +3,11 @@ import { lazy, type RefObject, Suspense, useId, useRef } from 'react';
 import type { Channel } from '../../channels/queries.ts';
 import { m as composeText } from '../../i18n/compose.ts';
 import { m } from '../../locale/i18n.ts';
+import { loadEditor, loadTextLimits } from '../load.ts';
 import { effective } from './contents.ts';
 import type { Doc } from './doc.ts';
 import type { PostEditorHandle } from './editor.tsx';
 import { type LimitItem, mainOnly, postTypeFor } from './items.ts';
-import { loadEditor, loadTextLimits } from './load.ts';
 import type { LimitTarget } from './text-limits.tsx';
 import type { ContentsState } from './use-contents.ts';
 

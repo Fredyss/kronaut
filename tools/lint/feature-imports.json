@@ -170,7 +170,7 @@
   "web/calendar -> analytics/roles.ts",
   "web/calendar -> channels/queries.ts",
   "web/calendar -> channels/status-label.ts",
-  "web/calendar -> compose/content/load.ts",
+  "web/calendar -> compose/load.ts",
   "web/calendar -> compose/search.ts",
   "web/calendar -> i18n/calendar.ts",
   "web/calendar -> post-actions/entry-actions.tsx",

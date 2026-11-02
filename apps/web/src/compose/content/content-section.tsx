@@ -3,12 +3,12 @@ import { lazy, type Ref, type RefObject, Suspense, useId, useRef, useState } fro
 import type { Channel } from '../../channels/queries.ts';
 import { m as composeText } from '../../i18n/compose.ts';
 import { useLocale } from '../../locale/context.ts';
+import { loadEditor, loadTextLimits } from '../load.ts';
 import { ImagesSection } from '../media/images-section.tsx';
 import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
 import type { PostEditorHandle } from './editor.tsx';
 import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
-import { loadEditor, loadTextLimits } from './load.ts';
 import { SavedTextMenu } from './saved-text-menu.tsx';
 import { SignatureToggle } from './signature-toggle.tsx';
 import { limitTargets } from './targets.ts';

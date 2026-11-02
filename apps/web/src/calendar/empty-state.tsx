@@ -1,6 +1,6 @@
 import { buttonVariants } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
-import { preloadEditor } from '../compose/content/load.ts';
+import { preloadEditor } from '../compose/load.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 
 export function EmptyState() {

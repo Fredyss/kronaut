@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { m as composeText } from '../../i18n/compose.ts';
-import { loadPreview } from './load.ts';
+import { loadPreview } from '../load.ts';
 import { previewTargets } from './targets.ts';
 import type { ContentsState } from './use-contents.ts';
 

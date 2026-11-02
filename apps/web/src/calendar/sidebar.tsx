@@ -6,7 +6,7 @@ import { Temporal } from 'temporal-polyfill';
 import { useApiClient } from '../api/client.ts';
 import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { statusLabel } from '../channels/status-label.ts';
-import { preloadEditor } from '../compose/content/load.ts';
+import { preloadEditor } from '../compose/load.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
