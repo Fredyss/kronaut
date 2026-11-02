@@ -398,6 +398,21 @@ describe('meta data deletion', () => {
     await refused('facebook', FB_SECRET);
   });
 
+  it('ignores a disabled app beside the usable one', async () => {
+    await root.withActor(CLI, (trx) =>
+      trx
+        .insertInto('provider_apps')
+        .values({ provider: 'instagram', client_id: 'retired', status: 'disabled' })
+        .execute(),
+    );
+    const response = await freshApp().request(`${BASE}/v1/meta/instagram/deauthorize`, {
+      method: 'POST',
+      headers: FORM,
+      body: new URLSearchParams({ signed_request: sign(payload(), IG_SECRET) }).toString(),
+    });
+    expect(response.status).toBe(204);
+  });
+
   it('never logs the signed request, the user id or a secret', () => {
     const logs = lines.join('\n');
     for (const secret of [USER_ID, FB_SECRET, IG_SECRET, TH_SECRET, sign(payload(), FB_SECRET)]) {
