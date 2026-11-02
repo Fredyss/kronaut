@@ -1,6 +1,6 @@
 import { m } from '../locale/i18n.ts';
-import type { Content } from './contents.ts';
-import { isBlank } from './doc.ts';
+import type { Content } from './content/contents.ts';
+import { isBlank } from './content/doc.ts';
 
 const ISSUES: Readonly<Record<string, () => string>> = {
   text_too_long: () => m.issue_text_too_long(),

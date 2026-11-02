@@ -3,7 +3,7 @@ import { Button } from '@kronaut/ui';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode } from '../api/errors.ts';
-import type { ScheduleWhen } from '../compose/submit.ts';
+import type { ScheduleWhen } from '../compose/submit/submit.ts';
 import { m } from '../locale/i18n.ts';
 import { type PostScope, useApprovalCall } from './actions.ts';
 import { approvalErrorMessage } from './messages.ts';

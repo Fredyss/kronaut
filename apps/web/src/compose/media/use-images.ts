@@ -1,0 +1,73 @@
+import { m as composeText } from '../../i18n/compose.ts';
+import { useLocale } from '../../locale/context.ts';
+import type { PickedImage } from '../content/contents.ts';
+import { fileProblem, MAX_IMAGE_BYTES, MAX_IMAGES, thumbnail } from './media.ts';
+
+type ImageList = readonly PickedImage[];
+
+type NewImage = PickedImage & { readonly file: File };
+
+export interface ImageTarget {
+  readonly images: ImageList;
+  readonly edit: (change: (images: ImageList) => ImageList) => void;
+  readonly setThumb: (id: string, thumb: string) => void;
+}
+
+function swap(images: ImageList, index: number, offset: -1 | 1): ImageList {
+  const target = index + offset;
+  const a = images[index];
+  const b = images[target];
+  if (a === undefined || b === undefined) return images;
+  const next = [...images];
+  next[index] = b;
+  next[target] = a;
+  return next;
+}
+
+export function useImages({ images, edit, setThumb }: ImageTarget) {
+  const { locale } = useLocale();
+  const maxSize = new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: 'megabyte',
+    maximumFractionDigits: 0,
+  }).format(MAX_IMAGE_BYTES / 1024 / 1024);
+
+  const pick = (files: readonly File[]): string[] => {
+    const found: string[] = [];
+    const accepted: NewImage[] = [];
+    const room = MAX_IMAGES - images.length;
+    for (const file of files) {
+      const problem = fileProblem(file);
+      if (problem === 'type') found.push(composeText.compose_image_bad_type({ name: file.name }));
+      else if (problem === 'size') {
+        found.push(composeText.compose_image_too_big({ name: file.name, max: maxSize }));
+      } else if (accepted.length >= room) {
+        found.push(composeText.compose_images_limit({ count: MAX_IMAGES }));
+        break;
+      } else
+        accepted.push({
+          id: crypto.randomUUID(),
+          file,
+          facts: file,
+          thumb: null,
+          altText: '',
+          aiGenerated: false,
+        });
+    }
+    if (accepted.length === 0) return found;
+    edit((current) => [...current, ...accepted]);
+    for (const image of accepted) {
+      void thumbnail(image.file).then((thumb) => {
+        if (thumb !== null) setThumb(image.id, thumb);
+      });
+    }
+    return found;
+  };
+  const update = (id: string, patch: Partial<Pick<PickedImage, 'altText' | 'aiGenerated'>>) =>
+    edit((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  const move = (index: number, offset: -1 | 1) => edit((current) => swap(current, index, offset));
+  const remove = (id: string) => edit((current) => current.filter((item) => item.id !== id));
+  return { images, maxSize, pick, update, move, remove };
+}
+
+export type ImagesState = ReturnType<typeof useImages>;

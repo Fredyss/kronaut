@@ -3,7 +3,7 @@ import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { COLD, channel, mount, type Override, post, warmUp } from '../compose/testing.tsx';
 
-vi.mock('../compose/editor.tsx', async () => ({
+vi.mock('../compose/content/editor.tsx', async () => ({
   default: (await import('../compose/testing.tsx')).MockEditor,
 }));
 

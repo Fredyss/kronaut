@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode } from '../api/errors.ts';
-import { formatDuration } from '../compose/video-text.ts';
+import { formatDuration } from '../compose/media/video-text.ts';
 import { m as mediaText } from '../i18n/media.ts';
 import { useLocale } from '../locale/context.ts';
 import { useFormat } from '../locale/format.ts';

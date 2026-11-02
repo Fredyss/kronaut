@@ -4,7 +4,7 @@ import type { Channel } from '../../channels/queries.ts';
 import { useLocale } from '../../locale/context.ts';
 import { m } from '../../locale/i18n.ts';
 import { providerUi } from '../../providers/ui.ts';
-import type { PickedImage } from '../contents.ts';
+import type { PickedImage } from '../content/contents.ts';
 import type { AspectRange } from './aspect.ts';
 
 export type PreviewImage = Pick<PickedImage, 'id' | 'thumb' | 'altText'>;

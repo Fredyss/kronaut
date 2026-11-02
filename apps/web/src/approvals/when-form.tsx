@@ -1,8 +1,8 @@
 import { Button } from '@kronaut/ui';
 import { useId, useState } from 'react';
-import type { ScheduleWhen } from '../compose/submit.ts';
-import { resolveWhen, submitLabel, useWhen } from '../compose/when.ts';
-import { WhenFieldset } from '../compose/when-fieldset.tsx';
+import type { ScheduleWhen } from '../compose/submit/submit.ts';
+import { resolveWhen, submitLabel, useWhen } from '../compose/when/when.ts';
+import { WhenFieldset } from '../compose/when/when-fieldset.tsx';
 import { m } from '../locale/i18n.ts';
 
 interface WhenFormProps {

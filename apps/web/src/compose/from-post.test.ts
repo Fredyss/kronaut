@@ -3,8 +3,8 @@ import type { Channel } from '../channels/queries.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
 import type { MediaAsset } from '../post-actions/post-media.ts';
 import type { Post } from '../posts/queries.ts';
-import { effective } from './contents.ts';
-import { docParagraphs } from './doc.ts';
+import { effective } from './content/contents.ts';
+import { docParagraphs } from './content/doc.ts';
 import { type FromPost, fromPost, type Refusal } from './from-post.ts';
 
 function doc(text: string) {

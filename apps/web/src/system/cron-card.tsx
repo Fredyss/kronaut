@@ -1,4 +1,4 @@
-import { formatDuration } from '../compose/video-text.ts';
+import { formatDuration } from '../compose/media/video-text.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { useLocale } from '../locale/context.ts';
 import { useFormat } from '../locale/format.ts';
