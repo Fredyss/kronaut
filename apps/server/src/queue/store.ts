@@ -5,7 +5,7 @@ import type { ChannelRef } from '../channels/channel-ref.ts';
 import type { RequestContext } from '../http/types.ts';
 import type { QueueSlot } from './slots.ts';
 
-export interface QueueChange {
+interface QueueChange {
   readonly timezone: string | null;
   readonly slots: readonly QueueSlot[];
 }
