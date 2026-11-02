@@ -11,7 +11,7 @@ Use this table before you create a file or move one.
 | Situation | Where it goes | Rule |
 |---|---|---|
 | A new concept | A new feature folder: `apps/<app>/src/<feature>/` | [Feature folders](#feature-folders) |
-| A sub-concept of a feature | A subfolder named for the sub-domain, inside that feature | [Feature folders](#feature-folders) |
+| A sub-concept of a feature | A subfolder named for the sub-domain, inside that feature. A sibling folder instead when a subfolder would keep a folder loop, like `approval-policy` | [Feature folders](#feature-folders), [Scheduling flow](14-scheduling-flow.md) |
 | A module a second feature needs | Logic stays with its owner, and the importing feature declares the import. A UI component moves to a shared home instead | [Imports](#imports), [Shared UI](#shared-ui) |
 | A styled UI primitive with no translated text | `packages/ui` | [Shared UI](#shared-ui) |
 | A UI piece used app-wide that shows translated text or reads app state | `apps/web/src/ui/` | [Shared UI](#shared-ui) |
