@@ -1,8 +1,8 @@
 import type { Database } from '@kronaut/db';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { type SessionRecord, slideSession, slideTarget } from '../auth/session.ts';
-import { HttpError } from './errors.ts';
+import { type SessionRecord, slideSession, slideTarget } from '../../auth/session.ts';
+import { HttpError } from '../errors.ts';
 
 export interface SessionRequest {
   readonly request: Request;

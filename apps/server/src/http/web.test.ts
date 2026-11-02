@@ -7,7 +7,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, describe, expect, it } from 'vitest';
 import { authRoutes } from '../auth/routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from './kernel.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps } from './pipeline/kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import { loadWebApp, webCsp } from './web.ts';
 

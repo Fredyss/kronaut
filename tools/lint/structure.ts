@@ -35,6 +35,9 @@ const CREDENTIAL_READERS = new Set([
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
+const SOURCE_DIR = /^(?:apps|packages)\/[^/]+\/src(?:\/|$)/;
+const UNCOUNTED = /\.(?:test|spec)\.[^/]+$/;
+const FOLDER_LIMIT = 25;
 
 export function isTesting(path: string): boolean {
   return /\.test\.tsx?$|(^|[/._-])testing([-./_]|$)/.test(path);
@@ -210,4 +213,18 @@ export function credentialLeaks(graph: ImportGraph): string[] {
 
 export function routeImports(graph: ImportGraph): string[] {
   return featureImports(graph).filter((line) => ROUTE_FILE.test(line));
+}
+
+export function oversizedFolders(files: Iterable<string>): string[] {
+  const counts = new Map<string, number>();
+  for (const file of files) {
+    const folder = dirname(file);
+    if (!SOURCE_DIR.test(folder) || !/\.tsx?$/.test(file)) continue;
+    if (UNCOUNTED.test(file) || GENERATED.test(file)) continue;
+    counts.set(folder, (counts.get(folder) ?? 0) + 1);
+  }
+  return [...counts]
+    .filter(([, count]) => count > FOLDER_LIMIT)
+    .map(([folder, count]) => `${folder} (${count})`)
+    .sort();
 }

@@ -10,6 +10,7 @@ import {
   type ImportGraph,
   isTesting,
   misplacedTests,
+  oversizedFolders,
   repoImportGraph,
   rootFiles,
   routeImports,
@@ -67,6 +68,10 @@ describe('repo structure', () => {
 
   it('lets only the named folders read credentials', () => {
     expect(credentialLeaks(graph)).toEqual([]);
+  });
+
+  it('keeps every source directory at 25 files or fewer', () => {
+    expect(oversizedFolders(graph.keys())).toEqual([]);
   });
 });
 
@@ -200,6 +205,34 @@ describe('the structure rules', () => {
     ];
     const graph: ImportGraph = new Map(files.map((file) => [file, []]));
     expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts', 'apps/web/src/testing.tsx']);
+  });
+
+  it('flags a source directory with more than 25 counted files', () => {
+    const many = (folder: string, count: number, ext = 'ts') =>
+      Array.from({ length: count }, (_, i) => `${folder}/f${i}.${ext}`);
+    const files = [
+      ...many('apps/server/src/posts', 26, 'tsx'),
+      ...many('packages/i18n/src/paraglide-cli', 26),
+      ...many('packages/db/src/gen', 26),
+      ...many('apps/server/src/jobs', 26, 'gen.ts'),
+      ...many('apps/web/src/compose', 24, 'tsx'),
+      'apps/web/src/compose/index.ts',
+      'apps/web/src/compose/form.test.tsx',
+      'apps/web/src/compose/form.spec.ts',
+      'apps/web/src/compose/env.d.ts',
+      'apps/web/src/compose/paraglide/messages.ts',
+      'apps/web/src/compose/media/drop.ts',
+      ...many('apps/web/src/calendar', 25),
+      'apps/web/src/calendar/index.ts',
+      ...many('packages/core/src', 26),
+      ...many('tools/lint', 30),
+      ...many('apps/server/e2e', 30),
+    ];
+    expect(oversizedFolders(files)).toEqual([
+      'apps/server/src/posts (26)',
+      'apps/web/src/calendar (26)',
+      'packages/core/src (26)',
+    ]);
   });
 
   it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {

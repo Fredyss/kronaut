@@ -15,7 +15,7 @@ import { expect } from 'vitest';
 import { hashGrantToken } from '../auth/grant.ts';
 import { activateKey, createKey } from '../cli/provider-apps.ts';
 import { loadCredential } from '../credentials/credential-store.ts';
-import type { AccessGate } from '../http/access.ts';
+import type { AccessGate } from '../http/caller/access.ts';
 import { BASE, createTestInstance, createTestUser, loginAs } from '../http/testing.ts';
 import { installJobQueue } from '../jobs/job-queue.ts';
 import { createProviderRegistry } from '../providers.ts';

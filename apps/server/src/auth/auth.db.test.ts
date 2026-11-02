@@ -7,7 +7,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { whileHeld } from '../testing/lock-wait.ts';
 import { hashPassword } from './password.ts';
 import { issueResetToken } from './reset-token.ts';

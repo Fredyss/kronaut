@@ -3,7 +3,7 @@ import { decodePublicId, ID_PREFIXES, type IdKind } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
-import { HttpError } from './errors.ts';
+import { HttpError } from '../errors.ts';
 
 export const IDEMPOTENCY_HEADER = 'idempotency-key';
 export const IDEMPOTENCY_RETENTION_MS = 24 * 60 * 60 * 1000;

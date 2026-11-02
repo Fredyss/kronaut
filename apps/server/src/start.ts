@@ -22,10 +22,10 @@ import {
   type ServerRole,
 } from './config.ts';
 import { cronItems, cronTaskList, cronTasks } from './cron.ts';
-import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/access.ts';
 import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
+import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/caller/access.ts';
 import { drain, listen } from './http/listen.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/pipeline/kernel.ts';
 import { loadWebApp } from './http/web.ts';
 import { type Heartbeat, startHeartbeat, workerAlive } from './jobs/heartbeat.ts';
 import { type LockSweep, openJobSession, startJobLocks } from './jobs/job-locks.ts';

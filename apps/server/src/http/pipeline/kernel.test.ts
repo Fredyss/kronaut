@@ -5,12 +5,12 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
-import type { AccessGate } from './access.ts';
-import { denyError } from './errors.ts';
+import type { AccessGate } from '../caller/access.ts';
+import { denyError } from '../errors.ts';
+import { systemRoutes } from '../system-routes.ts';
+import { type BoundRoute, bindRoute } from '../types.ts';
 import { accessExempt, createHttpApp, deriveHttpKeys, type HttpDeps } from './kernel.ts';
 import { createRouter } from './router.ts';
-import { systemRoutes } from './system-routes.ts';
-import { type BoundRoute, bindRoute } from './types.ts';
 
 const NOW = Temporal.Instant.from('2026-10-21T10:00:00Z');
 const BASE = 'https://kronaut.example.test';
