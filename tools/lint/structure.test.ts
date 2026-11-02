@@ -126,22 +126,27 @@ describe('the structure rules', () => {
     const vault = 'packages/credentials/src/index.ts';
     const store = 'apps/server/src/credentials/credential-store.ts';
     const server = (path: string) => `apps/server/src/${path}`;
+    const keyring = 'packages/credentials/src/keyring.ts';
     const imports: ImportGraph = new Map([
-      [server('start.ts'), [vault]],
+      [server('start.ts'), [vault, store]],
       [server('cli/context.ts'), [vault, store]],
       [server('publish/input.ts'), [store]],
       [server('credentials/credential-seal.ts'), [vault]],
       [server('posts/list.ts'), [store]],
       [server('channels/connect.ts'), [vault, store]],
       [server('main.ts'), [vault]],
+      [server('media/probe.ts'), [keyring, '@kronaut/credentials/envelope']],
       [server('posts/list.db.test.ts'), [store, vault]],
       ['apps/server/e2e/seed.ts', [vault]],
-      ['packages/credentials/src/keyring.ts', [vault]],
+      [keyring, [vault]],
     ]);
     expect(credentialLeaks(imports)).toEqual([
       'apps/server/src/channels/connect.ts -> packages/credentials/src/index.ts',
       'apps/server/src/main.ts -> packages/credentials/src/index.ts',
+      'apps/server/src/media/probe.ts -> @kronaut/credentials/envelope',
+      'apps/server/src/media/probe.ts -> packages/credentials/src/keyring.ts',
       'apps/server/src/posts/list.ts -> apps/server/src/credentials/credential-store.ts',
+      'apps/server/src/start.ts -> apps/server/src/credentials/credential-store.ts',
     ]);
   });
 
@@ -169,6 +174,8 @@ describe('the structure rules', () => {
       "export class F {}\nexport type { G } from './g.ts';",
       "import { /* it's */ h } from './h.ts';",
       "const lazy = () => import('./lazy.ts');",
+      'const quoted = () => import(`./quoted.ts`);',
+      'const built = (name: string) => import(`./${name}.ts`);',
     ].join('\n');
     expect(valueImports(source)).toEqual([
       './a.ts',
@@ -177,6 +184,7 @@ describe('the structure rules', () => {
       './d.ts',
       './h.ts',
       './lazy.ts',
+      './quoted.ts',
     ]);
   });
 
