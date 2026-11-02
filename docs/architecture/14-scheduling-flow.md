@@ -40,9 +40,9 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 6. Access | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
 | 7. Identity and events | `auth`, `webhooks` | Sessions and webhook events |
 | 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
-| Base | `http`, `@kronaut/core` | Request helpers, pure domain and time |
+| Base | `http`, `config`, `crypto`, `providers`, `@kronaut/core` | Request helpers, configuration, purpose keys and token hashing, the provider registry, pure domain and time |
 
-`http` is base and wiring at once. Every tier imports its helpers, but its wiring files import upward: `api-routes.ts` mounts the features, and `caller/authenticate.ts` and `caller/session-guard.ts` read `auth`. So the loop counts for PRs 1 to 4 below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`. The check from PR 5 keeps each `http` file and `src` root file as its own node instead, so a loop through one of them fails too. Measured that way, `main` before PR 5 still had only `auth` and `system`.
+`http` is base only: every tier imports its helpers, and it imports no feature. `api-routes.ts`, which mounts the features, sits in the `src` root, and auth's sign-in step (`auth/authenticate.ts`, `auth/session-guard.ts`) is passed in by the wiring through `HttpDeps`. Before that, `http` was base and wiring at once, so the loop counts for PRs 1 to 4 below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`. The check from PR 5 keeps each `src` root file as its own node instead, so a loop through one of them fails too. Measured that way, `main` before PR 5 still had only `auth` and `system`.
 
 `publish` already never imports `posts`. That stays: the worker knows destinations, not the editing flow.
 
