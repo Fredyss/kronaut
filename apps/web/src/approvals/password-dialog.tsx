@@ -1,5 +1,5 @@
-import { Button, Input, Label } from '@kronaut/ui';
-import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
+import { Button, Input, Label, trapTab } from '@kronaut/ui';
+import { useEffect, useId, useRef, useState } from 'react';
 import { m } from '../locale/i18n.ts';
 
 interface PasswordDialogProps {
@@ -7,23 +7,6 @@ interface PasswordDialogProps {
   readonly error: string | null;
   onConfirm(password: string): void;
   onClose(): void;
-}
-
-const FOCUSABLE = 'input:not([disabled]), button:not([disabled])';
-
-export function trapTab(event: KeyboardEvent<HTMLDivElement>): void {
-  if (event.key !== 'Tab') return;
-  const items = [...event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE)];
-  const first = items[0];
-  const last = items[items.length - 1];
-  if (first === undefined || last === undefined) return;
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
 }
 
 export function PasswordDialog({ pending, error, onConfirm, onClose }: PasswordDialogProps) {

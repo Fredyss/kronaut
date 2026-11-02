@@ -17,3 +17,4 @@ export {
   type ToastVariant,
   toast,
 } from './toast.tsx';
+export { trapTab } from './trap-tab.ts';
