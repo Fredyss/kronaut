@@ -20,7 +20,7 @@ import {
   workspaceId,
 } from './testing/harness.ts';
 import type { Seeded } from './testing.ts';
-import { runVerify } from './verify.ts';
+import { runVerify } from './verify/verify.ts';
 
 const USER_ID = '7654321';
 const TOKEN = 'CANARY_threads_access';

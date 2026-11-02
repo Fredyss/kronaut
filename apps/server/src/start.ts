@@ -40,7 +40,7 @@ import { metaLifecycleTask } from './meta/lifecycle.ts';
 import { emailDeps } from './notifications/email.ts';
 import { createProviderRegistry } from './providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
-import { verifyTask } from './publish/verify.ts';
+import { verifyTask } from './publish/verify/verify.ts';
 
 const APP_VERSION = (
   JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {

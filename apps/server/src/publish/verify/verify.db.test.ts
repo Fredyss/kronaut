@@ -1,9 +1,9 @@
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { saveCredential } from '../credentials/credential-store.ts';
-import { BACKOFF_BASE_MS } from './backoff.ts';
-import { reapLeases, reconcile } from './sweeps.ts';
+import { saveCredential } from '../../credentials/credential-store.ts';
+import { BACKOFF_BASE_MS } from '../backoff.ts';
+import { reapLeases, reconcile } from '../sweeps.ts';
 import {
   audits,
   CLI,
@@ -23,8 +23,8 @@ import {
   updateDestination,
   verifyRunAt,
   workspaceId,
-} from './testing/harness.ts';
-import { fakeVerifyDefaults, type Seeded } from './testing.ts';
+} from '../testing/harness.ts';
+import { fakeVerifyDefaults, type Seeded } from '../testing.ts';
 import { runVerify } from './verify.ts';
 
 let test: TestDatabase;

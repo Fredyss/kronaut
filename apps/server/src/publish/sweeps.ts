@@ -4,8 +4,8 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { enqueuePublish, enqueueVerify, ensurePublishJob, ensureVerifyJob } from '../jobs/jobs.ts';
 import { lockPost, SYSTEM } from '../post-access/lock.ts';
-import { currentLaterItem, failedReason, failLaterItem } from './chain-step.ts';
 import { firstCheckAt, retry } from './plan.ts';
+import { currentLaterItem, failedReason, failLaterItem } from './run/chain-step.ts';
 import type { PublishDeps } from './task.ts';
 import { auditTransition, type DestinationRef, transition } from './transition.ts';
 

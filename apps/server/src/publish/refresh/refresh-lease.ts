@@ -13,10 +13,10 @@ import {
   loadCredentialById,
   loadProviderApp,
   persistRefreshed,
-} from '../credentials/credential-store.ts';
-import { SYSTEM } from '../post-access/lock.ts';
-import type { ProviderEntry } from '../providers.ts';
-import { resolveExpiring } from './incidents.ts';
+} from '../../credentials/credential-store.ts';
+import { SYSTEM } from '../../post-access/lock.ts';
+import type { ProviderEntry } from '../../providers.ts';
+import { resolveExpiring } from '../incidents.ts';
 import type { RefreshDeps, RefreshOutcome, RefreshTarget } from './refresh.ts';
 
 const LEASE_SECONDS = 60;

@@ -23,7 +23,7 @@ import {
   workspaceId,
 } from './testing/harness.ts';
 import type { Seeded } from './testing.ts';
-import { runVerify } from './verify.ts';
+import { runVerify } from './verify/verify.ts';
 
 const SUB = 'aB3_x-9Q';
 const TOKEN = 'CANARY_linkedin_member_access';

@@ -1,8 +1,8 @@
 import type { VerifyMode } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
-import { backoffMs, type RandomInt } from './backoff.ts';
-import { anchorOf } from './chain.ts';
-import { type AttemptOutcome, type Plan, type PlanFacts, plan, retry } from './plan.ts';
+import { backoffMs, type RandomInt } from '../backoff.ts';
+import { type AttemptOutcome, type Plan, type PlanFacts, plan, retry } from '../plan.ts';
+import { anchorOf } from '../run/chain.ts';
 import { instant, type Probed, type VerifyRun } from './verify-run.ts';
 
 const ID_MODES: ReadonlySet<VerifyMode> = new Set([

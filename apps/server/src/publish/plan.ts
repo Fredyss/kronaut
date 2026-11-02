@@ -1,7 +1,7 @@
 import type { DestinationState, ItemAnchor, ProviderError, StateReason } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { backoffMs, type RandomInt } from './backoff.ts';
-import type { RefreshOutcome } from './refresh.ts';
+import type { RefreshOutcome } from './refresh/refresh.ts';
 
 export const MAX_ATTEMPTS = 6;
 const ERROR_MESSAGE_MAX = 2000;

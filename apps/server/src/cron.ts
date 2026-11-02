@@ -12,7 +12,7 @@ import { collectMedia, type MediaGcDeps } from './media/gc.ts';
 import { type EmailDeps, emailNotifications } from './notifications/email.ts';
 import { purgeNotifications } from './notifications/retention.ts';
 import { recomputeTimes } from './posts/schedule/tz-recompute.ts';
-import { type RefreshDeps, refreshExpiring } from './publish/refresh.ts';
+import { type RefreshDeps, refreshExpiring } from './publish/refresh/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './publish/sweeps.ts';
 import { advanceSeries } from './series/advance.ts';
 import { purgeInstanceRetention } from './system/instance-retention.ts';
