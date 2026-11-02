@@ -2,8 +2,12 @@ import { defineRoute } from '@kronaut/contract';
 import type { Schedule } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import {
+  type EffectivePolicy,
+  effectivePolicy,
+  policySnapshot,
+} from '../approval-policy/policy.ts';
 import { announce } from '../approvals/locked.ts';
-import { type EffectivePolicy, effectivePolicy, policySnapshot } from '../approvals/policy.ts';
 import { HttpError } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields, PostParams, pathId } from '../http/params.ts';

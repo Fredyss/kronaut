@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { addMember, type Member } from '../approvals/testing.ts';
 import {
   type Auth,
   CLI,
@@ -21,7 +22,6 @@ import {
   TZ,
   workspaceId,
 } from '../posts/testing.ts';
-import { addMember, type Member } from './testing.ts';
 
 interface PolicyDto {
   readonly brandId: string | null;

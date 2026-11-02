@@ -2,7 +2,7 @@ import { type ApprovalStatus, authorize, type Decision, type Principal } from '@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
-import { effectivePolicy } from '../approvals/policy.ts';
+import { effectivePolicy } from '../approval-policy/policy.ts';
 import { type Bound, bindGrantIn, bindUserIn } from '../http/principal.ts';
 import type { LockedPost } from '../post-access/lock.ts';
 

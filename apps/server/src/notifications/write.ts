@@ -1,6 +1,6 @@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import { effectivePolicy } from '../approvals/policy.ts';
+import { effectivePolicy } from '../approval-policy/policy.ts';
 import type { DestinationEventData, WebhookEventInput } from '../webhooks/events.ts';
 
 const NEEDS_PERSON: ReadonlySet<string> = new Set(['failed', 'unconfirmed', 'awaiting_manual']);

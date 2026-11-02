@@ -1,8 +1,8 @@
 # Scheduling flow
 
-Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals` or `publish`.
+Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals`, `approval-policy` or `publish`.
 
-**Status:** target. PRs 1 to 3 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
+**Status:** target. PRs 1 to 4 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
 
 ## The flow
 
@@ -36,7 +36,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 2. Flow | `posts` | Drafts, edits, freeze, scheduling, opening an approval request, starting a series |
 | 3. Steps | `approvals`, `queue`, `tags`, `saved-texts`, `publish` | One step each: decisions and bindings, free slots, labels, reusable text, the destination state machine and worker |
 | 4. Records | `analytics`, `notifications` | What the steps record |
-| 5. Policy | `approval-policy` | The approval rules that scheduling, the claim and notifications read |
+| 5. Policy | `approval-policy` | The approval rules that scheduling, decisions, the claim and notifications read |
 | 6. Access | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
 | 7. Identity and events | `auth`, `webhooks` | Sessions and webhook events |
 | 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
@@ -68,10 +68,10 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | 1. Helpers | `params.ts`, `unprocessable`, `iso`, `plainLocal`, `invalid`, `InstantFields` to `http`, and `zodDetails` replaced by `issueDetails` there. `Resolving` stays in `posts`, in `deps.ts`. `resolveLocal`, `scheduleAt`, `Schedule`, `TzResolution` to `@kronaut/core`. `posts/audit.ts` to `audit/`. | 8 folders, plus `auth` and `system` |
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
 | 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, as `approval-request.ts`, `series-start.ts` and `repeat.ts`. `approvalRequestRoutes` is mounted from `posts` and `approvals/routes.ts` stops mounting it; otherwise `approvals` still imports `posts` and the loop stays. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
-| 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |
+| 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. It sits beside `approvals`, not inside it: `approvals` still imports `notifications`, so a subfolder would keep the loop. | `auth` and `system` |
 | 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
 
-After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measure `approvals` and `notifications`, plus `auth` and `system`, as planned.
+After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measured `approvals` and `notifications`, plus `auth` and `system`. After PR 4 only `auth` and `system` are left, as planned.
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
 
