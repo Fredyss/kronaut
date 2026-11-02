@@ -1,5 +1,5 @@
 import type { ValidationIssue } from '@kronaut/compose/text';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { m } from '../locale/i18n.ts';
 import { formatDuration, formatMegabytes } from './video-text.ts';
 

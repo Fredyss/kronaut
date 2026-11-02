@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { useApiClient } from '../api/client.ts';
-import { type Channel, channelsQuery } from '../api.ts';
+import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { statusLabel } from '../channels/status-label.ts';
 import { preloadEditor } from '../compose/load.ts';
 import { m as calendarText } from '../i18n/calendar.ts';

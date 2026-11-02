@@ -10,11 +10,11 @@ import { useRef } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { detailCodes, errorCode, errorStatus, isUnauthenticated } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
-import { type NeedsActionItem, needsActionKey } from '../api.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
 import { apiErrorMessage } from '../locale/i18n.ts';
 import { type Post, postKey, postsKey } from '../posts/queries.ts';
+import { type NeedsActionItem, needsActionKey } from './queries.ts';
 
 export type ResolveKind = 'mark' | 'send' | 'cancel';
 

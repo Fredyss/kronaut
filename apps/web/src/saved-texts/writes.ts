@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { errorStatus } from '../api/errors.ts';
 import { idempotency, keyFor } from '../api/idempotency.ts';
-import { channelsKey } from '../api.ts';
+import { channelsKey } from '../channels/queries.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { savedTextError } from './error.ts';
 import { savedTextsKey } from './saved-texts.ts';

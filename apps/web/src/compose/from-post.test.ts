@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
 import type { MediaAsset } from '../post-actions/post-media.ts';
 import type { Post } from '../posts/queries.ts';

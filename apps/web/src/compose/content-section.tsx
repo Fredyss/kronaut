@@ -1,6 +1,6 @@
 import { Button } from '@kronaut/ui';
 import { lazy, type Ref, type RefObject, Suspense, useId, useRef, useState } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { useLocale } from '../locale/context.ts';
 import { channelHint } from './channel-picker.tsx';

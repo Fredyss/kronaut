@@ -1,5 +1,5 @@
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
 import {
   type Content,

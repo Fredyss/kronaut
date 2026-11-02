@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { type Queue, queueQuery } from '../channels/queue.ts';
 
 export interface QueueEntry {

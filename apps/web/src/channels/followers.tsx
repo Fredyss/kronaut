@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
-import { type Channel, channelMetricsQuery } from '../api.ts';
 import { useLocale } from '../locale/context.ts';
 import { useNumberFormat } from '../locale/format.ts';
 import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers/ui.ts';
+import { type Channel, channelMetricsQuery } from './queries.ts';
 
 const DAY_MS = 86_400_000;
 const CHANGE_DAYS = 30;

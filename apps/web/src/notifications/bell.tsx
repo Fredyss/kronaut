@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { lazyRouteComponent } from '@tanstack/react-router';
 import { Suspense } from 'react';
 import { useApiClient } from '../api/client.ts';
-import { notificationsQuery } from '../api.ts';
 import { m } from '../locale/i18n.ts';
 import { CountBadge } from '../ui/count-badge.tsx';
 import { useDisclosure } from '../ui/disclosure.ts';
+import { notificationsQuery } from './queries.ts';
 
 const Panel = lazyRouteComponent(() => import('./panel.tsx'), 'NotificationsPanel');
 

@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { lazy, Suspense } from 'react';
+import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { AnalyticsSection } from '../analytics/section.tsx';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
-import { ANALYTICS_ROLES, type Channel, channelsQuery } from '../api.ts';
 import { ApprovalSection } from '../approvals/panel.tsx';
+import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { docParagraphs, docText, isBlank, toDoc } from '../compose/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';

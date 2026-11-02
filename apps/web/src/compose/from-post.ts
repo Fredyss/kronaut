@@ -1,4 +1,4 @@
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import type { MediaAsset } from '../post-actions/post-media.ts';
 import type { Post } from '../posts/queries.ts';
 import { choiceFor } from './choice.ts';

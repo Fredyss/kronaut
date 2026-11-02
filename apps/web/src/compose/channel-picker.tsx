@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { type Dispatch, type SetStateAction, useId } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { statusLabel } from '../channels/status-label.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { useLocale } from '../locale/context.ts';

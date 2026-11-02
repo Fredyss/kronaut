@@ -3,12 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
-import { type NotificationItem, type NotificationList, notificationsQuery } from '../api.ts';
 import { useFormats } from '../calendar/formats.ts';
 import { browserTimeZone } from '../calendar/time.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
 import { useMarkRead } from './mark-read.ts';
+import { type NotificationItem, type NotificationList, notificationsQuery } from './queries.ts';
 import { NotificationRow } from './row.tsx';
 
 interface PanelProps {

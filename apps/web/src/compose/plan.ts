@@ -1,4 +1,4 @@
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import type { Destination } from '../posts/queries.ts';
 import { providerUi } from '../providers/ui.ts';

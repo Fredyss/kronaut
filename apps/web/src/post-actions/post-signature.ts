@@ -1,4 +1,4 @@
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import type { Doc } from '../compose/doc.ts';
 import type { Destination } from '../posts/queries.ts';
 

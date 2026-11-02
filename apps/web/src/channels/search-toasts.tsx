@@ -1,9 +1,9 @@
 import { toast } from '@kronaut/ui';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
-import type { Channel } from '../api.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
+import type { Channel } from './queries.ts';
 
 const route = getRouteApi('/app/channels');
 

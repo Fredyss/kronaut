@@ -6,7 +6,7 @@ import {
   postsList,
 } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
-import type { DayRange } from '../api.ts';
+import type { DayRange } from '../channels/queries.ts';
 
 export type Post = PostsGetResponse;
 

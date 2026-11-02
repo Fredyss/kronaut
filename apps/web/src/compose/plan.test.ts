@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import type { Destination } from '../posts/queries.ts';
 import { type Contents, EMPTY_CONTENTS } from './contents.ts';
 import { toPlan } from './plan.ts';

@@ -6,7 +6,7 @@ import {
   type ValidationIssue,
 } from '@kronaut/compose/text';
 import { useEffect } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers/ui.ts';

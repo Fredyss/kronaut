@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
-import { type Channel, channelsQuery } from '../api.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
+import { type Channel, channelsQuery } from './queries.ts';
 
 export const DISCONNECT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
 

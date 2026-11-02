@@ -1,6 +1,6 @@
 import { toPlainText } from '@kronaut/compose/text';
 import { type ComponentType, type ReactNode, useId } from 'react';
-import type { Channel } from '../../api.ts';
+import type { Channel } from '../../channels/queries.ts';
 import { m } from '../../locale/i18n.ts';
 import type { Doc } from '../doc.ts';
 import { MediaGrid } from './media-grid.tsx';

@@ -1,7 +1,7 @@
 import type { Client } from '@kronaut/sdk';
 import { type QueryClient, queryOptions } from '@tanstack/react-query';
-import { channelsQuery } from '../api.ts';
 import { approvalPolicyQuery } from '../approvals/queries.ts';
+import { channelsQuery } from '../channels/queries.ts';
 import { postMediaQuery } from '../post-actions/post-media.ts';
 import { postQuery } from '../posts/queries.ts';
 import { fromPost } from './from-post.ts';
