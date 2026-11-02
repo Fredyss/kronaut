@@ -3,9 +3,9 @@ import type { MediaLimits } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { restartPublishProgress } from '../../posts/draft/destinations.ts';
-import { MAX_ATTEMPTS } from '../plan.ts';
-import { reapLeases } from '../sweeps.ts';
+import { restartPublishProgress } from '../posts/draft/destinations.ts';
+import { MAX_ATTEMPTS } from './plan.ts';
+import { reapLeases } from './sweeps.ts';
 import {
   deps,
   fake,
@@ -17,9 +17,9 @@ import {
   stopHarness,
   updateDestination,
   workspaceId,
-} from '../testing/harness.ts';
-import { FAKE_TEXT_MAX, fakeManifest, fakeVerifyDefaults, type Seeded } from '../testing.ts';
-import { runVerify } from '../verify/verify.ts';
+} from './testing/harness.ts';
+import { FAKE_TEXT_MAX, fakeManifest, fakeVerifyDefaults, type Seeded } from './testing.ts';
+import { runVerify } from './verify/verify.ts';
 
 let test: TestDatabase;
 

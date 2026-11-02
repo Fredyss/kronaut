@@ -16,7 +16,7 @@ import {
   type ResolvedDestination,
   resolveDestination,
 } from '../snapshot.ts';
-import type { CurrentInput } from './run/chain.ts';
+import type { CurrentInput } from './chain.ts';
 import type { PublishDeps } from './task.ts';
 
 export interface InputAccount {

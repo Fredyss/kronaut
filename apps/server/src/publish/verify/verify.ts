@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { type DestinationJob, enqueueVerify } from '../../jobs/jobs.ts';
 import { lockPost, SYSTEM } from '../../post-access/lock.ts';
 import { applyPlan } from '../apply.ts';
-import { jsonb } from '../run/chain.ts';
+import { jsonb } from '../chain.ts';
 import type { PublishDeps } from '../task.ts';
 import { attemptOutcome, settlement } from './verify-decision.ts';
 import { prepareIn } from './verify-lookup.ts';
