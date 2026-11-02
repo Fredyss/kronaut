@@ -7,7 +7,7 @@ import { issueDetails } from '../http/input.ts';
 import { invalid } from '../http/issues.ts';
 import { iso } from '../http/time.ts';
 import { excerptOf, loadMains } from '../post-access/reads.ts';
-import { PostSummarySchema } from '../posts/dto.ts';
+import { PostSummarySchema } from '../posts/read/dto.ts';
 import type { MediaSigner } from './access.ts';
 import { LibraryAssetSchema, PREVIEW_COLUMNS, withPreviews } from './preview.ts';
 

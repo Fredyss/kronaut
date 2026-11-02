@@ -4,7 +4,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { addMember, decided, openRequestOf, setPolicy } from '../approvals/testing.ts';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   type Auth,
   accountB,

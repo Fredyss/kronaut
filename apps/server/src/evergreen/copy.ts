@@ -2,15 +2,15 @@ import { type Schedule, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { lockCurrent } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
-import { clonePost } from '../posts/clone.ts';
-import { actAs, ownerActing } from '../posts/owner.ts';
+import { clonePost } from '../posts/draft/clone.ts';
+import { actAs, ownerActing } from '../posts/owner/owner.ts';
 import {
   needsRequest,
   type OwnerEnv,
   type OwnerTurn,
   requestAsOwner,
   scheduleOrRequest,
-} from '../posts/owner-schedule.ts';
+} from '../posts/owner/owner-schedule.ts';
 import type { PoolRow } from './pool.ts';
 
 export interface SlotFill {

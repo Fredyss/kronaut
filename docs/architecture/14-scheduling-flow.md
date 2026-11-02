@@ -11,7 +11,7 @@ draft ──> pick a time ──> freeze ──> approval ──> scheduled ─�
            (queue)        (posts)   (approvals)                 (publish)
                              ^
                              └── series and evergreen re-enter here, acting as the post's owner,
-                                 through scheduleOrRequest in posts/owner-schedule.ts
+                                 through scheduleOrRequest in posts/owner/owner-schedule.ts
 ```
 
 ## The problem
@@ -48,12 +48,12 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 
 ## Where new code goes
 
-- **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that schedules as the owner through `posts/owner-schedule.ts`, like `evergreen`.
-- **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts` calls.
-- **It reshapes a draft** (signatures, templates): `posts`, or its own folder below `posts` if it needs its own routes and tables.
+- **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that schedules as the owner through `posts/owner/owner-schedule.ts`, like `evergreen`.
+- **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts/schedule/` calls.
+- **It reshapes a draft** (signatures, templates): `posts/draft/`, or its own folder below `posts` if it needs its own routes and tables.
 - **It reads or locks a post for another feature:** `post-access`.
 
-Every time and approval decision keeps going through `scheduleLocked` or `openApprovalRequest`, so a new entry point inherits freeze, binding and the audit trail. An owner acting on its own, such as a series step or an evergreen copy, goes through `posts/owner-schedule.ts`:
+Every time and approval decision keeps going through `scheduleLocked` or `openApprovalRequest`, so a new entry point inherits freeze, binding and the audit trail. An owner acting on its own, such as a series step or an evergreen copy, goes through `posts/owner/owner-schedule.ts`:
 - `needsRequest` comes first. It says yes when the policy asks for approval or an agent wrote the content (`agent_dirty`), and the owner then opens a request with `requestAsOwner`.
 - Otherwise `scheduleOrRequest` schedules, and falls back to a request when scheduling still needs approval.
 - `scheduleOrRequest` alone skips the agent check. Only a post whose newest request is already approved goes straight to it.
@@ -80,7 +80,7 @@ After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `p
 - **Lock order:** the post comes first, then its destinations or approval request. Moving a function doesn't change the order it locks in.
 - **`transition` stays in `publish`.** It writes notifications, and `notifications` reads through `post-access`, so moving it down would rebuild the loop.
 - **`approvalStatus` stays in `publish/principal.ts`,** because the claim re-checks it.
-- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and 27 after PR 2. PR 3 brought in 3, so it has 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so it gets split into subfolders next, with the loop check in place.
+- **`posts` stays one folder with sub-domains.** It reached 30 source files after PR 3, over the 25-file limit in [Code structure](13-code-structure.md), so it was split by sub-domain: `draft/`, `read/`, `schedule/` (time, freeze, approval request, series start) and `owner/` (the seam for series and evergreen), with `routes.ts`, `deps.ts` and `testing.ts` left in the root.
 
 ## Rejected
 

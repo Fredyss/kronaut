@@ -1,6 +1,6 @@
 import { decodePublicId } from '@kronaut/core';
 import { expect } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   type Auth,
   CLI,
@@ -48,23 +48,6 @@ export async function addMember(label: string, canApprove: boolean): Promise<Mem
       .execute(),
   );
   return { id, auth: await login(label) };
-}
-
-export function requestCall(post: PostDto, body: object = {}, auth: Auth = ownerAuth) {
-  return call('POST', `posts/${post.id}/approval-requests`, auth, {
-    expectedVersion: post.version,
-    ...body,
-  });
-}
-
-export async function requested(
-  post: PostDto,
-  body: object = {},
-  auth: Auth = ownerAuth,
-): Promise<PostDto> {
-  const response = await requestCall(post, body, auth);
-  expect(response.status).toBe(200);
-  return (await response.json()) as PostDto;
 }
 
 export async function requestsOf(post: PostDto, auth: Auth = ownerAuth) {

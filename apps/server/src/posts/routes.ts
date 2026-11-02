@@ -1,16 +1,16 @@
 import type { BoundRoute } from '../http/types.ts';
-import { approvalRequestRoutes } from './approval-request.ts';
-import { cancelRoutes } from './cancel.ts';
-import { createRoutes } from './create.ts';
-import { deleteRoutes } from './delete.ts';
 import type { PostRouteDeps } from './deps.ts';
-import { duplicateRoutes } from './duplicate.ts';
-import { getRoutes } from './get.ts';
-import { listRoutes } from './list.ts';
-import { rescheduleRoutes } from './reschedule.ts';
-import { scheduleRoutes } from './schedule.ts';
-import { unscheduleRoutes } from './unschedule.ts';
-import { updateRoutes } from './update.ts';
+import { createRoutes } from './draft/create.ts';
+import { deleteRoutes } from './draft/delete.ts';
+import { duplicateRoutes } from './draft/duplicate.ts';
+import { updateRoutes } from './draft/update.ts';
+import { getRoutes } from './read/get.ts';
+import { listRoutes } from './read/list.ts';
+import { approvalRequestRoutes } from './schedule/approval-request.ts';
+import { cancelRoutes } from './schedule/cancel.ts';
+import { rescheduleRoutes } from './schedule/reschedule.ts';
+import { scheduleRoutes } from './schedule/schedule.ts';
+import { unscheduleRoutes } from './schedule/unschedule.ts';
 
 export function postRoutes(deps: PostRouteDeps): BoundRoute[] {
   return [

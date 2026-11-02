@@ -6,14 +6,14 @@ import { InstantFields } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import type { LockedDestination } from '../post-access/locks.ts';
 import type { PostRouteDeps } from '../posts/deps.ts';
-import { restartPublishProgress } from '../posts/destinations.ts';
-import { PostSchema, readPost } from '../posts/dto.ts';
+import { restartPublishProgress } from '../posts/draft/destinations.ts';
+import { PostSchema, readPost } from '../posts/read/dto.ts';
 import {
   authorizeSchedule,
   ScheduleCommon,
   type ScheduleRun,
   scheduleLocked,
-} from '../posts/schedule.ts';
+} from '../posts/schedule/schedule.ts';
 import { auditResolution, DestinationParams, lockMove, lockTarget, movableTo } from './locked.ts';
 
 const RESENDABLE = movableTo('scheduled');

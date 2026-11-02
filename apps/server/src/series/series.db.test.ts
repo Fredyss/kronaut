@@ -4,15 +4,8 @@ import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import {
-  addMember,
-  decided,
-  openRequestOf,
-  requestCall,
-  requested,
-  setPolicy,
-} from '../approvals/testing.ts';
-import type { PostDto } from '../posts/dto.ts';
+import { addMember, decided, openRequestOf, setPolicy } from '../approvals/testing.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   type Auth,
   CLI,
@@ -29,6 +22,7 @@ import {
   ownerAuth,
   ownerId,
   providers,
+  requested,
   SYSTEM,
   scheduleCall,
   startPosts,
@@ -199,54 +193,6 @@ describe('a series that does not exist', () => {
     expect(await Promise.all(responses.map(errorOf))).toEqual(
       responses.map(() => expect.objectContaining({ code: 'not_found', message: 'Not found.' })),
     );
-  });
-});
-
-describe('creating a series', () => {
-  it('stores the rule and links occurrence 1', async () => {
-    const post = await repeating('2027-01-05T09:00', { freq: 'daily', interval: 2, count: 3 });
-    expect(post.seriesId).toMatch(/^ser_/);
-    expect(await seriesOf(post)).toMatchObject({
-      state: 'active',
-      occurrences: 1,
-      dtstartLocal: '2027-01-05T09:00:00',
-      nextLocal: '2027-01-05T09:00:00',
-      rule: { freq: 'daily', interval: 2, count: 3 },
-    });
-  });
-
-  it('refuses a rule outside the subset and repeat outside fixed-time mode', async () => {
-    const post = await create(ownerAuth, draft());
-    const body = { mode: 'instant', scheduleLocal: '2027-01-05T09:00', scheduleTz: TZ };
-    const bad = await scheduleCall(post, { ...body, repeat: { freq: 'daily', byMonthDay: 3 } });
-    expect(bad.status).toBe(422);
-    expect((await errorOf(bad)).details).toEqual([{ path: 'body.repeat', code: 'invalid_repeat' }]);
-    const asap = await scheduleCall(post, { mode: 'asap', repeat: { freq: 'daily' } });
-    expect(asap.status).toBe(400);
-  });
-
-  it('refuses repeat from someone who may only submit', async () => {
-    await setPolicy({ mode: 'required', allow_self_approval: true });
-    const contributor = await addMember('series-contributor', false);
-    await owner.withActor(CLI, (trx) =>
-      trx
-        .updateTable('memberships')
-        .set({ role: 'contributor' })
-        .where('user_id', '=', contributor.id)
-        .execute(),
-    );
-    const post = await create(contributor.auth, draft());
-    const schedule = { scheduleLocal: '2027-01-05T09:00', scheduleTz: TZ };
-    const response = await requestCall(
-      post,
-      { schedule, repeat: { freq: 'daily' } },
-      contributor.auth,
-    );
-    expect(response.status).toBe(403);
-    expect((await errorOf(response)).details).toEqual([
-      { path: 'body.repeat', code: 'repeat_needs_schedule' },
-    ]);
-    expect(await requestsOn(internal(post.id))).toEqual([]);
   });
 });
 

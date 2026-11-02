@@ -2,7 +2,7 @@ import { decodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   accountA,
   accountB,
@@ -15,6 +15,7 @@ import {
   inMinutes,
   insertAccount,
   ownerAuth,
+  requested,
   scheduleCall,
   startPosts,
   stopPosts,
@@ -27,7 +28,6 @@ import {
   destinationsOf,
   type Member,
   openRequestOf,
-  requested,
   setPolicy,
 } from './testing.ts';
 

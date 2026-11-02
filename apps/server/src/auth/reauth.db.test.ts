@@ -9,7 +9,6 @@ import {
   type Member,
   openRequestOf,
   reauthenticatedHoursAgo,
-  requested,
   setPolicy,
 } from '../approvals/testing.ts';
 import {
@@ -23,6 +22,7 @@ import {
   owner,
   ownerAuth,
   PASSWORD,
+  requested,
   SYSTEM,
   startPosts,
   stopPosts,

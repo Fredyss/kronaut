@@ -27,7 +27,9 @@ describe('repo structure', () => {
     expect(graph.has('packages/core/src/index.ts')).toBe(true);
     expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/http/api-routes.ts');
     expect(graph.get('apps/web/src/main.tsx')).toContain('apps/web/src/app.tsx');
-    expect(graph.get('apps/server/src/posts/items.ts')).toContain('packages/compose/src/index.ts');
+    expect(graph.get('apps/server/src/posts/draft/items.ts')).toContain(
+      'packages/compose/src/index.ts',
+    );
   });
 
   it('has no value-import cycle between files', () => {
