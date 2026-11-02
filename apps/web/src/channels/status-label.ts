@@ -1,5 +1,5 @@
-import type { Channel } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
+import type { Channel } from './queries.ts';
 
 export function statusLabel(status: Channel['status']): string {
   switch (status) {

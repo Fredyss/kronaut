@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { needsActionQuery } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
 import { useFormats } from '../calendar/formats.ts';
 import { browserTimeZone } from '../calendar/time.ts';
-import { useApiClient, useLocale } from '../context.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
+import { needsActionQuery } from './queries.ts';
 import { InboxRow } from './row.tsx';
 
 function Empty() {

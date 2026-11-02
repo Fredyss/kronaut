@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { useState } from 'react';
-import { meQuery } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { CalendarBody } from '../calendar/body.tsx';
 import { useFormats } from '../calendar/formats.ts';
 import { CalendarSidebar } from '../calendar/sidebar.tsx';
@@ -15,7 +16,7 @@ import {
   visibleRange,
 } from '../calendar/time.ts';
 import { CalendarToolbar } from '../calendar/toolbar.tsx';
-import { useApiClient, useLocale } from '../context.ts';
+import { useLocale } from '../locale/context.ts';
 
 const route = getRouteApi('/app/');
 

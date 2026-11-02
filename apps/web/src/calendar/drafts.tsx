@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
-import type { PostSummary } from '../api.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
+import type { PostSummary } from '../posts/queries.ts';
 import { postText } from './entries.ts';
 import type { Formats } from './formats.ts';
 

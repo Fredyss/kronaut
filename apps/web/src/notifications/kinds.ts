@@ -1,7 +1,7 @@
 import { CHANNEL_KINDS, notificationLine as line } from '@kronaut/i18n/notifications';
-import type { NotificationItem } from '../api.ts';
-import { m } from '../i18n.ts';
-import { providerUi } from '../providers.ts';
+import { m } from '../locale/i18n.ts';
+import { providerUi } from '../providers/ui.ts';
+import type { NotificationItem } from './queries.ts';
 
 export function notificationLine(item: NotificationItem): string {
   return line(m, item.kind, item.accountLabel ?? providerUi(item.provider).name());

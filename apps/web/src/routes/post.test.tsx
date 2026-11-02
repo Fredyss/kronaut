@@ -4,7 +4,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, getDefaultNormalizer, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
-import { pollDelay } from '../destinations.ts';
+import { pollDelay } from '../posts/destinations.ts';
 
 afterEach(cleanup);
 

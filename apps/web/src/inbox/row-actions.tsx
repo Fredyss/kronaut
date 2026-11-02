@@ -1,10 +1,10 @@
 import { Button } from '@kronaut/ui';
 import { useEffect, useRef, useState } from 'react';
-import type { NeedsActionItem } from '../api.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { actionsFor, type ResolveKind, useResolve } from './actions.ts';
 import { DuplicateConfirm } from './confirm.tsx';
+import type { NeedsActionItem } from './queries.ts';
 
 function actionLabel(kind: ResolveKind, state: NeedsActionItem['state']): string {
   if (kind === 'send') return inboxText.inbox_send_again();

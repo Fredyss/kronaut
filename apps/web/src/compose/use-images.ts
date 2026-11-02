@@ -1,5 +1,5 @@
-import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
+import { useLocale } from '../locale/context.ts';
 import type { PickedImage } from './contents.ts';
 import { fileProblem, MAX_IMAGE_BYTES, MAX_IMAGES, thumbnail } from './media.ts';
 

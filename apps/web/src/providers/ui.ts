@@ -1,4 +1,4 @@
-import { m } from './i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 export type PublishChoice =
   | { readonly kind: 'ok'; readonly publishType: string }

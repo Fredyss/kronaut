@@ -7,22 +7,14 @@ import {
 import { toast } from '@kronaut/ui';
 import { type QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import {
-  detailCodes,
-  errorCode,
-  errorStatus,
-  isUnauthenticated,
-  type NeedsActionItem,
-  needsActionKey,
-  type Post,
-  postKey,
-  postsKey,
-} from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { detailCodes, errorCode, errorStatus, isUnauthenticated } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { issueMessage } from '../compose/issues.ts';
-import { useApiClient } from '../context.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { apiErrorMessage } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import { apiErrorMessage } from '../locale/i18n.ts';
+import { type Post, postKey, postsKey } from '../posts/queries.ts';
+import { type NeedsActionItem, needsActionKey } from './queries.ts';
 
 export type ResolveKind = 'mark' | 'send' | 'cancel';
 

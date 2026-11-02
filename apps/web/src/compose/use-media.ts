@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
+import { useLocale } from '../locale/context.ts';
 import { MAX_VIDEO_BYTES, VIDEO_TYPES } from './media.ts';
 import type { ImagesState } from './use-images.ts';
 import type { VideoEntry, VideosState } from './use-video.ts';

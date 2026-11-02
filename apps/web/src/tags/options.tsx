@@ -1,6 +1,6 @@
 import { cn } from '@kronaut/ui';
 import { useEffect } from 'react';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { TagDot } from './dots.tsx';
 import type { TagOption } from './tags.ts';
 

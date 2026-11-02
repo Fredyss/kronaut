@@ -1,6 +1,6 @@
-import { useDateFormat } from '../format.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { providerUi } from '../providers.ts';
+import { useDateFormat } from '../locale/format.ts';
+import { providerUi } from '../providers/ui.ts';
 import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';
 import { Muted, StatusRow, type Tone } from './status-badge.tsx';

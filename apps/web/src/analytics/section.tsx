@@ -1,10 +1,11 @@
 import { type AnalyticsPostMetricsResponse, analyticsPostMetrics, type Client } from '@kronaut/sdk';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import type { Channel, Post } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { useNumberFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useApiClient } from '../api/client.ts';
+import type { Channel } from '../channels/queries.ts';
+import { useNumberFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
+import type { Post } from '../posts/queries.ts';
 
 export const ANALYTICS_ID = 'analytics';
 

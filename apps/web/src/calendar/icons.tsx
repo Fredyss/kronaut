@@ -1,4 +1,4 @@
-import { Icon } from '../icon.tsx';
+import { Icon } from '../ui/icon.tsx';
 
 export function ChevronLeft() {
   return (

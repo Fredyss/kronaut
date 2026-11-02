@@ -2,7 +2,8 @@ import { buttonVariants } from '@kronaut/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
-import { meQuery, type Post } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { ChannelsFieldset } from '../compose/channel-picker.tsx';
 import { ComposeBar } from '../compose/compose-bar.tsx';
 import { ContentSection } from '../compose/content-section.tsx';
@@ -10,11 +11,11 @@ import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
 import { type OpenedPostData, openedPostQuery } from '../compose/opened-post.ts';
 import { PreviewPane } from '../compose/preview-pane.tsx';
 import { type ComposeStart, useComposeForm } from '../compose/use-compose-form.ts';
-import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
+import type { Post } from '../posts/queries.ts';
 
 export { PostEdit } from '../compose/post-edit.tsx';
 

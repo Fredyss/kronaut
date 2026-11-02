@@ -1,4 +1,4 @@
-import { Icon } from '../icon.tsx';
+import { Icon } from '../ui/icon.tsx';
 import type { LibraryKind } from './queries.ts';
 
 export function KindIcon({

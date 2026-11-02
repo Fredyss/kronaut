@@ -1,5 +1,5 @@
-import type { Channel } from '../api.ts';
-import { type PublishChoice, providerUi } from '../providers.ts';
+import type { Channel } from '../channels/queries.ts';
+import { type PublishChoice, providerUi } from '../providers/ui.ts';
 
 export type ImageFacts = Pick<File, 'size' | 'type'>;
 

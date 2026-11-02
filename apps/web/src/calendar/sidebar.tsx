@@ -3,13 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { type Channel, channelsQuery } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { statusLabel } from '../channels/status-label.ts';
 import { preloadEditor } from '../compose/load.ts';
-import { useApiClient, useLocale } from '../context.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
-import { providerUi } from '../providers.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
+import { providerUi } from '../providers/ui.ts';
 import { ChevronsLeft, Plus } from './icons.tsx';
 
 const STORAGE_KEY = 'kronaut.calendar.sidebar';

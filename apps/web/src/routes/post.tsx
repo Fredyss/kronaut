@@ -1,31 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { lazy, Suspense } from 'react';
+import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { AnalyticsSection } from '../analytics/section.tsx';
-import {
-  ANALYTICS_ROLES,
-  type Channel,
-  channelsQuery,
-  type Destination,
-  meQuery,
-  type Post,
-  postQuery,
-} from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { ApprovalSection } from '../approvals/panel.tsx';
+import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { docParagraphs, docText, isBlank, toDoc } from '../compose/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
-import { useApiClient } from '../context.ts';
-import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
-import { useFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { canceledLive, editableBy } from '../post-actions/post-editable.ts';
 import { shownSignature } from '../post-actions/post-signature.ts';
 import { PostCompose } from '../post-page/post-compose.tsx';
 import { isSettled, PublishedView } from '../post-page/published.tsx';
-import { summaryLabel } from '../post-summary.ts';
-import { providerUi } from '../providers.ts';
+import { httpsUrl, pollDelay, stateLabel } from '../posts/destinations.ts';
+import { type Destination, type Post, postQuery } from '../posts/queries.ts';
+import { summaryLabel } from '../posts/summary.ts';
+import { providerUi } from '../providers/ui.ts';
 import { SeriesSection } from '../series/section.tsx';
 
 const route = getRouteApi('/app/posts/$postId');

@@ -3,25 +3,22 @@ import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { lazy, Suspense, useId, useState } from 'react';
-import {
-  ANALYTICS_ROLES,
-  type Channel,
-  channelsQuery,
-  connectableQuery,
-  errorStatus,
-  meQuery,
-} from '../api.ts';
+import { ANALYTICS_ROLES } from '../analytics/roles.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorStatus } from '../api/errors.ts';
+import { meQuery } from '../api/me.ts';
 import { AddChannelDialog } from '../channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
 import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
+import { type Channel, channelsQuery, connectableQuery } from '../channels/queries.ts';
 import { QUEUE_ROLES } from '../channels/queue.ts';
 import { SearchToasts } from '../channels/search-toasts.tsx';
 import { ChannelSignature } from '../channels/signature.tsx';
 import { statusLabel } from '../channels/status-label.ts';
-import { useApiClient, useLocale } from '../context.ts';
-import { httpsUrl } from '../destinations.ts';
-import { m } from '../i18n.ts';
-import { providerUi } from '../providers.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
+import { httpsUrl } from '../posts/destinations.ts';
+import { providerUi } from '../providers/ui.ts';
 
 const Followers = lazy(() =>
   import('../channels/followers.tsx').then((module) => ({ default: module.Followers })),

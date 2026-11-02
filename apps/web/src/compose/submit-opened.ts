@@ -1,7 +1,7 @@
 import { postsGet, postsReschedule, postsTagsReplace, postsUnschedule } from '@kronaut/sdk';
 import { Temporal } from 'temporal-polyfill';
-import type { Post } from '../api.ts';
-import { idempotency, keyFor } from '../idempotency.ts';
+import { idempotency, keyFor } from '../api/idempotency.ts';
+import type { Post } from '../posts/queries.ts';
 import type { ComposeInput, ComposeWhen, ScheduleWhen, Submitter } from './submit.ts';
 import {
   refusedForApproval,

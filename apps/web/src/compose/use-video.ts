@@ -1,6 +1,6 @@
 import { type Client, mediaMarkAi } from '@kronaut/sdk';
 import { useEffect, useState } from 'react';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
 import {
   type RejectedReason,
   sleep,

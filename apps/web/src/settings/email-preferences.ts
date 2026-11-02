@@ -7,9 +7,9 @@ import {
 import { toast } from '@kronaut/ui';
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 
 export type EmailPreferences = NotificationsPreferencesResponse['email'];
 

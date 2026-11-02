@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { PostSummary } from '../api.ts';
+import type { PostSummary } from '../posts/queries.ts';
 import { type Entry, keptTag } from './entries.ts';
 import {
   canLand,

@@ -11,11 +11,12 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { ANALYTICS_ROLES, type PostSummary } from '../api.ts';
+import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
+import type { PostSummary } from '../posts/queries.ts';
 import { MoreIcon } from './icons.tsx';
 
 export type EntryDialog = 'preview' | 'delete';

@@ -1,7 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { useId } from 'react';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { EditNotes } from './edit-notes.tsx';
 import { Failure } from './failure.tsx';
 import { REPEAT_ROLES } from './repeat.ts';

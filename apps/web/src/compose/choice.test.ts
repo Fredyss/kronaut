@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { choiceFor, type ImageFacts, type MediaFacts } from './choice.ts';
 
 const threads: Channel = {

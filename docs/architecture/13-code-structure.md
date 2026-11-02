@@ -7,7 +7,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 ## Feature folders
 
 - **One folder per product concept:** `apps/server/src/<feature>/` and `apps/web/src/<feature>/`. Name the concept first; new behaviour lands in the folder that owns it.
-- **New concept, new folder.** The `src/` root holds entrypoints and wiring only.
+- **New concept, new folder.** The `src/` root holds entrypoints and wiring only. In the web app this is checked: the root holds only `main.tsx` and `app.tsx`.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` and `*-routes.ts` bind handlers; shared logic lives in a named module that other features import. A feature importing another feature's file with one of those names fails the check; the check goes by file name only.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
@@ -25,6 +25,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
   - A line covers the whole source feature, so a second file there can use a listed target without a new line.
   - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
   - The list records today's coupling; it doesn't approve it. Each feature split should make it shorter.
+- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new base folder is a design decision, like a declared import.
 
 ## Files and modules
 
@@ -50,7 +51,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
 
 These rules bind new code, but existing code still breaks them:
 
-- Shared modules in the `apps/*/src` roots, which should each find an owner.
+- Shared modules in the `apps/server/src` root, which should each find an owner.
 - `post-actions/compose-dialog.tsx` imports a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Shared modules that also define routes: `posts/list.ts`, `posts/schedule.ts`, `channels/disconnect.ts`, `approvals/request.ts`, `auth/profile.ts`.

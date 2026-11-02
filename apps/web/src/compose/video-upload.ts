@@ -7,7 +7,7 @@ import {
   mediaVideoPart,
   mediaVideoUpload,
 } from '@kronaut/sdk';
-import { errorStatus } from '../api.ts';
+import { errorStatus } from '../api/errors.ts';
 
 export type VideoAsset = Omit<MediaGetResponse, 'previewUrl'>;
 export type RejectedReason = NonNullable<VideoAsset['rejectedReason']>;

@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
 import { byHour, type Entry, keptTag, slotCompose, slotKey } from './entries.ts';

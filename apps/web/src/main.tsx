@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App, createApp } from './app.tsx';
 import './styles.css';
-import { applyTheme, storedTheme } from './theme.tsx';
+import { applyTheme, storedTheme } from './theme/theme.tsx';
 
 applyTheme(storedTheme());
 

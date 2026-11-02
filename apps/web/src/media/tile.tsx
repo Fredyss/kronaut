@@ -1,5 +1,5 @@
-import { useLocale } from '../context.ts';
 import { m as mediaText } from '../i18n/media.ts';
+import { useLocale } from '../locale/context.ts';
 import { kindLabel, stateLabel } from './format.ts';
 import { KindIcon } from './kind-icon.tsx';
 import type { LibraryAsset } from './queries.ts';

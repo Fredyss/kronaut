@@ -1,11 +1,11 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import type { Temporal } from 'temporal-polyfill';
-import { draftsQuery, type PostList, type PostSummary, postsRangeQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { pollDelay } from '../destinations.ts';
+import { useApiClient } from '../api/client.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
+import { pollDelay } from '../posts/destinations.ts';
+import { draftsQuery, type PostList, type PostSummary, postsRangeQuery } from '../posts/queries.ts';
 import { MOVE_HINT_ID } from './chip.tsx';
 import { Drafts } from './drafts.tsx';
 import { EmptyState } from './empty-state.tsx';

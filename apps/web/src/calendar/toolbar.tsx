@@ -3,7 +3,7 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { keptTag } from './entries.ts';
 import type { Formats } from './formats.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';

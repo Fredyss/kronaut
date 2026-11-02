@@ -1,12 +1,12 @@
 import { buttonVariants } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { useId } from 'react';
-import type { NeedsActionItem } from '../api.ts';
 import type { Formats } from '../calendar/formats.ts';
-import { httpsUrl, stateLabel } from '../destinations.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
-import { providerUi } from '../providers.ts';
+import { m } from '../locale/i18n.ts';
+import { httpsUrl, stateLabel } from '../posts/destinations.ts';
+import { providerUi } from '../providers/ui.ts';
+import type { NeedsActionItem } from './queries.ts';
 import { RECONNECT, reasonLabel } from './reasons.ts';
 import { RowActions } from './row-actions.tsx';
 

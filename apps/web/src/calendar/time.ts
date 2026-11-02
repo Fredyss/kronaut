@@ -1,5 +1,5 @@
 import { Temporal } from 'temporal-polyfill';
-import type { Locale } from '../i18n.ts';
+import type { Locale } from '../locale/i18n.ts';
 import type { CalendarView } from './search.ts';
 
 const MONDAY = 1;

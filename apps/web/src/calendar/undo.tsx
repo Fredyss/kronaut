@@ -1,7 +1,7 @@
 import { buttonVariants } from '@kronaut/ui';
 import { useEffect } from 'react';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import type { Moved } from './move.ts';
 
 const UNDO_MS = 8000;

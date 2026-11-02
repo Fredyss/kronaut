@@ -1,4 +1,4 @@
-import { m } from './i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 export const PASSWORD_MIN_LENGTH = 12;
 export const PASSWORD_MAX_LENGTH = 256;

@@ -1,7 +1,7 @@
 import { Input, Label } from '@kronaut/ui';
 import { lazy, type ReactNode, Suspense, useId } from 'react';
-import { useFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
 import { issueMessage } from './issues.ts';
 import type { QueueChoice, QueueEntry } from './queue-choice.ts';
 import type { RepeatControl } from './repeat.ts';

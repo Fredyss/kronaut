@@ -2,12 +2,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  baseLeaks,
   featureImports,
   findCycles,
   type ImportGraph,
   isTesting,
   misplacedTests,
   repoImportGraph,
+  rootFiles,
   routeImports,
   testingLeaks,
   valueImports,
@@ -45,6 +47,14 @@ describe('repo structure', () => {
   it('matches the declared imports between features', () => {
     const declared = readFileSync(join(import.meta.dirname, 'feature-imports.json'), 'utf8');
     expect(featureImports(graph)).toEqual((JSON.parse(declared) as string[]).sort());
+  });
+
+  it('keeps base folders free of feature imports', () => {
+    expect(baseLeaks(graph)).toEqual([]);
+  });
+
+  it('keeps only entrypoints in the web src root', () => {
+    expect(rootFiles(graph)).toEqual([]);
   });
 });
 
@@ -85,6 +95,40 @@ describe('the structure rules', () => {
       'server/analytics -> queue/routes.ts',
       'server/tags -> media/upload-routes.ts',
     ]);
+  });
+
+  it('flags a base folder that imports a feature, and declares no import of a base folder', () => {
+    const app = (target: string) => `apps/web/src/${target}`;
+    const imports: ImportGraph = new Map([
+      [app('ui/icon.tsx'), [app('compose/form.tsx'), app('locale/i18n.ts'), app('ui/badge.tsx')]],
+      [app('locale/choice.ts'), [app('api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
+      [app('ui/icon.test.tsx'), [app('compose/form.tsx')]],
+      [app('inbox/list.tsx'), [app('api/client.ts'), app('ui/icon.tsx'), app('posts/queries.ts')]],
+      ['apps/server/src/posts/list.ts', [app('api/errors.ts')]],
+    ]);
+    expect(baseLeaks(imports)).toEqual([
+      'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
+      'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
+    ]);
+    expect(featureImports(imports)).toEqual([
+      'server/posts -> api/errors.ts',
+      'web/inbox -> posts/queries.ts',
+      'web/ui -> compose/form.tsx',
+    ]);
+  });
+
+  it('flags a shared module in the web src root', () => {
+    const files = [
+      'apps/web/src/app.tsx',
+      'apps/web/src/main.tsx',
+      'apps/web/src/foo.ts',
+      'apps/web/src/foo.test.ts',
+      'apps/web/src/testing.tsx',
+      'apps/web/src/compose/form.tsx',
+      'apps/server/src/config.ts',
+    ];
+    const graph: ImportGraph = new Map(files.map((file) => [file, []]));
+    expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts', 'apps/web/src/testing.tsx']);
   });
 
   it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {

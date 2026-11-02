@@ -1,5 +1,5 @@
-import { useFormat, useWallFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useFormat, useWallFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
 import { stateLabel, voidReasonLabel } from './messages.ts';
 import type { ApprovalRequest } from './queries.ts';
 

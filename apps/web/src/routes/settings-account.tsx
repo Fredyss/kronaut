@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { meQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../i18n.ts';
-import { LocaleSelect, SELECT } from '../locale-select.tsx';
+import { m } from '../locale/i18n.ts';
+import { LocaleSelect, SELECT } from '../locale/select.tsx';
 import { type ControlIds, SettingsCard, SettingsPage, SettingsRow } from '../settings/card.tsx';
 import { DisplayNameForm } from '../settings/display-name-form.tsx';
 import { PasswordCard } from '../settings/password-form.tsx';
-import { chooseTheme, THEMES, type Theme, useTheme } from '../theme.tsx';
+import { chooseTheme, THEMES, type Theme, useTheme } from '../theme/theme.tsx';
 
 function themeOption(theme: Theme): string {
   switch (theme) {

@@ -2,11 +2,11 @@ import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { lazyRouteComponent } from '@tanstack/react-router';
 import { Suspense } from 'react';
-import { notificationsQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { CountBadge } from '../count-badge.tsx';
-import { useDisclosure } from '../disclosure.ts';
-import { m } from '../i18n.ts';
+import { useApiClient } from '../api/client.ts';
+import { m } from '../locale/i18n.ts';
+import { CountBadge } from '../ui/count-badge.tsx';
+import { useDisclosure } from '../ui/disclosure.ts';
+import { notificationsQuery } from './queries.ts';
 
 const Panel = lazyRouteComponent(() => import('./panel.tsx'), 'NotificationsPanel');
 

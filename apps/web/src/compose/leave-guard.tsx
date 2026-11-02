@@ -1,7 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { useBlocker } from '@tanstack/react-router';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 function rememberFocus(): () => void {
   const element = document.activeElement;

@@ -1,7 +1,7 @@
 import { formatDuration } from '../compose/video-text.ts';
-import { useLocale } from '../context.ts';
-import { useFormat } from '../format.ts';
 import { m as settingsText } from '../i18n/settings.ts';
+import { useLocale } from '../locale/context.ts';
+import { useFormat } from '../locale/format.ts';
 import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';
 import { Muted, StatusRow, type Tone } from './status-badge.tsx';

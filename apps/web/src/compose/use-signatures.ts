@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { type Doc, toDoc } from './doc.ts';
 import type { OpenedForm } from './from-post.ts';
 

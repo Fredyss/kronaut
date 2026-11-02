@@ -2,11 +2,11 @@ import { approvalsPolicyUpdate } from '@kronaut/sdk';
 import { Button, Input, toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import { errorCode, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { type ControlIds, SettingsCard, SettingsRow } from '../settings/card.tsx';
 import { approvalPolicyKey, type PolicyResponse, type PolicyValues } from './queries.ts';
 

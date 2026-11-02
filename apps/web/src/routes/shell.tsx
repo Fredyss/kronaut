@@ -3,14 +3,15 @@ import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Outlet, useNavigate } from '@tanstack/react-router';
 import { useId } from 'react';
-import { isUnauthenticated, meQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { useDisclosure } from '../disclosure.ts';
-import { m } from '../i18n.ts';
-import { LocaleSelect } from '../locale-select.tsx';
+import { useApiClient } from '../api/client.ts';
+import { isUnauthenticated } from '../api/errors.ts';
+import { meQuery } from '../api/me.ts';
+import { m } from '../locale/i18n.ts';
+import { LocaleSelect } from '../locale/select.tsx';
 import { NotificationsBell } from '../notifications/bell.tsx';
 import { Rail } from '../shell/rail.tsx';
-import { ThemeToggle } from '../theme.tsx';
+import { ThemeToggle } from '../theme/theme.tsx';
+import { useDisclosure } from '../ui/disclosure.ts';
 
 function LocaleSwitch() {
   const id = useId();

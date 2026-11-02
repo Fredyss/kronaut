@@ -2,10 +2,11 @@ import { postsTagsReplace, tagsCreate } from '@kronaut/sdk';
 import { Label, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
-import { detailCodes, errorStatus, type Post, postsKey } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import { useApiClient } from '../api/client.ts';
+import { detailCodes, errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import { m } from '../locale/i18n.ts';
+import { type Post, postsKey } from '../posts/queries.ts';
 import { TagDot } from './dots.tsx';
 import { Options } from './options.tsx';
 import {

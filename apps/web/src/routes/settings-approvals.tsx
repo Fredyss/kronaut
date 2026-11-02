@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { meQuery } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { PolicyForm } from '../approvals/policy-form.tsx';
 import { approvalPolicyQuery, type StoredPolicy } from '../approvals/queries.ts';
-import { useApiClient } from '../context.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { SettingsCard, SettingsPage, SettingsRow } from '../settings/card.tsx';
 
 const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);

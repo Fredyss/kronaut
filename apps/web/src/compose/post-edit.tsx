@@ -1,12 +1,13 @@
 import { buttonVariants } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { channelsQuery, type Post } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { channelsQuery } from '../channels/queries.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { canceledLive } from '../post-actions/post-editable.ts';
 import { postMediaQuery } from '../post-actions/post-media.ts';
+import type { Post } from '../posts/queries.ts';
 import { fromPost, type Refusal } from './from-post.ts';
 
 function refusalText(reason: Refusal): string {

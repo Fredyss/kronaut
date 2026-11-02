@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { Channel } from '../api.ts';
+import type { Channel } from '../channels/queries.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import type { ContentsState } from './use-contents.ts';
 

@@ -8,11 +8,11 @@ import {
 import { Button, toast } from '@kronaut/ui';
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { errorCode, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
-import { useWallFormat } from '../format.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import { useWallFormat } from '../locale/format.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { useRuleText } from './rule-text.ts';
 
 interface SeriesScope {

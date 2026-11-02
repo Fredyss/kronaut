@@ -1,8 +1,8 @@
 import { Input, Label } from '@kronaut/ui';
 import { useId } from 'react';
-import { useWeekdayFormat } from '../format.ts';
-import { m } from '../i18n.ts';
-import { SELECT } from '../locale-select.tsx';
+import { useWeekdayFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
+import { SELECT } from '../locale/select.tsx';
 import { useRuleText, WEEKDAYS } from '../series/rule-text.ts';
 import type { End, Freq, RepeatControl, RepeatState } from './repeat.ts';
 

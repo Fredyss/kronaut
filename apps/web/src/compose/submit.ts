@@ -6,9 +6,10 @@ import {
   postsSchedule,
   postsUpdate,
 } from '@kronaut/sdk';
-import { type Destination, errorStatus, type Post } from '../api.ts';
+import { errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { approvalBody } from '../approvals/queries.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
+import type { Destination, Post } from '../posts/queries.ts';
 import type { Repeat } from '../series/rule-text.ts';
 import type { Doc } from './doc.ts';
 import { type DraftBody, draftBody } from './draft-body.ts';
