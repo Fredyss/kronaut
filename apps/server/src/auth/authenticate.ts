@@ -2,10 +2,11 @@ import type { AuthMode, Route } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../http/errors.ts';
-import { REVIEW_COOKIE } from '../http/pipeline/cookies.ts';
 import type { HttpDeps } from '../http/pipeline/kernel.ts';
 import { bearerToken, findGrantToken, type GrantTokenRecord } from './grant.ts';
 import { findSession, SESSION_COOKIE, type SessionRecord, sessionActive } from './session.ts';
+
+export const REVIEW_COOKIE = '__Host-kronaut_review';
 
 export type Authn =
   | { readonly kind: 'public' }

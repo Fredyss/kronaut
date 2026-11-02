@@ -16,7 +16,6 @@ import { failure } from './respond.ts';
 import { createRouter } from './router.ts';
 
 export { accessExempt } from '../caller/access-check.ts';
-export { REVIEW_COOKIE } from './cookies.ts';
 export { routeRegistry } from './registry.ts';
 
 export interface HttpKeys {

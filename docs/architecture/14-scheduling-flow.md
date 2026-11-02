@@ -71,6 +71,8 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. It sits beside `approvals`, not inside it: `approvals` still imports `notifications`, so a subfolder would keep the loop. | `auth` and `system` |
 | 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle. It keeps each `http` and `src` root file as its own node, so `api-routes.ts` mounting every feature isn't a loop, but a loop through `caller/authenticate.ts` or `cron.ts` is. | None, and `pnpm check` keeps it so |
 
+The PR rows describe the code as it was then: since the server root PR, `http` is one base folder, `api-routes.ts` sits in the `src` root and the sign-in step lives in `auth/`.
+
 After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measured `approvals` and `notifications`, plus `auth` and `system`. After PR 4 only `auth` and `system` were left, and after PR 5 there are none.
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
