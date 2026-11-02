@@ -3,7 +3,7 @@ import type { Logger } from 'pino';
 import type { MediaJob } from '../../jobs/jobs.ts';
 import { internalId } from '../routes.ts';
 import type { Staging } from '../staging.ts';
-import { completeUpload, createVideoUpload } from '../upload/upload.ts';
+import { completeUpload, createVideoUpload } from '../video/upload.ts';
 import { markImportDone } from './import-store.ts';
 
 const SYSTEM: Actor = { kind: 'system' };

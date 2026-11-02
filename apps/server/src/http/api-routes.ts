@@ -16,7 +16,7 @@ import { importRoutes } from '../media/import/import-routes.ts';
 import { libraryRoutes } from '../media/library/library-routes.ts';
 import { mediaRoutes } from '../media/routes.ts';
 import type { Staging } from '../media/staging.ts';
-import { MEDIA_BODY_LIMITS, uploadRoutes } from '../media/upload/upload-routes.ts';
+import { MEDIA_BODY_LIMITS, uploadRoutes } from '../media/video/upload-routes.ts';
 import { META_BODY_LIMITS, metaRoutes } from '../meta/routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';

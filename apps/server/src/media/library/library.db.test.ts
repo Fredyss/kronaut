@@ -13,7 +13,6 @@ import { insertVariant } from '../../posts/draft/variants.ts';
 import { collectMedia } from '../gc.ts';
 import { ingestImage, prepareImage } from '../ingest.ts';
 import { removeIfUnreferenced } from '../key-lock.ts';
-import { finishMedia, StoredObjectMissing } from '../process/process-finish.ts';
 import { createStaging } from '../staging.ts';
 import {
   asUser,
@@ -25,6 +24,7 @@ import {
   uuidOf,
 } from '../testing/db.ts';
 import { jpegFixture, pngFixture } from '../testing.ts';
+import { finishMedia, StoredObjectMissing } from '../video/process-finish.ts';
 import { mediaClearAiRoute, mediaListRoute, mediaUsageRoute } from './library-routes.ts';
 
 let test: TestDatabase;

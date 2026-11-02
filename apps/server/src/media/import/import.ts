@@ -10,7 +10,7 @@ import { internalId } from '../routes.ts';
 import { detectImageFormat } from '../sniff/sniff.ts';
 import { isMp4, isWebm, MP4_MIME, WEBM_MIME } from '../sniff/sniff-mp4.ts';
 import type { Staging } from '../staging.ts';
-import { VIDEO_MAX_BYTES, VIDEO_PART_SIZE } from '../upload/upload.ts';
+import { VIDEO_MAX_BYTES, VIDEO_PART_SIZE } from '../video/upload.ts';
 import { badStatus, classifyImportFailure, refuseImport } from './import-failure.ts';
 import { exactParts } from './import-parts.ts';
 import { type ClaimedImport, claimImport, failImport, markImportDone } from './import-store.ts';

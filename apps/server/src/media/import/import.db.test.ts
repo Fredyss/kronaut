@@ -24,7 +24,7 @@ import {
   startImport,
 } from '../testing/import.ts';
 import { pngFixture } from '../testing.ts';
-import { VIDEO_PART_SIZE } from '../upload/upload.ts';
+import { VIDEO_PART_SIZE } from '../video/upload.ts';
 import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
 import {
   failImport,

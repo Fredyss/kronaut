@@ -20,9 +20,9 @@ import {
   type Tenant,
   uuidOf,
 } from '../testing/db.ts';
-import { VIDEO_PART_SIZE } from '../upload/upload.ts';
-import { videoUploadRoute } from '../upload/upload-routes.ts';
 import { type MediaProcessDeps, runMediaProcess } from './process.ts';
+import { VIDEO_PART_SIZE } from './upload.ts';
+import { videoUploadRoute } from './upload-routes.ts';
 
 const hasFfmpeg = spawnSync('ffmpeg', ['-version']).status === 0;
 const CLI: Actor = { kind: 'cli' };

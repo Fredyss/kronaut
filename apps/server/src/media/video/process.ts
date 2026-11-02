@@ -19,13 +19,13 @@ import * as z from 'zod';
 import type { MediaJob } from '../../jobs/jobs.ts';
 import { removeIfUnreferenced } from '../key-lock.ts';
 import type { Staging } from '../staging.ts';
-import { VIDEO_MAX_BYTES } from '../upload/upload.ts';
 import {
   finishMedia,
   type ProcessedVideo,
   type RejectedReason,
   rejectMedia,
 } from './process-finish.ts';
+import { VIDEO_MAX_BYTES } from './upload.ts';
 
 export interface MediaProcessDeps {
   readonly db: Database;
