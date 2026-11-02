@@ -142,15 +142,24 @@ export function featureImports(graph: ImportGraph): string[] {
   return [...imports].sort();
 }
 
-export function folderCycles(imports: readonly string[], app: string): string[][] {
+function folderNode(file: string, app: string): string | undefined {
+  const prefix = `apps/${app}/src/`;
+  if (!file.startsWith(prefix) || isTesting(file)) return undefined;
+  const path = file.slice(prefix.length);
+  const [folder] = path.split('/');
+  return path.includes('/') && !WIRING_FOLDERS.has(`${app}/${folder}`) ? folder : path;
+}
+
+export function folderCycles(graph: ImportGraph, app: string): string[][] {
   const folders = new Map<string, string[]>();
-  for (const line of imports) {
-    const [source = '', target = ''] = line.split(' -> ');
-    const [sourceApp, from] = source.split('/');
-    if (sourceApp !== app || from === undefined) continue;
-    const to = target.split('/')[0] ?? '';
-    folders.set(from, [...(folders.get(from) ?? []), to]);
-    if (!folders.has(to)) folders.set(to, []);
+  for (const [file, targets] of graph) {
+    const from = folderNode(file, app);
+    if (from === undefined) continue;
+    const edges = folders.get(from) ?? [];
+    folders.set(from, edges);
+    for (const to of targets.map((target) => folderNode(target, app))) {
+      if (to !== undefined && to !== from) edges.push(to);
+    }
   }
   return findCycles(folders);
 }

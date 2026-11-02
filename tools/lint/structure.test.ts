@@ -52,7 +52,7 @@ describe('repo structure', () => {
   });
 
   it('has no import loop between server feature folders', () => {
-    expect(folderCycles(featureImports(graph), 'server')).toEqual([]);
+    expect(folderCycles(graph, 'server')).toEqual([]);
   });
 
   it('keeps base folders free of feature imports', () => {
@@ -93,20 +93,33 @@ describe('the structure rules', () => {
     ]);
   });
 
-  it('finds a loop between folders of one app from the declared imports', () => {
-    const imports = [
-      'server/posts -> approvals/binding.ts',
-      'server/approvals -> notifications/write.ts',
-      'server/notifications -> posts/dto.ts',
-      'server/notifications -> http/errors.ts',
-      'server/series -> posts/owner.ts',
-      'server/tags -> media/import/fetch.ts',
-      'web/compose -> calendar/grid.tsx',
-      'web/calendar -> compose/form.tsx',
-    ];
-    expect(folderCycles(imports, 'server')).toEqual([['approvals', 'notifications', 'posts']]);
+  it('finds a loop between folders of one app, also through wiring and root files', () => {
+    const app = (target: string) => `apps/server/src/${target}`;
+    const web = (target: string) => `apps/web/src/${target}`;
+    const imports: ImportGraph = new Map([
+      [app('posts/a.ts'), [app('approvals/binding.ts'), app('http/errors.ts')]],
+      [app('approvals/binding.ts'), [app('notifications/write.ts')]],
+      [app('notifications/write.ts'), [app('posts/dto.ts')]],
+      [app('tags/read.ts'), [app('media/import/fetch.ts')]],
+      [app('media/import/fetch.ts'), [app('tags/list.ts')]],
+      [app('series/a.ts'), [app('cron.ts')]],
+      [app('cron.ts'), [app('series/b.ts')]],
+      [app('channels/a.ts'), [app('http/authenticate.ts')]],
+      [app('http/authenticate.ts'), [app('auth/session.ts')]],
+      [app('auth/session.ts'), [app('channels/b.ts'), app('http/errors.ts')]],
+      [app('http/api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
+      [app('queue/a.test.ts'), [app('posts/a.ts')]],
+      [app('posts/b.ts'), [app('queue/a.ts'), web('compose/form.tsx')]],
+      [web('compose/form.tsx'), [web('calendar/grid.tsx')]],
+      [web('calendar/grid.tsx'), [web('compose/dialog.tsx'), app('posts/dto.ts')]],
+    ]);
+    expect(folderCycles(imports, 'server')).toEqual([
+      ['approvals', 'notifications', 'posts'],
+      ['media', 'tags'],
+      ['cron.ts', 'series'],
+      ['auth', 'channels', 'http/authenticate.ts'],
+    ]);
     expect(folderCycles(imports, 'web')).toEqual([['calendar', 'compose']]);
-    expect(folderCycles(imports.slice(1), 'server')).toEqual([]);
   });
 
   it("flags a feature that imports another feature's route file", () => {
