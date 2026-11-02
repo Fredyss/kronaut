@@ -1,9 +1,9 @@
 import type { ProviderState, PublishContext, StepEffect } from '@kronaut/core';
 import { sql } from 'kysely';
+import { lockPost, SYSTEM } from '../post-access/lock.ts';
 import { createBaseContext } from '../providers.ts';
 import { stepsFor } from './chain.ts';
 import type { Claimed } from './claim.ts';
-import { lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';
 
 export const LEASE_HEARTBEAT_MS = 30_000;

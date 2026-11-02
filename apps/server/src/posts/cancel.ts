@@ -6,16 +6,16 @@ import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { cancelLocked } from './cancel-locked.ts';
-import { PostSchema, readPost } from './dto.ts';
 import {
   bumpPost,
   checkVersion,
   type LockedDestination,
   lockCurrent,
   lockDestinations,
-} from './locks.ts';
-import { postUnits } from './units.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
+import { cancelLocked } from './cancel-locked.ts';
+import { PostSchema, readPost } from './dto.ts';
 
 // unconfirmed may already be live, and a canceled row can go back to draft without a duplicate check.
 export const CANCELABLE: ReadonlySet<string> = new Set(

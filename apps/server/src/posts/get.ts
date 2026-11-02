@@ -3,8 +3,8 @@ import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { postUnits } from '../post-access/units.ts';
 import { PostSchema, readPost } from './dto.ts';
-import { postUnits } from './units.ts';
 
 export const postGetRoute = defineRoute({
   id: 'posts.get',

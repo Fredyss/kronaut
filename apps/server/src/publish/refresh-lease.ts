@@ -14,9 +14,9 @@ import {
   loadProviderApp,
   persistRefreshed,
 } from '../credentials/credential-store.ts';
+import { SYSTEM } from '../post-access/lock.ts';
 import type { ProviderEntry } from '../providers.ts';
 import { resolveExpiring } from './incidents.ts';
-import { SYSTEM } from './lock.ts';
 import type { RefreshDeps, RefreshOutcome, RefreshTarget } from './refresh.ts';
 
 const LEASE_SECONDS = 60;

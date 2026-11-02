@@ -12,8 +12,8 @@ import {
   lockCurrent,
   lockDestinations,
   type PostRef,
-} from '../posts/locks.ts';
-import { postUnits } from '../posts/units.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 
 export const NEEDS_ACTION = ['unconfirmed', 'failed', 'blocked', 'awaiting_manual'] as const;
 

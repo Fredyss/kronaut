@@ -6,11 +6,6 @@ import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { dequeuePublish } from '../jobs/jobs.ts';
-import { transition } from '../publish/transition.ts';
-import { recordPostSettlement } from '../webhooks/events.ts';
-import { discardPublishProgress, refuseLive } from './destinations.ts';
-import { PostSchema, readPost } from './dto.ts';
-import { UNFROZEN } from './freeze.ts';
 import {
   bumpPost,
   checkVersion,
@@ -18,8 +13,13 @@ import {
   type LockedDestination,
   lockCurrent,
   lockDestinations,
-} from './locks.ts';
-import { postUnits } from './units.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
+import { transition } from '../publish/transition.ts';
+import { recordPostSettlement } from '../webhooks/events.ts';
+import { discardPublishProgress, refuseLive } from './destinations.ts';
+import { PostSchema, readPost } from './dto.ts';
+import { UNFROZEN } from './freeze.ts';
 
 const UNSCHEDULABLE: ReadonlySet<string> = new Set(['scheduled', 'retry_wait']);
 

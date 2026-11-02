@@ -4,7 +4,7 @@ import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { effectivePolicy } from '../approvals/policy.ts';
 import { type Bound, bindGrantIn, bindUserIn } from '../http/principal.ts';
-import type { LockedPost } from './lock.ts';
+import type { LockedPost } from '../post-access/lock.ts';
 
 export interface Scheduler {
   readonly userId: string | null;

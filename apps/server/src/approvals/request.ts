@@ -6,16 +6,17 @@ import { HttpError } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import type { PostRouteDeps } from '../posts/deps.ts';
-import { PostSchema, readPost } from '../posts/dto.ts';
-import type { Frozen } from '../posts/freeze.ts';
 import {
   bumpPost,
   type CurrentPost,
   checkVersion,
   lockCurrent,
   lockDestinations,
-} from '../posts/locks.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
+import type { PostRouteDeps } from '../posts/deps.ts';
+import { PostSchema, readPost } from '../posts/dto.ts';
+import type { Frozen } from '../posts/freeze.ts';
 import { ScheduleCommon } from '../posts/schedule.ts';
 import {
   draftTargets,
@@ -24,7 +25,6 @@ import {
   refuseOpenRequest,
   scheduleOf,
 } from '../posts/targets.ts';
-import { postUnits } from '../posts/units.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { RepeatInput } from '../series/repeat.ts';
 import { startSeries } from '../series/start.ts';

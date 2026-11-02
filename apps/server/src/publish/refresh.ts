@@ -4,10 +4,10 @@ import type { SweepRow } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import { Temporal } from 'temporal-polyfill';
 import { loadCredentialById, type RefreshableCredential } from '../credentials/credential-store.ts';
+import { SYSTEM } from '../post-access/lock.ts';
 import { createBaseContext, type ProviderEntry } from '../providers.ts';
 import { expiringAt, openExpiring, type Renewal, warningState } from './expiring.ts';
 import { flagAccount, flagApp } from './incidents.ts';
-import { SYSTEM } from './lock.ts';
 import {
   acquire,
   canRefresh,

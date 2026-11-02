@@ -7,7 +7,7 @@ import { issueDetails } from '../http/input.ts';
 import { invalid } from '../http/issues.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import { scopeUnit } from '../posts/units.ts';
+import { scopeUnit } from '../post-access/units.ts';
 import { storedValue } from './store.ts';
 
 const DEFAULT_DAYS = 30;

@@ -1,9 +1,9 @@
 import type { ItemAnchor, ProviderState, PublishContext } from '@kronaut/core';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import { sql } from 'kysely';
+import { SYSTEM } from '../post-access/lock.ts';
 import { createBaseContext, PROVIDER_EGRESS } from '../providers.ts';
 import { StepRefused } from './context.ts';
-import { SYSTEM } from './lock.ts';
 import { errorFields } from './plan.ts';
 import type { PublishDeps } from './task.ts';
 import { type Call, inconclusive, type Probed, type VerifyRun } from './verify-run.ts';

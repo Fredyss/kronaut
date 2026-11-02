@@ -3,17 +3,17 @@ import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
 import { InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
-import type { PostRouteDeps } from './deps.ts';
-import { PostSchema, readPost } from './dto.ts';
 import {
   checkVersion,
   destinationRows,
   type LockedDestination,
   lockCurrent,
   lockDestinations,
-} from './locks.ts';
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
+import type { PostRouteDeps } from './deps.ts';
+import { PostSchema, readPost } from './dto.ts';
 import { authorizeSchedule, ScheduleCommon, type ScheduleRun, scheduleLocked } from './schedule.ts';
-import { postUnits } from './units.ts';
 import { authorizeUnschedule, unscheduleLocked } from './unschedule.ts';
 
 const IN_FLIGHT: ReadonlySet<string> = new Set(['publishing', 'verifying', 'retry_wait']);

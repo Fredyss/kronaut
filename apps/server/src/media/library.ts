@@ -6,8 +6,8 @@ import * as z from 'zod';
 import { issueDetails } from '../http/input.ts';
 import { invalid } from '../http/issues.ts';
 import { iso } from '../http/time.ts';
+import { excerptOf, loadMains } from '../post-access/reads.ts';
 import { PostSummarySchema } from '../posts/dto.ts';
-import { excerptOf, loadMains } from '../posts/list.ts';
 import type { MediaSigner } from './access.ts';
 import { LibraryAssetSchema, PREVIEW_COLUMNS, withPreviews } from './preview.ts';
 

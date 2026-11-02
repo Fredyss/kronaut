@@ -11,12 +11,12 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { seedsPulls } from '../analytics/seed.ts';
 import { type DestinationJob, enqueuePublish } from '../jobs/jobs.ts';
+import { type LockedPost, lockPost, SYSTEM } from '../post-access/lock.ts';
 import type { ProviderEntry } from '../providers.ts';
 import { currentInput, selectItems } from './chain.ts';
 import { type ClaimAccount, checkAccess, checkContent, type Inputs } from './claim-checks.ts';
 import { resetItems } from './claim-items.ts';
 import { publishInput } from './input.ts';
-import { type LockedPost, lockPost, SYSTEM } from './lock.ts';
 import type { PublishDeps } from './task.ts';
 import type { DestinationRef } from './transition.ts';
 

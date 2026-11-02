@@ -3,8 +3,8 @@ import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
-import { lockCurrent } from '../posts/locks.ts';
-import { postUnits } from '../posts/units.ts';
+import { lockCurrent } from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import {
   type EvergreenTarget,
   markEvergreen,

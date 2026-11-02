@@ -16,6 +16,16 @@ import { HttpError } from '../http/errors.ts';
 import { ExpectedVersion, InstantFields, PostParams, pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { enqueuePublish } from '../jobs/jobs.ts';
+import {
+  bumpPost,
+  type CurrentPost,
+  checkVersion,
+  destinationRef,
+  type LockedDestination,
+  lockCurrent,
+  lockDestinations,
+} from '../post-access/locks.ts';
+import { postUnits } from '../post-access/units.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { approvalStatus } from '../publish/principal.ts';
 import { type DestinationUpdate, transition } from '../publish/transition.ts';
@@ -27,15 +37,6 @@ import { discardPublishProgress, type ProgressReset } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
 import {
-  bumpPost,
-  type CurrentPost,
-  checkVersion,
-  destinationRef,
-  type LockedDestination,
-  lockCurrent,
-  lockDestinations,
-} from './locks.ts';
-import {
   draftTargets,
   earliest,
   freezeTargets,
@@ -44,7 +45,6 @@ import {
   type Target,
   targetSchedules,
 } from './targets.ts';
-import { postUnits } from './units.ts';
 
 const WAITING = 'The post is waiting for approval.';
 

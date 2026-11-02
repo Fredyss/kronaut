@@ -1,7 +1,7 @@
 import type { Resource, ScopeUnit } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../http/errors.ts';
-import type { LockedPost } from '../publish/lock.ts';
+import type { LockedPost } from './lock.ts';
 
 export function scopeUnit(
   socialAccountId: string | null,
