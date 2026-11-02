@@ -17,10 +17,13 @@ export function SettingsRow({ label, description, children }: SettingsRowProps) 
   const ids = description === undefined ? { id } : { id, 'aria-describedby': descriptionId };
   const labelClass = 'font-medium text-sm';
   return (
-    <div className="flex items-center justify-between gap-4 px-6 py-4">
+    <div className="group/row flex items-center justify-between gap-4 px-6 py-4">
       <div className="flex min-w-0 flex-col gap-0.5">
         {typeof children === 'function' ? (
-          <label htmlFor={id} className={labelClass}>
+          <label
+            htmlFor={id}
+            className={`${labelClass} group-has-[:is(select,button,[type=checkbox],[type=radio]):enabled]/row:cursor-pointer`}
+          >
             {label}
           </label>
         ) : (
