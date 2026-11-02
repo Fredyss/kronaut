@@ -3,11 +3,11 @@ import type { MediaStore } from '@kronaut/media';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { type MediaJob, mediaJobKey } from '../jobs/jobs.ts';
-import { settleExpiredImport } from './import-store.ts';
+import { settleExpiredImport } from './import/import-store.ts';
 import { lockStorageKeys, removeIfUnreferenced } from './key-lock.ts';
-import { referenced } from './library.ts';
-import { rejectMedia } from './process-finish.ts';
+import { referenced } from './library/library.ts';
 import type { Staging } from './staging.ts';
+import { rejectMedia } from './video/process-finish.ts';
 
 export const MEDIA_GC_BATCH = 500;
 export const INCOMING_MAX_AGE_MS = 3_600_000;

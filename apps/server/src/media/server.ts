@@ -1,8 +1,8 @@
 import { type ByteRange, type MediaStore, verifyMediaRequest } from '@kronaut/media';
 import { Hono } from 'hono';
 import type { Temporal } from 'temporal-polyfill';
-import { SNIFF_HEAD_BYTES } from './sniff.ts';
-import { detectServedMime } from './sniff-mp4.ts';
+import { SNIFF_HEAD_BYTES } from './sniff/sniff.ts';
+import { detectServedMime } from './sniff/sniff-mp4.ts';
 
 export interface MediaServerDeps {
   readonly store: MediaStore;

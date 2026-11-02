@@ -2,11 +2,11 @@ import { encodePublicId } from '@kronaut/core';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
-import { HttpError } from '../http/errors.ts';
-import { enqueueMediaImport, type MediaJob } from '../jobs/jobs.ts';
-import { takeWindowQuota } from '../quota/window-quota.ts';
-import { findMediaAsset, MediaAssetSchema } from './dto.ts';
-import { MediaError } from './errors.ts';
+import { HttpError } from '../../http/errors.ts';
+import { enqueueMediaImport, type MediaJob } from '../../jobs/jobs.ts';
+import { takeWindowQuota } from '../../quota/window-quota.ts';
+import { findMediaAsset, MediaAssetSchema } from '../dto.ts';
+import { MediaError } from '../errors.ts';
 import { IMPORT_ERRORS, type ImportError, refuseImport } from './import-failure.ts';
 
 export const MEDIA_IMPORTS_PER_HOUR = 500;

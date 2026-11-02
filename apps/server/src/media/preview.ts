@@ -8,7 +8,7 @@ import {
   toMediaAssetDto,
 } from './dto.ts';
 import { MediaError } from './errors.ts';
-import { POSTER_TRANSFORM } from './process-finish.ts';
+import { POSTER_TRANSFORM } from './video/process-finish.ts';
 
 export const PREVIEW_TTL_SECONDS = 3600;
 
