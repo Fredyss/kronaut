@@ -1,10 +1,9 @@
-import { Button } from '@kronaut/ui';
+import { Button, Modal } from '@kronaut/ui';
 import { useRouter } from '@tanstack/react-router';
 import { lazy, Suspense, useId, useRef } from 'react';
 import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
 import { m } from '../locale/i18n.ts';
 import type { Post } from '../posts/queries.ts';
-import { Modal } from './modal.tsx';
 
 const load = () => import('../routes/compose.tsx');
 const ComposeForm = lazy(() => load().then((module) => ({ default: module.ComposeForm })));

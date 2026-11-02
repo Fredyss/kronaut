@@ -1,5 +1,5 @@
 import { appendSignature } from '@kronaut/compose/text';
-import { Button } from '@kronaut/ui';
+import { Button, Modal } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -8,7 +8,6 @@ import type { Doc } from '../compose/content/doc.ts';
 import type { PreviewTarget } from '../compose/preview/preview.tsx';
 import { m } from '../locale/i18n.ts';
 import { type Post, postQuery } from '../posts/queries.ts';
-import { Modal } from './modal.tsx';
 import { postMediaQuery } from './post-media.ts';
 import { shownSignature } from './post-signature.ts';
 

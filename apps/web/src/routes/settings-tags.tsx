@@ -1,5 +1,5 @@
 import { tagsDelete, tagsUpdate } from '@kronaut/sdk';
-import { Button, toast } from '@kronaut/ui';
+import { Button, Select, SettingsCard, SettingsPage, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -8,9 +8,7 @@ import { idempotency, keyFor } from '../api/idempotency.ts';
 import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import { SELECT } from '../locale/select.tsx';
 import { postsKey } from '../posts/queries.ts';
-import { SettingsCard, SettingsPage } from '../settings/card.tsx';
 import {
   TAG_COLORS,
   TAG_NAME_MAX,
@@ -173,18 +171,17 @@ function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; reado
         tag={tag}
         onRename={(name, onRefused) => update.mutate({ name }, { onError: onRefused })}
       />
-      <select
+      <Select
         aria-label={settingsText.settings_tag_color_of({ name: tag.name })}
         value={tag.color}
         onChange={(event) => update.mutate({ color: event.currentTarget.value as TagColor })}
-        className={SELECT}
       >
         {TAG_COLORS.map((color) => (
           <option key={color} value={color}>
             {settingsText.settings_tag_color({ color })}
           </option>
         ))}
-      </select>
+      </Select>
       <span className="text-muted-foreground text-sm tabular-nums">
         {settingsText.settings_tag_posts({ count: tag.postCount })}
       </span>

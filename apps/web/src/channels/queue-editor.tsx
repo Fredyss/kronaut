@@ -1,5 +1,5 @@
 import { type ChannelsQueueUpdateData, channelsQueueUpdate } from '@kronaut/sdk';
-import { Button, Input, toast } from '@kronaut/ui';
+import { Button, Input, Select, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -7,7 +7,6 @@ import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { useWeekdayFormat } from '../locale/format.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
-import { SELECT } from '../locale/select.tsx';
 import type { Channel } from './queries.ts';
 import { type Queue, queueQuery } from './queue.ts';
 
@@ -57,18 +56,17 @@ function SlotRow({ row, set }: { readonly row: Row; set(row: Row | null): void }
   const weekday = useWeekdayFormat();
   return (
     <li className="flex flex-wrap items-center gap-2">
-      <select
+      <Select
         aria-label={m.calendar_view_day()}
         value={row.weekday}
         onChange={(event) => set({ ...row, weekday: Number(event.currentTarget.value) })}
-        className={SELECT}
       >
         {WEEKDAYS.map((day) => (
           <option key={day} value={day}>
             {weekday(day)}
           </option>
         ))}
-      </select>
+      </Select>
       <Input
         type="time"
         aria-label={m.compose_time()}
@@ -110,18 +108,13 @@ function QueueForm({ initial, ...props }: EditorProps & { readonly initial: Queu
       <label htmlFor={zoneId} className="font-medium">
         {m.queue_zone()}
       </label>
-      <select
-        id={zoneId}
-        value={zone}
-        onChange={(event) => setZone(event.currentTarget.value)}
-        className={SELECT}
-      >
+      <Select id={zoneId} value={zone} onChange={(event) => setZone(event.currentTarget.value)}>
         {zones(zone).map((tz) => (
           <option key={tz} value={tz}>
             {tz}
           </option>
         ))}
-      </select>
+      </Select>
       <p className="text-muted-foreground">{m.queue_evergreen()}</p>
       <ul className="flex flex-col gap-2">
         {rows.map((row) => (

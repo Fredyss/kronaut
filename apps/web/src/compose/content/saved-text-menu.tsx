@@ -1,9 +1,8 @@
-import { Button } from '@kronaut/ui';
+import { Button, Select } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../api/client.ts';
 import { m as composeText } from '../../i18n/compose.ts';
-import { SELECT } from '../../locale/select.tsx';
 import { savedTextsQuery } from '../../saved-texts/saved-texts.ts';
 import { docText } from './doc.ts';
 
@@ -22,12 +21,12 @@ export function SavedTextMenu({ workspaceId, disabled, onPick }: SavedTextMenuPr
   const picked = texts.find((text) => text.id === selected);
   return (
     <div className="flex items-center gap-2">
-      <select
+      <Select
         aria-label={label}
         value={selected}
         disabled={disabled}
         onChange={(event) => setSelected(event.currentTarget.value)}
-        className={`${SELECT} max-w-56`}
+        className="max-w-56"
       >
         <option value="">{label}</option>
         {texts.map((text) => (
@@ -35,7 +34,7 @@ export function SavedTextMenu({ workspaceId, disabled, onPick }: SavedTextMenuPr
             {text.name}
           </option>
         ))}
-      </select>
+      </Select>
       <Button
         type="button"
         variant="outline"

@@ -1,9 +1,9 @@
+import { SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import { SettingsPage } from '../settings/card.tsx';
 import { ApiVersionsCard } from '../system/api-versions-card.tsx';
 import { CronCard } from '../system/cron-card.tsx';
 import { IncidentsCard } from '../system/incidents-card.tsx';

@@ -1,12 +1,11 @@
 import { authMeUpdate } from '@kronaut/sdk';
-import { Button, Input, toast } from '@kronaut/ui';
+import { Button, type ControlIds, Input, toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { type Me, meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import type { ControlIds } from './card.tsx';
 
 const DISPLAY_NAME_MAX_LENGTH = 80;
 

@@ -1,15 +1,14 @@
+import { SettingsCard, SettingsPage, SettingsRow, Switch } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import { SettingsCard, SettingsPage, SettingsRow } from '../settings/card.tsx';
 import {
   type EmailPreferences,
   emailPreferencesQuery,
   useSaveEmailPreferences,
 } from '../settings/email-preferences.ts';
-import { Switch } from '../settings/switch.tsx';
 
 const ROWS = [
   {

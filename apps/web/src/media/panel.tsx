@@ -1,9 +1,9 @@
 import { Button } from '@kronaut/ui';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
-import { trapTab } from '../approvals/password-dialog.tsx';
 import { m as mediaText } from '../i18n/media.ts';
 import { m } from '../locale/i18n.ts';
 import { Icon } from '../ui/icon.tsx';
+import { trapTab } from '../ui/password-dialog.tsx';
 import { kindLabel } from './format.ts';
 import { AiLabel, AltTextForm, Details, Usage } from './panel-sections.tsx';
 import type { LibraryAsset } from './queries.ts';

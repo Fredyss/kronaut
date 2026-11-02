@@ -3,6 +3,12 @@ export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export { cn } from './cn.ts';
 export { Input } from './input.tsx';
 export { Label } from './label.tsx';
+export { Modal } from './modal.tsx';
+export { Select } from './select.tsx';
+export { SettingsCard } from './settings-card.tsx';
+export { SettingsPage } from './settings-page.tsx';
+export { type ControlIds, SettingsRow } from './settings-row.tsx';
+export { Switch, type SwitchProps } from './switch.tsx';
 export {
   dismissToast,
   Toaster,

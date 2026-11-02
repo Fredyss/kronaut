@@ -1,6 +1,6 @@
+import { SettingsCard } from '@kronaut/ui';
 import { m as settingsText } from '../i18n/settings.ts';
 import { useNumberFormat, usePercentFormat } from '../locale/format.ts';
-import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';
 import { StatusBadge } from './status-badge.tsx';
 

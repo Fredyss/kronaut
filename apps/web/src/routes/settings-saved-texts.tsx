@@ -1,4 +1,4 @@
-import { Button } from '@kronaut/ui';
+import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -9,7 +9,6 @@ import { m } from '../locale/i18n.ts';
 import { DeleteSavedText, type Draft, SavedTextForm } from '../saved-texts/form.tsx';
 import { type SavedText, savedTextsQuery } from '../saved-texts/saved-texts.ts';
 import { useCreateSavedText, useSavedTextWrites } from '../saved-texts/writes.ts';
-import { SettingsCard, SettingsPage } from '../settings/card.tsx';
 
 const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 

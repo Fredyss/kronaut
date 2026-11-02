@@ -1,10 +1,10 @@
+import { type ControlIds, Select, SettingsCard, SettingsPage, SettingsRow } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import { LocaleSelect, SELECT } from '../locale/select.tsx';
-import { type ControlIds, SettingsCard, SettingsPage, SettingsRow } from '../settings/card.tsx';
+import { LocaleSelect } from '../locale/select.tsx';
 import { DisplayNameForm } from '../settings/display-name-form.tsx';
 import { PasswordCard } from '../settings/password-form.tsx';
 import { chooseTheme, THEMES, type Theme, useTheme } from '../theme/theme.tsx';
@@ -23,21 +23,20 @@ function themeOption(theme: Theme): string {
 function ThemeSelect(ids: ControlIds) {
   const theme = useTheme();
   return (
-    <select
+    <Select
       {...ids}
       value={theme}
       onChange={(event) => {
         const next = THEMES.find((option) => option === event.currentTarget.value);
         if (next !== undefined) chooseTheme(next);
       }}
-      className={SELECT}
     >
       {THEMES.map((option) => (
         <option key={option} value={option}>
           {themeOption(option)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }
 

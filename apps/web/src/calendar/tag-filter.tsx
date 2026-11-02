@@ -1,8 +1,8 @@
+import { Select } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { useApiClient } from '../api/client.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { SELECT } from '../locale/select.tsx';
 import { tagsQuery } from '../tags/picker.tsx';
 import type { CalendarSearch } from './search.ts';
 
@@ -29,11 +29,10 @@ export function TagFilter({ workspaceId, tag }: TagFilterProps) {
       },
     });
   return (
-    <select
+    <Select
       aria-label={calendarText.calendar_tag_filter()}
       value={tag ?? ''}
       onChange={(event) => choose(event.currentTarget.value)}
-      className={SELECT}
     >
       <option value="">{calendarText.calendar_tags_all()}</option>
       {tag === undefined || known ? null : <option value={tag}>{fallback}</option>}
@@ -42,6 +41,6 @@ export function TagFilter({ workspaceId, tag }: TagFilterProps) {
           {item.name}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }
