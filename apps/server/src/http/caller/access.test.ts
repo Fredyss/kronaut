@@ -3,7 +3,7 @@ import { exportJWK, generateKeyPair, type JWK, SignJWT } from 'jose';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { bootAccess } from '../start.ts';
+import { bootAccess } from '../../start.ts';
 import { type AccessVerifier, createAccessVerifier } from './access.ts';
 
 const AUD = 'aud-0123456789abcdef';

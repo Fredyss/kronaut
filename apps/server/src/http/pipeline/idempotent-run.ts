@@ -1,6 +1,6 @@
 import type { Database } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
-import type { TenantTarget } from './bind.ts';
+import type { TenantTarget } from '../caller/bind.ts';
 import { type Execution, execute, type Outcome } from './execute.ts';
 import {
   completeIdempotency,

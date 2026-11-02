@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import { encodePublicId, SELF_ACTION } from '@kronaut/core';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import type { HttpDeps } from '../http/kernel.ts';
+import type { HttpDeps } from '../http/pipeline/kernel.ts';
 import { type BoundRoute, bindRoute } from '../http/types.ts';
 import { EMAIL_MAX_LENGTH, normalizeEmail } from './email.ts';
 import { recordEvent, requireSession } from './events.ts';

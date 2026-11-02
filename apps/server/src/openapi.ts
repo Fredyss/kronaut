@@ -5,7 +5,7 @@ import { createLocalStore } from '@kronaut/media';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { apiRoutes } from './http/api-routes.ts';
-import { deriveHttpKeys, type HttpDeps, routeRegistry } from './http/kernel.ts';
+import { deriveHttpKeys, type HttpDeps, routeRegistry } from './http/pipeline/kernel.ts';
 import { createStaging } from './media/staging.ts';
 import { createProviderRegistry } from './providers.ts';
 

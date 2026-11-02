@@ -26,7 +26,7 @@ import { savedTextRoutes } from '../saved-texts/routes.ts';
 import { seriesRoutes } from '../series/routes.ts';
 import { systemStatusRoutes } from '../system/routes.ts';
 import { tagRoutes } from '../tags/routes.ts';
-import type { HttpDeps } from './kernel.ts';
+import type { HttpDeps } from './pipeline/kernel.ts';
 import { systemRoutes } from './system-routes.ts';
 import type { BoundRoute } from './types.ts';
 

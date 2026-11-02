@@ -9,12 +9,12 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import * as z from 'zod';
-import { hashPassword } from '../auth/password.ts';
-import { authRoutes } from '../auth/routes.ts';
-import { SESSION_COOKIE } from '../auth/session.ts';
-import { HttpError } from './errors.ts';
+import { hashPassword } from '../../auth/password.ts';
+import { authRoutes } from '../../auth/routes.ts';
+import { SESSION_COOKIE } from '../../auth/session.ts';
+import { HttpError } from '../errors.ts';
+import { bindRoute } from '../types.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
-import { bindRoute } from './types.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const NOW = Temporal.Now.instant();

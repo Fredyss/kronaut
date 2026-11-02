@@ -1,10 +1,10 @@
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { checkAccess } from './access-check.ts';
-import { errorBody, HttpError } from './errors.ts';
-import { readLimited } from './input.ts';
+import { checkAccess } from '../caller/access-check.ts';
+import { errorBody, HttpError } from '../errors.ts';
+import { readLimited } from '../input.ts';
+import { headersFor, respond } from '../respond.ts';
 import type { HttpDeps } from './kernel.ts';
-import { headersFor, respond } from './respond.ts';
 import type { RouteMatch } from './router.ts';
 import { serveRoute } from './serve-route.ts';
 

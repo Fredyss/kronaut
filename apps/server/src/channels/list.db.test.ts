@@ -15,7 +15,7 @@ import { hashGrantToken } from '../auth/grant.ts';
 import { hashPassword } from '../auth/password.ts';
 import { authRoutes } from '../auth/routes.ts';
 import { SESSION_COOKIE } from '../auth/session.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/kernel.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps } from '../http/pipeline/kernel.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { FAKE_PROVIDER, fakeManifest } from '../publish/testing.ts';
 import { channelRoutes } from './routes.ts';

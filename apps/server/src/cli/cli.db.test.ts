@@ -7,7 +7,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { authRoutes } from '../auth/routes.ts';
-import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { release, restoreComplete } from './instance.ts';
 import { createOwner, resetPassword, type UserCommandDeps } from './users.ts';
 

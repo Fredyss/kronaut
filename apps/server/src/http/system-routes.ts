@@ -1,7 +1,7 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { HttpError } from './errors.ts';
-import type { HttpDeps } from './kernel.ts';
+import type { HttpDeps } from './pipeline/kernel.ts';
 import { type BoundRoute, bindRoute } from './types.ts';
 
 export const healthRoute = defineRoute({

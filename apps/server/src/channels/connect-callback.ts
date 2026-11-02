@@ -12,7 +12,7 @@ import {
 import * as z from 'zod';
 import { findSession, SESSION_COOKIE, sessionActive } from '../auth/session.ts';
 import { constantTimeEqual } from '../crypto.ts';
-import { bindUser } from '../http/principal.ts';
+import { bindUser } from '../http/caller/principal.ts';
 import { bindRoute, type RequestContext } from '../http/types.ts';
 import type { ProviderEntry } from '../providers.ts';
 import {

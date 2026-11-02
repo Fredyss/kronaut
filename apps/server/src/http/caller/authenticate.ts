@@ -1,10 +1,15 @@
 import type { AuthMode, Route } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { bearerToken, findGrantToken, type GrantTokenRecord } from '../auth/grant.ts';
-import { findSession, SESSION_COOKIE, type SessionRecord, sessionActive } from '../auth/session.ts';
-import { HttpError } from './errors.ts';
-import type { HttpDeps } from './kernel.ts';
+import { bearerToken, findGrantToken, type GrantTokenRecord } from '../../auth/grant.ts';
+import {
+  findSession,
+  SESSION_COOKIE,
+  type SessionRecord,
+  sessionActive,
+} from '../../auth/session.ts';
+import { HttpError } from '../errors.ts';
+import type { HttpDeps } from '../pipeline/kernel.ts';
 
 export const REVIEW_COOKIE = '__Host-kronaut_review';
 

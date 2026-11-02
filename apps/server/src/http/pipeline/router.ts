@@ -1,4 +1,4 @@
-import type { BoundRoute } from './types.ts';
+import type { BoundRoute } from '../types.ts';
 
 export type RouteMatch =
   | {

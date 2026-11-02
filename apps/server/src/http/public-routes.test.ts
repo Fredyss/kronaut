@@ -11,7 +11,7 @@ import * as z from 'zod';
 import { createStaging } from '../media/staging.ts';
 import { createProviderRegistry } from '../providers.ts';
 import { apiRoutes } from './api-routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps, routeRegistry } from './kernel.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps, routeRegistry } from './pipeline/kernel.ts';
 import { type BoundRoute, bindRoute } from './types.ts';
 
 const unusedDb: Database = {

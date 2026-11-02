@@ -5,8 +5,8 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { bindRoute } from '../types.ts';
 import { createHttpApp, deriveHttpKeys } from './kernel.ts';
-import { bindRoute } from './types.ts';
 
 const unusedDb: Database = {
   withTenant: () => Promise.reject(new Error('database not available in unit tests')),
