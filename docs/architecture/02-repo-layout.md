@@ -6,7 +6,7 @@ pnpm workspace. Every package is TypeScript strict, ESM, built with `tsc -b` pro
 apps/
   server/                 src/main.ts --role=all|api|worker|media ; src/cli.ts
                           src/<feature>/: one folder per product concept (13-code-structure.md)
-                          src/entitlements/: the only place MODE is compared with 'saas' (ADR-0019)
+                          src/entitlements/ (planned): the only place MODE is compared with 'saas' (ADR-0019)
   web/                    Vite SPA; src/<feature>/ as on the server, src/routes/ for pages
 packages/
   core/                   domain types, state machine, errors
@@ -16,7 +16,7 @@ packages/
   i18n/                   message catalogs (en/sk/cs: the app, and the CLI apart) and compiled Paraglide modules; browser-safe; shared by web and server
   db/                     Kysely types, migrations/, withTenant(), sweep functions
     schema/v1.sql         normative v1 schema; migrations are tested against it
-  credentials/            token vault; only the worker and the connect flow may import it
+  credentials/            token vault; only the folders named in 13-code-structure.md may import it (checked)
   egress/                 the only module allowed to import undici or call fetch
   media/                  storage interface, signing, validation, re-encode
   providers/
@@ -24,7 +24,7 @@ packages/
     src/<id>/             manifest.ts, runtime.ts, runtime.test.ts, one module per concern
                           exports: @kronaut/providers/manifests (browser-safe)
                                    @kronaut/providers/runtime  (server only)
-  ui/                     shared UI primitives; network previews live in apps/web
+  ui/                     styled UI primitives with no translated text (13-code-structure.md); network previews live in apps/web
 infra/
   compose/                compose.yaml for self-host and local dev
   docker/                 image build

@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   baseLeaks,
+  credentialLeaks,
   featureImports,
   findCycles,
   type ImportGraph,
@@ -55,6 +56,10 @@ describe('repo structure', () => {
 
   it('keeps only entrypoints in the web src root', () => {
     expect(rootFiles(graph)).toEqual([]);
+  });
+
+  it('lets only the named folders read credentials', () => {
+    expect(credentialLeaks(graph)).toEqual([]);
   });
 });
 
@@ -114,6 +119,29 @@ describe('the structure rules', () => {
       'server/posts -> api/errors.ts',
       'web/inbox -> posts/queries.ts',
       'web/ui -> compose/form.tsx',
+    ]);
+  });
+
+  it('flags credential imports outside the named folders', () => {
+    const vault = 'packages/credentials/src/index.ts';
+    const store = 'apps/server/src/credentials/credential-store.ts';
+    const server = (path: string) => `apps/server/src/${path}`;
+    const imports: ImportGraph = new Map([
+      [server('start.ts'), [vault]],
+      [server('cli/context.ts'), [vault, store]],
+      [server('publish/input.ts'), [store]],
+      [server('credentials/credential-seal.ts'), [vault]],
+      [server('posts/list.ts'), [store]],
+      [server('channels/connect.ts'), [vault, store]],
+      [server('main.ts'), [vault]],
+      [server('posts/list.db.test.ts'), [store, vault]],
+      ['apps/server/e2e/seed.ts', [vault]],
+      ['packages/credentials/src/keyring.ts', [vault]],
+    ]);
+    expect(credentialLeaks(imports)).toEqual([
+      'apps/server/src/channels/connect.ts -> packages/credentials/src/index.ts',
+      'apps/server/src/main.ts -> packages/credentials/src/index.ts',
+      'apps/server/src/posts/list.ts -> apps/server/src/credentials/credential-store.ts',
     ]);
   });
 
