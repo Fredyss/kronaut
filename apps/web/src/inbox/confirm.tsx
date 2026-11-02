@@ -1,7 +1,7 @@
 import { Button } from '@kronaut/ui';
 import { useEffect, useId, useRef, useState } from 'react';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 interface ConfirmProps {
   readonly pending: boolean;

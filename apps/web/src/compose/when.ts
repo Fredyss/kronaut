@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { issueMessage } from './issues.ts';
 import type { ComposeWhen } from './submit.ts';
 

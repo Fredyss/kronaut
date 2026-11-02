@@ -2,7 +2,7 @@ import { Button } from '@kronaut/ui';
 import { lazy, type RefObject, Suspense, useId, useRef } from 'react';
 import type { Channel } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { effective } from './contents.ts';
 import type { Doc } from './doc.ts';
 import type { PostEditorHandle } from './editor.tsx';

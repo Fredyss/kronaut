@@ -1,6 +1,6 @@
 import { detailCodes, errorCode } from '../api/errors.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { apiErrorMessage } from '../i18n.ts';
+import { apiErrorMessage } from '../locale/i18n.ts';
 
 export function savedTextError(error: unknown): string {
   const code = errorCode(error);

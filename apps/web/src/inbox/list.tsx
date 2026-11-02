@@ -4,9 +4,9 @@ import { useApiClient } from '../api/client.ts';
 import { needsActionQuery } from '../api.ts';
 import { useFormats } from '../calendar/formats.ts';
 import { browserTimeZone } from '../calendar/time.ts';
-import { useLocale } from '../context.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
 import { InboxRow } from './row.tsx';
 
 function Empty() {

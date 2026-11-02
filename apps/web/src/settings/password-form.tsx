@@ -5,7 +5,7 @@ import { type FormEvent, type RefObject, useEffect, useId, useRef, useState } fr
 import { useApiClient } from '../api/client.ts';
 import { errorDetails, errorStatus, isUnauthenticated } from '../api/errors.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,

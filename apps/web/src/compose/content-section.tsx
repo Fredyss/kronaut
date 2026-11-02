@@ -1,8 +1,8 @@
 import { Button } from '@kronaut/ui';
 import { lazy, type Ref, type RefObject, Suspense, useId, useRef, useState } from 'react';
 import type { Channel } from '../api.ts';
-import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
+import { useLocale } from '../locale/context.ts';
 import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
 import type { PostEditorHandle } from './editor.tsx';

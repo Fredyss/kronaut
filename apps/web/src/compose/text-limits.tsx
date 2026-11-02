@@ -7,8 +7,8 @@ import {
 } from '@kronaut/compose/text';
 import { useEffect } from 'react';
 import type { Channel } from '../api.ts';
-import { useLocale } from '../context.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers.ts';
 import type { MediaFacts } from './choice.ts';
 import type { Doc } from './doc.ts';

@@ -13,7 +13,7 @@ import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { type NeedsActionItem, needsActionKey, type Post, postKey, postsKey } from '../api.ts';
 import { issueMessage } from '../compose/issues.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { apiErrorMessage } from '../i18n.ts';
+import { apiErrorMessage } from '../locale/i18n.ts';
 
 export type ResolveKind = 'mark' | 'send' | 'cancel';
 

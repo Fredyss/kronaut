@@ -1,4 +1,4 @@
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { MAX_VIDEO_BYTES } from './media.ts';
 import type { VideoEntry } from './use-video.ts';
 import type { RejectedReason } from './video-upload.ts';

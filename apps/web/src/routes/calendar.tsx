@@ -16,7 +16,7 @@ import {
   visibleRange,
 } from '../calendar/time.ts';
 import { CalendarToolbar } from '../calendar/toolbar.tsx';
-import { useLocale } from '../context.ts';
+import { useLocale } from '../locale/context.ts';
 
 const route = getRouteApi('/app/');
 

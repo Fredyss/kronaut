@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode } from '../api/errors.ts';
 import type { ScheduleWhen } from '../compose/submit.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { type PostScope, useApprovalCall } from './actions.ts';
 import { approvalErrorMessage } from './messages.ts';
 import { approvalBody } from './queries.ts';

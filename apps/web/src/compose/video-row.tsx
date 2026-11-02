@@ -1,8 +1,8 @@
 import { Button, Label } from '@kronaut/ui';
 import { useId } from 'react';
-import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
 import { MAX_ALT_TEXT } from './media.ts';
 import type { VideoSlot } from './use-media.ts';
 import { isMarked, type VideoEntry, type VideoPhase } from './use-video.ts';

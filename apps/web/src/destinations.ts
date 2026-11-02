@@ -1,5 +1,5 @@
 import type { Destination } from './api.ts';
-import { m } from './i18n.ts';
+import { m } from './locale/i18n.ts';
 
 const POLL_MS = 5000;
 const DUE_SOON_MS = 10 * 60 * 1000;

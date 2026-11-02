@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { ME_KEY } from '../api/me.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { denyCode, refreshApproval } from './queries.ts';
 
 export interface PostScope {

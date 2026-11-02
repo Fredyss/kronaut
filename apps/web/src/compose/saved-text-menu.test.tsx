@@ -4,7 +4,7 @@ import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import type { Editor } from '@tiptap/core';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { channel, mount } from './testing.tsx';
 
 const LABEL = 'Insert saved text';

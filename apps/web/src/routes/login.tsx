@@ -15,7 +15,7 @@ import type { FormEvent } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode } from '../api/errors.ts';
 import { ME_KEY } from '../api/me.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { safeNext } from '../next.ts';
 import { AuthLayout } from './auth-layout.tsx';
 

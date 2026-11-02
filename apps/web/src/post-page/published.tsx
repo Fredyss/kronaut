@@ -5,7 +5,7 @@ import { lazy, type ReactNode, Suspense, useState } from 'react';
 import { ANALYTICS_ID, useMetricsRows } from '../analytics/section.tsx';
 import { useApiClient } from '../api/client.ts';
 import { ANALYTICS_ROLES, type Post } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
 
 const load = () => import('../post-actions/entry-actions.tsx');

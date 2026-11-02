@@ -6,7 +6,7 @@ import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { type ControlIds, SettingsCard, SettingsRow } from '../settings/card.tsx';
 import { approvalPolicyKey, type PolicyResponse, type PolicyValues } from './queries.ts';
 

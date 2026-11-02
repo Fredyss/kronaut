@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { SAVED_TEXT_MAX, SAVED_TEXT_NAME_MAX } from './saved-texts.ts';
 
 const TEXT_AREA =

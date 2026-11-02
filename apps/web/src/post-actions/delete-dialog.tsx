@@ -6,7 +6,7 @@ import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { postKey, postsKey } from '../api.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { Modal } from './modal.tsx';
 
 export interface DeleteTarget {

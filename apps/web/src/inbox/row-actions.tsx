@@ -2,7 +2,7 @@ import { Button } from '@kronaut/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { NeedsActionItem } from '../api.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { actionsFor, type ResolveKind, useResolve } from './actions.ts';
 import { DuplicateConfirm } from './confirm.tsx';
 

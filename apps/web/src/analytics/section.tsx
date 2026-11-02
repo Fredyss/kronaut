@@ -3,8 +3,8 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useApiClient } from '../api/client.ts';
 import type { Channel, Post } from '../api.ts';
-import { useNumberFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useNumberFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
 
 export const ANALYTICS_ID = 'analytics';
 

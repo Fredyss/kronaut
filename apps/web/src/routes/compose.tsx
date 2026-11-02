@@ -13,7 +13,7 @@ import { type OpenedPostData, openedPostQuery } from '../compose/opened-post.ts'
 import { PreviewPane } from '../compose/preview-pane.tsx';
 import { type ComposeStart, useComposeForm } from '../compose/use-compose-form.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { DRAFT_ROLES } from '../post-actions/permissions.ts';
 import { editableBy } from '../post-actions/post-editable.ts';
 

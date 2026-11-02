@@ -11,8 +11,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
-import { useWallFormat } from '../format.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { useWallFormat } from '../locale/format.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { useRuleText } from './rule-text.ts';
 
 interface SeriesScope {

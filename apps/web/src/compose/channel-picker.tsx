@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router';
 import { type Dispatch, type SetStateAction, useId } from 'react';
 import type { Channel } from '../api.ts';
 import { statusLabel } from '../channels/status-label.ts';
-import { useLocale } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
 import { type PublishChoice, providerUi } from '../providers.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
 

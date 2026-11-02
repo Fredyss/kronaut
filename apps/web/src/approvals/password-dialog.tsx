@@ -1,6 +1,6 @@
 import { Button, Input, Label } from '@kronaut/ui';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 interface PasswordDialogProps {
   readonly pending: boolean;

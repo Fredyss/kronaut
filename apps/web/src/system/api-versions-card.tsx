@@ -1,5 +1,5 @@
-import { useDateFormat } from '../format.ts';
 import { m as settingsText } from '../i18n/settings.ts';
+import { useDateFormat } from '../locale/format.ts';
 import { providerUi } from '../providers.ts';
 import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';

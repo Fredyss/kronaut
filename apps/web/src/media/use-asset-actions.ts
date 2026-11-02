@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { m as mediaText } from '../i18n/media.ts';
-import { apiErrorMessage } from '../i18n.ts';
+import { apiErrorMessage } from '../locale/i18n.ts';
 import { clearAiLabel, deleteAsset, libraryKey, saveAltText } from './queries.ts';
 
 function failure(error: unknown): string | null {

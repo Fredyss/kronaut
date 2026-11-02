@@ -1,6 +1,6 @@
 import { detailCodes, errorCode } from '../api/errors.ts';
 import { issueMessage } from '../compose/issues.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { type ApprovalRequest, denyCode, hasDetail } from './queries.ts';
 
 export function stateLabel(state: ApprovalRequest['state']): string {

@@ -3,7 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { m as mediaText } from '../i18n/media.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { AssetPanel } from './panel.tsx';
 import { type LibraryKind, libraryQuery } from './queries.ts';
 import { MediaTile } from './tile.tsx';

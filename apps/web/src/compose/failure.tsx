@@ -3,7 +3,7 @@ import { Button } from '@kronaut/ui';
 import { errorCode, errorDetails, errorStatus } from '../api/errors.ts';
 import type { Channel } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
 import { destinationIndex, issueMessage } from './issues.ts';
 import {
   MarkedImageError,

@@ -6,7 +6,7 @@ import { useApiClient } from '../api/client.ts';
 import { notificationsQuery } from '../api.ts';
 import { CountBadge } from '../count-badge.tsx';
 import { useDisclosure } from '../disclosure.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 const Panel = lazyRouteComponent(() => import('./panel.tsx'), 'NotificationsPanel');
 

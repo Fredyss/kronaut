@@ -1,6 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
 import type { PostSummary } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 type Summary = PostSummary;
 type SummaryDestination = Summary['destinations'][number];

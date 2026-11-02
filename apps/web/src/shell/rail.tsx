@@ -1,8 +1,8 @@
 import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
-import { m } from '../i18n.ts';
 import { InboxBadge } from '../inbox/nav-link.tsx';
+import { m } from '../locale/i18n.ts';
 import { CalendarIcon, ChannelsIcon, InboxIcon, MediaIcon, SettingsIcon } from './icons.tsx';
 
 const ITEM =

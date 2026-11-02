@@ -1,6 +1,6 @@
 import { CHANNEL_KINDS, notificationLine as line } from '@kronaut/i18n/notifications';
 import type { NotificationItem } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers.ts';
 
 export function notificationLine(item: NotificationItem): string {

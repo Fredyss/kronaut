@@ -6,7 +6,7 @@ import { useApiClient } from '../api/client.ts';
 import { detailCodes, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { type Post, postsKey } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { TagDot } from './dots.tsx';
 import { Options } from './options.tsx';
 import {

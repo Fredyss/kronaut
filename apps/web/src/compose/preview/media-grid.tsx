@@ -1,6 +1,6 @@
 import { cn } from '@kronaut/ui';
 import { type SyntheticEvent, useState } from 'react';
-import { m } from '../../i18n.ts';
+import { m } from '../../locale/i18n.ts';
 import { type AspectRange, clampAspect, type Ratio } from './aspect.ts';
 import { Card, type CardProps, type PreviewImage, Thumb } from './parts.tsx';
 

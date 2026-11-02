@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../api/client.ts';
 import { meQuery } from '../api/me.ts';
-import { m } from '../i18n.ts';
 import { InboxList } from '../inbox/list.tsx';
+import { m } from '../locale/i18n.ts';
 
 export function InboxPage() {
   const client = useApiClient();

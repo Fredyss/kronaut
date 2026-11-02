@@ -1,7 +1,7 @@
 import type { PostsScheduleData } from '@kronaut/sdk';
-import { useLocale } from '../context.ts';
-import { useDateFormat, useWeekdayFormat } from '../format.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { useDateFormat, useWeekdayFormat } from '../locale/format.ts';
+import { m } from '../locale/i18n.ts';
 
 type InstantBody = Extract<PostsScheduleData['body'], { mode: 'instant' }>;
 export type Repeat = NonNullable<InstantBody['repeat']>;

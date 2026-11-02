@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 export function AuthLayout({ children }: { readonly children: ReactNode }) {
   return (

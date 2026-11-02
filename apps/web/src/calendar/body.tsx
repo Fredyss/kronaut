@@ -5,7 +5,7 @@ import { useApiClient } from '../api/client.ts';
 import { draftsQuery, type PostList, type PostSummary, postsRangeQuery } from '../api.ts';
 import { pollDelay } from '../destinations.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { MOVE_HINT_ID } from './chip.tsx';
 import { Drafts } from './drafts.tsx';
 import { EmptyState } from './empty-state.tsx';

@@ -7,9 +7,9 @@ import { useApiClient } from '../api/client.ts';
 import { type Channel, channelsQuery } from '../api.ts';
 import { statusLabel } from '../channels/status-label.ts';
 import { preloadEditor } from '../compose/load.ts';
-import { useLocale } from '../context.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
-import { m } from '../i18n.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers.ts';
 import { ChevronsLeft, Plus } from './icons.tsx';
 

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { SELECT } from '../locale-select.tsx';
+import { SELECT } from '../locale/select.tsx';
 import { savedTextsQuery } from '../saved-texts/saved-texts.ts';
 import { docText } from './doc.ts';
 

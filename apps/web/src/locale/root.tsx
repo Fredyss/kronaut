@@ -1,10 +1,10 @@
 import type { Client } from '@kronaut/sdk';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import type { AppRouter } from './app.tsx';
+import type { AppRouter } from '../app.tsx';
+import { useLocaleChoice } from './choice.ts';
 import { LocaleContext } from './context.ts';
 import { applyLocale, baseLocale, isLoaded, type Locale, loadLocale } from './i18n.ts';
-import { useLocaleChoice } from './locale-choice.ts';
 
 interface LocaleRootProps {
   readonly router: AppRouter;

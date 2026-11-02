@@ -8,8 +8,8 @@ import { idempotency, keyFor } from '../api/idempotency.ts';
 import { meQuery } from '../api/me.ts';
 import { postsKey } from '../api.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../i18n.ts';
-import { SELECT } from '../locale-select.tsx';
+import { m } from '../locale/i18n.ts';
+import { SELECT } from '../locale/select.tsx';
 import { SettingsCard, SettingsPage } from '../settings/card.tsx';
 import {
   TAG_COLORS,

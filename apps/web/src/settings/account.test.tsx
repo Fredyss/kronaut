@@ -16,7 +16,7 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App, createApp } from '../app.tsx';
 import { COLD, warmUp } from '../compose/testing.tsx';
-import { useLocaleChoice } from '../locale-choice.ts';
+import { useLocaleChoice } from '../locale/choice.ts';
 import { chooseTheme } from '../theme.tsx';
 
 afterEach(() => {

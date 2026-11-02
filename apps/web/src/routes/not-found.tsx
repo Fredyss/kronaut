@@ -1,6 +1,6 @@
 import { Button } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 
 export function NotFoundPage() {
   return (

@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { lazy, Suspense, useId, useRef } from 'react';
 import type { Post } from '../api.ts';
 import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { Modal } from './modal.tsx';
 
 const load = () => import('../routes/compose.tsx');

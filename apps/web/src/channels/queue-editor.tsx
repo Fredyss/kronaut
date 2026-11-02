@@ -6,9 +6,9 @@ import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import type { Channel } from '../api.ts';
-import { useWeekdayFormat } from '../format.ts';
-import { apiErrorMessage, m } from '../i18n.ts';
-import { SELECT } from '../locale-select.tsx';
+import { useWeekdayFormat } from '../locale/format.ts';
+import { apiErrorMessage, m } from '../locale/i18n.ts';
+import { SELECT } from '../locale/select.tsx';
 import { type Queue, queueQuery } from './queue.ts';
 
 type Slot = ChannelsQueueUpdateData['body']['slots'][number];

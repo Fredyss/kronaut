@@ -1,6 +1,6 @@
 import type { ValidationIssue } from '@kronaut/compose/text';
 import type { Channel } from '../api.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { formatDuration, formatMegabytes } from './video-text.ts';
 
 export type VideoRules = NonNullable<Channel['postTypes'][number]['video']>;

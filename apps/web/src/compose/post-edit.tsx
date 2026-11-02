@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { useApiClient } from '../api/client.ts';
 import { channelsQuery, type Post } from '../api.ts';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { canceledLive } from '../post-actions/post-editable.ts';
 import { postMediaQuery } from '../post-actions/post-media.ts';
 import { fromPost, type Refusal } from './from-post.ts';

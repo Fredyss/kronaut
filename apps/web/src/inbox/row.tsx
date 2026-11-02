@@ -5,7 +5,7 @@ import type { NeedsActionItem } from '../api.ts';
 import type { Formats } from '../calendar/formats.ts';
 import { httpsUrl, stateLabel } from '../destinations.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { providerUi } from '../providers.ts';
 import { RECONNECT, reasonLabel } from './reasons.ts';
 import { RowActions } from './row-actions.tsx';

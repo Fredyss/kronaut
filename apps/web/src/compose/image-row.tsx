@@ -1,7 +1,7 @@
 import { Button, Label } from '@kronaut/ui';
 import { useId } from 'react';
 import { m as composeText } from '../i18n/compose.ts';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import type { PickedImage } from './contents.ts';
 import { MAX_ALT_TEXT } from './media.ts';
 

@@ -1,4 +1,4 @@
-import { m } from './i18n.ts';
+import { m } from './locale/i18n.ts';
 
 const BADGE_MAX = 99;
 

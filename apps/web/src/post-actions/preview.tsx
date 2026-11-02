@@ -6,7 +6,7 @@ import { useApiClient } from '../api/client.ts';
 import { type Channel, channelsQuery, type Post, postQuery } from '../api.ts';
 import type { Doc } from '../compose/doc.ts';
 import type { PreviewTarget } from '../compose/preview/preview.tsx';
-import { m } from '../i18n.ts';
+import { m } from '../locale/i18n.ts';
 import { Modal } from './modal.tsx';
 import { postMediaQuery } from './post-media.ts';
 import { shownSignature } from './post-signature.ts';
