@@ -2,9 +2,9 @@ import { approvalsWithdraw } from '@kronaut/sdk';
 import { Button } from '@kronaut/ui';
 import { useApiClient } from '../api/client.ts';
 import { m } from '../locale/i18n.ts';
-import { PasswordDialog } from '../ui/password-dialog.tsx';
 import { type Decision, type PostScope, useApprovalCall, useDecide } from './actions.ts';
 import { approvalErrorMessage } from './messages.ts';
+import { PasswordDialog } from './password-dialog.tsx';
 
 const DECISIONS: readonly [Decision, () => string][] = [
   ['approve', () => m.approval_approve()],
