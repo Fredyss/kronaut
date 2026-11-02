@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -210,8 +210,8 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
     await expectRejected(await audioOnly(), 'video_stream_missing');
   });
 
-  it('rejects random bytes as video_unreadable', async () => {
-    await expectRejected(new Uint8Array(randomBytes(64 * 1024)), 'video_unreadable');
+  it('rejects zeroed bytes as video_unreadable', async () => {
+    await expectRejected(new Uint8Array(64 * 1024), 'video_unreadable');
   });
 
   it('rejects a second upload of the same video as a duplicate of the first', async () => {
