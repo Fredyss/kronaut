@@ -6,7 +6,7 @@ import type { Formats } from '../calendar/formats.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
 import { m } from '../locale/i18n.ts';
 import { httpsUrl, stateLabel } from '../posts/destinations.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 import { RECONNECT, reasonLabel } from './reasons.ts';
 import { RowActions } from './row-actions.tsx';
 

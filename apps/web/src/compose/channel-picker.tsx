@@ -5,7 +5,7 @@ import { statusLabel } from '../channels/status-label.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
-import { type PublishChoice, providerUi } from '../providers.ts';
+import { type PublishChoice, providerUi } from '../providers/ui.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
 
 export function channelHint(

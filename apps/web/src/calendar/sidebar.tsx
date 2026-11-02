@@ -10,7 +10,7 @@ import { preloadEditor } from '../compose/load.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 import { ChevronsLeft, Plus } from './icons.tsx';
 
 const STORAGE_KEY = 'kronaut.calendar.sidebar';

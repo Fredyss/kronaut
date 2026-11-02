@@ -2,7 +2,7 @@ import { Button, Input, Label } from '@kronaut/ui';
 import { type FormEvent, useId } from 'react';
 import { detailCodes, errorDetails, errorStatus } from '../api/errors.ts';
 import { m } from '../locale/i18n.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 
 export interface ConnectRequest {
   readonly provider: string;

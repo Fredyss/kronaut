@@ -4,15 +4,15 @@ import { useMutation } from '@tanstack/react-query';
 import { type FormEvent, type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
 import { errorDetails, errorStatus, isUnauthenticated } from '../api/errors.ts';
-import { m as settingsText } from '../i18n/settings.ts';
-import { m } from '../locale/i18n.ts';
 import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   passwordHint,
   passwordProblem,
   policyMessage,
-} from '../password-policy.ts';
+} from '../auth/password-policy.ts';
+import { m as settingsText } from '../i18n/settings.ts';
+import { m } from '../locale/i18n.ts';
 import { SettingsCard, SettingsRow } from './card.tsx';
 
 interface Problems {

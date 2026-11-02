@@ -19,7 +19,7 @@ import { isSettled, PublishedView } from '../post-page/published.tsx';
 import { httpsUrl, pollDelay, stateLabel } from '../posts/destinations.ts';
 import { type Destination, type Post, postQuery } from '../posts/queries.ts';
 import { summaryLabel } from '../posts/summary.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 import { SeriesSection } from '../series/section.tsx';
 
 const route = getRouteApi('/app/posts/$postId');

@@ -2,7 +2,7 @@ import { Button, cn } from '@kronaut/ui';
 import { useEffect, useId, useRef, useState } from 'react';
 import { trapTab } from '../approvals/password-dialog.tsx';
 import { m } from '../locale/i18n.ts';
-import { knownProviders, providerUi } from '../providers.ts';
+import { knownProviders, providerUi } from '../providers/ui.ts';
 import { Icon } from '../ui/icon.tsx';
 import { ConnectForm, type ConnectRequest } from './connect-option.tsx';
 

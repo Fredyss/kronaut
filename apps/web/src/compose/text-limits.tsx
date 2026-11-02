@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import type { Channel } from '../api.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 import type { MediaFacts } from './choice.ts';
 import type { Doc } from './doc.ts';
 import { type ItemDoc, type LimitItem, type PostTypeRules, postTypeFor } from './items.ts';

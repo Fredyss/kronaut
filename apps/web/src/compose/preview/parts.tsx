@@ -3,7 +3,7 @@ import type { ReactNode, SyntheticEvent } from 'react';
 import type { Channel } from '../../api.ts';
 import { useLocale } from '../../locale/context.ts';
 import { m } from '../../locale/i18n.ts';
-import { providerUi } from '../../providers.ts';
+import { providerUi } from '../../providers/ui.ts';
 import type { PickedImage } from '../contents.ts';
 import type { AspectRange } from './aspect.ts';
 

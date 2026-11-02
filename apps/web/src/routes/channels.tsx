@@ -17,7 +17,7 @@ import { statusLabel } from '../channels/status-label.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';
 import { httpsUrl } from '../posts/destinations.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 
 const Followers = lazy(() =>
   import('../channels/followers.tsx').then((module) => ({ default: module.Followers })),

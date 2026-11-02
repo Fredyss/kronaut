@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../locale/i18n.ts';
 import { stateLabel } from '../posts/destinations.ts';
-import { providerUi } from '../providers.ts';
+import { providerUi } from '../providers/ui.ts';
 import { TagDots } from '../tags/picker.tsx';
 import { type Entry, postText } from './entries.ts';
 import { EntryMenu } from './entry-menu.tsx';
