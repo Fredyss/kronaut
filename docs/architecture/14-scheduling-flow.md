@@ -2,7 +2,7 @@
 
 Which way imports run between the server folders that carry a post from draft to published, and the moves that get there. Read it before adding a planning tool or moving code in `posts`, `queue`, `series`, `approvals` or `publish`.
 
-**Status:** target. PRs 1 and 2 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
+**Status:** target. PRs 1 to 3 below are done and the others are not. The problem section is as measured at `e58af2a`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to one flow.
 
 ## The flow
 
@@ -67,11 +67,11 @@ One PR each, in this order. Each keeps every result unchanged, and the route sna
 | Today | | 11 folders |
 | 1. Helpers | `params.ts`, `unprocessable`, `iso`, `plainLocal`, `invalid`, `InstantFields` to `http`, and `zodDetails` replaced by `issueDetails` there. `Resolving` stays in `posts`, in `deps.ts`. `resolveLocal`, `scheduleAt`, `Schedule`, `TzResolution` to `@kronaut/core`. `posts/audit.ts` to `audit/`. | 8 folders, plus `auth` and `system` |
 | 2. Access | `publish/lock.ts`, `posts/locks.ts`, `posts/units.ts`, `excerptOf`, `visibleIn`, `loadMains` to `post-access/`. Imports of `transition` point at `publish/transition.ts`, and the re-export goes. | 5 folders, plus `auth` and `system` |
-| 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`. `requestRoutes` is mounted from `posts` and `approvals/routes.ts` stops mounting it; otherwise `approvals` still imports `posts` and the loop stays. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
+| 3. Flow | `approvals/request.ts`, `series/start.ts`, `series/repeat.ts` to `posts/`, as `approval-request.ts`, `series-start.ts` and `repeat.ts`. `requestRoutes` is mounted from `posts` and `approvals/routes.ts` stops mounting it; otherwise `approvals` still imports `posts` and the loop stays. `APPROVAL_UNBOUND` to `approvals/binding.ts`. | `approvals` and `notifications`, plus `auth` and `system` |
 | 4. Policy | `approvals/policy.ts`, `policy-store.ts`, `policy-routes.ts` to `approval-policy/`, with `policyRoutes` mounted in `http/api-routes.ts`, because a feature can't import another feature's route file. | `auth` and `system` |
 | 5. Check | `system/instance-admins.ts` to `auth/`, then a check in `tools/lint/structure.test.ts` that server feature folders have no cycle, built on the `server/` lines of `featureImports` so `http` stays out as an importer. | None, and `pnpm check` keeps it so |
 
-After PR 2 the folder loops measure 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`.
+After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `posts`, `publish` and `series`, plus `auth` and `system`. After PR 3 they measure `approvals` and `notifications`, plus `auth` and `system`, as planned.
 
 `feature-imports.json` changes in each PR. Its length isn't the measure here, because moves into `post-access` and `audit` trade one line for another.
 
@@ -80,7 +80,7 @@ After PR 2 the folder loops measure 5 folders, `approvals`, `notifications`, `po
 - **Lock order:** the post comes first, then its destinations or approval request. Moving a function doesn't change the order it locks in.
 - **`transition` stays in `publish`.** It writes notifications, and `notifications` reads through `post-access`, so moving it down would rebuild the loop.
 - **`approvalStatus` stays in `publish/principal.ts`,** because the claim re-checks it.
-- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and has 27 after PR 2. PR 3 brings in 3, so it ends PR 3 at 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so its split into subfolders comes after PR 5, when the loop check is in.
+- **`posts` stays large.** Counted as in [Code structure](13-code-structure.md), it had 29 source files after PR 1 and 27 after PR 2. PR 3 brought in 3, so it has 30. That's over the 25-file limit in [Code structure](13-code-structure.md), so its split into subfolders comes after PR 5, when the loop check is in.
 
 ## Rejected
 

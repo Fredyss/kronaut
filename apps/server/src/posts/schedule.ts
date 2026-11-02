@@ -29,13 +29,13 @@ import { postUnits } from '../post-access/units.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import { approvalStatus } from '../publish/principal.ts';
 import { type DestinationUpdate, transition } from '../publish/transition.ts';
-import { RepeatInput } from '../series/repeat.ts';
-import { startSeries } from '../series/start.ts';
 import { recordPostSettlement } from '../webhooks/events.ts';
 import type { PostRouteDeps } from './deps.ts';
 import { discardPublishProgress, type ProgressReset } from './destinations.ts';
 import { PostSchema, readPost } from './dto.ts';
 import { FRESH_PUBLISH, type Frozen } from './freeze.ts';
+import { RepeatInput } from './repeat.ts';
+import { startSeries } from './series-start.ts';
 import {
   draftTargets,
   earliest,

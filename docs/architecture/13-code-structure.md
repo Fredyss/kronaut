@@ -87,7 +87,7 @@ These rules bind new code, but existing code still breaks them:
 - Shared modules in the `apps/server/src` root, which should each find an owner.
 - `post-actions/compose-dialog.tsx` imports a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
-- Shared modules that also define routes: `posts/schedule.ts`, `channels/disconnect.ts`, `approvals/request.ts`, `auth/profile.ts`.
+- Shared modules that also define routes: `posts/schedule.ts`, `channels/disconnect.ts`, `auth/profile.ts`.
 - Feature folders import each other in cycles. A cycle between files fails the check; between folders, the declared list only makes a new one visible in review. [Scheduling flow](14-scheduling-flow.md) plans the server fix. The web loop spans 8 folders (`approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions`, `saved-texts`); a web chapter will set its direction.
-- Directories above 25 source files: `web/compose` (51), `server/media` (31), `server/http` (29), `server/posts` (27), `server/publish` (26). Each gets its own split; the check lands with the last one.
+- Directories above 25 source files: `web/compose` (51), `server/media` (31), `server/posts` (30), `server/http` (29), `server/publish` (26). Each gets its own split; the check lands with the last one.
 - Shared UI outside its home: `settings/card.tsx` is a primitive used by `system`, `approvals` and `routes`; `settings/switch.tsx` is used by `routes`; `approvals/password-dialog.tsx` is used by `channels` and `media`; the select styling is a `SELECT` class string in `locale/select.tsx`, used by 7 other files, plus an inline copy in `approvals/policy-form.tsx`. `post-actions/modal.tsx` is a primitive too, though only `post-actions` uses it so far.

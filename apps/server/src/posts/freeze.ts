@@ -9,6 +9,7 @@ import {
 } from '@kronaut/compose';
 import type { DB, TenantDb } from '@kronaut/db';
 import { sql, type UpdateObject } from 'kysely';
+import { APPROVAL_UNBOUND } from '../approvals/binding.ts';
 import { HttpError, type IssueDetail } from '../http/errors.ts';
 import type { ProviderEntry, ProviderRegistry } from '../providers.ts';
 import {
@@ -28,14 +29,6 @@ export const FRESH_PUBLISH: UpdateObject<DB, 'post_destinations'> = {
   provider_state: sql`'{}'::jsonb`,
   last_error_code: null,
   last_error_message: null,
-};
-
-export const APPROVAL_UNBOUND: UpdateObject<DB, 'post_destinations'> = {
-  approval_request_id: null,
-  approval_schedule_bound: null,
-  approved_scheduled_local: null,
-  approved_scheduled_tz: null,
-  approved_tolerance_min: null,
 };
 
 export const UNFROZEN: UpdateObject<DB, 'post_destinations'> = {

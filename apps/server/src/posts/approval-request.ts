@@ -2,6 +2,8 @@ import { defineRoute } from '@kronaut/contract';
 import type { Schedule } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { announce } from '../approvals/locked.ts';
+import { type EffectivePolicy, effectivePolicy, policySnapshot } from '../approvals/policy.ts';
 import { HttpError } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields, PostParams, pathId } from '../http/params.ts';
@@ -14,23 +16,21 @@ import {
   lockDestinations,
 } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
-import type { PostRouteDeps } from '../posts/deps.ts';
-import { PostSchema, readPost } from '../posts/dto.ts';
-import type { Frozen } from '../posts/freeze.ts';
-import { ScheduleCommon } from '../posts/schedule.ts';
+import type { ProviderRegistry } from '../providers.ts';
+import { postApprovalRequestedEvent } from '../webhooks/events.ts';
+import type { PostRouteDeps } from './deps.ts';
+import { PostSchema, readPost } from './dto.ts';
+import type { Frozen } from './freeze.ts';
+import { RepeatInput } from './repeat.ts';
+import { ScheduleCommon } from './schedule.ts';
+import { startSeries } from './series-start.ts';
 import {
   draftTargets,
   freezeTargets,
   postSchedule,
   refuseOpenRequest,
   scheduleOf,
-} from '../posts/targets.ts';
-import type { ProviderRegistry } from '../providers.ts';
-import { RepeatInput } from '../series/repeat.ts';
-import { startSeries } from '../series/start.ts';
-import { postApprovalRequestedEvent } from '../webhooks/events.ts';
-import { announce } from './locked.ts';
-import { type EffectivePolicy, effectivePolicy, policySnapshot } from './policy.ts';
+} from './targets.ts';
 
 const NOTE_MAX = 2000;
 
