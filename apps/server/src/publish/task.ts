@@ -11,12 +11,12 @@ import type { DestinationJob } from '../jobs/jobs.ts';
 import type { MediaAccess } from '../media/access.ts';
 import type { ProviderRegistry } from '../providers.ts';
 import type { RandomInt } from './backoff.ts';
-import { claim } from './claim.ts';
-import { createRunContext, LEASE_HEARTBEAT_MS } from './context.ts';
 import { closeAttempt, finalize } from './finalize.ts';
 import type { RunResult } from './plan.ts';
-import { refreshCredential } from './refresh.ts';
-import { canRefresh } from './refresh-lease.ts';
+import { refreshCredential } from './refresh/refresh.ts';
+import { canRefresh } from './refresh/refresh-lease.ts';
+import { claim } from './run/claim.ts';
+import { createRunContext, LEASE_HEARTBEAT_MS } from './run/context.ts';
 
 export interface PublishDeps {
   readonly db: Database;

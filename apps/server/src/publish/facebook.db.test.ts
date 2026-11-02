@@ -23,7 +23,7 @@ import {
   workspaceId,
 } from './testing/harness.ts';
 import type { Seeded } from './testing.ts';
-import { runVerify } from './verify.ts';
+import { runVerify } from './verify/verify.ts';
 
 const PAGE_ID = '1012345678901234';
 const TOKEN = 'CANARY_facebook_page_access';

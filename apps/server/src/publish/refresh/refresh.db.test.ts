@@ -5,11 +5,11 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { activateKey, createKey } from '../cli/provider-apps.ts';
-import { loadCredential } from '../credentials/credential-store.ts';
+import { activateKey, createKey } from '../../cli/provider-apps.ts';
+import { loadCredential } from '../../credentials/credential-store.ts';
+import { runPublish } from '../task.ts';
+import { type PublishFixture, type Seeded, startPublishFixture } from '../testing.ts';
 import { refreshCredential, refreshExpiring } from './refresh.ts';
-import { runPublish } from './task.ts';
-import { type PublishFixture, type Seeded, startPublishFixture } from './testing.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const MINUTE_MS = 60_000;

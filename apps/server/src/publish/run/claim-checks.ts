@@ -1,13 +1,13 @@
 import { contentHash } from '@kronaut/compose';
 import type { DestinationState, StateReason } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import type { ProviderEntry } from '../providers.ts';
-import { contentHashInput, type ResolvedDestination } from '../snapshot.ts';
-import { currentLaterItem, failedReason, failLaterItem } from './chain-step.ts';
+import type { ProviderEntry } from '../../providers.ts';
+import { contentHashInput, type ResolvedDestination } from '../../snapshot.ts';
+import { currentLaterItem, failedReason, failLaterItem } from '../chain-step.ts';
+import { prepareInput, type Ready, readResolved } from '../input.ts';
+import { authorizeScheduler } from '../principal.ts';
+import { auditTransition, type DestinationUpdate, transition } from '../transition.ts';
 import type { ClaimResult, ClaimScope } from './claim.ts';
-import { prepareInput, type Ready, readResolved } from './input.ts';
-import { authorizeScheduler } from './principal.ts';
-import { auditTransition, type DestinationUpdate, transition } from './transition.ts';
 
 const ACCOUNT_BLOCKS: Readonly<Record<string, StateReason>> = {
   needs_reauth: 'account_needs_reauth',

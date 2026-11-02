@@ -1,8 +1,8 @@
 import type { ItemAnchor, PublishInput, VerifyMode } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
-import type { ProviderEntry } from '../providers.ts';
-import type { PlanContext } from './apply.ts';
-import type { DestinationRef } from './transition.ts';
+import type { ProviderEntry } from '../../providers.ts';
+import type { PlanContext } from '../apply.ts';
+import type { DestinationRef } from '../transition.ts';
 
 export type Probed =
   | {

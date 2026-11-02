@@ -18,8 +18,8 @@ import {
   TEXT,
   updateDestination,
   workspaceId,
-} from './testing/harness.ts';
-import { FAKE_TEXT_MAX, type Seeded } from './testing.ts';
+} from '../testing/harness.ts';
+import { FAKE_TEXT_MAX, type Seeded } from '../testing.ts';
 
 let test: TestDatabase;
 

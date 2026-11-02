@@ -12,7 +12,7 @@ import {
   type Seeded,
   startPublishFixture,
 } from '../publish/testing.ts';
-import { runVerify } from '../publish/verify.ts';
+import { runVerify } from '../publish/verify/verify.ts';
 import { destinationEvent, writeWebhookEvent } from './events.ts';
 
 const SYSTEM: Actor = { kind: 'system' };

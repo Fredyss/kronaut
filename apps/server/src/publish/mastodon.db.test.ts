@@ -23,7 +23,7 @@ import {
   workspaceId,
 } from './testing/harness.ts';
 import type { Seeded } from './testing.ts';
-import { runVerify } from './verify.ts';
+import { runVerify } from './verify/verify.ts';
 
 const HOST = 'social.example.test';
 const ORIGIN = `https://${HOST}`;

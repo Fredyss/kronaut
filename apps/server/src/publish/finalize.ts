@@ -5,8 +5,8 @@ import type { Temporal } from 'temporal-polyfill';
 import { lockPost, SYSTEM } from '../post-access/lock.ts';
 import { applyPlan } from './apply.ts';
 import { jsonb } from './chain.ts';
-import type { Claimed } from './claim.ts';
 import { type Plan, plan, type RunResult } from './plan.ts';
+import type { Claimed } from './run/claim.ts';
 import type { PublishDeps } from './task.ts';
 import type { DestinationRef } from './transition.ts';
 

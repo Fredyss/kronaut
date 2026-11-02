@@ -19,7 +19,7 @@ import {
   workspaceId,
 } from './testing/harness.ts';
 import { FAKE_TEXT_MAX, fakeManifest, fakeVerifyDefaults, type Seeded } from './testing.ts';
-import { runVerify } from './verify.ts';
+import { runVerify } from './verify/verify.ts';
 
 let test: TestDatabase;
 
