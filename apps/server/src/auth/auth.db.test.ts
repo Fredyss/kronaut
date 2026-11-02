@@ -6,8 +6,9 @@ import type { Hono } from 'hono';
 import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { whileHeld } from '../testing/lock-wait.ts';
 import { hashPassword } from './password.ts';
 import { issueResetToken } from './reset-token.ts';
 import { authRoutes } from './routes.ts';
@@ -186,32 +187,6 @@ function erase(trx: TenantDb, id: string) {
     .execute();
 }
 
-function waitingOnLock(): Promise<number> {
-  return root.withActor(SYSTEM, async (trx) => {
-    const { rows } = await sql<{ count: number }>`
-      select count(*)::int as count from pg_stat_activity where wait_event_type = 'Lock'
-    `.execute(trx);
-    return rows[0]?.count ?? 0;
-  });
-}
-
-async function resetDuring(
-  token: string,
-  write: (trx: TenantDb) => Promise<unknown>,
-): Promise<Response> {
-  const [pending] = await root.withActor(SYSTEM, async (trx) => {
-    await write(trx);
-    const calls = [postReset(token)];
-    await vi.waitFor(async () => expect(await waitingOnLock()).toBe(1), {
-      timeout: 10_000,
-      interval: 25,
-    });
-    return calls;
-  });
-  if (pending === undefined) throw new Error('no reset call');
-  return await pending;
-}
-
 async function rejection(response: Response): Promise<unknown> {
   expect(response.status).toBe(400);
   const { error } = (await response.json()) as { error: Record<string, unknown> };
@@ -255,6 +230,16 @@ describe('signing in', () => {
 });
 
 describe('password reset link', () => {
+  it('signs out every session of the account', async () => {
+    const user = await createResetUser('signed-in');
+    const cookie = sessionCookie(await login(PASSWORD, 'signed-in@example.test'));
+    const me = () => app.request(`${BASE}/v1/me`, { headers: { cookie } });
+    expect((await me()).status).toBe(200);
+    const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
+    expect((await postReset(token)).status).toBe(204);
+    expect((await me()).status).toBe(401);
+  });
+
   it('works only once', async () => {
     const user = await createResetUser('once');
     const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
@@ -318,8 +303,11 @@ describe('password reset link', () => {
     const user = await createResetUser('raced');
     const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
     const winner = await hashPassword('the password that won');
-    const raced = await resetDuring(token, (trx) =>
-      trx.updateTable('users').set({ password_hash: winner }).where('id', '=', user.id).execute(),
+    const raced = await whileHeld(
+      root,
+      (trx) =>
+        trx.updateTable('users').set({ password_hash: winner }).where('id', '=', user.id).execute(),
+      () => postReset(token),
     );
     expect(await rejection(raced)).toEqual(RESET_REJECTED);
     expect(await passwordHashOf(user.id)).toBe(winner);
@@ -328,7 +316,11 @@ describe('password reset link', () => {
   it('loses to an erasure that lands between its read and its update', async () => {
     const user = await createResetUser('raced-erasure');
     const token = issueResetToken(resetKey, { userId: user.id, passwordHash: user.hash, now: NOW });
-    const raced = await resetDuring(token, (trx) => erase(trx, user.id));
+    const raced = await whileHeld(
+      root,
+      (trx) => erase(trx, user.id),
+      () => postReset(token),
+    );
     expect(await rejection(raced)).toEqual(RESET_REJECTED);
     expect(await passwordHashOf(user.id)).toBe(user.hash);
   });

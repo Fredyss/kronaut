@@ -27,6 +27,7 @@ import {
   TZ,
   workspaceId,
 } from '../posts/testing.ts';
+import { advisoryLock, whileHeld } from '../testing/lock-wait.ts';
 
 let test: TestDatabase;
 const NOW = Temporal.Instant.from('2027-03-03T11:00:00Z');
@@ -128,6 +129,15 @@ describe('the queue timetable', () => {
       { timezone: TZ, slots: 1 },
       { timezone: null, slots: 0 },
     ]);
+  });
+
+  it('waits for the lock of the channel queue before it replaces the slots', async () => {
+    const channel = await channelWith('Locked timetable', []);
+    const key = `queue:${decodePublicId('socialAccount', channel)}`;
+    const response = await whileHeld(owner, advisoryLock(key), () =>
+      putQueue(channel, [[1, '09:00']]),
+    );
+    expect(response.status).toBe(200);
   });
 
   it('lets only owners and admins change it and refuses a bad zone or a repeated slot', async () => {

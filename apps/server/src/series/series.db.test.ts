@@ -22,6 +22,7 @@ import {
   doc,
   draft,
   errorOf,
+  insertGrant,
   internal,
   login,
   owner,
@@ -35,6 +36,7 @@ import {
   TZ,
 } from '../posts/testing.ts';
 import { FAKE_TEXT_MAX } from '../publish/testing/fake.ts';
+import { whileHeld } from '../testing/lock-wait.ts';
 import { advanceSeries } from './advance.ts';
 
 const logger = pino({ level: 'silent' });
@@ -141,6 +143,49 @@ function occurrences(post: PostDto) {
       .execute(),
   );
 }
+
+async function pausedSeries(): Promise<{ post: PostDto; id: string }> {
+  at('2027-01-04T06:00:00Z');
+  const post = await repeating('2027-01-08T09:00', { freq: 'daily' });
+  const id = decodePublicId('series', post.seriesId ?? '') ?? '';
+  await owner.withActor(CLI, (trx) =>
+    trx
+      .updateTable('post_series')
+      .set({ state: 'paused', state_reason: 'owner_lost' })
+      .where('id', '=', id)
+      .execute(),
+  );
+  return { post, id };
+}
+
+describe('resuming a series', () => {
+  it('hands it from its user to the API key that resumes it', async () => {
+    const { post, id } = await pausedSeries();
+    const auth = await insertGrant({ scopes: ['posts:read', 'posts:schedule'] });
+    const resumed = await call('POST', `series/${post.seriesId}/resume`, auth);
+    expect(resumed.status).toBe(200);
+    const row = await owner.withActor(CLI, (trx) =>
+      trx
+        .selectFrom('post_series')
+        .select(['owner_user_id', 'owner_grant_id'])
+        .where('id', '=', id)
+        .executeTakeFirstOrThrow(),
+    );
+    expect(row).toEqual({ owner_user_id: null, owner_grant_id: expect.any(String) });
+  });
+
+  it('waits for a stop in progress, then refuses', async () => {
+    const { post, id } = await pausedSeries();
+    const response = await whileHeld(
+      owner,
+      (trx) =>
+        trx.updateTable('post_series').set({ state: 'stopped' }).where('id', '=', id).execute(),
+      () => call('POST', `series/${post.seriesId}/resume`, ownerAuth),
+    );
+    expect(response.status).toBe(409);
+    expect(await seriesOf(post)).toMatchObject({ state: 'stopped' });
+  });
+});
 
 describe('a series that does not exist', () => {
   it('is not found', async () => {

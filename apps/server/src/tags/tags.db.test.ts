@@ -36,6 +36,7 @@ import {
   workspaceId,
 } from '../posts/testing.ts';
 import { publishDeps, runPublish } from '../publish/task.ts';
+import { advisoryLock, whileHeld } from '../testing/lock-wait.ts';
 
 interface TagDto {
   readonly id: string;
@@ -209,6 +210,35 @@ describe('the tag list', () => {
       trx.selectFrom('audit_events').select('action').where('resource_id', '=', id).execute(),
     );
     expect(audit).toEqual([{ action: 'tag.created' }]);
+  });
+
+  it('audits a rename and a delete', async () => {
+    const tag = await newTag('Audited');
+    const post = await create(ownerAuth, draft());
+    await setTags(post, [tag.id]);
+    await call('PATCH', `tags/${tag.id}`, ownerAuth, { name: 'Audited again', color: 'blue' });
+    await call('DELETE', `tags/${tag.id}`, ownerAuth);
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select(['action', 'args_summary'])
+        .where('resource_id', '=', decodePublicId('tag', tag.id) ?? '')
+        .orderBy('occurred_at')
+        .orderBy('id')
+        .execute(),
+    );
+    expect(audit).toEqual([
+      { action: 'tag.created', args_summary: { color: 'teal' } },
+      { action: 'tag.updated', args_summary: { renamed: true, color: 'blue' } },
+      { action: 'tag.deleted', args_summary: { post_count: 1 } },
+    ]);
+  });
+
+  it('waits its turn before it counts the tags of a workspace', async () => {
+    const response = await whileHeld(owner, advisoryLock(`tags:${workspaceId}`), () =>
+      call('POST', 'tags', ownerAuth, { name: 'Serialised', color: 'red' }),
+    );
+    expect(response.status).toBe(201);
   });
 
   it('does not find an unknown tag or one of another workspace', async () => {
