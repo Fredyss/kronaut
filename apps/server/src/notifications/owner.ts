@@ -2,7 +2,7 @@ import type { AccessScope } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { HttpError } from '../http/errors.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 
 export interface Owner {
   readonly workspaceId: string;

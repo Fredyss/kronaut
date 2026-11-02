@@ -6,8 +6,10 @@ import { type RawBuilder, sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { authenticate } from '../auth/authenticate.ts';
 import { authRoutes } from '../auth/routes.ts';
-import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { guardSession } from '../auth/session-guard.ts';
+import { createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { release, restoreComplete } from './instance.ts';
 import { createOwner, resetPassword, type UserCommandDeps } from './users.ts';
 
@@ -39,6 +41,8 @@ beforeAll(async () => {
     clock: () => NOW,
     publicBaseUrl: BASE,
     readiness: async () => true,
+    authenticate,
+    guardSession,
   };
   app = createHttpApp(httpDeps, authRoutes(httpDeps));
 });

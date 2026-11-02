@@ -5,9 +5,9 @@ import { isInstanceAdmin } from '../auth/instance-admins.ts';
 import { readUser } from '../auth/profile.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import type { CronTask } from '../jobs/cron-tasks.ts';
-import type { ProviderRegistry } from '../providers.ts';
+import type { ProviderRegistry } from '../providers/providers.ts';
 import {
   CronStatusSchema,
   cronStatus,

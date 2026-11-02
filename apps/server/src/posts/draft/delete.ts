@@ -5,7 +5,7 @@ import { closeRequest } from '../../approvals/locked.ts';
 import { writePostAudit } from '../../audit/write.ts';
 import { HttpError } from '../../http/errors.ts';
 import { PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import { bumpPost, lockCurrent, lockDestinations } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
 import { CANCELABLE } from '../schedule/cancel.ts';

@@ -15,11 +15,29 @@ const DYNAMIC_IMPORT = /\bimport\(\s*(?:'([^']+)'|`([^`$]+)`)\s*\)/g;
 const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
 const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
-const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
-const BASE_FOLDERS = new Set(['web/api', 'web/locale', 'web/providers', 'web/ui']);
-const WEB_ROOT_FILE = /^apps\/web\/src\/[^/]+$/;
+const WIRING_FOLDERS = new Set(['web/i18n', 'web/routes']);
+const BASE_FOLDERS = new Set([
+  'server/config',
+  'server/crypto',
+  'server/http',
+  'server/providers',
+  'web/api',
+  'web/locale',
+  'web/providers',
+  'web/ui',
+]);
+const SRC_ROOT_FILE = /^apps\/(?:server|web)\/src\/[^/]+$/;
 const TEST_FILE = /\.test\.tsx?$/;
-const WEB_ENTRYPOINTS = new Set(['apps/web/src/app.tsx', 'apps/web/src/main.tsx']);
+const ROOT_ENTRYPOINTS = new Set([
+  'apps/server/src/api-routes.ts',
+  'apps/server/src/cli.ts',
+  'apps/server/src/cron.ts',
+  'apps/server/src/main.ts',
+  'apps/server/src/openapi.ts',
+  'apps/server/src/start.ts',
+  'apps/web/src/app.tsx',
+  'apps/web/src/main.tsx',
+]);
 const CREDENTIAL_PACKAGE = /^(?:packages\/credentials\/|@kronaut\/credentials(?:\/|$))/;
 const CREDENTIAL_STORES = /^apps\/server\/src\/credentials\//;
 const SERVER_ENTRYPOINTS = new Set(['apps/server/src/start.ts', 'apps/server/src/openapi.ts']);
@@ -37,6 +55,9 @@ const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
 const WEB_ROUTE = /^apps\/web\/src\/routes\//;
 const DATA_ACCESS = /^(?:@tanstack\/react-query(?:\/|$)|apps\/web\/src\/api\/client\.ts$)/;
+const SOURCE_DIR = /^(?:apps|packages)\/[^/]+\/src(?:\/|$)/;
+const UNCOUNTED = /\.(?:test|spec)\.[^/]+$/;
+const FOLDER_LIMIT = 25;
 
 export function isTesting(path: string): boolean {
   return /\.test\.tsx?$|(^|[/._-])testing([-./_]|$)/.test(path);
@@ -124,10 +145,10 @@ export function misplacedTests(graph: ImportGraph): string[] {
   });
 }
 
-function featureFile(file: string): { feature: string; path: string } | undefined {
+function featureFile(file: string): { app: string; feature: string; path: string } | undefined {
   const [, app, path, folder] = FEATURE_FILE.exec(file) ?? [];
-  if (path === undefined || isTesting(file)) return undefined;
-  return { feature: `${app}/${folder}`, path };
+  if (app === undefined || path === undefined || isTesting(file)) return undefined;
+  return { app, feature: `${app}/${folder}`, path };
 }
 
 export function featureImports(graph: ImportGraph): string[] {
@@ -137,7 +158,7 @@ export function featureImports(graph: ImportGraph): string[] {
     if (source === undefined || WIRING_FOLDERS.has(source.feature)) continue;
     for (const target of targets.map(featureFile)) {
       if (target === undefined || target.feature === source.feature) continue;
-      if (source.feature.startsWith('web/') && BASE_FOLDERS.has(target.feature)) continue;
+      if (target.app === source.app && BASE_FOLDERS.has(target.feature)) continue;
       imports.add(`${source.feature} -> ${target.path}`);
     }
   }
@@ -173,7 +194,7 @@ export function baseLeaks(graph: ImportGraph): string[] {
       if (source === undefined || !BASE_FOLDERS.has(source.feature)) return [];
       return targets
         .filter((target) => {
-          if (WEB_ROOT_FILE.test(target)) return true;
+          if (SRC_ROOT_FILE.test(target)) return true;
           const feature = featureFile(target)?.feature;
           return feature !== undefined && feature !== source.feature && !BASE_FOLDERS.has(feature);
         })
@@ -185,7 +206,7 @@ export function baseLeaks(graph: ImportGraph): string[] {
 export function rootFiles(graph: ImportGraph): string[] {
   return [...graph.keys()]
     .filter(
-      (file) => WEB_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !WEB_ENTRYPOINTS.has(file),
+      (file) => SRC_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !ROOT_ENTRYPOINTS.has(file),
     )
     .sort();
 }
@@ -223,5 +244,19 @@ export function fetchingRoutes(graph: ImportGraph): string[] {
             .filter((target) => DATA_ACCESS.test(target))
             .map((target) => `${file} -> ${target}`),
     )
+    .sort();
+}
+
+export function oversizedFolders(files: Iterable<string>): string[] {
+  const counts = new Map<string, number>();
+  for (const file of files) {
+    const folder = dirname(file);
+    if (!SOURCE_DIR.test(folder) || !/\.tsx?$/.test(file)) continue;
+    if (UNCOUNTED.test(file) || GENERATED.test(file)) continue;
+    counts.set(folder, (counts.get(folder) ?? 0) + 1);
+  }
+  return [...counts]
+    .filter(([, count]) => count > FOLDER_LIMIT)
+    .map(([folder, count]) => `${folder} (${count})`)
     .sort();
 }

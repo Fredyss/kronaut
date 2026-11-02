@@ -3,18 +3,19 @@ import type { Database } from '@kronaut/db';
 import { Hono } from 'hono';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { purposeKey } from '../crypto.ts';
-import type { AccessGate } from './access.ts';
-import { DEFAULT_MAX_BODY_BYTES } from './body.ts';
+import type { authenticate } from '../../auth/authenticate.ts';
+import type { guardSession } from '../../auth/session-guard.ts';
+import { purposeKey } from '../../crypto/crypto.ts';
+import { DEFAULT_MAX_BODY_BYTES } from '../body.ts';
+import type { AccessGate } from '../caller/access.ts';
+import type { BoundRoute } from '../request.ts';
+import type { WebApp } from '../web.ts';
 import { type Kernel, pipeline } from './pipeline.ts';
 import { routeRegistry } from './registry.ts';
 import { failure } from './respond.ts';
 import { createRouter } from './router.ts';
-import type { BoundRoute } from './types.ts';
-import type { WebApp } from './web.ts';
 
-export { accessExempt } from './access-check.ts';
-export { REVIEW_COOKIE } from './authenticate.ts';
+export { accessExempt } from '../caller/access-check.ts';
 export { routeRegistry } from './registry.ts';
 
 export interface HttpKeys {
@@ -47,6 +48,8 @@ export interface HttpDeps {
   readonly access?: AccessGate;
   readonly web?: WebApp;
   readonly instanceAdmins?: readonly string[];
+  readonly authenticate: typeof authenticate;
+  readonly guardSession: typeof guardSession;
 }
 
 const REQUEST_ID = /^[A-Za-z0-9-]{8,64}$/;

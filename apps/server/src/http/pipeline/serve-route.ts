@@ -1,17 +1,15 @@
 import type { Route } from '@kronaut/contract';
 import type { AccessScope, Principal } from '@kronaut/core';
-import { authenticate } from './authenticate.ts';
-import { bind, type TenantTarget, tenantOf } from './bind.ts';
+import { bind, type TenantTarget, tenantOf } from '../caller/bind.ts';
+import { parseInput, readLimited } from '../input.ts';
+import type { SessionInfo } from '../request.ts';
 import { createContext, preauthorize, type RequestState } from './context.ts';
 import { parseCookies } from './cookies.ts';
 import { type Execution, execute, type Outcome } from './execute.ts';
 import { executeIdempotent } from './idempotent-run.ts';
-import { parseInput, readLimited } from './input.ts';
 import type { Inbound, Kernel } from './pipeline.ts';
 import { headersFor, respond } from './respond.ts';
 import type { RouteMatch } from './router.ts';
-import { guardSession } from './session-guard.ts';
-import type { SessionInfo } from './types.ts';
 
 export interface FoundRequest extends Inbound {
   readonly matched: Extract<RouteMatch, { kind: 'found' }>;
@@ -44,14 +42,14 @@ export async function serveRoute(kernel: Kernel, req: FoundRequest): Promise<Res
   const { request, now, logger, matched } = req;
   const bound = matched.bound.route;
   const cookies = parseCookies(request.headers.get('cookie'));
-  const candidates = await authenticate(deps, { route: bound, request, cookies, now, logger });
+  const candidates = await deps.authenticate(deps, { route: bound, request, cookies, now, logger });
   const { authn, principal, accessScope, session } = await bind(
     deps.db,
     bound,
     matched.params,
     candidates,
   );
-  if (authn.kind === 'session') await guardSession(deps.db, kernel.origin, authn.record, req);
+  if (authn.kind === 'session') await deps.guardSession(deps.db, kernel.origin, authn.record, req);
   const scopeInput = accessScope === undefined ? {} : { accessScope };
   const target = tenantOf(principal);
   const owed = preauthorize({ route: bound, principal, target, now, scopeInput });

@@ -11,7 +11,7 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 import { postUnits } from '../post-access/units.ts';
 import type { ownerColumns } from '../posts/owner/owner.ts';
 

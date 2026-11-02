@@ -1,7 +1,7 @@
 import { isProviderFailure } from '@kronaut/core';
 import type { Actor } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
-import { createBaseContext, PROVIDER_EGRESS, type ProviderEntry } from '../providers.ts';
+import { createBaseContext, PROVIDER_EGRESS, type ProviderEntry } from '../providers/providers.ts';
 import type { PublishDeps } from '../publish/task.ts';
 
 export type CapabilitiesDeps = Pick<PublishDeps, 'db' | 'providers' | 'logger' | 'now'>;

@@ -4,7 +4,7 @@ import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../http/errors.ts';
 import { type CurrentPost, lockDestinations } from '../../post-access/locks.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { approvalStatus } from '../../publish/principal.ts';
 import { openApprovalRequest } from '../schedule/approval-request.ts';
 import { authorizeSchedule, scheduleLocked } from '../schedule/schedule.ts';

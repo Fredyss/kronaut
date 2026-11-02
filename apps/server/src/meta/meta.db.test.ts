@@ -7,8 +7,10 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { authenticate } from '../auth/authenticate.ts';
+import { guardSession } from '../auth/session-guard.ts';
 import { registerSecretApp } from '../cli/provider-apps.ts';
-import { accessExempt, createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { accessExempt, createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { installJobQueue } from '../jobs/job-queue.ts';
 import { runMetaLifecycle } from './lifecycle.ts';
 import { META_BODY_LIMITS, metaRoutes } from './routes.ts';
@@ -178,7 +180,13 @@ beforeAll(async () => {
   const http = { db, keys, logger, clock: () => Temporal.Now.instant(), publicBaseUrl: BASE };
   freshApp = () =>
     createHttpApp(
-      { ...http, readiness: async () => true, routeBodyLimits: META_BODY_LIMITS },
+      {
+        ...http,
+        readiness: async () => true,
+        routeBodyLimits: META_BODY_LIMITS,
+        authenticate,
+        guardSession,
+      },
       metaRoutes(deps),
     );
   app = freshApp();

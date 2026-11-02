@@ -1,5 +1,5 @@
 import type { PostTypeSpec } from '@kronaut/core';
-import type { ProviderEntry } from '../../providers.ts';
+import type { ProviderEntry } from '../../providers/providers.ts';
 import { currentInput, selectItems, stepsFor } from '../chain.ts';
 import { prepareInput, publishInput, readResolved } from '../input.ts';
 import type { openCheck, VerifyScope } from './verify-lookup.ts';

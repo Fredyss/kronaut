@@ -1,6 +1,6 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
-import { type BoundRoute, bindRoute, type RequestContext } from '../../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../http/request.ts';
 import type { MediaSigner } from '../access.ts';
 import { ALT_TEXT_MAX, findMediaAsset } from '../dto.ts';
 import { MediaError } from '../errors.ts';

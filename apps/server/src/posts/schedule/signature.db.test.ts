@@ -11,9 +11,9 @@ import {
   setPolicy,
   withdrawCall,
 } from '../../approvals/testing.ts';
+import { contentHashInput, parseSnapshot, resolveDestination } from '../../publish/snapshot.ts';
 import { publishDeps, runPublish } from '../../publish/task.ts';
 import { fakeManifest } from '../../publish/testing.ts';
-import { contentHashInput, parseSnapshot, resolveDestination } from '../../snapshot.ts';
 import type { PostDto } from '../read/dto.ts';
 import {
   accountA,

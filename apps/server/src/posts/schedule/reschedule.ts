@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { HttpError } from '../../http/errors.ts';
 import { InstantFields, PostParams, pathId } from '../../http/params.ts';
-import { type BoundRoute, bindRoute } from '../../http/types.ts';
+import { type BoundRoute, bindRoute } from '../../http/request.ts';
 import {
   checkVersion,
   destinationRows,

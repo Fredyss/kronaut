@@ -3,8 +3,8 @@ import { createMailer, type Mailer, type MailMessage } from '@kronaut/egress/smt
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import type { ServerConfig } from '../config.ts';
-import { bindUserIn } from '../http/principal.ts';
+import type { ServerConfig } from '../config/config.ts';
+import { bindUserIn } from '../http/caller/principal.ts';
 import { buildNotificationEmail } from './email-message.ts';
 import { isMuted } from './groups.ts';
 import { notificationItems } from './list.ts';

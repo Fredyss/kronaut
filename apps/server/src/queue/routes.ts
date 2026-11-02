@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { type ChannelRef, requireChannel } from '../channels/channel-ref.ts';
 import { unprocessable } from '../http/issues.ts';
 import { InstantFields, pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../http/request.ts';
 import { scopeUnit } from '../post-access/units.ts';
 import { freeSlots, lockQueues, type QueueSlot } from './slots.ts';
 import { auditQueueUpdate, replaceSlots } from './store.ts';

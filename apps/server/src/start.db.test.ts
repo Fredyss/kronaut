@@ -11,7 +11,7 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import type { ServerConfig, ServerRole } from './config.ts';
+import type { ServerConfig, ServerRole } from './config/config.ts';
 import { recordCronRun } from './jobs/cron-run.ts';
 import { CRON_TASKS } from './jobs/cron-tasks.ts';
 import { startHeartbeat } from './jobs/heartbeat.ts';

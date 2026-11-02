@@ -25,7 +25,7 @@ Use this table before you create a file or move one.
 ## Feature folders
 
 - **One folder per product concept:** `apps/server/src/<feature>/` and `apps/web/src/<feature>/`. Name the concept first; new behaviour lands in the folder that owns it.
-- **New concept, new folder.** The `src/` root holds entrypoints and wiring only. In the web app this is checked: the root holds only `main.tsx` and `app.tsx`.
+- **New concept, new folder.** The `src/` root holds entrypoints and wiring only (checked): the web root holds only `main.tsx` and `app.tsx`, and the server root only `main.ts`, `start.ts`, `cli.ts`, `cron.ts`, `openapi.ts` and `api-routes.ts`. Tests of those files sit beside them.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` and `*-routes.ts` bind handlers; shared logic lives in a named module that other features import. A feature importing another feature's file with one of those names fails the check; the check goes by file name only.
 - **Web route files stay thin (checked).** A file in `apps/web/src/routes/` re-exports the page its route loads and holds no page body; it never imports `@tanstack/react-query` or `api/client.ts`. [Web structure](15-web-structure.md) has the rule and an example.
@@ -33,24 +33,24 @@ Use this table before you create a file or move one.
 - **Planning tools and the server folders from draft to publish follow one direction:** [Scheduling flow](14-scheduling-flow.md) sets it and says where new code goes.
 - **Web feature folders follow one direction too:** [Web structure](15-web-structure.md) sets the tiers and says where a new page or module goes.
 - **Subfolders are sub-domains, never layers.** Name them after a part of the concept (`compose/media/`, `publish/verify/`, `media/import/`), not after a kind of file (`components/`, `hooks/`, `services/`, `utils/`). Tests stay beside their code. Files in one feature import across its subfolders freely; the file-cycle check still applies, and other features import a subfolder file through a declared line as usual.
-- **At most 25 source files per directory** (checked once the splits below land). Every directory under `apps/*/src` and `packages/*/src` counts, `src` roots included, and only files directly inside it: files in its subfolders count for their own directory. Tests (`*.test.*`, `*.spec.*`) and generated files (`paraglide*/`, `gen/`, `*.gen.ts`, `*.d.ts`) don't count; `index.ts` does. No directory is exempt.
+- **At most 25 TypeScript source files per directory** (checked). Every directory under `apps/*/src` and `packages/*/src` counts, `src` roots included, and only files directly inside it: files in its subfolders count for their own directory. Tests (`*.test.*`, `*.spec.*`) and generated files (`paraglide*/`, `gen/`, `*.gen.ts`, `*.d.ts`) don't count; `index.ts` does. No directory is exempt.
   - The limit is a guardrail, not a target. Past it, regroup the folder around sub-concepts. Don't nest just to pass the check.
   - Three files sharing a prefix (`verify-*`, `sniff-*`) are a subfolder waiting to happen.
 
 ## Imports
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
-- **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`server/http`, `web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http/authenticate.ts`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so; the check catches loops only, not imports against the tier order.
+- **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so; the check catches loops only, not imports against the tier order.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
-  - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
+  - It covers production value imports, including features importing the wiring folders (`web/i18n`, `web/routes`).
   - Type-only imports, tests, imports made by wiring folders and `apps/*/src` root files are outside it, so a root file, or a wiring file the feature already lists, can still pass one feature's code to another.
   - A new line is a design decision: add it by hand in the PR that needs it, and say why. Prefer a target already listed, or a file that clearly owns the concept.
   - A line covers the whole source feature, so a second file there can use a listed target without a new line.
   - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
   - The list records today's coupling; it doesn't approve it. Each feature split should make it shorter.
-- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice, what the browser reports), `web/providers` (names and marks of the social platforms) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new base folder is a design decision, like a declared import.
-  - The server gets one base folder too: the request helpers in `http`, once its wiring files (`api-routes.ts`, `authenticate.ts`, `session-guard.ts`) move out. Until then, imports of `http` stay declared, and the server follows the tiers in [Scheduling flow](14-scheduling-flow.md).
+- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice, what the browser reports), `web/providers` (names and marks of the social platforms) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. On the server, `http` (request helpers and the request pipeline), `config` (environment and config files), `crypto` (purpose keys and token hashing) and `providers` (the provider registry) may be imported by any server feature the same way. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new base folder is a design decision, like a declared import.
+  - `http` value-imports no feature; it still names `auth` types, which the check leaves out. `api-routes.ts` in the `src` root mounts the features, and the sign-in step that reads `auth` (`auth/authenticate.ts`, `auth/session-guard.ts`) reaches the pipeline through `HttpDeps`, passed in by the entrypoints. Above the base folders, the server follows the tiers in [Scheduling flow](14-scheduling-flow.md).
 - **Only named folders read credentials (checked).** `@kronaut/credentials` (keyrings, sealing) is value-imported only by `server/credentials`, `server/cli` and the entrypoints `start.ts` and `openapi.ts`. The stores in `apps/server/src/credentials/`, which hand out plaintext tokens and app secrets, are value-imported only by `publish` (the worker), `channels` (connect, revoke, instance apps), `analytics` (insights), `meta` (signed callbacks) and `cli` (operator commands). Type-only imports, such as `Keyring` in deps, are free. Tests and `apps/server/e2e/` are outside it too. The check sees direct imports only, so a reader folder never hands credentials on to another feature, by re-export or by wrapper; that part is for review. A new reader is a security decision: add it to the sets in `tools/lint/structure.ts` and to this list in the same PR.
 
 ## Shared UI
@@ -82,12 +82,3 @@ Use this table before you create a file or move one.
 
 - **A refactor keeps every result unchanged:** status codes, error shapes, ordering, defaults, permissions, side effects and transaction boundaries. Pin current behaviour with tests before moving code.
 - **Keep existing differences as named policy values** rather than unifying them. Changing a result is a separate, explicit decision.
-
-## Not checked yet
-
-These rules bind new code, but existing code still breaks them:
-
-- Shared modules in the `apps/server/src` root, which should each find an owner.
-- `apps/server/src/http/types.ts` has a catch-all name.
-- Modules other features import that also define routes: `posts/schedule/schedule.ts`, `channels/disconnect.ts`, `auth/profile.ts`.
-- Directories above 25 source files: `server/http` (29). Each gets its own split; the check lands with the last one.

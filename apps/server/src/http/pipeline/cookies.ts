@@ -1,4 +1,4 @@
-import type { CookieOptions } from './types.ts';
+import type { CookieOptions } from '../request.ts';
 
 const HOST_PREFIX = '__Host-';
 const COOKIE_NAME = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;

@@ -3,14 +3,14 @@ import type { Keyring } from '@kronaut/credentials';
 import type { Actor, Database } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
 import { loadProviderApp, type SigningKeyRequest } from '../credentials/credential-store.ts';
-import type { HttpKeys } from '../http/kernel.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { HttpKeys } from '../http/pipeline/kernel.ts';
+import type { RequestContext } from '../http/request.ts';
 import {
   createBaseContext,
   PROVIDER_EGRESS,
   type ProviderEntry,
   type ProviderRegistry,
-} from '../providers.ts';
+} from '../providers/providers.ts';
 
 export interface ChannelRouteDeps {
   readonly db: Database;

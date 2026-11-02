@@ -11,6 +11,7 @@ import {
   type ImportGraph,
   isTesting,
   misplacedTests,
+  oversizedFolders,
   repoImportGraph,
   rootFiles,
   routeImports,
@@ -26,7 +27,7 @@ describe('repo structure', () => {
   it('sees the whole workspace', () => {
     expect(graph.size).toBeGreaterThan(800);
     expect(graph.has('packages/core/src/index.ts')).toBe(true);
-    expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/http/api-routes.ts');
+    expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/api-routes.ts');
     expect(graph.get('apps/web/src/main.tsx')).toContain('apps/web/src/app.tsx');
     expect(graph.get('apps/server/src/posts/draft/items.ts')).toContain(
       'packages/compose/src/index.ts',
@@ -66,12 +67,16 @@ describe('repo structure', () => {
     expect(baseLeaks(graph)).toEqual([]);
   });
 
-  it('keeps only entrypoints in the web src root', () => {
+  it('keeps only entrypoints and wiring in the src roots', () => {
     expect(rootFiles(graph)).toEqual([]);
   });
 
   it('lets only the named folders read credentials', () => {
     expect(credentialLeaks(graph)).toEqual([]);
+  });
+
+  it('keeps every source directory at 25 files or fewer', () => {
+    expect(oversizedFolders(graph.keys())).toEqual([]);
   });
 });
 
@@ -82,17 +87,16 @@ describe('the structure rules', () => {
     const imports: ImportGraph = new Map([
       [app('posts/a.ts'), [app('posts/b.ts'), app('tags/read.ts'), app('tags/read.ts')]],
       [app('posts/c.ts'), [app('tags/read.ts'), app('queue/slots.ts'), app('config.ts')]],
-      [app('posts/d.ts'), [app('http/types.ts'), 'packages/core/src/index.ts']],
+      [app('posts/d.ts'), [app('http/errors.ts'), 'packages/core/src/index.ts']],
       [app('posts/a.test.ts'), [app('queue/routes.ts')]],
       [app('posts/testing.ts'), [app('queue/routes.ts')]],
-      [app('http/api-routes.ts'), [app('posts/routes.ts')]],
+      [app('api-routes.ts'), [app('posts/routes.ts')]],
       [app('start.ts'), [app('posts/routes.ts')]],
       ['apps/web/src/routes/post.tsx', ['apps/web/src/compose/form.tsx']],
       ['apps/web/src/inbox/list.tsx', ['apps/web/src/compose/form.tsx']],
       ['apps/web/src/inbox/row.tsx', ['apps/web/src/routes/post.tsx']],
     ]);
     expect(featureImports(imports)).toEqual([
-      'server/posts -> http/types.ts',
       'server/posts -> queue/slots.ts',
       'server/posts -> tags/read.ts',
       'web/inbox -> compose/form.tsx',
@@ -100,7 +104,7 @@ describe('the structure rules', () => {
     ]);
   });
 
-  it('finds a loop between folders of one app, also through wiring and root files', () => {
+  it('finds a loop between folders of one app, also through http and root files', () => {
     const app = (target: string) => `apps/server/src/${target}`;
     const web = (target: string) => `apps/web/src/${target}`;
     const imports: ImportGraph = new Map([
@@ -111,10 +115,10 @@ describe('the structure rules', () => {
       [app('media/import/fetch.ts'), [app('tags/list.ts')]],
       [app('series/a.ts'), [app('cron.ts')]],
       [app('cron.ts'), [app('series/b.ts')]],
-      [app('channels/a.ts'), [app('http/authenticate.ts')]],
-      [app('http/authenticate.ts'), [app('auth/session.ts')]],
+      [app('channels/a.ts'), [app('http/caller/authenticate.ts')]],
+      [app('http/caller/authenticate.ts'), [app('auth/session.ts')]],
       [app('auth/session.ts'), [app('channels/b.ts'), app('http/errors.ts')]],
-      [app('http/api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
+      [app('api-routes.ts'), [app('posts/routes.ts'), app('auth/routes.ts')]],
       [app('queue/a.test.ts'), [app('posts/a.ts')]],
       [app('queue/testing.ts'), [app('posts/a.ts')]],
       [app('queue/a.ts'), [app('queue/slots.ts')]],
@@ -131,7 +135,7 @@ describe('the structure rules', () => {
       ['approvals', 'notifications', 'posts'],
       ['media', 'tags'],
       ['cron.ts', 'series'],
-      ['auth', 'channels', 'http/authenticate.ts'],
+      ['auth', 'channels', 'http'],
     ]);
     expect(folderCycles(imports, 'web')).toEqual([
       ['calendar', 'compose'],
@@ -145,7 +149,7 @@ describe('the structure rules', () => {
       [app('analytics/a.ts'), [app('queue/routes.ts'), app('queue/slots.ts')]],
       [app('tags/b.ts'), [app('media/upload-routes.ts')]],
       [app('queue/c.ts'), [app('queue/routes.ts')]],
-      [app('http/api-routes.ts'), [app('queue/routes.ts')]],
+      [app('api-routes.ts'), [app('queue/routes.ts')]],
     ]);
     expect(routeImports(imports)).toEqual([
       'server/analytics -> queue/routes.ts',
@@ -155,18 +159,28 @@ describe('the structure rules', () => {
 
   it('flags a base folder that imports a feature, and declares no import of a base folder', () => {
     const app = (target: string) => `apps/web/src/${target}`;
+    const server = (target: string) => `apps/server/src/${target}`;
     const imports: ImportGraph = new Map([
       [app('ui/icon.tsx'), [app('compose/form.tsx'), app('locale/i18n.ts'), app('ui/badge.tsx')]],
       [app('locale/choice.ts'), [app('api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
       [app('ui/icon.test.tsx'), [app('compose/form.tsx')]],
       [app('inbox/list.tsx'), [app('api/client.ts'), app('ui/icon.tsx'), app('posts/queries.ts')]],
-      ['apps/server/src/posts/list.ts', [app('api/errors.ts')]],
+      ['apps/server/src/posts/list.ts', [app('api/errors.ts'), server('config/config.ts')]],
+      [server('crypto/crypto.ts'), [server('auth/session.ts'), server('config/config.ts')]],
+      [server('config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
+      [server('providers/providers.test.ts'), [server('posts/list.ts')]],
+      [server('http/web.ts'), [server('config/config.ts'), server('auth/session.ts')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
+      'apps/server/src/config/config.ts -> apps/server/src/start.ts',
+      'apps/server/src/crypto/crypto.ts -> apps/server/src/auth/session.ts',
+      'apps/server/src/http/web.ts -> apps/server/src/auth/session.ts',
       'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
       'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
+      'server/crypto -> auth/session.ts',
+      'server/http -> auth/session.ts',
       'server/posts -> api/errors.ts',
       'web/inbox -> posts/queries.ts',
       'web/ui -> compose/form.tsx',
@@ -218,7 +232,7 @@ describe('the structure rules', () => {
     ]);
   });
 
-  it('flags a shared module in the web src root', () => {
+  it('flags a shared module in a src root', () => {
     const files = [
       'apps/web/src/app.tsx',
       'apps/web/src/main.tsx',
@@ -227,9 +241,46 @@ describe('the structure rules', () => {
       'apps/web/src/testing.tsx',
       'apps/web/src/compose/form.tsx',
       'apps/server/src/config.ts',
+      'apps/server/src/main.ts',
+      'apps/server/src/api-routes.ts',
+      'apps/server/src/start.db.test.ts',
+      'apps/server/src/posts/routes.ts',
+      'packages/core/src/index.ts',
     ];
     const graph: ImportGraph = new Map(files.map((file) => [file, []]));
-    expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts', 'apps/web/src/testing.tsx']);
+    expect(rootFiles(graph)).toEqual([
+      'apps/server/src/config.ts',
+      'apps/web/src/foo.ts',
+      'apps/web/src/testing.tsx',
+    ]);
+  });
+
+  it('flags a source directory with more than 25 counted files', () => {
+    const many = (folder: string, count: number, ext = 'ts') =>
+      Array.from({ length: count }, (_, i) => `${folder}/f${i}.${ext}`);
+    const files = [
+      ...many('apps/server/src/posts', 26, 'tsx'),
+      ...many('packages/i18n/src/paraglide-cli', 26),
+      ...many('packages/db/src/gen', 26),
+      ...many('apps/server/src/jobs', 26, 'gen.ts'),
+      ...many('apps/web/src/compose', 24, 'tsx'),
+      'apps/web/src/compose/index.ts',
+      'apps/web/src/compose/form.test.tsx',
+      'apps/web/src/compose/form.spec.ts',
+      'apps/web/src/compose/env.d.ts',
+      'apps/web/src/compose/paraglide/messages.ts',
+      'apps/web/src/compose/media/drop.ts',
+      ...many('apps/web/src/calendar', 25),
+      'apps/web/src/calendar/index.ts',
+      ...many('packages/core/src', 26),
+      ...many('tools/lint', 30),
+      ...many('apps/server/e2e', 30),
+    ];
+    expect(oversizedFolders(files)).toEqual([
+      'apps/server/src/posts (26)',
+      'apps/web/src/calendar (26)',
+      'packages/core/src (26)',
+    ]);
   });
 
   it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {

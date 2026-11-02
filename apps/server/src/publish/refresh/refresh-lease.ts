@@ -15,7 +15,7 @@ import {
   persistRefreshed,
 } from '../../credentials/credential-store.ts';
 import { SYSTEM } from '../../post-access/lock.ts';
-import type { ProviderEntry } from '../../providers.ts';
+import type { ProviderEntry } from '../../providers/providers.ts';
 import { resolveExpiring } from '../incidents.ts';
 import type { RefreshDeps, RefreshOutcome, RefreshTarget } from './refresh.ts';
 

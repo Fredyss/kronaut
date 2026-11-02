@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { auditActor, writeDestinationAudit } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
-import type { RequestContext } from '../http/types.ts';
+import type { RequestContext } from '../http/request.ts';
 import {
   type CurrentPost,
   type LockedDestination,

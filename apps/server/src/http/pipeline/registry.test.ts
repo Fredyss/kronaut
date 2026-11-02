@@ -2,8 +2,8 @@ import { defineRoute } from '@kronaut/contract';
 import { SELF_ACTION } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
+import { bindRoute } from '../request.ts';
 import { routeRegistry } from './registry.ts';
-import { bindRoute } from './types.ts';
 
 describe('startup checks', () => {
   it('rejects an authorized session route without :workspaceId', () => {

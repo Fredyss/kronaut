@@ -1,11 +1,11 @@
 import type { Route } from '@kronaut/contract';
 import { type AccessScope, decodePublicId, type Principal } from '@kronaut/core';
 import type { Database } from '@kronaut/db';
-import type { Authn } from './authenticate.ts';
-import { HttpError } from './errors.ts';
+import type { Authn } from '../../auth/authenticate.ts';
+import { HttpError } from '../errors.ts';
+import { scoped } from '../pipeline/registry.ts';
+import type { SessionInfo } from '../request.ts';
 import { bindGrant, bindUser } from './principal.ts';
-import { scoped } from './registry.ts';
-import type { SessionInfo } from './types.ts';
 
 export interface Binding {
   readonly authn: Authn;

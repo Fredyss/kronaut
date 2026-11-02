@@ -5,7 +5,7 @@ import { CommandError, UsageError } from './cli/errors.ts';
 import { migrateCommand, releaseCommand, restoreCompleteCommand } from './cli/instance-command.ts';
 import { providerAppCommand } from './cli/provider-apps-command.ts';
 import { userCommand } from './cli/users-command.ts';
-import { ConfigError } from './config.ts';
+import { ConfigError } from './config/config.ts';
 
 function usage(m: CliMessages): string {
   const appSecret = `(${m.usage_app_secret_stdin({})})`;

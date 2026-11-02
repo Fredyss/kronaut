@@ -5,7 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { loadProviderApp } from '../credentials/credential-store.ts';
 import { HttpError } from '../http/errors.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { enqueueMetaLifecycle } from '../jobs/jobs.ts';
 import { verifySignedRequest } from './signed-request.ts';
 import { statusLocale, statusText } from './status.ts';

@@ -1,10 +1,10 @@
 import { decodePublicId } from '@kronaut/core';
 import { HttpError } from '../http/errors.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { bindConnectCallback } from './connect-callback.ts';
 import { bindConnectStart } from './connect-start.ts';
 import { type ChannelRouteDeps, connectsByRedirect, SYSTEM } from './deps.ts';
-import { bindDisconnect } from './disconnect.ts';
+import { bindDisconnect } from './disconnect-routes.ts';
 import { channelListRoute, channelProvidersRoute, listChannels, readyProviders } from './list.ts';
 import { bindPublicDocument } from './public-document.ts';
 import { bindSignature } from './signature.ts';

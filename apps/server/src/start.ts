@@ -13,6 +13,7 @@ import { type Runner, run } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
+import { API_BODY_LIMITS, API_SIGN_IN, apiRoutes } from './api-routes.ts';
 import { revokeTask } from './channels/revoke.ts';
 import {
   type AccessConfig,
@@ -20,12 +21,11 @@ import {
   type Env,
   type ServerConfig,
   type ServerRole,
-} from './config.ts';
+} from './config/config.ts';
 import { cronItems, cronTaskList, cronTasks } from './cron.ts';
-import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/access.ts';
-import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/kernel.ts';
+import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/caller/access.ts';
 import { drain, listen } from './http/listen.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/pipeline/kernel.ts';
 import { loadWebApp } from './http/web.ts';
 import { type Heartbeat, startHeartbeat, workerAlive } from './jobs/heartbeat.ts';
 import { type LockSweep, openJobSession, startJobLocks } from './jobs/job-locks.ts';
@@ -38,7 +38,7 @@ import { stagingIn } from './media/staging.ts';
 import { mediaProcessTask } from './media/video/process.ts';
 import { metaLifecycleTask } from './meta/lifecycle.ts';
 import { emailDeps } from './notifications/email.ts';
-import { createProviderRegistry } from './providers.ts';
+import { createProviderRegistry } from './providers/providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
 import { verifyTask } from './publish/verify/verify.ts';
 
@@ -244,6 +244,7 @@ async function startApi(boot: Boot): Promise<void> {
     publicBaseUrl: config.publicUrl.origin,
     instanceAdmins: config.instanceAdmins,
     readiness: async () => !state.stopping && (await workerAlive(db)),
+    ...API_SIGN_IN,
     routeBodyLimits: API_BODY_LIMITS,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),

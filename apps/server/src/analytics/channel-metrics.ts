@@ -6,7 +6,7 @@ import { requireChannel } from '../channels/channel-ref.ts';
 import { issueDetails } from '../http/input.ts';
 import { invalid } from '../http/issues.ts';
 import { pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute } from '../http/types.ts';
+import { type BoundRoute, bindRoute } from '../http/request.ts';
 import { scopeUnit } from '../post-access/units.ts';
 import { storedValue } from './store.ts';
 

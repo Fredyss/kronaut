@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
-import type { RequestContext } from '../../http/types.ts';
+import type { RequestContext } from '../../http/request.ts';
 import { ownerColumns } from '../owner/owner.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 

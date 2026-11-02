@@ -6,7 +6,7 @@ import { writePostAudit } from '../audit/write.ts';
 import type { IssueDetail } from '../http/errors.ts';
 import { unprocessable } from '../http/issues.ts';
 import { PostParams, pathId } from '../http/params.ts';
-import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../http/request.ts';
 import { lockCurrent, type PostRef } from '../post-access/locks.ts';
 import { postUnits } from '../post-access/units.ts';
 import { loadPostTags, PostTagSchema, tagFields } from './read.ts';

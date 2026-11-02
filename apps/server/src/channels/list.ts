@@ -10,7 +10,7 @@ import {
 } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
-import type { ProviderEntry, ProviderRegistry } from '../providers.ts';
+import type { ProviderEntry, ProviderRegistry } from '../providers/providers.ts';
 import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
 const Instant = z.iso.datetime();

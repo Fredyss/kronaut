@@ -7,12 +7,14 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { whileHeld } from '../testing/lock-wait.ts';
+import { authenticate } from './authenticate.ts';
 import { hashPassword } from './password.ts';
 import { issueResetToken } from './reset-token.ts';
 import { authRoutes } from './routes.ts';
 import { SESSION_COOKIE } from './session.ts';
+import { guardSession } from './session-guard.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 const NOW = Temporal.Now.instant();
@@ -53,6 +55,8 @@ beforeAll(async () => {
     clock: () => NOW,
     publicBaseUrl: BASE,
     readiness: async () => true,
+    authenticate,
+    guardSession,
   };
   resetKey = deps.keys.reset;
   app = createHttpApp(deps, authRoutes(deps));

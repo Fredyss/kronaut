@@ -5,12 +5,14 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
-import type { AccessGate } from './access.ts';
-import { denyError } from './errors.ts';
+import { authenticate } from '../../auth/authenticate.ts';
+import { guardSession } from '../../auth/session-guard.ts';
+import type { AccessGate } from '../caller/access.ts';
+import { denyError } from '../errors.ts';
+import { type BoundRoute, bindRoute } from '../request.ts';
+import { systemRoutes } from '../system-routes.ts';
 import { accessExempt, createHttpApp, deriveHttpKeys, type HttpDeps } from './kernel.ts';
 import { createRouter } from './router.ts';
-import { systemRoutes } from './system-routes.ts';
-import { type BoundRoute, bindRoute } from './types.ts';
 
 const NOW = Temporal.Instant.from('2026-10-21T10:00:00Z');
 const BASE = 'https://kronaut.example.test';
@@ -149,6 +151,8 @@ function setup(overrides: Partial<HttpDeps> = {}) {
     clock: () => NOW,
     publicBaseUrl: BASE,
     readiness: async () => true,
+    authenticate,
+    guardSession,
     maxBodyBytes: 1024,
     routeBodyLimits: { 'probe.upload': 4096, 'probe.private_upload': 4096 },
     ...overrides,

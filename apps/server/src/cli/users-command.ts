@@ -1,7 +1,7 @@
 import { parseArgs } from 'node:util';
 import { Temporal } from 'temporal-polyfill';
-import { parseBaseUrl, parseSecret, requireEnv } from '../config.ts';
-import { purposeKey } from '../crypto.ts';
+import { parseBaseUrl, parseSecret, requireEnv } from '../config/config.ts';
+import { purposeKey } from '../crypto/crypto.ts';
 import { stderrLogger, withDatabase } from './context.ts';
 import { UsageError } from './errors.ts';
 import { createOwner, resetPassword, type UserCommandDeps } from './users.ts';

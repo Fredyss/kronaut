@@ -1,7 +1,7 @@
 import type { Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { hmacToken, randomToken, TOKEN_PREFIX } from '../crypto.ts';
+import { hmacToken, randomToken, TOKEN_PREFIX } from '../crypto/crypto.ts';
 
 export const SESSION_COOKIE = '__Host-kronaut_session';
 export const SESSION_IDLE_MS = 7 * 24 * 60 * 60 * 1000;

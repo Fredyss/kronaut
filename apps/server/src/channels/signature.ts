@@ -4,7 +4,7 @@ import { decodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { HttpError } from '../http/errors.ts';
-import { bindRoute } from '../http/types.ts';
+import { bindRoute } from '../http/request.ts';
 import { type ChannelRef, requireChannel } from './channel-ref.ts';
 import { loadSignatures, SignatureSchema } from './signature-read.ts';
 

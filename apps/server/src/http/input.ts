@@ -8,7 +8,7 @@ import {
   readBody,
 } from './body.ts';
 import { HttpError, type IssueDetail } from './errors.ts';
-import type { RouteInput } from './types.ts';
+import type { RouteInput } from './request.ts';
 
 export interface RawInput {
   readonly route: Route;
