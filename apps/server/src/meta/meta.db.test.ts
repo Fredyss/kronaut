@@ -8,7 +8,7 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { registerSecretApp } from '../cli/provider-apps.ts';
-import { accessExempt, createHttpApp, deriveHttpKeys } from '../http/kernel.ts';
+import { accessExempt, createHttpApp, deriveHttpKeys } from '../http/pipeline/kernel.ts';
 import { installJobQueue } from '../jobs/job-queue.ts';
 import { runMetaLifecycle } from './lifecycle.ts';
 import { META_BODY_LIMITS, metaRoutes } from './routes.ts';

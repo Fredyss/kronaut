@@ -9,7 +9,7 @@ import {
 import type { Database, TenantDb } from '@kronaut/db';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import type { TenantTarget } from './bind.ts';
+import type { TenantTarget } from './caller/bind.ts';
 import { serializeCookie } from './cookies.ts';
 import { databaseError, denyError, HttpError } from './errors.ts';
 import type { RequestContext, SessionInfo } from './types.ts';

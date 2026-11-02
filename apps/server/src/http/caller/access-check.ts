@@ -1,6 +1,6 @@
 import type { Logger } from 'pino';
+import { HttpError } from '../errors.ts';
 import { ACCESS_HEADER, type AccessGate } from './access.ts';
-import { HttpError } from './errors.ts';
 
 const ACCESS_DENIED = 'Access denied.';
 const PROBE_PATHS: ReadonlySet<string> = new Set(['/healthz', '/readyz']);

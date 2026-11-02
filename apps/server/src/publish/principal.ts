@@ -3,7 +3,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { effectivePolicy } from '../approval-policy/policy.ts';
-import { type Bound, bindGrantIn, bindUserIn } from '../http/principal.ts';
+import { type Bound, bindGrantIn, bindUserIn } from '../http/caller/principal.ts';
 import type { LockedPost } from '../post-access/lock.ts';
 
 export interface Scheduler {

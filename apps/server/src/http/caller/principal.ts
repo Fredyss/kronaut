@@ -7,8 +7,8 @@ import {
 } from '@kronaut/core';
 import type { Database, TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
-import type { GrantTokenRecord } from '../auth/grant.ts';
-import type { SessionInfo } from './types.ts';
+import type { GrantTokenRecord } from '../../auth/grant.ts';
+import type { SessionInfo } from '../types.ts';
 
 export interface Bound<P> {
   readonly principal: P;

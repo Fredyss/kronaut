@@ -15,9 +15,9 @@ import type { CronTask } from '../jobs/cron-tasks.ts';
 import { createMediaSigner, type MediaSigner } from '../media/access.ts';
 import { createStaging, type Staging } from '../media/staging.ts';
 import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';
-import type { AccessGate } from './access.ts';
 import { API_BODY_LIMITS, apiRoutes } from './api-routes.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './kernel.ts';
+import type { AccessGate } from './caller/access.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './pipeline/kernel.ts';
 import type { BoundRoute } from './types.ts';
 
 export const BASE = 'https://kronaut.example.test';

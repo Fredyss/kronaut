@@ -1,6 +1,6 @@
 import { createRegistry, type Route, type RouteRegistry } from '@kronaut/contract';
 import { SELF_ACTION } from '@kronaut/core';
-import type { BoundRoute } from './types.ts';
+import type { BoundRoute } from '../types.ts';
 
 const WORKSPACE_SEGMENT = ':workspaceId';
 
