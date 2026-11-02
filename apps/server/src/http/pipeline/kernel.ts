@@ -8,15 +8,15 @@ import type { guardSession } from '../../auth/session-guard.ts';
 import { purposeKey } from '../../crypto/crypto.ts';
 import { DEFAULT_MAX_BODY_BYTES } from '../body.ts';
 import type { AccessGate } from '../caller/access.ts';
-import { failure } from '../respond.ts';
 import type { BoundRoute } from '../types.ts';
 import type { WebApp } from '../web.ts';
 import { type Kernel, pipeline } from './pipeline.ts';
 import { routeRegistry } from './registry.ts';
+import { failure } from './respond.ts';
 import { createRouter } from './router.ts';
 
 export { accessExempt } from '../caller/access-check.ts';
-export { REVIEW_COOKIE } from '../cookies.ts';
+export { REVIEW_COOKIE } from './cookies.ts';
 export { routeRegistry } from './registry.ts';
 
 export interface HttpKeys {

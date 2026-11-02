@@ -1,6 +1,6 @@
 import type { ResponseEncoding } from '@kronaut/contract';
 import type { Logger } from 'pino';
-import { errorBody, HttpError } from './errors.ts';
+import { errorBody, HttpError } from '../errors.ts';
 
 const GENERIC_FAILURE = 'Something went wrong. Try again later.';
 

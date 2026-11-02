@@ -1,8 +1,8 @@
 import type { AuthMode, Route } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { REVIEW_COOKIE } from '../http/cookies.ts';
 import { HttpError } from '../http/errors.ts';
+import { REVIEW_COOKIE } from '../http/pipeline/cookies.ts';
 import type { HttpDeps } from '../http/pipeline/kernel.ts';
 import { bearerToken, findGrantToken, type GrantTokenRecord } from './grant.ts';
 import { findSession, SESSION_COOKIE, type SessionRecord, sessionActive } from './session.ts';
