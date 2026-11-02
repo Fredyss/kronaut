@@ -25,7 +25,7 @@ Rules marked **checked** fail `pnpm check`, through the tests in `tools/lint/`.
   - A line covers the whole source feature, so a second file there can use a listed target without a new line.
   - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
   - The list records today's coupling; it doesn't approve it. Each feature split should make it shorter.
-- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice) and `web/ui` (app-wide UI pieces that need app messages) may be imported by any feature without a declared line. A base folder imports only packages, its own files and other base folders. A new base folder is a design decision, like a declared import.
+- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new base folder is a design decision, like a declared import.
 
 ## Files and modules
 

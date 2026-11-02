@@ -4,7 +4,6 @@ import type { Destination } from './queries.ts';
 const POLL_MS = 5000;
 const DUE_SOON_MS = 10 * 60 * 1000;
 const MAX_WAIT_MS = 60 * 60 * 1000;
-export const NEEDS_ACTION_POLL_MS = 30_000;
 export const BUSY: ReadonlySet<string> = new Set(['publishing', 'verifying', 'retry_wait']);
 
 export interface Pollable {

@@ -4,7 +4,8 @@ import {
   destinationsNeedsAction,
 } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
-import { NEEDS_ACTION_POLL_MS } from '../posts/destinations.ts';
+
+export const NEEDS_ACTION_POLL_MS = 30_000;
 
 export type NeedsAction = DestinationsNeedsActionResponse;
 

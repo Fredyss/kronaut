@@ -1,6 +1,6 @@
 import { type Client, type NotificationsListResponse, notificationsList } from '@kronaut/sdk';
 import { queryOptions } from '@tanstack/react-query';
-import { NEEDS_ACTION_POLL_MS } from '../posts/destinations.ts';
+import { NEEDS_ACTION_POLL_MS } from '../inbox/queries.ts';
 
 export type NotificationList = NotificationsListResponse;
 

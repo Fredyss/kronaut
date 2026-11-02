@@ -18,6 +18,7 @@ const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
 const WIRING_FOLDERS = new Set(['server/http', 'web/i18n', 'web/routes']);
 const BASE_FOLDERS = new Set(['web/api', 'web/locale', 'web/ui']);
 const WEB_ROOT_FILE = /^apps\/web\/src\/[^/]+$/;
+const TEST_FILE = /\.test\.tsx?$/;
 const WEB_ENTRYPOINTS = new Set(['apps/web/src/app.tsx', 'apps/web/src/main.tsx']);
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
@@ -122,7 +123,7 @@ export function featureImports(graph: ImportGraph): string[] {
     if (source === undefined || WIRING_FOLDERS.has(source.feature)) continue;
     for (const target of targets.map(featureFile)) {
       if (target === undefined || target.feature === source.feature) continue;
-      if (BASE_FOLDERS.has(target.feature)) continue;
+      if (source.feature.startsWith('web/') && BASE_FOLDERS.has(target.feature)) continue;
       imports.add(`${source.feature} -> ${target.path}`);
     }
   }
@@ -136,6 +137,7 @@ export function baseLeaks(graph: ImportGraph): string[] {
       if (source === undefined || !BASE_FOLDERS.has(source.feature)) return [];
       return targets
         .filter((target) => {
+          if (WEB_ROOT_FILE.test(target)) return true;
           const feature = featureFile(target)?.feature;
           return feature !== undefined && feature !== source.feature && !BASE_FOLDERS.has(feature);
         })
@@ -146,7 +148,9 @@ export function baseLeaks(graph: ImportGraph): string[] {
 
 export function rootFiles(graph: ImportGraph): string[] {
   return [...graph.keys()]
-    .filter((file) => WEB_ROOT_FILE.test(file) && !isTesting(file) && !WEB_ENTRYPOINTS.has(file))
+    .filter(
+      (file) => WEB_ROOT_FILE.test(file) && !TEST_FILE.test(file) && !WEB_ENTRYPOINTS.has(file),
+    )
     .sort();
 }
 

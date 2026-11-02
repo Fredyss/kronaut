@@ -104,11 +104,14 @@ describe('the structure rules', () => {
       [app('locale/choice.ts'), [app('api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
       [app('ui/icon.test.tsx'), [app('compose/form.tsx')]],
       [app('inbox/list.tsx'), [app('api/client.ts'), app('ui/icon.tsx'), app('posts/queries.ts')]],
+      ['apps/server/src/posts/list.ts', [app('api/errors.ts')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
+      'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
       'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
+      'server/posts -> api/errors.ts',
       'web/inbox -> posts/queries.ts',
       'web/ui -> compose/form.tsx',
     ]);
@@ -120,11 +123,12 @@ describe('the structure rules', () => {
       'apps/web/src/main.tsx',
       'apps/web/src/foo.ts',
       'apps/web/src/foo.test.ts',
+      'apps/web/src/testing.tsx',
       'apps/web/src/compose/form.tsx',
       'apps/server/src/config.ts',
     ];
     const graph: ImportGraph = new Map(files.map((file) => [file, []]));
-    expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts']);
+    expect(rootFiles(graph)).toEqual(['apps/web/src/foo.ts', 'apps/web/src/testing.tsx']);
   });
 
   it('reads value imports, re-exports and lazy imports, and skips type-only ones', () => {
