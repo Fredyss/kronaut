@@ -60,7 +60,16 @@ export default defineConfig({
     modulePreload: { polyfill: false },
     rolldownOptions: {
       output: {
-        codeSplitting: { groups: [{ name: routeEnglish }] },
+        codeSplitting: {
+          groups: [
+            { name: routeEnglish },
+            // Split into their own files, these small modules each became a chunk with its own wrapper.
+            {
+              name: 'data',
+              test: /\/src\/(api\/|posts\/|analytics\/roles\.ts|[^/]+\/queries\.ts)/,
+            },
+          ],
+        },
         chunkFileNames: (chunk) =>
           `assets/${routeCatalog(chunk.facadeModuleId) ?? '[name]'}-[hash].js`,
       },
