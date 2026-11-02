@@ -3,7 +3,8 @@ ARG PG_MAJOR=17
 ARG PGDG_FINGERPRINT=B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl gnupg patchelf \
- && curl -fsSL -o /tmp/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+ && { curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o /tmp/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      || curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o /tmp/pgdg.asc https://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc; } \
  && gpg --show-keys --with-colons /tmp/pgdg.asc | grep -qx "fpr:::::::::${PGDG_FINGERPRINT}:" \
  && gpg --dearmor -o /usr/share/keyrings/pgdg.gpg /tmp/pgdg.asc \
  && echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
@@ -40,7 +41,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 RUN set -eu; \
-    curl -fsSL -o x264.tar.gz "${X264_URL}"; \
+    curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o x264.tar.gz "${X264_URL}"; \
     echo "${X264_SHA256}  x264.tar.gz" | sha256sum -c -; \
     mkdir x264; \
     tar -xzf x264.tar.gz -C x264 --strip-components=1; \
