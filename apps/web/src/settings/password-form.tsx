@@ -1,5 +1,5 @@
 import { authPasswordChange } from '@kronaut/sdk';
-import { Button, Input, Label, toast } from '@kronaut/ui';
+import { Button, Input, Label, SettingsCard, SettingsRow, toast } from '@kronaut/ui';
 import { useMutation } from '@tanstack/react-query';
 import { type FormEvent, type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -13,7 +13,6 @@ import {
 } from '../auth/password-policy.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../locale/i18n.ts';
-import { SettingsCard, SettingsRow } from './card.tsx';
 
 interface Problems {
   readonly current?: string;

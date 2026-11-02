@@ -1,8 +1,8 @@
+import { SettingsCard } from '@kronaut/ui';
 import { formatDuration } from '../compose/media/video-text.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { useLocale } from '../locale/context.ts';
 import { useFormat } from '../locale/format.ts';
-import { SettingsCard } from '../settings/card.tsx';
 import type { SystemStatus } from './status.ts';
 import { Muted, StatusRow, type Tone } from './status-badge.tsx';
 

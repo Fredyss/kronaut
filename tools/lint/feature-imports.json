@@ -166,7 +166,6 @@
   "web/approvals -> i18n/settings.ts",
   "web/approvals -> notifications/queries.ts",
   "web/approvals -> posts/queries.ts",
-  "web/approvals -> settings/card.tsx",
   "web/calendar -> analytics/roles.ts",
   "web/calendar -> channels/queries.ts",
   "web/calendar -> channels/status-label.ts",
@@ -180,7 +179,6 @@
   "web/calendar -> posts/queries.ts",
   "web/calendar -> providers/ui.ts",
   "web/calendar -> tags/picker.tsx",
-  "web/channels -> approvals/password-dialog.tsx",
   "web/channels -> providers/ui.ts",
   "web/channels -> saved-texts/saved-texts.ts",
   "web/compose -> approvals/queries.ts",
@@ -202,7 +200,6 @@
   "web/inbox -> posts/destinations.ts",
   "web/inbox -> posts/queries.ts",
   "web/inbox -> providers/ui.ts",
-  "web/media -> approvals/password-dialog.tsx",
   "web/media -> compose/media/video-text.ts",
   "web/media -> i18n/media.ts",
   "web/media -> posts/summary.ts",
@@ -229,6 +226,5 @@
   "web/system -> compose/media/video-text.ts",
   "web/system -> i18n/settings.ts",
   "web/system -> providers/ui.ts",
-  "web/system -> settings/card.tsx",
   "web/tags -> posts/queries.ts"
 ]

@@ -1,8 +1,7 @@
-import { Input, Label } from '@kronaut/ui';
+import { Input, Label, Select } from '@kronaut/ui';
 import { useId } from 'react';
 import { useWeekdayFormat } from '../../locale/format.ts';
 import { m } from '../../locale/i18n.ts';
-import { SELECT } from '../../locale/select.tsx';
 import { useRuleText, WEEKDAYS } from '../../series/rule-text.ts';
 import type { End, Freq, RepeatControl, RepeatState } from './repeat.ts';
 
@@ -76,19 +75,18 @@ function EndFields({ repeat, pending }: RepeatProps) {
     <div className="flex flex-wrap items-end gap-3">
       <div className="flex flex-col gap-2">
         <Label htmlFor={id}>{m.repeat_ends()}</Label>
-        <select
+        <Select
           id={id}
           value={repeat.end}
           disabled={pending}
           onChange={(event) => repeat.setEnd(event.currentTarget.value as End)}
-          className={SELECT}
         >
           {ENDS.map(([value, label]) => (
             <option key={value} value={value}>
               {label()}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       {repeat.end === 'until' ? (
         <Input
@@ -139,19 +137,18 @@ export function RepeatFields({
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-2">
           <Label htmlFor={id}>{m.repeat_label()}</Label>
-          <select
+          <Select
             id={id}
             value={repeat.freq}
             disabled={pending}
             onChange={(event) => repeat.setFreq(event.currentTarget.value as Freq)}
-            className={SELECT}
           >
             {FREQS.map(([value, label]) => (
               <option key={value} value={value}>
                 {label()}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         {repeat.freq === 'none' ? null : (
           <NumberField

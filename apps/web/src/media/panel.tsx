@@ -1,6 +1,5 @@
-import { Button } from '@kronaut/ui';
+import { Button, trapTab } from '@kronaut/ui';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
-import { trapTab } from '../approvals/password-dialog.tsx';
 import { m as mediaText } from '../i18n/media.ts';
 import { m } from '../locale/i18n.ts';
 import { Icon } from '../ui/icon.tsx';

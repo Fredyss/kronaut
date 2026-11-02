@@ -1,5 +1,13 @@
 import { approvalsPolicyUpdate } from '@kronaut/sdk';
-import { Button, Input, toast } from '@kronaut/ui';
+import {
+  Button,
+  type ControlIds,
+  Input,
+  Select,
+  SettingsCard,
+  SettingsRow,
+  toast,
+} from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -7,7 +15,6 @@ import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
-import { type ControlIds, SettingsCard, SettingsRow } from '../settings/card.tsx';
 import { approvalPolicyKey, type PolicyResponse, type PolicyValues } from './queries.ts';
 
 const APPROVAL_COUNTS = [1, 2, 3, 4, 5] as const;
@@ -121,19 +128,19 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
         </SettingsRow>
         <SettingsRow label={settingsText.settings_required_approvals()}>
           {(ids) => (
-            <select
+            <Select
               {...ids}
               value={values.requiredApprovals}
               disabled={disabled}
               onChange={(event) => set({ requiredApprovals: Number(event.currentTarget.value) })}
-              className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm shadow-xs focus-visible:outline-2 focus-visible:outline-ring"
+              className="h-9 w-24"
             >
               {APPROVAL_COUNTS.map((count) => (
                 <option key={count} value={count}>
                   {count}
                 </option>
               ))}
-            </select>
+            </Select>
           )}
         </SettingsRow>
         <SettingsRow label={settingsText.settings_allow_self()}>

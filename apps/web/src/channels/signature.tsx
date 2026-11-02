@@ -1,5 +1,5 @@
 import { channelsSetSignature } from '@kronaut/sdk';
-import { toast } from '@kronaut/ui';
+import { Select, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -7,7 +7,6 @@ import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, keyFor } from '../api/idempotency.ts';
 import { meQuery } from '../api/me.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
-import { SELECT } from '../locale/select.tsx';
 import { savedTextsKey, savedTextsQuery } from '../saved-texts/saved-texts.ts';
 import { type Channel, channelsKey } from './queries.ts';
 import { QUEUE_ROLES } from './queue.ts';
@@ -53,12 +52,12 @@ function SignatureSelect({ workspaceId, channel }: SignatureSelectProps) {
       <label htmlFor={id} className="text-muted-foreground">
         {m.channels_signature()}
       </label>
-      <select
+      <Select
         id={id}
         value={signature?.id ?? ''}
         disabled={save.isPending}
         onChange={(event) => save.mutate(event.currentTarget.value || null)}
-        className={`${SELECT} max-w-56`}
+        className="max-w-56"
       >
         <option value="">{m.channels_signature_none()}</option>
         {options.map((text) => (
@@ -66,7 +65,7 @@ function SignatureSelect({ workspaceId, channel }: SignatureSelectProps) {
             {text.name}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }

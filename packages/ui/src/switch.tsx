@@ -1,5 +1,5 @@
-import { cn } from '@kronaut/ui';
 import type { ComponentProps } from 'react';
+import { cn } from './cn.ts';
 
 export type SwitchProps = Omit<ComponentProps<'button'>, 'type' | 'role' | 'onChange'> & {
   readonly checked: boolean;

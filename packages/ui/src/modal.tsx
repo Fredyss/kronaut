@@ -1,5 +1,5 @@
-import { cn } from '@kronaut/ui';
 import { type ReactNode, useEffect, useRef } from 'react';
+import { cn } from './cn.ts';
 
 interface ModalProps {
   readonly labelledBy?: string;
