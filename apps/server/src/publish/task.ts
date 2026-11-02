@@ -9,7 +9,7 @@ import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import type { DestinationJob } from '../jobs/jobs.ts';
 import type { MediaAccess } from '../media/access.ts';
-import type { ProviderRegistry } from '../providers.ts';
+import type { ProviderRegistry } from '../providers/providers.ts';
 import type { RandomInt } from './backoff.ts';
 import { closeAttempt, finalize } from './finalize.ts';
 import type { RunResult } from './plan.ts';

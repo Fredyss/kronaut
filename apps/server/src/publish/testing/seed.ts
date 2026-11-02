@@ -1,4 +1,4 @@
-import { parseSnapshot } from '../../snapshot.ts';
+import { parseSnapshot } from '../snapshot.ts';
 import { FAKE_PROVIDER } from './fake.ts';
 
 export const SEED_TEXT = 'Ahoj svet';

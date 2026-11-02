@@ -147,18 +147,25 @@ describe('the structure rules', () => {
 
   it('flags a base folder that imports a feature, and declares no import of a base folder', () => {
     const app = (target: string) => `apps/web/src/${target}`;
+    const server = (target: string) => `apps/server/src/${target}`;
     const imports: ImportGraph = new Map([
       [app('ui/icon.tsx'), [app('compose/form.tsx'), app('locale/i18n.ts'), app('ui/badge.tsx')]],
       [app('locale/choice.ts'), [app('api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
       [app('ui/icon.test.tsx'), [app('compose/form.tsx')]],
       [app('inbox/list.tsx'), [app('api/client.ts'), app('ui/icon.tsx'), app('posts/queries.ts')]],
-      ['apps/server/src/posts/list.ts', [app('api/errors.ts')]],
+      ['apps/server/src/posts/list.ts', [app('api/errors.ts'), server('config/config.ts')]],
+      [server('crypto/crypto.ts'), [server('auth/session.ts'), server('config/config.ts')]],
+      [server('config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
+      [server('providers/providers.test.ts'), [server('posts/list.ts')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
+      'apps/server/src/config/config.ts -> apps/server/src/start.ts',
+      'apps/server/src/crypto/crypto.ts -> apps/server/src/auth/session.ts',
       'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
       'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
+      'server/crypto -> auth/session.ts',
       'server/posts -> api/errors.ts',
       'web/inbox -> posts/queries.ts',
       'web/ui -> compose/form.tsx',

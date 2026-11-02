@@ -7,7 +7,7 @@ import { HttpError, type IssueDetail } from '../../http/errors.ts';
 import { unprocessable } from '../../http/issues.ts';
 import { pathId } from '../../http/params.ts';
 import { type BoundRoute, bindRoute } from '../../http/types.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import type { PostRouteDeps } from '../deps.ts';
 import { PostSchema, readPost } from '../read/dto.ts';
 import { DestinationsInput, insertDestinations, resolveDestinations } from './destinations.ts';

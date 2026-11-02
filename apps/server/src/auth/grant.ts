@@ -1,6 +1,6 @@
 import type { Database } from '@kronaut/db';
 import { sql } from 'kysely';
-import { hmacToken } from '../crypto.ts';
+import { hmacToken } from '../crypto/crypto.ts';
 
 const GRANT_TOKEN = /^kro_[0-9a-z]{16,32}_[A-Za-z0-9_-]{16,256}$/;
 const BEARER = /^Bearer ([^\s]+)$/i;

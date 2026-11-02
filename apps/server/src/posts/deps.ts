@@ -1,6 +1,6 @@
 import type { TenantDb } from '@kronaut/db';
 import type { IssueDetail } from '../http/errors.ts';
-import type { ProviderRegistry } from '../providers.ts';
+import type { ProviderRegistry } from '../providers/providers.ts';
 
 export interface PostRouteDeps {
   readonly providers: ProviderRegistry;

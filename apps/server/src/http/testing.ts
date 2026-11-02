@@ -14,7 +14,7 @@ import { SESSION_COOKIE } from '../auth/session.ts';
 import type { CronTask } from '../jobs/cron-tasks.ts';
 import { createMediaSigner, type MediaSigner } from '../media/access.ts';
 import { createStaging, type Staging } from '../media/staging.ts';
-import { createProviderRegistry, type ProviderRegistry } from '../providers.ts';
+import { createProviderRegistry, type ProviderRegistry } from '../providers/providers.ts';
 import { API_BODY_LIMITS, apiRoutes } from './api-routes.ts';
 import type { AccessGate } from './caller/access.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './pipeline/kernel.ts';

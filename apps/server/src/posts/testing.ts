@@ -22,14 +22,14 @@ import {
 } from '../http/testing.ts';
 import { installJobQueue } from '../jobs/job-queue.ts';
 import type { MediaAccess } from '../media/access.ts';
-import { createProviderRegistry } from '../providers.ts';
+import { createProviderRegistry } from '../providers/providers.ts';
+import { parseSnapshot, publishItems, resolveDestination } from '../publish/snapshot.ts';
 import {
   FAKE_PROVIDER,
   type FakeProvider,
   type FixtureUrls,
   fakeProvider,
 } from '../publish/testing.ts';
-import { parseSnapshot, publishItems, resolveDestination } from '../snapshot.ts';
 import type { PostDto } from './read/dto.ts';
 
 export {

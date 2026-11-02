@@ -20,7 +20,7 @@ import { MEDIA_BODY_LIMITS, uploadRoutes } from '../media/video/upload-routes.ts
 import { META_BODY_LIMITS, metaRoutes } from '../meta/routes.ts';
 import { notificationRoutes } from '../notifications/routes.ts';
 import { postRoutes } from '../posts/routes.ts';
-import type { ProviderRegistry } from '../providers.ts';
+import type { ProviderRegistry } from '../providers/providers.ts';
 import { queueRoutes } from '../queue/routes.ts';
 import { savedTextRoutes } from '../saved-texts/routes.ts';
 import { seriesRoutes } from '../series/routes.ts';

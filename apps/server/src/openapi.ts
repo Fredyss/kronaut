@@ -7,7 +7,7 @@ import { Temporal } from 'temporal-polyfill';
 import { apiRoutes } from './http/api-routes.ts';
 import { deriveHttpKeys, type HttpDeps, routeRegistry } from './http/pipeline/kernel.ts';
 import { createStaging } from './media/staging.ts';
-import { createProviderRegistry } from './providers.ts';
+import { createProviderRegistry } from './providers/providers.ts';
 
 export const OPENAPI_PATH = new URL('../../../packages/contract/openapi.json', import.meta.url);
 

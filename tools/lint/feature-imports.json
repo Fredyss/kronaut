@@ -109,6 +109,7 @@
   "server/posts -> post-access/reads.ts",
   "server/posts -> post-access/units.ts",
   "server/posts -> publish/principal.ts",
+  "server/posts -> publish/snapshot.ts",
   "server/posts -> publish/transition.ts",
   "server/posts -> queue/slots.ts",
   "server/posts -> tags/read.ts",

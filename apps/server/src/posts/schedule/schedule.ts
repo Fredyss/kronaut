@@ -26,7 +26,7 @@ import {
   lockDestinations,
 } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { approvalStatus } from '../../publish/principal.ts';
 import { type DestinationUpdate, transition } from '../../publish/transition.ts';
 import { recordPostSettlement } from '../../webhooks/events.ts';

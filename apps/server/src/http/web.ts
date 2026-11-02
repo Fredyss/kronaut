@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { extname, join, relative, sep } from 'node:path';
-import { ConfigError } from '../config.ts';
+import { ConfigError } from '../config/config.ts';
 
 export interface WebApp {
   serve(request: Request, base: Headers): Response | null;

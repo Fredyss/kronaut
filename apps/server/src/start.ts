@@ -20,7 +20,7 @@ import {
   type Env,
   type ServerConfig,
   type ServerRole,
-} from './config.ts';
+} from './config/config.ts';
 import { cronItems, cronTaskList, cronTasks } from './cron.ts';
 import { API_BODY_LIMITS, apiRoutes } from './http/api-routes.ts';
 import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/caller/access.ts';
@@ -38,7 +38,7 @@ import { stagingIn } from './media/staging.ts';
 import { mediaProcessTask } from './media/video/process.ts';
 import { metaLifecycleTask } from './meta/lifecycle.ts';
 import { emailDeps } from './notifications/email.ts';
-import { createProviderRegistry } from './providers.ts';
+import { createProviderRegistry } from './providers/providers.ts';
 import { publishDeps, publishTask } from './publish/task.ts';
 import { verifyTask } from './publish/verify/verify.ts';
 

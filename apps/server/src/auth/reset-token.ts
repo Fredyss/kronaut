@@ -1,6 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
 import type { Temporal } from 'temporal-polyfill';
-import { constantTimeEqual, TOKEN_PREFIX } from '../crypto.ts';
+import { constantTimeEqual, TOKEN_PREFIX } from '../crypto/crypto.ts';
 
 export const RESET_TOKEN_TTL_SECONDS = 15 * 60;
 export const RESET_TOKEN_MAX_LENGTH = 512;

@@ -20,7 +20,7 @@ import {
   lockDestinations,
 } from '../../post-access/locks.ts';
 import { postUnits } from '../../post-access/units.ts';
-import type { ProviderRegistry } from '../../providers.ts';
+import type { ProviderRegistry } from '../../providers/providers.ts';
 import { postApprovalRequestedEvent } from '../../webhooks/events.ts';
 import type { PostRouteDeps } from '../deps.ts';
 import { PostSchema, readPost } from '../read/dto.ts';

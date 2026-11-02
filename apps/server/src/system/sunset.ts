@@ -1,7 +1,7 @@
 import type { ProviderManifest } from '@kronaut/core';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import type { ProviderRegistry } from '../providers.ts';
+import type { ProviderRegistry } from '../providers/providers.ts';
 
 export const SUNSET_WARN_DAYS = 90;
 export const SUNSET_CRITICAL_DAYS = 30;

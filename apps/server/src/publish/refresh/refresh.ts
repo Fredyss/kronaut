@@ -8,7 +8,7 @@ import {
   type RefreshableCredential,
 } from '../../credentials/credential-store.ts';
 import { SYSTEM } from '../../post-access/lock.ts';
-import { createBaseContext, type ProviderEntry } from '../../providers.ts';
+import { createBaseContext, type ProviderEntry } from '../../providers/providers.ts';
 import { flagAccount, flagApp } from '../incidents.ts';
 import type { PublishDeps } from '../task.ts';
 import { expiringAt, openExpiring, type Renewal, warningState } from './expiring.ts';

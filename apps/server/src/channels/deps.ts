@@ -10,7 +10,7 @@ import {
   PROVIDER_EGRESS,
   type ProviderEntry,
   type ProviderRegistry,
-} from '../providers.ts';
+} from '../providers/providers.ts';
 
 export interface ChannelRouteDeps {
   readonly db: Database;

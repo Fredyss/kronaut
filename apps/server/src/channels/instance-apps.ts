@@ -5,7 +5,7 @@ import { sql } from 'kysely';
 import { sealAppSecret } from '../credentials/credential-store.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
-import type { ProviderEntry } from '../providers.ts';
+import type { ProviderEntry } from '../providers/providers.ts';
 import { takeWindowQuota } from '../quota/window-quota.ts';
 import { type ChannelRouteDeps, providerContext, redirectUri, SYSTEM } from './deps.ts';
 

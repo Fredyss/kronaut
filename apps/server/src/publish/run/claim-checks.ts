@@ -1,11 +1,11 @@
 import { contentHash } from '@kronaut/compose';
 import type { DestinationState, StateReason } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import type { ProviderEntry } from '../../providers.ts';
-import { contentHashInput, type ResolvedDestination } from '../../snapshot.ts';
+import type { ProviderEntry } from '../../providers/providers.ts';
 import { currentLaterItem, failedReason, failLaterItem } from '../chain-step.ts';
 import { prepareInput, type Ready, readResolved } from '../input.ts';
 import { authorizeScheduler } from '../principal.ts';
+import { contentHashInput, type ResolvedDestination } from '../snapshot.ts';
 import { auditTransition, type DestinationUpdate, transition } from '../transition.ts';
 import type { ClaimResult, ClaimScope } from './claim.ts';
 

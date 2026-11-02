@@ -1,5 +1,5 @@
 import { parseArgs } from 'node:util';
-import { parseBaseUrl, parseUuid, requireEnv } from '../config.ts';
+import { parseBaseUrl, parseUuid, requireEnv } from '../config/config.ts';
 import { keyring, positionals, stderrLogger, withDatabase } from './context.ts';
 import { UsageError } from './errors.ts';
 import {

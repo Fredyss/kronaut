@@ -4,7 +4,7 @@ import type { Task } from 'graphile-worker';
 import * as z from 'zod';
 import { loadCredentialById, loadProviderApp } from '../credentials/credential-store.ts';
 import type { RevokeJob } from '../jobs/jobs.ts';
-import { createBaseContext, PROVIDER_EGRESS, type ProviderEntry } from '../providers.ts';
+import { createBaseContext, PROVIDER_EGRESS, type ProviderEntry } from '../providers/providers.ts';
 import type { PublishDeps } from '../publish/task.ts';
 
 export type RevokeDeps = Pick<

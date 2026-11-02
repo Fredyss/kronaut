@@ -2,7 +2,7 @@ import type { ItemAnchor, ProviderState, PublishContext } from '@kronaut/core';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import { sql } from 'kysely';
 import { SYSTEM } from '../../post-access/lock.ts';
-import { createBaseContext, PROVIDER_EGRESS } from '../../providers.ts';
+import { createBaseContext, PROVIDER_EGRESS } from '../../providers/providers.ts';
 import { errorFields } from '../plan.ts';
 import { StepRefused } from '../run/context.ts';
 import type { PublishDeps } from '../task.ts';

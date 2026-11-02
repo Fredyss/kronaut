@@ -3,7 +3,7 @@ import type { Database } from '@kronaut/db';
 import { Hono } from 'hono';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
-import { purposeKey } from '../../crypto.ts';
+import { purposeKey } from '../../crypto/crypto.ts';
 import { DEFAULT_MAX_BODY_BYTES } from '../body.ts';
 import type { AccessGate } from '../caller/access.ts';
 import { failure } from '../respond.ts';

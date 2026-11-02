@@ -1,5 +1,5 @@
 import { createDatabase, migrate } from '@kronaut/db';
-import { parseUuid, requireEnv } from '../config.ts';
+import { parseUuid, requireEnv } from '../config/config.ts';
 import { installJobQueue, jobLogger } from '../jobs/job-queue.ts';
 import { logger, noArgs, stderrLogger, withDatabase } from './context.ts';
 import { release, restoreComplete } from './instance.ts';

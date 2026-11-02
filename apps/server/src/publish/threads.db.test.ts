@@ -5,7 +5,7 @@ import { manifests } from '@kronaut/providers/manifests';
 import { runtimes } from '@kronaut/providers/runtime';
 import { sql } from 'kysely';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createProviderRegistry } from '../providers.ts';
+import { createProviderRegistry } from '../providers/providers.ts';
 import type { PublishDeps } from './task.ts';
 import { runPublish } from './task.ts';
 import {
