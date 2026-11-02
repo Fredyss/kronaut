@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
 import { useApiClient } from '../api/client.ts';
-import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
+import { approvalPolicyQuery, approvalRequired } from '../approval-policy/queries.ts';
 import { type Channel, channelsQuery } from '../channels/queries.ts';
 import { useLocale } from '../locale/context.ts';
 import { m } from '../locale/i18n.ts';

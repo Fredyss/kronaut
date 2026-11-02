@@ -15,10 +15,14 @@ const clock = vi.hoisted(() => ({ now: '2026-10-01T10:00:00Z' }));
 
 vi.mock('./time.ts', async (importOriginal) => ({
   ...(await importOriginal<typeof import('./time.ts')>()),
-  browserTimeZone: () => 'Europe/Bratislava',
-  browserLanguage: () => 'en-US',
   today: () => Temporal.PlainDate.from('2026-10-01'),
   currentInstant: () => Temporal.Instant.from(clock.now),
+}));
+
+vi.mock('../locale/browser.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../locale/browser.ts')>()),
+  browserTimeZone: () => 'Europe/Bratislava',
+  browserLanguage: () => 'en-US',
 }));
 
 afterEach(cleanup);

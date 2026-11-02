@@ -14,8 +14,8 @@ import { createPortal } from 'react-dom';
 import { ANALYTICS_ROLES } from '../analytics/roles.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../locale/i18n.ts';
-import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
-import { editableBy } from '../post-actions/post-editable.ts';
+import { canDelete, canDuplicate } from '../posts/permissions.ts';
+import { editableBy } from '../posts/post-editable.ts';
 import type { PostSummary } from '../posts/queries.ts';
 import { MoreIcon } from './icons.tsx';
 

@@ -5,7 +5,7 @@ import { Discard, useLeaveGuard } from '../compose/leave-guard.tsx';
 import { m } from '../locale/i18n.ts';
 import type { Post } from '../posts/queries.ts';
 
-const load = () => import('../routes/compose.tsx');
+const load = () => import('../compose/compose-page.tsx');
 const ComposeForm = lazy(() => load().then((module) => ({ default: module.ComposeForm })));
 const EditForm = lazy(() => load().then((module) => ({ default: module.EditForm })));
 

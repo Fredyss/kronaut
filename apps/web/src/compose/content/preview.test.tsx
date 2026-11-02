@@ -6,7 +6,7 @@ import { channel, jpeg, mount, pickFiles, warmComposer } from '../testing.tsx';
 import type { PostEditorProps } from './editor.tsx';
 
 vi.mock('./editor.tsx', async () => {
-  const { toDoc } = await import('./doc.ts');
+  const { toDoc } = await import('../../posts/doc.ts');
   return {
     default: ({ id, label, initial, onChange }: PostEditorProps) => (
       <textarea

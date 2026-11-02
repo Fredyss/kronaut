@@ -23,6 +23,7 @@ const BASE_FOLDERS = new Set([
   'server/providers',
   'web/api',
   'web/locale',
+  'web/providers',
   'web/ui',
 ]);
 const SRC_ROOT_FILE = /^apps\/(?:server|web)\/src\/[^/]+$/;
@@ -52,6 +53,8 @@ const CREDENTIAL_READERS = new Set([
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
+const WEB_ROUTE = /^apps\/web\/src\/routes\//;
+const DATA_ACCESS = /^(?:@tanstack\/react-query(?:\/|$)|apps\/web\/src\/api\/client\.ts$)/;
 const SOURCE_DIR = /^(?:apps|packages)\/[^/]+\/src(?:\/|$)/;
 const UNCOUNTED = /\.(?:test|spec)\.[^/]+$/;
 const FOLDER_LIMIT = 25;
@@ -230,6 +233,18 @@ export function credentialLeaks(graph: ImportGraph): string[] {
 
 export function routeImports(graph: ImportGraph): string[] {
   return featureImports(graph).filter((line) => ROUTE_FILE.test(line));
+}
+
+export function fetchingRoutes(graph: ImportGraph): string[] {
+  return [...graph]
+    .flatMap(([file, targets]) =>
+      !WEB_ROUTE.test(file) || isTesting(file)
+        ? []
+        : targets
+            .filter((target) => DATA_ACCESS.test(target))
+            .map((target) => `${file} -> ${target}`),
+    )
+    .sort();
 }
 
 export function oversizedFolders(files: Iterable<string>): string[] {

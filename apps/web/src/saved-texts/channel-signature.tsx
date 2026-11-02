@@ -6,10 +6,10 @@ import { useApiClient } from '../api/client.ts';
 import { errorCode, errorStatus } from '../api/errors.ts';
 import { idempotency, keyFor } from '../api/idempotency.ts';
 import { meQuery } from '../api/me.ts';
+import { type Channel, channelsKey } from '../channels/queries.ts';
+import { QUEUE_ROLES } from '../channels/queue.ts';
 import { apiErrorMessage, m } from '../locale/i18n.ts';
-import { savedTextsKey, savedTextsQuery } from '../saved-texts/saved-texts.ts';
-import { type Channel, channelsKey } from './queries.ts';
-import { QUEUE_ROLES } from './queue.ts';
+import { savedTextsKey, savedTextsQuery } from './saved-texts.ts';
 
 interface SignatureSelectProps {
   readonly workspaceId: string;

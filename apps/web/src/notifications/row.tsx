@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import type { Formats } from '../calendar/formats.ts';
 import { reasonLabel } from '../inbox/reasons.ts';
+import type { Formats } from '../locale/formats.ts';
 import { m } from '../locale/i18n.ts';
 import { notificationLine, notificationTarget } from './kinds.ts';
 import type { NotificationItem } from './queries.ts';

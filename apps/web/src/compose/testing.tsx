@@ -3,7 +3,7 @@ import { createMemoryHistory } from '@tanstack/react-router';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { beforeAll } from 'vitest';
 import { App, createApp } from '../app.tsx';
-import { docText, textToParagraphs, toDoc } from './content/doc.ts';
+import { docText, textToParagraphs, toDoc } from '../posts/doc.ts';
 import type { PostEditorProps } from './content/editor.tsx';
 
 export function MockEditor({ id, label, initial, onChange }: PostEditorProps) {

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type Doc, docParagraphs, textToParagraphs, toDoc } from './doc.ts';
+import { type Doc, docParagraphs, textToParagraphs, toDoc } from '../../posts/doc.ts';
 import PostEditor from './editor.tsx';
 
 afterEach(cleanup);

@@ -1,0 +1,290 @@
+import { channelsConnectStart } from '@kronaut/sdk';
+import { Button, toast } from '@kronaut/ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getRouteApi } from '@tanstack/react-router';
+import { lazy, Suspense, useId, useState } from 'react';
+import { ANALYTICS_ROLES } from '../analytics/roles.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorStatus } from '../api/errors.ts';
+import { meQuery } from '../api/me.ts';
+import { AddChannelDialog } from '../channels/add-channel.tsx';
+import { type ConnectRequest, connectError } from '../channels/connect-option.tsx';
+import { DISCONNECT_ROLES, DisconnectConfirm, useDisconnect } from '../channels/disconnect.tsx';
+import { type Channel, channelsQuery, connectableQuery } from '../channels/queries.ts';
+import { QUEUE_ROLES } from '../channels/queue.ts';
+import { SearchToasts } from '../channels/search-toasts.tsx';
+import { statusLabel } from '../channels/status-label.ts';
+import { useLocale } from '../locale/context.ts';
+import { m } from '../locale/i18n.ts';
+import { httpsUrl } from '../posts/destinations.ts';
+import { providerUi } from '../providers/ui.ts';
+import { ChannelSignature } from '../saved-texts/channel-signature.tsx';
+
+const Followers = lazy(() =>
+  import('../channels/followers.tsx').then((module) => ({ default: module.Followers })),
+);
+
+const QueueEditor = lazy(() =>
+  import('../channels/queue-editor.tsx').then((module) => ({ default: module.QueueEditor })),
+);
+
+export interface ChannelsSearch {
+  readonly connected?: string;
+  readonly error?: string;
+}
+
+const route = getRouteApi('/app/channels');
+
+const HANDLE_HOST = /^@[^@\s]+@([^@\s]+)$/;
+
+function reconnectRequest({ provider, handle }: Channel): ConnectRequest | null {
+  const ui = providerUi(provider);
+  if (ui.instance) {
+    const instance = handle === null ? undefined : HANDLE_HOST.exec(handle)?.[1];
+    return instance === undefined ? null : { provider, instance };
+  }
+  return ui.loginHint && handle !== null ? { provider, loginHint: handle } : { provider };
+}
+
+interface ConnectAttempt {
+  readonly body: ConnectRequest;
+  readonly fromForm: boolean;
+}
+
+function fieldError(error: unknown, attempt: ConnectAttempt): string | null {
+  const { text, field } = connectError(error, attempt.body);
+  return field && attempt.fromForm ? text : null;
+}
+
+function useConnect(workspaceId: string) {
+  const client = useApiClient();
+  return useMutation({
+    mutationFn: async ({ body }: ConnectAttempt) =>
+      (await channelsConnectStart({ client, path: { workspaceId }, body })).data,
+    onSuccess: ({ authorizationUrl }) => {
+      if (httpsUrl(authorizationUrl) === null) {
+        toast(m.channels_connect_bad_url(), 'destructive');
+        return;
+      }
+      window.location.assign(authorizationUrl);
+    },
+    onError: (error, attempt) => {
+      if (errorStatus(error) === 401 || fieldError(error, attempt) !== null) return;
+      toast(connectError(error, attempt.body).text, 'destructive');
+    },
+  });
+}
+
+interface CardProps {
+  readonly channel: Channel;
+  readonly onReconnect: (() => void) | null;
+  readonly onDisconnect: (() => void) | null;
+  readonly pending: boolean;
+  readonly disconnecting: boolean;
+  readonly queueWorkspace: string | null;
+  readonly metricsWorkspace: string | null;
+  readonly onAddInsights: (() => void) | null;
+}
+
+type Panel = 'confirm' | 'queue' | null;
+
+interface ActionProps extends CardProps {
+  readonly panel: Panel;
+  setPanel(panel: Panel): void;
+}
+
+function CardActions({ channel, onReconnect, onDisconnect, pending, ...rest }: ActionProps) {
+  const { panel, setPanel, queueWorkspace } = rest;
+  const healthy = channel.status === 'active';
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <span
+        className={
+          healthy
+            ? 'rounded-full bg-secondary px-2 py-0.5 text-xs'
+            : 'rounded-full bg-destructive/10 px-2 py-0.5 text-destructive text-xs'
+        }
+      >
+        {statusLabel(channel.status)}
+      </span>
+      {onReconnect === null ? null : (
+        <Button size="sm" variant="outline" disabled={pending} onClick={onReconnect}>
+          {m.channels_reconnect()}
+        </Button>
+      )}
+      {queueWorkspace === null || panel !== null ? null : (
+        <Button size="sm" variant="ghost" onClick={() => setPanel('queue')}>
+          {m.channels_queue()}
+        </Button>
+      )}
+      {onDisconnect === null || panel !== null ? null : (
+        <Button size="sm" variant="ghost" onClick={() => setPanel('confirm')}>
+          {m.channels_disconnect()}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function ChannelCard(props: CardProps) {
+  const { channel, onDisconnect, disconnecting, queueWorkspace, metricsWorkspace } = props;
+  const { onAddInsights } = props;
+  const { locale } = useLocale();
+  const [panel, setPanel] = useState<Panel>(null);
+  const profile = httpsUrl(channel.profileUrl);
+  const expires =
+    channel.accessExpiresAt === null
+      ? null
+      : new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(
+          new Date(channel.accessExpiresAt),
+        );
+  return (
+    <li className="flex flex-wrap items-start gap-3 rounded-xl border p-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-muted-foreground text-xs">{providerUi(channel.provider).name()}</span>
+        <span className="truncate font-medium">{channel.displayName}</span>
+        {channel.handle === null ? null : (
+          <span className="truncate text-muted-foreground text-sm">{channel.handle}</span>
+        )}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+          {profile === null ? null : (
+            <a
+              href={profile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4"
+            >
+              {m.channels_open_profile()}
+            </a>
+          )}
+          {expires === null ? null : (
+            <span className="text-muted-foreground">{m.channels_expires({ date: expires })}</span>
+          )}
+          {metricsWorkspace === null ? null : (
+            <Suspense fallback={null}>
+              <Followers
+                workspaceId={metricsWorkspace}
+                channel={channel}
+                onReconnect={onAddInsights}
+                pending={props.pending}
+              />
+            </Suspense>
+          )}
+        </div>
+        <ChannelSignature channel={channel} />
+      </div>
+      <CardActions {...props} panel={panel} setPanel={setPanel} />
+      {onDisconnect === null || panel !== 'confirm' ? null : (
+        <DisconnectConfirm
+          name={channel.displayName}
+          pending={disconnecting}
+          onConfirm={onDisconnect}
+          onClose={() => setPanel(null)}
+        />
+      )}
+      {queueWorkspace === null || panel !== 'queue' ? null : (
+        <Suspense fallback={null}>
+          <QueueEditor
+            workspaceId={queueWorkspace}
+            channel={channel}
+            onClose={() => setPanel(null)}
+          />
+        </Suspense>
+      )}
+    </li>
+  );
+}
+
+function Channels({ workspaceId, role }: { readonly workspaceId: string; readonly role: string }) {
+  const client = useApiClient();
+  const channels = useQuery({
+    ...channelsQuery(client, workspaceId),
+    select: (items) => items.filter((channel) => channel.status !== 'disconnected'),
+  });
+  const connectable = useQuery(connectableQuery(client, workspaceId));
+  const connect = useConnect(workspaceId);
+  const disconnect = useDisconnect(workspaceId);
+  const canDisconnect = DISCONNECT_ROLES.has(role);
+  const search = route.useSearch();
+  const [adding, setAdding] = useState<{ readonly initial: string | null } | null>(null);
+
+  const fieldPrefix = useId();
+  const providers = connectable.data?.map((provider) => provider.id);
+  const startReconnect = (channel: Channel): (() => void) | null => {
+    if (providers === undefined) return null;
+    const request = reconnectRequest(channel);
+    if (request !== null) return () => connect.mutate({ body: request, fromForm: false });
+    return () => setAdding({ initial: channel.provider });
+  };
+  const reconnect = (channel: Channel) =>
+    channel.status === 'needs_reauth' ? startReconnect(channel) : null;
+  const errorFor = (provider: string): string | null => {
+    const attempt = connect.variables;
+    if (connect.error === null || attempt?.body.provider !== provider) return null;
+    return fieldError(connect.error, attempt);
+  };
+
+  return (
+    <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+      {search.connected === undefined && search.error === undefined ? null : (
+        <SearchToasts channels={channels.data} />
+      )}
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-semibold text-2xl tracking-tight">{m.channels_title()}</h1>
+          <p className="text-muted-foreground text-sm">{m.channels_subtitle()}</p>
+        </div>
+        {providers === undefined ? null : (
+          <Button onClick={() => setAdding({ initial: null })}>{m.channels_add()}</Button>
+        )}
+      </header>
+      {channels.isError ? (
+        <p role="alert" className="text-destructive text-sm">
+          {m.error_generic()}
+        </p>
+      ) : null}
+      {channels.data === undefined ? null : channels.data.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+          <h2 className="font-medium text-lg">{m.channels_empty_title()}</h2>
+          {providers === undefined ? null : (
+            <p className="text-muted-foreground text-sm">{m.channels_empty_body()}</p>
+          )}
+        </div>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {channels.data.map((channel) => (
+            <ChannelCard
+              key={channel.id}
+              channel={channel}
+              onReconnect={reconnect(channel)}
+              onAddInsights={startReconnect(channel)}
+              onDisconnect={canDisconnect ? () => disconnect.mutate(channel) : null}
+              pending={connect.isPending}
+              disconnecting={disconnect.isPending}
+              queueWorkspace={QUEUE_ROLES.has(role) ? workspaceId : null}
+              metricsWorkspace={ANALYTICS_ROLES.has(role) ? workspaceId : null}
+            />
+          ))}
+        </ul>
+      )}
+      {providers === undefined || adding === null ? null : (
+        <AddChannelDialog
+          available={providers}
+          initial={adding.initial}
+          pending={connect.isPending}
+          connect={(body) => connect.mutate({ body, fromForm: true })}
+          errorFor={errorFor}
+          fieldPrefix={fieldPrefix}
+          onClose={() => setAdding(null)}
+        />
+      )}
+    </section>
+  );
+}
+
+export function ChannelsPage() {
+  const client = useApiClient();
+  const workspace = useQuery(meQuery(client)).data?.workspaces[0];
+  if (workspace === undefined) return null;
+  return <Channels workspaceId={workspace.id} role={workspace.role} />;
+}

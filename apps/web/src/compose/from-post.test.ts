@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Channel } from '../channels/queries.ts';
-import { editableBy } from '../post-actions/post-editable.ts';
-import type { MediaAsset } from '../post-actions/post-media.ts';
+import { docParagraphs } from '../posts/doc.ts';
+import { editableBy } from '../posts/post-editable.ts';
+import type { MediaAsset } from '../posts/post-media.ts';
 import type { Post } from '../posts/queries.ts';
 import { effective } from './content/contents.ts';
-import { docParagraphs } from './content/doc.ts';
 import { type FromPost, fromPost, type Refusal } from './from-post.ts';
 
 function doc(text: string) {

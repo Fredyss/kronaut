@@ -1,5 +1,5 @@
+import { type Doc, EMPTY_DOC } from '../../posts/doc.ts';
 import type { ImageFacts } from './choice.ts';
-import { type Doc, EMPTY_DOC } from './doc.ts';
 
 export interface PickedImage {
   readonly id: string;

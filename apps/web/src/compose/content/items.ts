@@ -1,7 +1,7 @@
 import type { Channel } from '../../channels/queries.ts';
+import { type Doc, EMPTY_DOC } from '../../posts/doc.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
 import type { Content, Reply } from './contents.ts';
-import { type Doc, EMPTY_DOC } from './doc.ts';
 
 export const MAX_REPLIES = 24;
 

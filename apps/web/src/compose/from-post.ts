@@ -1,9 +1,9 @@
 import type { Channel } from '../channels/queries.ts';
-import type { MediaAsset } from '../post-actions/post-media.ts';
+import { toDoc } from '../posts/doc.ts';
+import type { MediaAsset } from '../posts/post-media.ts';
 import type { Post } from '../posts/queries.ts';
 import { choiceFor } from './content/choice.ts';
 import { type Content, type Contents, effective, type PickedImage } from './content/contents.ts';
-import { toDoc } from './content/doc.ts';
 import { isPlainDoc } from './content/plain-doc.ts';
 import type { VideoEntry, VideoRegistry } from './media/use-video.ts';
 import { upcoming, type WhenStart } from './when/when.ts';

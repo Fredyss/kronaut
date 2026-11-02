@@ -1,8 +1,8 @@
 import { buttonVariants } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { useId } from 'react';
-import type { Formats } from '../calendar/formats.ts';
 import { m as inboxText } from '../i18n/inbox.ts';
+import type { Formats } from '../locale/formats.ts';
 import { m } from '../locale/i18n.ts';
 import { httpsUrl, stateLabel } from '../posts/destinations.ts';
 import { providerUi } from '../providers/ui.ts';

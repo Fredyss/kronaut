@@ -9,10 +9,10 @@ import { useEffect } from 'react';
 import type { Channel } from '../../channels/queries.ts';
 import { useLocale } from '../../locale/context.ts';
 import { m } from '../../locale/i18n.ts';
+import type { Doc } from '../../posts/doc.ts';
 import { providerUi } from '../../providers/ui.ts';
 import { checkVideo, type VideoMeta, videoIssueLine } from '../media/video-rules.ts';
 import type { MediaFacts } from './choice.ts';
-import type { Doc } from './doc.ts';
 import { type ItemDoc, type LimitItem, type PostTypeRules, postTypeFor } from './items.ts';
 
 export interface LimitTarget {
