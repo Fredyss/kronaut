@@ -135,6 +135,11 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  select:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @layer base {
