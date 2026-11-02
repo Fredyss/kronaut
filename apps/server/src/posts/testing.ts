@@ -30,7 +30,7 @@ import {
   fakeProvider,
 } from '../publish/testing.ts';
 import { parseSnapshot, publishItems, resolveDestination } from '../snapshot.ts';
-import type { PostDto } from './dto.ts';
+import type { PostDto } from './read/dto.ts';
 
 export {
   type Auth,
@@ -288,6 +288,23 @@ export async function scheduled(
   scheduleLocal: string = inMinutes(120),
 ): Promise<PostDto> {
   const response = await scheduleCall(post, { mode: 'instant', scheduleLocal, scheduleTz: TZ });
+  expect(response.status).toBe(200);
+  return (await response.json()) as PostDto;
+}
+
+export function requestCall(post: PostDto, body: object = {}, auth: Auth = ownerAuth) {
+  return call('POST', `posts/${post.id}/approval-requests`, auth, {
+    expectedVersion: post.version,
+    ...body,
+  });
+}
+
+export async function requested(
+  post: PostDto,
+  body: object = {},
+  auth: Auth = ownerAuth,
+): Promise<PostDto> {
+  const response = await requestCall(post, body, auth);
   expect(response.status).toBe(200);
   return (await response.json()) as PostDto;
 }

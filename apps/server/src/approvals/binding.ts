@@ -3,7 +3,7 @@ import type { DB, TenantDb } from '@kronaut/db';
 import type { UpdateObject } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { unprocessable } from '../http/issues.ts';
-import type { Frozen } from '../posts/freeze.ts';
+import type { Frozen } from '../posts/schedule/freeze.ts';
 import type { DestinationUpdate } from '../publish/transition.ts';
 
 export const APPROVAL_UNBOUND: UpdateObject<DB, 'post_destinations'> = {

@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { expect } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   type Auth,
   accountA,

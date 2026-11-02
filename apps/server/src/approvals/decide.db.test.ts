@@ -1,7 +1,7 @@
 import { encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import type { PostDto } from '../posts/dto.ts';
+import type { PostDto } from '../posts/read/dto.ts';
 import {
   call,
   create,
@@ -10,6 +10,7 @@ import {
   insertGrant,
   ownerAuth,
   ownerId,
+  requested,
   startPosts,
   stopPosts,
 } from '../posts/testing.ts';
@@ -23,7 +24,6 @@ import {
   openRequestOf,
   type PolicyChange,
   reauthenticatedHoursAgo,
-  requested,
   setPolicy,
   webhookEventsOf,
 } from './testing.ts';

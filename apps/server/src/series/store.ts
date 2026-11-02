@@ -13,7 +13,7 @@ import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import type { RequestContext } from '../http/types.ts';
 import { postUnits } from '../post-access/units.ts';
-import type { ownerColumns } from '../posts/owner.ts';
+import type { ownerColumns } from '../posts/owner/owner.ts';
 
 const SERIES_COLUMNS = [
   'id',
