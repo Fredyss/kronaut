@@ -1,24 +1,22 @@
-import { randomUUID } from 'node:crypto';
 import { defineRoute } from '@kronaut/contract';
-import { encodePublicId, nextOccurrence, occurrenceAt, type Resource } from '@kronaut/core';
+import { encodePublicId, nextOccurrence, occurrenceAt } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
-import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
-import { auditActor } from '../audit/write.ts';
 import { HttpError } from '../http/errors.ts';
 import { pathId } from '../http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../http/types.ts';
 import { ownerColumns } from '../posts/owner.ts';
-import { postUnits } from '../posts/units.ts';
 import { RepeatInput, repeatOf } from './repeat.ts';
 import {
+  changeSeries,
+  findSeries,
   latestOccurrence,
   occurrenceInstant,
   plainOf,
   ruleSeriesOf,
   type SeriesRow,
-  seriesRows,
+  type SeriesTarget,
 } from './store.ts';
 
 const PATH = '/v1/workspaces/:workspaceId/series/:seriesId';
@@ -120,79 +118,23 @@ async function seriesDto(
   });
 }
 
-async function findSeries(trx: TenantDb, workspaceId: string, seriesId: string, lock: boolean) {
-  const row = await seriesRows(trx, workspaceId)
-    .where('id', '=', seriesId)
-    .$if(lock, (qb) => qb.forUpdate())
-    .executeTakeFirst();
-  if (row === undefined) throw new HttpError('not_found', 'Not found.');
-  const latest = await latestOccurrence(trx, workspaceId, seriesId);
-  if (latest === undefined) return { row, resource: { workspaceId } };
-  const post = await trx
-    .selectFrom('posts')
-    .select(['id', 'brand_id', 'location_id'])
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', latest.id)
-    .executeTakeFirstOrThrow();
-  const units = await postUnits(trx, workspaceId, post);
-  const resource: Resource = { workspaceId, postId: post.id, units };
-  return { row, resource };
-}
-
-type Change = { readonly state: 'stopped' } | { readonly state: 'active'; readonly owner: Owner };
-type Owner = ReturnType<typeof ownerColumns>;
-
-interface Target {
-  readonly workspaceId: string;
-  readonly row: SeriesRow;
-}
-
-async function change(
-  trx: TenantDb,
-  ctx: RequestContext,
-  { workspaceId, row }: Target,
-  to: Change,
-) {
-  const owner =
-    to.state === 'active' ? { owner_user_id: null, owner_grant_id: null, ...to.owner } : {};
-  const changed = await trx
-    .updateTable('post_series')
-    .set({ state: to.state, state_reason: null, ...owner, updated_at: sql<Date>`now()` })
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', row.id)
-    .returning(['state', 'state_reason', 'owner_user_id', 'owner_grant_id'])
-    .executeTakeFirstOrThrow();
-  await trx
-    .insertInto('audit_events')
-    .values({
-      workspace_id: workspaceId,
-      ...(await auditActor(trx, workspaceId, ctx.principal)),
-      action: to.state === 'active' ? 'series.resumed' : 'series.stopped',
-      resource_kind: 'post_series',
-      resource_id: row.id,
-      outcome: 'ok',
-      args_summary: JSON.stringify({ occurrences: row.occurrences }),
-      correlation_id: randomUUID(),
-      request_id: ctx.requestId,
-    })
-    .execute();
-  return { ...row, ...changed };
-}
-
-async function stop(trx: TenantDb, ctx: RequestContext, target: Target) {
+async function stop(trx: TenantDb, ctx: RequestContext, target: SeriesTarget) {
   const { row } = target;
   if (row.state === 'stopped' || row.state === 'ended') return row;
-  return await change(trx, ctx, target, { state: 'stopped' });
+  return await changeSeries(trx, ctx, target, { state: 'stopped' });
 }
 
-async function resume(trx: TenantDb, ctx: RequestContext, target: Target) {
+async function resume(trx: TenantDb, ctx: RequestContext, target: SeriesTarget) {
   const { row } = target;
   if (row.state === 'active') return row;
   if (row.state !== 'paused') throw new HttpError('conflict', 'Only a paused series can resume.');
-  return await change(trx, ctx, target, { state: 'active', owner: ownerColumns(ctx.principal) });
+  return await changeSeries(trx, ctx, target, {
+    state: 'active',
+    owner: ownerColumns(ctx.principal),
+  });
 }
 
-type Transition = (trx: TenantDb, ctx: RequestContext, target: Target) => Promise<SeriesRow>;
+type Transition = (trx: TenantDb, ctx: RequestContext, target: SeriesTarget) => Promise<SeriesRow>;
 
 async function transition(
   ctx: RequestContext,

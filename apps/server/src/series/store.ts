@@ -1,6 +1,19 @@
-import { occurrenceAt, parseRule, type RuleSeries, resolveLocal } from '@kronaut/core';
+import { randomUUID } from 'node:crypto';
+import {
+  occurrenceAt,
+  parseRule,
+  type Resource,
+  type RuleSeries,
+  resolveLocal,
+} from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
+import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
+import { auditActor } from '../audit/write.ts';
+import { HttpError } from '../http/errors.ts';
+import type { RequestContext } from '../http/types.ts';
+import type { ownerColumns } from '../posts/owner.ts';
+import { postUnits } from '../posts/units.ts';
 
 const SERIES_COLUMNS = [
   'id',
@@ -68,4 +81,71 @@ export async function occurrenceInstant(
   if (intended !== null) return intended.at;
   const local = occurrenceAt(ruleSeriesOf(row), row.occurrences);
   return local === null ? null : resolveLocal(local, row.timezone).at;
+}
+
+export async function findSeries(
+  trx: TenantDb,
+  workspaceId: string,
+  seriesId: string,
+  lock: boolean,
+) {
+  const row = await seriesRows(trx, workspaceId)
+    .where('id', '=', seriesId)
+    .$if(lock, (qb) => qb.forUpdate())
+    .executeTakeFirst();
+  if (row === undefined) throw new HttpError('not_found', 'Not found.');
+  const latest = await latestOccurrence(trx, workspaceId, seriesId);
+  if (latest === undefined) return { row, resource: { workspaceId } };
+  const post = await trx
+    .selectFrom('posts')
+    .select(['id', 'brand_id', 'location_id'])
+    .where('workspace_id', '=', workspaceId)
+    .where('id', '=', latest.id)
+    .executeTakeFirstOrThrow();
+  const units = await postUnits(trx, workspaceId, post);
+  const resource: Resource = { workspaceId, postId: post.id, units };
+  return { row, resource };
+}
+
+type Owner = ReturnType<typeof ownerColumns>;
+
+type SeriesChange =
+  | { readonly state: 'stopped' }
+  | { readonly state: 'active'; readonly owner: Owner };
+
+export interface SeriesTarget {
+  readonly workspaceId: string;
+  readonly row: SeriesRow;
+}
+
+export async function changeSeries(
+  trx: TenantDb,
+  ctx: RequestContext,
+  { workspaceId, row }: SeriesTarget,
+  to: SeriesChange,
+) {
+  const owner =
+    to.state === 'active' ? { owner_user_id: null, owner_grant_id: null, ...to.owner } : {};
+  const changed = await trx
+    .updateTable('post_series')
+    .set({ state: to.state, state_reason: null, ...owner, updated_at: sql<Date>`now()` })
+    .where('workspace_id', '=', workspaceId)
+    .where('id', '=', row.id)
+    .returning(['state', 'state_reason', 'owner_user_id', 'owner_grant_id'])
+    .executeTakeFirstOrThrow();
+  await trx
+    .insertInto('audit_events')
+    .values({
+      workspace_id: workspaceId,
+      ...(await auditActor(trx, workspaceId, ctx.principal)),
+      action: to.state === 'active' ? 'series.resumed' : 'series.stopped',
+      resource_kind: 'post_series',
+      resource_id: row.id,
+      outcome: 'ok',
+      args_summary: JSON.stringify({ occurrences: row.occurrences }),
+      correlation_id: randomUUID(),
+      request_id: ctx.requestId,
+    })
+    .execute();
+  return { ...row, ...changed };
 }

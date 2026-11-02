@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { decodePublicId, encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { sql } from 'kysely';
@@ -35,6 +36,7 @@ import {
   workspaceId,
 } from '../posts/testing.ts';
 import { publishDeps, runPublish } from '../publish/task.ts';
+import { advisoryLock, whileHeld } from '../testing/lock-wait.ts';
 
 interface TagDto {
   readonly id: string;
@@ -144,13 +146,34 @@ describe('the tag list', () => {
     expect(tag).toMatchObject({ name: 'Café', color: 'teal', postCount: 0 });
   });
 
-  it('refuses a name that differs only in case, and one that is empty', async () => {
+  it('refuses a name that differs only in case', async () => {
     await newTag('Launch');
     const taken = await call('POST', 'tags', ownerAuth, { name: 'LAUNCH', color: 'red' });
     expect(taken.status).toBe(409);
     expect((await errorOf(taken)).code).toBe('tag_exists');
-    const empty = await call('POST', 'tags', ownerAuth, { name: '   ', color: 'red' });
-    expect(empty.status).toBe(422);
+  });
+
+  it.each([
+    ['empty', '   '],
+    ['too long', 'x'.repeat(41)],
+  ])('refuses a name that is %s, on create and on rename', async (label, name) => {
+    const tag = await newTag(`Valid ${label}`);
+    for (const response of [
+      await call('POST', 'tags', ownerAuth, { name, color: 'red' }),
+      await call('PATCH', `tags/${tag.id}`, ownerAuth, { name }),
+    ]) {
+      expect(response.status).toBe(422);
+      expect(await errorOf(response)).toMatchObject({
+        code: 'unprocessable',
+        message: 'A tag name has 1–40 characters.',
+        details: [{ path: 'body.name', code: 'tag_name_invalid' }],
+      });
+    }
+  });
+
+  it('counts a name in characters, not code units', async () => {
+    const name = '😀'.repeat(40);
+    expect((await newTag(name)).name).toBe(name);
   });
 
   it('changes only the fields it was sent', async () => {
@@ -169,6 +192,65 @@ describe('the tag list', () => {
     expect(await renamed.json()).toMatchObject({ name: 'New name', color: 'blue' });
     const taken = await call('PATCH', `tags/${tag.id}`, ownerAuth, { name: 'taken NAME' });
     expect(taken.status).toBe(409);
+  });
+
+  it('neither writes nor audits an update that changes nothing', async () => {
+    const tag = await newTag('Unchanged');
+    const id = decodePublicId('tag', tag.id) ?? '';
+    const updatedAt = () =>
+      owner.withActor(CLI, (trx) =>
+        trx.selectFrom('tags').select('updated_at').where('id', '=', id).executeTakeFirstOrThrow(),
+      );
+    const before = await updatedAt();
+    const same = { name: tag.name, color: tag.color };
+    const response = await call('PATCH', `tags/${tag.id}`, ownerAuth, same);
+    expect(await response.json()).toMatchObject(same);
+    expect(await updatedAt()).toEqual(before);
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx.selectFrom('audit_events').select('action').where('resource_id', '=', id).execute(),
+    );
+    expect(audit).toEqual([{ action: 'tag.created' }]);
+  });
+
+  it('audits a rename and a delete', async () => {
+    const tag = await newTag('Audited');
+    const post = await create(ownerAuth, draft());
+    await setTags(post, [tag.id]);
+    await call('PATCH', `tags/${tag.id}`, ownerAuth, { name: 'Audited again', color: 'blue' });
+    await call('DELETE', `tags/${tag.id}`, ownerAuth);
+    const audit = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select(['action', 'args_summary'])
+        .where('resource_id', '=', decodePublicId('tag', tag.id) ?? '')
+        .orderBy('occurred_at')
+        .orderBy('id')
+        .execute(),
+    );
+    expect(audit).toEqual([
+      { action: 'tag.created', args_summary: { color: 'teal' } },
+      { action: 'tag.updated', args_summary: { renamed: true, color: 'blue' } },
+      { action: 'tag.deleted', args_summary: { post_count: 1 } },
+    ]);
+  });
+
+  it('waits its turn before it counts the tags of a workspace', async () => {
+    const response = await whileHeld(owner, advisoryLock(`tags:${workspaceId}`), () =>
+      call('POST', 'tags', ownerAuth, { name: 'Serialised', color: 'red' }),
+    );
+    expect(response.status).toBe(201);
+  });
+
+  it('does not find an unknown tag or one of another workspace', async () => {
+    const unknown = encodePublicId('tag', randomUUID());
+    for (const id of [unknown, foreignTag]) {
+      const renamed = await call('PATCH', `tags/${id}`, ownerAuth, { name: 'Renamed' });
+      expect(renamed.status).toBe(404);
+      expect((await errorOf(renamed)).message).toBe('Tag not found.');
+      const deleted = await call('DELETE', `tags/${id}`, ownerAuth);
+      expect(deleted.status).toBe(404);
+      expect((await errorOf(deleted)).message).toBe('Tag not found.');
+    }
   });
 
   it('removes a deleted tag from its posts', async () => {
