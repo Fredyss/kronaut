@@ -28,6 +28,7 @@ Use this table before you create a file or move one.
 - **New concept, new folder.** The `src/` root holds entrypoints and wiring only. In the web app this is checked: the root holds only `main.tsx` and `app.tsx`.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` and `*-routes.ts` bind handlers; shared logic lives in a named module that other features import. A feature importing another feature's file with one of those names fails the check; the check goes by file name only.
+- **Web route files stay thin (checked).** A file in `apps/web/src/routes/` re-exports the page its route loads and holds no page body; it never imports `@tanstack/react-query` or `api/client.ts`. [Web structure](15-web-structure.md) has the rule and an example.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
 - **Planning tools and the server folders from draft to publish follow one direction:** [Scheduling flow](14-scheduling-flow.md) sets it and says where new code goes.
 - **Subfolders are sub-domains, never layers.** Name them after a part of the concept (`compose/media/`, `publish/verify/`, `media/import/`), not after a kind of file (`components/`, `hooks/`, `services/`, `utils/`). Tests stay beside their code. Files in one feature import across its subfolders freely; the file-cycle check still applies, and other features import a subfolder file through a declared line as usual.
@@ -38,7 +39,7 @@ Use this table before you create a file or move one.
 ## Imports
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
-- **No import loop between server feature folders, `http` files and `src` root files (checked).** The check builds a folder graph from production value imports, where each `http` file and `src` root file is a node of its own. So a loop through `http/authenticate.ts` or `cron.ts` fails, while `api-routes.ts` mounting every feature doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) sets the tiers that keep it so; the check catches loops only, not imports against the tier order.
+- **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`server/http`, `web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http/authenticate.ts`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so; the check catches loops only, not imports against the tier order.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`server/http`, `web/i18n`, `web/routes`).
@@ -86,8 +87,6 @@ Use this table before you create a file or move one.
 These rules bind new code, but existing code still breaks them:
 
 - Shared modules in the `apps/server/src` root, which should each find an owner.
-- `post-actions/compose-dialog.tsx` imports a file from `web/routes`.
 - `apps/server/src/http/types.ts` has a catch-all name.
 - Modules other features import that also define routes: `posts/schedule/schedule.ts`, `channels/disconnect.ts`, `auth/profile.ts`.
-- Web feature folders import each other in a loop. A loop between server folders fails the check; between web folders, the declared list only makes a new one visible in review. The web loop spans 8 folders (`approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions`, `saved-texts`); a web chapter will set its direction.
 - Directories above 25 source files: `server/http` (29). Each gets its own split; the check lands with the last one.

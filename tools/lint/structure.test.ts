@@ -5,6 +5,7 @@ import {
   baseLeaks,
   credentialLeaks,
   featureImports,
+  fetchingRoutes,
   findCycles,
   folderCycles,
   type ImportGraph,
@@ -53,8 +54,12 @@ describe('repo structure', () => {
     expect(featureImports(graph)).toEqual((JSON.parse(declared) as string[]).sort());
   });
 
-  it('has no import loop between server feature folders', () => {
-    expect(folderCycles(graph, 'server')).toEqual([]);
+  it.each(['server', 'web'])('has no import loop between %s feature folders', (app) => {
+    expect(folderCycles(graph, app)).toEqual([]);
+  });
+
+  it('keeps data access out of web route files', () => {
+    expect(fetchingRoutes(graph)).toEqual([]);
   });
 
   it('keeps base folders free of feature imports', () => {
@@ -116,6 +121,11 @@ describe('the structure rules', () => {
       [app('posts/b.ts'), [app('queue/a.ts'), web('compose/form.tsx')]],
       [web('compose/form.tsx'), [web('calendar/grid.tsx')]],
       [web('calendar/grid.tsx'), [web('compose/dialog.tsx'), app('posts/dto.ts')]],
+      [web('post-actions/dialog.tsx'), [web('routes/compose.tsx')]],
+      [web('routes/compose.tsx'), [web('posts/permissions.ts'), web('locale/i18n.ts')]],
+      [web('posts/permissions.ts'), [web('post-actions/roles.ts')]],
+      [web('routes/post.tsx'), [web('post-page/page.tsx')]],
+      [web('post-page/page.tsx'), [web('routes/inbox.tsx')]],
     ]);
     expect(folderCycles(imports, 'server')).toEqual([
       ['approvals', 'notifications', 'posts'],
@@ -123,7 +133,10 @@ describe('the structure rules', () => {
       ['cron.ts', 'series'],
       ['auth', 'channels', 'http/authenticate.ts'],
     ]);
-    expect(folderCycles(imports, 'web')).toEqual([['calendar', 'compose']]);
+    expect(folderCycles(imports, 'web')).toEqual([
+      ['calendar', 'compose'],
+      ['post-actions', 'posts', 'routes/compose.tsx'],
+    ]);
   });
 
   it("flags a feature that imports another feature's route file", () => {
@@ -185,6 +198,23 @@ describe('the structure rules', () => {
       'apps/server/src/media/probe.ts -> packages/credentials/src/keyring.ts',
       'apps/server/src/posts/list.ts -> apps/server/src/credentials/credential-store.ts',
       'apps/server/src/start.ts -> apps/server/src/credentials/credential-store.ts',
+    ]);
+  });
+
+  it('flags a web route file that fetches or reaches the API client', () => {
+    const web = (path: string) => `apps/web/src/${path}`;
+    const imports: ImportGraph = new Map([
+      [web('routes/compose.tsx'), [web('compose/compose-page.tsx')]],
+      [web('routes/post.tsx'), ['@tanstack/react-query', web('post-page/post-page.tsx')]],
+      [web('routes/inbox.tsx'), [web('api/client.ts'), web('api/me.ts')]],
+      [web('routes/media.tsx'), ['@tanstack/react-query-devtools', '@tanstack/react-router']],
+      [web('routes/login.test.tsx'), ['@tanstack/react-query', web('api/client.ts')]],
+      [web('inbox/inbox-page.tsx'), ['@tanstack/react-query', web('api/client.ts')]],
+      ['apps/server/src/routes/a.ts', ['@tanstack/react-query']],
+    ]);
+    expect(fetchingRoutes(imports)).toEqual([
+      'apps/web/src/routes/inbox.tsx -> apps/web/src/api/client.ts',
+      'apps/web/src/routes/post.tsx -> @tanstack/react-query',
     ]);
   });
 
