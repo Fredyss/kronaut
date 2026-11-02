@@ -38,6 +38,7 @@ Go was seriously considered. It saves ~50–70 MB RSS, less than Postgres itself
 12. [Licensing](12-licensing.md)
 13. [Code structure](13-code-structure.md)
 14. [Scheduling flow](14-scheduling-flow.md)
+15. [Web structure](15-web-structure.md)
 
 ## Reference
 

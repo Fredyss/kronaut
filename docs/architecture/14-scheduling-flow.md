@@ -91,4 +91,4 @@ After PR 2 the folder loops measured 5 folders, `approvals`, `notifications`, `p
 
 ## Out of scope
 
-The web loop needs its own look. Measured after the web root moved into owner folders, it spans 8 folders: `approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions` and `saved-texts`.
+The web folders have their own chapter, [Web structure](15-web-structure.md). Measured after the web root moved into owner folders, their loop spanned 8 folders: `approvals`, `calendar`, `channels`, `compose`, `inbox`, `notifications`, `post-actions` and `saved-texts`.
