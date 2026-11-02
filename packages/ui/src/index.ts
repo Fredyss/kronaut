@@ -8,7 +8,7 @@ export { Select } from './select.tsx';
 export { SettingsCard } from './settings-card.tsx';
 export { SettingsPage } from './settings-page.tsx';
 export { type ControlIds, SettingsRow } from './settings-row.tsx';
-export { Switch, type SwitchProps } from './switch.tsx';
+export { Switch } from './switch.tsx';
 export {
   dismissToast,
   Toaster,

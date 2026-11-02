@@ -54,6 +54,8 @@ const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
 const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
 const WEB_ROUTE = /^apps\/web\/src\/routes\//;
+const ROUTE_GATE = 'apps/web/src/routes/locale-root.tsx';
+const RE_EXPORT = /^export\s+(?:type\s+)?\{[^{}]*\}\s+from\s+'[^']+';$/gm;
 const DATA_ACCESS = /^(?:@tanstack\/react-query(?:\/|$)|apps\/web\/src\/api\/client\.ts$)/;
 const SOURCE_DIR = /^(?:apps|packages)\/[^/]+\/src(?:\/|$)/;
 const UNCOUNTED = /\.(?:test|spec)\.[^/]+$/;
@@ -244,6 +246,19 @@ export function fetchingRoutes(graph: ImportGraph): string[] {
             .filter((target) => DATA_ACCESS.test(target))
             .map((target) => `${file} -> ${target}`),
     )
+    .sort();
+}
+
+export function fatRoutes(sources: ReadonlyMap<string, string>): string[] {
+  return [...sources]
+    .filter(
+      ([file, source]) =>
+        WEB_ROUTE.test(file) &&
+        !isTesting(file) &&
+        file !== ROUTE_GATE &&
+        source.replace(RE_EXPORT, '').trim() !== '',
+    )
+    .map(([file]) => file)
     .sort();
 }
 

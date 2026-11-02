@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   baseLeaks,
   credentialLeaks,
+  fatRoutes,
   featureImports,
   fetchingRoutes,
   findCycles,
@@ -61,6 +62,13 @@ describe('repo structure', () => {
 
   it('keeps data access out of web route files', () => {
     expect(fetchingRoutes(graph)).toEqual([]);
+  });
+
+  it('keeps web route files to re-exports of their pages', () => {
+    const routes = [...graph.keys()].filter((file) => file.startsWith('apps/web/src/routes/'));
+    const sources = new Map(routes.map((file) => [file, readFileSync(join(ROOT, file), 'utf8')]));
+    expect(sources.size).toBeGreaterThan(15);
+    expect(fatRoutes(sources)).toEqual([]);
   });
 
   it('keeps base folders free of feature imports', () => {
@@ -169,20 +177,26 @@ describe('the structure rules', () => {
       [server('crypto/crypto.ts'), [server('auth/session.ts'), server('config/config.ts')]],
       [server('config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
       [server('providers/providers.test.ts'), [server('posts/list.ts')]],
+      [server('providers/providers.ts'), [server('channels/read.ts'), server('crypto/crypto.ts')]],
       [server('http/web.ts'), [server('config/config.ts'), server('auth/session.ts')]],
+      [app('providers/ui.ts'), [app('locale/i18n.ts'), app('channels/list.tsx')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
       'apps/server/src/config/config.ts -> apps/server/src/start.ts',
       'apps/server/src/crypto/crypto.ts -> apps/server/src/auth/session.ts',
       'apps/server/src/http/web.ts -> apps/server/src/auth/session.ts',
+      'apps/server/src/providers/providers.ts -> apps/server/src/channels/read.ts',
       'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
+      'apps/web/src/providers/ui.ts -> apps/web/src/channels/list.tsx',
       'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
       'server/crypto -> auth/session.ts',
       'server/http -> auth/session.ts',
       'server/posts -> api/errors.ts',
+      'server/providers -> channels/read.ts',
       'web/inbox -> posts/queries.ts',
+      'web/providers -> channels/list.tsx',
       'web/ui -> compose/form.tsx',
     ]);
   });
@@ -229,6 +243,37 @@ describe('the structure rules', () => {
     expect(fetchingRoutes(imports)).toEqual([
       'apps/web/src/routes/inbox.tsx -> apps/web/src/api/client.ts',
       'apps/web/src/routes/post.tsx -> @tanstack/react-query',
+    ]);
+  });
+
+  it('flags a web route file that holds more than re-exports', () => {
+    const web = (path: string) => `apps/web/src/${path}`;
+    const sources = new Map([
+      [web('routes/compose.tsx'), "export { ComposePage } from '../compose/compose-page.tsx';\n"],
+      [
+        web('routes/login.tsx'),
+        "export {\n  LoginPage,\n  type LoginSearch,\n} from '../auth/login.tsx';",
+      ],
+      [
+        web('routes/inbox.tsx'),
+        "import { InboxPage } from '../inbox/inbox-page.tsx';\nexport { InboxPage };",
+      ],
+      [web('routes/post.tsx'), "export * from '../post-page/post-page.tsx';"],
+      [web('routes/channels.tsx'), "export type { ChannelsSearch } from '../channels-page/a.tsx';"],
+      [web('routes/shell.tsx'), "// the shell\nexport { AppShell } from '../shell/app-shell.tsx';"],
+      [
+        web('routes/media.tsx'),
+        "export { MediaPage } from '../media/media-page.tsx';\nconst x = 1;",
+      ],
+      [web('routes/locale-root.tsx'), 'export function LocaleRoot() {}'],
+      [web('routes/login.test.tsx'), "import { it } from 'vitest';"],
+      [web('inbox/inbox-page.tsx'), 'export function InboxPage() {}'],
+    ]);
+    expect(fatRoutes(sources)).toEqual([
+      'apps/web/src/routes/inbox.tsx',
+      'apps/web/src/routes/media.tsx',
+      'apps/web/src/routes/post.tsx',
+      'apps/web/src/routes/shell.tsx',
     ]);
   });
 
