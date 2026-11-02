@@ -10,10 +10,11 @@ import {
   type RouterHistory,
   redirect,
 } from '@tanstack/react-router';
-import { isUnauthenticated, ME_KEY, meQuery } from './api.ts';
+import { ApiClientContext } from './api/client.ts';
+import { isUnauthenticated } from './api/errors.ts';
+import { ME_KEY, meQuery } from './api/me.ts';
 import { calendarSearch } from './calendar/search.ts';
 import { composeSearch, postSearch } from './compose/search.ts';
-import { ApiClientContext } from './context.ts';
 import { browserLanguages, loadLocale, m, pickLocale } from './i18n.ts';
 import { LocaleRoot } from './locale-root.tsx';
 import { ChannelsPage, type ChannelsSearch } from './routes/channels.tsx';

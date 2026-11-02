@@ -2,7 +2,7 @@ import { authMeUpdate, type Client } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { type Me, meQuery } from './api.ts';
+import { type Me, meQuery } from './api/me.ts';
 import { browserLanguages, type Locale, m, pickLocale } from './i18n.ts';
 
 interface LocaleChoice {

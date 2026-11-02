@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { SELECT } from '../locale-select.tsx';
 import { tagsQuery } from '../tags/picker.tsx';

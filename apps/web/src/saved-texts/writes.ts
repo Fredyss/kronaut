@@ -1,10 +1,11 @@
 import { savedTextsCreate, savedTextsDelete, savedTextsUpdate } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { channelsKey, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorStatus } from '../api/errors.ts';
+import { idempotency, keyFor } from '../api/idempotency.ts';
+import { channelsKey } from '../api.ts';
 import { m as settingsText } from '../i18n/settings.ts';
-import { idempotency, keyFor } from '../idempotency.ts';
 import { savedTextError } from './error.ts';
 import { savedTextsKey } from './saved-texts.ts';
 

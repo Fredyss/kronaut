@@ -2,19 +2,19 @@ import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { lazy, Suspense } from 'react';
 import { AnalyticsSection } from '../analytics/section.tsx';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import {
   ANALYTICS_ROLES,
   type Channel,
   channelsQuery,
   type Destination,
-  meQuery,
   type Post,
   postQuery,
 } from '../api.ts';
 import { ApprovalSection } from '../approvals/panel.tsx';
 import { docParagraphs, docText, isBlank, toDoc } from '../compose/doc.ts';
 import { issueMessage } from '../compose/issues.ts';
-import { useApiClient } from '../context.ts';
 import { httpsUrl, pollDelay, stateLabel } from '../destinations.ts';
 import { EVERGREEN_ROLES, EvergreenSection } from '../evergreen/section.tsx';
 import { useFormat } from '../format.ts';

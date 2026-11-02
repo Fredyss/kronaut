@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { meQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { m } from '../i18n.ts';
 import { InboxList } from '../inbox/list.tsx';
 

@@ -2,10 +2,11 @@ import { postsDelete } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useId, useRef } from 'react';
-import { errorCode, errorStatus, postKey, postsKey } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import { postKey, postsKey } from '../api.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { Modal } from './modal.tsx';
 
 export interface DeleteTarget {

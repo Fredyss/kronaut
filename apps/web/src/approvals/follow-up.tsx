@@ -1,9 +1,9 @@
 import { postsRequestApproval, postsSchedule } from '@kronaut/sdk';
 import { Button } from '@kronaut/ui';
 import { useState } from 'react';
-import { errorCode } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode } from '../api/errors.ts';
 import type { ScheduleWhen } from '../compose/submit.ts';
-import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
 import { type PostScope, useApprovalCall } from './actions.ts';
 import { approvalErrorMessage } from './messages.ts';

@@ -12,8 +12,8 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useLocation, useNavigate, useRouter } from '@tanstack/react-router';
 import { type FormEvent, useEffect, useState } from 'react';
-import { errorCode } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode } from '../api/errors.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { passwordHint, passwordProblem } from '../password-policy.ts';
 import { AuthLayout } from './auth-layout.tsx';

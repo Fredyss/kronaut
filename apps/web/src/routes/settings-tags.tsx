@@ -2,11 +2,13 @@ import { tagsDelete, tagsUpdate } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
-import { errorStatus, meQuery, postsKey } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorStatus } from '../api/errors.ts';
+import { idempotency, keyFor } from '../api/idempotency.ts';
+import { meQuery } from '../api/me.ts';
+import { postsKey } from '../api.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
-import { idempotency, keyFor } from '../idempotency.ts';
 import { SELECT } from '../locale-select.tsx';
 import { SettingsCard, SettingsPage } from '../settings/card.tsx';
 import {

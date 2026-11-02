@@ -1,8 +1,8 @@
 import { buttonVariants } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { useApiClient } from '../api/client.ts';
 import { channelsQuery, type Post } from '../api.ts';
-import { useApiClient } from '../context.ts';
 import { m as composeText } from '../i18n/compose.ts';
 import { m } from '../i18n.ts';
 import { canceledLive } from '../post-actions/post-editable.ts';

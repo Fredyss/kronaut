@@ -1,9 +1,9 @@
 import { Button } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { meQuery } from '../api.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { docText, textToParagraphs } from '../compose/doc.ts';
-import { useApiClient } from '../context.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import { DeleteSavedText, type Draft, SavedTextForm } from '../saved-texts/form.tsx';

@@ -2,8 +2,9 @@ import { channelsDisconnect } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import { type Channel, channelsQuery, errorCode, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { type Channel, channelsQuery } from '../api.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 
 export const DISCONNECT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);

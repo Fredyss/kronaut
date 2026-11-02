@@ -1,10 +1,10 @@
 import { approvalsDecide, authReauthenticate } from '@kronaut/sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import { ME_KEY } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import { ME_KEY } from '../api/me.ts';
 import { m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { denyCode, refreshApproval } from './queries.ts';
 
 export interface PostScope {

@@ -12,8 +12,9 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import type { FormEvent } from 'react';
-import { errorCode, ME_KEY } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode } from '../api/errors.ts';
+import { ME_KEY } from '../api/me.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
 import { safeNext } from '../next.ts';
 import { AuthLayout } from './auth-layout.tsx';

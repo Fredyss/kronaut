@@ -1,9 +1,10 @@
 import { type Client, postsDuplicate } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import type { QueryClient } from '@tanstack/react-query';
-import { errorCode, errorStatus, postKey, postsKey } from '../api.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { idempotency, keyFor } from '../api/idempotency.ts';
+import { postKey, postsKey } from '../api.ts';
 import { apiErrorMessage } from '../i18n.ts';
-import { idempotency, keyFor } from '../idempotency.ts';
 
 export interface DuplicateRun {
   readonly client: Client;

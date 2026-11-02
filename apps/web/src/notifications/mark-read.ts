@@ -1,8 +1,9 @@
 import { type NotificationsMarkReadData, notificationsMarkRead } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { isUnauthenticated, type NotificationList, notificationsKey } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { isUnauthenticated } from '../api/errors.ts';
+import { type NotificationList, notificationsKey } from '../api.ts';
 import { m } from '../i18n.ts';
 
 export type MarkReadBody = NotificationsMarkReadData['body'];

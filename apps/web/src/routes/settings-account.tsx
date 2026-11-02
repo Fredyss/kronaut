@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { meQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { meQuery } from '../api/me.ts';
 import { m as settingsText } from '../i18n/settings.ts';
 import { m } from '../i18n.ts';
 import { LocaleSelect, SELECT } from '../locale-select.tsx';

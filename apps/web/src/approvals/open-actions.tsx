@@ -1,6 +1,6 @@
 import { approvalsWithdraw } from '@kronaut/sdk';
 import { Button } from '@kronaut/ui';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
 import { m } from '../i18n.ts';
 import { type Decision, type PostScope, useApprovalCall, useDecide } from './actions.ts';
 import { approvalErrorMessage } from './messages.ts';

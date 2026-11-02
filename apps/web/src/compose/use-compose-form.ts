@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
+import { useApiClient } from '../api/client.ts';
 import { type Channel, channelsQuery, type Post, postKey, postsKey } from '../api.ts';
 import { approvalPolicyQuery, approvalRequired } from '../approvals/queries.ts';
-import { useApiClient, useLocale } from '../context.ts';
+import { useLocale } from '../context.ts';
 import { m } from '../i18n.ts';
 import type { PostTag } from '../tags/tags.ts';
 import { formFingerprint } from './draft-body.ts';

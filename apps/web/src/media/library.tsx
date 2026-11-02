@@ -1,7 +1,7 @@
 import { Button, cn } from '@kronaut/ui';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
 import { m as mediaText } from '../i18n/media.ts';
 import { m } from '../i18n.ts';
 import { AssetPanel } from './panel.tsx';

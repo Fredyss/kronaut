@@ -3,16 +3,9 @@ import { toast } from '@kronaut/ui';
 import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import {
-  detailCodes,
-  errorCode,
-  errorStatus,
-  type Post,
-  type PostList,
-  type PostSummary,
-  postsKey,
-} from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { detailCodes, errorCode, errorStatus } from '../api/errors.ts';
+import { type Post, type PostList, type PostSummary, postsKey } from '../api.ts';
 import { BUSY } from '../destinations.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { currentInstant, today } from './time.ts';

@@ -2,11 +2,12 @@ import { type ChannelsQueueUpdateData, channelsQueueUpdate } from '@kronaut/sdk'
 import { Button, Input, toast } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useId, useRef, useState } from 'react';
-import { type Channel, errorCode, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
+import { idempotency, type Keyed, keyFor } from '../api/idempotency.ts';
+import type { Channel } from '../api.ts';
 import { useWeekdayFormat } from '../format.ts';
 import { apiErrorMessage, m } from '../i18n.ts';
-import { idempotency, type Keyed, keyFor } from '../idempotency.ts';
 import { SELECT } from '../locale-select.tsx';
 import { type Queue, queueQuery } from './queue.ts';
 

@@ -1,4 +1,4 @@
-import { detailCodes, errorCode } from '../api.ts';
+import { detailCodes, errorCode } from '../api/errors.ts';
 
 export interface SubmitTarget {
   readonly accountId: string;

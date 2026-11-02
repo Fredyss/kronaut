@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ApiClientContext } from '../context.ts';
+import { ApiClientContext } from '../api/client.ts';
 import { TagPicker } from './picker.tsx';
 import type { PostTag } from './tags.ts';
 

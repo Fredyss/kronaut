@@ -3,8 +3,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { lazy, type ReactNode, Suspense, useState } from 'react';
 import { ANALYTICS_ID, useMetricsRows } from '../analytics/section.tsx';
+import { useApiClient } from '../api/client.ts';
 import { ANALYTICS_ROLES, type Post } from '../api.ts';
-import { useApiClient } from '../context.ts';
 import { m } from '../i18n.ts';
 import { canDelete, canDuplicate } from '../post-actions/permissions.ts';
 

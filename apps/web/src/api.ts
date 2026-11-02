@@ -1,8 +1,5 @@
 import {
-  ApiRequestError,
-  type AuthMeResponse,
   analyticsChannelMetrics,
-  authMe,
   type ChannelsListResponse,
   type Client,
   channelsList,
@@ -19,8 +16,6 @@ import {
 import { queryOptions } from '@tanstack/react-query';
 import { NEEDS_ACTION_POLL_MS } from './destinations.ts';
 
-export type Me = AuthMeResponse;
-
 export type Channel = ChannelsListResponse['items'][number];
 
 export type Post = PostsGetResponse;
@@ -34,29 +29,6 @@ export type PostSummary = PostList['items'][number];
 export type NeedsAction = DestinationsNeedsActionResponse;
 
 export type NeedsActionItem = NeedsAction['items'][number];
-
-export interface ErrorDetail {
-  readonly path: string;
-  readonly code: string;
-}
-
-export const ME_KEY = ['me'] as const;
-
-export function meQuery(client: Client) {
-  return queryOptions({
-    queryKey: ME_KEY,
-    queryFn: async () => (await authMe({ client })).data,
-    staleTime: 60_000,
-  });
-}
-
-export function isUnauthenticated(error: unknown): boolean {
-  return error instanceof ApiRequestError && error.status === 401;
-}
-
-export function errorCode(error: unknown): string {
-  return error instanceof ApiRequestError ? error.code : 'internal';
-}
 
 export function channelsKey(workspaceId: string) {
   return ['channels', workspaceId] as const;
@@ -93,20 +65,6 @@ export function channelMetricsQuery(
     queryFn: async () =>
       (await analyticsChannelMetrics({ client, path: { workspaceId, channelId }, query })).data,
   });
-}
-
-export function errorStatus(error: unknown): number | null {
-  return error instanceof ApiRequestError ? error.status : null;
-}
-
-export function detailCodes(error: unknown): readonly string[] {
-  if (!(error instanceof ApiRequestError)) return [];
-  return error.body.error.details?.map((detail) => detail.code) ?? [];
-}
-
-export function errorDetails(error: unknown): readonly ErrorDetail[] {
-  if (!(error instanceof ApiRequestError)) return [];
-  return error.body.error.details ?? [];
 }
 
 export function postKey(workspaceId: string, postId: string) {

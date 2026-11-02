@@ -1,8 +1,8 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import type { Temporal } from 'temporal-polyfill';
+import { useApiClient } from '../api/client.ts';
 import { draftsQuery, type PostList, type PostSummary, postsRangeQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
 import { pollDelay } from '../destinations.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import { m } from '../i18n.ts';

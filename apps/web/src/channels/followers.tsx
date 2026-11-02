@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { useApiClient } from '../api/client.ts';
 import { type Channel, channelMetricsQuery } from '../api.ts';
-import { useApiClient, useLocale } from '../context.ts';
+import { useLocale } from '../context.ts';
 import { useNumberFormat } from '../format.ts';
 import { m } from '../i18n.ts';
 import { providerUi } from '../providers.ts';

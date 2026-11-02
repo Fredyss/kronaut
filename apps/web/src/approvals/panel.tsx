@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { type Me, meQuery, type Post } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { type Me, meQuery } from '../api/me.ts';
+import type { Post } from '../api.ts';
 import { m } from '../i18n.ts';
 import type { PostScope } from './actions.ts';
 import { RequestApproval, ScheduleApproved, ScheduleUnbound } from './follow-up.tsx';

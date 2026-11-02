@@ -1,7 +1,7 @@
 import { toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { errorCode, errorStatus } from '../api.ts';
-import { useApiClient } from '../context.ts';
+import { useApiClient } from '../api/client.ts';
+import { errorCode, errorStatus } from '../api/errors.ts';
 import { m as mediaText } from '../i18n/media.ts';
 import { apiErrorMessage } from '../i18n.ts';
 import { clearAiLabel, deleteAsset, libraryKey, saveAltText } from './queries.ts';

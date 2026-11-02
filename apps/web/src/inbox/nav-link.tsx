@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { useApiClient } from '../api/client.ts';
 import { needsActionQuery } from '../api.ts';
-import { useApiClient } from '../context.ts';
 import { CountBadge } from '../count-badge.tsx';
 import { m } from '../i18n.ts';
 
