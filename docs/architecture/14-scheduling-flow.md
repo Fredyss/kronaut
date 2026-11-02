@@ -49,8 +49,8 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 ## Where new code goes
 
 - **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder that schedules as the owner through `posts/owner/owner-schedule.ts`, like `evergreen`.
-- **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts` calls.
-- **It reshapes a draft** (signatures, templates): `posts`, or its own folder below `posts` if it needs its own routes and tables.
+- **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts/schedule/` calls.
+- **It reshapes a draft** (signatures, templates): `posts/draft/`, or its own folder below `posts` if it needs its own routes and tables.
 - **It reads or locks a post for another feature:** `post-access`.
 
 Every time and approval decision keeps going through `scheduleLocked` or `openApprovalRequest`, so a new entry point inherits freeze, binding and the audit trail. An owner acting on its own, such as a series step or an evergreen copy, goes through `posts/owner/owner-schedule.ts`:

@@ -1,7 +1,7 @@
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { addMember, setPolicy } from '../../approvals/testing.ts';
 import type { PostDto } from '../read/dto.ts';
 import {
@@ -36,6 +36,16 @@ afterAll(async () => {
 
 beforeEach(async () => {
   await setPolicy({ mode: 'none', allow_self_approval: true, reschedule_tolerance_min: 0 });
+});
+
+afterEach(async () => {
+  await owner.withActor(SYSTEM, (trx) =>
+    trx
+      .updateTable('post_series')
+      .set({ state: 'stopped' })
+      .where('state', '=', 'active')
+      .execute(),
+  );
 });
 
 interface SeriesDto {
