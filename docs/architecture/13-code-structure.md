@@ -40,7 +40,8 @@ Use this table before you create a file or move one.
 ## Imports
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
-- **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so; the check catches loops only, not imports against the tier order.
+- **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so.
+- **Each feature folder imports only lower tiers (checked).** Every feature folder in both apps has a tier in [Scheduling flow](14-scheduling-flow.md) or [Web structure](15-web-structure.md), mirrored in `tools/lint/tier-order.ts`. A folder imports lower tiers and base folders only: not its own tier, a route file or a `src` root file. A new folder gets a tier in the same PR.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`web/i18n`, `web/routes`).
@@ -65,7 +66,7 @@ Use this table before you create a file or move one.
 
 ## Files and modules
 
-- **Name a file for its concept,** in kebab-case. Catch-all names (`utils`, `helpers`, `common`, `misc`, `types`) hide the owner.
+- **Name a file for its concept,** in kebab-case (checked by Biome). Catch-all names (`utils`, `helpers`, `common`, `misc`, `types`) hide the owner.
 - **Types live with their owner.**
 - **Code stays with its only user.** A module becomes shared once a second module imports it. Repeated logic gets abstracted on the third copy, not the second.
 - **Split by step or branch** when a file nears the Biome limit of 300 lines (500 for tests), and pass more than four values as an object. The goal is a clearer owner, not a lower line count.
