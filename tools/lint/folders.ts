@@ -3,6 +3,16 @@ export const TIERS: Readonly<Record<string, readonly string[]>> = {
   web: ['pages', 'views', 'actions', 'lists', 'composer', 'content', 'records'],
 };
 export const WIRING_FOLDERS = new Set(['web/i18n', 'web/routes']);
+const BASE_FOLDERS = new Set([
+  'server/base/config',
+  'server/base/crypto',
+  'server/base/http',
+  'server/base/providers',
+  'web/base/api',
+  'web/base/locale',
+  'web/base/providers',
+  'web/base/ui',
+]);
 const APP_FILE = /^apps\/(server|web)\/src\/(.+)$/;
 
 export interface AppFile {
@@ -11,7 +21,7 @@ export interface AppFile {
   readonly path: string;
 }
 
-function isGroup(app: string, name: string): boolean {
+export function isGroup(app: string, name: string): boolean {
   return name === 'base' || (TIERS[app]?.includes(name) ?? false);
 }
 
@@ -25,7 +35,7 @@ export function appFile(file: string): AppFile | undefined {
 }
 
 export function isBase(folder: string): boolean {
-  return folder.split('/')[1] === 'base';
+  return BASE_FOLDERS.has(folder);
 }
 
 export function tierOf(folder: string): number | undefined {

@@ -44,7 +44,7 @@ The tier check reads production value imports: a feature folder imports only low
 - **`app.tsx`** builds the route tree: paths, `validateSearch`, `beforeLoad`, and which route file each route loads, lazily unless the page is in the shell. It also creates the query client and the router.
 - **`routes/`** holds one file per page, which re-exports that page from its feature, including `not-found.tsx` (from `shell/`), plus `locale-root.tsx`, the locale gate around the router.
 - **`i18n/`** holds the message catalogs of the route groups (`compose`, `calendar`, `media`, `inbox`, `settings`). A file imports a group only if every route that loads it belongs to that group (checked by `i18n/route-catalogs.test.ts`).
-- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files, `routes/`, `i18n/`, `base/` and the tier folders (checked).
+- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files, `styles.css`, `routes/`, `i18n/`, `base/` and the tier folders (checked).
 
 Each file in `routes/` and `i18n/` is a node of its own in the folder check, so `app.tsx` loading every page is no loop, but a feature importing a route file that imports the feature is.
 

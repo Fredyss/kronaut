@@ -1,7 +1,8 @@
-import { appFile, isBase, tierOf, WIRING_FOLDERS } from './folders.ts';
+import { appFile, isBase, isGroup, tierOf, WIRING_FOLDERS } from './folders.ts';
 import { type ImportGraph, isTesting } from './structure.ts';
 
 const CATALOGS = 'web/i18n';
+const GROUP_FILE = /^apps\/(server|web)\/src\/([^/]+)\/[^/]+$/;
 
 function folderOf(file: string): { app: string; folder: string | undefined } | undefined {
   const found = appFile(file);
@@ -36,7 +37,15 @@ export function tierBreaks(graph: ImportGraph): string[] {
 export function untieredFolders(graph: ImportGraph): string[] {
   const folders = new Set([...graph.keys()].flatMap((file) => folderOf(file)?.folder ?? []));
   return [...folders]
-    .filter((f) => tierOf(f) === undefined && !WIRING_FOLDERS.has(f))
-    .filter((f) => !isBase(f) || f.split('/').length !== 3)
+    .filter((f) => tierOf(f) === undefined && !WIRING_FOLDERS.has(f) && !isBase(f))
+    .sort();
+}
+
+export function looseFiles(files: Iterable<string>): string[] {
+  return [...files]
+    .filter((file) => {
+      const [, app = '', group = ''] = GROUP_FILE.exec(file) ?? [];
+      return isGroup(app, group);
+    })
     .sort();
 }
