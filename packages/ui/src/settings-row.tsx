@@ -22,7 +22,7 @@ export function SettingsRow({ label, description, children }: SettingsRowProps) 
         {typeof children === 'function' ? (
           <label
             htmlFor={id}
-            className={`${labelClass} group-has-[:is(select,button,[type=checkbox],[type=radio]):enabled]/row:cursor-pointer`}
+            className={`${labelClass} group-has-[:is(select,button,[type=checkbox],[type=radio]):enabled]/row:group-not-has-[input:not([type=checkbox],[type=radio])]/row:cursor-pointer`}
           >
             {label}
           </label>
