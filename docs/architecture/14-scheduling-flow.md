@@ -28,7 +28,7 @@ Files have no import cycle, but folders do. Measured at `e58af2a`, before PR 1, 
 
 ## Direction
 
-Each tier imports only tiers below it. Folders in one tier don't import each other.
+Each tier imports only tiers below it. Folders in one tier don't import each other (checked by [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) on production value imports; a `src` root file counts as above tier 1). A new folder goes into this table and that file in the same PR.
 
 | Tier | Folders | Owns |
 |---|---|---|
