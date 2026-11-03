@@ -135,6 +135,15 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  select:not(:disabled),
+  input:is([type="checkbox"], [type="radio"]):not(:disabled),
+  input:is([type="checkbox"], [type="radio"]):not(:disabled) ~ label,
+  input:is([type="checkbox"], [type="radio"]):not(:disabled) + div > label,
+  label:has(> input:is([type="checkbox"], [type="radio"]):not(:disabled)) {
+    cursor: pointer;
+  }
 }
 
 @layer base {
