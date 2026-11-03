@@ -1,1 +1,1 @@
-export { AppShell } from '../shell/app-shell.tsx';
+export { AppShell } from '../pages/shell/app-shell.tsx';

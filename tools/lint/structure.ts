@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, normalize } from 'node:path';
+import { appFile, isBase, WIRING_FOLDERS } from './folders.ts';
 
 export type ImportGraph = ReadonlyMap<string, readonly string[]>;
 
@@ -14,18 +15,6 @@ const STATIC_IMPORT =
 const DYNAMIC_IMPORT = /\bimport\(\s*(?:'([^']+)'|`([^`$]+)`)\s*\)/g;
 const GENERATED = /\/paraglide[^/]*\/|\/gen\/|\.gen\.ts$|\.d\.ts$/;
 const NOT_SHIPPED = /^apps\/server\/e2e\/|^packages\/db\/scripts\//;
-const FEATURE_FILE = /^apps\/(server|web)\/src\/(([^/]+)\/.+)$/;
-export const WIRING_FOLDERS = new Set(['web/i18n', 'web/routes']);
-export const BASE_FOLDERS = new Set([
-  'server/config',
-  'server/crypto',
-  'server/http',
-  'server/providers',
-  'web/api',
-  'web/locale',
-  'web/providers',
-  'web/ui',
-]);
 const SRC_ROOT_FILE = /^apps\/(?:server|web)\/src\/[^/]+$/;
 const TEST_FILE = /\.test\.tsx?$/;
 const ROOT_ENTRYPOINTS = new Set([
@@ -39,16 +28,16 @@ const ROOT_ENTRYPOINTS = new Set([
   'apps/web/src/main.tsx',
 ]);
 const CREDENTIAL_PACKAGE = /^(?:packages\/credentials\/|@kronaut\/credentials(?:\/|$))/;
-const CREDENTIAL_STORES = /^apps\/server\/src\/credentials\//;
+const CREDENTIAL_STORES = /^apps\/server\/src\/infrastructure\/credentials\//;
 const SERVER_ENTRYPOINTS = new Set(['apps/server/src/start.ts', 'apps/server/src/openapi.ts']);
-const KEYRING_USERS = new Set(['server/credentials', 'server/cli']);
+const KEYRING_USERS = new Set(['server/infrastructure/credentials', 'server/actors/cli']);
 const CREDENTIAL_READERS = new Set([
-  'server/credentials',
-  'server/publish',
-  'server/channels',
-  'server/analytics',
-  'server/meta',
-  'server/cli',
+  'server/infrastructure/credentials',
+  'server/steps/publish',
+  'server/access/channels',
+  'server/records/analytics',
+  'server/actors/meta',
+  'server/actors/cli',
 ]);
 const ROUTE_FILE = /[/-]routes\.ts$/;
 const SRC_ROOT_TEST = /^apps\/[^/]+\/src\/([^/]+?)(?:\.db)?\.test\.tsx?$/;
@@ -56,7 +45,7 @@ const HELPER_NAME = /(^|\/)testing(\.tsx?$|\/)/;
 const WEB_ROUTE = /^apps\/web\/src\/routes\//;
 const ROUTE_GATE = 'apps/web/src/routes/locale-root.tsx';
 const RE_EXPORT = /^export\s+(?:type\s+)?\{[^{}]*\}\s+from\s+'[^']+';$/gm;
-const DATA_ACCESS = /^(?:@tanstack\/react-query(?:\/|$)|apps\/web\/src\/api\/client\.ts$)/;
+const DATA_ACCESS = /^(?:@tanstack\/react-query(?:\/|$)|apps\/web\/src\/base\/api\/client\.ts$)/;
 const SOURCE_DIR = /^(?:apps|packages)\/[^/]+\/src(?:\/|$)/;
 const UNCOUNTED = /\.(?:test|spec)\.[^/]+$/;
 const FOLDER_LIMIT = 25;
@@ -148,9 +137,9 @@ export function misplacedTests(graph: ImportGraph): string[] {
 }
 
 function featureFile(file: string): { app: string; feature: string; path: string } | undefined {
-  const [, app, path, folder] = FEATURE_FILE.exec(file) ?? [];
-  if (app === undefined || path === undefined || isTesting(file)) return undefined;
-  return { app, feature: `${app}/${folder}`, path };
+  const found = appFile(file);
+  if (found?.folder === undefined || isTesting(file)) return undefined;
+  return { app: found.app, feature: found.folder, path: found.path };
 }
 
 export function featureImports(graph: ImportGraph): string[] {
@@ -160,7 +149,7 @@ export function featureImports(graph: ImportGraph): string[] {
     if (source === undefined || WIRING_FOLDERS.has(source.feature)) continue;
     for (const target of targets.map(featureFile)) {
       if (target === undefined || target.feature === source.feature) continue;
-      if (target.app === source.app && BASE_FOLDERS.has(target.feature)) continue;
+      if (target.app === source.app && isBase(target.feature)) continue;
       imports.add(`${source.feature} -> ${target.path}`);
     }
   }
@@ -168,11 +157,10 @@ export function featureImports(graph: ImportGraph): string[] {
 }
 
 function folderNode(file: string, app: string): string | undefined {
-  const prefix = `apps/${app}/src/`;
-  if (!file.startsWith(prefix) || isTesting(file)) return undefined;
-  const path = file.slice(prefix.length);
-  const [folder] = path.split('/');
-  return path.includes('/') && !WIRING_FOLDERS.has(`${app}/${folder}`) ? folder : path;
+  const found = appFile(file);
+  if (found?.app !== app || isTesting(file)) return undefined;
+  const { folder, path } = found;
+  return folder === undefined || WIRING_FOLDERS.has(folder) ? path : folder.slice(app.length + 1);
 }
 
 export function folderCycles(graph: ImportGraph, app: string): string[][] {
@@ -193,12 +181,12 @@ export function baseLeaks(graph: ImportGraph): string[] {
   return [...graph]
     .flatMap(([file, targets]) => {
       const source = featureFile(file);
-      if (source === undefined || !BASE_FOLDERS.has(source.feature)) return [];
+      if (source === undefined || !isBase(source.feature)) return [];
       return targets
         .filter((target) => {
           if (SRC_ROOT_FILE.test(target)) return true;
           const feature = featureFile(target)?.feature;
-          return feature !== undefined && feature !== source.feature && !BASE_FOLDERS.has(feature);
+          return feature !== undefined && feature !== source.feature && !isBase(feature);
         })
         .map((target) => `${file} -> ${target}`);
     })

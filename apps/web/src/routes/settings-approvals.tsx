@@ -1,1 +1,1 @@
-export { ApprovalSettingsPage } from '../approvals/settings-page.tsx';
+export { ApprovalSettingsPage } from '../views/approvals/settings-page.tsx';

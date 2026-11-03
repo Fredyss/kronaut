@@ -30,7 +30,7 @@ describe('repo structure', () => {
     expect(graph.has('packages/core/src/index.ts')).toBe(true);
     expect(graph.get('apps/server/src/start.ts')).toContain('apps/server/src/api-routes.ts');
     expect(graph.get('apps/web/src/main.tsx')).toContain('apps/web/src/app.tsx');
-    expect(graph.get('apps/server/src/posts/draft/items.ts')).toContain(
+    expect(graph.get('apps/server/src/flow/posts/draft/items.ts')).toContain(
       'packages/compose/src/index.ts',
     );
   });
@@ -95,7 +95,7 @@ describe('the structure rules', () => {
     const imports: ImportGraph = new Map([
       [app('posts/a.ts'), [app('posts/b.ts'), app('tags/read.ts'), app('tags/read.ts')]],
       [app('posts/c.ts'), [app('tags/read.ts'), app('queue/slots.ts'), app('config.ts')]],
-      [app('posts/d.ts'), [app('http/errors.ts'), 'packages/core/src/index.ts']],
+      [app('posts/d.ts'), [app('base/http/errors.ts'), 'packages/core/src/index.ts']],
       [app('posts/a.test.ts'), [app('queue/routes.ts')]],
       [app('posts/testing.ts'), [app('queue/routes.ts')]],
       [app('api-routes.ts'), [app('posts/routes.ts')]],
@@ -169,50 +169,65 @@ describe('the structure rules', () => {
     const app = (target: string) => `apps/web/src/${target}`;
     const server = (target: string) => `apps/server/src/${target}`;
     const imports: ImportGraph = new Map([
-      [app('ui/icon.tsx'), [app('compose/form.tsx'), app('locale/i18n.ts'), app('ui/badge.tsx')]],
-      [app('locale/choice.ts'), [app('api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
-      [app('ui/icon.test.tsx'), [app('compose/form.tsx')]],
-      [app('inbox/list.tsx'), [app('api/client.ts'), app('ui/icon.tsx'), app('posts/queries.ts')]],
-      ['apps/server/src/posts/list.ts', [app('api/errors.ts'), server('config/config.ts')]],
-      [server('crypto/crypto.ts'), [server('auth/session.ts'), server('config/config.ts')]],
-      [server('config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
-      [server('providers/providers.test.ts'), [server('posts/list.ts')]],
-      [server('providers/providers.ts'), [server('channels/read.ts'), server('crypto/crypto.ts')]],
-      [server('http/web.ts'), [server('config/config.ts'), server('auth/session.ts')]],
-      [app('providers/ui.ts'), [app('locale/i18n.ts'), app('channels/list.tsx')]],
+      [
+        app('base/ui/icon.tsx'),
+        [app('compose/form.tsx'), app('base/locale/i18n.ts'), app('base/ui/badge.tsx')],
+      ],
+      [app('base/locale/choice.ts'), [app('base/api/me.ts'), app('app.tsx'), '@kronaut/sdk']],
+      [app('base/ui/icon.test.tsx'), [app('compose/form.tsx')]],
+      [
+        app('inbox/list.tsx'),
+        [app('base/api/client.ts'), app('base/ui/icon.tsx'), app('posts/queries.ts')],
+      ],
+      [
+        'apps/server/src/posts/list.ts',
+        [app('base/api/errors.ts'), server('base/config/config.ts')],
+      ],
+      [
+        server('base/crypto/crypto.ts'),
+        [server('auth/session.ts'), server('base/config/config.ts')],
+      ],
+      [server('base/config/config.ts'), [server('start.ts'), '@kronaut/egress/smtp']],
+      [server('base/providers/providers.test.ts'), [server('posts/list.ts')]],
+      [
+        server('base/providers/providers.ts'),
+        [server('channels/read.ts'), server('base/crypto/crypto.ts')],
+      ],
+      [server('base/http/web.ts'), [server('base/config/config.ts'), server('auth/session.ts')]],
+      [app('base/providers/ui.ts'), [app('base/locale/i18n.ts'), app('channels/list.tsx')]],
     ]);
     expect(baseLeaks(imports)).toEqual([
-      'apps/server/src/config/config.ts -> apps/server/src/start.ts',
-      'apps/server/src/crypto/crypto.ts -> apps/server/src/auth/session.ts',
-      'apps/server/src/http/web.ts -> apps/server/src/auth/session.ts',
-      'apps/server/src/providers/providers.ts -> apps/server/src/channels/read.ts',
-      'apps/web/src/locale/choice.ts -> apps/web/src/app.tsx',
-      'apps/web/src/providers/ui.ts -> apps/web/src/channels/list.tsx',
-      'apps/web/src/ui/icon.tsx -> apps/web/src/compose/form.tsx',
+      'apps/server/src/base/config/config.ts -> apps/server/src/start.ts',
+      'apps/server/src/base/crypto/crypto.ts -> apps/server/src/auth/session.ts',
+      'apps/server/src/base/http/web.ts -> apps/server/src/auth/session.ts',
+      'apps/server/src/base/providers/providers.ts -> apps/server/src/channels/read.ts',
+      'apps/web/src/base/locale/choice.ts -> apps/web/src/app.tsx',
+      'apps/web/src/base/providers/ui.ts -> apps/web/src/channels/list.tsx',
+      'apps/web/src/base/ui/icon.tsx -> apps/web/src/compose/form.tsx',
     ]);
     expect(featureImports(imports)).toEqual([
-      'server/crypto -> auth/session.ts',
-      'server/http -> auth/session.ts',
-      'server/posts -> api/errors.ts',
-      'server/providers -> channels/read.ts',
+      'server/base/crypto -> auth/session.ts',
+      'server/base/http -> auth/session.ts',
+      'server/base/providers -> channels/read.ts',
+      'server/posts -> base/api/errors.ts',
+      'web/base/providers -> channels/list.tsx',
+      'web/base/ui -> compose/form.tsx',
       'web/inbox -> posts/queries.ts',
-      'web/providers -> channels/list.tsx',
-      'web/ui -> compose/form.tsx',
     ]);
   });
 
   it('flags credential imports outside the named folders', () => {
     const vault = 'packages/credentials/src/index.ts';
-    const store = 'apps/server/src/credentials/credential-store.ts';
+    const store = 'apps/server/src/infrastructure/credentials/credential-store.ts';
     const server = (path: string) => `apps/server/src/${path}`;
     const keyring = 'packages/credentials/src/keyring.ts';
     const imports: ImportGraph = new Map([
       [server('start.ts'), [vault, store]],
-      [server('cli/context.ts'), [vault, store]],
-      [server('publish/input.ts'), [store]],
-      [server('credentials/credential-seal.ts'), [vault]],
+      [server('actors/cli/context.ts'), [vault, store]],
+      [server('steps/publish/input.ts'), [store]],
+      [server('infrastructure/credentials/credential-seal.ts'), [vault]],
       [server('posts/list.ts'), [store]],
-      [server('channels/connect.ts'), [vault, store]],
+      [server('access/channels/connect.ts'), [vault, store]],
       [server('main.ts'), [vault]],
       [server('media/probe.ts'), [keyring, '@kronaut/credentials/envelope']],
       [server('posts/list.db.test.ts'), [store, vault]],
@@ -220,12 +235,12 @@ describe('the structure rules', () => {
       [keyring, [vault]],
     ]);
     expect(credentialLeaks(imports)).toEqual([
-      'apps/server/src/channels/connect.ts -> packages/credentials/src/index.ts',
+      'apps/server/src/access/channels/connect.ts -> packages/credentials/src/index.ts',
       'apps/server/src/main.ts -> packages/credentials/src/index.ts',
       'apps/server/src/media/probe.ts -> @kronaut/credentials/envelope',
       'apps/server/src/media/probe.ts -> packages/credentials/src/keyring.ts',
-      'apps/server/src/posts/list.ts -> apps/server/src/credentials/credential-store.ts',
-      'apps/server/src/start.ts -> apps/server/src/credentials/credential-store.ts',
+      'apps/server/src/posts/list.ts -> apps/server/src/infrastructure/credentials/credential-store.ts',
+      'apps/server/src/start.ts -> apps/server/src/infrastructure/credentials/credential-store.ts',
     ]);
   });
 
@@ -234,14 +249,14 @@ describe('the structure rules', () => {
     const imports: ImportGraph = new Map([
       [web('routes/compose.tsx'), [web('compose/compose-page.tsx')]],
       [web('routes/post.tsx'), ['@tanstack/react-query', web('post-page/post-page.tsx')]],
-      [web('routes/inbox.tsx'), [web('api/client.ts'), web('api/me.ts')]],
+      [web('routes/inbox.tsx'), [web('base/api/client.ts'), web('base/api/me.ts')]],
       [web('routes/media.tsx'), ['@tanstack/react-query-devtools', '@tanstack/react-router']],
-      [web('routes/login.test.tsx'), ['@tanstack/react-query', web('api/client.ts')]],
-      [web('inbox/inbox-page.tsx'), ['@tanstack/react-query', web('api/client.ts')]],
+      [web('routes/login.test.tsx'), ['@tanstack/react-query', web('base/api/client.ts')]],
+      [web('inbox/inbox-page.tsx'), ['@tanstack/react-query', web('base/api/client.ts')]],
       ['apps/server/src/routes/a.ts', ['@tanstack/react-query']],
     ]);
     expect(fetchingRoutes(imports)).toEqual([
-      'apps/web/src/routes/inbox.tsx -> apps/web/src/api/client.ts',
+      'apps/web/src/routes/inbox.tsx -> apps/web/src/base/api/client.ts',
       'apps/web/src/routes/post.tsx -> @tanstack/react-query',
     ]);
   });

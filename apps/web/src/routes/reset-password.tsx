@@ -1,1 +1,1 @@
-export { ResetPasswordPage } from '../auth/reset-password-page.tsx';
+export { ResetPasswordPage } from '../records/auth/reset-password-page.tsx';

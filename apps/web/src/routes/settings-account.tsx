@@ -1,1 +1,1 @@
-export { AccountSettingsPage } from '../settings/account-page.tsx';
+export { AccountSettingsPage } from '../pages/settings/account-page.tsx';

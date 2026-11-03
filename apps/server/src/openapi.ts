@@ -4,10 +4,10 @@ import type { Database } from '@kronaut/db';
 import { createLocalStore } from '@kronaut/media';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
+import { createStaging } from './actors/media/staging.ts';
 import { API_SIGN_IN, apiRoutes } from './api-routes.ts';
-import { deriveHttpKeys, type HttpDeps, routeRegistry } from './http/pipeline/kernel.ts';
-import { createStaging } from './media/staging.ts';
-import { createProviderRegistry } from './providers/providers.ts';
+import { deriveHttpKeys, type HttpDeps, routeRegistry } from './base/http/pipeline/kernel.ts';
+import { createProviderRegistry } from './base/providers/providers.ts';
 
 export const OPENAPI_PATH = new URL('../../../packages/contract/openapi.json', import.meta.url);
 

@@ -10,13 +10,13 @@ Use this table before you create a file or move one.
 
 | Situation | Where it goes | Rule |
 |---|---|---|
-| A new concept | A new feature folder: `apps/<app>/src/<feature>/` | [Feature folders](#feature-folders) |
+| A new concept | A new feature folder inside its tier folder: `apps/<app>/src/<tier>/<feature>/` | [Feature folders](#feature-folders) |
 | A sub-concept of a feature | A subfolder named for the sub-domain, inside that feature. A sibling folder instead when a subfolder would keep a folder loop, like `approval-policy` | [Feature folders](#feature-folders), [Scheduling flow](14-scheduling-flow.md) |
 | A module a second feature needs | Logic stays with its owner, and the importing feature declares the import. A UI component moves to a shared home instead | [Imports](#imports), [Shared UI](#shared-ui) |
 | A styled UI primitive with no translated text | `packages/ui` | [Shared UI](#shared-ui) |
-| A UI piece used app-wide that shows translated text or reads app state | `apps/web/src/ui/` | [Shared UI](#shared-ui) |
-| Shell, navigation, layout | `apps/web/src/shell/`; router wiring and global context providers in `app.tsx` and `routes/` | [Shared UI](#shared-ui) |
-| A request helper | Server: `apps/server/src/http/`. Web: `apps/web/src/api/` | [Imports](#imports) |
+| A UI piece used app-wide that shows translated text or reads app state | `apps/web/src/base/ui/` | [Shared UI](#shared-ui) |
+| Shell, navigation, layout | `apps/web/src/pages/shell/`; router wiring and global context providers in `app.tsx` and `routes/` | [Shared UI](#shared-ui) |
+| A request helper | Server: `apps/server/src/base/http/`. Web: `apps/web/src/base/api/` | [Imports](#imports) |
 | A pure domain or time rule | `@kronaut/core` | [Repo layout](02-repo-layout.md) |
 | Code more than one app or package uses | A package under `packages/` | [Repo layout](02-repo-layout.md) |
 
@@ -24,11 +24,12 @@ Use this table before you create a file or move one.
 
 ## Feature folders
 
-- **One folder per product concept:** `apps/server/src/<feature>/` and `apps/web/src/<feature>/`. Name the concept first; new behaviour lands in the folder that owns it.
-- **New concept, new folder.** The `src/` root holds entrypoints and wiring only (checked): the web root holds only `main.tsx` and `app.tsx`, and the server root only `main.ts`, `start.ts`, `cli.ts`, `cron.ts`, `openapi.ts` and `api-routes.ts`. Tests of those files sit beside them.
+- **One folder per product concept:** `apps/<app>/src/<tier>/<feature>/`. Name the concept first; new behaviour lands in the folder that owns it.
+- **Tier folders show the import direction (checked).** Each feature folder sits in the folder of its tier: `pages`, `views`, `actions`, `lists`, `composer`, `content` and `records` in web ([Web structure](15-web-structure.md)); `actors`, `flow`, `steps`, `records`, `policy`, `access`, `identity` and `infrastructure` on the server ([Scheduling flow](14-scheduling-flow.md)). Shared layers sit in `base/`. A tier folder and `base/` hold feature folders only, no loose files. The order of the tiers lives in `tools/lint/folders.ts`.
+- **New concept, new folder.** The `src/` root holds entrypoints, wiring and the tier folders only (checked): the web root holds only `main.tsx`, `app.tsx`, `styles.css`, `routes/` and `i18n/`, and the server root only `main.ts`, `start.ts`, `cli.ts`, `cron.ts`, `openapi.ts`, `api-routes.ts` and the `testing/` helpers. Tests of those files sit beside them.
 - **Features stay beside each other:** group by concept (`posts/`, `approvals/`), with no folders by layer such as `controllers/` or `services/`.
 - **Route files are wiring.** `routes.ts` and `*-routes.ts` bind handlers; shared logic lives in a named module that other features import. A feature importing another feature's file with one of those names fails the check; the check goes by file name only.
-- **Web route files stay thin (checked).** A file in `apps/web/src/routes/` holds only `export { … } from` lines that re-export the page its route loads; the locale gate `locale-root.tsx` is the one exception. No route file imports `@tanstack/react-query` or `api/client.ts`. [Web structure](15-web-structure.md) has the rule and an example.
+- **Web route files stay thin (checked).** A file in `apps/web/src/routes/` holds only `export { … } from` lines that re-export the page its route loads; the locale gate `locale-root.tsx` is the one exception. No route file imports `@tanstack/react-query` or `base/api/client.ts`. [Web structure](15-web-structure.md) has the rule and an example.
 - **A new import from one feature into another is a design decision.** Say why in the PR. The shared module belongs to the concept it describes, not to whichever feature needed it first.
 - **Planning tools and the server folders from draft to publish follow one direction:** [Scheduling flow](14-scheduling-flow.md) sets it and says where new code goes.
 - **Web feature folders follow one direction too:** [Web structure](15-web-structure.md) sets the tiers and says where a new page or module goes.
@@ -41,7 +42,7 @@ Use this table before you create a file or move one.
 
 - **No value-import cycle between files (checked).** Lazy imports and imports through a `@kronaut/*` package count; type-only imports don't. When two files need each other, move what they share into a third.
 - **No import loop between feature folders, wiring files and `src` root files, in either app (checked).** The check builds a folder graph per app from production value imports, where each file in a wiring folder (`web/i18n`, `web/routes`) and each `src` root file is a node of its own. So a loop through `http`, `cron.ts` or `routes/compose.tsx` fails, while `api-routes.ts` mounting every feature, or `app.tsx` loading every page, doesn't. Type-only imports and tests stay out. [Scheduling flow](14-scheduling-flow.md) and [Web structure](15-web-structure.md) set the tiers that keep it so.
-- **Each feature folder imports only lower tiers (checked).** Every feature folder in both apps has a tier in [Scheduling flow](14-scheduling-flow.md) or [Web structure](15-web-structure.md), mirrored in `tools/lint/tier-order.ts`. A folder imports lower tiers, base folders and, in web, the `i18n` catalogs only: not its own tier, a route file or a `src` root file. The catalogs import only base folders and packages. A new folder gets a tier in the same PR.
+- **Each feature folder imports only lower tiers (checked).** A feature's tier is the tier folder it sits in, so every feature folder has one. A folder imports lower tiers, base folders and, in web, the `i18n` catalogs only: not its own tier, a route file or a `src` root file. The catalogs import only base folders and packages. A new feature folder goes into a tier folder, and a new tier into `tools/lint/folders.ts` and the doc table.
 - **Production code never imports testing code (checked).** That covers `*.test.ts`, testing helpers, and `@kronaut/*/testing`. `packages/db/scripts/` and `apps/server/e2e/` stay out of the image, so they may.
 - **Imports between features are declared (checked).** [`tools/lint/feature-imports.json`](../../tools/lint/feature-imports.json) lists each one as source feature and exact target file, so a feature reaches another feature's files only through listed targets.
   - It covers production value imports, including features importing the wiring folders (`web/i18n`, `web/routes`).
@@ -50,17 +51,17 @@ Use this table before you create a file or move one.
   - A line covers the whole source feature, so a second file there can use a listed target without a new line.
   - Once no file in the source feature imports a target, the check fails until its line goes too, so the list only ever shows what exists.
   - The list records today's coupling; it doesn't approve it. Each feature split should make it shorter.
-- **Base folders are shared layers (checked).** `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice, what the browser reports), `web/providers` (names and marks of the social platforms) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. On the server, `http` (request helpers and the request pipeline), `config` (environment and config files), `crypto` (purpose keys and token hashing) and `providers` (the provider registry) may be imported by any server feature the same way. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new base folder is a design decision, like a declared import.
+- **Base folders are shared layers (checked).** They sit in `base/`: `web/api` (client, errors, idempotency, the signed-in user), `web/locale` (messages, formatting, locale choice, what the browser reports), `web/providers` (names and marks of the social platforms) and `web/ui` (app-wide UI pieces) may be imported by any web feature without a declared line. On the server, `http` (request helpers and the request pipeline), `config` (environment and config files), `crypto` (purpose keys and token hashing) and `providers` (the provider registry) may be imported by any server feature the same way. A base folder value-imports only packages, its own files and other base folders: no feature and no `src` root file. As with declared imports, type-only imports are outside the check. A new folder in `base/` is a design decision, like a declared import: it fails the check until it's added to the list in `tools/lint/folders.ts`.
   - `http` value-imports no feature; it still names `auth` types, which the check leaves out. `api-routes.ts` in the `src` root mounts the features, and the sign-in step that reads `auth` (`auth/authenticate.ts`, `auth/session-guard.ts`) reaches the pipeline through `HttpDeps`, passed in by the entrypoints. Above the base folders, the server follows the tiers in [Scheduling flow](14-scheduling-flow.md).
-- **Only named folders read credentials (checked).** `@kronaut/credentials` (keyrings, sealing) is value-imported only by `server/credentials`, `server/cli` and the entrypoints `start.ts` and `openapi.ts`. The stores in `apps/server/src/credentials/`, which hand out plaintext tokens and app secrets, are value-imported only by `publish` (the worker), `channels` (connect, revoke, instance apps), `analytics` (insights), `meta` (signed callbacks) and `cli` (operator commands). Type-only imports, such as `Keyring` in deps, are free. Tests and `apps/server/e2e/` are outside it too. The check sees direct imports only, so a reader folder never hands credentials on to another feature, by re-export or by wrapper; that part is for review. A new reader is a security decision: add it to the sets in `tools/lint/structure.ts` and to this list in the same PR.
+- **Only named folders read credentials (checked).** `@kronaut/credentials` (keyrings, sealing) is value-imported only by `infrastructure/credentials`, `actors/cli` and the entrypoints `start.ts` and `openapi.ts`. The stores in `apps/server/src/infrastructure/credentials/`, which hand out plaintext tokens and app secrets, are value-imported only by `publish` (the worker), `channels` (connect, revoke, instance apps), `analytics` (insights), `meta` (signed callbacks) and `cli` (operator commands). Type-only imports, such as `Keyring` in deps, are free. Tests and `apps/server/e2e/` are outside it too. The check sees direct imports only, so a reader folder never hands credentials on to another feature, by re-export or by wrapper; that part is for review. A new reader is a security decision: add it to the sets in `tools/lint/structure.ts` and to this list in the same PR.
 
 ## Shared UI
 
 - **Three homes, each with one job:**
   - **`packages/ui`:** styled primitives with no translated text and no app state, such as button, input, select, switch, dialog, menu, card and badge. One component per kebab-case file in a flat `src/`, exported from `index.ts`.
-  - **`apps/web/src/ui/`** (base folder): pieces used app-wide that show translated text or read app state, such as the count badge.
-  - **`apps/web/src/shell/`:** the app chrome: rail, navigation and page layout. It's an ordinary feature folder, so other features import it through declared lines. Router wiring stays in `app.tsx` and `routes/`.
-  - Not to be confused with `apps/web/src/providers/`, a base folder that holds UI for social platform providers.
+  - **`apps/web/src/base/ui/`** (base folder): pieces used app-wide that show translated text or read app state, such as the count badge.
+  - **`apps/web/src/pages/shell/`:** the app chrome: rail, navigation and page layout. It's an ordinary feature folder, so other features import it through declared lines. Router wiring stays in `app.tsx` and `routes/`.
+  - Not to be confused with `apps/web/src/base/providers/`, a base folder that holds UI for social platform providers.
 - **A component stays in its feature until a second feature needs it.** Then it moves: to `packages/ui` if it's a pure primitive, to `web/ui` if it needs messages or state. It doesn't go behind a declared import from another feature.
 - **Don't copy primitive styling.** This is the one exception to the third-copy rule: a class string repeated once for a select or a dialog is already a missing `packages/ui` component.
 
@@ -76,7 +77,7 @@ Use this table before you create a file or move one.
 - **Tests sit beside the code they cover.** A test in an `apps/*/src` root needs a file of the same name there (checked); elsewhere this is for review.
 - **Testing helpers have one name (checked):** `testing.ts` or `testing.tsx`, or files in a `testing/` folder when a feature needs several.
 - **Write tests where they pay:** the [security](../reference/security-tests.md) and [reliability](../reference/reliability-tests.md) catalogues, DB triggers and RLS, state machines, non-trivial logic. Skip trivial wiring.
-- **Test routes over HTTP** through `createTestInstance` (`apps/server/src/http/testing.ts`), so tests cross the same seam as production.
+- **Test routes over HTTP** through `createTestInstance` (`apps/server/src/base/http/testing.ts`), so tests cross the same seam as production.
 - **Prove a new check can fail.** Break the code once and watch it go red.
 
 ## Refactors

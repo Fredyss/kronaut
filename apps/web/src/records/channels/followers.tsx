@@ -1,0 +1,89 @@
+import { useQuery } from '@tanstack/react-query';
+import { useApiClient } from '../../base/api/client.ts';
+import { useLocale } from '../../base/locale/context.ts';
+import { useNumberFormat } from '../../base/locale/format.ts';
+import { m } from '../../base/locale/i18n.ts';
+import { providerUi } from '../../base/providers/ui.ts';
+import { type Channel, channelMetricsQuery } from './queries.ts';
+
+const DAY_MS = 86_400_000;
+const CHANGE_DAYS = 30;
+
+function useSignedFormat() {
+  const { locale } = useLocale();
+  const format = new Intl.NumberFormat(locale, { signDisplay: 'exceptZero' });
+  return (value: number) => format.format(value);
+}
+
+function utcDay(ms: number): string {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+function Count({ value }: { readonly value: number | null }) {
+  const number = useNumberFormat();
+  if (value !== null) return m.channels_followers({ value: number(value) });
+  return (
+    <>
+      <span aria-hidden="true">{m.channels_followers({ value: m.analytics_missing() })}</span>
+      <span className="sr-only">{m.channels_followers({ value: m.analytics_not_reported() })}</span>
+    </>
+  );
+}
+
+interface FollowersProps {
+  readonly workspaceId: string;
+  readonly channel: Channel;
+  readonly onReconnect: (() => void) | null;
+  readonly pending: boolean;
+}
+
+function InsightsHint({ channel, onReconnect, pending }: Omit<FollowersProps, 'workspaceId'>) {
+  if (onReconnect === null || channel.status !== 'active' || channel.insights) return null;
+  if (providerUi(channel.provider).insights !== true) return null;
+  return (
+    <button
+      type="button"
+      className="text-muted-foreground underline underline-offset-4 disabled:opacity-50"
+      disabled={pending}
+      onClick={onReconnect}
+    >
+      {m.channels_insights_reconnect()}
+    </button>
+  );
+}
+
+export function Followers(props: FollowersProps) {
+  return (
+    <>
+      <FollowerCount {...props} />
+      <InsightsHint
+        channel={props.channel}
+        onReconnect={props.onReconnect}
+        pending={props.pending}
+      />
+    </>
+  );
+}
+
+function FollowerCount({ workspaceId, channel }: FollowersProps) {
+  const client = useApiClient();
+  const signed = useSignedFormat();
+  const enabled = channel.status === 'active' && providerUi(channel.provider).followers === true;
+  const today = Date.now();
+  const range = { from: utcDay(today - (CHANGE_DAYS - 1) * DAY_MS), to: utcDay(today) };
+  const series = useQuery({
+    ...channelMetricsQuery(client, workspaceId, channel.id, range),
+    enabled,
+  });
+  const data = enabled ? series.data : undefined;
+  const latest = data?.followers.at(-1) ?? data?.before;
+  if (latest === undefined || latest === null) return null;
+  const baseline = data?.before?.value ?? null;
+  const change = latest.value === null || baseline === null ? null : latest.value - baseline;
+  return (
+    <span className="text-muted-foreground">
+      <Count value={latest.value} />
+      {change === null ? null : ` ${m.channels_followers_change({ change: signed(change) })}`}
+    </span>
+  );
+}

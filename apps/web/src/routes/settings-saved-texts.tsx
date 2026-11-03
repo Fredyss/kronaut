@@ -1,1 +1,1 @@
-export { SavedTextSettingsPage } from '../saved-texts/settings-page.tsx';
+export { SavedTextSettingsPage } from '../content/saved-texts/settings-page.tsx';
