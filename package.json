@@ -25,6 +25,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@types/node": "catalog:",
+    "fallow": "catalog:",
     "happy-dom": "catalog:",
     "jscpd": "catalog:",
     "typescript": "catalog:",

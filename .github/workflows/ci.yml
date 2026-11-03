@@ -31,6 +31,27 @@ jobs:
       - run: pnpm --filter @kronaut/web size
       - run: "! find apps/web/dist/web -name '*.map' | grep -q ."
 
+  fallow:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - id: version
+        run: |
+          echo "fallow=$(sed -n 's/^  fallow: //p' pnpm-workspace.yaml)" >> "$GITHUB_OUTPUT"
+      - uses: fallow-rs/fallow@3c6e45b55ae60a52caa2b586ea3fae44f3e5a44e # v3.36.0
+        with:
+          command: audit
+          version: ${{ steps.version.outputs.fallow }}
+          format: human
+
   db:
     runs-on: ubuntu-latest
     permissions:

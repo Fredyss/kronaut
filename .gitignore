@@ -10,6 +10,7 @@ secrets/
 *.age
 *.log
 .turbo/
+.fallow/
 .vite/
 playwright-report/
 test-results/
