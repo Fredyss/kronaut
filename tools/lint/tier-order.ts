@@ -51,7 +51,7 @@ export function tierBreaks(graph: ImportGraph): string[] {
   return [...graph]
     .flatMap(([file, targets]) => {
       const source = nodeOf(file)?.folder;
-      const tier = source === undefined ? undefined : TIER_OF.get(source);
+      const tier = source === CATALOGS ? Number.POSITIVE_INFINITY : TIER_OF.get(source ?? '');
       if (source === undefined || tier === undefined) return [];
       return targets
         .filter((target) => breaksOrder(source, tier, target))

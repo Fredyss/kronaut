@@ -29,7 +29,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 
 A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. Type-only imports are outside both.
 
-The tier check reads production value imports: a feature folder imports only lower tiers, base folders and the `i18n` catalogs, never a route file or a `src` root file. Every feature folder needs a tier, so a new folder goes into this table and into [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) in the same PR. A tier change is a design decision, like a declared import.
+The tier check reads production value imports: a feature folder imports only lower tiers, base folders and the `i18n` catalogs, never a route file or a `src` root file. The catalogs in turn import only base folders and packages, so no feature reaches another through them. Every feature folder needs a tier, so a new folder goes into this table and into [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) in the same PR. A tier change is a design decision, like a declared import.
 
 `approval-policy` sits beside `approvals`, as on the server: `compose` reads the policy, and `approvals` reuses `compose/when/*` and `compose/issues.ts`, so a subfolder would keep the loop.
 

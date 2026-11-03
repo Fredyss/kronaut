@@ -14,7 +14,7 @@ describe('tier order', () => {
     expect(untieredFolders(graph)).toEqual([]);
   });
 
-  it('flags imports into the same or a higher tier, a route file or a src root file', () => {
+  it('flags imports into the same or a higher tier, a route file, a src root file or from the catalogs', () => {
     const web = (path: string) => `apps/web/src/${path}`;
     const server = (path: string) => `apps/server/src/${path}`;
     const imports: ImportGraph = new Map([
@@ -27,6 +27,7 @@ describe('tier order', () => {
       [web('compose/form.test.tsx'), [web('calendar/grid.tsx')]],
       [web('compose/testing.tsx'), [web('calendar/grid.tsx')]],
       [web('drafts/list.tsx'), [web('compose/form.tsx')]],
+      [web('i18n/compose.ts'), [web('locale/i18n.ts'), web('compose/when/time.tsx')]],
       [server('posts/schedule.ts'), [server('series/start.ts'), server('queue/slots.ts')]],
       [server('posts/list.ts'), [server('http/errors.ts'), server('cron.ts')]],
       [server('testing/fake.ts'), [server('posts/list.ts')]],
@@ -37,6 +38,7 @@ describe('tier order', () => {
       'apps/server/src/posts/schedule.ts -> apps/server/src/series/start.ts',
       'apps/web/src/calendar/grid.tsx -> apps/web/src/approvals/list.tsx',
       'apps/web/src/compose/form.tsx -> apps/web/src/calendar/grid.tsx',
+      'apps/web/src/i18n/compose.ts -> apps/web/src/compose/when/time.tsx',
       'apps/web/src/inbox/row.tsx -> apps/web/src/app.tsx',
       'apps/web/src/inbox/row.tsx -> apps/web/src/routes/post.tsx',
     ]);
