@@ -67,5 +67,91 @@
   "calendar_tag_filter": "Filter by tag",
   "calendar_tags_all": "All tags",
   "calendar_tag_gone": "Deleted tag",
-  "calendar_tag_current": "Selected tag"
+  "calendar_tag_current": "Selected tag",
+  "calendar_import_open": "Import CSV",
+  "calendar_import_title": "Import posts from a CSV file",
+  "calendar_import_intro": "Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue.",
+  "calendar_import_example": "Download example CSV",
+  "calendar_import_file": "CSV file",
+  "calendar_import_channels": "Default channels",
+  "calendar_import_channels_hint": "For rows whose channels column is empty. In the column, list channel handles separated by commas or spaces.",
+  "calendar_import_no_channels": "No channel can publish a text-only post.",
+  "calendar_import_checking": "Checking the file…",
+  "calendar_import_ready": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} post is ready to import.",
+        "countPlural=*": "{count} posts are ready to import."
+      }
+    }
+  ],
+  "calendar_import_problems": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} problem to fix. Fix the file and pick it again.",
+        "countPlural=*": "{count} problems to fix. Fix the file and pick it again."
+      }
+    }
+  ],
+  "calendar_import_line": "Line {line}: {problem}",
+  "calendar_import_submit": "Import",
+  "calendar_import_importing": "Importing…",
+  "calendar_import_scheduled": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} post scheduled.",
+        "countPlural=*": "{count} posts scheduled."
+      }
+    }
+  ],
+  "calendar_import_requested": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} post sent for approval.",
+        "countPlural=*": "{count} posts sent for approval."
+      }
+    }
+  ],
+  "calendar_import_error_read": "The file couldn't be read.",
+  "calendar_import_error_empty": "The file has no posts.",
+  "calendar_import_error_quote": "A quoted field isn't closed.",
+  "calendar_import_error_column": "Unknown column “{name}”. Use text, channels, date and time.",
+  "calendar_import_error_column_twice": "The column “{name}” appears twice.",
+  "calendar_import_error_text_column": "The file needs a text column.",
+  "calendar_import_error_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "The file has more than {count} post. Split it into smaller files.",
+        "countPlural=*": "The file has more than {count} posts. Split it into smaller files."
+      }
+    }
+  ],
+  "calendar_import_error_fields": "This row has more fields than the header.",
+  "calendar_import_error_text": "The text is empty.",
+  "calendar_import_error_handle": "No channel has the handle “{handle}”.",
+  "calendar_import_error_handle_twice": "More than one channel has the handle “{handle}”.",
+  "calendar_import_error_channel": "{channel} can't publish a text-only post.",
+  "calendar_import_error_inactive": "{channel}: {status}",
+  "calendar_import_error_channels": "Fill in the channels column or pick default channels.",
+  "calendar_import_error_date": "Write the date as 2026-12-31 or 31.12.2026 and the time as 9:30, 09:30 or 09:30:00.",
+  "calendar_import_error_date_half": "Fill in both the date and the time, or leave both empty.",
+  "calendar_import_example_first": "Hello! This post goes out at the date and time given.",
+  "calendar_import_example_queue": "This post takes the next free slot in the queue.",
+  "calendar_import_error_encoding": "The file isn't saved as UTF-8. In Excel, use Save As and pick the type “CSV UTF-8”.",
+  "calendar_import_error_too_large": "The file is too large to import at once. Split it into smaller files and import them one by one.",
+  "calendar_import_issue_not_found": "The channel wasn't found. It may have been removed.",
+  "calendar_import_issue_out_of_scope": "You don't have access to this channel.",
+  "calendar_import_issue_scope_missing": "Your access doesn't allow posting here.",
+  "calendar_import_issue_channel": "{channel}: {problem}",
+  "calendar_import_requested_queue": "Posts without a date and time get no slot while they wait. Schedule them once they're approved."
 }

@@ -5,6 +5,7 @@ import type { Temporal } from 'temporal-polyfill';
 import { m as calendarText } from '../i18n/calendar.ts';
 import type { Formats } from '../locale/formats.ts';
 import { m } from '../locale/i18n.ts';
+import { ImportButton } from '../post-import/import-button.tsx';
 import { keptTag } from './entries.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';
 import type { CalendarView } from './search.ts';
@@ -111,11 +112,12 @@ interface ToolbarProps {
   readonly range: VisibleRange;
   readonly formats: Formats;
   readonly workspaceId: string | undefined;
+  readonly role: string | undefined;
   readonly tag: string | undefined;
 }
 
 export function CalendarToolbar(props: ToolbarProps) {
-  const { view, current, range, formats, workspaceId, tag } = props;
+  const { view, current, range, formats, workspaceId, role, tag } = props;
   const navigate = route.useNavigate();
   const date = current.toString();
   const kept = keptTag({ tag });
@@ -166,6 +168,9 @@ export function CalendarToolbar(props: ToolbarProps) {
       </nav>
       <div className="flex flex-wrap items-center gap-2">
         {workspaceId === undefined ? null : <TagFilter workspaceId={workspaceId} tag={tag} />}
+        {workspaceId === undefined || role === undefined ? null : (
+          <ImportButton workspaceId={workspaceId} role={role} />
+        )}
         <Segmented
           label={calendarText.calendar_views()}
           onPick={pick}

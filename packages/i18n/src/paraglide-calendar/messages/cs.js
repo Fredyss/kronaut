@@ -10,6 +10,47 @@
 /** @typedef {{}} Calendar_Entry_OpenInputs */
 /** @typedef {{ text: NonNullable<unknown> }} Calendar_Entry_OptionsInputs */
 /** @typedef {{}} Calendar_Entry_PreviewInputs */
+/** @typedef {{}} Calendar_Import_ChannelsInputs */
+/** @typedef {{}} Calendar_Import_Channels_HintInputs */
+/** @typedef {{}} Calendar_Import_CheckingInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_ChannelInputs */
+/** @typedef {{}} Calendar_Import_Error_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_ColumnInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_Column_TwiceInputs */
+/** @typedef {{}} Calendar_Import_Error_DateInputs */
+/** @typedef {{}} Calendar_Import_Error_Date_HalfInputs */
+/** @typedef {{}} Calendar_Import_Error_EmptyInputs */
+/** @typedef {{}} Calendar_Import_Error_EncodingInputs */
+/** @typedef {{}} Calendar_Import_Error_FieldsInputs */
+/** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
+/** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
+/** @typedef {{ channel: NonNullable<unknown>, status: NonNullable<unknown> }} Calendar_Import_Error_InactiveInputs */
+/** @typedef {{}} Calendar_Import_Error_QuoteInputs */
+/** @typedef {{}} Calendar_Import_Error_ReadInputs */
+/** @typedef {{}} Calendar_Import_Error_TextInputs */
+/** @typedef {{}} Calendar_Import_Error_Text_ColumnInputs */
+/** @typedef {{}} Calendar_Import_Error_Too_LargeInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
+/** @typedef {{}} Calendar_Import_ExampleInputs */
+/** @typedef {{}} Calendar_Import_Example_FirstInputs */
+/** @typedef {{}} Calendar_Import_Example_QueueInputs */
+/** @typedef {{}} Calendar_Import_FileInputs */
+/** @typedef {{}} Calendar_Import_ImportingInputs */
+/** @typedef {{}} Calendar_Import_IntroInputs */
+/** @typedef {{ channel: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_Issue_ChannelInputs */
+/** @typedef {{}} Calendar_Import_Issue_Not_FoundInputs */
+/** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
+/** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
+/** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
+/** @typedef {{}} Calendar_Import_No_ChannelsInputs */
+/** @typedef {{}} Calendar_Import_OpenInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ReadyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_RequestedInputs */
+/** @typedef {{}} Calendar_Import_Requested_QueueInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ScheduledInputs */
+/** @typedef {{}} Calendar_Import_SubmitInputs */
+/** @typedef {{}} Calendar_Import_TitleInputs */
 /** @typedef {{}} Calendar_LayoutInputs */
 /** @typedef {{}} Calendar_Layout_GridInputs */
 /** @typedef {{}} Calendar_Load_FailedInputs */
@@ -94,6 +135,190 @@ export const calendar_entry_options = /** @type {(inputs: Calendar_Entry_Options
 
 export const calendar_entry_preview = /** @type {(inputs: Calendar_Entry_PreviewInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Náhled`)
+};
+
+export const calendar_import_channels = /** @type {(inputs: Calendar_Import_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Výchozí kanály`)
+};
+
+export const calendar_import_channels_hint = /** @type {(inputs: Calendar_Import_Channels_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pro řádky s prázdným sloupcem channels. Ve sloupci uveďte uživatelská jména kanálů oddělená čárkou nebo mezerou.`)
+};
+
+export const calendar_import_checking = /** @type {(inputs: Calendar_Import_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor se kontroluje…`)
+};
+
+export const calendar_import_error_channel = /** @type {(inputs: Calendar_Import_Error_ChannelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nemůže zveřejnit příspěvek jen s textem.`)
+};
+
+export const calendar_import_error_channels = /** @type {(inputs: Calendar_Import_Error_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyplňte sloupec channels, nebo vyberte výchozí kanály.`)
+};
+
+export const calendar_import_error_column = /** @type {(inputs: Calendar_Import_Error_ColumnInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Neznámý sloupec „${i?.name}“. Použijte text, channels, date a time.`)
+};
+
+export const calendar_import_error_column_twice = /** @type {(inputs: Calendar_Import_Error_Column_TwiceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Sloupec „${i?.name}“ je v souboru dvakrát.`)
+};
+
+export const calendar_import_error_date = /** @type {(inputs: Calendar_Import_Error_DateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Datum zadejte jako 2026-12-31 nebo 31.12.2026 a čas jako 9:30, 09:30 nebo 09:30:00.`)
+};
+
+export const calendar_import_error_date_half = /** @type {(inputs: Calendar_Import_Error_Date_HalfInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyplňte datum i čas, nebo nechte obě pole prázdná.`)
+};
+
+export const calendar_import_error_empty = /** @type {(inputs: Calendar_Import_Error_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`V souboru nejsou žádné příspěvky.`)
+};
+
+export const calendar_import_error_encoding = /** @type {(inputs: Calendar_Import_Error_EncodingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor není uložený v kódování UTF-8. V Excelu zvolte Uložit jako a typ „CSV UTF-8“.`)
+};
+
+export const calendar_import_error_fields = /** @type {(inputs: Calendar_Import_Error_FieldsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Řádek má víc polí než záhlaví.`)
+};
+
+export const calendar_import_error_handle = /** @type {(inputs: Calendar_Import_Error_HandleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Žádný kanál nemá uživatelské jméno „${i?.handle}“.`)
+};
+
+export const calendar_import_error_handle_twice = /** @type {(inputs: Calendar_Import_Error_Handle_TwiceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Uživatelské jméno „${i?.handle}“ má víc kanálů.`)
+};
+
+export const calendar_import_error_inactive = /** @type {(inputs: Calendar_Import_Error_InactiveInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel}: ${i?.status}`)
+};
+
+export const calendar_import_error_quote = /** @type {(inputs: Calendar_Import_Error_QuoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pole v uvozovkách není uzavřené.`)
+};
+
+export const calendar_import_error_read = /** @type {(inputs: Calendar_Import_Error_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor se nepodařilo načíst.`)
+};
+
+export const calendar_import_error_text = /** @type {(inputs: Calendar_Import_Error_TextInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text je prázdný.`)
+};
+
+export const calendar_import_error_text_column = /** @type {(inputs: Calendar_Import_Error_Text_ColumnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`V souboru chybí sloupec text.`)
+};
+
+export const calendar_import_error_too_large = /** @type {(inputs: Calendar_Import_Error_Too_LargeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor je na jeden import příliš velký. Rozdělte ho na menší soubory a importujte je postupně.`)
+};
+
+export const calendar_import_error_too_many = /** @type {(inputs: Calendar_Import_Error_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvek. Rozdělte ho na menší soubory.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvky. Rozdělte ho na menší soubory.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvku. Rozdělte ho na menší soubory.`);
+	return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvků. Rozdělte ho na menší soubory.`)
+};
+
+export const calendar_import_example = /** @type {(inputs: Calendar_Import_ExampleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stáhnout ukázkový CSV`)
+};
+
+export const calendar_import_example_first = /** @type {(inputs: Calendar_Import_Example_FirstInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Dobrý den! Tento příspěvek vyjde v zadaném datu a čase.`)
+};
+
+export const calendar_import_example_queue = /** @type {(inputs: Calendar_Import_Example_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento příspěvek dostane nejbližší volné místo ve frontě.`)
+};
+
+export const calendar_import_file = /** @type {(inputs: Calendar_Import_FileInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soubor CSV`)
+};
+
+export const calendar_import_importing = /** @type {(inputs: Calendar_Import_ImportingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Importuje se…`)
+};
+
+export const calendar_import_intro = /** @type {(inputs: Calendar_Import_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Z každého řádku vznikne jeden příspěvek. Použijte sloupce text, channels, date a time; povinný je jen text. Řádek bez data a času se zařadí do fronty každého kanálu.`)
+};
+
+export const calendar_import_issue_channel = /** @type {(inputs: Calendar_Import_Issue_ChannelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.problem}`)
+};
+
+export const calendar_import_issue_not_found = /** @type {(inputs: Calendar_Import_Issue_Not_FoundInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanál se nenašel. Možná byl odstraněn.`)
+};
+
+export const calendar_import_issue_out_of_scope = /** @type {(inputs: Calendar_Import_Issue_Out_Of_ScopeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`K tomuto kanálu nemáte přístup.`)
+};
+
+export const calendar_import_issue_scope_missing = /** @type {(inputs: Calendar_Import_Issue_Scope_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Váš přístup tady nepovoluje zveřejňovat.`)
+};
+
+export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Řádek ${i?.line}: ${i?.problem}`)
+};
+
+export const calendar_import_no_channels = /** @type {(inputs: Calendar_Import_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Žádný kanál nemůže zveřejnit příspěvek jen s textem.`)
+};
+
+export const calendar_import_open = /** @type {(inputs: Calendar_Import_OpenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Importovat CSV`)
+};
+
+export const calendar_import_problems = /** @type {(inputs: Calendar_Import_ProblemsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`V souboru je ${i?.count} chyba. Opravte ho a vyberte znovu.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`V souboru jsou ${i?.count} chyby. Opravte ho a vyberte znovu.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`V souboru je ${i?.count} chyby. Opravte ho a vyberte znovu.`);
+	return /** @type {LocalizedString} */ (`V souboru je ${i?.count} chyb. Opravte ho a vyberte znovu.`)
+};
+
+export const calendar_import_ready = /** @type {(inputs: Calendar_Import_ReadyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek je připravený k importu.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky jsou připravené k importu.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku je připraveno k importu.`);
+	return /** @type {LocalizedString} */ (`${i?.count} příspěvků je připraveno k importu.`)
+};
+
+export const calendar_import_requested = /** @type {(inputs: Calendar_Import_RequestedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek čeká na schválení.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky čekají na schválení.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku čeká na schválení.`);
+	return /** @type {LocalizedString} */ (`${i?.count} příspěvků čeká na schválení.`)
+};
+
+export const calendar_import_requested_queue = /** @type {(inputs: Calendar_Import_Requested_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvky bez data a času během čekání nedostanou místo ve frontě. Po schválení je naplánujte.`)
+};
+
+export const calendar_import_scheduled = /** @type {(inputs: Calendar_Import_ScheduledInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek je naplánovaný.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky jsou naplánované.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku je naplánováno.`);
+	return /** @type {LocalizedString} */ (`${i?.count} příspěvků je naplánováno.`)
+};
+
+export const calendar_import_submit = /** @type {(inputs: Calendar_Import_SubmitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Importovat`)
+};
+
+export const calendar_import_title = /** @type {(inputs: Calendar_Import_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Import příspěvků ze souboru CSV`)
 };
 
 export const calendar_layout = /** @type {(inputs: Calendar_LayoutInputs) => LocalizedString} */ () => {

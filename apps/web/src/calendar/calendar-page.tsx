@@ -35,6 +35,7 @@ export function CalendarPage() {
           range={range}
           formats={formats}
           workspaceId={workspace?.id}
+          role={workspace?.role}
           tag={search.tag}
         />
         {workspace === undefined ? null : (

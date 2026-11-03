@@ -50,7 +50,7 @@ export interface DraftSpec {
   authorize(units: readonly ScopeUnit[]): void;
 }
 
-function authorOf(principal: Principal | null) {
+export function authorOf(principal: Principal | null) {
   if (principal?.kind === 'user') {
     return { origin: 'ui', created_by_user_id: principal.userId, created_by_grant_id: null };
   }
