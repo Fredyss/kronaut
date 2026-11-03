@@ -86,7 +86,7 @@ RUN set -eu; \
     /opt/ffmpeg/bin/ffmpeg -hide_banner -muxers | awk '{ print $2 }' | grep -qxF mp4 || { echo "missing muxer mp4" >&2; exit 1; }; \
     /opt/ffmpeg/bin/ffprobe -version
 
-FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS node-build
+FROM node:24.22.0-trixie-slim@sha256:a6155384446670e9719bdc4fd0ebe4d4b29fb32a8d6aa523da3547a6cfbcf22c AS node-build
 
 FROM node-build AS deps
 ARG PNPM_VERSION=12.14.0
@@ -157,7 +157,7 @@ RUN pnpm install --frozen-lockfile --prod --filter '@kronaut/server...' --filter
 COPY tools/licenses tools/licenses
 RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:cb606325b7ec4af55462cb0b424a53b452a5b4a894ffe841fcf1048d216fb9f8
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:b8cec4b2f2126ff7bd034ec9ac207ffb3272667dfdc48376e3b035d3270549ba
 COPY --from=pg /opt/pg /opt/pg
 COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=deps /app /app
