@@ -63,6 +63,7 @@ When a task conflicts with 1–3, stop and ask. Don't silently deviate.
 - `pnpm check`: Biome + jscpd (≤ 1% duplication; `pnpm dup` lists the clones) + `tsc -b` + Vitest, including the structure rules in `tools/lint/`. It must pass before any task counts as done.
 - `pnpm format`: apply Biome fixes.
 - `pnpm typecheck`, `pnpm test`, `pnpm lint`: the parts of `check`.
+- `pnpm fallow`: the CI gate for unused code, unused dependencies and import cycles. It fails only on findings the branch adds against `origin/main`; config in `.fallowrc.json`. `pnpm exec fallow dead-code` lists the whole backlog.
 - `pnpm test:e2e`: builds the web app, then runs the Playwright smoke suite in `apps/server/e2e/` against the real server and a testcontainers Postgres. It needs Docker and a Chromium from `pnpm --filter @kronaut/server exec playwright install chromium`.
 - Self-hosted stack: [Self-hosting guide](docs/guides/self-hosting.md). Local Postgres only: run `infra/compose/init-secrets.sh`, copy `infra/compose/.env.example` to `.env`, then `docker compose -f infra/compose/compose.yaml up -d postgres`; a host port needs the guide's `compose.override.yaml`. `pnpm test:db` doesn't need it (testcontainers).
 
