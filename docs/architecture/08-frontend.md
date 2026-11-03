@@ -62,6 +62,11 @@
     - **Duplicate** → `POST …/duplicate`, then the composer on the copy;
     - **Preview** → a read-only dialog with the network preview the composer uses;
     - **Delete** → a confirm dialog; for a published post it says the post stays on the network and only leaves Kronaut. Hidden from roles without `posts:draft`.
+- **CSV import:** an "Import CSV" button on the calendar, for roles with `posts:schedule`, opens a dialog over it (loaded lazily).
+  - It takes a `.csv` file, default channels (those that can publish text alone) and a time zone, by default the browser's, as in the composer. "Download example CSV" builds a small file with the four columns in the browser.
+  - The file is read in the browser: RFC 4180 quoting, CRLF or LF, a UTF-8 byte order mark dropped, `,` or `;` as the delimiter (from the header line; Excel writes `;` in sk and cs). Columns `text` (required), `channels`, `date` and `time`, in any case; an unknown column, more than 500 rows or more fields than the header is an error. Blank lines are skipped.
+  - Each row: the text becomes one item; `channels` lists handles (case and a leading `@` ignored) separated by commas, semicolons or spaces, and an empty column takes the default channels; `date` `YYYY-MM-DD` with `time` `HH:MM` schedules at that time, both empty adds it to the queue.
+  - Without client errors, a dry run checks the rows on the server. Every error shows with its CSV line, and Import stays disabled until there are none. Importing shows how many posts were scheduled and how many were sent for approval, then refreshes the calendar.
 - **Tags:** internal labels for finding and grouping posts, separate from hashtags and never published.
   - A tag has a name and one of eight colors. The color is only a hint, so the name is always available too (visible, or as the accessible name of a dot).
   - The composer and the post page pick tags, and can create one by typing a new name. The post page saves at once, in any state; the composer saves them with the post.

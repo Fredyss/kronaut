@@ -16,6 +16,10 @@ export function canDuplicate(role: string): boolean {
   return DRAFT_ROLES.has(role);
 }
 
+export function canImport(role: string): boolean {
+  return CANCEL_ROLES.has(role);
+}
+
 export function canDelete(role: string, destinations: readonly { readonly state: string }[]) {
   if (!DRAFT_ROLES.has(role)) return false;
   return CANCEL_ROLES.has(role) || !destinations.some((d) => CANCELED_ON_DELETE.has(d.state));

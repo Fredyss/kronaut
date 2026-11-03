@@ -10,6 +10,40 @@
 /** @typedef {{}} Calendar_Entry_OpenInputs */
 /** @typedef {{ text: NonNullable<unknown> }} Calendar_Entry_OptionsInputs */
 /** @typedef {{}} Calendar_Entry_PreviewInputs */
+/** @typedef {{}} Calendar_Import_ChannelsInputs */
+/** @typedef {{}} Calendar_Import_Channels_HintInputs */
+/** @typedef {{}} Calendar_Import_CheckingInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_ChannelInputs */
+/** @typedef {{}} Calendar_Import_Error_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_ColumnInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_Column_TwiceInputs */
+/** @typedef {{}} Calendar_Import_Error_DateInputs */
+/** @typedef {{}} Calendar_Import_Error_Date_HalfInputs */
+/** @typedef {{}} Calendar_Import_Error_EmptyInputs */
+/** @typedef {{}} Calendar_Import_Error_FieldsInputs */
+/** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
+/** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
+/** @typedef {{ channel: NonNullable<unknown>, status: NonNullable<unknown> }} Calendar_Import_Error_InactiveInputs */
+/** @typedef {{}} Calendar_Import_Error_QuoteInputs */
+/** @typedef {{}} Calendar_Import_Error_ReadInputs */
+/** @typedef {{}} Calendar_Import_Error_TextInputs */
+/** @typedef {{}} Calendar_Import_Error_Text_ColumnInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
+/** @typedef {{}} Calendar_Import_ExampleInputs */
+/** @typedef {{}} Calendar_Import_Example_FirstInputs */
+/** @typedef {{}} Calendar_Import_Example_QueueInputs */
+/** @typedef {{}} Calendar_Import_FileInputs */
+/** @typedef {{}} Calendar_Import_ImportingInputs */
+/** @typedef {{}} Calendar_Import_IntroInputs */
+/** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
+/** @typedef {{}} Calendar_Import_No_ChannelsInputs */
+/** @typedef {{}} Calendar_Import_OpenInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ReadyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_RequestedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ScheduledInputs */
+/** @typedef {{}} Calendar_Import_SubmitInputs */
+/** @typedef {{}} Calendar_Import_TitleInputs */
 /** @typedef {{}} Calendar_LayoutInputs */
 /** @typedef {{}} Calendar_Layout_GridInputs */
 /** @typedef {{}} Calendar_Load_FailedInputs */
@@ -94,6 +128,152 @@ export const calendar_entry_options = /** @type {(inputs: Calendar_Entry_Options
 
 export const calendar_entry_preview = /** @type {(inputs: Calendar_Entry_PreviewInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Preview`)
+};
+
+export const calendar_import_channels = /** @type {(inputs: Calendar_Import_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Default channels`)
+};
+
+export const calendar_import_channels_hint = /** @type {(inputs: Calendar_Import_Channels_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`For rows whose channels column is empty. In the column, list channel handles separated by commas or spaces.`)
+};
+
+export const calendar_import_checking = /** @type {(inputs: Calendar_Import_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Checking the file…`)
+};
+
+export const calendar_import_error_channel = /** @type {(inputs: Calendar_Import_Error_ChannelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} can't publish a text-only post.`)
+};
+
+export const calendar_import_error_channels = /** @type {(inputs: Calendar_Import_Error_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Fill in the channels column or pick default channels.`)
+};
+
+export const calendar_import_error_column = /** @type {(inputs: Calendar_Import_Error_ColumnInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Unknown column “${i?.name}”. Use text, channels, date and time.`)
+};
+
+export const calendar_import_error_column_twice = /** @type {(inputs: Calendar_Import_Error_Column_TwiceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The column “${i?.name}” appears twice.`)
+};
+
+export const calendar_import_error_date = /** @type {(inputs: Calendar_Import_Error_DateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Use a date like 2026-12-31 and a time like 09:30.`)
+};
+
+export const calendar_import_error_date_half = /** @type {(inputs: Calendar_Import_Error_Date_HalfInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Fill in both the date and the time, or leave both empty.`)
+};
+
+export const calendar_import_error_empty = /** @type {(inputs: Calendar_Import_Error_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file has no posts.`)
+};
+
+export const calendar_import_error_fields = /** @type {(inputs: Calendar_Import_Error_FieldsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This row has more fields than the header.`)
+};
+
+export const calendar_import_error_handle = /** @type {(inputs: Calendar_Import_Error_HandleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`No channel has the handle “${i?.handle}”.`)
+};
+
+export const calendar_import_error_handle_twice = /** @type {(inputs: Calendar_Import_Error_Handle_TwiceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`More than one channel has the handle “${i?.handle}”.`)
+};
+
+export const calendar_import_error_inactive = /** @type {(inputs: Calendar_Import_Error_InactiveInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.status}`)
+};
+
+export const calendar_import_error_quote = /** @type {(inputs: Calendar_Import_Error_QuoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A quoted field isn't closed.`)
+};
+
+export const calendar_import_error_read = /** @type {(inputs: Calendar_Import_Error_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file couldn't be read.`)
+};
+
+export const calendar_import_error_text = /** @type {(inputs: Calendar_Import_Error_TextInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The text is empty.`)
+};
+
+export const calendar_import_error_text_column = /** @type {(inputs: Calendar_Import_Error_Text_ColumnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file needs a text column.`)
+};
+
+export const calendar_import_error_too_many = /** @type {(inputs: Calendar_Import_Error_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`The file has more than ${i?.count} post. Split it into smaller files.`);
+	return /** @type {LocalizedString} */ (`The file has more than ${i?.count} posts. Split it into smaller files.`)
+};
+
+export const calendar_import_example = /** @type {(inputs: Calendar_Import_ExampleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Download example CSV`)
+};
+
+export const calendar_import_example_first = /** @type {(inputs: Calendar_Import_Example_FirstInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Hello! This post goes out at the date and time given.`)
+};
+
+export const calendar_import_example_queue = /** @type {(inputs: Calendar_Import_Example_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This post takes the next free slot in the queue.`)
+};
+
+export const calendar_import_file = /** @type {(inputs: Calendar_Import_FileInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`CSV file`)
+};
+
+export const calendar_import_importing = /** @type {(inputs: Calendar_Import_ImportingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Importing…`)
+};
+
+export const calendar_import_intro = /** @type {(inputs: Calendar_Import_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue.`)
+};
+
+export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Line ${i?.line}: ${i?.problem}`)
+};
+
+export const calendar_import_no_channels = /** @type {(inputs: Calendar_Import_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No channel can publish a text-only post.`)
+};
+
+export const calendar_import_open = /** @type {(inputs: Calendar_Import_OpenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Import CSV`)
+};
+
+export const calendar_import_problems = /** @type {(inputs: Calendar_Import_ProblemsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} problem to fix. Fix the file and pick it again.`);
+	return /** @type {LocalizedString} */ (`${i?.count} problems to fix. Fix the file and pick it again.`)
+};
+
+export const calendar_import_ready = /** @type {(inputs: Calendar_Import_ReadyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post is ready to import.`);
+	return /** @type {LocalizedString} */ (`${i?.count} posts are ready to import.`)
+};
+
+export const calendar_import_requested = /** @type {(inputs: Calendar_Import_RequestedInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post sent for approval.`);
+	return /** @type {LocalizedString} */ (`${i?.count} posts sent for approval.`)
+};
+
+export const calendar_import_scheduled = /** @type {(inputs: Calendar_Import_ScheduledInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post scheduled.`);
+	return /** @type {LocalizedString} */ (`${i?.count} posts scheduled.`)
+};
+
+export const calendar_import_submit = /** @type {(inputs: Calendar_Import_SubmitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Import`)
+};
+
+export const calendar_import_title = /** @type {(inputs: Calendar_Import_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Import posts from a CSV file`)
 };
 
 export const calendar_layout = /** @type {(inputs: Calendar_LayoutInputs) => LocalizedString} */ () => {

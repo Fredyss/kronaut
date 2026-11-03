@@ -343,6 +343,16 @@ A series repeats a post on a rule in local wall time. Each occurrence is an ordi
 - **Stopping:** `POST …/series/:seriesId/stop` (`posts:schedule`) ends the series. Already-materialised occurrences are left as they are. Deleting or cancelling one occurrence doesn't stop the series.
 - **Duplicate text:** some providers reject identical text on the same account. The composer warns when a series repeats unchanged content more often than every 7 days.
 
+## CSV import
+
+`POST /v1/workspaces/:id/post-imports` (`posts.import`, `posts:schedule`, idempotent) turns up to 500 rows into posts. The calendar builds the rows from a CSV file; the API takes them as JSON.
+
+- **A row** is the content (`items`), at least one destination, and a schedule: a local time in an IANA zone (`instant`) or the next free slot of each channel's queue (`queue`).
+- **Same path as the composer:** each row is a new draft (`origin = 'import'`), then frozen and scheduled through `scheduleLocked` as the requesting member or API key. When the policy asks for approval, the draft stays and `openApprovalRequest` opens a request instead (`posts:submit`), bound to the row's time for an instant row and unbound for a queue row. Nothing skips freeze, approval, binding or the audit trail.
+- **Order:** rows run one after another in CSV order, so queue rows take slots in that order.
+- **All or nothing:** everything runs in one transaction, each row in its own savepoint. A row that fails is rolled back and the next one still runs, so one `422 unprocessable` lists every problem, with paths under `body.rows.<index>`; then nothing is kept. Issue messages aren't carried per row, only codes.
+- **Dry run:** with `dryRun: true` the whole import runs and is rolled back to a savepoint, so no post, request, job or event remains. The answer is `200` with each row's outcome (`scheduled` or `requested`) and no post ids; it's stored for its idempotency key like any answer. A real import answers `201` with the new post ids.
+
 ## Evergreen posts
 
 Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with proven content, so the queue doesn't run dry.

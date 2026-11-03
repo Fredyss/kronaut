@@ -24,6 +24,7 @@ import type { Staging } from './media/staging.ts';
 import { MEDIA_BODY_LIMITS, uploadRoutes } from './media/video/upload-routes.ts';
 import { META_BODY_LIMITS, metaRoutes } from './meta/routes.ts';
 import { notificationRoutes } from './notifications/routes.ts';
+import { postImportRoutes } from './post-import/routes.ts';
 import { postRoutes } from './posts/routes.ts';
 import type { ProviderRegistry } from './providers/providers.ts';
 import { queueRoutes } from './queue/routes.ts';
@@ -72,6 +73,7 @@ export function apiRoutes({
     ...uploadRoutes({ staging }),
     ...importRoutes(),
     ...postRoutes({ providers }),
+    ...postImportRoutes({ providers }),
     ...destinationRoutes({ providers }),
     ...approvalRoutes(),
     ...policyRoutes(),

@@ -71,5 +71,94 @@
   "calendar_tag_filter": "Filtrovať podľa štítka",
   "calendar_tags_all": "Všetky štítky",
   "calendar_tag_gone": "Odstránený štítok",
-  "calendar_tag_current": "Vybraný štítok"
+  "calendar_tag_current": "Vybraný štítok",
+  "calendar_import_open": "Importovať CSV",
+  "calendar_import_title": "Import príspevkov zo súboru CSV",
+  "calendar_import_intro": "Z každého riadka vznikne jeden príspevok. Použite stĺpce text, channels, date a time; povinný je len text. Riadok bez dátumu a času sa zaradí do frontu každého kanála.",
+  "calendar_import_example": "Stiahnuť vzorový CSV",
+  "calendar_import_file": "Súbor CSV",
+  "calendar_import_channels": "Predvolené kanály",
+  "calendar_import_channels_hint": "Pre riadky s prázdnym stĺpcom channels. V stĺpci uveďte používateľské mená kanálov oddelené čiarkou alebo medzerou.",
+  "calendar_import_no_channels": "Žiadny kanál nemôže uverejniť príspevok len s textom.",
+  "calendar_import_checking": "Súbor sa kontroluje…",
+  "calendar_import_ready": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} príspevok je pripravený na import.",
+        "countPlural=few": "{count} príspevky sú pripravené na import.",
+        "countPlural=many": "{count} príspevku je pripraveného na import.",
+        "countPlural=*": "{count} príspevkov je pripravených na import."
+      }
+    }
+  ],
+  "calendar_import_problems": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "V súbore je {count} chyba. Opravte ho a vyberte znova.",
+        "countPlural=few": "V súbore sú {count} chyby. Opravte ho a vyberte znova.",
+        "countPlural=many": "V súbore je {count} chyby. Opravte ho a vyberte znova.",
+        "countPlural=*": "V súbore je {count} chýb. Opravte ho a vyberte znova."
+      }
+    }
+  ],
+  "calendar_import_line": "Riadok {line}: {problem}",
+  "calendar_import_submit": "Importovať",
+  "calendar_import_importing": "Importuje sa…",
+  "calendar_import_scheduled": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} príspevok je naplánovaný.",
+        "countPlural=few": "{count} príspevky sú naplánované.",
+        "countPlural=many": "{count} príspevku je naplánovaného.",
+        "countPlural=*": "{count} príspevkov je naplánovaných."
+      }
+    }
+  ],
+  "calendar_import_requested": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} príspevok čaká na schválenie.",
+        "countPlural=few": "{count} príspevky čakajú na schválenie.",
+        "countPlural=many": "{count} príspevku čaká na schválenie.",
+        "countPlural=*": "{count} príspevkov čaká na schválenie."
+      }
+    }
+  ],
+  "calendar_import_error_read": "Súbor sa nepodarilo načítať.",
+  "calendar_import_error_empty": "V súbore nie sú žiadne príspevky.",
+  "calendar_import_error_quote": "Pole v úvodzovkách nie je uzavreté.",
+  "calendar_import_error_column": "Neznámy stĺpec „{name}“. Použite text, channels, date a time.",
+  "calendar_import_error_column_twice": "Stĺpec „{name}“ je v súbore dvakrát.",
+  "calendar_import_error_text_column": "V súbore chýba stĺpec text.",
+  "calendar_import_error_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Súbor má viac ako {count} príspevok. Rozdeľte ho na menšie súbory.",
+        "countPlural=few": "Súbor má viac ako {count} príspevky. Rozdeľte ho na menšie súbory.",
+        "countPlural=many": "Súbor má viac ako {count} príspevku. Rozdeľte ho na menšie súbory.",
+        "countPlural=*": "Súbor má viac ako {count} príspevkov. Rozdeľte ho na menšie súbory."
+      }
+    }
+  ],
+  "calendar_import_error_fields": "Riadok má viac polí ako hlavička.",
+  "calendar_import_error_text": "Text je prázdny.",
+  "calendar_import_error_handle": "Žiadny kanál nemá používateľské meno „{handle}“.",
+  "calendar_import_error_handle_twice": "Používateľské meno „{handle}“ má viac kanálov.",
+  "calendar_import_error_channel": "Kanál {channel} nemôže uverejniť príspevok len s textom.",
+  "calendar_import_error_inactive": "Kanál {channel}: {status}",
+  "calendar_import_error_channels": "Vyplňte stĺpec channels alebo vyberte predvolené kanály.",
+  "calendar_import_error_date": "Zadajte dátum v tvare 2026-12-31 a čas v tvare 09:30.",
+  "calendar_import_error_date_half": "Vyplňte dátum aj čas, alebo nechajte obe polia prázdne.",
+  "calendar_import_example_first": "Dobrý deň! Tento príspevok vyjde v zadanom dátume a čase.",
+  "calendar_import_example_queue": "Tento príspevok dostane najbližšie voľné miesto vo fronte."
 }

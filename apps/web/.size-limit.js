@@ -44,6 +44,7 @@ const LAZY = {
   'followers JS': ['followers', '10 KB'],
   'tags JS': ['picker', '10 KB'],
   'repeat control JS': ['repeat-fieldset', '5 KB'],
+  'CSV import JS': ['import-dialog', '10 KB'],
   ...Object.fromEntries(ROUTE_CATALOGS),
 };
 
