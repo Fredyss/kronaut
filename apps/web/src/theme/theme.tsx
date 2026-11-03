@@ -97,7 +97,6 @@ export function ThemeToggle() {
     <button
       type="button"
       aria-label={label}
-      title={label}
       onClick={() => {
         const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length] ?? 'system';
         chooseTheme(next);
