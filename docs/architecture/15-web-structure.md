@@ -16,26 +16,26 @@ Measured at `f6517c9`, files had no import cycle, but folders did:
 
 Each tier imports only tiers below it. Folders in one tier don't import each other (checked).
 
-| Tier | Folders | Owns |
-|---|---|---|
-| 1. Pages | `post-page`, `channels-page`, `shell`, `settings` | Pages that put several features on one screen, the app chrome, the account and notification settings |
-| 2. Views | `calendar`, `approvals`, `evergreen` | The planning calendar, approval requests and decisions, the evergreen section |
-| 3. Actions | `post-actions`, `post-import`, `notifications` | Post menus and dialogs that open the composer, the CSV import dialog, the notification bell and panel |
-| 4. Lists | `inbox`, `media`, `system` | The needs-action inbox, the media library, system status |
-| 5. Composer | `compose` | Drafting, editing, scheduling and submitting a post |
-| 6. Content | `saved-texts`, `tags`, `series` | Reusable text and channel signatures, labels, repeat rules |
-| 7. Records | `posts`, `channels`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, the approval policy, metrics, sign-in, the theme |
-| Base | `api`, `locale`, `providers`, `ui`, `@kronaut/*` | Client and errors, messages and formatting, platform names, app-wide UI |
+| Tier | Tier folder | Features | Owns |
+|---|---|---|---|
+| 1. Pages | `pages/` | `post-page`, `channels-page`, `shell`, `settings` | Pages that put several features on one screen, the app chrome, the account and notification settings |
+| 2. Views | `views/` | `calendar`, `approvals`, `evergreen` | The planning calendar, approval requests and decisions, the evergreen section |
+| 3. Actions | `actions/` | `post-actions`, `post-import`, `notifications` | Post menus and dialogs that open the composer, the CSV import dialog, the notification bell and panel |
+| 4. Lists | `lists/` | `inbox`, `media`, `system` | The needs-action inbox, the media library, system status |
+| 5. Composer | `composer/` | `compose` | Drafting, editing, scheduling and submitting a post |
+| 6. Content | `content/` | `saved-texts`, `tags`, `series` | Reusable text and channel signatures, labels, repeat rules |
+| 7. Records | `records/` | `posts`, `channels`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, the approval policy, metrics, sign-in, the theme |
+| Base | `base/` | `api`, `locale`, `providers`, `ui`, plus `@kronaut/*` | Client and errors, messages and formatting, platform names, app-wide UI |
 
 A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. Type-only imports are outside both.
 
-The tier check reads production value imports: a feature folder imports only lower tiers, base folders and the `i18n` catalogs, never a route file or a `src` root file. The catalogs in turn import only base folders and packages, so no feature reaches another through them. Every feature folder needs a tier, so a new folder goes into this table and into [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) in the same PR. A tier change is a design decision, like a declared import.
+The tier check reads production value imports: a feature folder imports only lower tiers, base folders and the `i18n` catalogs, never a route file or a `src` root file. The catalogs in turn import only base folders and packages, so no feature reaches another through them. Each feature folder sits in the folder of its tier, as `apps/web/src/<tier folder>/<feature>/`, so the tree shows the direction, and a folder outside a tier folder fails the check. A new feature goes into its tier folder; a new tier goes into this table and [`tools/lint/folders.ts`](../../tools/lint/folders.ts) in the same PR. Moving a feature to another tier is a design decision, like a declared import.
 
 `approval-policy` sits beside `approvals`, as on the server: `compose` reads the policy, and `approvals` reuses `compose/when/*` and `compose/issues.ts`, so a subfolder would keep the loop.
 
 ## Base folders
 
-`api`, `locale`, `providers` and `ui` value-import only packages, their own files and each other (checked). `providers` qualifies because `providers/ui.ts` reads only `locale`.
+`api`, `locale`, `providers` and `ui` sit in `base/` and value-import only packages, their own files and each other (checked). `providers` qualifies because `providers/ui.ts` reads only `locale`.
 
 `locale` holds everything about the reader's language and clock: messages, `useFormat` and `useFormats`, and in `locale/browser.ts` the browser's time zone, language and first day of the week.
 
@@ -44,7 +44,7 @@ The tier check reads production value imports: a feature folder imports only low
 - **`app.tsx`** builds the route tree: paths, `validateSearch`, `beforeLoad`, and which route file each route loads, lazily unless the page is in the shell. It also creates the query client and the router.
 - **`routes/`** holds one file per page, which re-exports that page from its feature, including `not-found.tsx` (from `shell/`), plus `locale-root.tsx`, the locale gate around the router.
 - **`i18n/`** holds the message catalogs of the route groups (`compose`, `calendar`, `media`, `inbox`, `settings`). A file imports a group only if every route that loads it belongs to that group (checked by `i18n/route-catalogs.test.ts`).
-- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files (checked).
+- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files, `routes/`, `i18n/`, `base/` and the tier folders (checked).
 
 Each file in `routes/` and `i18n/` is a node of its own in the folder check, so `app.tsx` loading every page is no loop, but a feature importing a route file that imports the feature is.
 
@@ -77,7 +77,7 @@ A page reads its own search and params with `getRouteApi`, as before.
 ## Where new code goes
 
 - **A new page:** a `<name>-page.tsx` in the feature it's about, a route file that re-exports it, the route in `app.tsx`, and a budget in `.size-limit.js`.
-- **A page that puts features from different tiers on one screen:** a `<name>-page` folder in tier 1, like `post-page` and `channels-page`.
+- **A page that puts features from different tiers on one screen:** a `<name>-page` folder in `pages/`, tier 1, like `post-page` and `channels-page`.
 - **A settings page:** in the feature it configures (`tags/settings-page.tsx`, `approvals/settings-page.tsx`). Account-wide pages stay in `settings`.
 - **A rule or query that several features read about posts:** `posts`. Only `destinations.ts`, `queries.ts` and `summary.ts` there join the shell's `data` chunk ([`vite.config.ts`](../../apps/web/vite.config.ts)), so a new file stays lazy unless you add it.
 - **A browser or locale read, or a date format:** `locale`.

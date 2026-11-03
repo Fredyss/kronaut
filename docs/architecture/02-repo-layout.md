@@ -5,9 +5,10 @@ pnpm workspace. Every package is TypeScript strict, ESM, built with `tsc -b` pro
 ```
 apps/
   server/                 src/main.ts --role=all|api|worker|media ; src/cli.ts
-                          src/<feature>/: one folder per product concept (13-code-structure.md)
+                          src/<tier>/<feature>/: one folder per product concept, inside its tier folder;
+                          src/base/<folder>/ for shared layers (13-code-structure.md)
                           src/entitlements/ (planned): the only place MODE is compared with 'saas' (ADR-0019)
-  web/                    Vite SPA; src/<feature>/ as on the server, src/routes/ for pages
+  web/                    Vite SPA; src/<tier>/<feature>/ and src/base/ as on the server, src/routes/ for pages
 packages/
   core/                   domain types, state machine, errors
   compose/                text counters, serializers, validate()            browser-safe

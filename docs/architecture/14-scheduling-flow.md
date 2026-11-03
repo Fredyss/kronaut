@@ -28,19 +28,19 @@ Files have no import cycle, but folders do. Measured at `e58af2a`, before PR 1, 
 
 ## Direction
 
-Each tier imports only tiers below it. Folders in one tier don't import each other (checked by [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) on production value imports; a `src` root file counts as above tier 1). A new folder goes into this table and that file in the same PR.
+Each tier imports only tiers below it. Folders in one tier don't import each other (checked by [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) on production value imports; a `src` root file counts as above tier 1). Each feature folder sits in the folder of its tier, as `apps/server/src/<tier folder>/<feature>/`, so the tree shows the direction. A new feature goes into its tier folder; a new tier goes into this table and [`tools/lint/folders.ts`](../../tools/lint/folders.ts) in the same PR.
 
-| Tier | Folders | Owns |
-|---|---|---|
-| 1. Actors | `series`, `evergreen`, `post-import`, `destinations`, `media`, `meta`, `cli`, `system` | Whatever drives or reads posts from outside the editing flow |
-| 2. Flow | `posts` | Drafts, edits, freeze, scheduling, opening an approval request, starting a series |
-| 3. Steps | `approvals`, `queue`, `tags`, `saved-texts`, `publish` | One step each: decisions and bindings, free slots, labels, reusable text, the destination state machine and worker |
-| 4. Records | `analytics`, `notifications` | What the steps record |
-| 5. Policy | `approval-policy` | The approval rules that scheduling, decisions, the claim and notifications read |
-| 6. Access | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
-| 7. Identity and events | `auth`, `webhooks` | Sessions and webhook events |
-| 8. Infrastructure | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
-| Base | `http`, `config`, `crypto`, `providers`, `@kronaut/core` | Request helpers, configuration, purpose keys and token hashing, the provider registry, pure domain and time |
+| Tier | Tier folder | Features | Owns |
+|---|---|---|---|
+| 1. Actors | `actors/` | `series`, `evergreen`, `post-import`, `destinations`, `media`, `meta`, `cli`, `system` | Whatever drives or reads posts from outside the editing flow |
+| 2. Flow | `flow/` | `posts` | Drafts, edits, freeze, scheduling, opening an approval request, starting a series |
+| 3. Steps | `steps/` | `approvals`, `queue`, `tags`, `saved-texts`, `publish` | One step each: decisions and bindings, free slots, labels, reusable text, the destination state machine and worker |
+| 4. Records | `records/` | `analytics`, `notifications` | What the steps record |
+| 5. Policy | `policy/` | `approval-policy` | The approval rules that scheduling, decisions, the claim and notifications read |
+| 6. Access | `access/` | `post-access`, `audit`, `channels` | Locks, versions, scope units, list reads, audit rows, channel lookups |
+| 7. Identity and events | `identity/` | `auth`, `webhooks` | Sessions and webhook events |
+| 8. Infrastructure | `infrastructure/` | `jobs`, `credentials`, `quota` | Job queue and locks, cron task names, credential storage, rate windows |
+| Base | `base/` | `http`, `config`, `crypto`, `providers`, plus `@kronaut/core` | Request helpers, configuration, purpose keys and token hashing, the provider registry, pure domain and time |
 
 `http` is base only: every tier imports its helpers, and it imports no feature. `api-routes.ts`, which mounts the features, sits in the `src` root, and auth's sign-in step (`auth/authenticate.ts`, `auth/session-guard.ts`) is passed in by the wiring through `HttpDeps`. Before that, `http` was base and wiring at once, so the loop counts for PRs 1 to 4 below cover production value imports between feature folders only: type-only imports, tests, `http` as an importer and the `src` root files stay out, as they do in `feature-imports.json`. The check from PR 5 keeps each `src` root file as its own node instead, so a loop through one of them fails too. Measured that way, `main` before PR 5 still had only `auth` and `system`.
 
@@ -48,7 +48,7 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 
 ## Where new code goes
 
-- **It creates or schedules posts** (CSV import, RSS autopost): a new tier 1 folder. One that acts within a member's request, like `post-import`, calls `scheduleLocked` or `openApprovalRequest` as that member. One that acts later on its own, like `evergreen`, schedules as the owner through `posts/owner/owner-schedule.ts`.
+- **It creates or schedules posts** (CSV import, RSS autopost): a new folder in `actors/`, tier 1. One that acts within a member's request, like `post-import`, calls `scheduleLocked` or `openApprovalRequest` as that member. One that acts later on its own, like `evergreen`, schedules as the owner through `posts/owner/owner-schedule.ts`.
 - **Scheduling consults it** (a new rule on times or content): a module in tier 3 or 5 with no import of `posts`, which `posts/schedule/` calls.
 - **It reshapes a draft** (signatures, templates): `posts/draft/`, or its own folder below `posts` if it needs its own routes and tables.
 - **It reads or locks a post for another feature:** `post-access`.
