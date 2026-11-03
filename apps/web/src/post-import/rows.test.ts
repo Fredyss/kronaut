@@ -78,6 +78,22 @@ describe('row mapping', () => {
     });
   });
 
+  it('decides a handle among the channels that can take the row', () => {
+    const insta: Channel = { ...gram, id: 'acct_insta', handle: 'acme' };
+    const threads: Channel = { ...ada, id: 'acct_threads', provider: 'threads', handle: '@acme' };
+    const pair = { ...context, channels: [insta, threads] };
+    expect(mapRecord(record({ channels: '@acme' }), pair)).toMatchObject({
+      row: { destinations: [{ accountId: 'acct_threads', publishType: 'post' }] },
+    });
+    const unusable = {
+      ...context,
+      channels: [insta, { ...threads, status: 'disconnected' as const }],
+    };
+    expect(mapRecord(record({ channels: 'acme' }), unusable)).toEqual({
+      problems: [{ kind: 'channel_text_only', channel: insta }],
+    });
+  });
+
   it('needs text and at least one channel', () => {
     const none = { ...context, defaults: new Set<string>() };
     expect(mapRecord(record({ text: '  ' }), none)).toEqual({
@@ -98,10 +114,26 @@ describe('row mapping', () => {
   });
 
   it.each([
+    ['2026-12-31', '9:30', '2026-12-31T09:30:00'],
+    ['2026-12-31', '09:30:00', '2026-12-31T09:30:00'],
+    ['31.12.2026', '09:30', '2026-12-31T09:30:00'],
+    ['1. 2. 2027', '7:05', '2027-02-01T07:05:00'],
+    ['1.2. 2027', '23:59', '2027-02-01T23:59:00'],
+  ])('reads date %j with time %j', (date, time, scheduleLocal) => {
+    expect(mapRecord(record({ date, time }), context)).toMatchObject({
+      row: { schedule: { mode: 'instant', scheduleLocal } },
+    });
+  });
+
+  it.each([
     ['2026-02-30', '09:30', 'date_invalid'],
+    ['30.2.2026', '09:30', 'date_invalid'],
     ['2026-12-31', '24:00', 'date_invalid'],
-    ['31.12.2026', '09:30', 'date_invalid'],
-    ['2026-12-31', '9:30', 'date_invalid'],
+    ['2026-12-31', '09:30:15', 'date_invalid'],
+    ['2026-12-31', '930', 'date_invalid'],
+    ['12/31/2026', '09:30', 'date_invalid'],
+    ['31/12/2026', '09:30', 'date_invalid'],
+    ['31.12.26', '09:30', 'date_invalid'],
     ['2026-12-31', '', 'date_half'],
     ['', '09:30', 'date_half'],
   ])('refuses date %j with time %j', (date, time, kind) => {

@@ -1,4 +1,5 @@
 import { statusLabel } from '../channels/status-label.ts';
+import { issueMessage } from '../compose/issues.ts';
 import { m as calendarText } from '../i18n/calendar.ts';
 import type { CsvProblem } from './csv.ts';
 import type { RowProblem } from './rows.ts';
@@ -44,4 +45,15 @@ export function rowProblemMessage(problem: RowProblem): string {
     case 'date_half':
       return calendarText.calendar_import_error_date_half();
   }
+}
+
+const ROW_ISSUES: Readonly<Record<string, () => string>> = {
+  not_found: () => calendarText.calendar_import_issue_not_found(),
+  out_of_scope: () => calendarText.calendar_import_issue_out_of_scope(),
+  scope_missing: () => calendarText.calendar_import_issue_scope_missing(),
+};
+
+export function issueText(code: string): string {
+  const own = Object.hasOwn(ROW_ISSUES, code) ? ROW_ISSUES[code] : undefined;
+  return own === undefined ? issueMessage(code) : own();
 }

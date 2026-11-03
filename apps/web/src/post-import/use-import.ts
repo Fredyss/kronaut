@@ -1,4 +1,4 @@
-import { postsImport } from '@kronaut/sdk';
+import { postsImport, postsImportCheck } from '@kronaut/sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { useApiClient } from '../api/client.ts';
@@ -13,15 +13,14 @@ export function checkedRows(prepared: Prepared | null): readonly ImportRow[] | n
   return prepared.rows;
 }
 
-export function useImportCheck(workspaceId: string, prepared: Prepared | null) {
+export function useImportCheck(workspaceId: string, prepared: Prepared | null, nonce: number) {
   const client = useApiClient();
   const rows = checkedRows(prepared);
   return useQuery({
-    queryKey: ['post-import', workspaceId, rows],
+    queryKey: ['post-import-check', workspaceId, nonce, rows],
     queryFn: async () => {
-      const body = { dryRun: true, rows: [...(rows ?? [])] };
-      const headers = { 'Idempotency-Key': crypto.randomUUID() };
-      return (await postsImport({ client, path: { workspaceId }, body, headers })).data;
+      const body = { rows: [...(rows ?? [])] };
+      return (await postsImportCheck({ client, path: { workspaceId }, body })).data;
     },
     enabled: rows !== null,
     retry: false,

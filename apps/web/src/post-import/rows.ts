@@ -1,9 +1,9 @@
 import type { PostsImportData } from '@kronaut/sdk';
-import { Temporal } from 'temporal-polyfill';
 import type { Channel } from '../channels/queries.ts';
 import { choiceFor } from '../compose/content/choice.ts';
 import { textToParagraphs } from '../posts/doc.ts';
 import type { CsvRecord } from './csv.ts';
+import { localDateTime } from './when.ts';
 
 export type ImportRow = PostsImportData['body']['rows'][number];
 type RowSchedule = ImportRow['schedule'];
@@ -28,11 +28,30 @@ export interface RowContext {
 export type MappedRow = { readonly row: ImportRow } | { readonly problems: readonly RowProblem[] };
 
 const NO_MEDIA = { images: [], video: false } as const;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const TIME = /^\d{2}:\d{2}$/;
 
 function handleKey(handle: string): string {
   return handle.trim().replace(/^@/, '').toLowerCase();
+}
+
+function usable(channel: Channel): boolean {
+  return channel.status === 'active' && choiceFor(channel, NO_MEDIA).kind === 'ok';
+}
+
+function unusableProblem(channel: Channel): RowProblem {
+  return channel.status === 'active'
+    ? { kind: 'channel_text_only', channel }
+    : { kind: 'channel_inactive', channel };
+}
+
+function matchHandle(handle: string, channels: readonly Channel[]): Channel | RowProblem {
+  const key = handleKey(handle);
+  const matches = channels.filter((c) => c.handle !== null && handleKey(c.handle) === key);
+  const fit = matches.filter(usable);
+  const [only] = fit;
+  if (fit.length > 1) return { kind: 'handle_ambiguous', handle };
+  if (only !== undefined) return only;
+  const [unfit] = matches;
+  return unfit === undefined ? { kind: 'handle_unknown', handle } : unusableProblem(unfit);
 }
 
 function namedChannels(
@@ -42,25 +61,17 @@ function namedChannels(
 ): Channel[] {
   const found: Channel[] = [];
   for (const handle of column.split(/[\s,;]+/).filter((part) => part !== '')) {
-    const matches = channels.filter(
-      (c) => c.handle !== null && handleKey(c.handle) === handleKey(handle),
-    );
-    const [only] = matches;
-    if (only === undefined) problems.push({ kind: 'handle_unknown', handle });
-    else if (matches.length > 1) problems.push({ kind: 'handle_ambiguous', handle });
-    else if (!found.includes(only)) found.push(only);
+    const matched = matchHandle(handle, channels);
+    if ('kind' in matched) problems.push(matched);
+    else if (!found.includes(matched)) found.push(matched);
   }
   return found;
 }
 
 function destinationOf(channel: Channel, problems: RowProblem[]): RowDestination | null {
-  if (channel.status !== 'active') {
-    problems.push({ kind: 'channel_inactive', channel });
-    return null;
-  }
   const choice = choiceFor(channel, NO_MEDIA);
-  if (choice.kind !== 'ok') {
-    problems.push({ kind: 'channel_text_only', channel });
+  if (channel.status !== 'active' || choice.kind !== 'ok') {
+    problems.push(unusableProblem(channel));
     return null;
   }
   return { accountId: channel.id, publishType: choice.publishType };
@@ -76,16 +87,6 @@ function destinationsOf(column: string, context: RowContext, problems: RowProble
   return named.flatMap((channel) => destinationOf(channel, problems) ?? []);
 }
 
-function localAt(date: string, time: string): Temporal.PlainDateTime | null {
-  if (!DATE.test(date) || !TIME.test(time)) return null;
-  try {
-    const day = Temporal.PlainDate.from(date, { overflow: 'reject' });
-    return day.toPlainDateTime(Temporal.PlainTime.from(time, { overflow: 'reject' }));
-  } catch {
-    return null;
-  }
-}
-
 function scheduleOf(record: CsvRecord, tz: string, problems: RowProblem[]): RowSchedule | null {
   const date = record.values.date.trim();
   const time = record.values.time.trim();
@@ -94,7 +95,7 @@ function scheduleOf(record: CsvRecord, tz: string, problems: RowProblem[]): RowS
     problems.push({ kind: 'date_half' });
     return null;
   }
-  const local = localAt(date, time);
+  const local = localDateTime(date, time);
   if (local === null) {
     problems.push({ kind: 'date_invalid' });
     return null;

@@ -22,6 +22,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Import_Error_DateInputs */
 /** @typedef {{}} Calendar_Import_Error_Date_HalfInputs */
 /** @typedef {{}} Calendar_Import_Error_EmptyInputs */
+/** @typedef {{}} Calendar_Import_Error_EncodingInputs */
 /** @typedef {{}} Calendar_Import_Error_FieldsInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
@@ -30,6 +31,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Import_Error_ReadInputs */
 /** @typedef {{}} Calendar_Import_Error_TextInputs */
 /** @typedef {{}} Calendar_Import_Error_Text_ColumnInputs */
+/** @typedef {{}} Calendar_Import_Error_Too_LargeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_ExampleInputs */
 /** @typedef {{}} Calendar_Import_Example_FirstInputs */
@@ -37,12 +39,17 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Import_FileInputs */
 /** @typedef {{}} Calendar_Import_ImportingInputs */
 /** @typedef {{}} Calendar_Import_IntroInputs */
+/** @typedef {{ channel: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_Issue_ChannelInputs */
+/** @typedef {{}} Calendar_Import_Issue_Not_FoundInputs */
+/** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
+/** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
 /** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
 /** @typedef {{}} Calendar_Import_No_ChannelsInputs */
 /** @typedef {{}} Calendar_Import_OpenInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ReadyInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_RequestedInputs */
+/** @typedef {{}} Calendar_Import_Requested_QueueInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ScheduledInputs */
 /** @typedef {{}} Calendar_Import_SubmitInputs */
 /** @typedef {{}} Calendar_Import_TitleInputs */
@@ -361,7 +368,7 @@ export const calendar_import_error_column_twice = /** @type {((inputs: Calendar_
 /**
 * | output |
 * | --- |
-* | "Use a date like 2026-12-31 and a time like 09:30." |
+* | "Write the date as 2026-12-31 or 31.12.2026 and the time as 9:30, 09:30 or 09:30:00." |
 *
 * @param {Calendar_Import_Error_DateInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -402,6 +409,21 @@ export const calendar_import_error_empty = /** @type {((inputs?: Calendar_Import
 	if (locale === "sk") return __sk.calendar_import_error_empty(inputs)
 	if (locale === "cs") return __cs.calendar_import_error_empty(inputs)
 	return __en.calendar_import_error_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The file isn't saved as UTF-8. In Excel, use Save As and pick the type “CSV UTF-8”." |
+*
+* @param {Calendar_Import_Error_EncodingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_encoding = /** @type {((inputs?: Calendar_Import_Error_EncodingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_EncodingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_encoding(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_encoding(inputs)
+	return __en.calendar_import_error_encoding(inputs)
 });
 /**
 * | output |
@@ -524,6 +546,21 @@ export const calendar_import_error_text_column = /** @type {((inputs?: Calendar_
 	return __en.calendar_import_error_text_column(inputs)
 });
 /**
+* | output |
+* | --- |
+* | "The file is too large to import at once. Split it into smaller files and import them one by one." |
+*
+* @param {Calendar_Import_Error_Too_LargeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_too_large = /** @type {((inputs?: Calendar_Import_Error_Too_LargeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Too_LargeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_too_large(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_too_large(inputs)
+	return __en.calendar_import_error_too_large(inputs)
+});
+/**
 * | countPlural | output |
 * | --- | --- |
 * | "one" | "The file has more than {count} post. Split it into smaller files." |
@@ -632,6 +669,66 @@ export const calendar_import_intro = /** @type {((inputs?: Calendar_Import_Intro
 /**
 * | output |
 * | --- |
+* | "{channel}: {problem}" |
+*
+* @param {Calendar_Import_Issue_ChannelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_issue_channel = /** @type {((inputs: Calendar_Import_Issue_ChannelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Issue_ChannelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_issue_channel(inputs)
+	if (locale === "cs") return __cs.calendar_import_issue_channel(inputs)
+	return __en.calendar_import_issue_channel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The channel wasn't found. It may have been removed." |
+*
+* @param {Calendar_Import_Issue_Not_FoundInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_issue_not_found = /** @type {((inputs?: Calendar_Import_Issue_Not_FoundInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Issue_Not_FoundInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_issue_not_found(inputs)
+	if (locale === "cs") return __cs.calendar_import_issue_not_found(inputs)
+	return __en.calendar_import_issue_not_found(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "You don't have access to this channel." |
+*
+* @param {Calendar_Import_Issue_Out_Of_ScopeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_issue_out_of_scope = /** @type {((inputs?: Calendar_Import_Issue_Out_Of_ScopeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Issue_Out_Of_ScopeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_issue_out_of_scope(inputs)
+	if (locale === "cs") return __cs.calendar_import_issue_out_of_scope(inputs)
+	return __en.calendar_import_issue_out_of_scope(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Your access doesn't allow posting here." |
+*
+* @param {Calendar_Import_Issue_Scope_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_issue_scope_missing = /** @type {((inputs?: Calendar_Import_Issue_Scope_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Issue_Scope_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_issue_scope_missing(inputs)
+	if (locale === "cs") return __cs.calendar_import_issue_scope_missing(inputs)
+	return __en.calendar_import_issue_scope_missing(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Line {line}: {problem}" |
 *
 * @param {Calendar_Import_LineInputs} inputs
@@ -721,6 +818,21 @@ export const calendar_import_requested = /** @type {((inputs: Calendar_Import_Re
 	if (locale === "sk") return __sk.calendar_import_requested(inputs)
 	if (locale === "cs") return __cs.calendar_import_requested(inputs)
 	return __en.calendar_import_requested(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Posts without a date and time get no slot while they wait. Schedule them once they're approved." |
+*
+* @param {Calendar_Import_Requested_QueueInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_requested_queue = /** @type {((inputs?: Calendar_Import_Requested_QueueInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Requested_QueueInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_requested_queue(inputs)
+	if (locale === "cs") return __cs.calendar_import_requested_queue(inputs)
+	return __en.calendar_import_requested_queue(inputs)
 });
 /**
 * | countPlural | output |

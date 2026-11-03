@@ -1,9 +1,10 @@
-import { encodePublicId } from '@kronaut/core';
+import { decodePublicId, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
-import { HttpError, type IssueDetail } from '../http/errors.ts';
+import { databaseError, HttpError, type IssueDetail } from '../http/errors.ts';
+import { lockQueues } from '../queue/slots.ts';
 import { type ImportEnv, importRow, type RowDone } from './import-row.ts';
-import type { ImportBody, ImportOutput, ImportRowBody } from './input.ts';
+import type { ImportBody, ImportCheckOutput, ImportOutput, ImportRowBody } from './input.ts';
 
 const SCHEDULE_FIELDS: ReadonlySet<string> = new Set(['mode', 'scheduleLocal', 'scheduleTz']);
 
@@ -37,21 +38,25 @@ async function guardedRow(
     await sql`release savepoint ${point}`.execute(trx);
     return { done };
   } catch (err) {
-    if (!(err instanceof HttpError)) throw err;
+    const mapped = err instanceof HttpError ? err : databaseError(err);
+    if (!(mapped instanceof HttpError)) throw err;
     await sql`rollback to savepoint ${point}`.execute(trx);
     await sql`release savepoint ${point}`.execute(trx);
-    return { details: rowDetails(index, err) };
+    return { details: rowDetails(index, mapped) };
   }
 }
 
-// The dry run rolls back to a savepoint instead of throwing, so the idempotency row in the
-// same transaction survives and replays the dry-run answer.
-export async function importPosts(
-  trx: TenantDb,
-  env: ImportEnv,
-  body: ImportBody,
-): Promise<ImportOutput> {
-  await sql`savepoint post_import`.execute(trx);
+function queueChannels(rows: readonly ImportRowBody[]): string[] {
+  return rows
+    .filter((row) => row.schedule.mode === 'queue')
+    .flatMap((row) => row.destinations.map((d) => decodePublicId('socialAccount', d.accountId)))
+    .filter((id) => id !== null);
+}
+
+// Every queue channel is locked once, in id order, before row 0: rows lock in CSV order, which
+// would deadlock against a composer or another import that takes the same channels in id order.
+async function runRows(trx: TenantDb, env: ImportEnv, body: ImportBody): Promise<RowDone[]> {
+  await lockQueues(trx, queueChannels(body.rows));
   const done: RowDone[] = [];
   const details: IssueDetail[] = [];
   for (const [index, row] of body.rows.entries()) {
@@ -62,14 +67,27 @@ export async function importPosts(
   if (details.length > 0) {
     throw new HttpError('unprocessable', 'Some rows could not be imported.', { details });
   }
-  const dryRun = body.dryRun === true;
-  await (dryRun
-    ? sql`rollback to savepoint post_import`.execute(trx)
-    : sql`release savepoint post_import`.execute(trx));
+  return done;
+}
+
+export async function importPosts(
+  trx: TenantDb,
+  env: ImportEnv,
+  body: ImportBody,
+): Promise<ImportOutput> {
+  const done = await runRows(trx, env, body);
   return {
-    rows: done.map(({ outcome, postId }) => ({
-      outcome,
-      postId: dryRun ? null : encodePublicId('post', postId),
-    })),
+    rows: done.map(({ outcome, postId }) => ({ outcome, postId: encodePublicId('post', postId) })),
   };
+}
+
+export async function checkImport(
+  trx: TenantDb,
+  env: ImportEnv,
+  body: ImportBody,
+): Promise<ImportCheckOutput> {
+  await sql`savepoint import_check`.execute(trx);
+  const done = await runRows(trx, env, body);
+  await sql`rollback to savepoint import_check`.execute(trx);
+  return { rows: done.map(({ outcome }) => ({ outcome })) };
 }

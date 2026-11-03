@@ -6919,7 +6919,7 @@
     },
     "/v1/workspaces/{workspaceId}/post-imports": {
       "post": {
-        "description": "Creates one post per row, in order, and schedules it at a local time in a time zone or at the next free slot of each channel queue. When approval is needed, the post stays a draft and an approval request opens instead, bound to the row time if it has one. All rows succeed or none: 422 lists every problem with a path under body.rows.<index>. With dryRun the import runs and is rolled back, and the answer is 200 with no post ids.",
+        "description": "Creates one post per row, in order, and schedules it at a local time in a time zone or at the next free slot of each channel queue. When approval is needed, the post stays a draft and an approval request opens instead, bound to the row time if it has one; a queue row is then scheduled by hand after approval. All rows succeed or none: 422 lists every problem with a path under body.rows.<index>.",
         "operationId": "posts.import",
         "parameters": [
           {
@@ -6947,9 +6947,6 @@
               "schema": {
                 "additionalProperties": false,
                 "properties": {
-                  "dryRun": {
-                    "type": "boolean"
-                  },
                   "rows": {
                     "items": {
                       "additionalProperties": false,
@@ -7139,10 +7136,7 @@
                             "type": "string"
                           },
                           "postId": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         },
                         "required": [
@@ -7183,6 +7177,262 @@
           }
         ],
         "summary": "Import posts",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/post-imports/checks": {
+      "post": {
+        "description": "Runs an import exactly as posts.import would and rolls it back: nothing is created. Answers each row with the outcome it would have, or 422 with the same problems.",
+        "operationId": "posts.import_check",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "rows": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "destinations": {
+                          "items": {
+                            "properties": {
+                              "accountId": {
+                                "type": "string"
+                              },
+                              "deliveryMode": {
+                                "enum": [
+                                  "auto",
+                                  "reminder"
+                                ],
+                                "type": "string"
+                              },
+                              "publishType": {
+                                "pattern": "^[a-z0-9_]{1,40}$",
+                                "type": "string"
+                              },
+                              "settings": {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "skipSignature": {
+                                "type": "boolean"
+                              },
+                              "variant": {
+                                "anyOf": [
+                                  {
+                                    "maximum": 9007199254740991,
+                                    "minimum": 0,
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "accountId",
+                              "publishType"
+                            ],
+                            "type": "object"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "items": {
+                          "items": {
+                            "properties": {
+                              "doc": {
+                                "additionalProperties": {},
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "media": {
+                                "items": {
+                                  "properties": {
+                                    "altText": {
+                                      "anyOf": [
+                                        {
+                                          "maxLength": 1500,
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "mediaId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "mediaId"
+                                  ],
+                                  "type": "object"
+                                },
+                                "maxItems": 35,
+                                "type": "array"
+                              },
+                              "role": {
+                                "enum": [
+                                  "main",
+                                  "thread",
+                                  "comment"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "doc"
+                            ],
+                            "type": "object"
+                          },
+                          "maxItems": 25,
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "schedule": {
+                          "oneOf": [
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "mode": {
+                                  "const": "instant",
+                                  "type": "string"
+                                },
+                                "scheduleLocal": {
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z)|(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?)$",
+                                  "type": "string"
+                                },
+                                "scheduleTz": {
+                                  "maxLength": 64,
+                                  "pattern": "^[A-Za-z_]+(\\/[A-Za-z0-9_+-]+)*$",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "mode",
+                                "scheduleLocal",
+                                "scheduleTz"
+                              ],
+                              "type": "object"
+                            },
+                            {
+                              "additionalProperties": false,
+                              "properties": {
+                                "mode": {
+                                  "const": "queue",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "type": "object"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "items",
+                        "destinations",
+                        "schedule"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 500,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "rows"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "rows": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "outcome": {
+                            "enum": [
+                              "scheduled",
+                              "requested"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "outcome"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "rows"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Check a post import",
         "tags": [
           "posts"
         ],

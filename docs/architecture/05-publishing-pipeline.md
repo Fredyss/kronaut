@@ -345,13 +345,13 @@ A series repeats a post on a rule in local wall time. Each occurrence is an ordi
 
 ## CSV import
 
-`POST /v1/workspaces/:id/post-imports` (`posts.import`, `posts:schedule`, idempotent) turns up to 500 rows into posts. The calendar builds the rows from a CSV file; the API takes them as JSON.
+`POST /v1/workspaces/:id/post-imports` (`posts.import`, `posts:schedule`, idempotent, `201`) turns up to 500 rows into posts. `POST /v1/workspaces/:id/post-imports/checks` (`posts.import_check`, same action and body, not idempotent, `200`) runs the same rows and rolls them back. The calendar builds the rows from a CSV file; the API takes them as JSON.
 
 - **A row** is the content (`items`), at least one destination, and a schedule: a local time in an IANA zone (`instant`) or the next free slot of each channel's queue (`queue`).
-- **Same path as the composer:** each row is a new draft (`origin = 'import'`), then frozen and scheduled through `scheduleLocked` as the requesting member or API key. When the policy asks for approval, the draft stays and `openApprovalRequest` opens a request instead (`posts:submit`), bound to the row's time for an instant row and unbound for a queue row. Nothing skips freeze, approval, binding or the audit trail.
-- **Order:** rows run one after another in CSV order, so queue rows take slots in that order.
-- **All or nothing:** everything runs in one transaction, each row in its own savepoint. A row that fails is rolled back and the next one still runs, so one `422 unprocessable` lists every problem, with paths under `body.rows.<index>`; then nothing is kept. Issue messages aren't carried per row, only codes.
-- **Dry run:** with `dryRun: true` the whole import runs and is rolled back to a savepoint, so no post, request, job or event remains. The answer is `200` with each row's outcome (`scheduled` or `requested`) and no post ids; it's stored for its idempotency key like any answer. A real import answers `201` with the new post ids.
+- **Same path as the composer:** each row is a new draft (`origin = 'import'`), then frozen and scheduled through `scheduleLocked` as the requesting member or API key. When the policy asks for approval, the draft stays and `openApprovalRequest` opens a request instead (`posts:submit`), bound to the row's time for an instant row and unbound for a queue row. As in the composer, nothing queues that post after approval; it's scheduled by hand. Nothing skips freeze, approval, binding or the audit trail.
+- **Order and locks:** rows run one after another in CSV order, so queue rows take slots in that order. Before row 0, the queues of every queue row's channels are locked once, in channel-id order, so an import can't deadlock with the composer or another import; each row's own lock on the same channel is then a no-op.
+- **All or nothing:** everything runs in one transaction, each row in its own savepoint. A row that fails with a request error, or with a database rule mapped to one (`databaseError`), is rolled back and the next one still runs, so one `422 unprocessable` lists every problem, with paths under `body.rows.<index>`; then nothing is kept. Any other database error aborts the whole import. Issue messages aren't carried per row, only codes.
+- **Check:** `posts.import_check` runs the whole import inside a savepoint and rolls back to it, so no post, request, job or event remains. It answers each row's outcome (`scheduled` or `requested`), or the same `422`. A real import answers with the outcomes and the new post ids.
 
 ## Evergreen posts
 

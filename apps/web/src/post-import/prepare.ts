@@ -1,8 +1,10 @@
 import { errorCode, errorDetails } from '../api/errors.ts';
-import { issueMessage } from '../compose/issues.ts';
+import type { Channel } from '../channels/queries.ts';
+import { destinationIndex } from '../compose/issues.ts';
+import { m as calendarText } from '../i18n/calendar.ts';
 import { apiErrorMessage } from '../locale/i18n.ts';
 import { parseCsv } from './csv.ts';
-import { csvProblemMessage, rowProblemMessage } from './messages.ts';
+import { csvProblemMessage, issueText, rowProblemMessage } from './messages.ts';
 import { type ImportRow, mapRecord, type RowContext, rowIndex } from './rows.ts';
 
 export interface Problem {
@@ -40,14 +42,39 @@ function byLine(a: Problem, b: Problem): number {
   return (a.line ?? 0) - (b.line ?? 0);
 }
 
-export function serverProblems(error: unknown, lines: readonly number[]): Problem[] {
+function channelName(path: string, row: ImportRow | undefined, channels: readonly Channel[]) {
+  const index = destinationIndex(path);
+  const id = index === null ? undefined : row?.destinations[index]?.accountId;
+  return channels.find((channel) => channel.id === id)?.displayName ?? null;
+}
+
+function wholeFileMessage(code: string): string {
+  return code === 'payload_too_large'
+    ? calendarText.calendar_import_error_too_large()
+    : apiErrorMessage(code);
+}
+
+export function serverProblems(
+  error: unknown,
+  sent: Pick<Prepared, 'rows' | 'lines'>,
+  channels: readonly Channel[],
+): Problem[] {
   const details = errorDetails(error);
-  if (details.length === 0) return [{ line: null, message: apiErrorMessage(errorCode(error)) }];
+  if (details.length === 0) return [{ line: null, message: wholeFileMessage(errorCode(error)) }];
   return details.map((detail) => {
     const index = rowIndex(detail.path);
+    const problem = issueText(detail.code);
+    const channel = channelName(
+      detail.path,
+      index === null ? undefined : sent.rows[index],
+      channels,
+    );
     return {
-      line: index === null ? null : (lines[index] ?? null),
-      message: issueMessage(detail.code),
+      line: index === null ? null : (sent.lines[index] ?? null),
+      message:
+        channel === null
+          ? problem
+          : calendarText.calendar_import_issue_channel({ channel, problem }),
     };
   });
 }

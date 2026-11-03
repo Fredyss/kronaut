@@ -143,8 +143,15 @@
   "calendar_import_error_channel": "{channel} can't publish a text-only post.",
   "calendar_import_error_inactive": "{channel}: {status}",
   "calendar_import_error_channels": "Fill in the channels column or pick default channels.",
-  "calendar_import_error_date": "Use a date like 2026-12-31 and a time like 09:30.",
+  "calendar_import_error_date": "Write the date as 2026-12-31 or 31.12.2026 and the time as 9:30, 09:30 or 09:30:00.",
   "calendar_import_error_date_half": "Fill in both the date and the time, or leave both empty.",
   "calendar_import_example_first": "Hello! This post goes out at the date and time given.",
-  "calendar_import_example_queue": "This post takes the next free slot in the queue."
+  "calendar_import_example_queue": "This post takes the next free slot in the queue.",
+  "calendar_import_error_encoding": "The file isn't saved as UTF-8. In Excel, use Save As and pick the type “CSV UTF-8”.",
+  "calendar_import_error_too_large": "The file is too large to import at once. Split it into smaller files and import them one by one.",
+  "calendar_import_issue_not_found": "The channel wasn't found. It may have been removed.",
+  "calendar_import_issue_out_of_scope": "You don't have access to this channel.",
+  "calendar_import_issue_scope_missing": "Your access doesn't allow posting here.",
+  "calendar_import_issue_channel": "{channel}: {problem}",
+  "calendar_import_requested_queue": "Posts without a date and time get no slot while they wait. Schedule them once they're approved."
 }

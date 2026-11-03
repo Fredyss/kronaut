@@ -58,6 +58,7 @@
   "server/post-import -> posts/draft/items.ts",
   "server/post-import -> posts/schedule/approval-request.ts",
   "server/post-import -> posts/schedule/schedule.ts",
+  "server/post-import -> queue/slots.ts",
   "server/posts -> approval-policy/policy.ts",
   "server/posts -> approvals/binding.ts",
   "server/posts -> approvals/locked.ts",

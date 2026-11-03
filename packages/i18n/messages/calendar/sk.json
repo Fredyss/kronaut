@@ -157,8 +157,15 @@
   "calendar_import_error_channel": "Kanál {channel} nemôže uverejniť príspevok len s textom.",
   "calendar_import_error_inactive": "Kanál {channel}: {status}",
   "calendar_import_error_channels": "Vyplňte stĺpec channels alebo vyberte predvolené kanály.",
-  "calendar_import_error_date": "Zadajte dátum v tvare 2026-12-31 a čas v tvare 09:30.",
+  "calendar_import_error_date": "Dátum zadajte ako 2026-12-31 alebo 31.12.2026 a čas ako 9:30, 09:30 alebo 09:30:00.",
   "calendar_import_error_date_half": "Vyplňte dátum aj čas, alebo nechajte obe polia prázdne.",
   "calendar_import_example_first": "Dobrý deň! Tento príspevok vyjde v zadanom dátume a čase.",
-  "calendar_import_example_queue": "Tento príspevok dostane najbližšie voľné miesto vo fronte."
+  "calendar_import_example_queue": "Tento príspevok dostane najbližšie voľné miesto vo fronte.",
+  "calendar_import_error_encoding": "Súbor nie je uložený v kódovaní UTF-8. V Exceli zvoľte Uložiť ako a typ „CSV UTF-8“.",
+  "calendar_import_error_too_large": "Súbor je príliš veľký na jeden import. Rozdeľte ho na menšie súbory a importujte ich postupne.",
+  "calendar_import_issue_not_found": "Kanál sa nenašiel. Možno bol odstránený.",
+  "calendar_import_issue_out_of_scope": "K tomuto kanálu nemáte prístup.",
+  "calendar_import_issue_scope_missing": "Váš prístup tu nepovoľuje uverejňovať.",
+  "calendar_import_issue_channel": "{channel}: {problem}",
+  "calendar_import_requested_queue": "Príspevky bez dátumu a času počas čakania nedostanú miesto vo fronte. Po schválení ich naplánujte."
 }

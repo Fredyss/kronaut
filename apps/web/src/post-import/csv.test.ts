@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOM, MAX_CSV_ROWS, parseCsv, toCsv } from './csv.ts';
+import { BOM, decodeUtf8, MAX_CSV_ROWS, parseCsv, toCsv } from './csv.ts';
 
 function texts(input: string) {
   return parseCsv(input).records.map((record) => record.values.text);
@@ -54,7 +54,28 @@ describe('CSV parsing', () => {
   it('reports an empty file, an unclosed quote and extra fields', () => {
     expect(parseCsv('text\n\n').problems).toEqual([{ kind: 'empty' }]);
     expect(parseCsv('text\nok\n"open').problems).toEqual([{ kind: 'unclosed_quote', line: 3 }]);
-    expect(parseCsv('text\na,b').problems).toEqual([{ kind: 'extra_fields', line: 2 }]);
+    expect(parseCsv('text,channels\na,b,c').problems).toEqual([{ kind: 'extra_fields', line: 2 }]);
+  });
+
+  it('ignores an empty header column only while its cells are empty', () => {
+    const parsed = parseCsv('text;channels;date;time;;\nAhoj;;;;;\n');
+    expect(parsed.problems).toEqual([]);
+    expect(parsed.records.map((record) => record.values.text)).toEqual(['Ahoj']);
+    expect(parseCsv('text;;\nAhoj;;x\n').problems).toEqual([{ kind: 'unknown_column', name: '' }]);
+  });
+
+  it('keeps each line whole when the header has a single field', () => {
+    expect(texts('text\nAhoj, svet; druhý\n"Quoted\nline, too"\n')).toEqual([
+      'Ahoj, svet; druhý',
+      'Quoted\nline, too',
+    ]);
+  });
+
+  it('decodes UTF-8 and refuses anything else', () => {
+    const utf8 = new TextEncoder().encode('text\nDobrý deň');
+    expect(decodeUtf8(utf8.buffer)).toBe('text\nDobrý deň');
+    const cp1250 = Uint8Array.from([0x74, 0x65, 0x78, 0x74, 0x0a, 0x44, 0x6f, 0x62, 0x72, 0xfd]);
+    expect(decodeUtf8(cp1250.buffer)).toBeNull();
   });
 
   it('writes what it reads', () => {

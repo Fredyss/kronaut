@@ -17,21 +17,22 @@ const ImportRow = z.strictObject({
 });
 
 export const ImportInput = z.strictObject({
-  dryRun: z.boolean().optional(),
   rows: z.array(ImportRow).min(1).max(MAX_IMPORT_ROWS),
 });
 
+const Outcome = z.enum(['scheduled', 'requested']);
+
 export const ImportResult = z.object({
-  rows: z.array(
-    z.object({
-      outcome: z.enum(['scheduled', 'requested']),
-      postId: z.string().nullable(),
-    }),
-  ),
+  rows: z.array(z.object({ outcome: Outcome, postId: z.string() })),
+});
+
+export const ImportCheckResult = z.object({
+  rows: z.array(z.object({ outcome: Outcome })),
 });
 
 export type ImportBody = z.output<typeof ImportInput>;
 export type ImportRowBody = z.output<typeof ImportRow>;
 export type RowSchedule = z.output<typeof RowSchedule>;
 export type ImportOutput = z.output<typeof ImportResult>;
-export type RowOutcome = ImportOutput['rows'][number]['outcome'];
+export type ImportCheckOutput = z.output<typeof ImportCheckResult>;
+export type RowOutcome = z.output<typeof Outcome>;

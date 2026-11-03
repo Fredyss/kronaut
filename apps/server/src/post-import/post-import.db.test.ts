@@ -29,7 +29,7 @@ let queued: string;
 const QUEUE = { mode: 'queue' } as const;
 
 interface ImportAnswer {
-  readonly rows: { readonly outcome: string; readonly postId: string | null }[];
+  readonly rows: { readonly outcome: string; readonly postId: string }[];
 }
 
 beforeAll(async () => {
@@ -73,6 +73,10 @@ function row(accountId: string, schedule: object, text = 'Ahoj z CSV') {
 
 function importCall(body: object, auth: Auth = ownerAuth, key: string = randomUUID()) {
   return callWithKey('POST', 'post-imports', auth, { body, key });
+}
+
+function checkCall(body: object, auth: Auth = ownerAuth) {
+  return call('POST', 'post-imports/checks', auth, body);
 }
 
 function internal(postId: string | null): string {
@@ -149,23 +153,29 @@ describe('CSV import', () => {
     expect(String(first?.scheduled_local) < String(second?.scheduled_local)).toBe(true);
   });
 
-  it('checks a dry run without leaving posts, requests, jobs or events, and replays it', async () => {
+  it('checks an import without leaving posts, requests, jobs or events', async () => {
+    const before = await counts();
+    const response = await checkCall({ rows: [row(accountA, at(120)), row(queued, QUEUE)] });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      rows: [{ outcome: 'scheduled' }, { outcome: 'scheduled' }],
+    });
+    expect(await counts()).toEqual(before);
+  });
+
+  it('replays an import for the same key without creating its posts again', async () => {
     const before = await counts();
     const key = randomUUID();
-    const body = { dryRun: true, rows: [row(accountA, at(120)), row(queued, QUEUE)] };
+    const body = { rows: [row(accountA, at(150)), row(queued, QUEUE)] };
     const response = await importCall(body, ownerAuth, key);
-    expect(response.status).toBe(200);
-    const answer = (await response.json()) as ImportAnswer;
-    expect(answer.rows).toEqual([
-      { outcome: 'scheduled', postId: null },
-      { outcome: 'scheduled', postId: null },
-    ]);
-    expect(await counts()).toEqual(before);
+    expect(response.status).toBe(201);
+    const answer = await response.json();
+    expect((await counts())?.posts).toBe((before?.posts ?? 0) + 2);
     const replayed = await importCall(body, ownerAuth, key);
-    expect(replayed.status).toBe(200);
+    expect(replayed.status).toBe(201);
     expect(replayed.headers.get('idempotent-replayed')).toBe('true');
     expect(await replayed.json()).toEqual(answer);
-    expect(await counts()).toEqual(before);
+    expect((await counts())?.posts).toBe((before?.posts ?? 0) + 2);
   });
 
   it('fails the whole import when one row fails, and names every bad row', async () => {
@@ -182,6 +192,11 @@ describe('CSV import', () => {
       { path: 'body.rows.1.destinations.0.accountId', code: 'not_found' },
       { path: 'body.rows.2.schedule.mode', code: 'queue_empty' },
     ]);
+    const checked = await checkCall({ rows: [row(unknown, at(120))] });
+    expect(checked.status).toBe(422);
+    expect((await errorOf(checked)).details).toEqual([
+      { path: 'body.rows.0.destinations.0.accountId', code: 'not_found' },
+    ]);
     expect(await counts()).toEqual(before);
   });
 
@@ -195,6 +210,10 @@ describe('CSV import', () => {
   it('APR-03 no_bypass_paths: opens approval requests when the policy asks for them', async () => {
     await setPolicy({ mode: 'required', allow_self_approval: true });
     const time = at(240);
+    const checked = await checkCall({ rows: [row(accountA, time), row(queued, QUEUE)] });
+    expect(await checked.json()).toEqual({
+      rows: [{ outcome: 'requested' }, { outcome: 'requested' }],
+    });
     const response = await importCall({ rows: [row(accountA, time), row(queued, QUEUE)] });
     expect(response.status).toBe(201);
     const { rows } = (await response.json()) as ImportAnswer;
@@ -217,6 +236,7 @@ describe('CSV import', () => {
     const before = await counts();
     const response = await importCall({ rows: [row(accountA, at(120))] }, viewerAuth);
     expect(response.status).toBe(403);
+    expect((await checkCall({ rows: [row(accountA, at(120))] }, viewerAuth)).status).toBe(403);
     expect(await counts()).toEqual(before);
   });
 });

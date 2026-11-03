@@ -1881,7 +1881,6 @@ export type NotificationsMarkReadResponse = NotificationsMarkReadResponses[keyof
 
 export type PostsImportData = {
     body: {
-        dryRun?: boolean;
         rows: Array<{
             destinations: Array<{
                 accountId: string;
@@ -1938,12 +1937,73 @@ export type PostsImportResponses = {
     201: {
         rows: Array<{
             outcome: 'scheduled' | 'requested';
-            postId: string | null;
+            postId: string;
         }>;
     };
 };
 
 export type PostsImportResponse = PostsImportResponses[keyof PostsImportResponses];
+
+export type PostsImportCheckData = {
+    body: {
+        rows: Array<{
+            destinations: Array<{
+                accountId: string;
+                deliveryMode?: 'auto' | 'reminder';
+                publishType: string;
+                settings?: {
+                    [key: string]: unknown;
+                };
+                skipSignature?: boolean;
+                variant?: number | null;
+            }>;
+            items: Array<{
+                doc: {
+                    [key: string]: unknown;
+                };
+                media?: Array<{
+                    altText?: string | null;
+                    mediaId: string;
+                }>;
+                role?: 'main' | 'thread' | 'comment';
+            }>;
+            schedule: {
+                mode: 'instant';
+                scheduleLocal: string;
+                scheduleTz: string;
+            } | {
+                mode: 'queue';
+            };
+        }>;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/post-imports/checks';
+};
+
+export type PostsImportCheckErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type PostsImportCheckError = PostsImportCheckErrors[keyof PostsImportCheckErrors];
+
+export type PostsImportCheckResponses = {
+    /**
+     * OK
+     */
+    200: {
+        rows: Array<{
+            outcome: 'scheduled' | 'requested';
+        }>;
+    };
+};
+
+export type PostsImportCheckResponse = PostsImportCheckResponses[keyof PostsImportCheckResponses];
 
 export type PostsListData = {
     body?: never;

@@ -29,7 +29,7 @@ interface RawRecord {
 
 interface Scan {
   readonly text: string;
-  readonly delimiter: string;
+  readonly delimiter: string | null;
   readonly records: RawRecord[];
   index: number;
   line: number;
@@ -41,9 +41,20 @@ interface Scan {
 
 export const BOM = String.fromCodePoint(0xfeff);
 
-function detectDelimiter(text: string): ',' | ';' {
+const UTF8 = new TextDecoder('utf-8', { fatal: true });
+
+export function decodeUtf8(bytes: ArrayBuffer): string | null {
+  try {
+    return UTF8.decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+function detectDelimiter(text: string): ',' | ';' | null {
   const header = text.split(/\r\n|\r|\n/, 1)[0] ?? '';
   const count = (char: string) => header.split(char).length - 1;
+  if (count(';') === 0 && count(',') === 0) return null;
   return count(';') > count(',') ? ';' : ',';
 }
 
@@ -82,7 +93,10 @@ function plainStep(s: Scan, char: string): void {
   }
 }
 
-function scan(text: string, delimiter: string): { records: RawRecord[]; unclosed: number | null } {
+function scan(
+  text: string,
+  delimiter: string | null,
+): { records: RawRecord[]; unclosed: number | null } {
   const s: Scan = {
     text,
     delimiter,
@@ -112,21 +126,33 @@ function isColumn(name: string): name is CsvColumn {
   return (CSV_COLUMNS as readonly string[]).includes(name);
 }
 
-function readHeader(header: RawRecord): { columns: CsvColumn[] } | { problem: CsvProblem } {
-  const columns: CsvColumn[] = [];
+type HeaderColumn = CsvColumn | null;
+
+function readHeader(header: RawRecord): { columns: HeaderColumn[] } | { problem: CsvProblem } {
+  const columns: HeaderColumn[] = [];
   for (const raw of header.fields) {
     const name = raw.trim().toLowerCase();
-    if (!isColumn(name)) return { problem: { kind: 'unknown_column', name: raw.trim() } };
-    if (columns.includes(name)) return { problem: { kind: 'duplicate_column', name } };
-    columns.push(name);
+    if (name === '') columns.push(null);
+    else if (!isColumn(name)) return { problem: { kind: 'unknown_column', name: raw.trim() } };
+    else if (columns.includes(name)) return { problem: { kind: 'duplicate_column', name } };
+    else columns.push(name);
   }
   if (!columns.includes('text')) return { problem: { kind: 'missing_text' } };
   return { columns };
 }
 
-function toRecord(columns: readonly CsvColumn[], raw: RawRecord): CsvRecord {
+function unnamedInUse(columns: readonly HeaderColumn[], rows: readonly RawRecord[]): boolean {
+  return columns.some(
+    (column, index) =>
+      column === null && rows.some((raw) => (raw.fields[index] ?? '').trim() !== ''),
+  );
+}
+
+function toRecord(columns: readonly HeaderColumn[], raw: RawRecord): CsvRecord {
   const values: Record<CsvColumn, string> = { text: '', channels: '', date: '', time: '' };
-  for (const [index, column] of columns.entries()) values[column] = raw.fields[index] ?? '';
+  for (const [index, column] of columns.entries()) {
+    if (column !== null) values[column] = raw.fields[index] ?? '';
+  }
   return { line: raw.line, values };
 }
 
@@ -142,6 +168,7 @@ export function parseCsv(input: string): CsvParse {
   if (header === undefined || rows.length === 0) return failed({ kind: 'empty' });
   const read = readHeader(header);
   if ('problem' in read) return failed(read.problem);
+  if (unnamedInUse(read.columns, rows)) return failed({ kind: 'unknown_column', name: '' });
   if (rows.length > MAX_CSV_ROWS) return failed({ kind: 'too_many_rows', max: MAX_CSV_ROWS });
   const problems: CsvProblem[] = rows
     .filter((raw) => raw.fields.length > read.columns.length)

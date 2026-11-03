@@ -20,6 +20,7 @@
 /** @typedef {{}} Calendar_Import_Error_DateInputs */
 /** @typedef {{}} Calendar_Import_Error_Date_HalfInputs */
 /** @typedef {{}} Calendar_Import_Error_EmptyInputs */
+/** @typedef {{}} Calendar_Import_Error_EncodingInputs */
 /** @typedef {{}} Calendar_Import_Error_FieldsInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
@@ -28,6 +29,7 @@
 /** @typedef {{}} Calendar_Import_Error_ReadInputs */
 /** @typedef {{}} Calendar_Import_Error_TextInputs */
 /** @typedef {{}} Calendar_Import_Error_Text_ColumnInputs */
+/** @typedef {{}} Calendar_Import_Error_Too_LargeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_ExampleInputs */
 /** @typedef {{}} Calendar_Import_Example_FirstInputs */
@@ -35,12 +37,17 @@
 /** @typedef {{}} Calendar_Import_FileInputs */
 /** @typedef {{}} Calendar_Import_ImportingInputs */
 /** @typedef {{}} Calendar_Import_IntroInputs */
+/** @typedef {{ channel: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_Issue_ChannelInputs */
+/** @typedef {{}} Calendar_Import_Issue_Not_FoundInputs */
+/** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
+/** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
 /** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
 /** @typedef {{}} Calendar_Import_No_ChannelsInputs */
 /** @typedef {{}} Calendar_Import_OpenInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ReadyInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_RequestedInputs */
+/** @typedef {{}} Calendar_Import_Requested_QueueInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ScheduledInputs */
 /** @typedef {{}} Calendar_Import_SubmitInputs */
 /** @typedef {{}} Calendar_Import_TitleInputs */
@@ -159,7 +166,7 @@ export const calendar_import_error_column_twice = /** @type {(inputs: Calendar_I
 };
 
 export const calendar_import_error_date = /** @type {(inputs: Calendar_Import_Error_DateInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Use a date like 2026-12-31 and a time like 09:30.`)
+	return /** @type {LocalizedString} */ (`Write the date as 2026-12-31 or 31.12.2026 and the time as 9:30, 09:30 or 09:30:00.`)
 };
 
 export const calendar_import_error_date_half = /** @type {(inputs: Calendar_Import_Error_Date_HalfInputs) => LocalizedString} */ () => {
@@ -168,6 +175,10 @@ export const calendar_import_error_date_half = /** @type {(inputs: Calendar_Impo
 
 export const calendar_import_error_empty = /** @type {(inputs: Calendar_Import_Error_EmptyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The file has no posts.`)
+};
+
+export const calendar_import_error_encoding = /** @type {(inputs: Calendar_Import_Error_EncodingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file isn't saved as UTF-8. In Excel, use Save As and pick the type “CSV UTF-8”.`)
 };
 
 export const calendar_import_error_fields = /** @type {(inputs: Calendar_Import_Error_FieldsInputs) => LocalizedString} */ () => {
@@ -202,6 +213,10 @@ export const calendar_import_error_text_column = /** @type {(inputs: Calendar_Im
 	return /** @type {LocalizedString} */ (`The file needs a text column.`)
 };
 
+export const calendar_import_error_too_large = /** @type {(inputs: Calendar_Import_Error_Too_LargeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The file is too large to import at once. Split it into smaller files and import them one by one.`)
+};
+
 export const calendar_import_error_too_many = /** @type {(inputs: Calendar_Import_Error_Too_ManyInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`The file has more than ${i?.count} post. Split it into smaller files.`);
@@ -232,6 +247,22 @@ export const calendar_import_intro = /** @type {(inputs: Calendar_Import_IntroIn
 	return /** @type {LocalizedString} */ (`Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue.`)
 };
 
+export const calendar_import_issue_channel = /** @type {(inputs: Calendar_Import_Issue_ChannelInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.problem}`)
+};
+
+export const calendar_import_issue_not_found = /** @type {(inputs: Calendar_Import_Issue_Not_FoundInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The channel wasn't found. It may have been removed.`)
+};
+
+export const calendar_import_issue_out_of_scope = /** @type {(inputs: Calendar_Import_Issue_Out_Of_ScopeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`You don't have access to this channel.`)
+};
+
+export const calendar_import_issue_scope_missing = /** @type {(inputs: Calendar_Import_Issue_Scope_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your access doesn't allow posting here.`)
+};
+
 export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Line ${i?.line}: ${i?.problem}`)
 };
@@ -260,6 +291,10 @@ export const calendar_import_requested = /** @type {(inputs: Calendar_Import_Req
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post sent for approval.`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts sent for approval.`)
+};
+
+export const calendar_import_requested_queue = /** @type {(inputs: Calendar_Import_Requested_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posts without a date and time get no slot while they wait. Schedule them once they're approved.`)
 };
 
 export const calendar_import_scheduled = /** @type {(inputs: Calendar_Import_ScheduledInputs) => LocalizedString} */ (i) => {
