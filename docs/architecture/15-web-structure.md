@@ -2,7 +2,7 @@
 
 Which way imports run between the folders of `apps/web/src`, what a route file may hold, and where a new page or module goes. Read it before adding a page or moving code between web folders.
 
-**Status:** done. `pnpm check` keeps the web folders free of loops and the route files thin. The problem section is as measured at `f6517c9`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to the web app, as [Scheduling flow](14-scheduling-flow.md) does for the server.
+**Status:** done. `pnpm check` keeps the web folders free of loops and in tier order, and the route files thin. The problem section is as measured at `f6517c9`. [Code structure](13-code-structure.md) holds the general rules; this chapter applies them to the web app, as [Scheduling flow](14-scheduling-flow.md) does for the server.
 
 ## The problem
 
@@ -14,7 +14,7 @@ Measured at `f6517c9`, files had no import cycle, but folders did:
 
 ## Direction
 
-Each tier imports only tiers below it. Folders in one tier don't import each other; measured on the final import graph, that holds for every tier below.
+Each tier imports only tiers below it. Folders in one tier don't import each other (checked).
 
 | Tier | Folders | Owns |
 |---|---|---|
@@ -27,7 +27,9 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 7. Records | `posts`, `channels`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, the approval policy, metrics, sign-in, the theme |
 | Base | `api`, `locale`, `providers`, `ui`, `@kronaut/*` | Client and errors, messages and formatting, platform names, app-wide UI |
 
-A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. The check catches loops only, not an import against the tier order, so the order is for review. Type-only imports are outside both.
+A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. Type-only imports are outside both.
+
+The tier check reads production value imports: a feature folder imports only lower tiers, base folders and the `i18n` catalogs, never a route file or a `src` root file. The catalogs in turn import only base folders and packages, so no feature reaches another through them. Every feature folder needs a tier, so a new folder goes into this table and into [`tools/lint/tier-order.ts`](../../tools/lint/tier-order.ts) in the same PR. A tier change is a design decision, like a declared import.
 
 `approval-policy` sits beside `approvals`, as on the server: `compose` reads the policy, and `approvals` reuses `compose/when/*` and `compose/issues.ts`, so a subfolder would keep the loop.
 

@@ -112,10 +112,20 @@
         },
         "useMaxParams": { "level": "error", "options": { "max": 4 } }
       },
+      "correctness": {
+        "useImportExtensions": "error"
+      },
       "security": {
         "noDangerouslySetInnerHtml": "error"
       },
+      "suspicious": {
+        "noImportCycles": "error"
+      },
       "style": {
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"] }
+        },
         "noExcessiveLinesPerFile": {
           "level": "error",
           "options": { "maxLines": 300, "skipBlankLines": true }
