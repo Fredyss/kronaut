@@ -1,1 +1,1 @@
-export { ComposePage } from '../compose/compose-page.tsx';
+export { ComposePage } from '../composer/compose/compose-page.tsx';

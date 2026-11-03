@@ -4,11 +4,11 @@ import { createDatabase } from '@kronaut/db';
 import type { TestDatabase } from '@kronaut/db/testing';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { persistConnection } from '../src/channels/connect.ts';
-import { registerBluesky } from '../src/cli/provider-apps.ts';
-import { createOwner } from '../src/cli/users.ts';
-import type { Env } from '../src/config/config.ts';
-import { purposeKey } from '../src/crypto/crypto.ts';
+import { persistConnection } from '../src/access/channels/connect.ts';
+import { registerBluesky } from '../src/actors/cli/provider-apps.ts';
+import { createOwner } from '../src/actors/cli/users.ts';
+import type { Env } from '../src/base/config/config.ts';
+import { purposeKey } from '../src/base/crypto/crypto.ts';
 import { CHANNEL, OWNER, TIME_ZONE } from './env.ts';
 
 export interface SeedInput {

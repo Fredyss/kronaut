@@ -1,11 +1,15 @@
 import type { CliMessages } from '@kronaut/i18n/cli';
-import { backupCommand, exportCommand, importCommand } from './cli/backup-command.ts';
-import { locale, logger, messages, stderrLogger } from './cli/context.ts';
-import { CommandError, UsageError } from './cli/errors.ts';
-import { migrateCommand, releaseCommand, restoreCompleteCommand } from './cli/instance-command.ts';
-import { providerAppCommand } from './cli/provider-apps-command.ts';
-import { userCommand } from './cli/users-command.ts';
-import { ConfigError } from './config/config.ts';
+import { backupCommand, exportCommand, importCommand } from './actors/cli/backup-command.ts';
+import { locale, logger, messages, stderrLogger } from './actors/cli/context.ts';
+import { CommandError, UsageError } from './actors/cli/errors.ts';
+import {
+  migrateCommand,
+  releaseCommand,
+  restoreCompleteCommand,
+} from './actors/cli/instance-command.ts';
+import { providerAppCommand } from './actors/cli/provider-apps-command.ts';
+import { userCommand } from './actors/cli/users-command.ts';
+import { ConfigError } from './base/config/config.ts';
 
 function usage(m: CliMessages): string {
   const appSecret = `(${m.usage_app_secret_stdin({})})`;

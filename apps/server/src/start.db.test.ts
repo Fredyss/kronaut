@@ -11,12 +11,12 @@ import { sql } from 'kysely';
 import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import type { ServerConfig, ServerRole } from './config/config.ts';
-import { recordCronRun } from './jobs/cron-run.ts';
-import { CRON_TASKS } from './jobs/cron-tasks.ts';
-import { startHeartbeat } from './jobs/heartbeat.ts';
-import { installJobQueue, jobLogger } from './jobs/job-queue.ts';
-import { pngFixture } from './media/testing.ts';
+import { pngFixture } from './actors/media/testing.ts';
+import type { ServerConfig, ServerRole } from './base/config/config.ts';
+import { recordCronRun } from './infrastructure/jobs/cron-run.ts';
+import { CRON_TASKS } from './infrastructure/jobs/cron-tasks.ts';
+import { startHeartbeat } from './infrastructure/jobs/heartbeat.ts';
+import { installJobQueue, jobLogger } from './infrastructure/jobs/job-queue.ts';
 import { startServer } from './start.ts';
 
 const INSTANCE_ID = randomUUID();

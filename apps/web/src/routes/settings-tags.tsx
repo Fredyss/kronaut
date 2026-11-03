@@ -1,1 +1,1 @@
-export { TagSettingsPage } from '../tags/settings-page.tsx';
+export { TagSettingsPage } from '../content/tags/settings-page.tsx';

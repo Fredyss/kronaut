@@ -1,1 +1,1 @@
-export { SystemSettingsPage } from '../system/settings-page.tsx';
+export { SystemSettingsPage } from '../lists/system/settings-page.tsx';

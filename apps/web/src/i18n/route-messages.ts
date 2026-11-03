@@ -1,4 +1,9 @@
-import { baseLocale, type Locale, type MessagesOf, registerRouteCatalogs } from '../locale/i18n.ts';
+import {
+  baseLocale,
+  type Locale,
+  type MessagesOf,
+  registerRouteCatalogs,
+} from '../base/locale/i18n.ts';
 
 type Importers<C> = Readonly<Record<Exclude<Locale, typeof baseLocale>, () => Promise<C>>>;
 

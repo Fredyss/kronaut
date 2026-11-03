@@ -1,1 +1,1 @@
-export { MediaPage } from '../media/media-page.tsx';
+export { MediaPage } from '../lists/media/media-page.tsx';

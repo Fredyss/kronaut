@@ -7,8 +7,8 @@ import { join, resolve } from 'node:path';
 import { createDatabase } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { pino } from 'pino';
-import type { ServerConfig } from '../src/config/config.ts';
-import { installJobQueue } from '../src/jobs/job-queue.ts';
+import type { ServerConfig } from '../src/base/config/config.ts';
+import { installJobQueue } from '../src/infrastructure/jobs/job-queue.ts';
 import { type StartedServer, startServer } from '../src/start.ts';
 import { seed } from './seed.ts';
 

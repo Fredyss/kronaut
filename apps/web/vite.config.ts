@@ -66,7 +66,7 @@ export default defineConfig({
             // Split into their own files, these small modules each became a chunk with its own wrapper.
             {
               name: 'data',
-              test: /\/src\/(api\/|posts\/(?:destinations|queries|summary)\.ts|analytics\/roles\.ts|[^/]+\/queries\.ts)/,
+              test: /\/src\/(base\/api\/|records\/posts\/(?:destinations|queries|summary)\.ts|records\/analytics\/roles\.ts|(?:(?:pages|views|actions|lists|composer|content|records|base)\/)?[^/]+\/queries\.ts)/,
             },
           ],
         },

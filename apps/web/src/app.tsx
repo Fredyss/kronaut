@@ -10,19 +10,19 @@ import {
   type RouterHistory,
   redirect,
 } from '@tanstack/react-router';
-import { ApiClientContext } from './api/client.ts';
-import { isUnauthenticated } from './api/errors.ts';
-import { ME_KEY, meQuery } from './api/me.ts';
-import { calendarSearch } from './calendar/search.ts';
-import { composeSearch, postSearch } from './compose/search.ts';
-import { browserLanguages, loadLocale, m, pickLocale } from './locale/i18n.ts';
+import { ApiClientContext } from './base/api/client.ts';
+import { isUnauthenticated } from './base/api/errors.ts';
+import { ME_KEY, meQuery } from './base/api/me.ts';
+import { browserLanguages, loadLocale, m, pickLocale } from './base/locale/i18n.ts';
+import { composeSearch, postSearch } from './composer/compose/search.ts';
+import { canReadSystem } from './lists/system/status.ts';
 import { ChannelsPage, type ChannelsSearch } from './routes/channels.tsx';
 import { LocaleRoot } from './routes/locale-root.tsx';
 import { LoginPage, type LoginSearch } from './routes/login.tsx';
 import { NotFoundPage } from './routes/not-found.tsx';
 import { ResetPasswordPage } from './routes/reset-password.tsx';
 import { AppShell } from './routes/shell.tsx';
-import { canReadSystem } from './system/status.ts';
+import { calendarSearch } from './views/calendar/search.ts';
 
 export interface RouterContext {
   readonly queryClient: QueryClient;

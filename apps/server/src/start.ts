@@ -13,34 +13,33 @@ import { type Runner, run } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
+import { revokeTask } from './access/channels/revoke.ts';
+import { createMediaAccess, createMediaSigner } from './actors/media/access.ts';
+import { MEDIA_IMPORT_EGRESS, mediaImportTask } from './actors/media/import/import.ts';
+import { createMediaServer } from './actors/media/server.ts';
+import { stagingIn } from './actors/media/staging.ts';
+import { mediaProcessTask } from './actors/media/video/process.ts';
+import { metaLifecycleTask } from './actors/meta/lifecycle.ts';
 import { API_BODY_LIMITS, API_SIGN_IN, apiRoutes } from './api-routes.ts';
-import { revokeTask } from './channels/revoke.ts';
+import type { AccessConfig, Env, ServerConfig, ServerRole } from './base/config/config.ts';
+import { ConfigError } from './base/config/config.ts';
 import {
-  type AccessConfig,
-  ConfigError,
-  type Env,
-  type ServerConfig,
-  type ServerRole,
-} from './config/config.ts';
+  ACCESS_EGRESS,
+  type AccessVerifier,
+  createAccessVerifier,
+} from './base/http/caller/access.ts';
+import { drain, listen } from './base/http/listen.ts';
+import { createHttpApp, deriveHttpKeys, type HttpDeps } from './base/http/pipeline/kernel.ts';
+import { loadWebApp } from './base/http/web.ts';
+import { createProviderRegistry } from './base/providers/providers.ts';
 import { cronItems, cronTaskList, cronTasks } from './cron.ts';
-import { ACCESS_EGRESS, type AccessVerifier, createAccessVerifier } from './http/caller/access.ts';
-import { drain, listen } from './http/listen.ts';
-import { createHttpApp, deriveHttpKeys, type HttpDeps } from './http/pipeline/kernel.ts';
-import { loadWebApp } from './http/web.ts';
-import { type Heartbeat, startHeartbeat, workerAlive } from './jobs/heartbeat.ts';
-import { type LockSweep, openJobSession, startJobLocks } from './jobs/job-locks.ts';
-import { jobLogger } from './jobs/job-queue.ts';
-import { JOBS } from './jobs/jobs.ts';
-import { createMediaAccess, createMediaSigner } from './media/access.ts';
-import { MEDIA_IMPORT_EGRESS, mediaImportTask } from './media/import/import.ts';
-import { createMediaServer } from './media/server.ts';
-import { stagingIn } from './media/staging.ts';
-import { mediaProcessTask } from './media/video/process.ts';
-import { metaLifecycleTask } from './meta/lifecycle.ts';
-import { emailDeps } from './notifications/email.ts';
-import { createProviderRegistry } from './providers/providers.ts';
-import { publishDeps, publishTask } from './publish/task.ts';
-import { verifyTask } from './publish/verify/verify.ts';
+import { type Heartbeat, startHeartbeat, workerAlive } from './infrastructure/jobs/heartbeat.ts';
+import { type LockSweep, openJobSession, startJobLocks } from './infrastructure/jobs/job-locks.ts';
+import { jobLogger } from './infrastructure/jobs/job-queue.ts';
+import { JOBS } from './infrastructure/jobs/jobs.ts';
+import { emailDeps } from './records/notifications/email.ts';
+import { publishDeps, publishTask } from './steps/publish/task.ts';
+import { verifyTask } from './steps/publish/verify/verify.ts';
 
 const APP_VERSION = (
   JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {

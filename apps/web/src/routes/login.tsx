@@ -1,1 +1,1 @@
-export { LoginPage, type LoginSearch } from '../auth/login-page.tsx';
+export { LoginPage, type LoginSearch } from '../records/auth/login-page.tsx';
