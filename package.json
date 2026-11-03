@@ -12,6 +12,7 @@
     "check": "biome check . && jscpd && tsc -b && vitest run && pnpm licenses:check",
     "lint": "biome check .",
     "dup": "jscpd --reporters console",
+    "fallow": "fallow audit",
     "format": "biome check --write .",
     "typecheck": "tsc -b",
     "test": "vitest run",
