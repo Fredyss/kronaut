@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import { type Client, type ClientMeta, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client/index.ts';
-import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, RssFeedsCreateData, RssFeedsCreateErrors, RssFeedsCreateResponses, RssFeedsDeleteData, RssFeedsDeleteErrors, RssFeedsDeleteResponses, RssFeedsListData, RssFeedsListErrors, RssFeedsListResponses, RssFeedsUpdateData, RssFeedsUpdateErrors, RssFeedsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
+import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetShortenLinksData, ChannelsSetShortenLinksErrors, ChannelsSetShortenLinksResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, LinkShortenerConnectData, LinkShortenerConnectErrors, LinkShortenerConnectResponses, LinkShortenerGetData, LinkShortenerGetErrors, LinkShortenerGetResponses, LinkShortenerRemoveData, LinkShortenerRemoveErrors, LinkShortenerRemoveResponses, LinkShortenerUpdateData, LinkShortenerUpdateErrors, LinkShortenerUpdateResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, RssFeedsCreateData, RssFeedsCreateErrors, RssFeedsCreateResponses, RssFeedsDeleteData, RssFeedsDeleteErrors, RssFeedsDeleteResponses, RssFeedsListData, RssFeedsListErrors, RssFeedsListResponses, RssFeedsUpdateData, RssFeedsUpdateErrors, RssFeedsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, ShortLinksPostData, ShortLinksPostErrors, ShortLinksPostResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -405,6 +405,93 @@ export const channelsSetSignature = <ThrowOnError extends boolean = true>(option
             type: 'apiKey'
         }],
     url: '/v1/workspaces/{workspaceId}/channels/{channelId}/saved-text',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Turn a channel's short links on or off
+ *
+ * Whether links in posts frozen for this channel are shortened through the workspace's link shortener (on by default). Posts already frozen keep their choice. Owners and admins only.
+ */
+export const channelsSetShortenLinks = <ThrowOnError extends boolean = true>(options: Options<ChannelsSetShortenLinksData, ThrowOnError>): RequestResult<ChannelsSetShortenLinksResponses, ChannelsSetShortenLinksErrors, ThrowOnError> => (options.client ?? client).put<ChannelsSetShortenLinksResponses, ChannelsSetShortenLinksErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/shorten-links',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove the link shortener
+ *
+ * Posts frozen afterwards keep their long links; short links already created stay on the shortener. 404 when there is none. Owners and admins only.
+ */
+export const linkShortenerRemove = <ThrowOnError extends boolean = true>(options: Options<LinkShortenerRemoveData, ThrowOnError>): RequestResult<LinkShortenerRemoveResponses, LinkShortenerRemoveErrors, ThrowOnError> => (options.client ?? client).delete<LinkShortenerRemoveResponses, LinkShortenerRemoveErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/link-shortener',
+    ...options
+});
+
+/**
+ * Read the workspace's link shortener
+ *
+ * The connected shortener, or null when there is none. Owners and admins only.
+ */
+export const linkShortenerGet = <ThrowOnError extends boolean = true>(options: Options<LinkShortenerGetData, ThrowOnError>): RequestResult<LinkShortenerGetResponses, LinkShortenerGetErrors, ThrowOnError> => (options.client ?? client).get<LinkShortenerGetResponses, LinkShortenerGetErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/link-shortener',
+    ...options
+});
+
+/**
+ * Change the link shortener
+ *
+ * Changes the base URL, the domain or the key; a different provider needs removing and connecting again. 404 when there is none. The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is `https://api.dub.co` for Dub; for Kutt it is required, an `https` link of up to 2048 characters to `https://kutt.to` or your own instance, stored without `/api/v2` (422 base_url_invalid; `kutt.it` is refused). The domain is an optional custom short domain of up to 190 characters (422 domain_invalid). The key has up to 1024 printable characters (422 api_key_invalid). Owners and admins only.
+ */
+export const linkShortenerUpdate = <ThrowOnError extends boolean = true>(options: Options<LinkShortenerUpdateData, ThrowOnError>): RequestResult<LinkShortenerUpdateResponses, LinkShortenerUpdateErrors, ThrowOnError> => (options.client ?? client).patch<LinkShortenerUpdateResponses, LinkShortenerUpdateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/link-shortener',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Connect a link shortener
+ *
+ * Links in posts frozen afterwards are shortened per channel, with UTM tags, when the post is sent. One shortener per workspace (409 conflict). The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is `https://api.dub.co` for Dub; for Kutt it is required, an `https` link of up to 2048 characters to `https://kutt.to` or your own instance, stored without `/api/v2` (422 base_url_invalid; `kutt.it` is refused). The domain is an optional custom short domain of up to 190 characters (422 domain_invalid). The key has up to 1024 printable characters (422 api_key_invalid). Owners and admins only.
+ */
+export const linkShortenerConnect = <ThrowOnError extends boolean = true>(options: Options<LinkShortenerConnectData, ThrowOnError>): RequestResult<LinkShortenerConnectResponses, LinkShortenerConnectErrors, ThrowOnError> => (options.client ?? client).post<LinkShortenerConnectResponses, LinkShortenerConnectErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/link-shortener',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -1045,6 +1132,21 @@ export const postsSchedule = <ThrowOnError extends boolean = true>(options: Opti
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * Read a post's short links
+ *
+ * Per destination: whether its frozen revision is shortened, and each long link with its short link. A pending link is shortened when the post is sent; a failed one names the error and is published as written. A link that isn't ready when the post is first sent stays long.
+ */
+export const shortLinksPost = <ThrowOnError extends boolean = true>(options: Options<ShortLinksPostData, ThrowOnError>): RequestResult<ShortLinksPostResponses, ShortLinksPostErrors, ThrowOnError> => (options.client ?? client).get<ShortLinksPostResponses, ShortLinksPostErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/short-links',
+    ...options
 });
 
 /**

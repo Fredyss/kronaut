@@ -20,6 +20,7 @@ import { JOBS } from './infrastructure/jobs/jobs.ts';
 import { pullAnalytics } from './records/analytics/pull.ts';
 import { type EmailDeps, emailNotifications } from './records/notifications/email.ts';
 import { purgeNotifications } from './records/notifications/retention.ts';
+import { purgeShortLinks } from './records/short-links/gc.ts';
 import { type RefreshDeps, refreshExpiring } from './steps/publish/refresh/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './steps/publish/sweeps.ts';
 
@@ -214,8 +215,11 @@ export function cronTaskList(
       await recordCronRun(db, CRON_TASKS.credentialRefresh, () => refreshExpiring(sweeps));
     },
     [CRON_TASKS.credentialRetention]: async () => {
-      await recordCronRun(db, CRON_TASKS.credentialRetention, () =>
-        purgeDisconnectedCredentials(db),
+      await recordCronRun(db, CRON_TASKS.credentialRetention, async () =>
+        JSON.stringify({
+          ...JSON.parse(await purgeDisconnectedCredentials(db)),
+          shortLinks: await purgeShortLinks(db),
+        }),
       );
     },
     [CRON_TASKS.evergreenFill]: async () => {

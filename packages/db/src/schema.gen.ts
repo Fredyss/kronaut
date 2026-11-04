@@ -444,6 +444,21 @@ export interface ItemMedia {
   workspace_id: string;
 }
 
+export interface LinkShorteners {
+  aad_v: number;
+  base_url: string;
+  created_at: Generated<Timestamp>;
+  domain: string | null;
+  id: Generated<string>;
+  kek_version: number;
+  key_ciphertext: Buffer;
+  key_nonce: Buffer;
+  key_wrapped_dek: Buffer;
+  provider: string;
+  updated_at: Generated<Timestamp>;
+  workspace_id: string;
+}
+
 export interface Locations {
   address: Json | null;
   archived_at: Timestamp | null;
@@ -910,6 +925,21 @@ export interface Sessions {
   user_id: string;
 }
 
+export interface ShortLinks {
+  attempts: Generated<number>;
+  created_at: Generated<Timestamp>;
+  destination_id: string;
+  error_code: string | null;
+  link_id: string | null;
+  long_url: string;
+  short_url: string | null;
+  state: Generated<string>;
+  target: string;
+  updated_at: Generated<Timestamp>;
+  url_sha256: Buffer;
+  workspace_id: string;
+}
+
 export interface SocialAccounts {
   access_expires_at: Timestamp | null;
   account_kind: string;
@@ -930,6 +960,7 @@ export interface SocialAccounts {
   provider_subject_id: string | null;
   refresh_expires_at: Timestamp | null;
   saved_text_id: string | null;
+  shorten_links: Generated<boolean>;
   status: Generated<string>;
   status_changed_at: Generated<Timestamp>;
   status_reason: string | null;
@@ -1090,6 +1121,7 @@ export interface DB {
   inbound_events: InboundEvents;
   instance_state: InstanceState;
   item_media: ItemMedia;
+  link_shorteners: LinkShorteners;
   locations: Locations;
   media_assets: MediaAssets;
   media_imports: MediaImports;
@@ -1120,6 +1152,7 @@ export interface DB {
   saved_texts: SavedTexts;
   security_events: SecurityEvents;
   sessions: Sessions;
+  short_links: ShortLinks;
   social_accounts: SocialAccounts;
   tags: Tags;
   usage_counters: UsageCounters;

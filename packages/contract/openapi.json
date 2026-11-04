@@ -2459,6 +2459,9 @@
                           "provider": {
                             "type": "string"
                           },
+                          "shortenLinks": {
+                            "type": "boolean"
+                          },
                           "signature": {
                             "anyOf": [
                               {
@@ -2521,7 +2524,8 @@
                           "postTypes",
                           "preview",
                           "insights",
-                          "signature"
+                          "signature",
+                          "shortenLinks"
                         ],
                         "type": "object"
                       },
@@ -3355,6 +3359,521 @@
         "summary": "Set a channel's signature",
         "tags": [
           "channels"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/channels/{channelId}/shorten-links": {
+      "put": {
+        "description": "Whether links in posts frozen for this channel are shortened through the workspace's link shortener (on by default). Posts already frozen keep their choice. Owners and admins only.",
+        "operationId": "channels.set_shorten_links",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "shortenLinks": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "shortenLinks"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "shortenLinks": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "shortenLinks"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Turn a channel's short links on or off",
+        "tags": [
+          "channels"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/link-shortener": {
+      "delete": {
+        "description": "Posts frozen afterwards keep their long links; short links already created stay on the shortener. 404 when there is none. Owners and admins only.",
+        "operationId": "link_shortener.remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Remove the link shortener",
+        "tags": [
+          "short-links"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "get": {
+        "description": "The connected shortener, or null when there is none. Owners and admins only.",
+        "operationId": "link_shortener.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "shortener": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "baseUrl": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                              "type": "string"
+                            },
+                            "domain": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "hasKey": {
+                              "type": "boolean"
+                            },
+                            "provider": {
+                              "enum": [
+                                "dub",
+                                "kutt"
+                              ],
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "provider",
+                            "baseUrl",
+                            "domain",
+                            "hasKey",
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "shortener"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Read the workspace's link shortener",
+        "tags": [
+          "short-links"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "patch": {
+        "description": "Changes the base URL, the domain or the key; a different provider needs removing and connecting again. 404 when there is none. The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is `https://api.dub.co` for Dub; for Kutt it is required, an `https` link of up to 2048 characters to `https://kutt.to` or your own instance, stored without `/api/v2` (422 base_url_invalid; `kutt.it` is refused). The domain is an optional custom short domain of up to 190 characters (422 domain_invalid). The key has up to 1024 printable characters (422 api_key_invalid). Owners and admins only.",
+        "operationId": "link_shortener.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "baseUrl": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "baseUrl": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "hasKey": {
+                      "type": "boolean"
+                    },
+                    "provider": {
+                      "enum": [
+                        "dub",
+                        "kutt"
+                      ],
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "baseUrl",
+                    "domain",
+                    "hasKey",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Change the link shortener",
+        "tags": [
+          "short-links"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "post": {
+        "description": "Links in posts frozen afterwards are shortened per channel, with UTM tags, when the post is sent. One shortener per workspace (409 conflict). The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is `https://api.dub.co` for Dub; for Kutt it is required, an `https` link of up to 2048 characters to `https://kutt.to` or your own instance, stored without `/api/v2` (422 base_url_invalid; `kutt.it` is refused). The domain is an optional custom short domain of up to 190 characters (422 domain_invalid). The key has up to 1024 printable characters (422 api_key_invalid). Owners and admins only.",
+        "operationId": "link_shortener.connect",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "apiKey": {
+                    "type": "string"
+                  },
+                  "baseUrl": {
+                    "type": "string"
+                  },
+                  "domain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "provider": {
+                    "enum": [
+                      "dub",
+                      "kutt"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "apiKey"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "baseUrl": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "domain": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "hasKey": {
+                      "type": "boolean"
+                    },
+                    "provider": {
+                      "enum": [
+                        "dub",
+                        "kutt"
+                      ],
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "baseUrl",
+                    "domain",
+                    "hasKey",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Connect a link shortener",
+        "tags": [
+          "short-links"
         ],
         "x-kronaut-action": "settings:write",
         "x-kronaut-auth": [
@@ -14921,6 +15440,151 @@
           "posts"
         ],
         "x-kronaut-action": "posts:schedule",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/short-links": {
+      "get": {
+        "description": "Per destination: whether its frozen revision is shortened, and each long link with its short link. A pending link is shortened when the post is sent; a failed one names the error and is published as written. A link that isn't ready when the post is first sent stays long.",
+        "operationId": "short_links.post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "destinations": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelId": {
+                            "type": "string"
+                          },
+                          "destinationId": {
+                            "type": "string"
+                          },
+                          "links": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "error": {
+                                  "anyOf": [
+                                    {
+                                      "enum": [
+                                        "unauthorized",
+                                        "refused",
+                                        "rate_limited",
+                                        "unavailable",
+                                        "timed_out",
+                                        "url_blocked",
+                                        "conflict",
+                                        "invalid_response"
+                                      ],
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "longUrl": {
+                                  "type": "string"
+                                },
+                                "shortUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "state": {
+                                  "enum": [
+                                    "pending",
+                                    "ready",
+                                    "failed"
+                                  ],
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "longUrl",
+                                "shortUrl",
+                                "state",
+                                "error"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "shorten": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "destinationId",
+                          "channelId",
+                          "shorten",
+                          "links"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "destinations"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Read a post's short links",
+        "tags": [
+          "short-links"
+        ],
+        "x-kronaut-action": "posts:read",
         "x-kronaut-auth": [
           "session",
           "grant"

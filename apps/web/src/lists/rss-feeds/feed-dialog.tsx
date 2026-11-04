@@ -1,4 +1,4 @@
-import { Button, Input, Label, Modal } from '@kronaut/ui';
+import { Button, Modal, TextField } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { type FormEvent, useId, useMemo, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
@@ -7,7 +7,7 @@ import { choiceFor, type MediaFacts, NO_MEDIA } from '../../composer/compose/con
 import { m as settingsText } from '../../i18n/settings.ts';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
 import { type FeedErrors, feedErrors } from './errors.ts';
-import { ChannelChoices, FieldError, ModeChoice, TemplateField } from './feed-fields.tsx';
+import { ChannelChoices, ModeChoice, TemplateField } from './feed-fields.tsx';
 import {
   DEFAULT_TEMPLATE,
   FEED_NAME_MAX,
@@ -41,37 +41,6 @@ function bodyOf(draft: FeedBody, order: readonly Channel[]): FeedBody {
     name: draft.name.normalize('NFC').trim(),
     channelIds: order.filter((channel) => picked.has(channel.id)).map((channel) => channel.id),
   };
-}
-
-function TextField({
-  label,
-  value,
-  max,
-  error,
-  onChange,
-}: {
-  readonly label: string;
-  readonly value: string;
-  readonly max: number;
-  readonly error?: string | undefined;
-  onChange(value: string): void;
-}) {
-  const id = useId();
-  const errorId = useId();
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Input
-        id={id}
-        value={value}
-        maxLength={max}
-        aria-invalid={error === undefined ? undefined : true}
-        aria-describedby={error === undefined ? undefined : errorId}
-        onChange={(event) => onChange(event.currentTarget.value)}
-      />
-      <FieldError id={errorId} message={error} />
-    </div>
-  );
 }
 
 export interface FeedDialogProps {
@@ -118,16 +87,16 @@ export function FeedDialog({ workspaceId, feed, onClose }: FeedDialogProps) {
           <TextField
             label={settingsText.settings_feed_url()}
             value={url}
-            max={FEED_URL_MAX}
+            maxLength={FEED_URL_MAX}
             error={errors.url}
-            onChange={setUrl}
+            onValueChange={setUrl}
           />
           <TextField
             label={settingsText.settings_feed_name()}
             value={name}
-            max={FEED_NAME_MAX}
+            maxLength={FEED_NAME_MAX}
             error={errors.name}
-            onChange={setName}
+            onValueChange={setName}
           />
           <ChannelChoices
             channels={channels}

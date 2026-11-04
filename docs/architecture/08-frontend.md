@@ -80,6 +80,9 @@
 - **Feeds:** Settings → Feeds, for roles with `settings:write`, lists each feed with its name, host, channels, mode, last check and status: active, or paused with the reason and a Resume button.
   - Adding or editing opens a dialog: URL, name, channels (those that can post text alone or text with one image; a hint below the list says that channels needing an image, such as Instagram, get only the items that have one), mode ("Add to queue" or "Save as draft") and the template, with the three placeholders listed below it. Saving runs the first check, and its error shows in the dialog.
   - Deleting asks first and says the posts stay.
+- **Short links:** Settings → Short links, for roles with `settings:write`, connects one shortener: Dub or Kutt, for Kutt its base URL (hint: `https://kutt.to` or your own instance), an optional custom domain and the API key. The key is write-only: the page shows only that one is set. Saving checks the key, and its error shows in the form. Removing asks first.
+  - Each channel's page has a "Shorten links" switch, shown when the workspace has a shortener.
+  - The post page and the approval view list, per channel, each long link with its short link, "will be shortened when published" while it's pending, or why it wasn't shortened.
 - **Saved texts:** reusable text, such as a signature or a template, kept for the whole workspace.
   - Settings → Saved texts adds, edits and deletes them, for roles with `settings:write`. It's plain text, edited in a text box.
   - In the composer, an "Insert saved text" select and an Insert button sit above the text box, hidden while the workspace has none. Choosing a text inserts nothing until Insert is pressed, so type-ahead and arrow keys can't change the post.

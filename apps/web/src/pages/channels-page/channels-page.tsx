@@ -10,6 +10,7 @@ import { useLocale } from '../../base/locale/context.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { ChannelSignature } from '../../content/saved-texts/channel-signature.tsx';
+import { ChannelShortenLinks } from '../../content/short-links/channel-switch.tsx';
 import { ANALYTICS_ROLES } from '../../records/analytics/roles.ts';
 import { AddChannelDialog } from '../../records/channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../../records/channels/connect-option.tsx';
@@ -178,6 +179,7 @@ function ChannelCard(props: CardProps) {
           )}
         </div>
         <ChannelSignature channel={channel} />
+        <ChannelShortenLinks channel={channel} />
       </div>
       <CardActions {...props} panel={panel} setPanel={setPanel} />
       {onDisconnect === null || panel !== 'confirm' ? null : (

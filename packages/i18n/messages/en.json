@@ -544,5 +544,27 @@
   "channels_signature_none": "None",
   "channels_signature_named": "Signature: {name}",
   "channels_signature_saved": "Signature saved",
-  "post_signature": "Signature: {text}"
+  "post_signature": "Signature: {text}",
+  "channels_shorten_links": "Shorten links",
+  "channels_shorten_links_on": "Links on this channel will be shortened",
+  "channels_shorten_links_off": "Links on this channel won't be shortened",
+  "post_short_links_title": "Short links",
+  "post_short_link_pending": "Will be shortened when published",
+  "post_short_link_failed": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=unauthorized": "Not shortened: the shortener refused the API key.",
+        "kind=refused": "Not shortened: the shortener refused this link.",
+        "kind=rate_limited": "Not shortened: the shortener got too many requests.",
+        "kind=unavailable": "Not shortened: the shortener couldn't be reached.",
+        "kind=timed_out": "Not shortened: the shortener took too long to answer.",
+        "kind=url_blocked": "Not shortened: the shortener's address isn't allowed.",
+        "kind=conflict": "Not shortened: the shortener already has a different link under this ID.",
+        "kind=invalid_response": "Not shortened: the shortener's answer couldn't be read.",
+        "kind=*": "Not shortened."
+      }
+    }
+  ]
 }

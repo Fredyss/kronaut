@@ -30,6 +30,7 @@ import type { CronTask } from './infrastructure/jobs/cron-tasks.ts';
 import { policyRoutes } from './policy/approval-policy/policy-routes.ts';
 import { analyticsRoutes } from './records/analytics/routes.ts';
 import { notificationRoutes } from './records/notifications/routes.ts';
+import { shortLinkRoutes } from './records/short-links/routes.ts';
 import { approvalRoutes } from './steps/approvals/routes.ts';
 import { queueRoutes } from './steps/queue/routes.ts';
 import { savedTextRoutes } from './steps/saved-texts/routes.ts';
@@ -54,6 +55,7 @@ export interface ApiRouteDeps {
   readonly providers: ProviderRegistry;
   readonly cronTasks: readonly CronTask[];
   readonly feedHttp?: HttpClient | undefined;
+  readonly shortenerHttp?: HttpClient | undefined;
 }
 
 export function apiRoutes({
@@ -65,6 +67,7 @@ export function apiRoutes({
   providers,
   cronTasks,
   feedHttp,
+  shortenerHttp,
 }: ApiRouteDeps): BoundRoute[] {
   return [
     ...systemRoutes(http),
@@ -88,6 +91,7 @@ export function apiRoutes({
     ...savedTextRoutes(),
     ...rssFeedRoutes({ providers, http: feedHttp }),
     ...analyticsRoutes(),
+    ...shortLinkRoutes({ keyring, http: shortenerHttp }),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({

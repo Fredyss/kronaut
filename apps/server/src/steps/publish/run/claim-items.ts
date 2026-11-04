@@ -8,11 +8,16 @@ function sha256(text: string): Buffer {
   return createHash('sha256').update(text, 'utf8').digest();
 }
 
+export interface ItemPlan {
+  readonly items: readonly PublishItem[];
+  readonly postType: PostTypeSpec;
+  render(): Promise<ReadonlyMap<number, string>>;
+}
+
 export async function resetItems(
   trx: TenantDb,
   job: DestinationJob,
-  items: readonly PublishItem[],
-  postType: PostTypeSpec,
+  { items, postType, render }: ItemPlan,
 ): Promise<void> {
   const existingItem = await trx
     .selectFrom('destination_items')
@@ -31,11 +36,12 @@ export async function resetItems(
     return;
   }
   const skipped = frozenSkips(postType, items);
+  const texts = await render();
   await trx
     .insertInto('destination_items')
     .values(
       items.map((item) => {
-        const text = item.text.normalize('NFC');
+        const text = (texts.get(item.position) ?? item.text).normalize('NFC');
         return {
           workspace_id: job.workspaceId,
           destination_id: job.id,

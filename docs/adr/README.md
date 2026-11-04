@@ -49,6 +49,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0031](0031-outgoing-webhooks.md) | Outgoing webhooks |
 | [0032](0032-providererror-contract.md) | ProviderError contract |
 | [0034](0034-delivery-mode-and-manual-reminders.md) | Delivery mode and manual reminders |
+| [0058](0058-short-links-swapped-in-at-the-first-claim.md) | Short links swapped in at the first claim |
 
 ## Identity, agents & security
 

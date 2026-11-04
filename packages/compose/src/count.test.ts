@@ -1,6 +1,6 @@
 import type { TextCounting } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
-import { countLinks, countText } from './count.ts';
+import { countLinks, countText, findLinks, replaceLinks } from './count.ts';
 
 const FAMILY = '\u{1F468}‍\u{1F469}‍\u{1F467}‍\u{1F466}';
 const FLAG_SK = '\u{1F1F8}\u{1F1F0}';
@@ -117,5 +117,15 @@ describe('countLinks', () => {
     ['a decomposed host as its composed form', 'c\u030c.example č.example', 1],
   ])('counts %s', (_label, text, expected) => {
     expect(countLinks(text)).toBe(expected);
+  });
+});
+
+describe('findLinks and replaceLinks', () => {
+  it('find each http link once, without trailing punctuation, and replace them in place', () => {
+    const text = 'See https://a.test/x, http://b.test/y?q=1. Again https://a.test/x and a.test';
+    expect(findLinks(text)).toEqual(['https://a.test/x', 'http://b.test/y?q=1']);
+    expect(
+      replaceLinks(text, (link) => (link === 'https://a.test/x' ? 'https://s.test/1' : link)),
+    ).toBe('See https://s.test/1, http://b.test/y?q=1. Again https://s.test/1 and a.test');
   });
 });

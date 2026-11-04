@@ -11,6 +11,7 @@ export const JOBS = {
   mediaImport: 'media_import',
   metaLifecycle: 'meta_lifecycle',
   rss: 'rss',
+  shortLinks: 'short_links',
 } as const;
 
 export interface DestinationJob {
@@ -170,5 +171,22 @@ export async function enqueueFeedCheck(
       max_attempts := 1,
       job_key := ${`rss:${job.id}`},
       job_key_mode := 'preserve_run_at')
+  `.execute(trx);
+}
+
+const SHORT_LINK_ATTEMPTS = 3;
+
+function shortLinksJobKey(destinationId: string): string {
+  return `short-links:${destinationId}`;
+}
+
+export async function enqueueShortLinks(trx: TenantDb, destination: DestinationJob): Promise<void> {
+  const payload = JSON.stringify({ workspaceId: destination.workspaceId, id: destination.id });
+  await sql`
+    select graphile_worker.add_job(${JOBS.shortLinks}, ${payload}::json,
+      queue_name := 'short-links',
+      max_attempts := ${SHORT_LINK_ATTEMPTS},
+      job_key := ${shortLinksJobKey(destination.id)},
+      job_key_mode := 'replace')
   `.execute(trx);
 }

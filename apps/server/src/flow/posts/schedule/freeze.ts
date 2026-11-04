@@ -11,6 +11,7 @@ import type { DB, TenantDb } from '@kronaut/db';
 import { sql, type UpdateObject } from 'kysely';
 import { HttpError, type IssueDetail } from '../../../base/http/errors.ts';
 import type { ProviderEntry, ProviderRegistry } from '../../../base/providers/providers.ts';
+import { enqueueShortLinks } from '../../../infrastructure/jobs/jobs.ts';
 import { APPROVAL_UNBOUND } from '../../../steps/approvals/binding.ts';
 import {
   contentHashInput,
@@ -20,6 +21,7 @@ import {
   SNAPSHOT_V,
   unsignedHashInput,
 } from '../../../steps/publish/snapshot.ts';
+import { type Accounts, loadAccounts, shortenField, signatureField } from './accounts.ts';
 import { loadContent, mediaSnapshot } from './content.ts';
 
 // A new schedule is a new publish. Checkpoints and the attempt budget belong to the previous one.
@@ -100,13 +102,6 @@ function preflightFailed(details: readonly IssueDetail[]): HttpError {
 
 type Content = Awaited<ReturnType<typeof loadContent>>;
 
-interface AccountFacts {
-  readonly capabilities: unknown;
-  readonly signature: unknown;
-}
-
-type Accounts = ReadonlyMap<string, AccountFacts>;
-
 interface Checked {
   readonly p: Prepared;
   readonly resolved: ReturnType<typeof resolveDestination>;
@@ -145,13 +140,6 @@ function prepareTargets(
   return prepared;
 }
 
-function signatureField(target: FreezeTarget, accounts: Accounts) {
-  const { held, skipSignature, socialAccountId } = target;
-  const current = skipSignature ? null : (accounts.get(socialAccountId)?.signature ?? null);
-  const signature = held === null ? current : held.signature;
-  return signature === null ? {} : { signature };
-}
-
 function snapshotOf(
   input: FreezeInput,
   { variants, items, media }: Content,
@@ -188,26 +176,12 @@ function snapshotOf(
       deliveryMode: p.target.deliveryMode,
       settings: p.settings,
       ...signatureField(p.target, accounts),
+      ...shortenField(p.target, accounts),
     })),
   });
 }
 
 type Snapshot = ReturnType<typeof snapshotOf>;
-
-async function loadAccounts(trx: TenantDb, input: FreezeInput): Promise<Accounts> {
-  const ids = [...new Set(input.targets.map((target) => target.socialAccountId))];
-  if (ids.length === 0) return new Map();
-  const rows = await trx
-    .selectFrom('social_accounts as a')
-    .leftJoin('saved_texts as s', (join) =>
-      join.onRef('s.workspace_id', '=', 'a.workspace_id').onRef('s.id', '=', 'a.saved_text_id'),
-    )
-    .select(['a.id', 'a.capabilities', 's.doc as signature'])
-    .where('a.workspace_id', '=', input.workspaceId)
-    .where('a.id', 'in', ids)
-    .execute();
-  return new Map(rows.map(({ id, ...facts }) => [id, facts]));
-}
 
 function preflight(
   input: FreezeInput,
@@ -297,6 +271,11 @@ export async function freeze(
     })),
   );
   const rows = await insertRevision(trx, input, snapshot, hashed);
+  for (const { p, resolved } of hashed) {
+    if (resolved.destination.shorten === true) {
+      await enqueueShortLinks(trx, { workspaceId: input.workspaceId, id: p.target.id });
+    }
+  }
 
   return hashed.map(({ p, resolved, issues, hash }) => {
     const row = rows.find(

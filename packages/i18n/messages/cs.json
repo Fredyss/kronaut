@@ -571,5 +571,27 @@
   "channels_signature_none": "Žádný",
   "channels_signature_named": "Podpis: {name}",
   "channels_signature_saved": "Podpis je uložený",
-  "post_signature": "Podpis: {text}"
+  "post_signature": "Podpis: {text}",
+  "channels_shorten_links": "Zkracovat odkazy",
+  "channels_shorten_links_on": "Odkazy v tomto kanálu se budou zkracovat",
+  "channels_shorten_links_off": "Odkazy v tomto kanálu se nebudou zkracovat",
+  "post_short_links_title": "Zkrácené odkazy",
+  "post_short_link_pending": "Zkrátí se při zveřejnění",
+  "post_short_link_failed": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=unauthorized": "Odkaz se nezkrátil: zkracovač odmítl klíč API.",
+        "kind=refused": "Odkaz se nezkrátil: zkracovač ho odmítl.",
+        "kind=rate_limited": "Odkaz se nezkrátil: zkracovač dostal příliš mnoho požadavků.",
+        "kind=unavailable": "Odkaz se nezkrátil: zkracovač nebyl dostupný.",
+        "kind=timed_out": "Odkaz se nezkrátil: zkracovač neodpověděl včas.",
+        "kind=url_blocked": "Odkaz se nezkrátil: adresa zkracovače není povolená.",
+        "kind=conflict": "Odkaz se nezkrátil: zkracovač už má pod tímto označením jiný odkaz.",
+        "kind=invalid_response": "Odkaz se nezkrátil: odpovědi zkracovače se nedalo porozumět.",
+        "kind=*": "Odkaz se nezkrátil."
+      }
+    }
+  ]
 }

@@ -27,6 +27,11 @@ const FEEDS_SECTION = {
   label: () => settingsText.settings_feeds_title(),
 } as const;
 
+const SHORT_LINKS_SECTION = {
+  to: '/settings/short-links',
+  label: () => settingsText.settings_short_links_title(),
+} as const;
+
 const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 const SYSTEM_SECTION = {
@@ -46,7 +51,7 @@ export function SettingsLayout() {
     ...SECTIONS,
     ...(writer ? [TAGS_SECTION] : []),
     SAVED_TEXTS_SECTION,
-    ...(writer ? [FEEDS_SECTION] : []),
+    ...(writer ? [FEEDS_SECTION, SHORT_LINKS_SECTION] : []),
     ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),
   ];
   return (

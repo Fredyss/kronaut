@@ -31,6 +31,7 @@ function record(log: FakeCall[], input: PublishInput<unknown, unknown>, events: 
   log.push({
     attemptNo: input.attemptNo,
     positions: input.items.map((item) => item.position),
+    items: input.items,
     chain: input.chain ?? [],
     state: input.state,
     credentials: input.credentials,

@@ -19,6 +19,7 @@ const ada: Channel = {
   lastErrorCode: null,
   postTypes: [],
   signature: null,
+  shortenLinks: true,
   preview: 'short-feed',
   insights: false,
 };

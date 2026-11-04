@@ -17,6 +17,7 @@ import { refreshCredential } from './refresh/refresh.ts';
 import { canRefresh } from './refresh/refresh-lease.ts';
 import { claim } from './run/claim.ts';
 import { createRunContext, LEASE_HEARTBEAT_MS } from './run/context.ts';
+import { ensureShortLinks, type ShortLinksConfig } from './shorten/ensure.ts';
 
 export interface PublishDeps {
   readonly db: Database;
@@ -29,6 +30,7 @@ export interface PublishDeps {
   readonly now: () => Temporal.Instant;
   readonly randomInt: RandomInt;
   readonly heartbeatMs: number;
+  readonly shortLinks?: ShortLinksConfig | undefined;
 }
 
 export type PublishDepsInput = Omit<PublishDeps, 'now' | 'randomInt' | 'heartbeatMs'> &
@@ -56,6 +58,7 @@ function fromOutcome(outcome: PublishOutcome): RunResult {
 }
 
 export async function runPublish(deps: PublishDeps, job: DestinationJob): Promise<void> {
+  await ensureShortLinks(deps, job);
   const claimed = await claim(deps, job);
   if (claimed.kind !== 'claimed') return;
   const { entry, credential, afterRefresh } = claimed.claimed;

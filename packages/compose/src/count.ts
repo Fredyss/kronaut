@@ -42,6 +42,14 @@ function countMastodon(text: string, urlWeight: number): number {
   return countGraphemes(rest) - links + links * urlWeight;
 }
 
+export function findLinks(text: string): string[] {
+  return [...new Set(text.match(LINK) ?? [])];
+}
+
+export function replaceLinks(text: string, replace: (link: string) => string): string {
+  return text.replace(LINK, replace);
+}
+
 export function countLinks(text: string): number {
   const links = new Set<string>();
   const rest = text.normalize('NFC').replace(LINK, (url) => {

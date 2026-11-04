@@ -108,6 +108,38 @@
 /** @typedef {{}} Settings_Saved_Texts_IntroInputs */
 /** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_KeyInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_MissingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_SetInputs */
+/** @typedef {{}} Settings_Short_Links_Base_UrlInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_HintInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_CancelInputs */
+/** @typedef {{}} Settings_Short_Links_CheckingInputs */
+/** @typedef {{}} Settings_Short_Links_ConflictInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectInputs */
+/** @typedef {{}} Settings_Short_Links_Connect_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectedInputs */
+/** @typedef {{}} Settings_Short_Links_Connected_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_DomainInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_NoneInputs */
+/** @typedef {{}} Settings_Short_Links_EditInputs */
+/** @typedef {{}} Settings_Short_Links_Edit_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_IntroInputs */
+/** @typedef {{}} Settings_Short_Links_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_ProviderInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Short_Links_Provider_NameInputs */
+/** @typedef {{}} Settings_Short_Links_RemoveInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_BodyInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_RemovedInputs */
+/** @typedef {{}} Settings_Short_Links_SavedInputs */
+/** @typedef {{}} Settings_Short_Links_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_UnauthorizedInputs */
+/** @typedef {{}} Settings_Short_Links_UnreachableInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
@@ -618,6 +650,136 @@ export const settings_saved_texts_title = /** @type {(inputs: Settings_Saved_Tex
 
 export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Ukladá sa…`)
+};
+
+export const settings_short_links_api_key = /** @type {(inputs: Settings_Short_Links_Api_KeyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kľúč API`)
+};
+
+export const settings_short_links_api_key_invalid = /** @type {(inputs: Settings_Short_Links_Api_Key_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kľúč API je príliš dlhý alebo obsahuje nepovolené znaky.`)
+};
+
+export const settings_short_links_api_key_keep = /** @type {(inputs: Settings_Short_Links_Api_Key_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ak pole necháte prázdne, zostane súčasný kľúč.`)
+};
+
+export const settings_short_links_api_key_missing = /** @type {(inputs: Settings_Short_Links_Api_Key_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kľúč API chýba`)
+};
+
+export const settings_short_links_api_key_set = /** @type {(inputs: Settings_Short_Links_Api_Key_SetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kľúč API je nastavený`)
+};
+
+export const settings_short_links_base_url = /** @type {(inputs: Settings_Short_Links_Base_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Základná adresa URL`)
+};
+
+export const settings_short_links_base_url_hint = /** @type {(inputs: Settings_Short_Links_Base_Url_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`https://kutt.to alebo vaša vlastná inštancia`)
+};
+
+export const settings_short_links_base_url_invalid = /** @type {(inputs: Settings_Short_Links_Base_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadajte odkaz https, napríklad https://kutt.to alebo adresu vlastnej inštancie, bez používateľského mena, hesla a parametrov. Adresa kutt.it nie je podporovaná.`)
+};
+
+export const settings_short_links_cancel = /** @type {(inputs: Settings_Short_Links_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušiť`)
+};
+
+export const settings_short_links_checking = /** @type {(inputs: Settings_Short_Links_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Overuje sa kľúč…`)
+};
+
+export const settings_short_links_conflict = /** @type {(inputs: Settings_Short_Links_ConflictInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skracovač medzitým niekto zmenil. Obnovte stránku a skúste to znova.`)
+};
+
+export const settings_short_links_connect = /** @type {(inputs: Settings_Short_Links_ConnectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pripojiť`)
+};
+
+export const settings_short_links_connect_title = /** @type {(inputs: Settings_Short_Links_Connect_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pripojiť skracovač`)
+};
+
+export const settings_short_links_connected = /** @type {(inputs: Settings_Short_Links_ConnectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skracovač je pripojený`)
+};
+
+export const settings_short_links_connected_title = /** @type {(inputs: Settings_Short_Links_Connected_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skracovač`)
+};
+
+export const settings_short_links_domain = /** @type {(inputs: Settings_Short_Links_DomainInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vlastná doména (nepovinné)`)
+};
+
+export const settings_short_links_domain_invalid = /** @type {(inputs: Settings_Short_Links_Domain_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadajte názov hostiteľa, napríklad go.example.com, bez https:// a bez cesty.`)
+};
+
+export const settings_short_links_domain_none = /** @type {(inputs: Settings_Short_Links_Domain_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Predvolená doména služby`)
+};
+
+export const settings_short_links_edit = /** @type {(inputs: Settings_Short_Links_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upraviť`)
+};
+
+export const settings_short_links_edit_title = /** @type {(inputs: Settings_Short_Links_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upraviť skracovač`)
+};
+
+export const settings_short_links_intro = /** @type {(inputs: Settings_Short_Links_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odkazy v naplánovaných príspevkoch sa skrátia cez Dub alebo Kutt, pre každý kanál zvlášť a so značkami UTM. Ak skracovač nie je dostupný, odkaz sa uverejní tak, ako je napísaný.`)
+};
+
+export const settings_short_links_keep = /** @type {(inputs: Settings_Short_Links_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechať skracovač`)
+};
+
+export const settings_short_links_provider = /** @type {(inputs: Settings_Short_Links_ProviderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Služba`)
+};
+
+export const settings_short_links_provider_name = /** @type {(inputs: Settings_Short_Links_Provider_NameInputs) => LocalizedString} */ (i) => {
+	if (i?.provider === "dub") return /** @type {LocalizedString} */ (`Dub`);
+	if (i?.provider === "kutt") return /** @type {LocalizedString} */ (`Kutt`);
+	return /** @type {LocalizedString} */ (`Iná`)
+};
+
+export const settings_short_links_remove = /** @type {(inputs: Settings_Short_Links_RemoveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť`)
+};
+
+export const settings_short_links_remove_body = /** @type {(inputs: Settings_Short_Links_Remove_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevky naplánované odteraz si ponechajú dlhé odkazy. Skrátené odkazy, ktoré už existujú, budú fungovať ďalej.`)
+};
+
+export const settings_short_links_remove_title = /** @type {(inputs: Settings_Short_Links_Remove_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť skracovač?`)
+};
+
+export const settings_short_links_removed = /** @type {(inputs: Settings_Short_Links_RemovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skracovač sa odstránil`)
+};
+
+export const settings_short_links_saved = /** @type {(inputs: Settings_Short_Links_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skracovač sa uložil`)
+};
+
+export const settings_short_links_title = /** @type {(inputs: Settings_Short_Links_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skrátené odkazy`)
+};
+
+export const settings_short_links_unauthorized = /** @type {(inputs: Settings_Short_Links_UnauthorizedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Služba tento kľúč API odmietla.`)
+};
+
+export const settings_short_links_unreachable = /** @type {(inputs: Settings_Short_Links_UnreachableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Služba nie je dostupná. Skontrolujte adresu a skúste to znova.`)
 };
 
 export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {

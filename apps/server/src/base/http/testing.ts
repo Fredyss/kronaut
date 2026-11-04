@@ -49,6 +49,7 @@ export interface TestInstanceOptions {
   readonly instanceAdmins?: readonly string[];
   readonly access?: AccessGate;
   readonly feedHttp?: HttpClient;
+  readonly shortenerHttp?: HttpClient;
 }
 
 export interface TestInstance {
@@ -75,6 +76,7 @@ export function createTestInstance({
   instanceAdmins = [],
   access,
   feedHttp,
+  shortenerHttp,
 }: TestInstanceOptions): TestInstance {
   const deps: HttpDeps = {
     db,
@@ -90,7 +92,7 @@ export function createTestInstance({
   };
   const routes = apiRoutes({
     http: deps,
-    ...{ store, signer, staging, keyring, providers, cronTasks, feedHttp },
+    ...{ store, signer, staging, keyring, providers, cronTasks, feedHttp, shortenerHttp },
   });
   return { app: createHttpApp(deps, routes), deps, routes };
 }

@@ -187,6 +187,15 @@ const feedSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('./routes/settings-feeds.tsx'), 'FeedSettingsPage'),
 });
 
+const shortLinkSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'short-links',
+  component: lazyRouteComponent(
+    () => import('./routes/settings-short-links.tsx'),
+    'ShortLinkSettingsPage',
+  ),
+});
+
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -224,6 +233,7 @@ const routeTree = rootRoute.addChildren([
       tagSettingsRoute,
       savedTextSettingsRoute,
       feedSettingsRoute,
+      shortLinkSettingsRoute,
       systemSettingsRoute,
     ]),
   ]),
