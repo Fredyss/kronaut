@@ -354,6 +354,7 @@ describe('the structure rules', () => {
       "import { /* it's */ h } from './h.ts';",
       "const lazy = () => import('./lazy.ts');",
       'const quoted = () => import(`./quoted.ts`);',
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: the fixture is source text with a template literal
       'const built = (name: string) => import(`./${name}.ts`);',
     ].join('\n');
     expect(valueImports(source)).toEqual([
