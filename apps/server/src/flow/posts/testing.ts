@@ -157,7 +157,7 @@ export async function startPosts(
   test: FixtureUrls,
   logger: Logger = pino({ level: 'silent' }),
   clock: () => Temporal.Instant = () => Temporal.Now.instant(),
-  feedHttp?: HttpClient,
+  outbound?: HttpClient,
 ): Promise<void> {
   owner = createDatabase({ connectionString: test.ownerUrl });
   db = createDatabase({ connectionString: test.appUrl });
@@ -174,7 +174,7 @@ export async function startPosts(
     clock,
     cronTasks: cronTasks(true),
     instanceAdmins: ['owner@example.test'],
-    ...(feedHttp === undefined ? {} : { feedHttp }),
+    ...(outbound === undefined ? {} : { feedHttp: outbound, shortenerHttp: outbound }),
   });
   app = instance.app;
   grantKey = instance.deps.keys.grant;

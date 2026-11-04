@@ -32,6 +32,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | tag | štítok (2–4 štítky, 5+ štítkov) | štítek (2–4 štítky, 5+ štítků) | An internal label for finding and grouping posts, never published. Not a hashtag. |
 | saved text | uložený text | uložený text | Reusable text kept for the workspace, inserted into a post while writing it. |
 | feed | zdroj (RSS) | zdroj (RSS) | An RSS or Atom feed whose new items become posts. Never "kanál"; that is a channel. |
+| short link | skrátený odkaz | zkrácený odkaz | The redirect a shortener makes for a long link in a post. |
+| shortener | skracovač | zkracovač | The service, Dub or Kutt, that makes short links. |
 
 ## Style
 

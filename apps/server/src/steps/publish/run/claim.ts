@@ -19,6 +19,7 @@ import type { PublishDeps } from '../task.ts';
 import type { DestinationRef } from '../transition.ts';
 import { type ClaimAccount, checkAccess, checkContent, type Inputs } from './claim-checks.ts';
 import { resetItems } from './claim-items.ts';
+import { renderedTexts } from './render.ts';
 
 const CLAIMABLE = ['scheduled', 'retry_wait'] as const;
 const BUSY_RETRY_MIN_MS = 15_000;
@@ -87,7 +88,7 @@ function selectClaimable(trx: TenantDb, job: DestinationJob) {
     .executeTakeFirst();
 }
 
-export type ClaimRow = NonNullable<Awaited<ReturnType<typeof selectClaimable>>>;
+type ClaimRow = NonNullable<Awaited<ReturnType<typeof selectClaimable>>>;
 
 interface Claimable {
   readonly post: LockedPost;
@@ -192,13 +193,23 @@ async function claimAttempt(
   inputs: Inputs,
 ): Promise<ClaimResult> {
   const { job, post, dest } = scope;
-  const { entry, prepared } = inputs;
+  const { entry, prepared, resolved } = inputs;
   const { items, postType } = prepared;
   const counted = !(dest.state === 'retry_wait' && dest.state_reason === 'provider_processing');
   const attemptId = randomUUID();
   const cas = await casClaim(scope, attemptId, counted);
   if (cas === undefined) return NOOP;
-  await resetItems(scope.trx, job, items, postType);
+  await resetItems(scope.trx, job, {
+    items,
+    postType,
+    render: () =>
+      renderedTexts(scope.trx, job, {
+        resolved,
+        entry,
+        publishType: dest.publish_type,
+        capabilities: account.capabilities,
+      }),
+  });
   const current = currentInput(await selectItems(scope.trx, job), items);
   if (current === undefined) throw new Error('a claimed destination has no item left to send');
   const attemptNo = await insertAttempt(scope, attemptId, counted, current.item.position);

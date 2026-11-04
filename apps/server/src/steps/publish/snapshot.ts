@@ -13,7 +13,7 @@ export const SNAPSHOT_V = 1;
 
 const SHA256_HEX = /^[0-9a-f]{64}$/;
 
-export const MediaSnapshotSchema = z.object({
+const MediaSnapshotSchema = z.object({
   assetId: z.uuid(),
   sha256: z.string().regex(SHA256_HEX),
   kind: z.enum(['image', 'video']),
@@ -27,7 +27,7 @@ export const MediaSnapshotSchema = z.object({
   transform: z.record(z.string(), z.number().int()).nullable(),
 });
 
-export const ItemSnapshotSchema = z.object({
+const ItemSnapshotSchema = z.object({
   position: z.number().int().min(0).max(99),
   role: z.enum(['main', 'thread', 'comment']),
   doc: z.unknown(),
@@ -35,14 +35,14 @@ export const ItemSnapshotSchema = z.object({
   media: z.array(MediaSnapshotSchema).max(35),
 });
 
-export const VariantSnapshotSchema = z.object({
+const VariantSnapshotSchema = z.object({
   id: z.uuid(),
   isDefault: z.boolean(),
   contentLanguage: z.string().nullable(),
   items: z.array(ItemSnapshotSchema).min(1),
 });
 
-export const DestinationSnapshotSchema = z.object({
+const DestinationSnapshotSchema = z.object({
   socialAccountId: z.uuid(),
   provider: z.string().regex(/^[a-z0-9_]{1,40}$/),
   publishType: z.string().regex(/^[a-z0-9_]{1,40}$/),
@@ -50,6 +50,7 @@ export const DestinationSnapshotSchema = z.object({
   deliveryMode: z.enum(['auto', 'reminder']),
   settings: z.unknown(),
   signature: z.unknown().optional(),
+  shorten: z.literal(true).optional(),
 });
 
 export const RevisionSnapshotSchema = z.object({
@@ -60,7 +61,7 @@ export const RevisionSnapshotSchema = z.object({
   destinations: z.array(DestinationSnapshotSchema),
 });
 
-export type MediaSnapshot = z.output<typeof MediaSnapshotSchema>;
+type MediaSnapshot = z.output<typeof MediaSnapshotSchema>;
 export type ItemSnapshot = z.output<typeof ItemSnapshotSchema>;
 export type VariantSnapshot = z.output<typeof VariantSnapshotSchema>;
 export type DestinationSnapshot = z.output<typeof DestinationSnapshotSchema>;

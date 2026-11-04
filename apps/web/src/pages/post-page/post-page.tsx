@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { lazy, Suspense } from 'react';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { meQuery } from '../../base/api/me.ts';
 import { useFormat } from '../../base/locale/format.ts';
@@ -8,6 +8,7 @@ import { m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { issueMessage } from '../../composer/compose/issues.ts';
 import { SeriesSection } from '../../content/series/section.tsx';
+import { ShortLinks } from '../../content/short-links/post-links.tsx';
 import { ANALYTICS_ROLES } from '../../records/analytics/roles.ts';
 import { AnalyticsSection } from '../../records/analytics/section.tsx';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
@@ -84,12 +85,14 @@ function DestinationRow({
   main,
   custom,
   format,
+  shortLinks,
 }: {
   readonly destination: Destination;
   readonly channel: Channel | undefined;
   readonly main: Item | undefined;
   readonly custom: Item | undefined;
   readonly format: (iso: string) => string;
+  readonly shortLinks: ReactNode;
 }) {
   const link = httpsUrl(destination.remoteUrl);
   const signature = signatureText(destination, channel, custom ?? main);
@@ -135,6 +138,7 @@ function DestinationRow({
             {m.post_signature({ text: signature })}
           </p>
         )}
+        {shortLinks}
         {custom === undefined ? null : (
           <details className="text-sm">
             <summary className="cursor-pointer text-muted-foreground">
@@ -150,6 +154,44 @@ function DestinationRow({
         {stateLabel(destination.state)}
       </span>
     </li>
+  );
+}
+
+interface DestinationsProps {
+  readonly workspaceId: string;
+  readonly post: Post;
+  readonly channels: ReadonlyMap<string, Channel>;
+  readonly format: (iso: string) => string;
+}
+
+function Destinations({ workspaceId, post, channels, format }: DestinationsProps) {
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="font-medium text-lg">{m.post_destinations_title()}</h2>
+      <ul className="flex flex-col gap-3">
+        {post.destinations.map((destination) => (
+          <DestinationRow
+            key={destination.id}
+            destination={destination}
+            channel={channels.get(destination.accountId)}
+            main={post.items[0]}
+            custom={
+              destination.variant === null
+                ? undefined
+                : post.variants[destination.variant]?.items[0]
+            }
+            format={format}
+            shortLinks={
+              <ShortLinks
+                workspaceId={workspaceId}
+                postId={post.id}
+                destinationId={destination.id}
+              />
+            }
+          />
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -231,25 +273,7 @@ function PostStatus({
         format={format}
         readable={ANALYTICS_ROLES.has(role)}
       />
-      <section className="flex flex-col gap-3">
-        <h2 className="font-medium text-lg">{m.post_destinations_title()}</h2>
-        <ul className="flex flex-col gap-3">
-          {data.destinations.map((destination) => (
-            <DestinationRow
-              key={destination.id}
-              destination={destination}
-              channel={byId.get(destination.accountId)}
-              main={data.items[0]}
-              custom={
-                destination.variant === null
-                  ? undefined
-                  : data.variants[destination.variant]?.items[0]
-              }
-              format={format}
-            />
-          ))}
-        </ul>
-      </section>
+      <Destinations workspaceId={workspaceId} post={data} channels={byId} format={format} />
     </>
   );
 }

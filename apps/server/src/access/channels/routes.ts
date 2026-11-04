@@ -7,12 +7,10 @@ import { type ChannelRouteDeps, connectsByRedirect, SYSTEM } from './deps.ts';
 import { bindDisconnect } from './disconnect-routes.ts';
 import { channelListRoute, channelProvidersRoute, listChannels, readyProviders } from './list.ts';
 import { bindPublicDocument } from './public-document.ts';
+import { bindShortenLinks } from './shorten-links.ts';
 import { bindSignature } from './signature.ts';
 
-export { CONNECT_ERRORS, type ConnectError, connectCallbackRoute } from './connect-callback.ts';
-export { connectStartRoute } from './connect-start.ts';
 export type { ChannelRouteDeps } from './deps.ts';
-export { publicDocumentRoute } from './public-document.ts';
 
 function bindList(deps: ChannelRouteDeps) {
   return bindRoute(channelListRoute, async ({ params }, ctx) => {
@@ -56,5 +54,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindConnectable(deps),
     bindDisconnect(deps.providers),
     bindSignature(),
+    bindShortenLinks(),
   ];
 }

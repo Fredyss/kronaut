@@ -4,7 +4,7 @@ import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
 import { keyringFromEnv } from '@kronaut/credentials';
 import { type Actor, createDatabase, type Database } from '@kronaut/db';
-import { createHttpClient, type HttpClient } from '@kronaut/egress';
+import { createHttpClient } from '@kronaut/egress';
 import type { Mailer } from '@kronaut/egress/smtp';
 import { createLocalStore, deriveMediaSigningKey } from '@kronaut/media';
 import { manifests } from '@kronaut/providers/manifests';
@@ -21,13 +21,9 @@ import { stagingIn } from './actors/media/staging.ts';
 import { mediaProcessTask } from './actors/media/video/process.ts';
 import { metaLifecycleTask } from './actors/meta/lifecycle.ts';
 import { API_BODY_LIMITS, API_SIGN_IN, apiRoutes } from './api-routes.ts';
-import type { AccessConfig, Env, ServerConfig, ServerRole } from './base/config/config.ts';
+import type { Env, ServerConfig, ServerRole } from './base/config/config.ts';
 import { ConfigError } from './base/config/config.ts';
-import {
-  ACCESS_EGRESS,
-  type AccessVerifier,
-  createAccessVerifier,
-} from './base/http/caller/access.ts';
+import { type AccessVerifier, bootAccess } from './base/http/caller/access.ts';
 import { drain, listen } from './base/http/listen.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps } from './base/http/pipeline/kernel.ts';
 import { loadWebApp } from './base/http/web.ts';
@@ -38,6 +34,8 @@ import { type LockSweep, openJobSession, startJobLocks } from './infrastructure/
 import { jobLogger } from './infrastructure/jobs/job-queue.ts';
 import { JOBS } from './infrastructure/jobs/jobs.ts';
 import { emailDeps } from './records/notifications/email.ts';
+import { SHORTENER_EGRESS } from './records/short-links/api.ts';
+import { shortLinksTask } from './steps/publish/shorten/ensure.ts';
 import { publishDeps, publishTask } from './steps/publish/task.ts';
 import { verifyTask } from './steps/publish/verify/verify.ts';
 
@@ -82,22 +80,6 @@ async function fence(db: Database, instanceId: string, logger: Logger): Promise<
     return result.rows[0]?.paused === true;
   });
   if (paused) logger.warn({ instanceId }, 'publishing is paused');
-}
-
-export async function bootAccess(
-  access: AccessConfig,
-  logger: Logger,
-  clock: Clock,
-  http: HttpClient = createHttpClient({ ...ACCESS_EGRESS, allowedHosts: [access.teamDomain] }),
-): Promise<AccessVerifier> {
-  const verifier = createAccessVerifier({ ...access, http, logger, now: clock });
-  try {
-    await verifier.refresh();
-  } catch (err) {
-    verifier.stop();
-    throw err;
-  }
-  return verifier;
 }
 
 async function startMedia(config: ServerConfig, clock: Clock): Promise<StartedServer> {
@@ -184,6 +166,7 @@ async function startWorker(boot: Boot): Promise<void> {
     workerId: config.workerId,
     publicBaseUrl: config.publicUrl.origin,
     now: clock,
+    shortLinks: { http: createHttpClient(SHORTENER_EGRESS) },
   });
   const publish = publishTask(publishing);
   const verify = verifyTask(publishing);
@@ -206,6 +189,7 @@ async function startWorker(boot: Boot): Promise<void> {
       [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
       [JOBS.mediaImport]: mediaImportTask({ db, store, staging, http: importHttp, logger }),
       [JOBS.metaLifecycle]: metaLifecycleTask({ db, logger }),
+      [JOBS.shortLinks]: shortLinksTask(publishing),
     },
     parsedCronItems: cronItems(email !== null),
   });

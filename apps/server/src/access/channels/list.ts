@@ -15,7 +15,7 @@ import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
 const Instant = z.iso.datetime();
 
-export const CHANNEL_STATUSES = ['active', 'needs_reauth', 'disabled', 'disconnected'] as const;
+const CHANNEL_STATUSES = ['active', 'needs_reauth', 'disabled', 'disconnected'] as const;
 const AVAILABILITY = ['stable', 'experimental', 'limited'] as const;
 const TEXT_COUNTINGS = [
   'x-weighted',
@@ -54,7 +54,7 @@ const PostTypeRulesSchema = z.object({
   comment: z.object({ text: z.array(TextLimitSchema) }).nullable(),
 });
 
-export const ChannelSchema = z.object({
+const ChannelSchema = z.object({
   id: z.string(),
   provider: z.string(),
   accountKind: z.string(),
@@ -70,6 +70,7 @@ export const ChannelSchema = z.object({
   preview: z.enum(PREVIEW_ARCHETYPES),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
+  shortenLinks: z.boolean(),
 });
 
 export const channelListRoute = defineRoute({
@@ -182,6 +183,7 @@ export async function listChannels(
       'last_error_code',
       'capabilities',
       'saved_text_id',
+      'shorten_links',
     ])
     .where('workspace_id', '=', workspaceId);
   if (scope !== null) {
@@ -217,6 +219,7 @@ export async function listChannels(
       preview: entry?.manifest.preview ?? 'short-feed',
       insights: insightsGranted(row.capabilities),
       signature: signatures.get(row.saved_text_id ?? '') ?? null,
+      shortenLinks: row.shorten_links,
     });
   });
 }

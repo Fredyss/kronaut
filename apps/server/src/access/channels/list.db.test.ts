@@ -269,6 +269,7 @@ describe('channel listing', () => {
       'preview',
       'profileUrl',
       'provider',
+      'shortenLinks',
       'signature',
       'status',
       'statusReason',

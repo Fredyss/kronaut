@@ -110,6 +110,38 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Saved_Texts_IntroInputs */
 /** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_KeyInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_MissingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_SetInputs */
+/** @typedef {{}} Settings_Short_Links_Base_UrlInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_HintInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_CancelInputs */
+/** @typedef {{}} Settings_Short_Links_CheckingInputs */
+/** @typedef {{}} Settings_Short_Links_ConflictInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectInputs */
+/** @typedef {{}} Settings_Short_Links_Connect_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectedInputs */
+/** @typedef {{}} Settings_Short_Links_Connected_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_DomainInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_NoneInputs */
+/** @typedef {{}} Settings_Short_Links_EditInputs */
+/** @typedef {{}} Settings_Short_Links_Edit_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_IntroInputs */
+/** @typedef {{}} Settings_Short_Links_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_ProviderInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Short_Links_Provider_NameInputs */
+/** @typedef {{}} Settings_Short_Links_RemoveInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_BodyInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_RemovedInputs */
+/** @typedef {{}} Settings_Short_Links_SavedInputs */
+/** @typedef {{}} Settings_Short_Links_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_UnauthorizedInputs */
+/** @typedef {{}} Settings_Short_Links_UnreachableInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
@@ -1814,6 +1846,488 @@ export const settings_saving = /** @type {((inputs?: Settings_SavingInputs, opti
 	if (locale === "sk") return __sk.settings_saving(inputs)
 	if (locale === "cs") return __cs.settings_saving(inputs)
 	return __en.settings_saving(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API key" |
+*
+* @param {Settings_Short_Links_Api_KeyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key = /** @type {((inputs?: Settings_Short_Links_Api_KeyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_KeyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key(inputs)
+	return __en.settings_short_links_api_key(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The API key is too long or has characters that aren't allowed." |
+*
+* @param {Settings_Short_Links_Api_Key_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key_invalid = /** @type {((inputs?: Settings_Short_Links_Api_Key_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_Key_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key_invalid(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key_invalid(inputs)
+	return __en.settings_short_links_api_key_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Leave empty to keep the current key." |
+*
+* @param {Settings_Short_Links_Api_Key_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key_keep = /** @type {((inputs?: Settings_Short_Links_Api_Key_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_Key_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key_keep(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key_keep(inputs)
+	return __en.settings_short_links_api_key_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No API key" |
+*
+* @param {Settings_Short_Links_Api_Key_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key_missing = /** @type {((inputs?: Settings_Short_Links_Api_Key_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_Key_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key_missing(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key_missing(inputs)
+	return __en.settings_short_links_api_key_missing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API key set" |
+*
+* @param {Settings_Short_Links_Api_Key_SetInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key_set = /** @type {((inputs?: Settings_Short_Links_Api_Key_SetInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_Key_SetInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key_set(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key_set(inputs)
+	return __en.settings_short_links_api_key_set(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Base URL" |
+*
+* @param {Settings_Short_Links_Base_UrlInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_base_url = /** @type {((inputs?: Settings_Short_Links_Base_UrlInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Base_UrlInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_base_url(inputs)
+	if (locale === "cs") return __cs.settings_short_links_base_url(inputs)
+	return __en.settings_short_links_base_url(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "https://kutt.to or your own instance" |
+*
+* @param {Settings_Short_Links_Base_Url_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_base_url_hint = /** @type {((inputs?: Settings_Short_Links_Base_Url_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Base_Url_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_base_url_hint(inputs)
+	if (locale === "cs") return __cs.settings_short_links_base_url_hint(inputs)
+	return __en.settings_short_links_base_url_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Enter an https link, such as https://kutt.to or your own instance, without a user name, password or query. kutt.it isn't supported." |
+*
+* @param {Settings_Short_Links_Base_Url_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_base_url_invalid = /** @type {((inputs?: Settings_Short_Links_Base_Url_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Base_Url_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_base_url_invalid(inputs)
+	if (locale === "cs") return __cs.settings_short_links_base_url_invalid(inputs)
+	return __en.settings_short_links_base_url_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Short_Links_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_cancel = /** @type {((inputs?: Settings_Short_Links_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_cancel(inputs)
+	if (locale === "cs") return __cs.settings_short_links_cancel(inputs)
+	return __en.settings_short_links_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Checking key…" |
+*
+* @param {Settings_Short_Links_CheckingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_checking = /** @type {((inputs?: Settings_Short_Links_CheckingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_CheckingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_checking(inputs)
+	if (locale === "cs") return __cs.settings_short_links_checking(inputs)
+	return __en.settings_short_links_checking(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The shortener was changed in the meantime. Reload the page and try again." |
+*
+* @param {Settings_Short_Links_ConflictInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_conflict = /** @type {((inputs?: Settings_Short_Links_ConflictInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_ConflictInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_conflict(inputs)
+	if (locale === "cs") return __cs.settings_short_links_conflict(inputs)
+	return __en.settings_short_links_conflict(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Connect" |
+*
+* @param {Settings_Short_Links_ConnectInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_connect = /** @type {((inputs?: Settings_Short_Links_ConnectInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_ConnectInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_connect(inputs)
+	if (locale === "cs") return __cs.settings_short_links_connect(inputs)
+	return __en.settings_short_links_connect(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Connect a shortener" |
+*
+* @param {Settings_Short_Links_Connect_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_connect_title = /** @type {((inputs?: Settings_Short_Links_Connect_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Connect_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_connect_title(inputs)
+	if (locale === "cs") return __cs.settings_short_links_connect_title(inputs)
+	return __en.settings_short_links_connect_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shortener connected" |
+*
+* @param {Settings_Short_Links_ConnectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_connected = /** @type {((inputs?: Settings_Short_Links_ConnectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_ConnectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_connected(inputs)
+	if (locale === "cs") return __cs.settings_short_links_connected(inputs)
+	return __en.settings_short_links_connected(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shortener" |
+*
+* @param {Settings_Short_Links_Connected_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_connected_title = /** @type {((inputs?: Settings_Short_Links_Connected_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Connected_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_connected_title(inputs)
+	if (locale === "cs") return __cs.settings_short_links_connected_title(inputs)
+	return __en.settings_short_links_connected_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Custom domain (optional)" |
+*
+* @param {Settings_Short_Links_DomainInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_domain = /** @type {((inputs?: Settings_Short_Links_DomainInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_DomainInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_domain(inputs)
+	if (locale === "cs") return __cs.settings_short_links_domain(inputs)
+	return __en.settings_short_links_domain(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Enter a host name such as go.example.com, without https:// or a path." |
+*
+* @param {Settings_Short_Links_Domain_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_domain_invalid = /** @type {((inputs?: Settings_Short_Links_Domain_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Domain_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_domain_invalid(inputs)
+	if (locale === "cs") return __cs.settings_short_links_domain_invalid(inputs)
+	return __en.settings_short_links_domain_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The service's default" |
+*
+* @param {Settings_Short_Links_Domain_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_domain_none = /** @type {((inputs?: Settings_Short_Links_Domain_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Domain_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_domain_none(inputs)
+	if (locale === "cs") return __cs.settings_short_links_domain_none(inputs)
+	return __en.settings_short_links_domain_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit" |
+*
+* @param {Settings_Short_Links_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_edit = /** @type {((inputs?: Settings_Short_Links_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_edit(inputs)
+	if (locale === "cs") return __cs.settings_short_links_edit(inputs)
+	return __en.settings_short_links_edit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit shortener" |
+*
+* @param {Settings_Short_Links_Edit_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_edit_title = /** @type {((inputs?: Settings_Short_Links_Edit_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Edit_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_edit_title(inputs)
+	if (locale === "cs") return __cs.settings_short_links_edit_title(inputs)
+	return __en.settings_short_links_edit_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shorten the links in scheduled posts through Dub or Kutt, with one short link per channel and UTM tags added. If the shortener can't be reached, a link is pu..." |
+*
+* @param {Settings_Short_Links_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_intro = /** @type {((inputs?: Settings_Short_Links_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_intro(inputs)
+	if (locale === "cs") return __cs.settings_short_links_intro(inputs)
+	return __en.settings_short_links_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep shortener" |
+*
+* @param {Settings_Short_Links_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_keep = /** @type {((inputs?: Settings_Short_Links_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_keep(inputs)
+	if (locale === "cs") return __cs.settings_short_links_keep(inputs)
+	return __en.settings_short_links_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Service" |
+*
+* @param {Settings_Short_Links_ProviderInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_provider = /** @type {((inputs?: Settings_Short_Links_ProviderInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_ProviderInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_provider(inputs)
+	if (locale === "cs") return __cs.settings_short_links_provider(inputs)
+	return __en.settings_short_links_provider(inputs)
+});
+/**
+* | provider | output |
+* | --- | --- |
+* | "dub" | "Dub" |
+* | "kutt" | "Kutt" |
+* | * | "Other" |
+*
+* @param {Settings_Short_Links_Provider_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_provider_name = /** @type {((inputs: Settings_Short_Links_Provider_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Provider_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_provider_name(inputs)
+	if (locale === "cs") return __cs.settings_short_links_provider_name(inputs)
+	return __en.settings_short_links_provider_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Remove" |
+*
+* @param {Settings_Short_Links_RemoveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_remove = /** @type {((inputs?: Settings_Short_Links_RemoveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_RemoveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_remove(inputs)
+	if (locale === "cs") return __cs.settings_short_links_remove(inputs)
+	return __en.settings_short_links_remove(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Posts scheduled from now on keep their long links. Short links that already exist keep working." |
+*
+* @param {Settings_Short_Links_Remove_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_remove_body = /** @type {((inputs?: Settings_Short_Links_Remove_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Remove_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_remove_body(inputs)
+	if (locale === "cs") return __cs.settings_short_links_remove_body(inputs)
+	return __en.settings_short_links_remove_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Remove the shortener?" |
+*
+* @param {Settings_Short_Links_Remove_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_remove_title = /** @type {((inputs?: Settings_Short_Links_Remove_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Remove_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_remove_title(inputs)
+	if (locale === "cs") return __cs.settings_short_links_remove_title(inputs)
+	return __en.settings_short_links_remove_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shortener removed" |
+*
+* @param {Settings_Short_Links_RemovedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_removed = /** @type {((inputs?: Settings_Short_Links_RemovedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_RemovedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_removed(inputs)
+	if (locale === "cs") return __cs.settings_short_links_removed(inputs)
+	return __en.settings_short_links_removed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shortener saved" |
+*
+* @param {Settings_Short_Links_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_saved = /** @type {((inputs?: Settings_Short_Links_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_saved(inputs)
+	if (locale === "cs") return __cs.settings_short_links_saved(inputs)
+	return __en.settings_short_links_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Short links" |
+*
+* @param {Settings_Short_Links_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_title = /** @type {((inputs?: Settings_Short_Links_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_title(inputs)
+	if (locale === "cs") return __cs.settings_short_links_title(inputs)
+	return __en.settings_short_links_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The service refused this API key." |
+*
+* @param {Settings_Short_Links_UnauthorizedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_unauthorized = /** @type {((inputs?: Settings_Short_Links_UnauthorizedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_UnauthorizedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_unauthorized(inputs)
+	if (locale === "cs") return __cs.settings_short_links_unauthorized(inputs)
+	return __en.settings_short_links_unauthorized(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The service couldn't be reached. Check the address and try again." |
+*
+* @param {Settings_Short_Links_UnreachableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_unreachable = /** @type {((inputs?: Settings_Short_Links_UnreachableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_UnreachableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_unreachable(inputs)
+	if (locale === "cs") return __cs.settings_short_links_unreachable(inputs)
+	return __en.settings_short_links_unreachable(inputs)
 });
 /**
 * | output |

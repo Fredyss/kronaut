@@ -149,6 +149,18 @@ SELECT pg_temp.must('TEN-04 rss_items: tenant policy, app may read and write',
   AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
          FROM pg_class c, aclexplode(c.relacl) a
         WHERE c.oid = 'rss_items'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 link_shorteners: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'link_shorteners'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'link_shorteners'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'link_shorteners'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 short_links: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'short_links'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'short_links'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'short_links'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
 SELECT pg_temp.must('TEN-04 post_tags: tenant policy, app may only read, insert and delete',
   (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_tags'::regclass)
   AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_tags'::regclass AND polname = 'tenant_isolation')

@@ -571,5 +571,27 @@
   "channels_signature_none": "Žiadny",
   "channels_signature_named": "Podpis: {name}",
   "channels_signature_saved": "Podpis sa uložil",
-  "post_signature": "Podpis: {text}"
+  "post_signature": "Podpis: {text}",
+  "channels_shorten_links": "Skracovať odkazy",
+  "channels_shorten_links_on": "Odkazy v tomto kanáli sa budú skracovať",
+  "channels_shorten_links_off": "Odkazy v tomto kanáli sa nebudú skracovať",
+  "post_short_links_title": "Skrátené odkazy",
+  "post_short_link_pending": "Skráti sa pri uverejnení",
+  "post_short_link_failed": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=unauthorized": "Odkaz sa neskrátil: skracovač odmietol kľúč API.",
+        "kind=refused": "Odkaz sa neskrátil: skracovač ho odmietol.",
+        "kind=rate_limited": "Odkaz sa neskrátil: skracovač dostal priveľa požiadaviek.",
+        "kind=unavailable": "Odkaz sa neskrátil: skracovač nebol dostupný.",
+        "kind=timed_out": "Odkaz sa neskrátil: skracovač neodpovedal včas.",
+        "kind=url_blocked": "Odkaz sa neskrátil: adresa skracovača nie je povolená.",
+        "kind=conflict": "Odkaz sa neskrátil: skracovač už má pod týmto označením iný odkaz.",
+        "kind=invalid_response": "Odkaz sa neskrátil: odpovedi skracovača sa nedalo porozumieť.",
+        "kind=*": "Odkaz sa neskrátil."
+      }
+    }
+  ]
 }

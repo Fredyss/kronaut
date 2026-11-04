@@ -282,5 +282,47 @@
   "settings_feed_channel_gone": "Jeden z kanálov už neexistuje.",
   "settings_feed_channel_unsupported": "Kanál {channel} nedokáže uverejniť samotný text ani text s jedným obrázkom.",
   "settings_feed_channel_queue": "Kanál {channel} nemá vo fronte žiadne časy. Pridajte ich na stránke Kanály alebo nové položky ukladajte ako koncepty.",
-  "settings_feed_limit": "Tento pracovný priestor už má najviac povolených zdrojov. Najprv niektorý odstráňte."
+  "settings_feed_limit": "Tento pracovný priestor už má najviac povolených zdrojov. Najprv niektorý odstráňte.",
+  "settings_short_links_title": "Skrátené odkazy",
+  "settings_short_links_intro": "Odkazy v naplánovaných príspevkoch sa skrátia cez Dub alebo Kutt, pre každý kanál zvlášť a so značkami UTM. Ak skracovač nie je dostupný, odkaz sa uverejní tak, ako je napísaný.",
+  "settings_short_links_connect_title": "Pripojiť skracovač",
+  "settings_short_links_connected_title": "Skracovač",
+  "settings_short_links_edit_title": "Upraviť skracovač",
+  "settings_short_links_provider": "Služba",
+  "settings_short_links_provider_name": [
+    {
+      "declarations": ["input provider"],
+      "selectors": ["provider"],
+      "match": {
+        "provider=dub": "Dub",
+        "provider=kutt": "Kutt",
+        "provider=*": "Iná"
+      }
+    }
+  ],
+  "settings_short_links_base_url": "Základná adresa URL",
+  "settings_short_links_base_url_hint": "https://kutt.to alebo vaša vlastná inštancia",
+  "settings_short_links_domain": "Vlastná doména (nepovinné)",
+  "settings_short_links_domain_none": "Predvolená doména služby",
+  "settings_short_links_api_key": "Kľúč API",
+  "settings_short_links_api_key_keep": "Ak pole necháte prázdne, zostane súčasný kľúč.",
+  "settings_short_links_api_key_set": "Kľúč API je nastavený",
+  "settings_short_links_api_key_missing": "Kľúč API chýba",
+  "settings_short_links_connect": "Pripojiť",
+  "settings_short_links_checking": "Overuje sa kľúč…",
+  "settings_short_links_cancel": "Zrušiť",
+  "settings_short_links_edit": "Upraviť",
+  "settings_short_links_remove": "Odstrániť",
+  "settings_short_links_remove_title": "Odstrániť skracovač?",
+  "settings_short_links_remove_body": "Príspevky naplánované odteraz si ponechajú dlhé odkazy. Skrátené odkazy, ktoré už existujú, budú fungovať ďalej.",
+  "settings_short_links_keep": "Ponechať skracovač",
+  "settings_short_links_connected": "Skracovač je pripojený",
+  "settings_short_links_saved": "Skracovač sa uložil",
+  "settings_short_links_removed": "Skracovač sa odstránil",
+  "settings_short_links_unauthorized": "Služba tento kľúč API odmietla.",
+  "settings_short_links_unreachable": "Služba nie je dostupná. Skontrolujte adresu a skúste to znova.",
+  "settings_short_links_base_url_invalid": "Zadajte odkaz https, napríklad https://kutt.to alebo adresu vlastnej inštancie, bez používateľského mena, hesla a parametrov. Adresa kutt.it nie je podporovaná.",
+  "settings_short_links_domain_invalid": "Zadajte názov hostiteľa, napríklad go.example.com, bez https:// a bez cesty.",
+  "settings_short_links_api_key_invalid": "Kľúč API je príliš dlhý alebo obsahuje nepovolené znaky.",
+  "settings_short_links_conflict": "Skracovač medzitým niekto zmenil. Obnovte stránku a skúste to znova."
 }

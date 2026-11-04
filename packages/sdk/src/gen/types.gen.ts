@@ -797,6 +797,7 @@ export type ChannelsListResponses = {
             preview: 'short-feed' | 'pro-feed' | 'media-grid' | 'vertical-video' | 'chat' | 'article';
             profileUrl: string | null;
             provider: string;
+            shortenLinks: boolean;
             signature: {
                 doc: {
                     [key: string]: unknown;
@@ -1072,6 +1073,190 @@ export type ChannelsSetSignatureResponses = {
 };
 
 export type ChannelsSetSignatureResponse = ChannelsSetSignatureResponses[keyof ChannelsSetSignatureResponses];
+
+export type ChannelsSetShortenLinksData = {
+    body: {
+        shortenLinks: boolean;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/shorten-links';
+};
+
+export type ChannelsSetShortenLinksErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSetShortenLinksError = ChannelsSetShortenLinksErrors[keyof ChannelsSetShortenLinksErrors];
+
+export type ChannelsSetShortenLinksResponses = {
+    /**
+     * OK
+     */
+    200: {
+        shortenLinks: boolean;
+    };
+};
+
+export type ChannelsSetShortenLinksResponse = ChannelsSetShortenLinksResponses[keyof ChannelsSetShortenLinksResponses];
+
+export type LinkShortenerRemoveData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/link-shortener';
+};
+
+export type LinkShortenerRemoveErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type LinkShortenerRemoveError = LinkShortenerRemoveErrors[keyof LinkShortenerRemoveErrors];
+
+export type LinkShortenerRemoveResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type LinkShortenerRemoveResponse = LinkShortenerRemoveResponses[keyof LinkShortenerRemoveResponses];
+
+export type LinkShortenerGetData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/link-shortener';
+};
+
+export type LinkShortenerGetErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type LinkShortenerGetError = LinkShortenerGetErrors[keyof LinkShortenerGetErrors];
+
+export type LinkShortenerGetResponses = {
+    /**
+     * OK
+     */
+    200: {
+        shortener: {
+            baseUrl: string;
+            createdAt: string;
+            domain: string | null;
+            hasKey: boolean;
+            provider: 'dub' | 'kutt';
+            updatedAt: string;
+        } | null;
+    };
+};
+
+export type LinkShortenerGetResponse = LinkShortenerGetResponses[keyof LinkShortenerGetResponses];
+
+export type LinkShortenerUpdateData = {
+    body: {
+        apiKey?: string;
+        baseUrl?: string;
+        domain?: string | null;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/link-shortener';
+};
+
+export type LinkShortenerUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type LinkShortenerUpdateError = LinkShortenerUpdateErrors[keyof LinkShortenerUpdateErrors];
+
+export type LinkShortenerUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        baseUrl: string;
+        createdAt: string;
+        domain: string | null;
+        hasKey: boolean;
+        provider: 'dub' | 'kutt';
+        updatedAt: string;
+    };
+};
+
+export type LinkShortenerUpdateResponse = LinkShortenerUpdateResponses[keyof LinkShortenerUpdateResponses];
+
+export type LinkShortenerConnectData = {
+    body: {
+        apiKey: string;
+        baseUrl?: string;
+        domain?: string | null;
+        provider: 'dub' | 'kutt';
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/link-shortener';
+};
+
+export type LinkShortenerConnectErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type LinkShortenerConnectError = LinkShortenerConnectErrors[keyof LinkShortenerConnectErrors];
+
+export type LinkShortenerConnectResponses = {
+    /**
+     * OK
+     */
+    201: {
+        baseUrl: string;
+        createdAt: string;
+        domain: string | null;
+        hasKey: boolean;
+        provider: 'dub' | 'kutt';
+        updatedAt: string;
+    };
+};
+
+export type LinkShortenerConnectResponse = LinkShortenerConnectResponses[keyof LinkShortenerConnectResponses];
 
 export type MediaListData = {
     body?: never;
@@ -3507,6 +3692,46 @@ export type PostsScheduleResponses = {
 };
 
 export type PostsScheduleResponse = PostsScheduleResponses[keyof PostsScheduleResponses];
+
+export type ShortLinksPostData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/short-links';
+};
+
+export type ShortLinksPostErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ShortLinksPostError = ShortLinksPostErrors[keyof ShortLinksPostErrors];
+
+export type ShortLinksPostResponses = {
+    /**
+     * OK
+     */
+    200: {
+        destinations: Array<{
+            channelId: string;
+            destinationId: string;
+            links: Array<{
+                error: 'unauthorized' | 'refused' | 'rate_limited' | 'unavailable' | 'timed_out' | 'url_blocked' | 'conflict' | 'invalid_response' | null;
+                longUrl: string;
+                shortUrl: string | null;
+                state: 'pending' | 'ready' | 'failed';
+            }>;
+            shorten: boolean;
+        }>;
+    };
+};
+
+export type ShortLinksPostResponse = ShortLinksPostResponses[keyof ShortLinksPostResponses];
 
 export type PostsTagsReplaceData = {
     body: {

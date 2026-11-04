@@ -1,13 +1,14 @@
 import { toDate } from '@kronaut/core';
-import type { HttpClient } from '@kronaut/egress';
+import { createHttpClient, type HttpClient } from '@kronaut/egress';
 import { createLocalJWKSet, errors, importJWK, type JWK, jwtVerify } from 'jose';
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import type { AccessConfig } from '../../config/config.ts';
 
 export const ACCESS_HEADER = 'cf-access-jwt-assertion';
 
-export const ACCESS_EGRESS = {
+const ACCESS_EGRESS = {
   maxResponseBytes: 64 * 1024,
   timeoutMs: 10_000,
   maxRedirects: 0,
@@ -210,4 +211,20 @@ export function createAccessVerifier(options: AccessVerifierOptions): AccessVeri
       clearInterval(timer);
     },
   };
+}
+
+export async function bootAccess(
+  access: AccessConfig,
+  logger: Logger,
+  clock: () => Temporal.Instant,
+  http: HttpClient = createHttpClient({ ...ACCESS_EGRESS, allowedHosts: [access.teamDomain] }),
+): Promise<AccessVerifier> {
+  const verifier = createAccessVerifier({ ...access, http, logger, now: clock });
+  try {
+    await verifier.refresh();
+  } catch (err) {
+    verifier.stop();
+    throw err;
+  }
+  return verifier;
 }

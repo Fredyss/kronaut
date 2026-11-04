@@ -9,6 +9,7 @@ import type {
   ProviderManifest,
   ProviderRuntime,
   ProviderState,
+  PublishItem,
   PublishOutcome,
   RefreshKind,
   VerifyMode,
@@ -82,6 +83,7 @@ export interface FakeRefreshCall {
 export interface FakeCall {
   readonly attemptNo: number;
   readonly positions: readonly number[];
+  readonly items: readonly PublishItem[];
   readonly chain: readonly ChainLink[];
   readonly state: ProviderState;
   readonly credentials: unknown;

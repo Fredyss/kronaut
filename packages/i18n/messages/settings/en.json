@@ -268,5 +268,47 @@
   "settings_feed_channel_gone": "One of the channels no longer exists.",
   "settings_feed_channel_unsupported": "{channel} can post neither text alone nor text with one image.",
   "settings_feed_channel_queue": "{channel} has no queue times. Add some on the Channels page, or save new items as drafts.",
-  "settings_feed_limit": "This workspace has reached its limit of feeds. Delete one first."
+  "settings_feed_limit": "This workspace has reached its limit of feeds. Delete one first.",
+  "settings_short_links_title": "Short links",
+  "settings_short_links_intro": "Shorten the links in scheduled posts through Dub or Kutt, with one short link per channel and UTM tags added. If the shortener can't be reached, a link is published as written.",
+  "settings_short_links_connect_title": "Connect a shortener",
+  "settings_short_links_connected_title": "Shortener",
+  "settings_short_links_edit_title": "Edit shortener",
+  "settings_short_links_provider": "Service",
+  "settings_short_links_provider_name": [
+    {
+      "declarations": ["input provider"],
+      "selectors": ["provider"],
+      "match": {
+        "provider=dub": "Dub",
+        "provider=kutt": "Kutt",
+        "provider=*": "Other"
+      }
+    }
+  ],
+  "settings_short_links_base_url": "Base URL",
+  "settings_short_links_base_url_hint": "https://kutt.to or your own instance",
+  "settings_short_links_domain": "Custom domain (optional)",
+  "settings_short_links_domain_none": "The service's default",
+  "settings_short_links_api_key": "API key",
+  "settings_short_links_api_key_keep": "Leave empty to keep the current key.",
+  "settings_short_links_api_key_set": "API key set",
+  "settings_short_links_api_key_missing": "No API key",
+  "settings_short_links_connect": "Connect",
+  "settings_short_links_checking": "Checking key…",
+  "settings_short_links_cancel": "Cancel",
+  "settings_short_links_edit": "Edit",
+  "settings_short_links_remove": "Remove",
+  "settings_short_links_remove_title": "Remove the shortener?",
+  "settings_short_links_remove_body": "Posts scheduled from now on keep their long links. Short links that already exist keep working.",
+  "settings_short_links_keep": "Keep shortener",
+  "settings_short_links_connected": "Shortener connected",
+  "settings_short_links_saved": "Shortener saved",
+  "settings_short_links_removed": "Shortener removed",
+  "settings_short_links_unauthorized": "The service refused this API key.",
+  "settings_short_links_unreachable": "The service couldn't be reached. Check the address and try again.",
+  "settings_short_links_base_url_invalid": "Enter an https link, such as https://kutt.to or your own instance, without a user name, password or query. kutt.it isn't supported.",
+  "settings_short_links_domain_invalid": "Enter a host name such as go.example.com, without https:// or a path.",
+  "settings_short_links_api_key_invalid": "The API key is too long or has characters that aren't allowed.",
+  "settings_short_links_conflict": "The shortener was changed in the meantime. Reload the page and try again."
 }

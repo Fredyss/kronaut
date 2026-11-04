@@ -36,6 +36,7 @@
 - **Secrets:**
   - `SEC-01 secret_canary` (REST, MCP, errors, logs, exports, audit, webhooks, AI prompt logs)
   - `SEC-02 rss_feed_url_secret` (a feed URL with a token never reaches a log, a job payload, an audit event or an error message; only the feed itself returns it)
+  - `SEC-03 shortener_key_secret` (the link shortener's API key never reaches a response, a log, a job payload, an audit event or an error message; it is sealed through the keyring and the API shows only `hasKey`)
 - **Prompt injection:**
   - `INJ-01 injection_corpus` (draft only; planted links flagged)
   - `INJ-02 mcp_untrusted_envelope`

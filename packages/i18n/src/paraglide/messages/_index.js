@@ -97,6 +97,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Server_Rate_LimitedInputs */
 /** @typedef {{}} Channels_Server_RejectedInputs */
 /** @typedef {{}} Channels_Server_UnreachableInputs */
+/** @typedef {{}} Channels_Shorten_LinksInputs */
+/** @typedef {{}} Channels_Shorten_Links_OffInputs */
+/** @typedef {{}} Channels_Shorten_Links_OnInputs */
 /** @typedef {{}} Channels_SignatureInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Signature_NamedInputs */
 /** @typedef {{}} Channels_Signature_NoneInputs */
@@ -285,6 +288,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Post_Schedule_At_TzInputs */
 /** @typedef {{}} Post_Schedule_NoneInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Scheduled_AtInputs */
+/** @typedef {{ kind: NonNullable<unknown> }} Post_Short_Link_FailedInputs */
+/** @typedef {{}} Post_Short_Link_PendingInputs */
+/** @typedef {{}} Post_Short_Links_TitleInputs */
 /** @typedef {{ text: NonNullable<unknown> }} Post_SignatureInputs */
 /** @typedef {{}} Post_Summary_CanceledInputs */
 /** @typedef {{}} Post_Summary_Completed_AllInputs */
@@ -1827,6 +1833,51 @@ export const channels_server_unreachable = /** @type {((inputs?: Channels_Server
 	if (locale === "sk") return __sk.channels_server_unreachable(inputs)
 	if (locale === "cs") return __cs.channels_server_unreachable(inputs)
 	return __en.channels_server_unreachable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Shorten links" |
+*
+* @param {Channels_Shorten_LinksInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_shorten_links = /** @type {((inputs?: Channels_Shorten_LinksInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Shorten_LinksInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_shorten_links(inputs)
+	if (locale === "cs") return __cs.channels_shorten_links(inputs)
+	return __en.channels_shorten_links(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Links on this channel won't be shortened" |
+*
+* @param {Channels_Shorten_Links_OffInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_shorten_links_off = /** @type {((inputs?: Channels_Shorten_Links_OffInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Shorten_Links_OffInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_shorten_links_off(inputs)
+	if (locale === "cs") return __cs.channels_shorten_links_off(inputs)
+	return __en.channels_shorten_links_off(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Links on this channel will be shortened" |
+*
+* @param {Channels_Shorten_Links_OnInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_shorten_links_on = /** @type {((inputs?: Channels_Shorten_Links_OnInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Shorten_Links_OnInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_shorten_links_on(inputs)
+	if (locale === "cs") return __cs.channels_shorten_links_on(inputs)
+	return __en.channels_shorten_links_on(inputs)
 });
 /**
 * | output |
@@ -4656,6 +4707,59 @@ export const post_scheduled_at = /** @type {((inputs: Post_Scheduled_AtInputs, o
 	if (locale === "sk") return __sk.post_scheduled_at(inputs)
 	if (locale === "cs") return __cs.post_scheduled_at(inputs)
 	return __en.post_scheduled_at(inputs)
+});
+/**
+* | kind | output |
+* | --- | --- |
+* | "unauthorized" | "Not shortened: the shortener refused the API key." |
+* | "refused" | "Not shortened: the shortener refused this link." |
+* | "rate_limited" | "Not shortened: the shortener got too many requests." |
+* | "unavailable" | "Not shortened: the shortener couldn't be reached." |
+* | "timed_out" | "Not shortened: the shortener took too long to answer." |
+* | "url_blocked" | "Not shortened: the shortener's address isn't allowed." |
+* | "conflict" | "Not shortened: the shortener already has a different link under this ID." |
+* | "invalid_response" | "Not shortened: the shortener's answer couldn't be read." |
+* | * | "Not shortened." |
+*
+* @param {Post_Short_Link_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_short_link_failed = /** @type {((inputs: Post_Short_Link_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Short_Link_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_short_link_failed(inputs)
+	if (locale === "cs") return __cs.post_short_link_failed(inputs)
+	return __en.post_short_link_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Will be shortened when published" |
+*
+* @param {Post_Short_Link_PendingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_short_link_pending = /** @type {((inputs?: Post_Short_Link_PendingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Short_Link_PendingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_short_link_pending(inputs)
+	if (locale === "cs") return __cs.post_short_link_pending(inputs)
+	return __en.post_short_link_pending(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Short links" |
+*
+* @param {Post_Short_Links_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const post_short_links_title = /** @type {((inputs?: Post_Short_Links_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Post_Short_Links_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.post_short_links_title(inputs)
+	if (locale === "cs") return __cs.post_short_links_title(inputs)
+	return __en.post_short_links_title(inputs)
 });
 /**
 * | output |

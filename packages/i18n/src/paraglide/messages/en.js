@@ -95,6 +95,9 @@
 /** @typedef {{}} Channels_Server_Rate_LimitedInputs */
 /** @typedef {{}} Channels_Server_RejectedInputs */
 /** @typedef {{}} Channels_Server_UnreachableInputs */
+/** @typedef {{}} Channels_Shorten_LinksInputs */
+/** @typedef {{}} Channels_Shorten_Links_OffInputs */
+/** @typedef {{}} Channels_Shorten_Links_OnInputs */
 /** @typedef {{}} Channels_SignatureInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Signature_NamedInputs */
 /** @typedef {{}} Channels_Signature_NoneInputs */
@@ -283,6 +286,9 @@
 /** @typedef {{ when: NonNullable<unknown>, tz: NonNullable<unknown> }} Post_Schedule_At_TzInputs */
 /** @typedef {{}} Post_Schedule_NoneInputs */
 /** @typedef {{ when: NonNullable<unknown> }} Post_Scheduled_AtInputs */
+/** @typedef {{ kind: NonNullable<unknown> }} Post_Short_Link_FailedInputs */
+/** @typedef {{}} Post_Short_Link_PendingInputs */
+/** @typedef {{}} Post_Short_Links_TitleInputs */
 /** @typedef {{ text: NonNullable<unknown> }} Post_SignatureInputs */
 /** @typedef {{}} Post_Summary_CanceledInputs */
 /** @typedef {{}} Post_Summary_Completed_AllInputs */
@@ -771,6 +777,18 @@ export const channels_server_rejected = /** @type {(inputs: Channels_Server_Reje
 
 export const channels_server_unreachable = /** @type {(inputs: Channels_Server_UnreachableInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`That server couldn't be reached. Try again later.`)
+};
+
+export const channels_shorten_links = /** @type {(inputs: Channels_Shorten_LinksInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shorten links`)
+};
+
+export const channels_shorten_links_off = /** @type {(inputs: Channels_Shorten_Links_OffInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Links on this channel won't be shortened`)
+};
+
+export const channels_shorten_links_on = /** @type {(inputs: Channels_Shorten_Links_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Links on this channel will be shortened`)
 };
 
 export const channels_signature = /** @type {(inputs: Channels_SignatureInputs) => LocalizedString} */ () => {
@@ -1540,6 +1558,26 @@ export const post_schedule_none = /** @type {(inputs: Post_Schedule_NoneInputs) 
 
 export const post_scheduled_at = /** @type {(inputs: Post_Scheduled_AtInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Due ${i?.when}`)
+};
+
+export const post_short_link_failed = /** @type {(inputs: Post_Short_Link_FailedInputs) => LocalizedString} */ (i) => {
+	if (i?.kind === "unauthorized") return /** @type {LocalizedString} */ (`Not shortened: the shortener refused the API key.`);
+	if (i?.kind === "refused") return /** @type {LocalizedString} */ (`Not shortened: the shortener refused this link.`);
+	if (i?.kind === "rate_limited") return /** @type {LocalizedString} */ (`Not shortened: the shortener got too many requests.`);
+	if (i?.kind === "unavailable") return /** @type {LocalizedString} */ (`Not shortened: the shortener couldn't be reached.`);
+	if (i?.kind === "timed_out") return /** @type {LocalizedString} */ (`Not shortened: the shortener took too long to answer.`);
+	if (i?.kind === "url_blocked") return /** @type {LocalizedString} */ (`Not shortened: the shortener's address isn't allowed.`);
+	if (i?.kind === "conflict") return /** @type {LocalizedString} */ (`Not shortened: the shortener already has a different link under this ID.`);
+	if (i?.kind === "invalid_response") return /** @type {LocalizedString} */ (`Not shortened: the shortener's answer couldn't be read.`);
+	return /** @type {LocalizedString} */ (`Not shortened.`)
+};
+
+export const post_short_link_pending = /** @type {(inputs: Post_Short_Link_PendingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Will be shortened when published`)
+};
+
+export const post_short_links_title = /** @type {(inputs: Post_Short_Links_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Short links`)
 };
 
 export const post_signature = /** @type {(inputs: Post_SignatureInputs) => LocalizedString} */ (i) => {

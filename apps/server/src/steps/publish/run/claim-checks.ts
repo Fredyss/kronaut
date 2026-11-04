@@ -44,6 +44,7 @@ export interface Inputs {
   readonly kind: 'inputs';
   readonly entry: ProviderEntry;
   readonly prepared: Ready;
+  readonly resolved: ResolvedDestination;
 }
 
 async function settle(
@@ -147,5 +148,5 @@ export async function checkContent(
   });
   if (prepared.kind === 'fail') return fail(scope, prepared.code, prepared.message);
   if (prepared.kind === 'no_credential') return settle(scope, 'blocked', 'account_needs_reauth');
-  return { kind: 'inputs', entry, prepared };
+  return { kind: 'inputs', entry, prepared, resolved };
 }

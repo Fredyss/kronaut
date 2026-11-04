@@ -108,6 +108,38 @@
 /** @typedef {{}} Settings_Saved_Texts_IntroInputs */
 /** @typedef {{}} Settings_Saved_Texts_TitleInputs */
 /** @typedef {{}} Settings_SavingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_KeyInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_MissingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_SetInputs */
+/** @typedef {{}} Settings_Short_Links_Base_UrlInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_HintInputs */
+/** @typedef {{}} Settings_Short_Links_Base_Url_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_CancelInputs */
+/** @typedef {{}} Settings_Short_Links_CheckingInputs */
+/** @typedef {{}} Settings_Short_Links_ConflictInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectInputs */
+/** @typedef {{}} Settings_Short_Links_Connect_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_ConnectedInputs */
+/** @typedef {{}} Settings_Short_Links_Connected_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_DomainInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_InvalidInputs */
+/** @typedef {{}} Settings_Short_Links_Domain_NoneInputs */
+/** @typedef {{}} Settings_Short_Links_EditInputs */
+/** @typedef {{}} Settings_Short_Links_Edit_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_IntroInputs */
+/** @typedef {{}} Settings_Short_Links_KeepInputs */
+/** @typedef {{}} Settings_Short_Links_ProviderInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Short_Links_Provider_NameInputs */
+/** @typedef {{}} Settings_Short_Links_RemoveInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_BodyInputs */
+/** @typedef {{}} Settings_Short_Links_Remove_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_RemovedInputs */
+/** @typedef {{}} Settings_Short_Links_SavedInputs */
+/** @typedef {{}} Settings_Short_Links_TitleInputs */
+/** @typedef {{}} Settings_Short_Links_UnauthorizedInputs */
+/** @typedef {{}} Settings_Short_Links_UnreachableInputs */
 /** @typedef {{}} Settings_System_TitleInputs */
 /** @typedef {{ color: NonNullable<unknown> }} Settings_Tag_ColorInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Tag_Color_OfInputs */
@@ -614,6 +646,136 @@ export const settings_saved_texts_title = /** @type {(inputs: Settings_Saved_Tex
 
 export const settings_saving = /** @type {(inputs: Settings_SavingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Saving…`)
+};
+
+export const settings_short_links_api_key = /** @type {(inputs: Settings_Short_Links_Api_KeyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API key`)
+};
+
+export const settings_short_links_api_key_invalid = /** @type {(inputs: Settings_Short_Links_Api_Key_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The API key is too long or has characters that aren't allowed.`)
+};
+
+export const settings_short_links_api_key_keep = /** @type {(inputs: Settings_Short_Links_Api_Key_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Leave empty to keep the current key.`)
+};
+
+export const settings_short_links_api_key_missing = /** @type {(inputs: Settings_Short_Links_Api_Key_MissingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No API key`)
+};
+
+export const settings_short_links_api_key_set = /** @type {(inputs: Settings_Short_Links_Api_Key_SetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API key set`)
+};
+
+export const settings_short_links_base_url = /** @type {(inputs: Settings_Short_Links_Base_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Base URL`)
+};
+
+export const settings_short_links_base_url_hint = /** @type {(inputs: Settings_Short_Links_Base_Url_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`https://kutt.to or your own instance`)
+};
+
+export const settings_short_links_base_url_invalid = /** @type {(inputs: Settings_Short_Links_Base_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Enter an https link, such as https://kutt.to or your own instance, without a user name, password or query. kutt.it isn't supported.`)
+};
+
+export const settings_short_links_cancel = /** @type {(inputs: Settings_Short_Links_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_short_links_checking = /** @type {(inputs: Settings_Short_Links_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Checking key…`)
+};
+
+export const settings_short_links_conflict = /** @type {(inputs: Settings_Short_Links_ConflictInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The shortener was changed in the meantime. Reload the page and try again.`)
+};
+
+export const settings_short_links_connect = /** @type {(inputs: Settings_Short_Links_ConnectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Connect`)
+};
+
+export const settings_short_links_connect_title = /** @type {(inputs: Settings_Short_Links_Connect_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Connect a shortener`)
+};
+
+export const settings_short_links_connected = /** @type {(inputs: Settings_Short_Links_ConnectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shortener connected`)
+};
+
+export const settings_short_links_connected_title = /** @type {(inputs: Settings_Short_Links_Connected_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shortener`)
+};
+
+export const settings_short_links_domain = /** @type {(inputs: Settings_Short_Links_DomainInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Custom domain (optional)`)
+};
+
+export const settings_short_links_domain_invalid = /** @type {(inputs: Settings_Short_Links_Domain_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Enter a host name such as go.example.com, without https:// or a path.`)
+};
+
+export const settings_short_links_domain_none = /** @type {(inputs: Settings_Short_Links_Domain_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The service's default`)
+};
+
+export const settings_short_links_edit = /** @type {(inputs: Settings_Short_Links_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit`)
+};
+
+export const settings_short_links_edit_title = /** @type {(inputs: Settings_Short_Links_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit shortener`)
+};
+
+export const settings_short_links_intro = /** @type {(inputs: Settings_Short_Links_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shorten the links in scheduled posts through Dub or Kutt, with one short link per channel and UTM tags added. If the shortener can't be reached, a link is published as written.`)
+};
+
+export const settings_short_links_keep = /** @type {(inputs: Settings_Short_Links_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep shortener`)
+};
+
+export const settings_short_links_provider = /** @type {(inputs: Settings_Short_Links_ProviderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Service`)
+};
+
+export const settings_short_links_provider_name = /** @type {(inputs: Settings_Short_Links_Provider_NameInputs) => LocalizedString} */ (i) => {
+	if (i?.provider === "dub") return /** @type {LocalizedString} */ (`Dub`);
+	if (i?.provider === "kutt") return /** @type {LocalizedString} */ (`Kutt`);
+	return /** @type {LocalizedString} */ (`Other`)
+};
+
+export const settings_short_links_remove = /** @type {(inputs: Settings_Short_Links_RemoveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Remove`)
+};
+
+export const settings_short_links_remove_body = /** @type {(inputs: Settings_Short_Links_Remove_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posts scheduled from now on keep their long links. Short links that already exist keep working.`)
+};
+
+export const settings_short_links_remove_title = /** @type {(inputs: Settings_Short_Links_Remove_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Remove the shortener?`)
+};
+
+export const settings_short_links_removed = /** @type {(inputs: Settings_Short_Links_RemovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shortener removed`)
+};
+
+export const settings_short_links_saved = /** @type {(inputs: Settings_Short_Links_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Shortener saved`)
+};
+
+export const settings_short_links_title = /** @type {(inputs: Settings_Short_Links_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Short links`)
+};
+
+export const settings_short_links_unauthorized = /** @type {(inputs: Settings_Short_Links_UnauthorizedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The service refused this API key.`)
+};
+
+export const settings_short_links_unreachable = /** @type {(inputs: Settings_Short_Links_UnreachableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The service couldn't be reached. Check the address and try again.`)
 };
 
 export const settings_system_title = /** @type {(inputs: Settings_System_TitleInputs) => LocalizedString} */ () => {

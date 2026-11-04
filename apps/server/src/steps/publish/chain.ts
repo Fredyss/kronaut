@@ -18,12 +18,13 @@ export interface ItemRow {
   readonly state: string;
   readonly remote_id: string | null;
   readonly anchor: unknown;
+  readonly rendered_text: string | null;
 }
 
 export function selectItems(trx: TenantDb, job: DestinationJob): Promise<ItemRow[]> {
   return trx
     .selectFrom('destination_items')
-    .select(['position', 'role', 'state', 'remote_id', 'anchor'])
+    .select(['position', 'role', 'state', 'remote_id', 'anchor', 'rendered_text'])
     .where('workspace_id', '=', job.workspaceId)
     .where('destination_id', '=', job.id)
     .orderBy('position')
@@ -94,5 +95,9 @@ export function currentInput(
   const position = rows.length === 0 ? items[0]?.position : row?.position;
   const item = items.find((candidate) => candidate.position === position);
   if (item === undefined) return undefined;
-  return { item, chain: chainBefore(rows, item.position) };
+  const text = rows.find((candidate) => candidate.position === position)?.rendered_text;
+  return {
+    item: text === undefined || text === null ? item : { ...item, text },
+    chain: chainBefore(rows, item.position),
+  };
 }
