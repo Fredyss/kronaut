@@ -1,10 +1,10 @@
+import type { DraftMedia } from '@kronaut/compose';
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { lockCurrent } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
 import { HttpError } from '../../base/http/errors.ts';
-import { unprocessable } from '../../base/http/issues.ts';
 import { authorOf, insertDraft } from '../../flow/posts/draft/create.ts';
 import { actAs, type OwnerActing, ownerActing } from '../../flow/posts/owner/owner.ts';
 import {
@@ -15,10 +15,9 @@ import {
   requestAsOwner,
   scheduleOrRequest,
 } from '../../flow/posts/owner/owner-schedule.ts';
-import { textOnlyType } from './input.ts';
-import type { FeedItem } from './parse.ts';
+import { type FeedChannel, publishTypeFor } from './pick.ts';
 import type { ItemOutcome } from './seen.ts';
-import { renderDoc } from './template.ts';
+import { docOf } from './template.ts';
 
 export const CONTENT_ERRORS: ReadonlySet<string> = new Set([
   'invalid_request',
@@ -27,12 +26,6 @@ export const CONTENT_ERRORS: ReadonlySet<string> = new Set([
 ]);
 
 const QUEUE_CODES: ReadonlySet<string> = new Set(['queue_empty', 'queue_full']);
-
-export interface FeedChannel {
-  readonly id: string;
-  readonly provider: string;
-  readonly capabilities: unknown;
-}
 
 export interface PostingFeed {
   readonly owner_user_id: string;
@@ -44,28 +37,55 @@ export interface PostingFeed {
 export interface ItemPost {
   readonly outcome: ItemOutcome;
   readonly errorCode: string | null;
-  readonly postId: string;
+  readonly postId: string | null;
 }
 
-function destinations(env: OwnerEnv, channels: readonly FeedChannel[]) {
-  return channels.map((channel) => {
-    const publishType = textOnlyType(env.providers, channel);
-    if (publishType === null) {
-      throw unprocessable([{ path: 'channels', code: 'text_unsupported' }]);
-    }
-    return { accountId: encodePublicId('socialAccount', channel.id), publishType };
+export interface ItemMedia {
+  readonly assetId: string;
+  readonly altText: string | null;
+  readonly facts: DraftMedia;
+}
+
+export interface ItemContent {
+  readonly text: string;
+  readonly media: ItemMedia | null;
+}
+
+interface Destination {
+  readonly accountId: string;
+  readonly publishType: string;
+}
+
+function destinations(env: OwnerEnv, channels: readonly FeedChannel[], media: ItemMedia | null) {
+  const drafted = media === null ? [] : [media.facts];
+  return channels.flatMap((channel): Destination[] => {
+    const publishType = publishTypeFor(env.providers, channel, drafted);
+    if (publishType === null) return [];
+    return [{ accountId: encodePublicId('socialAccount', channel.id), publishType }];
   });
 }
 
-async function draftOf(trx: TenantDb, env: OwnerEnv, feed: PostingFeed, item: FeedItem) {
+function itemOf({ text, media }: ItemContent) {
+  if (media === null) return { doc: docOf(text) };
+  const mediaId = encodePublicId('media', media.assetId);
+  return { doc: docOf(text), media: [{ mediaId, altText: media.altText }] };
+}
+
+interface Drafting {
+  readonly feed: PostingFeed;
+  readonly content: ItemContent;
+  readonly targets: readonly Destination[];
+}
+
+async function draftOf(trx: TenantDb, env: OwnerEnv, { feed, content, targets }: Drafting) {
   const { workspaceId } = env;
   const acting = await ownerActing(trx, workspaceId, { ...feed, owner_grant_id: null }, env.now);
   await actAs(trx, acting.actor);
   const postId = await insertDraft(trx, env.providers, {
     workspaceId,
     body: {
-      items: [{ doc: renderDoc(feed.template, item) }],
-      destinations: destinations(env, feed.channels),
+      items: [itemOf(content)],
+      destinations: [...targets],
     },
     columns: { schedule_mode: 'unscheduled', ...authorOf(acting.principal), origin: 'rss' },
     authorize: (units) => acting.authorize('posts:draft', { workspaceId, units }),
@@ -109,9 +129,11 @@ export async function postItem(
   trx: TenantDb,
   env: OwnerEnv,
   feed: PostingFeed,
-  item: FeedItem,
+  content: ItemContent,
 ): Promise<ItemPost> {
-  const { acting, postId } = await draftOf(trx, env, feed, item);
+  const targets = destinations(env, feed.channels, content.media);
+  if (targets.length === 0) return { outcome: 'skipped', errorCode: null, postId: null };
+  const { acting, postId } = await draftOf(trx, env, { feed, content, targets });
   if (feed.mode !== 'queue') return { outcome: 'drafted', errorCode: null, postId };
   return await scheduleOrKeep(trx, postId, () => queue(trx, env, acting, postId));
 }

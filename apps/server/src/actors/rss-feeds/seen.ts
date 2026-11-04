@@ -6,7 +6,14 @@ import type { FeedItem } from './parse.ts';
 const BATCH = 500;
 const KEEP_DAYS = 30;
 
-export type ItemOutcome = 'scheduled' | 'requested' | 'drafted' | 'retrying' | 'failed';
+export type ItemOutcome =
+  | 'fetching_media'
+  | 'scheduled'
+  | 'requested'
+  | 'drafted'
+  | 'skipped'
+  | 'retrying'
+  | 'failed';
 
 export interface SeenAt extends FeedRef {
   readonly at: Date;
@@ -18,6 +25,13 @@ export interface ItemRecord {
   readonly errorCode: string | null;
   readonly postId: string | null;
   readonly attempts?: number;
+  readonly fetching?: Fetching;
+}
+
+export interface Fetching {
+  readonly importId: string;
+  readonly text: string;
+  readonly altText: string | null;
 }
 
 export interface Known {
@@ -89,6 +103,9 @@ export async function recordItem(trx: TenantDb, ref: SeenAt, record: ItemRecord)
       error_code: record.errorCode,
       post_id: record.postId,
       attempts: record.attempts ?? 0,
+      media_import_id: record.fetching?.importId ?? null,
+      text: record.fetching?.text ?? null,
+      alt_text: record.fetching?.altText ?? null,
       last_seen_at: ref.at,
     })
     .onConflict((oc) =>
@@ -97,6 +114,11 @@ export async function recordItem(trx: TenantDb, ref: SeenAt, record: ItemRecord)
         error_code: eb.ref('excluded.error_code'),
         post_id: eb.ref('excluded.post_id'),
         attempts: eb.ref('excluded.attempts'),
+        media_import_id: sql<
+          string | null
+        >`coalesce(excluded.media_import_id, rss_items.media_import_id)`,
+        text: eb.ref('excluded.text'),
+        alt_text: eb.ref('excluded.alt_text'),
         last_seen_at: eb.ref('excluded.last_seen_at'),
       })),
     )

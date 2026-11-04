@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { FeedInvalid, parseFeed } from './parse.ts';
 import { cutSummary, htmlToText } from './plain-text.ts';
-import { renderDoc, renderText } from './template.ts';
+import { docOf, renderText } from './template.ts';
 
 const BASE = 'https://blog.example.test/feed.xml';
 
@@ -13,6 +13,56 @@ function sha(text: string): Buffer {
 function rss(items: string): string {
   return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Blog</title>${items}</channel></rss>`;
 }
+
+const MEDIA = 'xmlns:media="http://search.yahoo.com/mrss/"';
+
+function imageOfItem(inner: string) {
+  const xml = `<?xml version="1.0"?><rss version="2.0" ${MEDIA}><channel><item><title>T</title><link>/t</link>${inner}</item></channel></rss>`;
+  return parseFeed(xml, BASE)[0]?.image;
+}
+
+describe('the item image', () => {
+  it('takes media:content with an image medium or type, also inside media:group', () => {
+    expect(
+      imageOfItem(`<media:content url="/v.mp4" medium="video"/>
+        <media:content url="/a.jpg" medium="image"><media:description>A &lt;b&gt;cat&lt;/b&gt;</media:description></media:content>`),
+    ).toEqual({ url: 'https://blog.example.test/a.jpg', alt: 'A cat' });
+    expect(
+      imageOfItem(
+        '<media:group><media:content url="https://cdn.example.test/g.png" type="image/png"/></media:group>',
+      ),
+    ).toEqual({ url: 'https://cdn.example.test/g.png', alt: null });
+  });
+
+  it('falls back to media:thumbnail, then an image enclosure', () => {
+    expect(
+      imageOfItem('<enclosure url="/e.jpg" type="image/jpeg"/><media:thumbnail url="/th.jpg"/>'),
+    ).toEqual({ url: 'https://blog.example.test/th.jpg', alt: null });
+    expect(
+      imageOfItem(
+        '<enclosure url="/a.mp3" type="audio/mpeg"/><enclosure url="/e.jpg" type="image/jpeg"/>',
+      ),
+    ).toEqual({ url: 'https://blog.example.test/e.jpg', alt: null });
+  });
+
+  it('reads an Atom enclosure link with an image type', () => {
+    const xml = `<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>e1</id><title>T</title>
+      <link href="/post"/><link rel="enclosure" type="image/webp" href="/pic.webp"/></entry></feed>`;
+    expect(parseFeed(xml, BASE)[0]?.image).toEqual({
+      url: 'https://blog.example.test/pic.webp',
+      alt: null,
+    });
+  });
+
+  it('ignores an image that is not https, and cuts the alt text at 1500 characters', () => {
+    expect(imageOfItem('<media:thumbnail url="http://blog.example.test/a.jpg"/>')).toBeNull();
+    const long = 'a'.repeat(1600);
+    const image = imageOfItem(
+      `<media:content url="/a.jpg" medium="image"/><media:description>${long}</media:description>`,
+    );
+    expect(image?.alt).toHaveLength(1500);
+  });
+});
 
 describe('RSS 2.0', () => {
   it('reads title, link, guid, description and date per item', () => {
@@ -142,7 +192,7 @@ describe('the template', () => {
   });
 
   it('makes one paragraph per line', () => {
-    expect(renderDoc('{title}\n\n{link}', item)).toEqual({
+    expect(docOf(renderText('{title}\n\n{link}', item))).toEqual({
       type: 'doc',
       content: [
         { type: 'paragraph', content: [{ type: 'text', text: 'Café' }] },

@@ -22,9 +22,10 @@
 /** @typedef {{}} Settings_Feed_CancelInputs */
 /** @typedef {{}} Settings_Feed_Channel_GoneInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_TextInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_UnsupportedInputs */
 /** @typedef {{}} Settings_Feed_ChannelsInputs */
 /** @typedef {{}} Settings_Feed_Channels_HintInputs */
+/** @typedef {{}} Settings_Feed_Channels_Image_HintInputs */
 /** @typedef {{}} Settings_Feed_CheckingInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_DeleteInputs */
 /** @typedef {{}} Settings_Feed_Delete_BodyInputs */
@@ -261,8 +262,8 @@ export const settings_feed_channel_queue = /** @type {(inputs: Settings_Feed_Cha
 	return /** @type {LocalizedString} */ (`${i?.channel} has no queue times. Add some on the Channels page, or save new items as drafts.`)
 };
 
-export const settings_feed_channel_text = /** @type {(inputs: Settings_Feed_Channel_TextInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`${i?.channel} can't post text without media.`)
+export const settings_feed_channel_unsupported = /** @type {(inputs: Settings_Feed_Channel_UnsupportedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} can post neither text alone nor text with one image.`)
 };
 
 export const settings_feed_channels = /** @type {(inputs: Settings_Feed_ChannelsInputs) => LocalizedString} */ () => {
@@ -270,7 +271,11 @@ export const settings_feed_channels = /** @type {(inputs: Settings_Feed_Channels
 };
 
 export const settings_feed_channels_hint = /** @type {(inputs: Settings_Feed_Channels_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Only channels that can post text without media are listed.`)
+	return /** @type {LocalizedString} */ (`Only channels that can post text alone or text with one image are listed.`)
+};
+
+export const settings_feed_channels_image_hint = /** @type {(inputs: Settings_Feed_Channels_Image_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channels that need an image, such as Instagram, get only the items that have one.`)
 };
 
 export const settings_feed_checking = /** @type {(inputs: Settings_Feed_CheckingInputs) => LocalizedString} */ () => {
@@ -359,7 +364,7 @@ export const settings_feed_never_checked = /** @type {(inputs: Settings_Feed_Nev
 };
 
 export const settings_feed_no_channels = /** @type {(inputs: Settings_Feed_No_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`No channel can post text without media yet. Connect one first.`)
+	return /** @type {LocalizedString} */ (`No channel can post text alone or text with one image yet. Connect one first.`)
 };
 
 export const settings_feed_pause = /** @type {(inputs: Settings_Feed_PauseInputs) => LocalizedString} */ () => {

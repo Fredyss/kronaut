@@ -219,8 +219,9 @@
   "settings_feed_url": "Adresa zdroje",
   "settings_feed_name": "Název",
   "settings_feed_channels": "Kanály",
-  "settings_feed_channels_hint": "Nabízejí se jen kanály, které umí zveřejnit samotný text bez médií.",
-  "settings_feed_no_channels": "Zatím žádný kanál neumí zveřejnit samotný text. Nejdřív nějaký připojte.",
+  "settings_feed_channels_hint": "Nabízejí se jen kanály, které umí zveřejnit samotný text nebo text s jedním obrázkem.",
+  "settings_feed_no_channels": "Zatím žádný kanál neumí zveřejnit samotný text ani text s jedním obrázkem. Nejdřív nějaký připojte.",
+  "settings_feed_channels_image_hint": "Kanály, které potřebují obrázek (například Instagram), dostanou jen položky s obrázkem.",
   "settings_feed_mode": "Nové položky",
   "settings_feed_mode_queue": "Přidat do fronty",
   "settings_feed_mode_draft": "Uložit jako koncept",
@@ -279,7 +280,7 @@
   "settings_feed_name_invalid": "Název je prázdný nebo příliš dlouhý.",
   "settings_feed_template_invalid": "Text příspěvku je prázdný nebo příliš dlouhý.",
   "settings_feed_channel_gone": "Jeden z kanálů už neexistuje.",
-  "settings_feed_channel_text": "Kanál {channel} neumí zveřejnit samotný text.",
+  "settings_feed_channel_unsupported": "Kanál {channel} neumí zveřejnit samotný text ani text s jedním obrázkem.",
   "settings_feed_channel_queue": "Kanál {channel} nemá ve frontě žádné časy. Přidejte je na stránce Kanály, nebo nové položky ukládejte jako koncepty.",
   "settings_feed_limit": "Tento pracovní prostor už má nejvíc povolených zdrojů. Nejdřív některý smažte."
 }

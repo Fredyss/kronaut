@@ -18,7 +18,7 @@ describe('feedErrors', () => {
       { path: 'body.name', code: 'name_invalid' },
       { path: 'body.template', code: 'template_invalid' },
       { path: 'body.channelIds.1', code: 'queue_empty' },
-      { path: 'body.channelIds.0', code: 'text_unsupported' },
+      { path: 'body.channelIds.0', code: 'channel_unsupported' },
     ]);
     expect(feedErrors(error, nameOf)).toEqual({
       url: settingsText.settings_feed_unreachable(),
@@ -26,7 +26,7 @@ describe('feedErrors', () => {
       template: settingsText.settings_feed_template_invalid(),
       channels: [
         settingsText.settings_feed_channel_queue({ channel: 'Bob' }),
-        settingsText.settings_feed_channel_text({ channel: 'Ada' }),
+        settingsText.settings_feed_channel_unsupported({ channel: 'Ada' }),
       ],
     });
   });

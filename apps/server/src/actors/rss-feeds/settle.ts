@@ -1,22 +1,24 @@
 import { encodePublicId, toDate } from '@kronaut/core';
-import type { Actor, TenantDb } from '@kronaut/db';
+import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { Temporal } from 'temporal-polyfill';
-import { HttpError } from '../../base/http/errors.ts';
 import type { ProviderRegistry } from '../../base/providers/providers.ts';
-import { actAs, OwnerLost } from '../../flow/posts/owner/owner.ts';
+import { enqueueFeedCheck } from '../../infrastructure/jobs/jobs.ts';
+import { type Attempt, attemptItem } from './attempt.ts';
 import { auditFeed, type FeedRef } from './audit.ts';
 import type { FeedError, Fetched } from './fetch.ts';
-import { CONTENT_ERRORS, type FeedChannel, type PostingFeed, postItem } from './item.ts';
+import { type PostingFeed, postItem } from './item.ts';
+import { hasPending, pendingItems, pendingMedia, startImport } from './media-item.ts';
 import type { FeedItem } from './parse.ts';
+import type { FeedChannel } from './pick.ts';
 import { revisitRequests } from './revisit.ts';
-import { type Known, recordItem, type SeenAt, touchAll, touchKnown } from './seen.ts';
+import { type Known, touchAll, touchKnown } from './seen.ts';
+import { renderText } from './template.ts';
 
 const PER_CHECK = 5;
-const MAX_ATTEMPTS = 3;
+const REQUEUE_MINUTES = 2;
 const FAILING_HOURS = 24;
-const SYSTEM: Actor = { kind: 'system' };
 const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
 
 export interface Settling {
@@ -96,56 +98,25 @@ function pickNew(found: readonly FeedItem[], known: Known, budget: number) {
   return { picked: ordered.slice(0, budget), waiting: ordered.length > budget };
 }
 
-type ItemResult = 'done' | 'retry' | 'owner_lost';
-
-interface Posting {
-  readonly feed: LockedFeed;
-  readonly item: FeedItem;
-  readonly prior: number;
+function envOf(s: Settling) {
+  return { providers: s.providers, now: s.now, workspaceId: s.ref.workspaceId };
 }
 
-async function retryLater(trx: TenantDb, seen: SeenAt, { item, prior }: Posting) {
-  const attempts = prior + 1;
-  const done = attempts >= MAX_ATTEMPTS;
-  await recordItem(trx, seen, {
-    key: item.key,
-    outcome: done ? 'failed' : 'retrying',
-    errorCode: done ? 'item_failed' : null,
-    postId: null,
-    attempts,
+function postFound(
+  trx: TenantDb,
+  s: Settling,
+  feed: LockedFeed,
+  attempt: Attempt & { item: FeedItem },
+) {
+  const { item } = attempt;
+  return attemptItem(trx, s, attempt, async () => {
+    const text = renderText(feed.template, item);
+    const env = envOf(s);
+    const fetching =
+      item.image === null ? null : await startImport(trx, env, feed, { image: item.image, text });
+    if (fetching === null) return await postItem(trx, env, feed, { text, media: null });
+    return { outcome: 'fetching_media', errorCode: null, postId: null, fetching };
   });
-  return done ? 'done' : 'retry';
-}
-
-async function postOne(trx: TenantDb, s: Settling, posting: Posting): Promise<ItemResult> {
-  const { feed, item, prior } = posting;
-  const seen: SeenAt = { ...s.ref, at: toDate(s.now) };
-  const env = { providers: s.providers, now: s.now, workspaceId: s.ref.workspaceId };
-  await sql`savepoint rss_item`.execute(trx);
-  try {
-    const post = await postItem(trx, env, feed, item);
-    await recordItem(trx, seen, { key: item.key, ...post, attempts: prior });
-    await sql`release savepoint rss_item`.execute(trx);
-    await actAs(trx, SYSTEM);
-    return 'done';
-  } catch (err) {
-    await sql`rollback to savepoint rss_item`.execute(trx);
-    await actAs(trx, SYSTEM);
-    if (err instanceof OwnerLost) return 'owner_lost';
-    if (err instanceof HttpError && CONTENT_ERRORS.has(err.code)) {
-      await recordItem(trx, seen, {
-        key: item.key,
-        outcome: 'failed',
-        errorCode: err.code,
-        postId: null,
-        attempts: prior,
-      });
-      return 'done';
-    }
-    const log = { task: 'rss', feed: encodePublicId('rssFeed', s.ref.feedId) };
-    s.logger.error(log, 'an RSS item could not be posted');
-    return await retryLater(trx, seen, posting);
-  }
 }
 
 interface Budgeted {
@@ -164,7 +135,7 @@ async function postNew(
   let complete = !waiting;
   for (const item of picked) {
     const prior = known.attempts.get(item.key.toString('hex')) ?? 0;
-    const result = await postOne(trx, s, { feed, item, prior });
+    const result = await postFound(trx, s, feed, { key: item.key, prior, item });
     if (result === 'owner_lost') {
       await pause(trx, s.ref, 'owner_lost');
       return { complete: false, paused: true };
@@ -193,13 +164,36 @@ async function settleFetched(trx: TenantDb, s: Settling, budgeted: Budgeted, fet
   return paused ? 'paused' : 'checked';
 }
 
-// Requests waiting for approval come first, so an approved post isn't overtaken by newer items.
 function revisit(trx: TenantDb, s: Settling, feed: LockedFeed) {
   if (feed.mode !== 'queue') return Promise.resolve({ acted: 0, ownerLost: false });
-  const env = { providers: s.providers, now: s.now, workspaceId: s.ref.workspaceId };
-  return revisitRequests(trx, { env, ref: s.ref, feed, budget: PER_CHECK, logger: s.logger });
+  return revisitRequests(trx, {
+    env: envOf(s),
+    ref: s.ref,
+    feed,
+    budget: PER_CHECK,
+    logger: s.logger,
+  });
 }
 
+async function settlePending(trx: TenantDb, s: Settling, feed: LockedFeed, budget: number) {
+  const rows = budget > 0 ? await pendingItems(trx, s.ref, budget) : [];
+  for (const row of rows) {
+    const media = pendingMedia(row, s.now);
+    if (media === 'wait') continue;
+    const attempt = { key: row.key, prior: row.attempts };
+    const content = { text: row.text ?? '', media };
+    const result = await attemptItem(trx, s, attempt, () => postItem(trx, envOf(s), feed, content));
+    if (result === 'owner_lost') return { used: rows.length, ownerLost: true };
+  }
+  return { used: rows.length, ownerLost: false };
+}
+
+async function ownerLost(trx: TenantDb, s: Settling): Promise<CheckOutcome> {
+  await pause(trx, s.ref, 'owner_lost');
+  return 'paused';
+}
+
+// Revisited requests and images still being fetched come first, so newer items can't overtake them.
 export async function settleCheck(
   trx: TenantDb,
   s: Settling,
@@ -207,11 +201,18 @@ export async function settleCheck(
 ): Promise<CheckOutcome> {
   const feed = await lockFeed(trx, s);
   if (feed === null) return 'skipped';
-  const { acted, ownerLost } = await revisit(trx, s, feed);
-  if (ownerLost) {
-    await pause(trx, s.ref, 'owner_lost');
-    return 'paused';
+  const revisited = await revisit(trx, s, feed);
+  if (revisited.ownerLost) return await ownerLost(trx, s);
+  const pending = await settlePending(trx, s, feed, PER_CHECK - revisited.acted);
+  if (pending.ownerLost) return await ownerLost(trx, s);
+  const budget = PER_CHECK - revisited.acted - pending.used;
+  const outcome =
+    typeof fetched === 'string'
+      ? await recordFailure(trx, s, feed, fetched)
+      : await settleFetched(trx, s, { feed, budget }, fetched);
+  if (outcome !== 'paused' && (await hasPending(trx, s.ref))) {
+    const job = { workspaceId: s.ref.workspaceId, id: s.ref.feedId };
+    await enqueueFeedCheck(trx, job, toDate(s.now.add({ minutes: REQUEUE_MINUTES })));
   }
-  if (typeof fetched === 'string') return await recordFailure(trx, s, feed, fetched);
-  return await settleFetched(trx, s, { feed, budget: PER_CHECK - acted }, fetched);
+  return outcome;
 }

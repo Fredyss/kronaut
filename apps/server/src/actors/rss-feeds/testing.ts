@@ -83,6 +83,7 @@ export interface Entry {
   readonly guid?: string;
   readonly date?: string;
   readonly description?: string;
+  readonly image?: string;
 }
 
 function entryXml(entry: Entry): string {
@@ -93,6 +94,7 @@ function entryXml(entry: Entry): string {
     entry.guid === undefined ? '' : `<guid>${entry.guid}</guid>`,
     entry.date === undefined ? '' : `<pubDate>${entry.date}</pubDate>`,
     entry.description === undefined ? '' : `<description>${entry.description}</description>`,
+    entry.image === undefined ? '' : `<enclosure url="${entry.image}" type="image/jpeg"/>`,
     '</item>',
   ].join('');
 }

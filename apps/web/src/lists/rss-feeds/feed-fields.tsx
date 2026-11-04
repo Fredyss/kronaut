@@ -48,11 +48,13 @@ export function ChannelChoices({
 }) {
   const prefix = useId();
   const hintId = useId();
+  const imageHintId = useId();
   const errorId = useId();
+  const described = channels.length > 0 ? `${hintId} ${imageHintId}` : hintId;
   return (
     <fieldset
       className="flex flex-col gap-2 text-sm"
-      aria-describedby={errors.length > 0 ? `${hintId} ${errorId}` : hintId}
+      aria-describedby={errors.length > 0 ? `${described} ${errorId}` : described}
     >
       <legend className="mb-1 font-medium">{settingsText.settings_feed_channels()}</legend>
       <p id={hintId} className="text-muted-foreground">
@@ -82,6 +84,11 @@ export function ChannelChoices({
           );
         })}
       </ul>
+      {channels.length > 0 ? (
+        <p id={imageHintId} className="text-muted-foreground">
+          {settingsText.settings_feed_channels_image_hint()}
+        </p>
+      ) : null}
       {errors.length > 0 ? (
         <ul id={errorId} className="flex flex-col gap-1 text-destructive">
           {errors.map((message) => (

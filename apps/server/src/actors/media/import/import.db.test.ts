@@ -10,6 +10,11 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { expectError } from '../../../base/http/testing.ts';
 import { installJobQueue, jobLogger } from '../../../infrastructure/jobs/job-queue.ts';
 import { JOBS } from '../../../infrastructure/jobs/jobs.ts';
+import {
+  importBucketKey,
+  MEDIA_IMPORTS_MAX_OPEN,
+  MEDIA_IMPORTS_PER_HOUR,
+} from '../../../records/media-imports/imports.ts';
 import { collectMedia } from '../gc.ts';
 import { type MediaDb, stagingUnder, startMediaDb, type Tenant } from '../testing/db.ts';
 import {
@@ -26,12 +31,7 @@ import {
 import { pngFixture } from '../testing.ts';
 import { VIDEO_PART_SIZE } from '../video/upload.ts';
 import { MEDIA_IMPORT_EGRESS, mediaImportTask, runMediaImport } from './import.ts';
-import {
-  failImport,
-  importBucketKey,
-  MEDIA_IMPORTS_MAX_OPEN,
-  MEDIA_IMPORTS_PER_HOUR,
-} from './import-store.ts';
+import { failImport } from './import-store.ts';
 
 const CLI: Actor = { kind: 'cli' };
 const CANARY = 'CANARY_import_token_31337';

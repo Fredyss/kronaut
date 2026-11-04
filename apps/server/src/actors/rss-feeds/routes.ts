@@ -33,7 +33,7 @@ const RssFeedSchema = z.object({
   updatedAt: z.iso.datetime(),
 });
 
-const SAVE_RULES = `The URL is an \`https\` link of up to ${URL_MAX} characters without credentials (422 url_invalid); the name has 1–${NAME_MAX} characters (422 name_invalid); the template is plain text of up to ${TEMPLATE_MAX} characters with {title}, {link} and {summary} (422 template_invalid). Every channel must be able to post text alone (422 text_unsupported) and, in queue mode, have queue slots (422 queue_empty).`;
+const SAVE_RULES = `The URL is an \`https\` link of up to ${URL_MAX} characters without credentials (422 url_invalid); the name has 1–${NAME_MAX} characters (422 name_invalid); the template is plain text of up to ${TEMPLATE_MAX} characters with {title}, {link} and {summary} (422 template_invalid). Every channel must be able to post text alone or text with one image (422 channel_unsupported) and, in queue mode, have queue slots (422 queue_empty).`;
 const FIRST_CHECK =
   'A new URL is fetched at once (422 feed_unreachable or feed_invalid), and every item it lists is marked seen, so nothing old is posted.';
 

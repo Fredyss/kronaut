@@ -1,11 +1,10 @@
 import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
+import { checkImportUrl } from '../../../records/media-imports/imports.ts';
 import { MediaError } from '../errors.ts';
 import { internalId } from '../routes.ts';
 import { createImport, findImport, MediaImportSchema } from './import-store.ts';
-
-const URL_MAX_LENGTH = 2048;
 
 export const mediaImportCreateRoute = defineRoute({
   id: 'media.import_create',
@@ -35,22 +34,6 @@ export const mediaImportGetRoute = defineRoute({
   summary: 'Get a media import',
   tags: ['media'],
 });
-
-function checkImportUrl(value: string): string {
-  const parsed = value.length > URL_MAX_LENGTH ? null : URL.parse(value);
-  if (
-    parsed === null ||
-    parsed.protocol !== 'https:' ||
-    parsed.username !== '' ||
-    parsed.password !== '' ||
-    parsed.href.length > URL_MAX_LENGTH
-  ) {
-    throw new MediaError('invalid_request', 'url must be an https link without credentials', {
-      details: [{ path: 'body.url', code: 'url_invalid' }],
-    });
-  }
-  return parsed.href;
-}
 
 export function importRoutes(): BoundRoute[] {
   return [

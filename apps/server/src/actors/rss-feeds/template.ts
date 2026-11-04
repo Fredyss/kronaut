@@ -18,7 +18,7 @@ function paragraph(line: string) {
     : { type: 'paragraph', content: [{ type: 'text', text: line }] };
 }
 
-export function renderDoc(template: string, item: Fields) {
-  const lines = renderText(template, item).replaceAll('\r\n', '\n').split('\n');
+export function docOf(text: string) {
+  const lines = text.replaceAll('\r\n', '\n').split('\n');
   return { type: 'doc', content: lines.map(paragraph) };
 }

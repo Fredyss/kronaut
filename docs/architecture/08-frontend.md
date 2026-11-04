@@ -78,7 +78,7 @@
   - A member restricted to some brands or channels sees only the tags used on posts they can see. The server refuses them a new tag, and the picker says why.
   - The composer saves tags first on a post it opened: a tag failure leaves the schedule alone. On a new post, a tag failure stops before scheduling, and the error says the post isn't scheduled yet. A post's tags only change if the user changed them in the form, so a save can't undo someone else's change.
 - **Feeds:** Settings → Feeds, for roles with `settings:write`, lists each feed with its name, host, channels, mode, last check and status: active, or paused with the reason and a Resume button.
-  - Adding or editing opens a dialog: URL, name, channels (those that can post text alone), mode ("Add to queue" or "Save as draft") and the template, with the three placeholders listed below it. Saving runs the first check, and its error shows in the dialog.
+  - Adding or editing opens a dialog: URL, name, channels (those that can post text alone or text with one image; a hint below the list says that channels needing an image, such as Instagram, get only the items that have one), mode ("Add to queue" or "Save as draft") and the template, with the three placeholders listed below it. Saving runs the first check, and its error shows in the dialog.
   - Deleting asks first and says the posts stay.
 - **Saved texts:** reusable text, such as a signature or a template, kept for the whole workspace.
   - Settings → Saved texts adds, edits and deletes them, for roles with `settings:write`. It's plain text, edited in a text box.
