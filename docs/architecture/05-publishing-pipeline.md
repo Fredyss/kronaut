@@ -396,6 +396,19 @@ A feed turns each new item of an RSS or Atom feed into a post on its channels, s
   - Every check updates each item's `last_seen_at`. GC removes items last seen more than 30 days before the feed's own last check, so a paused feed keeps its items.
 - **Failures:** an owner who can no longer schedule pauses the feed (`owner_lost`). A fetch or parse error is kept as the last error, and a feed that has failed for 24 hours in a row is paused (`fetch_failing`). Resuming is a normal check, so items from the pause are posted, at most 5 at a time.
 
+## Short links
+
+Links in a scheduled post are shortened per channel through the workspace's shortener, with UTM tags, and swapped in when the post is sent ([ADR-0058](../adr/0058-short-links-swapped-in-at-the-first-claim.md)).
+
+- **Shortener:** one per workspace, Dub or Kutt (`link_shorteners`). Dub is always `https://api.dub.co`. Kutt needs its base URL (`https`): the hosted `https://kutt.to` or a self-hosted instance; nothing defaults to the old `kutt.it`. Also an optional custom domain, and the API key, sealed through the keyring and never returned. Owners and admins connect, change and remove it (`settings:write`, session only), written to the audit trail as `link_shortener.connected`, `.updated` and `.removed`. Saving checks the key with one read-only call (Dub `GET /links?pageSize=1`, Kutt `GET /api/v2/users`; see [Shortener facts](../reference/shortener-facts.md)): a refused key is `422 shortener_unauthorized`, an unreachable host `422 shortener_unreachable`.
+- **Per channel:** `social_accounts.shorten_links`, on by default, turned off on the channel's page (`settings:write`). Freezing writes `shorten: true` into the destination snapshot when the channel has it on and the workspace has a shortener; the key is left out otherwise.
+- **Links:** every `http` or `https` link that the compose link rule (`LINK` in `packages/compose`) finds in the text of the items the destination sends. The target gets `utm_source=<provider id>`, `utm_medium=social` and `utm_campaign=kronaut`, unless the link already has a `utm_` parameter.
+- **Mapping:** `short_links`, one row per `(destination, SHA-256 of the long link)`: target, short URL, shortener link id, state (`pending`, `ready`, `failed` with the error kind) and attempts.
+- **Creation:** freezing a destination with `shorten` enqueues a `short_links` job (payload: workspace and destination ids; job key per destination). The job creates the missing links one by one. On Dub each link gets an `externalId` derived from the destination id and the long link's hash; a `409` reads the link back with `GET /links/info?externalId=ext_<id>` and accepts it only when its URL is the target. Kutt has no idempotency key, so a create that may have reached it before a crash can leave one unused extra link. Network failures, `429` and `5xx` are retried 3 times in all; anything else fails that link. Queue `short-links` runs one job at a time across the instance.
+- **Swap:** before the claim, the publish job ensures the destination's links, outside any transaction, for at most 10 s. When the first claim writes `destination_items.rendered_text`, each long link with a `ready` row becomes its short URL. An item whose swapped text would break the post type's text limits keeps its long links. Retries and send again reuse `rendered_text`.
+- **Fallback:** a link without a `ready` row is published as written, without UTM tags. Shortening never fails or blocks a post.
+- **GC:** rows go 90 days after their destination reaches a final state; the links on the shortener stay.
+
 ## Analytics
 
 Kronaut keeps the counts each network reports for what it published, and a daily follower count per channel. Charts stay honest (ADR-0037): a value is stored only when it changes, and a value the network didn't give is NULL, never 0.
