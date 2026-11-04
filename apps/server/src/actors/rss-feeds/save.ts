@@ -7,14 +7,7 @@ import type { RequestContext } from '../../base/http/request.ts';
 import type { ProviderRegistry } from '../../base/providers/providers.ts';
 import { auditFeed, type FeedRef } from './audit.ts';
 import { FeedFailed, fetchFeed } from './fetch.ts';
-import {
-  type ChannelCheck,
-  type FeedMode,
-  feedChannels,
-  feedName,
-  feedTemplate,
-  feedUrl,
-} from './input.ts';
+import { type FeedMode, feedChannels, feedName, feedTemplate, feedUrl } from './input.ts';
 import type { FeedItem } from './parse.ts';
 import { markSeen } from './seen.ts';
 import { checkRoom, feedOwner, readFeed, replaceChannels, type StoredFeed } from './store.ts';
@@ -124,13 +117,32 @@ interface Next {
   readonly template: string;
 }
 
-function nextFields(current: StoredFeed, body: FeedChange): Next {
+type Fields = { readonly [K in keyof Next]?: Next[K] | undefined };
+
+function validFields(body: FeedChange): Fields {
   return {
-    url: body.url === undefined ? current.url : feedUrl(body.url),
-    name: body.name === undefined ? current.name : feedName(body.name),
-    mode: body.mode ?? (current.mode as FeedMode),
-    template: body.template === undefined ? current.template : feedTemplate(body.template),
+    url: body.url === undefined ? undefined : feedUrl(body.url),
+    name: body.name === undefined ? undefined : feedName(body.name),
+    mode: body.mode,
+    template: body.template === undefined ? undefined : feedTemplate(body.template),
   };
+}
+
+function nextFields(current: StoredFeed, fields: Fields): Next {
+  return {
+    url: fields.url ?? current.url,
+    name: fields.name ?? current.name,
+    mode: fields.mode ?? (current.mode as FeedMode),
+    template: fields.template ?? current.template,
+  };
+}
+
+function channelCheck(ref: FeedRef, current: StoredFeed, body: FeedChange, mode: FeedMode) {
+  const recheck = body.channelIds !== undefined || body.mode !== undefined || body.paused === false;
+  if (!recheck) return null;
+  const channelIds =
+    body.channelIds ?? current.channels.map((id) => encodePublicId('socialAccount', id));
+  return { workspaceId: ref.workspaceId, channelIds, mode };
 }
 
 function stateColumns(current: StoredFeed, paused: boolean | undefined) {
@@ -157,14 +169,18 @@ function changedArgs(current: StoredFeed, next: Next, channels: readonly string[
 interface Saving {
   readonly ref: FeedRef;
   readonly body: FeedChange;
-  readonly next: Next;
+  readonly fields: Fields;
   readonly found: FirstCheck | null;
-  readonly check: ChannelCheck | null;
 }
 
 async function writeChange(trx: TenantDb, ctx: RequestContext, deps: SaveDeps, saving: Saving) {
-  const { ref, body, next, found, check } = saving;
+  const { ref, body, fields, found } = saving;
   const current = await readFeed(trx, ref, true);
+  if (found === null && fields.url !== undefined && fields.url !== current.url) {
+    throw new HttpError('conflict', 'The feed was changed meanwhile: try again.');
+  }
+  const next = nextFields(current, fields);
+  const check = channelCheck(ref, current, body, next.mode);
   const channels =
     check === null ? current.channels : (await feedChannels(trx, deps.providers, check)).sort();
   const state = stateColumns(current, body.paused);
@@ -190,22 +206,21 @@ async function writeChange(trx: TenantDb, ctx: RequestContext, deps: SaveDeps, s
   if (state !== null) await auditFeed(trx, ctx, { ref, action: state.action });
 }
 
+// Fields left out of the body take the locked row's value, so a concurrent edit isn't reverted.
 export async function updateFeed(
   ctx: RequestContext,
   deps: SaveDeps,
   ref: FeedRef,
   body: FeedChange,
 ): Promise<StoredFeed> {
+  const fields = validFields(body);
   const current = await ctx.tenant((trx) => readFeed(trx, ref));
-  const next = nextFields(current, body);
-  const channelIds =
-    body.channelIds ?? current.channels.map((id) => encodePublicId('socialAccount', id));
-  const recheck = body.channelIds !== undefined || body.mode !== undefined || body.paused === false;
-  const check = recheck ? { workspaceId: ref.workspaceId, channelIds, mode: next.mode } : null;
+  const check = channelCheck(ref, current, body, nextFields(current, fields).mode);
   if (check !== null) await ctx.tenant((trx) => feedChannels(trx, deps.providers, check));
-  const found = next.url === current.url ? null : await firstCheck(deps.http, next.url);
+  const moved = fields.url !== undefined && fields.url !== current.url;
+  const found = moved ? await firstCheck(deps.http, fields.url) : null;
   return await ctx.tenant(async (trx) => {
-    await writeChange(trx, ctx, deps, { ref, body, next, found, check });
+    await writeChange(trx, ctx, deps, { ref, body, fields, found });
     return await readFeed(trx, ref);
   });
 }

@@ -11,9 +11,10 @@ import type { FeedError, Fetched } from './fetch.ts';
 import { CONTENT_ERRORS, type FeedChannel, type PostingFeed, postItem } from './item.ts';
 import type { FeedItem } from './parse.ts';
 import { revisitRequests } from './revisit.ts';
-import { recordItem, type SeenAt, touchAll, touchKnown } from './seen.ts';
+import { type Known, recordItem, type SeenAt, touchAll, touchKnown } from './seen.ts';
 
 const PER_CHECK = 5;
+const MAX_ATTEMPTS = 3;
 const FAILING_HOURS = 24;
 const SYSTEM: Actor = { kind: 'system' };
 const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
@@ -85,24 +86,45 @@ async function recordFailure(trx: TenantDb, s: Settling, feed: LockedFeed, kind:
   return 'paused';
 }
 
-function pickNew(found: readonly FeedItem[], known: ReadonlySet<string>, budget: number) {
-  const fresh = found.filter((item) => !known.has(item.key.toString('hex')));
+// Feeds list newest first, so without a date on every item the reverse feed order is the oldest first.
+function pickNew(found: readonly FeedItem[], known: Known, budget: number) {
+  const fresh = found.filter((item) => !known.settled.has(item.key.toString('hex')));
   const dated = fresh.every((item) => item.at !== null);
   const ordered = dated
     ? [...fresh].sort((a, b) => Temporal.Instant.compare(a.at ?? EPOCH, b.at ?? EPOCH))
-    : fresh;
+    : [...fresh].sort((a, b) => b.index - a.index);
   return { picked: ordered.slice(0, budget), waiting: ordered.length > budget };
 }
 
 type ItemResult = 'done' | 'retry' | 'owner_lost';
 
-async function postOne(trx: TenantDb, s: Settling, feed: LockedFeed, item: FeedItem) {
+interface Posting {
+  readonly feed: LockedFeed;
+  readonly item: FeedItem;
+  readonly prior: number;
+}
+
+async function retryLater(trx: TenantDb, seen: SeenAt, { item, prior }: Posting) {
+  const attempts = prior + 1;
+  const done = attempts >= MAX_ATTEMPTS;
+  await recordItem(trx, seen, {
+    key: item.key,
+    outcome: done ? 'failed' : 'retrying',
+    errorCode: done ? 'item_failed' : null,
+    postId: null,
+    attempts,
+  });
+  return done ? 'done' : 'retry';
+}
+
+async function postOne(trx: TenantDb, s: Settling, posting: Posting): Promise<ItemResult> {
+  const { feed, item, prior } = posting;
   const seen: SeenAt = { ...s.ref, at: toDate(s.now) };
   const env = { providers: s.providers, now: s.now, workspaceId: s.ref.workspaceId };
   await sql`savepoint rss_item`.execute(trx);
   try {
     const post = await postItem(trx, env, feed, item);
-    await recordItem(trx, seen, { key: item.key, ...post });
+    await recordItem(trx, seen, { key: item.key, ...post, attempts: prior });
     await sql`release savepoint rss_item`.execute(trx);
     await actAs(trx, SYSTEM);
     return 'done';
@@ -116,12 +138,13 @@ async function postOne(trx: TenantDb, s: Settling, feed: LockedFeed, item: FeedI
         outcome: 'failed',
         errorCode: err.code,
         postId: null,
+        attempts: prior,
       });
       return 'done';
     }
     const log = { task: 'rss', feed: encodePublicId('rssFeed', s.ref.feedId) };
     s.logger.error(log, 'an RSS item could not be posted');
-    return 'retry';
+    return await retryLater(trx, seen, posting);
   }
 }
 
@@ -140,7 +163,8 @@ async function postNew(
   const { picked, waiting } = pickNew(found, known, budget);
   let complete = !waiting;
   for (const item of picked) {
-    const result: ItemResult = await postOne(trx, s, feed, item);
+    const prior = known.attempts.get(item.key.toString('hex')) ?? 0;
+    const result = await postOne(trx, s, { feed, item, prior });
     if (result === 'owner_lost') {
       await pause(trx, s.ref, 'owner_lost');
       return { complete: false, paused: true };

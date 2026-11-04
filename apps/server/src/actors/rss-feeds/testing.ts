@@ -22,6 +22,7 @@ export interface FeedReply {
   readonly body?: string;
   readonly headers?: Readonly<Record<string, string>>;
   readonly error?: Error;
+  readonly before?: () => Promise<void>;
 }
 
 export interface SeenRequest {
@@ -67,6 +68,7 @@ export function feedServer(): FeedServer {
       server.requests.push({ url: String(url), headers: { ...init?.headers } });
       const reply = pending.shift();
       if (reply === undefined) throw new Error('no reply is scripted');
+      await reply.before?.();
       if (reply.error !== undefined) throw reply.error;
       return response(String(url), reply);
     },
@@ -166,7 +168,7 @@ export function itemRows(publicId: string) {
   return owner.withActor(SYSTEM, (trx) =>
     trx
       .selectFrom('rss_items')
-      .select(['outcome', 'error_code', 'post_id', 'last_seen_at', 'key'])
+      .select(['outcome', 'error_code', 'attempts', 'post_id', 'last_seen_at', 'key'])
       .where('feed_id', '=', feedId(publicId))
       .orderBy('created_at')
       .orderBy('key')

@@ -235,6 +235,41 @@ describe('a check in queue mode', () => {
   });
 });
 
+describe('an item that keeps failing', () => {
+  it('is retried twice, then failed, while later items are posted', async () => {
+    const feed = await savedFeed('draft');
+    const [first, later] = entries('try', 2);
+    const body = rssOf([{ ...first, title: 'BOOM' }, later ?? {}]);
+    await failOnBoom(true);
+    try {
+      const outcomes = [];
+      for (const n of [1, 2, 3]) {
+        feeds.reply({ body, headers: { etag: '"t"' } });
+        await check(feed, silent, NOW.add({ minutes: 10 * n }));
+        const rows = await itemRows(feed.id);
+        outcomes.push(rows.map((row) => [row.outcome, row.error_code, row.attempts]).sort());
+      }
+      expect(outcomes).toEqual([
+        [
+          ['drafted', null, 0],
+          ['retrying', null, 1],
+        ],
+        [
+          ['drafted', null, 0],
+          ['retrying', null, 2],
+        ],
+        [
+          ['drafted', null, 0],
+          ['failed', 'item_failed', 3],
+        ],
+      ]);
+      expect(await feedRow(feed.id)).toMatchObject({ etag: '"t"' });
+    } finally {
+      await failOnBoom(false);
+    }
+  });
+});
+
 describe('a check in draft mode', () => {
   it('leaves every new item a draft', async () => {
     const feed = await savedFeed('draft', [], { template: '{title}\n{summary}' });
@@ -368,6 +403,24 @@ describe('the rss_poll task', () => {
     expect((await itemRows(idle.id)).length).toBe(1);
   });
 });
+
+function failOnBoom(on: boolean) {
+  return owner.withActor(CLI, async (trx) => {
+    if (!on) {
+      await sql`drop trigger rss_test_fail on variant_items`.execute(trx);
+      await sql`drop function rss_test_fail()`.execute(trx);
+      return;
+    }
+    await sql`
+      create function rss_test_fail() returns trigger language plpgsql as $$
+      begin
+        if new.doc::text like '%BOOM%' then raise exception 'test failure'; end if;
+        return new;
+      end $$`.execute(trx);
+    await sql`create trigger rss_test_fail before insert on variant_items
+      for each row execute function rss_test_fail()`.execute(trx);
+  });
+}
 
 function queuedJobs() {
   return owner.withActor(CLI, async (trx) => {

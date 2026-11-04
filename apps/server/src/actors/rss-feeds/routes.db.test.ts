@@ -5,6 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
   accountA,
+  CLI,
   call,
   db,
   errorOf,
@@ -212,6 +213,39 @@ describe('changing a feed', () => {
     expect(audit.every((row) => row.actor_kind === 'user')).toBe(true);
     expect(JSON.stringify(audit)).not.toContain(CANARY);
     expect(audit[4]?.args_summary).toMatchObject({ urlChanged: true, renamed: false });
+  });
+
+  it('keeps a field another request changed while the new URL was fetched', async () => {
+    feeds.reply({ body: rssOf([]) });
+    const feed = await createdFeed({ channelIds: [queued], mode: 'draft' });
+    const rename = async () => {
+      await owner.withActor(CLI, (trx) =>
+        trx
+          .updateTable('rss_feeds')
+          .set({ name: 'Concurrent' })
+          .where('id', '=', feedId(feed.id))
+          .execute(),
+      );
+    };
+    feeds.reply({ body: rssOf([]), before: rename });
+    const moved = 'https://news.example.test/rss';
+    const response = await feedCall('PATCH', `/${feed.id}`, { url: moved, template: '{link}' });
+    expect(await response.json()).toMatchObject({
+      name: 'Concurrent',
+      url: moved,
+      template: '{link}',
+    });
+  });
+
+  it('saves the whole form without fetching again or marking new items seen', async () => {
+    feeds.reply({ body: rssOf([]) });
+    const feed = await createdFeed({ channelIds: [accountA], mode: 'draft' });
+    const before = feeds.requests.length;
+    const body = { url: FEED_URL, name: 'Renamed', channelIds: [accountA], mode: 'draft' };
+    const response = await feedCall('PATCH', `/${feed.id}`, body);
+    expect(await response.json()).toMatchObject({ url: FEED_URL, name: 'Renamed' });
+    expect(feeds.requests.length).toBe(before);
+    expect(await itemRows(feed.id)).toEqual([]);
   });
 
   it('re-checks the queue of every channel when switching to queue mode', async () => {

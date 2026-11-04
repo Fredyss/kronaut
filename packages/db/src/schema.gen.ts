@@ -867,6 +867,7 @@ export interface RssFeeds {
 }
 
 export interface RssItems {
+  attempts: Generated<number>;
   created_at: Generated<Timestamp>;
   error_code: string | null;
   feed_id: string;
