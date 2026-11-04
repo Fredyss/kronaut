@@ -8,8 +8,8 @@ vi.mock('../content/editor.tsx', async () => ({
   default: (await import('../testing.tsx')).MockEditor,
 }));
 
-vi.mock('./video-upload.ts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./video-upload.ts')>()),
+vi.mock('../../../base/api/retry.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../base/api/retry.ts')>()),
   sleep: () => Promise.resolve(),
 }));
 

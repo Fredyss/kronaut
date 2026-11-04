@@ -14,6 +14,7 @@
 /** @typedef {{}} Calendar_Import_Channels_HintInputs */
 /** @typedef {{}} Calendar_Import_CheckingInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_ChannelInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_Channel_MediaInputs */
 /** @typedef {{}} Calendar_Import_Error_ChannelsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_ColumnInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_Column_TwiceInputs */
@@ -25,6 +26,13 @@
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
 /** @typedef {{ channel: NonNullable<unknown>, status: NonNullable<unknown> }} Calendar_Import_Error_InactiveInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_FailedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_File_Too_ManyInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_LinkInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_MixInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_Rate_LimitedInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_RejectedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_Error_QuoteInputs */
 /** @typedef {{}} Calendar_Import_Error_ReadInputs */
 /** @typedef {{}} Calendar_Import_Error_TextInputs */
@@ -33,7 +41,11 @@
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_ExampleInputs */
 /** @typedef {{}} Calendar_Import_Example_FirstInputs */
+/** @typedef {{}} Calendar_Import_Example_MediaInputs */
 /** @typedef {{}} Calendar_Import_Example_QueueInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StopInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StoppedInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Calendar_Import_FetchingInputs */
 /** @typedef {{}} Calendar_Import_FileInputs */
 /** @typedef {{}} Calendar_Import_ImportingInputs */
 /** @typedef {{}} Calendar_Import_IntroInputs */
@@ -42,6 +54,7 @@
 /** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
 /** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
 /** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Media_HintInputs */
 /** @typedef {{}} Calendar_Import_No_ChannelsInputs */
 /** @typedef {{}} Calendar_Import_OpenInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
@@ -153,12 +166,16 @@ export const calendar_import_error_channel = /** @type {(inputs: Calendar_Import
 	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nemôže uverejniť príspevok len s textom.`)
 };
 
+export const calendar_import_error_channel_media = /** @type {(inputs: Calendar_Import_Error_Channel_MediaInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nemôže uverejniť tieto médiá.`)
+};
+
 export const calendar_import_error_channels = /** @type {(inputs: Calendar_Import_Error_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vyplňte stĺpec channels alebo vyberte predvolené kanály.`)
 };
 
 export const calendar_import_error_column = /** @type {(inputs: Calendar_Import_Error_ColumnInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Neznámy stĺpec „${i?.name}“. Použite text, channels, date a time.`)
+	return /** @type {LocalizedString} */ (`Neznámy stĺpec „${i?.name}“. Použite text, channels, date, time a media.`)
 };
 
 export const calendar_import_error_column_twice = /** @type {(inputs: Calendar_Import_Error_Column_TwiceInputs) => LocalizedString} */ (i) => {
@@ -197,6 +214,42 @@ export const calendar_import_error_inactive = /** @type {(inputs: Calendar_Impor
 	return /** @type {LocalizedString} */ (`Kanál ${i?.channel}: ${i?.status}`)
 };
 
+export const calendar_import_error_media_failed = /** @type {(inputs: Calendar_Import_Error_Media_FailedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Médium z odkazu na ${i?.host} sa nepodarilo stiahnuť.`)
+};
+
+export const calendar_import_error_media_file_too_many = /** @type {(inputs: Calendar_Import_Error_Media_File_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Súbor má viac ako ${i?.count} odkaz na médium. Rozdeľte ho na menšie súbory.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Súbor má viac ako ${i?.count} odkazy na médiá. Rozdeľte ho na menšie súbory.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Súbor má viac ako ${i?.count} odkazu na médiá. Rozdeľte ho na menšie súbory.`);
+	return /** @type {LocalizedString} */ (`Súbor má viac ako ${i?.count} odkazov na médiá. Rozdeľte ho na menšie súbory.`)
+};
+
+export const calendar_import_error_media_link = /** @type {(inputs: Calendar_Import_Error_Media_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odkazy na médiá musia začínať na https, napríklad https://example.com/photo.jpg.`)
+};
+
+export const calendar_import_error_media_mix = /** @type {(inputs: Calendar_Import_Error_Media_MixInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevok môže mať obrázky alebo jedno video, nie oboje.`)
+};
+
+export const calendar_import_error_media_rate_limited = /** @type {(inputs: Calendar_Import_Error_Media_Rate_LimitedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Práve sa importuje príliš veľa odkazov na médiá. Ak chcete pokračovať, vyberte súbor znova neskôr.`)
+};
+
+export const calendar_import_error_media_rejected = /** @type {(inputs: Calendar_Import_Error_Media_RejectedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Médium z ${i?.host} sa nedá použiť.`)
+};
+
+export const calendar_import_error_media_too_many = /** @type {(inputs: Calendar_Import_Error_Media_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Riadok môže mať najviac ${i?.count} odkaz na médium.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Riadok môže mať najviac ${i?.count} odkazy na médiá.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Riadok môže mať najviac ${i?.count} odkazu na médiá.`);
+	return /** @type {LocalizedString} */ (`Riadok môže mať najviac ${i?.count} odkazov na médiá.`)
+};
+
 export const calendar_import_error_quote = /** @type {(inputs: Calendar_Import_Error_QuoteInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pole v úvodzovkách nie je uzavreté.`)
 };
@@ -233,8 +286,28 @@ export const calendar_import_example_first = /** @type {(inputs: Calendar_Import
 	return /** @type {LocalizedString} */ (`Dobrý deň! Tento príspevok vyjde v zadanom dátume a čase.`)
 };
 
+export const calendar_import_example_media = /** @type {(inputs: Calendar_Import_Example_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odkaz na médium v ukážke je len zástupný a nestiahne sa. Nahraďte ho vlastným odkazom alebo stĺpec nechajte prázdny.`)
+};
+
 export const calendar_import_example_queue = /** @type {(inputs: Calendar_Import_Example_QueueInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tento príspevok dostane najbližšie voľné miesto vo fronte.`)
+};
+
+export const calendar_import_fetch_stop = /** @type {(inputs: Calendar_Import_Fetch_StopInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zastaviť sťahovanie`)
+};
+
+export const calendar_import_fetch_stopped = /** @type {(inputs: Calendar_Import_Fetch_StoppedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Sťahovanie sa zastavilo. Odkazy, ktoré už boli odoslané, sa aj tak dokončia v knižnici médií. Ak chcete pokračovať, vyberte súbor znova.`)
+};
+
+export const calendar_import_fetching = /** @type {(inputs: Calendar_Import_FetchingInputs) => LocalizedString} */ (i) => {
+	const totalPlural = registry.plural("sk", i?.total, {}, true);
+	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Sťahujú sa médiá: odkaz ${i?.current} z ${i?.total}…`);
+	if (totalPlural === "few") return /** @type {LocalizedString} */ (`Sťahujú sa médiá: odkaz ${i?.current} z ${i?.total}…`);
+	if (totalPlural === "many") return /** @type {LocalizedString} */ (`Sťahujú sa médiá: odkaz ${i?.current} z ${i?.total}…`);
+	return /** @type {LocalizedString} */ (`Sťahujú sa médiá: odkaz ${i?.current} z ${i?.total}…`)
 };
 
 export const calendar_import_file = /** @type {(inputs: Calendar_Import_FileInputs) => LocalizedString} */ () => {
@@ -246,7 +319,7 @@ export const calendar_import_importing = /** @type {(inputs: Calendar_Import_Imp
 };
 
 export const calendar_import_intro = /** @type {(inputs: Calendar_Import_IntroInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Z každého riadka vznikne jeden príspevok. Použite stĺpce text, channels, date a time; povinný je len text. Riadok bez dátumu a času sa zaradí do frontu každého kanála.`)
+	return /** @type {LocalizedString} */ (`Z každého riadka vznikne jeden príspevok. Použite stĺpce text, channels, date, time a media; povinný je len text. Riadok bez dátumu a času sa zaradí do frontu každého kanála.`)
 };
 
 export const calendar_import_issue_channel = /** @type {(inputs: Calendar_Import_Issue_ChannelInputs) => LocalizedString} */ (i) => {
@@ -267,6 +340,14 @@ export const calendar_import_issue_scope_missing = /** @type {(inputs: Calendar_
 
 export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Riadok ${i?.line}: ${i?.problem}`)
+};
+
+export const calendar_import_media_hint = /** @type {(inputs: Calendar_Import_Media_HintInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Do stĺpca media napíšte najviac ${i?.count} odkaz https; viac odkazov oddeľte medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Do stĺpca media napíšte najviac ${i?.count} odkazy https oddelené medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Do stĺpca media napíšte najviac ${i?.count} odkazu https oddeleného medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.`);
+	return /** @type {LocalizedString} */ (`Do stĺpca media napíšte najviac ${i?.count} odkazov https oddelených medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.`)
 };
 
 export const calendar_import_no_channels = /** @type {(inputs: Calendar_Import_No_ChannelsInputs) => LocalizedString} */ () => {

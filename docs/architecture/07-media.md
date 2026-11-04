@@ -20,6 +20,7 @@
   - The URL can hold a token. It lives only on the `media_imports` row, is cleared when the import ends, and never reaches a response, a log or a job payload.
   - Only a network failure or a 5xx or 429 answer is retried, 3 attempts in all. A timeout isn't, so a slow host costs one 10-minute slot at most. A worker shutting down aborts the download, and the job retries.
   - At most 500 imports per workspace per hour, the size of one CSV file, and 500 open at once.
+  - The calendar's CSV import uses this route from the browser: one import per distinct link in the file, one at a time, then it sends the rows with the asset ids ([CSV import](05-publishing-pipeline.md#csv-import)).
   - Queue `media-import` runs one at a time across the instance, apart from the conversions. The worker runs 4 jobs at once, so imports and conversions always leave 2 slots free. All workspaces share this queue, so a hosted service needs per-workspace fairness first.
   - GC fails an import that waited 7 days, or that is still fetching 24 h after its last claim, and removes finished rows after 7 days.
 - **Masters and renditions:**

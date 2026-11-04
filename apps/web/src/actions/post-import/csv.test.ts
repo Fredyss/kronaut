@@ -10,8 +10,11 @@ describe('CSV parsing', () => {
     const parsed = parseCsv('text,channels\n"Hello, ""world""","a b"\n"two\nlines",c\n');
     expect(parsed.problems).toEqual([]);
     expect(parsed.records).toEqual([
-      { line: 2, values: { text: 'Hello, "world"', channels: 'a b', date: '', time: '' } },
-      { line: 3, values: { text: 'two\nlines', channels: 'c', date: '', time: '' } },
+      {
+        line: 2,
+        values: { text: 'Hello, "world"', channels: 'a b', date: '', time: '', media: '' },
+      },
+      { line: 3, values: { text: 'two\nlines', channels: 'c', date: '', time: '', media: '' } },
     ]);
   });
 
@@ -22,12 +25,15 @@ describe('CSV parsing', () => {
   });
 
   it('detects the semicolon delimiter Excel writes in sk and cs', () => {
-    const parsed = parseCsv('Text;Channels;Date;Time\nAhoj, svet;ada;2026-12-31;09:30\n');
+    const parsed = parseCsv(
+      'Text;Channels;Date;Time;Media\nAhoj, svet;ada;2026-12-31;09:30;https://a.test/1.jpg\n',
+    );
     expect(parsed.records[0]?.values).toEqual({
       text: 'Ahoj, svet',
       channels: 'ada',
       date: '2026-12-31',
       time: '09:30',
+      media: 'https://a.test/1.jpg',
     });
   });
 

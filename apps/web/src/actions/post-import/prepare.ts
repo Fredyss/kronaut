@@ -4,8 +4,18 @@ import { destinationIndex } from '../../composer/compose/issues.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import type { Channel } from '../../records/channels/queries.ts';
 import { parseCsv } from './csv.ts';
-import { csvProblemMessage, issueText, rowProblemMessage } from './messages.ts';
-import { type ImportRow, mapRecord, type RowContext, rowIndex } from './rows.ts';
+import { distinctUrls } from './links.ts';
+import type { MediaResult } from './media-fetch.ts';
+import { finishRow } from './media-rows.ts';
+import { csvProblemMessage, fileMediaMessage, issueText, rowProblemMessage } from './messages.ts';
+import {
+  type Draft,
+  type ImportRow,
+  mapRecord,
+  type RowContext,
+  type RowProblem,
+  rowIndex,
+} from './rows.ts';
 
 export interface Problem {
   readonly line: number | null;
@@ -18,24 +28,57 @@ export interface Prepared {
   readonly problems: readonly Problem[];
 }
 
-export function prepareImport(text: string, context: RowContext): Prepared {
+export interface Drafted {
+  readonly drafts: readonly Draft[];
+  readonly lines: readonly number[];
+  readonly urls: readonly string[];
+  readonly problems: readonly Problem[];
+}
+
+function rowProblems(line: number, problems: readonly RowProblem[]): Problem[] {
+  return problems.map((problem) => ({ line, message: rowProblemMessage(problem) }));
+}
+
+export function draftImport(text: string, context: RowContext): Drafted {
   const parsed = parseCsv(text);
   const problems: Problem[] = parsed.problems.map((problem) => ({
     line: 'line' in problem ? problem.line : null,
     message: csvProblemMessage(problem),
   }));
-  const rows: ImportRow[] = [];
+  const drafts: Draft[] = [];
   for (const record of parsed.records) {
     const mapped = mapRecord(record, context);
-    if ('row' in mapped) rows.push(mapped.row);
-    else {
-      problems.push(
-        ...mapped.problems.map((p) => ({ line: record.line, message: rowProblemMessage(p) })),
-      );
-    }
+    if ('draft' in mapped) drafts.push(mapped.draft);
+    else problems.push(...rowProblems(record.line, mapped.problems));
   }
   const lines = parsed.records.map((record) => record.line);
-  return { rows, lines, problems: problems.sort(byLine) };
+  const links = distinctUrls(drafts.map((draft) => draft.urls));
+  if ('kind' in links) problems.push({ line: null, message: fileMediaMessage(links) });
+  const urls = 'urls' in links ? links.urls : [];
+  return { drafts, lines, urls, problems: problems.sort(byLine) };
+}
+
+export function mediaUrls(drafted: Drafted | null): readonly string[] | null {
+  if (drafted === null || drafted.problems.length > 0) return null;
+  return drafted.urls;
+}
+
+export function finishImport(
+  drafted: Drafted,
+  results: ReadonlyMap<string, MediaResult>,
+  context: RowContext,
+): Prepared | null {
+  const { lines } = drafted;
+  if (drafted.problems.length > 0) return { rows: [], lines, problems: drafted.problems };
+  if (drafted.drafts.some((draft) => draft.urls.some((url) => !results.has(url)))) return null;
+  const rows: ImportRow[] = [];
+  const problems: Problem[] = [];
+  for (const draft of drafted.drafts) {
+    const finished = finishRow(draft, results, context);
+    if ('row' in finished) rows.push(finished.row);
+    else problems.push(...rowProblems(draft.line, finished.problems));
+  }
+  return { rows, lines, problems };
 }
 
 function byLine(a: Problem, b: Problem): number {

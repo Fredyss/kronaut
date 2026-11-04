@@ -1,87 +1,15 @@
-import type { PostsImportResponse } from '@kronaut/sdk';
 import { Button, Modal } from '@kronaut/ui';
-import { useQuery } from '@tanstack/react-query';
-import { useId, useMemo, useState } from 'react';
-import { useApiClient } from '../../base/api/client.ts';
-import { browserTimeZone } from '../../base/locale/browser.ts';
+import { useId } from 'react';
 import { m } from '../../base/locale/i18n.ts';
-import { choiceFor } from '../../composer/compose/content/choice.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
-import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
-import { type FileText, useFileText } from './file-text.ts';
 import { ImportFields } from './import-fields.tsx';
-import { Done, Problems } from './import-status.tsx';
-import { type Prepared, type Problem, prepareImport, serverProblems } from './prepare.ts';
-import type { ImportRow } from './rows.ts';
-import { checkedRows, useImportCheck, useImportRun } from './use-import.ts';
-
-const NO_MEDIA = { images: [], video: false } as const;
+import { queueWaiting, useImportState } from './import-state.ts';
+import { Done, FetchStatus, Problems } from './import-status.tsx';
+import { checkedRows } from './use-import.ts';
 
 export interface ImportDialogProps {
   readonly workspaceId: string;
   onClose(): void;
-}
-
-interface Checked {
-  readonly file: FileText;
-  readonly prepared: Prepared | null;
-  readonly channels: readonly Channel[];
-  readonly errors: readonly unknown[];
-}
-
-function fileProblem(file: FileText): Problem | null {
-  if (file.problem === 'read')
-    return { line: null, message: calendarText.calendar_import_error_read() };
-  if (file.problem === 'encoding') {
-    return { line: null, message: calendarText.calendar_import_error_encoding() };
-  }
-  return null;
-}
-
-function shownProblems({ file, prepared, channels, errors }: Checked): readonly Problem[] {
-  const unread = fileProblem(file);
-  if (unread !== null) return [unread];
-  if (prepared === null) return [];
-  if (prepared.problems.length > 0) return prepared.problems;
-  const error = errors.find((candidate) => candidate !== null);
-  return error === undefined ? [] : serverProblems(error, prepared, channels);
-}
-
-function queueWaiting(result: PostsImportResponse, rows: readonly ImportRow[] | undefined) {
-  return result.rows.some(
-    (row, index) => row.outcome === 'requested' && rows?.[index]?.schedule.mode === 'queue',
-  );
-}
-
-function useImportState(workspaceId: string) {
-  const client = useApiClient();
-  const channels = useQuery(channelsQuery(client, workspaceId)).data;
-  const usable = useMemo(
-    () =>
-      (channels ?? []).filter((c) => c.status === 'active' && choiceFor(c, NO_MEDIA).kind === 'ok'),
-    [channels],
-  );
-  const [defaults, setDefaults] = useState<ReadonlySet<string>>(() => new Set());
-  const [tz, setTz] = useState(browserTimeZone);
-  const { file, pick } = useFileText();
-  const prepared = useMemo(
-    () =>
-      file.text === null || channels === undefined
-        ? null
-        : prepareImport(file.text, { channels, defaults, tz }),
-    [file.text, channels, defaults, tz],
-  );
-  const check = useImportCheck(workspaceId, prepared, file.nonce);
-  const run = useImportRun(workspaceId);
-  const runError = run.variables === checkedRows(prepared) ? run.error : null;
-  const errors = [runError, check.error];
-  const problems = shownProblems({ file, prepared, channels: channels ?? [], errors });
-  const repick = (picked: File) => {
-    run.reset();
-    pick(picked);
-  };
-  const settings = { defaults, setDefaults, tz, setTz };
-  return { usable, settings, file, pick: repick, prepared, check, run, problems };
 }
 
 export function ImportDialog({ workspaceId, onClose }: ImportDialogProps) {
@@ -111,6 +39,7 @@ export function ImportDialog({ workspaceId, onClose }: ImportDialogProps) {
         ) : (
           <Done result={run.data} queueWaiting={queueWaiting(run.data, run.variables)} />
         )}
+        {run.data === undefined ? <FetchStatus media={state.media} /> : null}
         {problems.length > 0 ? <Problems problems={problems} /> : null}
         {check.isFetching ? (
           <p className="text-muted-foreground text-sm">{calendarText.calendar_import_checking()}</p>

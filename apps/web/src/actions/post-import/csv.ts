@@ -1,4 +1,4 @@
-export const CSV_COLUMNS = ['text', 'channels', 'date', 'time'] as const;
+export const CSV_COLUMNS = ['text', 'channels', 'date', 'time', 'media'] as const;
 export const MAX_CSV_ROWS = 500;
 
 export type CsvColumn = (typeof CSV_COLUMNS)[number];
@@ -149,7 +149,13 @@ function unnamedInUse(columns: readonly HeaderColumn[], rows: readonly RawRecord
 }
 
 function toRecord(columns: readonly HeaderColumn[], raw: RawRecord): CsvRecord {
-  const values: Record<CsvColumn, string> = { text: '', channels: '', date: '', time: '' };
+  const values: Record<CsvColumn, string> = {
+    text: '',
+    channels: '',
+    date: '',
+    time: '',
+    media: '',
+  };
   for (const [index, column] of columns.entries()) {
     if (column !== null) values[column] = raw.fields[index] ?? '';
   }
