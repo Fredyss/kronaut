@@ -27,7 +27,7 @@ const NOWHERE = '/nonexistent';
 
 export type Auth = { readonly cookie: string } | { readonly bearer: string };
 
-export interface ErrorResponse {
+interface ErrorResponse {
   readonly error: {
     readonly code: string;
     readonly message: string;
