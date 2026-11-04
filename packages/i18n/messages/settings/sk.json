@@ -208,5 +208,78 @@
         "countPlural=*": "{count} kanálov príde o tento podpis."
       }
     }
-  ]
+  ],
+  "settings_feeds_title": "Zdroje RSS",
+  "settings_feeds_intro": "Každá nová položka zdroja RSS alebo Atom, napríklad blogu či newslettera, sa zmení na príspevok na vašich kanáloch.",
+  "settings_feeds_empty": "Zatiaľ tu nie sú žiadne zdroje.",
+  "settings_feed_add": "Pridať zdroj",
+  "settings_feed_edit": "Upraviť",
+  "settings_feed_edit_named": "Upraviť zdroj {name}",
+  "settings_feed_edit_title": "Upraviť zdroj",
+  "settings_feed_url": "Adresa zdroja",
+  "settings_feed_name": "Názov",
+  "settings_feed_channels": "Kanály",
+  "settings_feed_channels_hint": "Ponúkajú sa iba kanály, ktoré dokážu uverejniť samotný text bez médií.",
+  "settings_feed_no_channels": "Zatiaľ žiadny kanál nedokáže uverejniť samotný text. Najprv nejaký pripojte.",
+  "settings_feed_mode": "Nové položky",
+  "settings_feed_mode_queue": "Pridať do frontu",
+  "settings_feed_mode_draft": "Uložiť ako koncept",
+  "settings_feed_template": "Text príspevku",
+  "settings_feed_placeholders": "Môžete použiť:",
+  "settings_feed_placeholder_title": "nadpis položky",
+  "settings_feed_placeholder_link": "odkaz na položku",
+  "settings_feed_placeholder_summary": "krátke zhrnutie položky, najviac 500 znakov",
+  "settings_feed_cancel": "Zrušiť",
+  "settings_feed_checking": "Kontroluje sa zdroj…",
+  "settings_feed_saved": "Zdroj je uložený",
+  "settings_feed_deleted": "Zdroj je odstránený",
+  "settings_feed_paused_toast": "Zdroj je pozastavený",
+  "settings_feed_resumed": "Zdroj znova beží",
+  "settings_feed_pause": "Pozastaviť",
+  "settings_feed_pause_named": "Pozastaviť zdroj {name}",
+  "settings_feed_resume": "Obnoviť",
+  "settings_feed_resume_named": "Obnoviť zdroj {name}",
+  "settings_feed_delete": "Odstrániť zdroj {name}",
+  "settings_feed_delete_title": "Odstrániť zdroj „{name}“?",
+  "settings_feed_delete_body": "Príspevky, ktoré z neho už vznikli, zostanú zachované.",
+  "settings_feed_keep": "Ponechať zdroj",
+  "settings_feed_delete_confirm": "Odstrániť zdroj",
+  "settings_feed_active": "Aktívny",
+  "settings_feed_paused": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=manual": "Pozastavený",
+        "reason=owner_lost": "Pozastavený: ten, kto ho naposledy uložil, už nemôže plánovať príspevky",
+        "reason=fetch_failing": "Pozastavený: zdroj zlyháva už 24 hodín",
+        "reason=*": "Pozastavený"
+      }
+    }
+  ],
+  "settings_feed_last_check": "Naposledy skontrolovaný {time}",
+  "settings_feed_never_checked": "Zatiaľ neskontrolovaný",
+  "settings_feed_last_error": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=url_blocked": "Posledná kontrola zlyhala: táto adresa nie je povolená.",
+        "kind=fetch_failed": "Posledná kontrola zlyhala: zdroj sa nepodarilo načítať.",
+        "kind=timed_out": "Posledná kontrola zlyhala: zdroj neodpovedal včas.",
+        "kind=too_large": "Posledná kontrola zlyhala: zdroj je príliš veľký.",
+        "kind=feed_invalid": "Posledná kontrola zlyhala: odkaz nevedie na zdroj RSS ani Atom.",
+        "kind=*": "Posledná kontrola zlyhala."
+      }
+    }
+  ],
+  "settings_feed_url_invalid": "Zadajte odkaz https bez používateľského mena a hesla.",
+  "settings_feed_unreachable": "Zdroj sa nepodarilo načítať. Skontrolujte odkaz a skúste to znova.",
+  "settings_feed_invalid": "Tento odkaz nevedie na zdroj RSS ani Atom.",
+  "settings_feed_name_invalid": "Názov je prázdny alebo príliš dlhý.",
+  "settings_feed_template_invalid": "Text príspevku je prázdny alebo príliš dlhý.",
+  "settings_feed_channel_gone": "Jeden z kanálov už neexistuje.",
+  "settings_feed_channel_text": "Kanál {channel} nedokáže uverejniť samotný text.",
+  "settings_feed_channel_queue": "Kanál {channel} nemá vo fronte žiadne časy. Pridajte ich na stránke Kanály alebo nové položky ukladajte ako koncepty.",
+  "settings_feed_limit": "Tento pracovný priestor už má najviac povolených zdrojov. Najprv niektorý odstráňte."
 }

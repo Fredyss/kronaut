@@ -15579,6 +15579,649 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/rss-feeds": {
+      "get": {
+        "description": "The workspace's feeds by name, with their URL. Owners and admins only.",
+        "operationId": "rss_feeds.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelIds": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "lastCheckedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "lastError": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "url_blocked",
+                                  "fetch_failed",
+                                  "timed_out",
+                                  "too_large",
+                                  "feed_invalid"
+                                ],
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "mode": {
+                            "enum": [
+                              "queue",
+                              "draft"
+                            ],
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "pausedReason": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "manual",
+                                  "owner_lost",
+                                  "fetch_failing"
+                                ],
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "state": {
+                            "enum": [
+                              "active",
+                              "paused"
+                            ],
+                            "type": "string"
+                          },
+                          "template": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "url",
+                          "name",
+                          "channelIds",
+                          "mode",
+                          "template",
+                          "state",
+                          "pausedReason",
+                          "lastCheckedAt",
+                          "lastError",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "List RSS feeds",
+        "tags": [
+          "feeds"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "post": {
+        "description": "Each new item of an RSS 2.0 or Atom feed becomes a post on the feed's channels: the next free queue slot in queue mode, a draft in draft mode. The caller becomes the owner, re-authorized on every item. The URL is an `https` link of up to 2048 characters without credentials (422 url_invalid); the name has 1–100 characters (422 name_invalid); the template is plain text of up to 1000 characters with {title}, {link} and {summary} (422 template_invalid). Every channel must be able to post text alone (422 text_unsupported) and, in queue mode, have queue slots (422 queue_empty). A new URL is fetched at once (422 feed_unreachable or feed_invalid), and every item it lists is marked seen, so nothing old is posted. The template defaults to \"{title} {link}\". At most 20 feeds per workspace (409 rss_feed_limit). Owners and admins only.",
+        "operationId": "rss_feeds.create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "channelIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "mode": {
+                    "enum": [
+                      "queue",
+                      "draft"
+                    ],
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url",
+                  "name",
+                  "channelIds",
+                  "mode"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "channelIds": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "lastCheckedAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastError": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "url_blocked",
+                            "fetch_failed",
+                            "timed_out",
+                            "too_large",
+                            "feed_invalid"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "queue",
+                        "draft"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "pausedReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "manual",
+                            "owner_lost",
+                            "fetch_failing"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "paused"
+                      ],
+                      "type": "string"
+                    },
+                    "template": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "url",
+                    "name",
+                    "channelIds",
+                    "mode",
+                    "template",
+                    "state",
+                    "pausedReason",
+                    "lastCheckedAt",
+                    "lastError",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Add an RSS feed",
+        "tags": [
+          "feeds"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/rss-feeds/{feedId}": {
+      "delete": {
+        "description": "The posts it made stay. Owners and admins only.",
+        "operationId": "rss_feeds.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feedId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Delete an RSS feed",
+        "tags": [
+          "feeds"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "patch": {
+        "description": "The fields follow the same rules as when adding a feed; the caller becomes the owner. A new URL is fetched at once (422 feed_unreachable or feed_invalid), and every item it lists is marked seen, so nothing old is posted. `paused` pauses or resumes the feed; a resumed feed posts what it missed, at most 5 items per check. Owners and admins only.",
+        "operationId": "rss_feeds.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "feedId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "channelIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "mode": {
+                    "enum": [
+                      "queue",
+                      "draft"
+                    ],
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "paused": {
+                    "type": "boolean"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "channelIds": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "lastCheckedAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "lastError": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "url_blocked",
+                            "fetch_failed",
+                            "timed_out",
+                            "too_large",
+                            "feed_invalid"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mode": {
+                      "enum": [
+                        "queue",
+                        "draft"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "pausedReason": {
+                      "anyOf": [
+                        {
+                          "enum": [
+                            "manual",
+                            "owner_lost",
+                            "fetch_failing"
+                          ],
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "state": {
+                      "enum": [
+                        "active",
+                        "paused"
+                      ],
+                      "type": "string"
+                    },
+                    "template": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "url",
+                    "name",
+                    "channelIds",
+                    "mode",
+                    "template",
+                    "state",
+                    "pausedReason",
+                    "lastCheckedAt",
+                    "lastError",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Change, pause or resume an RSS feed",
+        "tags": [
+          "feeds"
+        ],
+        "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/saved-texts": {
       "get": {
         "description": "The workspace's saved texts by name, each with how many channels use it.",

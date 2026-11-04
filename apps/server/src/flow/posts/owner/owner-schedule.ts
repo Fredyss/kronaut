@@ -28,32 +28,42 @@ export interface LocalAt {
   readonly scheduleTz: string;
 }
 
-export async function scheduleAsOwner(trx: TenantDb, turn: OwnerTurn, at: LocalAt) {
+export const QUEUE = { mode: 'queue' } as const;
+
+export type OwnerAt = LocalAt | typeof QUEUE;
+
+function bodyOf(at: OwnerAt, expectedVersion: number) {
+  if ('mode' in at) return { mode: at.mode, expectedVersion };
+  return { mode: 'instant' as const, expectedVersion, ...at };
+}
+
+export async function scheduleAsOwner(trx: TenantDb, turn: OwnerTurn, at: OwnerAt) {
   const { env, locked, units, acting } = turn;
   const { workspaceId } = env;
   const auth = await authorizeSchedule(trx, acting, { workspaceId, locked, units });
   const rows = await lockDestinations(trx, workspaceId, locked.id);
-  const body = { mode: 'instant' as const, expectedVersion: locked.version, ...at };
+  const body = bodyOf(at, locked.version);
   const run = { providers: env.providers, now: env.now, workspaceId, locked, auth, body };
   await scheduleLocked(trx, run, rows);
   return 'scheduled' as const;
 }
 
-export async function requestAsOwner(trx: TenantDb, turn: OwnerTurn, at: LocalAt) {
+// A queue post's slots differ per channel, so its request binds no time, as in the CSV import.
+export async function requestAsOwner(trx: TenantDb, turn: OwnerTurn, at: OwnerAt) {
   const { env, locked, units, acting } = turn;
   acting.authorize('posts:submit', { workspaceId: env.workspaceId, postId: locked.id, units });
   await openApprovalRequest(trx, acting, {
     providers: env.providers,
     workspaceId: env.workspaceId,
     locked,
-    schedule: at,
+    schedule: 'mode' in at ? undefined : at,
     note: undefined,
   });
   return 'requested' as const;
 }
 
 // An approval covers the content and time it was given for (ADR-0011); after an edit the owner asks again.
-export async function scheduleOrRequest(trx: TenantDb, turn: OwnerTurn, at: LocalAt) {
+export async function scheduleOrRequest(trx: TenantDb, turn: OwnerTurn, at: OwnerAt) {
   await sql`savepoint owner_schedule`.execute(trx);
   try {
     const outcome = await scheduleAsOwner(trx, turn, at);

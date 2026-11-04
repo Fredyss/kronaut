@@ -54,6 +54,7 @@ describe('ID_PREFIXES', () => {
       tag: 'tag',
       savedText: 'stx',
       mediaImport: 'mimp',
+      rssFeed: 'rss',
     });
   });
 

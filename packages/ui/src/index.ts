@@ -1,6 +1,8 @@
 export { Button, type ButtonProps, buttonVariants } from './button.tsx';
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card.tsx';
 export { cn } from './cn.ts';
+export { ConfirmDelete } from './confirm-delete.tsx';
+export { focusNeighbour } from './focus-neighbour.ts';
 export { Input } from './input.tsx';
 export { Label } from './label.tsx';
 export { Modal } from './modal.tsx';

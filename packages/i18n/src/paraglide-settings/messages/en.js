@@ -17,6 +17,55 @@
 /** @typedef {{}} Settings_Email_FailuresInputs */
 /** @typedef {{}} Settings_Email_Failures_HintInputs */
 /** @typedef {{}} Settings_Email_TitleInputs */
+/** @typedef {{}} Settings_Feed_ActiveInputs */
+/** @typedef {{}} Settings_Feed_AddInputs */
+/** @typedef {{}} Settings_Feed_CancelInputs */
+/** @typedef {{}} Settings_Feed_Channel_GoneInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_TextInputs */
+/** @typedef {{}} Settings_Feed_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_Channels_HintInputs */
+/** @typedef {{}} Settings_Feed_CheckingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_DeleteInputs */
+/** @typedef {{}} Settings_Feed_Delete_BodyInputs */
+/** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
+/** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{}} Settings_Feed_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
+/** @typedef {{}} Settings_Feed_Edit_TitleInputs */
+/** @typedef {{}} Settings_Feed_InvalidInputs */
+/** @typedef {{}} Settings_Feed_KeepInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Feed_Last_CheckInputs */
+/** @typedef {{ kind: NonNullable<unknown> }} Settings_Feed_Last_ErrorInputs */
+/** @typedef {{}} Settings_Feed_LimitInputs */
+/** @typedef {{}} Settings_Feed_ModeInputs */
+/** @typedef {{}} Settings_Feed_Mode_DraftInputs */
+/** @typedef {{}} Settings_Feed_Mode_QueueInputs */
+/** @typedef {{}} Settings_Feed_NameInputs */
+/** @typedef {{}} Settings_Feed_Name_InvalidInputs */
+/** @typedef {{}} Settings_Feed_Never_CheckedInputs */
+/** @typedef {{}} Settings_Feed_No_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_PauseInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Pause_NamedInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Settings_Feed_PausedInputs */
+/** @typedef {{}} Settings_Feed_Paused_ToastInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_LinkInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_SummaryInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_TitleInputs */
+/** @typedef {{}} Settings_Feed_PlaceholdersInputs */
+/** @typedef {{}} Settings_Feed_ResumeInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Resume_NamedInputs */
+/** @typedef {{}} Settings_Feed_ResumedInputs */
+/** @typedef {{}} Settings_Feed_SavedInputs */
+/** @typedef {{}} Settings_Feed_TemplateInputs */
+/** @typedef {{}} Settings_Feed_Template_InvalidInputs */
+/** @typedef {{}} Settings_Feed_UnreachableInputs */
+/** @typedef {{}} Settings_Feed_UrlInputs */
+/** @typedef {{}} Settings_Feed_Url_InvalidInputs */
+/** @typedef {{}} Settings_Feeds_EmptyInputs */
+/** @typedef {{}} Settings_Feeds_IntroInputs */
+/** @typedef {{}} Settings_Feeds_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -190,6 +239,210 @@ export const settings_email_failures_hint = /** @type {(inputs: Settings_Email_F
 
 export const settings_email_title = /** @type {(inputs: Settings_Email_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Email notifications`)
+};
+
+export const settings_feed_active = /** @type {(inputs: Settings_Feed_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Active`)
+};
+
+export const settings_feed_add = /** @type {(inputs: Settings_Feed_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add feed`)
+};
+
+export const settings_feed_cancel = /** @type {(inputs: Settings_Feed_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_feed_channel_gone = /** @type {(inputs: Settings_Feed_Channel_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`One of the channels no longer exists.`)
+};
+
+export const settings_feed_channel_queue = /** @type {(inputs: Settings_Feed_Channel_QueueInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} has no queue times. Add some on the Channels page, or save new items as drafts.`)
+};
+
+export const settings_feed_channel_text = /** @type {(inputs: Settings_Feed_Channel_TextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} can't post text without media.`)
+};
+
+export const settings_feed_channels = /** @type {(inputs: Settings_Feed_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channels`)
+};
+
+export const settings_feed_channels_hint = /** @type {(inputs: Settings_Feed_Channels_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Only channels that can post text without media are listed.`)
+};
+
+export const settings_feed_checking = /** @type {(inputs: Settings_Feed_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Checking feed…`)
+};
+
+export const settings_feed_delete = /** @type {(inputs: Settings_Feed_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete feed ${i?.name}`)
+};
+
+export const settings_feed_delete_body = /** @type {(inputs: Settings_Feed_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posts it has already made stay as they are.`)
+};
+
+export const settings_feed_delete_confirm = /** @type {(inputs: Settings_Feed_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete feed`)
+};
+
+export const settings_feed_delete_title = /** @type {(inputs: Settings_Feed_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete feed “${i?.name}”?`)
+};
+
+export const settings_feed_deleted = /** @type {(inputs: Settings_Feed_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feed deleted`)
+};
+
+export const settings_feed_edit = /** @type {(inputs: Settings_Feed_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit`)
+};
+
+export const settings_feed_edit_named = /** @type {(inputs: Settings_Feed_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Edit feed ${i?.name}`)
+};
+
+export const settings_feed_edit_title = /** @type {(inputs: Settings_Feed_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit feed`)
+};
+
+export const settings_feed_invalid = /** @type {(inputs: Settings_Feed_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This link isn't an RSS or Atom feed.`)
+};
+
+export const settings_feed_keep = /** @type {(inputs: Settings_Feed_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep feed`)
+};
+
+export const settings_feed_last_check = /** @type {(inputs: Settings_Feed_Last_CheckInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Last checked ${i?.time}`)
+};
+
+export const settings_feed_last_error = /** @type {(inputs: Settings_Feed_Last_ErrorInputs) => LocalizedString} */ (i) => {
+	if (i?.kind === "url_blocked") return /** @type {LocalizedString} */ (`Last check failed: this address isn't allowed.`);
+	if (i?.kind === "fetch_failed") return /** @type {LocalizedString} */ (`Last check failed: the feed couldn't be fetched.`);
+	if (i?.kind === "timed_out") return /** @type {LocalizedString} */ (`Last check failed: the feed took too long to answer.`);
+	if (i?.kind === "too_large") return /** @type {LocalizedString} */ (`Last check failed: the feed is too large.`);
+	if (i?.kind === "feed_invalid") return /** @type {LocalizedString} */ (`Last check failed: the link isn't an RSS or Atom feed.`);
+	return /** @type {LocalizedString} */ (`Last check failed.`)
+};
+
+export const settings_feed_limit = /** @type {(inputs: Settings_Feed_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This workspace has reached its limit of feeds. Delete one first.`)
+};
+
+export const settings_feed_mode = /** @type {(inputs: Settings_Feed_ModeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New items`)
+};
+
+export const settings_feed_mode_draft = /** @type {(inputs: Settings_Feed_Mode_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Save as draft`)
+};
+
+export const settings_feed_mode_queue = /** @type {(inputs: Settings_Feed_Mode_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add to queue`)
+};
+
+export const settings_feed_name = /** @type {(inputs: Settings_Feed_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Name`)
+};
+
+export const settings_feed_name_invalid = /** @type {(inputs: Settings_Feed_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The name is empty or too long.`)
+};
+
+export const settings_feed_never_checked = /** @type {(inputs: Settings_Feed_Never_CheckedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Not checked yet`)
+};
+
+export const settings_feed_no_channels = /** @type {(inputs: Settings_Feed_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No channel can post text without media yet. Connect one first.`)
+};
+
+export const settings_feed_pause = /** @type {(inputs: Settings_Feed_PauseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pause`)
+};
+
+export const settings_feed_pause_named = /** @type {(inputs: Settings_Feed_Pause_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Pause feed ${i?.name}`)
+};
+
+export const settings_feed_paused = /** @type {(inputs: Settings_Feed_PausedInputs) => LocalizedString} */ (i) => {
+	if (i?.reason === "manual") return /** @type {LocalizedString} */ (`Paused`);
+	if (i?.reason === "owner_lost") return /** @type {LocalizedString} */ (`Paused: whoever saved it last can no longer schedule posts`);
+	if (i?.reason === "fetch_failing") return /** @type {LocalizedString} */ (`Paused: the feed has failed for 24 hours`);
+	return /** @type {LocalizedString} */ (`Paused`)
+};
+
+export const settings_feed_paused_toast = /** @type {(inputs: Settings_Feed_Paused_ToastInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feed paused`)
+};
+
+export const settings_feed_placeholder_link = /** @type {(inputs: Settings_Feed_Placeholder_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`the link to the item`)
+};
+
+export const settings_feed_placeholder_summary = /** @type {(inputs: Settings_Feed_Placeholder_SummaryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`a short summary of the item, up to 500 characters`)
+};
+
+export const settings_feed_placeholder_title = /** @type {(inputs: Settings_Feed_Placeholder_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`the item's title`)
+};
+
+export const settings_feed_placeholders = /** @type {(inputs: Settings_Feed_PlaceholdersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`You can use:`)
+};
+
+export const settings_feed_resume = /** @type {(inputs: Settings_Feed_ResumeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Resume`)
+};
+
+export const settings_feed_resume_named = /** @type {(inputs: Settings_Feed_Resume_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Resume feed ${i?.name}`)
+};
+
+export const settings_feed_resumed = /** @type {(inputs: Settings_Feed_ResumedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feed resumed`)
+};
+
+export const settings_feed_saved = /** @type {(inputs: Settings_Feed_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feed saved`)
+};
+
+export const settings_feed_template = /** @type {(inputs: Settings_Feed_TemplateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post text`)
+};
+
+export const settings_feed_template_invalid = /** @type {(inputs: Settings_Feed_Template_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The post text is empty or too long.`)
+};
+
+export const settings_feed_unreachable = /** @type {(inputs: Settings_Feed_UnreachableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The feed couldn't be fetched. Check the link and try again.`)
+};
+
+export const settings_feed_url = /** @type {(inputs: Settings_Feed_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feed URL`)
+};
+
+export const settings_feed_url_invalid = /** @type {(inputs: Settings_Feed_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Enter an https link without a user name or password.`)
+};
+
+export const settings_feeds_empty = /** @type {(inputs: Settings_Feeds_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No feeds yet.`)
+};
+
+export const settings_feeds_intro = /** @type {(inputs: Settings_Feeds_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Turn each new item of an RSS or Atom feed, such as a blog or a newsletter, into a post on your channels.`)
+};
+
+export const settings_feeds_title = /** @type {(inputs: Settings_Feeds_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Feeds`)
 };
 
 export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {

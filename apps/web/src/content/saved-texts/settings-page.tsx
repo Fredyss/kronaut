@@ -1,4 +1,4 @@
-import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
+import { Button, ConfirmDelete, focusNeighbour, SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
@@ -6,7 +6,7 @@ import { meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { docText, textToParagraphs } from '../../records/posts/doc.ts';
-import { DeleteSavedText, type Draft, SavedTextForm } from './form.tsx';
+import { type Draft, SavedTextForm } from './form.tsx';
 import { type SavedText, savedTextsQuery } from './saved-texts.ts';
 import { useCreateSavedText, useSavedTextWrites } from './writes.ts';
 
@@ -19,10 +19,11 @@ function toBody({ name, text }: Draft) {
   };
 }
 
-function focusNeighbour(row: HTMLElement | null): void {
-  const sibling = row?.nextElementSibling ?? row?.previousElementSibling;
-  const target = sibling?.querySelector('button') ?? row?.closest<HTMLElement>('[tabindex="-1"]');
-  target?.focus();
+function deleteBody(channelCount: number): string {
+  const body = settingsText.settings_saved_text_delete_body();
+  return channelCount === 0
+    ? body
+    : `${body} ${settingsText.settings_saved_text_delete_channels({ count: channelCount })}`;
 }
 
 function Summary({ savedText }: { readonly savedText: SavedText }) {
@@ -79,9 +80,11 @@ function EditableRow({
         />
       ) : null}
       {open === 'delete' ? (
-        <DeleteSavedText
-          name={name}
-          channelCount={savedText.channelCount}
+        <ConfirmDelete
+          title={settingsText.settings_saved_text_delete_title({ name })}
+          body={deleteBody(savedText.channelCount)}
+          keepLabel={settingsText.settings_saved_text_keep()}
+          confirmLabel={settingsText.settings_saved_text_delete_confirm()}
           pending={remove.isPending}
           onCancel={close}
           onConfirm={() => remove.mutate(undefined, { onSettled: close })}

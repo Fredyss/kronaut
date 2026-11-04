@@ -17,6 +17,7 @@ export const ID_PREFIXES = {
   tag: 'tag',
   savedText: 'stx',
   mediaImport: 'mimp',
+  rssFeed: 'rss',
 } as const;
 
 export type IdKind = keyof typeof ID_PREFIXES;

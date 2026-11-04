@@ -17,6 +17,55 @@
 /** @typedef {{}} Settings_Email_FailuresInputs */
 /** @typedef {{}} Settings_Email_Failures_HintInputs */
 /** @typedef {{}} Settings_Email_TitleInputs */
+/** @typedef {{}} Settings_Feed_ActiveInputs */
+/** @typedef {{}} Settings_Feed_AddInputs */
+/** @typedef {{}} Settings_Feed_CancelInputs */
+/** @typedef {{}} Settings_Feed_Channel_GoneInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_TextInputs */
+/** @typedef {{}} Settings_Feed_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_Channels_HintInputs */
+/** @typedef {{}} Settings_Feed_CheckingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_DeleteInputs */
+/** @typedef {{}} Settings_Feed_Delete_BodyInputs */
+/** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
+/** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{}} Settings_Feed_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
+/** @typedef {{}} Settings_Feed_Edit_TitleInputs */
+/** @typedef {{}} Settings_Feed_InvalidInputs */
+/** @typedef {{}} Settings_Feed_KeepInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Feed_Last_CheckInputs */
+/** @typedef {{ kind: NonNullable<unknown> }} Settings_Feed_Last_ErrorInputs */
+/** @typedef {{}} Settings_Feed_LimitInputs */
+/** @typedef {{}} Settings_Feed_ModeInputs */
+/** @typedef {{}} Settings_Feed_Mode_DraftInputs */
+/** @typedef {{}} Settings_Feed_Mode_QueueInputs */
+/** @typedef {{}} Settings_Feed_NameInputs */
+/** @typedef {{}} Settings_Feed_Name_InvalidInputs */
+/** @typedef {{}} Settings_Feed_Never_CheckedInputs */
+/** @typedef {{}} Settings_Feed_No_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_PauseInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Pause_NamedInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Settings_Feed_PausedInputs */
+/** @typedef {{}} Settings_Feed_Paused_ToastInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_LinkInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_SummaryInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_TitleInputs */
+/** @typedef {{}} Settings_Feed_PlaceholdersInputs */
+/** @typedef {{}} Settings_Feed_ResumeInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Resume_NamedInputs */
+/** @typedef {{}} Settings_Feed_ResumedInputs */
+/** @typedef {{}} Settings_Feed_SavedInputs */
+/** @typedef {{}} Settings_Feed_TemplateInputs */
+/** @typedef {{}} Settings_Feed_Template_InvalidInputs */
+/** @typedef {{}} Settings_Feed_UnreachableInputs */
+/** @typedef {{}} Settings_Feed_UrlInputs */
+/** @typedef {{}} Settings_Feed_Url_InvalidInputs */
+/** @typedef {{}} Settings_Feeds_EmptyInputs */
+/** @typedef {{}} Settings_Feeds_IntroInputs */
+/** @typedef {{}} Settings_Feeds_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -192,6 +241,210 @@ export const settings_email_failures_hint = /** @type {(inputs: Settings_Email_F
 
 export const settings_email_title = /** @type {(inputs: Settings_Email_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Oznámení e-mailem`)
+};
+
+export const settings_feed_active = /** @type {(inputs: Settings_Feed_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aktivní`)
+};
+
+export const settings_feed_add = /** @type {(inputs: Settings_Feed_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přidat zdroj`)
+};
+
+export const settings_feed_cancel = /** @type {(inputs: Settings_Feed_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit`)
+};
+
+export const settings_feed_channel_gone = /** @type {(inputs: Settings_Feed_Channel_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Jeden z kanálů už neexistuje.`)
+};
+
+export const settings_feed_channel_queue = /** @type {(inputs: Settings_Feed_Channel_QueueInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nemá ve frontě žádné časy. Přidejte je na stránce Kanály, nebo nové položky ukládejte jako koncepty.`)
+};
+
+export const settings_feed_channel_text = /** @type {(inputs: Settings_Feed_Channel_TextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} neumí zveřejnit samotný text.`)
+};
+
+export const settings_feed_channels = /** @type {(inputs: Settings_Feed_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanály`)
+};
+
+export const settings_feed_channels_hint = /** @type {(inputs: Settings_Feed_Channels_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nabízejí se jen kanály, které umí zveřejnit samotný text bez médií.`)
+};
+
+export const settings_feed_checking = /** @type {(inputs: Settings_Feed_CheckingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kontroluje se zdroj…`)
+};
+
+export const settings_feed_delete = /** @type {(inputs: Settings_Feed_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Smazat zdroj ${i?.name}`)
+};
+
+export const settings_feed_delete_body = /** @type {(inputs: Settings_Feed_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Příspěvky, které z něj už vznikly, zůstanou zachované.`)
+};
+
+export const settings_feed_delete_confirm = /** @type {(inputs: Settings_Feed_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Smazat zdroj`)
+};
+
+export const settings_feed_delete_title = /** @type {(inputs: Settings_Feed_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Smazat zdroj „${i?.name}“?`)
+};
+
+export const settings_feed_deleted = /** @type {(inputs: Settings_Feed_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroj je smazaný`)
+};
+
+export const settings_feed_edit = /** @type {(inputs: Settings_Feed_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upravit`)
+};
+
+export const settings_feed_edit_named = /** @type {(inputs: Settings_Feed_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Upravit zdroj ${i?.name}`)
+};
+
+export const settings_feed_edit_title = /** @type {(inputs: Settings_Feed_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upravit zdroj`)
+};
+
+export const settings_feed_invalid = /** @type {(inputs: Settings_Feed_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento odkaz nevede na zdroj RSS ani Atom.`)
+};
+
+export const settings_feed_keep = /** @type {(inputs: Settings_Feed_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat zdroj`)
+};
+
+export const settings_feed_last_check = /** @type {(inputs: Settings_Feed_Last_CheckInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Naposledy zkontrolovaný ${i?.time}`)
+};
+
+export const settings_feed_last_error = /** @type {(inputs: Settings_Feed_Last_ErrorInputs) => LocalizedString} */ (i) => {
+	if (i?.kind === "url_blocked") return /** @type {LocalizedString} */ (`Poslední kontrola selhala: tato adresa není povolená.`);
+	if (i?.kind === "fetch_failed") return /** @type {LocalizedString} */ (`Poslední kontrola selhala: zdroj se nepodařilo načíst.`);
+	if (i?.kind === "timed_out") return /** @type {LocalizedString} */ (`Poslední kontrola selhala: zdroj neodpověděl včas.`);
+	if (i?.kind === "too_large") return /** @type {LocalizedString} */ (`Poslední kontrola selhala: zdroj je příliš velký.`);
+	if (i?.kind === "feed_invalid") return /** @type {LocalizedString} */ (`Poslední kontrola selhala: odkaz nevede na zdroj RSS ani Atom.`);
+	return /** @type {LocalizedString} */ (`Poslední kontrola selhala.`)
+};
+
+export const settings_feed_limit = /** @type {(inputs: Settings_Feed_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovní prostor už má nejvíc povolených zdrojů. Nejdřív některý smažte.`)
+};
+
+export const settings_feed_mode = /** @type {(inputs: Settings_Feed_ModeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nové položky`)
+};
+
+export const settings_feed_mode_draft = /** @type {(inputs: Settings_Feed_Mode_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložit jako koncept`)
+};
+
+export const settings_feed_mode_queue = /** @type {(inputs: Settings_Feed_Mode_QueueInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přidat do fronty`)
+};
+
+export const settings_feed_name = /** @type {(inputs: Settings_Feed_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Název`)
+};
+
+export const settings_feed_name_invalid = /** @type {(inputs: Settings_Feed_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Název je prázdný nebo příliš dlouhý.`)
+};
+
+export const settings_feed_never_checked = /** @type {(inputs: Settings_Feed_Never_CheckedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím nezkontrolovaný`)
+};
+
+export const settings_feed_no_channels = /** @type {(inputs: Settings_Feed_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím žádný kanál neumí zveřejnit samotný text. Nejdřív nějaký připojte.`)
+};
+
+export const settings_feed_pause = /** @type {(inputs: Settings_Feed_PauseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pozastavit`)
+};
+
+export const settings_feed_pause_named = /** @type {(inputs: Settings_Feed_Pause_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Pozastavit zdroj ${i?.name}`)
+};
+
+export const settings_feed_paused = /** @type {(inputs: Settings_Feed_PausedInputs) => LocalizedString} */ (i) => {
+	if (i?.reason === "manual") return /** @type {LocalizedString} */ (`Pozastavený`);
+	if (i?.reason === "owner_lost") return /** @type {LocalizedString} */ (`Pozastavený: ten, kdo ho naposledy uložil, už nemůže plánovat příspěvky`);
+	if (i?.reason === "fetch_failing") return /** @type {LocalizedString} */ (`Pozastavený: zdroj selhává už 24 hodin`);
+	return /** @type {LocalizedString} */ (`Pozastavený`)
+};
+
+export const settings_feed_paused_toast = /** @type {(inputs: Settings_Feed_Paused_ToastInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroj je pozastavený`)
+};
+
+export const settings_feed_placeholder_link = /** @type {(inputs: Settings_Feed_Placeholder_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`odkaz na položku`)
+};
+
+export const settings_feed_placeholder_summary = /** @type {(inputs: Settings_Feed_Placeholder_SummaryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`krátké shrnutí položky, nejvýš 500 znaků`)
+};
+
+export const settings_feed_placeholder_title = /** @type {(inputs: Settings_Feed_Placeholder_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`titulek položky`)
+};
+
+export const settings_feed_placeholders = /** @type {(inputs: Settings_Feed_PlaceholdersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Můžete použít:`)
+};
+
+export const settings_feed_resume = /** @type {(inputs: Settings_Feed_ResumeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Obnovit`)
+};
+
+export const settings_feed_resume_named = /** @type {(inputs: Settings_Feed_Resume_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obnovit zdroj ${i?.name}`)
+};
+
+export const settings_feed_resumed = /** @type {(inputs: Settings_Feed_ResumedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroj znovu běží`)
+};
+
+export const settings_feed_saved = /** @type {(inputs: Settings_Feed_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroj je uložený`)
+};
+
+export const settings_feed_template = /** @type {(inputs: Settings_Feed_TemplateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text příspěvku`)
+};
+
+export const settings_feed_template_invalid = /** @type {(inputs: Settings_Feed_Template_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Text příspěvku je prázdný nebo příliš dlouhý.`)
+};
+
+export const settings_feed_unreachable = /** @type {(inputs: Settings_Feed_UnreachableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroj se nepodařilo načíst. Zkontrolujte odkaz a zkuste to znovu.`)
+};
+
+export const settings_feed_url = /** @type {(inputs: Settings_Feed_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Adresa zdroje`)
+};
+
+export const settings_feed_url_invalid = /** @type {(inputs: Settings_Feed_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadejte odkaz https bez uživatelského jména a hesla.`)
+};
+
+export const settings_feeds_empty = /** @type {(inputs: Settings_Feeds_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím tu nejsou žádné zdroje.`)
+};
+
+export const settings_feeds_intro = /** @type {(inputs: Settings_Feeds_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Z každé nové položky zdroje RSS nebo Atom, třeba blogu či newsletteru, vznikne příspěvek na vašich kanálech.`)
+};
+
+export const settings_feeds_title = /** @type {(inputs: Settings_Feeds_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zdroje RSS`)
 };
 
 export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {

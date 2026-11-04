@@ -10,6 +10,7 @@ export const JOBS = {
   mediaProcess: 'media_process',
   mediaImport: 'media_import',
   metaLifecycle: 'meta_lifecycle',
+  rss: 'rss',
 } as const;
 
 export type JobName = (typeof JOBS)[keyof typeof JOBS];
@@ -31,6 +32,11 @@ export interface RevokeJob {
 }
 
 export interface MediaJob {
+  readonly workspaceId: string;
+  readonly id: string;
+}
+
+export interface FeedJob {
   readonly workspaceId: string;
   readonly id: string;
 }
@@ -153,6 +159,18 @@ export async function enqueueMetaLifecycle(trx: TenantDb, requestId: string): Pr
     select graphile_worker.add_job(${JOBS.metaLifecycle}, ${payload}::json,
       max_attempts := ${META_LIFECYCLE_ATTEMPTS},
       job_key := ${`meta:${requestId}`},
+      job_key_mode := 'preserve_run_at')
+  `.execute(trx);
+}
+
+// Feed failures are tracked on the feed and the next rss_poll queues the check again.
+export async function enqueueFeedCheck(trx: TenantDb, job: FeedJob): Promise<void> {
+  const payload = JSON.stringify({ workspaceId: job.workspaceId, id: job.id });
+  await sql`
+    select graphile_worker.add_job(${JOBS.rss}, ${payload}::json,
+      queue_name := 'rss',
+      max_attempts := 1,
+      job_key := ${`rss:${job.id}`},
       job_key_mode := 'preserve_run_at')
   `.execute(trx);
 }

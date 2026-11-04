@@ -3646,6 +3646,179 @@ export type PostsUnscheduleResponses = {
 
 export type PostsUnscheduleResponse = PostsUnscheduleResponses[keyof PostsUnscheduleResponses];
 
+export type RssFeedsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/rss-feeds';
+};
+
+export type RssFeedsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type RssFeedsListError = RssFeedsListErrors[keyof RssFeedsListErrors];
+
+export type RssFeedsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            channelIds: Array<string>;
+            createdAt: string;
+            id: string;
+            lastCheckedAt: string | null;
+            lastError: 'url_blocked' | 'fetch_failed' | 'timed_out' | 'too_large' | 'feed_invalid' | null;
+            mode: 'queue' | 'draft';
+            name: string;
+            pausedReason: 'manual' | 'owner_lost' | 'fetch_failing' | null;
+            state: 'active' | 'paused';
+            template: string;
+            updatedAt: string;
+            url: string;
+        }>;
+    };
+};
+
+export type RssFeedsListResponse = RssFeedsListResponses[keyof RssFeedsListResponses];
+
+export type RssFeedsCreateData = {
+    body: {
+        channelIds: Array<string>;
+        mode: 'queue' | 'draft';
+        name: string;
+        template?: string;
+        url: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/rss-feeds';
+};
+
+export type RssFeedsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type RssFeedsCreateError = RssFeedsCreateErrors[keyof RssFeedsCreateErrors];
+
+export type RssFeedsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        channelIds: Array<string>;
+        createdAt: string;
+        id: string;
+        lastCheckedAt: string | null;
+        lastError: 'url_blocked' | 'fetch_failed' | 'timed_out' | 'too_large' | 'feed_invalid' | null;
+        mode: 'queue' | 'draft';
+        name: string;
+        pausedReason: 'manual' | 'owner_lost' | 'fetch_failing' | null;
+        state: 'active' | 'paused';
+        template: string;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type RssFeedsCreateResponse = RssFeedsCreateResponses[keyof RssFeedsCreateResponses];
+
+export type RssFeedsDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        feedId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/rss-feeds/{feedId}';
+};
+
+export type RssFeedsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type RssFeedsDeleteError = RssFeedsDeleteErrors[keyof RssFeedsDeleteErrors];
+
+export type RssFeedsDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type RssFeedsDeleteResponse = RssFeedsDeleteResponses[keyof RssFeedsDeleteResponses];
+
+export type RssFeedsUpdateData = {
+    body: {
+        channelIds?: Array<string>;
+        mode?: 'queue' | 'draft';
+        name?: string;
+        paused?: boolean;
+        template?: string;
+        url?: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        feedId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/rss-feeds/{feedId}';
+};
+
+export type RssFeedsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type RssFeedsUpdateError = RssFeedsUpdateErrors[keyof RssFeedsUpdateErrors];
+
+export type RssFeedsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        channelIds: Array<string>;
+        createdAt: string;
+        id: string;
+        lastCheckedAt: string | null;
+        lastError: 'url_blocked' | 'fetch_failed' | 'timed_out' | 'too_large' | 'feed_invalid' | null;
+        mode: 'queue' | 'draft';
+        name: string;
+        pausedReason: 'manual' | 'owner_lost' | 'fetch_failing' | null;
+        state: 'active' | 'paused';
+        template: string;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type RssFeedsUpdateResponse = RssFeedsUpdateResponses[keyof RssFeedsUpdateResponses];
+
 export type SavedTextsListData = {
     body?: never;
     path: {

@@ -194,5 +194,78 @@
         "countPlural=*": "{count} channels lose it as their signature."
       }
     }
-  ]
+  ],
+  "settings_feeds_title": "Feeds",
+  "settings_feeds_intro": "Turn each new item of an RSS or Atom feed, such as a blog or a newsletter, into a post on your channels.",
+  "settings_feeds_empty": "No feeds yet.",
+  "settings_feed_add": "Add feed",
+  "settings_feed_edit": "Edit",
+  "settings_feed_edit_named": "Edit feed {name}",
+  "settings_feed_edit_title": "Edit feed",
+  "settings_feed_url": "Feed URL",
+  "settings_feed_name": "Name",
+  "settings_feed_channels": "Channels",
+  "settings_feed_channels_hint": "Only channels that can post text without media are listed.",
+  "settings_feed_no_channels": "No channel can post text without media yet. Connect one first.",
+  "settings_feed_mode": "New items",
+  "settings_feed_mode_queue": "Add to queue",
+  "settings_feed_mode_draft": "Save as draft",
+  "settings_feed_template": "Post text",
+  "settings_feed_placeholders": "You can use:",
+  "settings_feed_placeholder_title": "the item's title",
+  "settings_feed_placeholder_link": "the link to the item",
+  "settings_feed_placeholder_summary": "a short summary of the item, up to 500 characters",
+  "settings_feed_cancel": "Cancel",
+  "settings_feed_checking": "Checking feed…",
+  "settings_feed_saved": "Feed saved",
+  "settings_feed_deleted": "Feed deleted",
+  "settings_feed_paused_toast": "Feed paused",
+  "settings_feed_resumed": "Feed resumed",
+  "settings_feed_pause": "Pause",
+  "settings_feed_pause_named": "Pause feed {name}",
+  "settings_feed_resume": "Resume",
+  "settings_feed_resume_named": "Resume feed {name}",
+  "settings_feed_delete": "Delete feed {name}",
+  "settings_feed_delete_title": "Delete feed “{name}”?",
+  "settings_feed_delete_body": "Posts it has already made stay as they are.",
+  "settings_feed_keep": "Keep feed",
+  "settings_feed_delete_confirm": "Delete feed",
+  "settings_feed_active": "Active",
+  "settings_feed_paused": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=manual": "Paused",
+        "reason=owner_lost": "Paused: whoever saved it last can no longer schedule posts",
+        "reason=fetch_failing": "Paused: the feed has failed for 24 hours",
+        "reason=*": "Paused"
+      }
+    }
+  ],
+  "settings_feed_last_check": "Last checked {time}",
+  "settings_feed_never_checked": "Not checked yet",
+  "settings_feed_last_error": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=url_blocked": "Last check failed: this address isn't allowed.",
+        "kind=fetch_failed": "Last check failed: the feed couldn't be fetched.",
+        "kind=timed_out": "Last check failed: the feed took too long to answer.",
+        "kind=too_large": "Last check failed: the feed is too large.",
+        "kind=feed_invalid": "Last check failed: the link isn't an RSS or Atom feed.",
+        "kind=*": "Last check failed."
+      }
+    }
+  ],
+  "settings_feed_url_invalid": "Enter an https link without a user name or password.",
+  "settings_feed_unreachable": "The feed couldn't be fetched. Check the link and try again.",
+  "settings_feed_invalid": "This link isn't an RSS or Atom feed.",
+  "settings_feed_name_invalid": "The name is empty or too long.",
+  "settings_feed_template_invalid": "The post text is empty or too long.",
+  "settings_feed_channel_gone": "One of the channels no longer exists.",
+  "settings_feed_channel_text": "{channel} can't post text without media.",
+  "settings_feed_channel_queue": "{channel} has no queue times. Add some on the Channels page, or save new items as drafts.",
+  "settings_feed_limit": "This workspace has reached its limit of feeds. Delete one first."
 }

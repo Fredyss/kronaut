@@ -286,6 +286,7 @@ The approval events are written in the transaction that opens or decides the req
 | tz recompute after a tzdata update (`tz_recompute`, see [Time](#time)) | 1 h |
 | series advance (`series_advance`, see [Recurring posts](#recurring-posts)) | 5 min |
 | evergreen fill (`evergreen_fill`, see [Evergreen posts](#evergreen-posts)) | 1 h |
+| RSS check (`rss_poll`, see [RSS autopost](#rss-autopost)) | 15 min |
 | reconciliation: re-adds a missing `verify:<id>` job for every `verifying` row (no lower time bound); the verify job itself promotes outcomes a fenced-out finalize recorded (see [Verifier](#verifier)) | 10 min |
 | async poll (IG/Threads containers, LinkedIn `PUBLISH_REQUESTED`, TikTok status) | per the manifest |
 | analytics pull (`analytics_pull`, see [Analytics](#analytics)) | 15 min |
@@ -367,6 +368,30 @@ Evergreen posts refill a channel's queue (see [Queue slots](#queue-slots)) with 
     - A copy whose slot passes without approval stays a draft. Its open request is voided, and a later slot gets another post.
   - **Locking:** per-channel queue locks, as in "add to queue", so a manual queue claim and the fill never take the same slot.
 - **Failures:** an owner who can no longer schedule, or a pool post that can't be copied (`preflight_failed`, `unprocessable` or `invalid_request`), is taken out of the **whole** pool with a reason, even if only one channel failed; re-marking puts it back. Other errors, conflicts included, are retried on the next run.
+
+## RSS autopost
+
+A feed turns each new item of an RSS or Atom feed into a post on its channels, so a blog or newsletter goes out without anyone copying links by hand.
+
+- **Feed:** `rss_feeds` holds the URL, a name, at least one channel (`rss_feed_channels`), a mode and a template. Owners and admins manage feeds (`settings:write`, session only), at most 20 per workspace. Whoever saves a feed last is its owner, re-authorized for `posts:schedule` on every item, as for evergreen. Creating, changing, pausing, resuming and deleting a feed write `rss_feed.created`, `.updated`, `.paused`, `.resumed` and `.deleted`. Deleting a feed keeps its posts.
+- **URL:** `https` only, at most 2048 characters, no credentials. A feed URL can hold a token, so it never reaches a log, a job payload or an audit event; it's returned only in the feed itself, to roles that manage feeds.
+- **Mode:** `queue` gives each item the next free slot of each channel (see [Queue slots](#queue-slots)); `draft` leaves it a draft for someone to schedule. A channel in a `queue` feed must have queue slots when the feed is saved (`422 queue_empty`).
+- **Template:** plain text up to 1000 characters with `{title}`, `{link}` and `{summary}`, `{title} {link}` by default. Any other brace text stays as written. The result is normalized to NFC and becomes one item, one paragraph per line, with the text-only publish type of each channel.
+- **Fetching:** through `packages/egress`: any public host, port 443, 3 redirects, 5 MB, 30 s, with `If-None-Match` and `If-Modified-Since` from the last answer. `304` means nothing new; it still counts as seeing every known item. The `ETag` and `Last-Modified` of an answer are stored only once every new item in it is recorded, so a feed with items still waiting is fetched in full next time.
+- **Parsing:** RSS 2.0 and Atom 1.0. A document with a DOCTYPE is refused, so no entity can expand. Only the first 1000 items are read. Per item:
+  - **Key:** `guid` or Atom `id`, else the link; stored as its SHA-256. An item without a key is skipped, and a repeated key counts once.
+  - **Link:** resolved against the feed URL, `http` or `https` only.
+  - **Title and summary:** `description`, Atom `summary` or `content`, as plain text: tags dropped, entities decoded, whitespace collapsed. `{summary}` is cut at 500 characters on a word boundary, with `…`.
+  - An item with neither title nor link is skipped.
+- **First check:** saving a new feed, or a new URL, fetches it at once: an unreachable or unreadable feed is `422 feed_unreachable` or `422 feed_invalid`. Every item found then is recorded with the outcome `seen`, so nothing old is posted.
+- **Checks:** the `rss_poll` cron task walks `sweep_workspaces` every 15 min and queues one `rss` job per active feed whose last check is at least 10 min old (job key per feed). Queue `rss` runs one job at a time across the instance.
+  - In `queue` mode a check first revisits the feed's `requested` items, oldest first. When a post's newest request is approved, the post is scheduled at each channel's next free slot through `scheduleOrRequest`, and the item becomes `scheduled`. A rejected, voided or withdrawn request makes it `drafted`. Every item changed this way counts toward the 5 per check.
+  - New items are those not in `rss_items`, plus those still `retrying`. They're taken oldest first, at most 5 per check minus the revisited ones; the rest wait for the next one. Items are ordered by date only when every new item has one, else in reverse feed order, since feeds list the newest first.
+  - Each item becomes a draft (`origin = 'rss'`) created as the owner. In `queue` mode it's then scheduled or sent for approval through `posts/owner/owner-schedule.ts` with each channel's next free slot. A queue post's slots differ per channel, so its request binds no time, as in the CSV import. `queue_empty` or `queue_full` leaves it a draft.
+  - `rss_items` records the outcome (`seen`, `scheduled`, `requested`, `drafted`, `retrying` or `failed` with its error code) and the post. A content error (`preflight_failed`, `unprocessable`, `invalid_request`) fails only that item.
+  - Any other error makes the item `retrying` and counts it in `attempts`; it's tried again on the next check. The 3rd failed attempt makes it `failed` with `item_failed`, so it stops taking a place in the 5.
+  - Every check updates each item's `last_seen_at`. GC removes items last seen more than 30 days before the feed's own last check, so a paused feed keeps its items.
+- **Failures:** an owner who can no longer schedule pauses the feed (`owner_lost`). A fetch or parse error is kept as the last error, and a feed that has failed for 24 hours in a row is paused (`fetch_failing`). Resuming is a normal check, so items from the pause are posted, at most 5 at a time.
 
 ## Analytics
 

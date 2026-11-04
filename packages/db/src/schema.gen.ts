@@ -841,6 +841,43 @@ export interface RevisionDestinations {
   workspace_id: string;
 }
 
+export interface RssFeedChannels {
+  feed_id: string;
+  social_account_id: string;
+  workspace_id: string;
+}
+
+export interface RssFeeds {
+  created_at: Generated<Timestamp>;
+  etag: string | null;
+  failing_since: Timestamp | null;
+  id: Generated<string>;
+  last_checked_at: Timestamp | null;
+  last_error: string | null;
+  last_modified: string | null;
+  mode: string;
+  name: string;
+  owner_user_id: string;
+  paused_reason: string | null;
+  state: Generated<string>;
+  template: string;
+  updated_at: Generated<Timestamp>;
+  url: string;
+  workspace_id: string;
+}
+
+export interface RssItems {
+  attempts: Generated<number>;
+  created_at: Generated<Timestamp>;
+  error_code: string | null;
+  feed_id: string;
+  key: Buffer;
+  last_seen_at: Generated<Timestamp>;
+  outcome: string;
+  post_id: string | null;
+  workspace_id: string;
+}
+
 export interface SavedTexts {
   created_at: Generated<Timestamp>;
   doc: Json;
@@ -1074,6 +1111,9 @@ export interface DB {
   review_link_posts: ReviewLinkPosts;
   review_links: ReviewLinks;
   revision_destinations: RevisionDestinations;
+  rss_feed_channels: RssFeedChannels;
+  rss_feeds: RssFeeds;
+  rss_items: RssItems;
   saved_texts: SavedTexts;
   security_events: SecurityEvents;
   sessions: Sessions;

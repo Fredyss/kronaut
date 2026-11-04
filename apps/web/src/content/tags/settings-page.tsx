@@ -1,7 +1,15 @@
 import { tagsDelete, tagsUpdate } from '@kronaut/sdk';
-import { Button, Select, SettingsCard, SettingsPage, toast } from '@kronaut/ui';
+import {
+  Button,
+  ConfirmDelete,
+  focusNeighbour,
+  Select,
+  SettingsCard,
+  SettingsPage,
+  toast,
+} from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
+import { type KeyboardEvent, useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
@@ -29,12 +37,6 @@ interface TagChange {
 
 function reportFailure(error: unknown): void {
   if (errorStatus(error) !== 401) toast(tagError(error), 'destructive');
-}
-
-function focusNeighbour(row: HTMLElement | null): void {
-  const sibling = row?.nextElementSibling ?? row?.previousElementSibling;
-  const target = sibling?.querySelector('button') ?? row?.closest<HTMLElement>('[tabindex="-1"]');
-  target?.focus();
 }
 
 function useTagWrites(workspaceId: string, tagId: string, onDeleted: () => void) {
@@ -111,55 +113,6 @@ function NameField({
   );
 }
 
-function DeleteTag({
-  tag,
-  pending,
-  onCancel,
-  onConfirm,
-}: {
-  readonly tag: Tag;
-  readonly pending: boolean;
-  onCancel(): void;
-  onConfirm(): void;
-}) {
-  const titleId = useId();
-  const bodyId = useId();
-  const keep = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    keep.current?.focus();
-    return () => {
-      if (opener?.isConnected === true) opener.focus();
-    };
-  }, []);
-  return (
-    <div
-      role="alertdialog"
-      aria-labelledby={titleId}
-      aria-describedby={bodyId}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') onCancel();
-      }}
-      className="flex basis-full flex-col gap-3 rounded-md border p-4"
-    >
-      <h3 id={titleId} className="font-medium text-sm">
-        {settingsText.settings_tag_delete_title({ name: tag.name })}
-      </h3>
-      <p id={bodyId} className="text-muted-foreground text-sm">
-        {settingsText.settings_tag_delete_body({ count: tag.postCount })}
-      </p>
-      <div className="flex flex-wrap justify-end gap-2">
-        <Button ref={keep} type="button" variant="ghost" onClick={onCancel}>
-          {settingsText.settings_tag_keep()}
-        </Button>
-        <Button type="button" variant="destructive" disabled={pending} onClick={onConfirm}>
-          {settingsText.settings_tag_delete_confirm()}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; readonly tag: Tag }) {
   const row = useRef<HTMLLIElement>(null);
   const { update, remove } = useTagWrites(workspaceId, tag.id, () => focusNeighbour(row.current));
@@ -195,8 +148,11 @@ function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; reado
         {settingsText.settings_tag_delete_confirm()}
       </Button>
       {asking ? (
-        <DeleteTag
-          tag={tag}
+        <ConfirmDelete
+          title={settingsText.settings_tag_delete_title({ name: tag.name })}
+          body={settingsText.settings_tag_delete_body({ count: tag.postCount })}
+          keepLabel={settingsText.settings_tag_keep()}
+          confirmLabel={settingsText.settings_tag_delete_confirm()}
           pending={remove.isPending}
           onCancel={() => setAsking(false)}
           onConfirm={() => remove.mutate(undefined, { onSettled: () => setAsking(false) })}

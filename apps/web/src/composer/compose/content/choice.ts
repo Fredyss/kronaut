@@ -8,6 +8,8 @@ export interface MediaFacts {
   readonly video: boolean;
 }
 
+export const NO_MEDIA: MediaFacts = { images: [], video: false };
+
 export function choiceFor(channel: Channel, { images, video }: MediaFacts): PublishChoice {
   if (channel.status !== 'active') return { kind: 'unsupported' };
   const ui = providerUi(channel.provider);

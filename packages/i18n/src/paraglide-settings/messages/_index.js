@@ -19,6 +19,55 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Email_FailuresInputs */
 /** @typedef {{}} Settings_Email_Failures_HintInputs */
 /** @typedef {{}} Settings_Email_TitleInputs */
+/** @typedef {{}} Settings_Feed_ActiveInputs */
+/** @typedef {{}} Settings_Feed_AddInputs */
+/** @typedef {{}} Settings_Feed_CancelInputs */
+/** @typedef {{}} Settings_Feed_Channel_GoneInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_TextInputs */
+/** @typedef {{}} Settings_Feed_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_Channels_HintInputs */
+/** @typedef {{}} Settings_Feed_CheckingInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_DeleteInputs */
+/** @typedef {{}} Settings_Feed_Delete_BodyInputs */
+/** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
+/** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{}} Settings_Feed_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
+/** @typedef {{}} Settings_Feed_Edit_TitleInputs */
+/** @typedef {{}} Settings_Feed_InvalidInputs */
+/** @typedef {{}} Settings_Feed_KeepInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Feed_Last_CheckInputs */
+/** @typedef {{ kind: NonNullable<unknown> }} Settings_Feed_Last_ErrorInputs */
+/** @typedef {{}} Settings_Feed_LimitInputs */
+/** @typedef {{}} Settings_Feed_ModeInputs */
+/** @typedef {{}} Settings_Feed_Mode_DraftInputs */
+/** @typedef {{}} Settings_Feed_Mode_QueueInputs */
+/** @typedef {{}} Settings_Feed_NameInputs */
+/** @typedef {{}} Settings_Feed_Name_InvalidInputs */
+/** @typedef {{}} Settings_Feed_Never_CheckedInputs */
+/** @typedef {{}} Settings_Feed_No_ChannelsInputs */
+/** @typedef {{}} Settings_Feed_PauseInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Pause_NamedInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Settings_Feed_PausedInputs */
+/** @typedef {{}} Settings_Feed_Paused_ToastInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_LinkInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_SummaryInputs */
+/** @typedef {{}} Settings_Feed_Placeholder_TitleInputs */
+/** @typedef {{}} Settings_Feed_PlaceholdersInputs */
+/** @typedef {{}} Settings_Feed_ResumeInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Resume_NamedInputs */
+/** @typedef {{}} Settings_Feed_ResumedInputs */
+/** @typedef {{}} Settings_Feed_SavedInputs */
+/** @typedef {{}} Settings_Feed_TemplateInputs */
+/** @typedef {{}} Settings_Feed_Template_InvalidInputs */
+/** @typedef {{}} Settings_Feed_UnreachableInputs */
+/** @typedef {{}} Settings_Feed_UrlInputs */
+/** @typedef {{}} Settings_Feed_Url_InvalidInputs */
+/** @typedef {{}} Settings_Feeds_EmptyInputs */
+/** @typedef {{}} Settings_Feeds_IntroInputs */
+/** @typedef {{}} Settings_Feeds_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -390,6 +439,749 @@ export const settings_email_title = /** @type {((inputs?: Settings_Email_TitleIn
 	if (locale === "sk") return __sk.settings_email_title(inputs)
 	if (locale === "cs") return __cs.settings_email_title(inputs)
 	return __en.settings_email_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Active" |
+*
+* @param {Settings_Feed_ActiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_active = /** @type {((inputs?: Settings_Feed_ActiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_ActiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_active(inputs)
+	if (locale === "cs") return __cs.settings_feed_active(inputs)
+	return __en.settings_feed_active(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add feed" |
+*
+* @param {Settings_Feed_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_add = /** @type {((inputs?: Settings_Feed_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_add(inputs)
+	if (locale === "cs") return __cs.settings_feed_add(inputs)
+	return __en.settings_feed_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Feed_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_cancel = /** @type {((inputs?: Settings_Feed_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_cancel(inputs)
+	if (locale === "cs") return __cs.settings_feed_cancel(inputs)
+	return __en.settings_feed_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "One of the channels no longer exists." |
+*
+* @param {Settings_Feed_Channel_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channel_gone = /** @type {((inputs?: Settings_Feed_Channel_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Channel_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channel_gone(inputs)
+	if (locale === "cs") return __cs.settings_feed_channel_gone(inputs)
+	return __en.settings_feed_channel_gone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} has no queue times. Add some on the Channels page, or save new items as drafts." |
+*
+* @param {Settings_Feed_Channel_QueueInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channel_queue = /** @type {((inputs: Settings_Feed_Channel_QueueInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Channel_QueueInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channel_queue(inputs)
+	if (locale === "cs") return __cs.settings_feed_channel_queue(inputs)
+	return __en.settings_feed_channel_queue(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} can't post text without media." |
+*
+* @param {Settings_Feed_Channel_TextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channel_text = /** @type {((inputs: Settings_Feed_Channel_TextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Channel_TextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channel_text(inputs)
+	if (locale === "cs") return __cs.settings_feed_channel_text(inputs)
+	return __en.settings_feed_channel_text(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channels" |
+*
+* @param {Settings_Feed_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channels = /** @type {((inputs?: Settings_Feed_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channels(inputs)
+	if (locale === "cs") return __cs.settings_feed_channels(inputs)
+	return __en.settings_feed_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Only channels that can post text without media are listed." |
+*
+* @param {Settings_Feed_Channels_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channels_hint = /** @type {((inputs?: Settings_Feed_Channels_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Channels_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channels_hint(inputs)
+	if (locale === "cs") return __cs.settings_feed_channels_hint(inputs)
+	return __en.settings_feed_channels_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Checking feed…" |
+*
+* @param {Settings_Feed_CheckingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_checking = /** @type {((inputs?: Settings_Feed_CheckingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_CheckingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_checking(inputs)
+	if (locale === "cs") return __cs.settings_feed_checking(inputs)
+	return __en.settings_feed_checking(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete feed {name}" |
+*
+* @param {Settings_Feed_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_delete = /** @type {((inputs: Settings_Feed_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_delete(inputs)
+	if (locale === "cs") return __cs.settings_feed_delete(inputs)
+	return __en.settings_feed_delete(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Posts it has already made stay as they are." |
+*
+* @param {Settings_Feed_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_delete_body = /** @type {((inputs?: Settings_Feed_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_delete_body(inputs)
+	if (locale === "cs") return __cs.settings_feed_delete_body(inputs)
+	return __en.settings_feed_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete feed" |
+*
+* @param {Settings_Feed_Delete_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_delete_confirm = /** @type {((inputs?: Settings_Feed_Delete_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Delete_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_delete_confirm(inputs)
+	if (locale === "cs") return __cs.settings_feed_delete_confirm(inputs)
+	return __en.settings_feed_delete_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete feed “{name}”?" |
+*
+* @param {Settings_Feed_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_delete_title = /** @type {((inputs: Settings_Feed_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_delete_title(inputs)
+	if (locale === "cs") return __cs.settings_feed_delete_title(inputs)
+	return __en.settings_feed_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feed deleted" |
+*
+* @param {Settings_Feed_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_deleted = /** @type {((inputs?: Settings_Feed_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_deleted(inputs)
+	if (locale === "cs") return __cs.settings_feed_deleted(inputs)
+	return __en.settings_feed_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit" |
+*
+* @param {Settings_Feed_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_edit = /** @type {((inputs?: Settings_Feed_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_edit(inputs)
+	if (locale === "cs") return __cs.settings_feed_edit(inputs)
+	return __en.settings_feed_edit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit feed {name}" |
+*
+* @param {Settings_Feed_Edit_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_edit_named = /** @type {((inputs: Settings_Feed_Edit_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Edit_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_edit_named(inputs)
+	if (locale === "cs") return __cs.settings_feed_edit_named(inputs)
+	return __en.settings_feed_edit_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit feed" |
+*
+* @param {Settings_Feed_Edit_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_edit_title = /** @type {((inputs?: Settings_Feed_Edit_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Edit_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_edit_title(inputs)
+	if (locale === "cs") return __cs.settings_feed_edit_title(inputs)
+	return __en.settings_feed_edit_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This link isn't an RSS or Atom feed." |
+*
+* @param {Settings_Feed_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_invalid = /** @type {((inputs?: Settings_Feed_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_invalid(inputs)
+	if (locale === "cs") return __cs.settings_feed_invalid(inputs)
+	return __en.settings_feed_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep feed" |
+*
+* @param {Settings_Feed_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_keep = /** @type {((inputs?: Settings_Feed_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_keep(inputs)
+	if (locale === "cs") return __cs.settings_feed_keep(inputs)
+	return __en.settings_feed_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Last checked {time}" |
+*
+* @param {Settings_Feed_Last_CheckInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_last_check = /** @type {((inputs: Settings_Feed_Last_CheckInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Last_CheckInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_last_check(inputs)
+	if (locale === "cs") return __cs.settings_feed_last_check(inputs)
+	return __en.settings_feed_last_check(inputs)
+});
+/**
+* | kind | output |
+* | --- | --- |
+* | "url_blocked" | "Last check failed: this address isn't allowed." |
+* | "fetch_failed" | "Last check failed: the feed couldn't be fetched." |
+* | "timed_out" | "Last check failed: the feed took too long to answer." |
+* | "too_large" | "Last check failed: the feed is too large." |
+* | "feed_invalid" | "Last check failed: the link isn't an RSS or Atom feed." |
+* | * | "Last check failed." |
+*
+* @param {Settings_Feed_Last_ErrorInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_last_error = /** @type {((inputs: Settings_Feed_Last_ErrorInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Last_ErrorInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_last_error(inputs)
+	if (locale === "cs") return __cs.settings_feed_last_error(inputs)
+	return __en.settings_feed_last_error(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has reached its limit of feeds. Delete one first." |
+*
+* @param {Settings_Feed_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_limit = /** @type {((inputs?: Settings_Feed_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_limit(inputs)
+	if (locale === "cs") return __cs.settings_feed_limit(inputs)
+	return __en.settings_feed_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "New items" |
+*
+* @param {Settings_Feed_ModeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_mode = /** @type {((inputs?: Settings_Feed_ModeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_ModeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_mode(inputs)
+	if (locale === "cs") return __cs.settings_feed_mode(inputs)
+	return __en.settings_feed_mode(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Save as draft" |
+*
+* @param {Settings_Feed_Mode_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_mode_draft = /** @type {((inputs?: Settings_Feed_Mode_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Mode_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_mode_draft(inputs)
+	if (locale === "cs") return __cs.settings_feed_mode_draft(inputs)
+	return __en.settings_feed_mode_draft(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add to queue" |
+*
+* @param {Settings_Feed_Mode_QueueInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_mode_queue = /** @type {((inputs?: Settings_Feed_Mode_QueueInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Mode_QueueInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_mode_queue(inputs)
+	if (locale === "cs") return __cs.settings_feed_mode_queue(inputs)
+	return __en.settings_feed_mode_queue(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Name" |
+*
+* @param {Settings_Feed_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_name = /** @type {((inputs?: Settings_Feed_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_name(inputs)
+	if (locale === "cs") return __cs.settings_feed_name(inputs)
+	return __en.settings_feed_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The name is empty or too long." |
+*
+* @param {Settings_Feed_Name_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_name_invalid = /** @type {((inputs?: Settings_Feed_Name_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Name_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_name_invalid(inputs)
+	if (locale === "cs") return __cs.settings_feed_name_invalid(inputs)
+	return __en.settings_feed_name_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Not checked yet" |
+*
+* @param {Settings_Feed_Never_CheckedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_never_checked = /** @type {((inputs?: Settings_Feed_Never_CheckedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Never_CheckedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_never_checked(inputs)
+	if (locale === "cs") return __cs.settings_feed_never_checked(inputs)
+	return __en.settings_feed_never_checked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No channel can post text without media yet. Connect one first." |
+*
+* @param {Settings_Feed_No_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_no_channels = /** @type {((inputs?: Settings_Feed_No_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_No_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_no_channels(inputs)
+	if (locale === "cs") return __cs.settings_feed_no_channels(inputs)
+	return __en.settings_feed_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pause" |
+*
+* @param {Settings_Feed_PauseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_pause = /** @type {((inputs?: Settings_Feed_PauseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_PauseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_pause(inputs)
+	if (locale === "cs") return __cs.settings_feed_pause(inputs)
+	return __en.settings_feed_pause(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pause feed {name}" |
+*
+* @param {Settings_Feed_Pause_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_pause_named = /** @type {((inputs: Settings_Feed_Pause_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Pause_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_pause_named(inputs)
+	if (locale === "cs") return __cs.settings_feed_pause_named(inputs)
+	return __en.settings_feed_pause_named(inputs)
+});
+/**
+* | reason | output |
+* | --- | --- |
+* | "manual" | "Paused" |
+* | "owner_lost" | "Paused: whoever saved it last can no longer schedule posts" |
+* | "fetch_failing" | "Paused: the feed has failed for 24 hours" |
+* | * | "Paused" |
+*
+* @param {Settings_Feed_PausedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_paused = /** @type {((inputs: Settings_Feed_PausedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_PausedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_paused(inputs)
+	if (locale === "cs") return __cs.settings_feed_paused(inputs)
+	return __en.settings_feed_paused(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feed paused" |
+*
+* @param {Settings_Feed_Paused_ToastInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_paused_toast = /** @type {((inputs?: Settings_Feed_Paused_ToastInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Paused_ToastInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_paused_toast(inputs)
+	if (locale === "cs") return __cs.settings_feed_paused_toast(inputs)
+	return __en.settings_feed_paused_toast(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "the link to the item" |
+*
+* @param {Settings_Feed_Placeholder_LinkInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_placeholder_link = /** @type {((inputs?: Settings_Feed_Placeholder_LinkInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Placeholder_LinkInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_placeholder_link(inputs)
+	if (locale === "cs") return __cs.settings_feed_placeholder_link(inputs)
+	return __en.settings_feed_placeholder_link(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "a short summary of the item, up to 500 characters" |
+*
+* @param {Settings_Feed_Placeholder_SummaryInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_placeholder_summary = /** @type {((inputs?: Settings_Feed_Placeholder_SummaryInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Placeholder_SummaryInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_placeholder_summary(inputs)
+	if (locale === "cs") return __cs.settings_feed_placeholder_summary(inputs)
+	return __en.settings_feed_placeholder_summary(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "the item's title" |
+*
+* @param {Settings_Feed_Placeholder_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_placeholder_title = /** @type {((inputs?: Settings_Feed_Placeholder_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Placeholder_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_placeholder_title(inputs)
+	if (locale === "cs") return __cs.settings_feed_placeholder_title(inputs)
+	return __en.settings_feed_placeholder_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "You can use:" |
+*
+* @param {Settings_Feed_PlaceholdersInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_placeholders = /** @type {((inputs?: Settings_Feed_PlaceholdersInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_PlaceholdersInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_placeholders(inputs)
+	if (locale === "cs") return __cs.settings_feed_placeholders(inputs)
+	return __en.settings_feed_placeholders(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Resume" |
+*
+* @param {Settings_Feed_ResumeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_resume = /** @type {((inputs?: Settings_Feed_ResumeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_ResumeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_resume(inputs)
+	if (locale === "cs") return __cs.settings_feed_resume(inputs)
+	return __en.settings_feed_resume(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Resume feed {name}" |
+*
+* @param {Settings_Feed_Resume_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_resume_named = /** @type {((inputs: Settings_Feed_Resume_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Resume_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_resume_named(inputs)
+	if (locale === "cs") return __cs.settings_feed_resume_named(inputs)
+	return __en.settings_feed_resume_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feed resumed" |
+*
+* @param {Settings_Feed_ResumedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_resumed = /** @type {((inputs?: Settings_Feed_ResumedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_ResumedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_resumed(inputs)
+	if (locale === "cs") return __cs.settings_feed_resumed(inputs)
+	return __en.settings_feed_resumed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feed saved" |
+*
+* @param {Settings_Feed_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_saved = /** @type {((inputs?: Settings_Feed_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_saved(inputs)
+	if (locale === "cs") return __cs.settings_feed_saved(inputs)
+	return __en.settings_feed_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post text" |
+*
+* @param {Settings_Feed_TemplateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_template = /** @type {((inputs?: Settings_Feed_TemplateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_TemplateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_template(inputs)
+	if (locale === "cs") return __cs.settings_feed_template(inputs)
+	return __en.settings_feed_template(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The post text is empty or too long." |
+*
+* @param {Settings_Feed_Template_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_template_invalid = /** @type {((inputs?: Settings_Feed_Template_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Template_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_template_invalid(inputs)
+	if (locale === "cs") return __cs.settings_feed_template_invalid(inputs)
+	return __en.settings_feed_template_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The feed couldn't be fetched. Check the link and try again." |
+*
+* @param {Settings_Feed_UnreachableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_unreachable = /** @type {((inputs?: Settings_Feed_UnreachableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_UnreachableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_unreachable(inputs)
+	if (locale === "cs") return __cs.settings_feed_unreachable(inputs)
+	return __en.settings_feed_unreachable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feed URL" |
+*
+* @param {Settings_Feed_UrlInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_url = /** @type {((inputs?: Settings_Feed_UrlInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_UrlInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_url(inputs)
+	if (locale === "cs") return __cs.settings_feed_url(inputs)
+	return __en.settings_feed_url(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Enter an https link without a user name or password." |
+*
+* @param {Settings_Feed_Url_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_url_invalid = /** @type {((inputs?: Settings_Feed_Url_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Url_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_url_invalid(inputs)
+	if (locale === "cs") return __cs.settings_feed_url_invalid(inputs)
+	return __en.settings_feed_url_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No feeds yet." |
+*
+* @param {Settings_Feeds_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feeds_empty = /** @type {((inputs?: Settings_Feeds_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feeds_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feeds_empty(inputs)
+	if (locale === "cs") return __cs.settings_feeds_empty(inputs)
+	return __en.settings_feeds_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Turn each new item of an RSS or Atom feed, such as a blog or a newsletter, into a post on your channels." |
+*
+* @param {Settings_Feeds_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feeds_intro = /** @type {((inputs?: Settings_Feeds_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feeds_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feeds_intro(inputs)
+	if (locale === "cs") return __cs.settings_feeds_intro(inputs)
+	return __en.settings_feeds_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Feeds" |
+*
+* @param {Settings_Feeds_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feeds_title = /** @type {((inputs?: Settings_Feeds_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feeds_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feeds_title(inputs)
+	if (locale === "cs") return __cs.settings_feeds_title(inputs)
+	return __en.settings_feeds_title(inputs)
 });
 /**
 * | output |

@@ -1,5 +1,5 @@
 import type { PostsImportData } from '@kronaut/sdk';
-import { choiceFor, type MediaFacts } from '../../composer/compose/content/choice.ts';
+import { choiceFor, type MediaFacts, NO_MEDIA } from '../../composer/compose/content/choice.ts';
 import type { Channel } from '../../records/channels/queries.ts';
 import { textToParagraphs } from '../../records/posts/doc.ts';
 import type { CsvRecord } from './csv.ts';
@@ -41,8 +41,6 @@ export interface Draft {
 }
 
 export type DraftedRow = { readonly draft: Draft } | { readonly problems: readonly RowProblem[] };
-
-export const NO_MEDIA: MediaFacts = { images: [], video: false };
 
 function handleKey(handle: string): string {
   return handle.trim().replace(/^@/, '').toLowerCase();

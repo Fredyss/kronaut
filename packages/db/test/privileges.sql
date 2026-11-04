@@ -131,6 +131,24 @@ SELECT pg_temp.must('TEN-04 media_imports: tenant policy, app may read and write
   AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
          FROM pg_class c, aclexplode(c.relacl) a
         WHERE c.oid = 'media_imports'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 rss_feeds: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'rss_feeds'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'rss_feeds'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'rss_feeds'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
+SELECT pg_temp.must('TEN-04 rss_feed_channels: tenant policy, app may only read, insert and delete',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'rss_feed_channels'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'rss_feed_channels'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'rss_feed_channels'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT');
+SELECT pg_temp.must('TEN-04 rss_items: tenant policy, app may read and write',
+  (SELECT relrowsecurity FROM pg_class WHERE oid = 'rss_items'::regclass)
+  AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'rss_items'::regclass AND polname = 'tenant_isolation')
+  AND (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
+         FROM pg_class c, aclexplode(c.relacl) a
+        WHERE c.oid = 'rss_items'::regclass AND a.grantee = 'kronaut_app'::regrole) = 'DELETE,INSERT,SELECT,UPDATE');
 SELECT pg_temp.must('TEN-04 post_tags: tenant policy, app may only read, insert and delete',
   (SELECT relrowsecurity FROM pg_class WHERE oid = 'post_tags'::regclass)
   AND EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = 'post_tags'::regclass AND polname = 'tenant_isolation')

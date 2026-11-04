@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { browserTimeZone } from '../../base/locale/browser.ts';
-import { choiceFor } from '../../composer/compose/content/choice.ts';
+import { choiceFor, NO_MEDIA } from '../../composer/compose/content/choice.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
 import { type FileText, useFileText } from './file-text.ts';
@@ -17,7 +17,7 @@ import {
   type Problem,
   serverProblems,
 } from './prepare.ts';
-import { type ImportRow, NO_MEDIA, type RowContext } from './rows.ts';
+import type { ImportRow, RowContext } from './rows.ts';
 import { checkedRows, useImportCheck, useImportRun } from './use-import.ts';
 import { useMediaFetch } from './use-media-fetch.ts';
 
