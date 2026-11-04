@@ -70,7 +70,7 @@
   "calendar_tag_current": "Selected tag",
   "calendar_import_open": "Import CSV",
   "calendar_import_title": "Import posts from a CSV file",
-  "calendar_import_intro": "Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue.",
+  "calendar_import_intro": "Each row becomes one post. Use the columns text, channels, date, time and media; only text is required. A row without a date and time goes to each channel's queue.",
   "calendar_import_example": "Download example CSV",
   "calendar_import_file": "CSV file",
   "calendar_import_channels": "Default channels",
@@ -123,7 +123,7 @@
   "calendar_import_error_read": "The file couldn't be read.",
   "calendar_import_error_empty": "The file has no posts.",
   "calendar_import_error_quote": "A quoted field isn't closed.",
-  "calendar_import_error_column": "Unknown column “{name}”. Use text, channels, date and time.",
+  "calendar_import_error_column": "Unknown column “{name}”. Use text, channels, date, time and media.",
   "calendar_import_error_column_twice": "The column “{name}” appears twice.",
   "calendar_import_error_text_column": "The file needs a text column.",
   "calendar_import_error_too_many": [
@@ -153,5 +153,54 @@
   "calendar_import_issue_out_of_scope": "You don't have access to this channel.",
   "calendar_import_issue_scope_missing": "Your access doesn't allow posting here.",
   "calendar_import_issue_channel": "{channel}: {problem}",
-  "calendar_import_requested_queue": "Posts without a date and time get no slot while they wait. Schedule them once they're approved."
+  "calendar_import_requested_queue": "Posts without a date and time get no slot while they wait. Schedule them once they're approved.",
+  "calendar_import_media_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "In the media column, list up to {count} https link, separated by spaces or |. Links are fetched into the media library before the file is checked.",
+        "countPlural=*": "In the media column, list up to {count} https links, separated by spaces or |. Links are fetched into the media library before the file is checked."
+      }
+    }
+  ],
+  "calendar_import_example_media": "The media link in the example is a placeholder and won't fetch. Put in your own link or leave the column empty.",
+  "calendar_import_fetching": [
+    {
+      "declarations": ["input current", "input total", "local totalPlural = total: plural"],
+      "selectors": ["totalPlural"],
+      "match": {
+        "totalPlural=one": "Fetching media: link {current} of {total}…",
+        "totalPlural=*": "Fetching media: link {current} of {total}…"
+      }
+    }
+  ],
+  "calendar_import_fetch_stop": "Stop fetching",
+  "calendar_import_fetch_stopped": "Fetching stopped. Links that were already sent still finish in the media library. Pick the file again to continue.",
+  "calendar_import_error_media_link": "Media links must be https links, such as https://example.com/photo.jpg.",
+  "calendar_import_error_media_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "A row can have at most {count} media link.",
+        "countPlural=*": "A row can have at most {count} media links."
+      }
+    }
+  ],
+  "calendar_import_error_media_failed": "The media link on {host} couldn't be fetched.",
+  "calendar_import_error_media_rejected": "The media from {host} can't be used.",
+  "calendar_import_error_media_mix": "A post can have images or one video, not both.",
+  "calendar_import_error_channel_media": "{channel} can't publish this media.",
+  "calendar_import_error_media_file_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "The file has more than {count} media link. Split it into smaller files.",
+        "countPlural=*": "The file has more than {count} media links. Split it into smaller files."
+      }
+    }
+  ],
+  "calendar_import_error_media_rate_limited": "Too many media links are being imported right now. Pick the file again later to continue."
 }

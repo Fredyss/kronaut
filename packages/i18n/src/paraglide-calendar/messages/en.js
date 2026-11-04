@@ -14,6 +14,7 @@
 /** @typedef {{}} Calendar_Import_Channels_HintInputs */
 /** @typedef {{}} Calendar_Import_CheckingInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_ChannelInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_Channel_MediaInputs */
 /** @typedef {{}} Calendar_Import_Error_ChannelsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_ColumnInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_Column_TwiceInputs */
@@ -25,6 +26,13 @@
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
 /** @typedef {{ channel: NonNullable<unknown>, status: NonNullable<unknown> }} Calendar_Import_Error_InactiveInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_FailedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_File_Too_ManyInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_LinkInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_MixInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_Rate_LimitedInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_RejectedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_Error_QuoteInputs */
 /** @typedef {{}} Calendar_Import_Error_ReadInputs */
 /** @typedef {{}} Calendar_Import_Error_TextInputs */
@@ -33,7 +41,11 @@
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_ExampleInputs */
 /** @typedef {{}} Calendar_Import_Example_FirstInputs */
+/** @typedef {{}} Calendar_Import_Example_MediaInputs */
 /** @typedef {{}} Calendar_Import_Example_QueueInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StopInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StoppedInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Calendar_Import_FetchingInputs */
 /** @typedef {{}} Calendar_Import_FileInputs */
 /** @typedef {{}} Calendar_Import_ImportingInputs */
 /** @typedef {{}} Calendar_Import_IntroInputs */
@@ -42,6 +54,7 @@
 /** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
 /** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
 /** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Media_HintInputs */
 /** @typedef {{}} Calendar_Import_No_ChannelsInputs */
 /** @typedef {{}} Calendar_Import_OpenInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
@@ -153,12 +166,16 @@ export const calendar_import_error_channel = /** @type {(inputs: Calendar_Import
 	return /** @type {LocalizedString} */ (`${i?.channel} can't publish a text-only post.`)
 };
 
+export const calendar_import_error_channel_media = /** @type {(inputs: Calendar_Import_Error_Channel_MediaInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channel} can't publish this media.`)
+};
+
 export const calendar_import_error_channels = /** @type {(inputs: Calendar_Import_Error_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Fill in the channels column or pick default channels.`)
 };
 
 export const calendar_import_error_column = /** @type {(inputs: Calendar_Import_Error_ColumnInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Unknown column “${i?.name}”. Use text, channels, date and time.`)
+	return /** @type {LocalizedString} */ (`Unknown column “${i?.name}”. Use text, channels, date, time and media.`)
 };
 
 export const calendar_import_error_column_twice = /** @type {(inputs: Calendar_Import_Error_Column_TwiceInputs) => LocalizedString} */ (i) => {
@@ -197,6 +214,38 @@ export const calendar_import_error_inactive = /** @type {(inputs: Calendar_Impor
 	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.status}`)
 };
 
+export const calendar_import_error_media_failed = /** @type {(inputs: Calendar_Import_Error_Media_FailedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The media link on ${i?.host} couldn't be fetched.`)
+};
+
+export const calendar_import_error_media_file_too_many = /** @type {(inputs: Calendar_Import_Error_Media_File_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`The file has more than ${i?.count} media link. Split it into smaller files.`);
+	return /** @type {LocalizedString} */ (`The file has more than ${i?.count} media links. Split it into smaller files.`)
+};
+
+export const calendar_import_error_media_link = /** @type {(inputs: Calendar_Import_Error_Media_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Media links must be https links, such as https://example.com/photo.jpg.`)
+};
+
+export const calendar_import_error_media_mix = /** @type {(inputs: Calendar_Import_Error_Media_MixInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A post can have images or one video, not both.`)
+};
+
+export const calendar_import_error_media_rate_limited = /** @type {(inputs: Calendar_Import_Error_Media_Rate_LimitedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Too many media links are being imported right now. Pick the file again later to continue.`)
+};
+
+export const calendar_import_error_media_rejected = /** @type {(inputs: Calendar_Import_Error_Media_RejectedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The media from ${i?.host} can't be used.`)
+};
+
+export const calendar_import_error_media_too_many = /** @type {(inputs: Calendar_Import_Error_Media_Too_ManyInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`A row can have at most ${i?.count} media link.`);
+	return /** @type {LocalizedString} */ (`A row can have at most ${i?.count} media links.`)
+};
+
 export const calendar_import_error_quote = /** @type {(inputs: Calendar_Import_Error_QuoteInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`A quoted field isn't closed.`)
 };
@@ -231,8 +280,26 @@ export const calendar_import_example_first = /** @type {(inputs: Calendar_Import
 	return /** @type {LocalizedString} */ (`Hello! This post goes out at the date and time given.`)
 };
 
+export const calendar_import_example_media = /** @type {(inputs: Calendar_Import_Example_MediaInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The media link in the example is a placeholder and won't fetch. Put in your own link or leave the column empty.`)
+};
+
 export const calendar_import_example_queue = /** @type {(inputs: Calendar_Import_Example_QueueInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This post takes the next free slot in the queue.`)
+};
+
+export const calendar_import_fetch_stop = /** @type {(inputs: Calendar_Import_Fetch_StopInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stop fetching`)
+};
+
+export const calendar_import_fetch_stopped = /** @type {(inputs: Calendar_Import_Fetch_StoppedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Fetching stopped. Links that were already sent still finish in the media library. Pick the file again to continue.`)
+};
+
+export const calendar_import_fetching = /** @type {(inputs: Calendar_Import_FetchingInputs) => LocalizedString} */ (i) => {
+	const totalPlural = registry.plural("en", i?.total, {}, true);
+	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Fetching media: link ${i?.current} of ${i?.total}…`);
+	return /** @type {LocalizedString} */ (`Fetching media: link ${i?.current} of ${i?.total}…`)
 };
 
 export const calendar_import_file = /** @type {(inputs: Calendar_Import_FileInputs) => LocalizedString} */ () => {
@@ -244,7 +311,7 @@ export const calendar_import_importing = /** @type {(inputs: Calendar_Import_Imp
 };
 
 export const calendar_import_intro = /** @type {(inputs: Calendar_Import_IntroInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue.`)
+	return /** @type {LocalizedString} */ (`Each row becomes one post. Use the columns text, channels, date, time and media; only text is required. A row without a date and time goes to each channel's queue.`)
 };
 
 export const calendar_import_issue_channel = /** @type {(inputs: Calendar_Import_Issue_ChannelInputs) => LocalizedString} */ (i) => {
@@ -265,6 +332,12 @@ export const calendar_import_issue_scope_missing = /** @type {(inputs: Calendar_
 
 export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Line ${i?.line}: ${i?.problem}`)
+};
+
+export const calendar_import_media_hint = /** @type {(inputs: Calendar_Import_Media_HintInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`In the media column, list up to ${i?.count} https link, separated by spaces or |. Links are fetched into the media library before the file is checked.`);
+	return /** @type {LocalizedString} */ (`In the media column, list up to ${i?.count} https links, separated by spaces or |. Links are fetched into the media library before the file is checked.`)
 };
 
 export const calendar_import_no_channels = /** @type {(inputs: Calendar_Import_No_ChannelsInputs) => LocalizedString} */ () => {

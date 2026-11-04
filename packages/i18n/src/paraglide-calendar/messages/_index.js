@@ -16,6 +16,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Import_Channels_HintInputs */
 /** @typedef {{}} Calendar_Import_CheckingInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_ChannelInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Calendar_Import_Error_Channel_MediaInputs */
 /** @typedef {{}} Calendar_Import_Error_ChannelsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_ColumnInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Calendar_Import_Error_Column_TwiceInputs */
@@ -27,6 +28,13 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_HandleInputs */
 /** @typedef {{ handle: NonNullable<unknown> }} Calendar_Import_Error_Handle_TwiceInputs */
 /** @typedef {{ channel: NonNullable<unknown>, status: NonNullable<unknown> }} Calendar_Import_Error_InactiveInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_FailedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_File_Too_ManyInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_LinkInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_MixInputs */
+/** @typedef {{}} Calendar_Import_Error_Media_Rate_LimitedInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Calendar_Import_Error_Media_RejectedInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Media_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_Error_QuoteInputs */
 /** @typedef {{}} Calendar_Import_Error_ReadInputs */
 /** @typedef {{}} Calendar_Import_Error_TextInputs */
@@ -35,7 +43,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Error_Too_ManyInputs */
 /** @typedef {{}} Calendar_Import_ExampleInputs */
 /** @typedef {{}} Calendar_Import_Example_FirstInputs */
+/** @typedef {{}} Calendar_Import_Example_MediaInputs */
 /** @typedef {{}} Calendar_Import_Example_QueueInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StopInputs */
+/** @typedef {{}} Calendar_Import_Fetch_StoppedInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Calendar_Import_FetchingInputs */
 /** @typedef {{}} Calendar_Import_FileInputs */
 /** @typedef {{}} Calendar_Import_ImportingInputs */
 /** @typedef {{}} Calendar_Import_IntroInputs */
@@ -44,6 +56,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Calendar_Import_Issue_Out_Of_ScopeInputs */
 /** @typedef {{}} Calendar_Import_Issue_Scope_MissingInputs */
 /** @typedef {{ line: NonNullable<unknown>, problem: NonNullable<unknown> }} Calendar_Import_LineInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_Media_HintInputs */
 /** @typedef {{}} Calendar_Import_No_ChannelsInputs */
 /** @typedef {{}} Calendar_Import_OpenInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Calendar_Import_ProblemsInputs */
@@ -323,6 +336,21 @@ export const calendar_import_error_channel = /** @type {((inputs: Calendar_Impor
 /**
 * | output |
 * | --- |
+* | "{channel} can't publish this media." |
+*
+* @param {Calendar_Import_Error_Channel_MediaInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_channel_media = /** @type {((inputs: Calendar_Import_Error_Channel_MediaInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Channel_MediaInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_channel_media(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_channel_media(inputs)
+	return __en.calendar_import_error_channel_media(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Fill in the channels column or pick default channels." |
 *
 * @param {Calendar_Import_Error_ChannelsInputs} inputs
@@ -338,7 +366,7 @@ export const calendar_import_error_channels = /** @type {((inputs?: Calendar_Imp
 /**
 * | output |
 * | --- |
-* | "Unknown column “{name}”. Use text, channels, date and time." |
+* | "Unknown column “{name}”. Use text, channels, date, time and media." |
 *
 * @param {Calendar_Import_Error_ColumnInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -488,6 +516,113 @@ export const calendar_import_error_inactive = /** @type {((inputs: Calendar_Impo
 /**
 * | output |
 * | --- |
+* | "The media link on {host} couldn't be fetched." |
+*
+* @param {Calendar_Import_Error_Media_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_failed = /** @type {((inputs: Calendar_Import_Error_Media_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_failed(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_failed(inputs)
+	return __en.calendar_import_error_media_failed(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "The file has more than {count} media link. Split it into smaller files." |
+* | * | "The file has more than {count} media links. Split it into smaller files." |
+*
+* @param {Calendar_Import_Error_Media_File_Too_ManyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_file_too_many = /** @type {((inputs: Calendar_Import_Error_Media_File_Too_ManyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_File_Too_ManyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_file_too_many(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_file_too_many(inputs)
+	return __en.calendar_import_error_media_file_too_many(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Media links must be https links, such as https://example.com/photo.jpg." |
+*
+* @param {Calendar_Import_Error_Media_LinkInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_link = /** @type {((inputs?: Calendar_Import_Error_Media_LinkInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_LinkInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_link(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_link(inputs)
+	return __en.calendar_import_error_media_link(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A post can have images or one video, not both." |
+*
+* @param {Calendar_Import_Error_Media_MixInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_mix = /** @type {((inputs?: Calendar_Import_Error_Media_MixInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_MixInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_mix(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_mix(inputs)
+	return __en.calendar_import_error_media_mix(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Too many media links are being imported right now. Pick the file again later to continue." |
+*
+* @param {Calendar_Import_Error_Media_Rate_LimitedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_rate_limited = /** @type {((inputs?: Calendar_Import_Error_Media_Rate_LimitedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_Rate_LimitedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_rate_limited(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_rate_limited(inputs)
+	return __en.calendar_import_error_media_rate_limited(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The media from {host} can't be used." |
+*
+* @param {Calendar_Import_Error_Media_RejectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_rejected = /** @type {((inputs: Calendar_Import_Error_Media_RejectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_RejectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_rejected(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_rejected(inputs)
+	return __en.calendar_import_error_media_rejected(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "A row can have at most {count} media link." |
+* | * | "A row can have at most {count} media links." |
+*
+* @param {Calendar_Import_Error_Media_Too_ManyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_error_media_too_many = /** @type {((inputs: Calendar_Import_Error_Media_Too_ManyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Error_Media_Too_ManyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_error_media_too_many(inputs)
+	if (locale === "cs") return __cs.calendar_import_error_media_too_many(inputs)
+	return __en.calendar_import_error_media_too_many(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "A quoted field isn't closed." |
 *
 * @param {Calendar_Import_Error_QuoteInputs} inputs
@@ -609,6 +744,21 @@ export const calendar_import_example_first = /** @type {((inputs?: Calendar_Impo
 /**
 * | output |
 * | --- |
+* | "The media link in the example is a placeholder and won't fetch. Put in your own link or leave the column empty." |
+*
+* @param {Calendar_Import_Example_MediaInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_example_media = /** @type {((inputs?: Calendar_Import_Example_MediaInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Example_MediaInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_example_media(inputs)
+	if (locale === "cs") return __cs.calendar_import_example_media(inputs)
+	return __en.calendar_import_example_media(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "This post takes the next free slot in the queue." |
 *
 * @param {Calendar_Import_Example_QueueInputs} inputs
@@ -620,6 +770,52 @@ export const calendar_import_example_queue = /** @type {((inputs?: Calendar_Impo
 	if (locale === "sk") return __sk.calendar_import_example_queue(inputs)
 	if (locale === "cs") return __cs.calendar_import_example_queue(inputs)
 	return __en.calendar_import_example_queue(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Stop fetching" |
+*
+* @param {Calendar_Import_Fetch_StopInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_fetch_stop = /** @type {((inputs?: Calendar_Import_Fetch_StopInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Fetch_StopInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_fetch_stop(inputs)
+	if (locale === "cs") return __cs.calendar_import_fetch_stop(inputs)
+	return __en.calendar_import_fetch_stop(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Fetching stopped. Links that were already sent still finish in the media library. Pick the file again to continue." |
+*
+* @param {Calendar_Import_Fetch_StoppedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_fetch_stopped = /** @type {((inputs?: Calendar_Import_Fetch_StoppedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Fetch_StoppedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_fetch_stopped(inputs)
+	if (locale === "cs") return __cs.calendar_import_fetch_stopped(inputs)
+	return __en.calendar_import_fetch_stopped(inputs)
+});
+/**
+* | totalPlural | output |
+* | --- | --- |
+* | "one" | "Fetching media: link {current} of {total}…" |
+* | * | "Fetching media: link {current} of {total}…" |
+*
+* @param {Calendar_Import_FetchingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_fetching = /** @type {((inputs: Calendar_Import_FetchingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_FetchingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_fetching(inputs)
+	if (locale === "cs") return __cs.calendar_import_fetching(inputs)
+	return __en.calendar_import_fetching(inputs)
 });
 /**
 * | output |
@@ -654,7 +850,7 @@ export const calendar_import_importing = /** @type {((inputs?: Calendar_Import_I
 /**
 * | output |
 * | --- |
-* | "Each row becomes one post. Use the columns text, channels, date and time; only text is required. A row without a date and time goes to each channel's queue." |
+* | "Each row becomes one post. Use the columns text, channels, date, time and media; only text is required. A row without a date and time goes to each channel's ..." |
 *
 * @param {Calendar_Import_IntroInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -740,6 +936,22 @@ export const calendar_import_line = /** @type {((inputs: Calendar_Import_LineInp
 	if (locale === "sk") return __sk.calendar_import_line(inputs)
 	if (locale === "cs") return __cs.calendar_import_line(inputs)
 	return __en.calendar_import_line(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "In the media column, list up to {count} https link, separated by spaces or \|. Links are fetched into the media library before the file is checked." |
+* | * | "In the media column, list up to {count} https links, separated by spaces or \|. Links are fetched into the media library before the file is checked." |
+*
+* @param {Calendar_Import_Media_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const calendar_import_media_hint = /** @type {((inputs: Calendar_Import_Media_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Calendar_Import_Media_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.calendar_import_media_hint(inputs)
+	if (locale === "cs") return __cs.calendar_import_media_hint(inputs)
+	return __en.calendar_import_media_hint(inputs)
 });
 /**
 * | output |

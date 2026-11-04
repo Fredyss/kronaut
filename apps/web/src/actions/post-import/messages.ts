@@ -2,6 +2,8 @@ import { issueMessage } from '../../composer/compose/issues.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import { statusLabel } from '../../records/channels/status-label.ts';
 import type { CsvProblem } from './csv.ts';
+import type { FileLinksProblem } from './links.ts';
+import type { RateLimited } from './media-fetch.ts';
 import type { RowProblem } from './rows.ts';
 
 export function csvProblemMessage(problem: CsvProblem): string {
@@ -44,6 +46,29 @@ export function rowProblemMessage(problem: RowProblem): string {
       return calendarText.calendar_import_error_date();
     case 'date_half':
       return calendarText.calendar_import_error_date_half();
+    case 'channel_media':
+      return calendarText.calendar_import_error_channel_media({
+        channel: problem.channel.displayName,
+      });
+    case 'media_link_invalid':
+      return calendarText.calendar_import_error_media_link();
+    case 'media_too_many':
+      return calendarText.calendar_import_error_media_too_many({ count: problem.max });
+    case 'media_failed':
+      return calendarText.calendar_import_error_media_failed({ host: problem.host });
+    case 'media_rejected':
+      return calendarText.calendar_import_error_media_rejected({ host: problem.host });
+    case 'media_mix':
+      return calendarText.calendar_import_error_media_mix();
+  }
+}
+
+export function fileMediaMessage(problem: FileLinksProblem | RateLimited): string {
+  switch (problem.kind) {
+    case 'media_file_too_many':
+      return calendarText.calendar_import_error_media_file_too_many({ count: problem.max });
+    case 'media_rate_limited':
+      return calendarText.calendar_import_error_media_rate_limited();
   }
 }
 

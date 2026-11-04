@@ -345,7 +345,7 @@ A series repeats a post on a rule in local wall time. Each occurrence is an ordi
 
 ## CSV import
 
-`POST /v1/workspaces/:id/post-imports` (`posts.import`, `posts:schedule`, idempotent, `201`) turns up to 500 rows into posts. `POST /v1/workspaces/:id/post-imports/checks` (`posts.import_check`, same action and body, not idempotent, `200`) runs the same rows and rolls them back. The calendar builds the rows from a CSV file; the API takes them as JSON.
+`POST /v1/workspaces/:id/post-imports` (`posts.import`, `posts:schedule`, idempotent, `201`) turns up to 500 rows into posts. `POST /v1/workspaces/:id/post-imports/checks` (`posts.import_check`, same action and body, not idempotent, `200`) runs the same rows and rolls them back. The calendar builds the rows from a CSV file; the API takes them as JSON. A CSV `media` column holds `https` links: the browser fetches them first through the media link import (`media.import_create`, [Media](07-media.md)) and sends the rows with the ready asset ids, so the import routes only ever see assets.
 
 - **A row** is the content (`items`), at least one destination, and a schedule: a local time in an IANA zone (`instant`) or the next free slot of each channel's queue (`queue`).
 - **Same path as the composer:** each row is a new draft (`origin = 'import'`), then frozen and scheduled through `scheduleLocked` as the requesting member or API key. When the policy asks for approval, the draft stays and `openApprovalRequest` opens a request instead (`posts:submit`), bound to the row's time for an instant row and unbound for a queue row. As in the composer, nothing queues that post after approval; it's scheduled by hand. Nothing skips freeze, approval, binding or the audit trail.

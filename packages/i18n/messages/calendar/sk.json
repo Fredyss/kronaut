@@ -74,7 +74,7 @@
   "calendar_tag_current": "Vybraný štítok",
   "calendar_import_open": "Importovať CSV",
   "calendar_import_title": "Import príspevkov zo súboru CSV",
-  "calendar_import_intro": "Z každého riadka vznikne jeden príspevok. Použite stĺpce text, channels, date a time; povinný je len text. Riadok bez dátumu a času sa zaradí do frontu každého kanála.",
+  "calendar_import_intro": "Z každého riadka vznikne jeden príspevok. Použite stĺpce text, channels, date, time a media; povinný je len text. Riadok bez dátumu a času sa zaradí do frontu každého kanála.",
   "calendar_import_example": "Stiahnuť vzorový CSV",
   "calendar_import_file": "Súbor CSV",
   "calendar_import_channels": "Predvolené kanály",
@@ -135,7 +135,7 @@
   "calendar_import_error_read": "Súbor sa nepodarilo načítať.",
   "calendar_import_error_empty": "V súbore nie sú žiadne príspevky.",
   "calendar_import_error_quote": "Pole v úvodzovkách nie je uzavreté.",
-  "calendar_import_error_column": "Neznámy stĺpec „{name}“. Použite text, channels, date a time.",
+  "calendar_import_error_column": "Neznámy stĺpec „{name}“. Použite text, channels, date, time a media.",
   "calendar_import_error_column_twice": "Stĺpec „{name}“ je v súbore dvakrát.",
   "calendar_import_error_text_column": "V súbore chýba stĺpec text.",
   "calendar_import_error_too_many": [
@@ -167,5 +167,62 @@
   "calendar_import_issue_out_of_scope": "K tomuto kanálu nemáte prístup.",
   "calendar_import_issue_scope_missing": "Váš prístup tu nepovoľuje uverejňovať.",
   "calendar_import_issue_channel": "{channel}: {problem}",
-  "calendar_import_requested_queue": "Príspevky bez dátumu a času počas čakania nedostanú miesto vo fronte. Po schválení ich naplánujte."
+  "calendar_import_requested_queue": "Príspevky bez dátumu a času počas čakania nedostanú miesto vo fronte. Po schválení ich naplánujte.",
+  "calendar_import_media_hint": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Do stĺpca media napíšte najviac {count} odkaz https; viac odkazov oddeľte medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.",
+        "countPlural=few": "Do stĺpca media napíšte najviac {count} odkazy https oddelené medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.",
+        "countPlural=many": "Do stĺpca media napíšte najviac {count} odkazu https oddeleného medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií.",
+        "countPlural=*": "Do stĺpca media napíšte najviac {count} odkazov https oddelených medzerou alebo znakom |. Pred kontrolou súboru sa stiahnu do knižnice médií."
+      }
+    }
+  ],
+  "calendar_import_example_media": "Odkaz na médium v ukážke je len zástupný a nestiahne sa. Nahraďte ho vlastným odkazom alebo stĺpec nechajte prázdny.",
+  "calendar_import_fetching": [
+    {
+      "declarations": ["input current", "input total", "local totalPlural = total: plural"],
+      "selectors": ["totalPlural"],
+      "match": {
+        "totalPlural=one": "Sťahujú sa médiá: odkaz {current} z {total}…",
+        "totalPlural=few": "Sťahujú sa médiá: odkaz {current} z {total}…",
+        "totalPlural=many": "Sťahujú sa médiá: odkaz {current} z {total}…",
+        "totalPlural=*": "Sťahujú sa médiá: odkaz {current} z {total}…"
+      }
+    }
+  ],
+  "calendar_import_fetch_stop": "Zastaviť sťahovanie",
+  "calendar_import_fetch_stopped": "Sťahovanie sa zastavilo. Odkazy, ktoré už boli odoslané, sa aj tak dokončia v knižnici médií. Ak chcete pokračovať, vyberte súbor znova.",
+  "calendar_import_error_media_link": "Odkazy na médiá musia začínať na https, napríklad https://example.com/photo.jpg.",
+  "calendar_import_error_media_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Riadok môže mať najviac {count} odkaz na médium.",
+        "countPlural=few": "Riadok môže mať najviac {count} odkazy na médiá.",
+        "countPlural=many": "Riadok môže mať najviac {count} odkazu na médiá.",
+        "countPlural=*": "Riadok môže mať najviac {count} odkazov na médiá."
+      }
+    }
+  ],
+  "calendar_import_error_media_failed": "Médium z odkazu na {host} sa nepodarilo stiahnuť.",
+  "calendar_import_error_media_rejected": "Médium z {host} sa nedá použiť.",
+  "calendar_import_error_media_mix": "Príspevok môže mať obrázky alebo jedno video, nie oboje.",
+  "calendar_import_error_channel_media": "Kanál {channel} nemôže uverejniť tieto médiá.",
+  "calendar_import_error_media_file_too_many": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Súbor má viac ako {count} odkaz na médium. Rozdeľte ho na menšie súbory.",
+        "countPlural=few": "Súbor má viac ako {count} odkazy na médiá. Rozdeľte ho na menšie súbory.",
+        "countPlural=many": "Súbor má viac ako {count} odkazu na médiá. Rozdeľte ho na menšie súbory.",
+        "countPlural=*": "Súbor má viac ako {count} odkazov na médiá. Rozdeľte ho na menšie súbory."
+      }
+    }
+  ],
+  "calendar_import_error_media_rate_limited": "Práve sa importuje príliš veľa odkazov na médiá. Ak chcete pokračovať, vyberte súbor znova neskôr."
 }

@@ -2,11 +2,12 @@ import { Input, Select } from '@kronaut/ui';
 import { type Dispatch, type SetStateAction, useId } from 'react';
 import { m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
+import { MAX_IMAGES } from '../../composer/compose/media/media.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import type { Channel } from '../../records/channels/queries.ts';
 import { downloadExample } from './example.ts';
 
-export interface ImportSettings {
+interface ImportSettings {
   readonly defaults: ReadonlySet<string>;
   readonly setDefaults: Dispatch<SetStateAction<ReadonlySet<string>>>;
   readonly tz: string;
@@ -79,6 +80,9 @@ export function ImportFields({ channels, settings, fileName, pick }: FieldsProps
   return (
     <div className="flex flex-col gap-4 text-sm">
       <p className="text-muted-foreground">{calendarText.calendar_import_intro()}</p>
+      <p className="text-muted-foreground">
+        {calendarText.calendar_import_media_hint({ count: MAX_IMAGES })}
+      </p>
       <button
         type="button"
         className="self-start underline underline-offset-4"
@@ -86,6 +90,7 @@ export function ImportFields({ channels, settings, fileName, pick }: FieldsProps
       >
         {calendarText.calendar_import_example()}
       </button>
+      <p className="text-muted-foreground">{calendarText.calendar_import_example_media()}</p>
       <div className="flex flex-col gap-1.5">
         <label htmlFor={fileId} className="font-medium">
           {calendarText.calendar_import_file()}

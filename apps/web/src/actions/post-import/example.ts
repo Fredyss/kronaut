@@ -3,14 +3,15 @@ import { m as calendarText } from '../../i18n/calendar.ts';
 import { BOM, CSV_COLUMNS, toCsv } from './csv.ts';
 
 const FILE_NAME = 'kronaut-import.csv';
+const EXAMPLE_MEDIA = 'https://example.com/photo.jpg';
 
-export function exampleCsv(handles: readonly string[], tz: string): string {
+function exampleCsv(handles: readonly string[], tz: string): string {
   const tomorrow = Temporal.Now.plainDateISO(tz).add({ days: 1 }).toString();
   const channels = handles.join(' ');
   return toCsv([
     [...CSV_COLUMNS],
-    [calendarText.calendar_import_example_first(), channels, tomorrow, '09:00'],
-    [calendarText.calendar_import_example_queue(), channels, '', ''],
+    [calendarText.calendar_import_example_first(), channels, tomorrow, '09:00', EXAMPLE_MEDIA],
+    [calendarText.calendar_import_example_queue(), channels, '', '', ''],
   ]);
 }
 
