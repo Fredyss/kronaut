@@ -35,7 +35,6 @@ import type { PostDto } from './read/dto.ts';
 export {
   type Auth,
   BASE,
-  type ErrorResponse,
   errorOf,
   PASSWORD,
 } from '../../base/http/testing.ts';

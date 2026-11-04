@@ -144,7 +144,7 @@ export function cronTasks(email: boolean): CronTask[] {
   return registeredItems(email).map((item) => item.task as CronTask);
 }
 
-export async function maintainAuditPartitions(db: Database, logger: Logger): Promise<string> {
+async function maintainAuditPartitions(db: Database, logger: Logger): Promise<string> {
   const totals: Record<string, number> = {};
   let drained = false;
   for (let batch = 0; batch < AUDIT_MAX_BATCHES && !drained; batch++) {

@@ -13,14 +13,7 @@ export const JOBS = {
   rss: 'rss',
 } as const;
 
-export type JobName = (typeof JOBS)[keyof typeof JOBS];
-
 export interface DestinationJob {
-  readonly workspaceId: string;
-  readonly id: string;
-}
-
-export interface CredentialJob {
   readonly workspaceId: string;
   readonly id: string;
 }
@@ -41,10 +34,10 @@ export interface FeedJob {
   readonly id: string;
 }
 
-export const REVOKE_ATTEMPTS = 8;
-export const MEDIA_PROCESS_ATTEMPTS = 3;
-export const MEDIA_IMPORT_ATTEMPTS = 3;
-export const META_LIFECYCLE_ATTEMPTS = 8;
+const REVOKE_ATTEMPTS = 8;
+const MEDIA_PROCESS_ATTEMPTS = 3;
+const MEDIA_IMPORT_ATTEMPTS = 3;
+const META_LIFECYCLE_ATTEMPTS = 8;
 
 export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promise<void> {
   const payload = JSON.stringify(credential);
@@ -56,7 +49,7 @@ export async function enqueueRevoke(trx: TenantDb, credential: RevokeJob): Promi
   `.execute(trx);
 }
 
-export function destinationJobKey(destinationId: string): string {
+function destinationJobKey(destinationId: string): string {
   return `dest:${destinationId}`;
 }
 
@@ -91,7 +84,7 @@ export async function dequeuePublish(trx: TenantDb, destinationId: string): Prom
   await sql`select graphile_worker.remove_job(${destinationJobKey(destinationId)})`.execute(trx);
 }
 
-export function verifyJobKey(destinationId: string): string {
+function verifyJobKey(destinationId: string): string {
   return `verify:${destinationId}`;
 }
 
