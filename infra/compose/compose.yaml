@@ -26,7 +26,7 @@ x-instance-env: &instance-env
 services:
   postgres:
     <<: *hardened
-    image: postgres:17.10-alpine3.23@sha256:8189a1f6e40904781fc9e2612687877791d21679866db58b1de996b31fc312e4
+    image: postgres:17.11-alpine3.23@sha256:05aa77262db9277fde6374bb2f901c9604b8a9373029e1a7993440c6aae48736
     user: "70:70"
     tmpfs: [/tmp, /var/run/postgresql]
     environment:
@@ -120,7 +120,7 @@ services:
 
   cloudflared:
     <<: *hardened
-    image: cloudflare/cloudflared:2026.10.2@sha256:0e56c13c7058fcef9c4f0e7d83372f82330548dbf8f8b366f3d8b506526d93b2
+    image: cloudflare/cloudflared:2026.10.5@sha256:1b1d34d0a9c0bfca9de72db8460d328db3f19edd2b96169114e3e893a97bbe53
     command: [tunnel, run]
     environment:
       TUNNEL_TOKEN_FILE: /run/secrets/cloudflared_token
