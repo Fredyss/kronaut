@@ -176,16 +176,20 @@ function revisit(trx: TenantDb, s: Settling, feed: LockedFeed) {
 }
 
 async function settlePending(trx: TenantDb, s: Settling, feed: LockedFeed, budget: number) {
-  const rows = budget > 0 ? await pendingItems(trx, s.ref, budget) : [];
-  for (const row of rows) {
+  let used = 0;
+  for (const row of await pendingItems(trx, s.ref)) {
+    if (used >= budget) break;
     const media = pendingMedia(row, s.now);
     if (media === 'wait') continue;
-    const attempt = { key: row.key, prior: row.attempts };
-    const content = { text: row.text ?? '', media };
+    used++;
+    const text = row.text ?? '';
+    const fetching = { importId: row.media_import_id, text, altText: row.alt_text };
+    const attempt = { key: row.key, prior: row.attempts, fetching };
+    const content = { text, media };
     const result = await attemptItem(trx, s, attempt, () => postItem(trx, envOf(s), feed, content));
-    if (result === 'owner_lost') return { used: rows.length, ownerLost: true };
+    if (result === 'owner_lost') return { used, ownerLost: true };
   }
-  return { used: rows.length, ownerLost: false };
+  return { used, ownerLost: false };
 }
 
 async function ownerLost(trx: TenantDb, s: Settling): Promise<CheckOutcome> {

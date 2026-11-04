@@ -29,7 +29,7 @@ export interface ItemRecord {
 }
 
 export interface Fetching {
-  readonly importId: string;
+  readonly importId: string | null;
   readonly text: string;
   readonly altText: string | null;
 }

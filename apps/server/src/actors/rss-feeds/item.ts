@@ -56,25 +56,45 @@ interface Destination {
   readonly publishType: string;
 }
 
-function destinations(env: OwnerEnv, channels: readonly FeedChannel[], media: ItemMedia | null) {
-  const drafted = media === null ? [] : [media.facts];
-  return channels.flatMap((channel): Destination[] => {
-    const publishType = publishTypeFor(env.providers, channel, drafted);
-    if (publishType === null) return [];
-    return [{ accountId: encodePublicId('socialAccount', channel.id), publishType }];
-  });
+interface Targets {
+  readonly pictured: readonly Destination[];
+  readonly plain: readonly Destination[];
 }
 
-function itemOf({ text, media }: ItemContent) {
-  if (media === null) return { doc: docOf(text) };
+function target(env: OwnerEnv, channel: FeedChannel, media: readonly DraftMedia[]) {
+  const publishType = publishTypeFor(env.providers, channel, media);
+  if (publishType === null) return null;
+  return { accountId: encodePublicId('socialAccount', channel.id), publishType };
+}
+
+// A channel that can't take the image still gets the text, through a variant without it.
+function targetsOf(env: OwnerEnv, channels: readonly FeedChannel[], media: ItemMedia | null) {
+  const pictured: Destination[] = [];
+  const plain: Destination[] = [];
+  for (const channel of channels) {
+    const withImage = media === null ? null : target(env, channel, [media.facts]);
+    const textOnly = withImage === null ? target(env, channel, []) : null;
+    if (withImage !== null) pictured.push(withImage);
+    else if (textOnly !== null) plain.push(textOnly);
+  }
+  return { pictured, plain };
+}
+
+function bodyOf({ text, media }: ItemContent, { pictured, plain }: Targets) {
+  const doc = docOf(text);
+  if (media === null || pictured.length === 0)
+    return { items: [{ doc }], destinations: [...plain] };
   const mediaId = encodePublicId('media', media.assetId);
-  return { doc: docOf(text), media: [{ mediaId, altText: media.altText }] };
+  const items = [{ doc, media: [{ mediaId, altText: media.altText }] }];
+  if (plain.length === 0) return { items, destinations: [...pictured] };
+  const textOnly = plain.map((d) => ({ ...d, variant: 0 }));
+  return { items, variants: [{ items: [{ doc }] }], destinations: [...pictured, ...textOnly] };
 }
 
 interface Drafting {
   readonly feed: PostingFeed;
   readonly content: ItemContent;
-  readonly targets: readonly Destination[];
+  readonly targets: Targets;
 }
 
 async function draftOf(trx: TenantDb, env: OwnerEnv, { feed, content, targets }: Drafting) {
@@ -83,10 +103,7 @@ async function draftOf(trx: TenantDb, env: OwnerEnv, { feed, content, targets }:
   await actAs(trx, acting.actor);
   const postId = await insertDraft(trx, env.providers, {
     workspaceId,
-    body: {
-      items: [itemOf(content)],
-      destinations: [...targets],
-    },
+    body: bodyOf(content, targets),
     columns: { schedule_mode: 'unscheduled', ...authorOf(acting.principal), origin: 'rss' },
     authorize: (units) => acting.authorize('posts:draft', { workspaceId, units }),
   });
@@ -131,8 +148,10 @@ export async function postItem(
   feed: PostingFeed,
   content: ItemContent,
 ): Promise<ItemPost> {
-  const targets = destinations(env, feed.channels, content.media);
-  if (targets.length === 0) return { outcome: 'skipped', errorCode: null, postId: null };
+  const targets = targetsOf(env, feed.channels, content.media);
+  if (targets.pictured.length + targets.plain.length === 0) {
+    return { outcome: 'skipped', errorCode: null, postId: null };
+  }
   const { acting, postId } = await draftOf(trx, env, { feed, content, targets });
   if (feed.mode !== 'queue') return { outcome: 'drafted', errorCode: null, postId };
   return await scheduleOrKeep(trx, postId, () => queue(trx, env, acting, postId));

@@ -53,7 +53,7 @@ export async function hasPending(trx: TenantDb, ref: FeedRef): Promise<boolean> 
   return row !== undefined;
 }
 
-export function pendingItems(trx: TenantDb, ref: FeedRef, limit: number) {
+export function pendingItems(trx: TenantDb, ref: FeedRef) {
   return trx
     .selectFrom('rss_items as i')
     .leftJoin('media_imports as m', (join) =>
@@ -62,7 +62,7 @@ export function pendingItems(trx: TenantDb, ref: FeedRef, limit: number) {
     .leftJoin('media_assets as a', (join) =>
       join.onRef('a.workspace_id', '=', 'm.workspace_id').onRef('a.id', '=', 'm.media_id'),
     )
-    .select(['i.key', 'i.text', 'i.alt_text', 'i.attempts'])
+    .select(['i.key', 'i.text', 'i.alt_text', 'i.attempts', 'i.media_import_id'])
     .select(['m.state as import_state', 'm.created_at as import_at'])
     .select(['a.id as asset_id', 'a.kind', 'a.state as asset_state'])
     .select(['a.mime', 'a.bytes', 'a.width', 'a.height'])
@@ -71,7 +71,6 @@ export function pendingItems(trx: TenantDb, ref: FeedRef, limit: number) {
     .where('i.outcome', '=', 'fetching_media')
     .orderBy('i.created_at')
     .orderBy('i.key')
-    .limit(limit)
     .execute();
 }
 

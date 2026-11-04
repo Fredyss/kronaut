@@ -7,7 +7,7 @@ import { HttpError } from '../../base/http/errors.ts';
 import { actAs, OwnerLost } from '../../flow/posts/owner/owner.ts';
 import type { FeedRef } from './audit.ts';
 import { CONTENT_ERRORS } from './item.ts';
-import { type ItemRecord, recordItem, type SeenAt } from './seen.ts';
+import { type Fetching, type ItemRecord, recordItem, type SeenAt } from './seen.ts';
 
 const MAX_ATTEMPTS = 3;
 const SYSTEM: Actor = { kind: 'system' };
@@ -23,11 +23,18 @@ export interface Attempting {
 export interface Attempt {
   readonly key: Buffer;
   readonly prior: number;
+  readonly fetching?: Fetching | undefined;
 }
 
-async function retryLater(trx: TenantDb, seen: SeenAt, { key, prior }: Attempt) {
+// An item whose image is already in keeps it, so a retry doesn't need the feed or a new import.
+async function retryLater(trx: TenantDb, seen: SeenAt, { key, prior, fetching }: Attempt) {
   const attempts = prior + 1;
   const done = attempts >= MAX_ATTEMPTS;
+  if (!done && fetching !== undefined) {
+    const record = { outcome: 'fetching_media', errorCode: null, postId: null } as const;
+    await recordItem(trx, seen, { key, ...record, attempts, fetching });
+    return 'retry';
+  }
   await recordItem(trx, seen, {
     key,
     outcome: done ? 'failed' : 'retrying',

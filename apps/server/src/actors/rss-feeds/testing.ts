@@ -196,3 +196,21 @@ export async function clearFeeds(): Promise<void> {
     await sql`delete from graphile_worker._private_jobs`.execute(trx);
   });
 }
+
+export function failOnBoom(on: boolean) {
+  return owner.withActor(CLI, async (trx) => {
+    if (!on) {
+      await sql`drop trigger rss_test_fail on variant_items`.execute(trx);
+      await sql`drop function rss_test_fail()`.execute(trx);
+      return;
+    }
+    await sql`
+      create function rss_test_fail() returns trigger language plpgsql as $$
+      begin
+        if new.doc::text like '%BOOM%' then raise exception 'test failure'; end if;
+        return new;
+      end $$`.execute(trx);
+    await sql`create trigger rss_test_fail before insert on variant_items
+      for each row execute function rss_test_fail()`.execute(trx);
+  });
+}
