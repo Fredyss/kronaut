@@ -13,7 +13,7 @@ const PLACEHOLDER_TEXT: Readonly<Record<(typeof PLACEHOLDERS)[number], () => str
   summary: () => settingsText.settings_feed_placeholder_summary(),
 };
 
-export function FieldError({
+function FieldError({
   id,
   message,
 }: {

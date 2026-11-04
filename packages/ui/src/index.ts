@@ -11,6 +11,7 @@ export { SettingsCard } from './settings-card.tsx';
 export { SettingsPage } from './settings-page.tsx';
 export { type ControlIds, SettingsRow } from './settings-row.tsx';
 export { Switch } from './switch.tsx';
+export { TextField, type TextFieldProps } from './text-field.tsx';
 export {
   dismissToast,
   Toaster,
