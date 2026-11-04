@@ -48,6 +48,7 @@ export interface TestInstanceOptions {
   readonly cronTasks?: readonly CronTask[];
   readonly instanceAdmins?: readonly string[];
   readonly access?: AccessGate;
+  readonly feedHttp?: HttpClient;
 }
 
 export interface TestInstance {
@@ -73,6 +74,7 @@ export function createTestInstance({
   cronTasks = [],
   instanceAdmins = [],
   access,
+  feedHttp,
 }: TestInstanceOptions): TestInstance {
   const deps: HttpDeps = {
     db,
@@ -86,7 +88,10 @@ export function createTestInstance({
     routeBodyLimits: API_BODY_LIMITS,
     ...(access === undefined ? {} : { access }),
   };
-  const routes = apiRoutes({ http: deps, store, signer, staging, keyring, providers, cronTasks });
+  const routes = apiRoutes({
+    http: deps,
+    ...{ store, signer, staging, keyring, providers, cronTasks, feedHttp },
+  });
   return { app: createHttpApp(deps, routes), deps, routes };
 }
 

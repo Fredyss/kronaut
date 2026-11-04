@@ -33,7 +33,9 @@
 - **Publishing:**
   - `PUB-01 ambiguous_no_blind_retry`
   - `PUB-02 disconnected_or_revoked_blocks`
-- **Secrets:** `SEC-01 secret_canary` (REST, MCP, errors, logs, exports, audit, webhooks, AI prompt logs)
+- **Secrets:**
+  - `SEC-01 secret_canary` (REST, MCP, errors, logs, exports, audit, webhooks, AI prompt logs)
+  - `SEC-02 rss_feed_url_secret` (a feed URL with a token never reaches a log, a job payload, an audit event or an error message; only the feed itself returns it)
 - **Prompt injection:**
   - `INJ-01 injection_corpus` (draft only; planted links flagged)
   - `INJ-02 mcp_untrusted_envelope`

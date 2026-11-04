@@ -1,4 +1,5 @@
 import type { Keyring } from '@kronaut/credentials';
+import type { HttpClient } from '@kronaut/egress';
 import type { MediaStore } from '@kronaut/media';
 import { channelRoutes } from './access/channels/routes.ts';
 import { destinationRoutes } from './actors/destinations/routes.ts';
@@ -11,6 +12,7 @@ import type { Staging } from './actors/media/staging.ts';
 import { MEDIA_BODY_LIMITS, uploadRoutes } from './actors/media/video/upload-routes.ts';
 import { META_BODY_LIMITS, metaRoutes } from './actors/meta/routes.ts';
 import { postImportRoutes } from './actors/post-import/routes.ts';
+import { rssFeedRoutes } from './actors/rss-feeds/routes.ts';
 import { seriesRoutes } from './actors/series/routes.ts';
 import { systemStatusRoutes } from './actors/system/routes.ts';
 import type { HttpDeps } from './base/http/pipeline/kernel.ts';
@@ -51,6 +53,7 @@ export interface ApiRouteDeps {
   readonly keyring: Keyring;
   readonly providers: ProviderRegistry;
   readonly cronTasks: readonly CronTask[];
+  readonly feedHttp?: HttpClient | undefined;
 }
 
 export function apiRoutes({
@@ -61,6 +64,7 @@ export function apiRoutes({
   keyring,
   providers,
   cronTasks,
+  feedHttp,
 }: ApiRouteDeps): BoundRoute[] {
   return [
     ...systemRoutes(http),
@@ -82,6 +86,7 @@ export function apiRoutes({
     ...evergreenRoutes(),
     ...tagRoutes(),
     ...savedTextRoutes(),
+    ...rssFeedRoutes({ providers, http: feedHttp }),
     ...analyticsRoutes(),
     ...notificationRoutes(),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),

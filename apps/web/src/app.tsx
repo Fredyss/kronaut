@@ -181,6 +181,12 @@ const savedTextSettingsRoute = createRoute({
   ),
 });
 
+const feedSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'feeds',
+  component: lazyRouteComponent(() => import('./routes/settings-feeds.tsx'), 'FeedSettingsPage'),
+});
+
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -217,6 +223,7 @@ const routeTree = rootRoute.addChildren([
       notificationSettingsRoute,
       tagSettingsRoute,
       savedTextSettingsRoute,
+      feedSettingsRoute,
       systemSettingsRoute,
     ]),
   ]),

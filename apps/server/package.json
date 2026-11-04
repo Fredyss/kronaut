@@ -21,6 +21,7 @@
     "@kronaut/providers": "workspace:*",
     "@node-rs/argon2": "catalog:",
     "age-encryption": "catalog:",
+    "fast-xml-parser": "catalog:",
     "graphile-worker": "catalog:",
     "hono": "catalog:",
     "jose": "catalog:",

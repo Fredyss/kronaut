@@ -31,6 +31,7 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | reach | dosah | dosah | Unique accounts that saw a post, as the network estimates it. |
 | tag | štítok (2–4 štítky, 5+ štítkov) | štítek (2–4 štítky, 5+ štítků) | An internal label for finding and grouping posts, never published. Not a hashtag. |
 | saved text | uložený text | uložený text | Reusable text kept for the workspace, inserted into a post while writing it. |
+| feed | zdroj (RSS) | zdroj (RSS) | An RSS or Atom feed whose new items become posts. Never "kanál"; that is a channel. |
 
 ## Style
 

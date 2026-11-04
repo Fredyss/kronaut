@@ -22,6 +22,11 @@ const SAVED_TEXTS_SECTION = {
   label: () => settingsText.settings_saved_texts_title(),
 } as const;
 
+const FEEDS_SECTION = {
+  to: '/settings/feeds',
+  label: () => settingsText.settings_feeds_title(),
+} as const;
+
 const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 const SYSTEM_SECTION = {
@@ -36,10 +41,12 @@ const ACTIVE = { className: 'border-primary font-medium text-foreground md:bg-ac
 export function SettingsLayout() {
   const client = useApiClient();
   const me = useQuery(meQuery(client)).data;
+  const writer = SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '');
   const sections = [
     ...SECTIONS,
-    ...(SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '') ? [TAGS_SECTION] : []),
+    ...(writer ? [TAGS_SECTION] : []),
     SAVED_TEXTS_SECTION,
+    ...(writer ? [FEEDS_SECTION] : []),
     ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),
   ];
   return (

@@ -1,4 +1,5 @@
 import type { Actor, Database } from '@kronaut/db';
+import { createHttpClient } from '@kronaut/egress';
 import { type CronItem, type ParsedCronItem, parseCronItems, type TaskList } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
@@ -6,12 +7,16 @@ import { refreshCapabilities } from './access/channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './access/channels/retention.ts';
 import { fillEvergreen } from './actors/evergreen/fill.ts';
 import { collectMedia, type MediaGcDeps } from './actors/media/gc.ts';
+import { feedCheckTask } from './actors/rss-feeds/check.ts';
+import { RSS_EGRESS } from './actors/rss-feeds/fetch.ts';
+import { pollFeeds } from './actors/rss-feeds/poll.ts';
 import { advanceSeries } from './actors/series/advance.ts';
 import { purgeInstanceRetention } from './actors/system/instance-retention.ts';
 import { checkApiVersionSunsets } from './actors/system/sunset.ts';
 import { recomputeTimes } from './flow/posts/schedule/tz-recompute.ts';
 import { recordCronRun } from './infrastructure/jobs/cron-run.ts';
 import { CRON_TASKS, type CronTask, DAY_MS } from './infrastructure/jobs/cron-tasks.ts';
+import { JOBS } from './infrastructure/jobs/jobs.ts';
 import { pullAnalytics } from './records/analytics/pull.ts';
 import { type EmailDeps, emailNotifications } from './records/notifications/email.ts';
 import { purgeNotifications } from './records/notifications/retention.ts';
@@ -105,6 +110,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     task: CRON_TASKS.publishReconcile,
     identifier: CRON_TASKS.publishReconcile,
     match: '*/10 * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
+    task: CRON_TASKS.rssPoll,
+    identifier: CRON_TASKS.rssPoll,
+    match: '4,19,34,49 * * * *',
     options: { backfillPeriod: 0, maxAttempts: 1 },
   },
   {
@@ -228,6 +239,10 @@ export function cronTaskList(
     [CRON_TASKS.publishReconcile]: async () => {
       await recordCronRun(db, CRON_TASKS.publishReconcile, () => reconcile(sweeps));
     },
+    [CRON_TASKS.rssPoll]: async () => {
+      await recordCronRun(db, CRON_TASKS.rssPoll, () => pollFeeds(sweeps));
+    },
+    [JOBS.rss]: feedCheckTask({ ...sweeps, http: createHttpClient(RSS_EGRESS) }),
     [CRON_TASKS.seriesAdvance]: async () => {
       await recordCronRun(db, CRON_TASKS.seriesAdvance, () => advanceSeries(sweeps));
     },

@@ -208,5 +208,78 @@
         "countPlural=*": "{count} kanálů přijde o tento podpis."
       }
     }
-  ]
+  ],
+  "settings_feeds_title": "Zdroje RSS",
+  "settings_feeds_intro": "Z každé nové položky zdroje RSS nebo Atom, třeba blogu či newsletteru, vznikne příspěvek na vašich kanálech.",
+  "settings_feeds_empty": "Zatím tu nejsou žádné zdroje.",
+  "settings_feed_add": "Přidat zdroj",
+  "settings_feed_edit": "Upravit",
+  "settings_feed_edit_named": "Upravit zdroj {name}",
+  "settings_feed_edit_title": "Upravit zdroj",
+  "settings_feed_url": "Adresa zdroje",
+  "settings_feed_name": "Název",
+  "settings_feed_channels": "Kanály",
+  "settings_feed_channels_hint": "Nabízejí se jen kanály, které umí zveřejnit samotný text bez médií.",
+  "settings_feed_no_channels": "Zatím žádný kanál neumí zveřejnit samotný text. Nejdřív nějaký připojte.",
+  "settings_feed_mode": "Nové položky",
+  "settings_feed_mode_queue": "Přidat do fronty",
+  "settings_feed_mode_draft": "Uložit jako koncept",
+  "settings_feed_template": "Text příspěvku",
+  "settings_feed_placeholders": "Můžete použít:",
+  "settings_feed_placeholder_title": "titulek položky",
+  "settings_feed_placeholder_link": "odkaz na položku",
+  "settings_feed_placeholder_summary": "krátké shrnutí položky, nejvýš 500 znaků",
+  "settings_feed_cancel": "Zrušit",
+  "settings_feed_checking": "Kontroluje se zdroj…",
+  "settings_feed_saved": "Zdroj je uložený",
+  "settings_feed_deleted": "Zdroj je smazaný",
+  "settings_feed_paused_toast": "Zdroj je pozastavený",
+  "settings_feed_resumed": "Zdroj znovu běží",
+  "settings_feed_pause": "Pozastavit",
+  "settings_feed_pause_named": "Pozastavit zdroj {name}",
+  "settings_feed_resume": "Obnovit",
+  "settings_feed_resume_named": "Obnovit zdroj {name}",
+  "settings_feed_delete": "Smazat zdroj {name}",
+  "settings_feed_delete_title": "Smazat zdroj „{name}“?",
+  "settings_feed_delete_body": "Příspěvky, které z něj už vznikly, zůstanou zachované.",
+  "settings_feed_keep": "Ponechat zdroj",
+  "settings_feed_delete_confirm": "Smazat zdroj",
+  "settings_feed_active": "Aktivní",
+  "settings_feed_paused": [
+    {
+      "declarations": ["input reason"],
+      "selectors": ["reason"],
+      "match": {
+        "reason=manual": "Pozastavený",
+        "reason=owner_lost": "Pozastavený: ten, kdo ho naposledy uložil, už nemůže plánovat příspěvky",
+        "reason=fetch_failing": "Pozastavený: zdroj selhává už 24 hodin",
+        "reason=*": "Pozastavený"
+      }
+    }
+  ],
+  "settings_feed_last_check": "Naposledy zkontrolovaný {time}",
+  "settings_feed_never_checked": "Zatím nezkontrolovaný",
+  "settings_feed_last_error": [
+    {
+      "declarations": ["input kind"],
+      "selectors": ["kind"],
+      "match": {
+        "kind=url_blocked": "Poslední kontrola selhala: tato adresa není povolená.",
+        "kind=fetch_failed": "Poslední kontrola selhala: zdroj se nepodařilo načíst.",
+        "kind=timed_out": "Poslední kontrola selhala: zdroj neodpověděl včas.",
+        "kind=too_large": "Poslední kontrola selhala: zdroj je příliš velký.",
+        "kind=feed_invalid": "Poslední kontrola selhala: odkaz nevede na zdroj RSS ani Atom.",
+        "kind=*": "Poslední kontrola selhala."
+      }
+    }
+  ],
+  "settings_feed_url_invalid": "Zadejte odkaz https bez uživatelského jména a hesla.",
+  "settings_feed_unreachable": "Zdroj se nepodařilo načíst. Zkontrolujte odkaz a zkuste to znovu.",
+  "settings_feed_invalid": "Tento odkaz nevede na zdroj RSS ani Atom.",
+  "settings_feed_name_invalid": "Název je prázdný nebo příliš dlouhý.",
+  "settings_feed_template_invalid": "Text příspěvku je prázdný nebo příliš dlouhý.",
+  "settings_feed_channel_gone": "Jeden z kanálů už neexistuje.",
+  "settings_feed_channel_text": "Kanál {channel} neumí zveřejnit samotný text.",
+  "settings_feed_channel_queue": "Kanál {channel} nemá ve frontě žádné časy. Přidejte je na stránce Kanály, nebo nové položky ukládejte jako koncepty.",
+  "settings_feed_limit": "Tento pracovní prostor už má nejvíc povolených zdrojů. Nejdřív některý smažte."
 }

@@ -13,6 +13,7 @@ export const CRON_TASKS = {
   publishDueSweep: 'publish_due_sweep',
   publishLeaseReaper: 'publish_lease_reaper',
   publishReconcile: 'publish_reconcile',
+  rssPoll: 'rss_poll',
   seriesAdvance: 'series_advance',
   tzRecompute: 'tz_recompute',
 } as const;
@@ -37,6 +38,7 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.publishDueSweep]: MINUTE_MS,
   [CRON_TASKS.publishLeaseReaper]: MINUTE_MS,
   [CRON_TASKS.publishReconcile]: 10 * MINUTE_MS,
+  [CRON_TASKS.rssPoll]: 15 * MINUTE_MS,
   [CRON_TASKS.seriesAdvance]: 5 * MINUTE_MS,
   [CRON_TASKS.tzRecompute]: 60 * MINUTE_MS,
 };

@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import { type Client, type ClientMeta, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client/index.ts';
-import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
+import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, RssFeedsCreateData, RssFeedsCreateErrors, RssFeedsCreateResponses, RssFeedsDeleteData, RssFeedsDeleteErrors, RssFeedsDeleteResponses, RssFeedsListData, RssFeedsListErrors, RssFeedsListResponses, RssFeedsUpdateData, RssFeedsUpdateErrors, RssFeedsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -1078,6 +1078,74 @@ export const postsUnschedule = <ThrowOnError extends boolean = true>(options: Op
             type: 'apiKey'
         }, { scheme: 'bearer', type: 'http' }],
     url: '/v1/workspaces/{workspaceId}/posts/{postId}/unschedule',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List RSS feeds
+ *
+ * The workspace's feeds by name, with their URL. Owners and admins only.
+ */
+export const rssFeedsList = <ThrowOnError extends boolean = true>(options: Options<RssFeedsListData, ThrowOnError>): RequestResult<RssFeedsListResponses, RssFeedsListErrors, ThrowOnError> => (options.client ?? client).get<RssFeedsListResponses, RssFeedsListErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/rss-feeds',
+    ...options
+});
+
+/**
+ * Add an RSS feed
+ *
+ * Each new item of an RSS 2.0 or Atom feed becomes a post on the feed's channels: the next free queue slot in queue mode, a draft in draft mode. The caller becomes the owner, re-authorized on every item. The URL is an `https` link of up to 2048 characters without credentials (422 url_invalid); the name has 1–100 characters (422 name_invalid); the template is plain text of up to 1000 characters with {title}, {link} and {summary} (422 template_invalid). Every channel must be able to post text alone (422 text_unsupported) and, in queue mode, have queue slots (422 queue_empty). A new URL is fetched at once (422 feed_unreachable or feed_invalid), and every item it lists is marked seen, so nothing old is posted. The template defaults to "{title} {link}". At most 20 feeds per workspace (409 rss_feed_limit). Owners and admins only.
+ */
+export const rssFeedsCreate = <ThrowOnError extends boolean = true>(options: Options<RssFeedsCreateData, ThrowOnError>): RequestResult<RssFeedsCreateResponses, RssFeedsCreateErrors, ThrowOnError> => (options.client ?? client).post<RssFeedsCreateResponses, RssFeedsCreateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/rss-feeds',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete an RSS feed
+ *
+ * The posts it made stay. Owners and admins only.
+ */
+export const rssFeedsDelete = <ThrowOnError extends boolean = true>(options: Options<RssFeedsDeleteData, ThrowOnError>): RequestResult<RssFeedsDeleteResponses, RssFeedsDeleteErrors, ThrowOnError> => (options.client ?? client).delete<RssFeedsDeleteResponses, RssFeedsDeleteErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/rss-feeds/{feedId}',
+    ...options
+});
+
+/**
+ * Change, pause or resume an RSS feed
+ *
+ * The fields follow the same rules as when adding a feed; the caller becomes the owner. A new URL is fetched at once (422 feed_unreachable or feed_invalid), and every item it lists is marked seen, so nothing old is posted. `paused` pauses or resumes the feed; a resumed feed posts what it missed, at most 5 items per check. Owners and admins only.
+ */
+export const rssFeedsUpdate = <ThrowOnError extends boolean = true>(options: Options<RssFeedsUpdateData, ThrowOnError>): RequestResult<RssFeedsUpdateResponses, RssFeedsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<RssFeedsUpdateResponses, RssFeedsUpdateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/rss-feeds/{feedId}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
