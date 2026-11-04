@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { sleep } from '../../composer/compose/media/video-upload.ts';
+import { sleep } from '../../base/api/retry.ts';
 import { type FetchProgress, fetchAll, type MediaResult } from './media-fetch.ts';
 
 export interface MediaFetch {

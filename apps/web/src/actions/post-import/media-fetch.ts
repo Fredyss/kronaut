@@ -6,7 +6,8 @@ import {
   mediaImportGet,
 } from '@kronaut/sdk';
 import { errorStatus } from '../../base/api/errors.ts';
-import { type VideoApi, withRetry } from '../../composer/compose/media/video-upload.ts';
+import { withRetry } from '../../base/api/retry.ts';
+import type { VideoApi } from '../../composer/compose/media/video-upload.ts';
 
 const POLL_MS = 2000;
 const TOO_MANY_REQUESTS = 429;

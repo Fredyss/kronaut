@@ -113,7 +113,6 @@
   "web/actions/post-import -> composer/compose/content/choice.ts",
   "web/actions/post-import -> composer/compose/issues.ts",
   "web/actions/post-import -> composer/compose/media/media.ts",
-  "web/actions/post-import -> composer/compose/media/video-upload.ts",
   "web/actions/post-import -> i18n/calendar.ts",
   "web/actions/post-import -> records/channels/queries.ts",
   "web/actions/post-import -> records/channels/status-label.ts",

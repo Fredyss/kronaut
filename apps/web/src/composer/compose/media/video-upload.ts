@@ -7,15 +7,12 @@ import {
   mediaVideoPart,
   mediaVideoUpload,
 } from '@kronaut/sdk';
-import { errorStatus } from '../../../base/api/errors.ts';
+import { type Wait, withRetry } from '../../../base/api/retry.ts';
 
 export type VideoAsset = Omit<MediaGetResponse, 'previewUrl'>;
 export type RejectedReason = NonNullable<VideoAsset['rejectedReason']>;
 
 const POLL_MS = 3000;
-const BACKOFF_MS: readonly number[] = [1000, 2000, 4000];
-
-export type Wait = (ms: number, signal: AbortSignal) => Promise<void>;
 
 export interface VideoApi {
   readonly client: Client;
@@ -36,46 +33,11 @@ export type VideoOutcome =
   | { readonly kind: 'ready'; readonly asset: VideoAsset }
   | { readonly kind: 'rejected'; readonly reason: RejectedReason };
 
-export const sleep: Wait = (ms, signal) =>
-  new Promise((resolve, reject) => {
-    if (signal.aborted) {
-      reject(signal.reason);
-      return;
-    }
-    const onAbort = () => {
-      clearTimeout(timer);
-      reject(signal.reason);
-    };
-    const timer = setTimeout(() => {
-      signal.removeEventListener('abort', onAbort);
-      resolve();
-    }, ms);
-    signal.addEventListener('abort', onAbort, { once: true });
-  });
-
 export function partRanges(bytes: number, partSize: number, partCount: number) {
   return Array.from({ length: partCount }, (_, index) => ({
     start: index * partSize,
     end: Math.min(bytes, (index + 1) * partSize),
   }));
-}
-
-function retryable(error: unknown): boolean {
-  const status = errorStatus(error);
-  return status === null || status === 0 || status >= 500;
-}
-
-export async function withRetry<T>(api: VideoApi, signal: AbortSignal, call: () => Promise<T>) {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await call();
-    } catch (error) {
-      signal.throwIfAborted();
-      const delay = BACKOFF_MS[attempt];
-      if (delay === undefined || !retryable(error)) throw error;
-      await api.wait(delay, signal);
-    }
-  }
 }
 
 async function create(api: VideoApi, job: VideoJob): Promise<MediaVideoUploadResponse> {

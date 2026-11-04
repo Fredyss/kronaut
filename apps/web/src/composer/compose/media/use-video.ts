@@ -1,13 +1,8 @@
 import { type Client, mediaMarkAi } from '@kronaut/sdk';
 import { useEffect, useState } from 'react';
 import { useApiClient } from '../../../base/api/client.ts';
-import {
-  type RejectedReason,
-  sleep,
-  uploadVideo,
-  type VideoAsset,
-  withRetry,
-} from './video-upload.ts';
+import { sleep, withRetry } from '../../../base/api/retry.ts';
+import { type RejectedReason, uploadVideo, type VideoAsset } from './video-upload.ts';
 
 export type VideoPhase =
   | { readonly kind: 'uploading'; readonly sent: number; readonly total: number }
