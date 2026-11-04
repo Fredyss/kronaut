@@ -867,14 +867,17 @@ export interface RssFeeds {
 }
 
 export interface RssItems {
+  alt_text: string | null;
   attempts: Generated<number>;
   created_at: Generated<Timestamp>;
   error_code: string | null;
   feed_id: string;
   key: Buffer;
   last_seen_at: Generated<Timestamp>;
+  media_import_id: string | null;
   outcome: string;
   post_id: string | null;
+  text: string | null;
   workspace_id: string;
 }
 

@@ -2,16 +2,12 @@ import { encodePublicId } from '@kronaut/core';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
-import { HttpError } from '../../../base/http/errors.ts';
-import { enqueueMediaImport, type MediaJob } from '../../../infrastructure/jobs/jobs.ts';
-import { takeWindowQuota } from '../../../infrastructure/quota/window-quota.ts';
+import type { MediaJob } from '../../../infrastructure/jobs/jobs.ts';
+import { insertImport, type NewImport } from '../../../records/media-imports/imports.ts';
 import { findMediaAsset, MediaAssetSchema } from '../dto.ts';
 import { MediaError } from '../errors.ts';
 import { IMPORT_ERRORS, type ImportError, refuseImport } from './import-failure.ts';
 
-export const MEDIA_IMPORTS_PER_HOUR = 500;
-export const MEDIA_IMPORTS_MAX_OPEN = 500;
-const QUOTA_WINDOW_SECONDS = 60 * 60;
 const OPEN_STATES = ['pending', 'fetching'];
 const SYSTEM: Actor = { kind: 'system' };
 
@@ -24,19 +20,10 @@ export const MediaImportSchema = z.object({
 
 export type MediaImportDto = z.output<typeof MediaImportSchema>;
 
-export interface NewImport {
-  readonly url: string;
-  readonly aiGenerated: boolean;
-}
-
 export interface ClaimedImport {
   readonly url: string;
   readonly aiGenerated: boolean;
   readonly actor: Actor;
-}
-
-export function importBucketKey(workspaceId: string): string {
-  return `endpoint:media_import:${workspaceId}`;
 }
 
 function toDto(row: {
@@ -48,45 +35,12 @@ function toDto(row: {
   return MediaImportSchema.parse({ ...row, id: encodePublicId('mediaImport', row.id) });
 }
 
-function tooManyImports(): HttpError {
-  return new HttpError('rate_limited', 'Too many imports were started recently. Try again later.');
-}
-
-async function countOpen(trx: TenantDb, workspaceId: string): Promise<number> {
-  const { open } = await trx
-    .selectFrom('media_imports')
-    .select(sql<string>`count(*)`.as('open'))
-    .where('workspace_id', '=', workspaceId)
-    .where('state', 'in', OPEN_STATES)
-    .executeTakeFirstOrThrow();
-  return Number(open);
-}
-
 export async function createImport(
   trx: TenantDb,
   workspaceId: string,
   input: NewImport,
 ): Promise<MediaImportDto> {
-  if ((await countOpen(trx, workspaceId)) >= MEDIA_IMPORTS_MAX_OPEN) throw tooManyImports();
-  const allowed = await takeWindowQuota(trx, {
-    key: importBucketKey(workspaceId),
-    capacity: MEDIA_IMPORTS_PER_HOUR,
-    windowSeconds: QUOTA_WINDOW_SECONDS,
-  });
-  if (!allowed) throw tooManyImports();
-  const row = await trx
-    .insertInto('media_imports')
-    .values({
-      workspace_id: workspaceId,
-      url: input.url,
-      ai_generated: input.aiGenerated,
-      requested_by_user_id: sql<string | null>`app_actor_id('user')`,
-      requested_by_grant_id: sql<string | null>`app_actor_id('grant')`,
-    })
-    .returning(['id', 'state', 'error'])
-    .executeTakeFirstOrThrow();
-  await enqueueMediaImport(trx, { workspaceId, id: row.id });
-  return toDto({ ...row, media: null });
+  return toDto({ ...(await insertImport(trx, workspaceId, input)), media: null });
 }
 
 export async function findImport(

@@ -205,8 +205,9 @@
   "settings_feed_url": "Feed URL",
   "settings_feed_name": "Name",
   "settings_feed_channels": "Channels",
-  "settings_feed_channels_hint": "Only channels that can post text without media are listed.",
-  "settings_feed_no_channels": "No channel can post text without media yet. Connect one first.",
+  "settings_feed_channels_hint": "Only channels that can post text alone or text with one image are listed.",
+  "settings_feed_no_channels": "No channel can post text alone or text with one image yet. Connect one first.",
+  "settings_feed_channels_image_hint": "Channels that need an image, such as Instagram, get only the items that have one.",
   "settings_feed_mode": "New items",
   "settings_feed_mode_queue": "Add to queue",
   "settings_feed_mode_draft": "Save as draft",
@@ -265,7 +266,7 @@
   "settings_feed_name_invalid": "The name is empty or too long.",
   "settings_feed_template_invalid": "The post text is empty or too long.",
   "settings_feed_channel_gone": "One of the channels no longer exists.",
-  "settings_feed_channel_text": "{channel} can't post text without media.",
+  "settings_feed_channel_unsupported": "{channel} can post neither text alone nor text with one image.",
   "settings_feed_channel_queue": "{channel} has no queue times. Add some on the Channels page, or save new items as drafts.",
   "settings_feed_limit": "This workspace has reached its limit of feeds. Delete one first."
 }

@@ -1,12 +1,21 @@
 import { createHash } from 'node:crypto';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { Temporal } from 'temporal-polyfill';
+import { type FeedImage, imageOf } from './image.ts';
+import { ATTRIBUTE, attribute, list, type Node, record, textOf } from './nodes.ts';
 import { cutSummary, decodeEntities, htmlToText } from './plain-text.ts';
 
 const MAX_ITEMS = 1000;
-const ATTRIBUTE = '@_';
 const TEXT = '#text';
-const LISTS: ReadonlySet<string> = new Set(['item', 'entry', 'link']);
+const LISTS: ReadonlySet<string> = new Set([
+  'item',
+  'entry',
+  'link',
+  'enclosure',
+  'media:content',
+  'media:thumbnail',
+  'media:group',
+]);
 
 export interface FeedItem {
   readonly key: Buffer;
@@ -14,6 +23,7 @@ export interface FeedItem {
   readonly link: string | null;
   readonly summary: string;
   readonly at: Temporal.Instant | null;
+  readonly image: FeedImage | null;
   readonly index: number;
 }
 
@@ -39,8 +49,6 @@ const parser = new XMLParser({
   isArray: (name) => LISTS.has(name),
 });
 
-type Node = unknown;
-
 function skipTo(xml: string, from: number, end: string): number {
   const at = xml.indexOf(end, from);
   return at === -1 ? xml.length : at + end.length;
@@ -55,28 +63,6 @@ function hasDoctype(xml: string): boolean {
     at = xml.indexOf('<!', at);
   }
   return false;
-}
-
-function record(node: Node): Record<string, Node> | null {
-  return typeof node === 'object' && node !== null && !Array.isArray(node)
-    ? (node as Record<string, Node>)
-    : null;
-}
-
-function textOf(node: Node): string {
-  if (typeof node === 'string') return node;
-  if (Array.isArray(node)) return node.map(textOf).join(' ');
-  const fields = record(node);
-  if (fields === null) return '';
-  return Object.entries(fields)
-    .filter(([name]) => !name.startsWith(ATTRIBUTE))
-    .map(([, value]) => textOf(value))
-    .join(' ');
-}
-
-function attribute(node: Node, name: string): string | null {
-  const value = record(node)?.[`${ATTRIBUTE}${name}`];
-  return typeof value === 'string' ? value : null;
 }
 
 function resolveLink(raw: string | null, base: string): string | null {
@@ -95,17 +81,13 @@ function instantOf(raw: string): Temporal.Instant | null {
   }
 }
 
-function list(node: Node): Node[] {
-  if (node === undefined) return [];
-  return Array.isArray(node) ? node : [node];
-}
-
 interface RawItem {
   readonly id: string;
   readonly title: string;
   readonly link: string | null;
   readonly summary: string;
   readonly date: string;
+  readonly node: Node;
 }
 
 function rssItem(node: Node): RawItem {
@@ -116,6 +98,7 @@ function rssItem(node: Node): RawItem {
     link: list(fields.link).map(textOf)[0] ?? null,
     summary: textOf(fields.description),
     date: textOf(fields.pubDate),
+    node,
   };
 }
 
@@ -136,6 +119,7 @@ function atomItem(node: Node): RawItem {
     link: atomLink(fields.link),
     summary: textOf(fields.summary ?? fields.content),
     date: textOf(fields.published ?? fields.updated),
+    node,
   };
 }
 
@@ -159,6 +143,7 @@ function itemOf(raw: RawItem, base: string, index: number): FeedItem | null {
     link,
     summary: cutSummary(htmlToText(raw.summary)),
     at: raw.date.trim() === '' ? null : instantOf(raw.date),
+    image: imageOf(raw.node, base),
     index,
   };
 }

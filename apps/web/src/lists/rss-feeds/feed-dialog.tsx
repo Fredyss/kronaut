@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type FormEvent, useId, useMemo, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { m } from '../../base/locale/i18n.ts';
-import { choiceFor, NO_MEDIA } from '../../composer/compose/content/choice.ts';
+import { choiceFor, type MediaFacts, NO_MEDIA } from '../../composer/compose/content/choice.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
 import { type FeedErrors, feedErrors } from './errors.ts';
@@ -18,15 +18,17 @@ import {
 import { type FeedBody, useSaveFeed } from './writes.ts';
 
 const NO_ERRORS: FeedErrors = { channels: [] };
+const ONE_IMAGE: MediaFacts = { images: [{ type: 'image/jpeg', size: 1_000_000 }], video: false };
+
+function takesItems(channel: Channel): boolean {
+  return choiceFor(channel, NO_MEDIA).kind === 'ok' || choiceFor(channel, ONE_IMAGE).kind === 'ok';
+}
 
 function useChoosable(workspaceId: string, initial: ReadonlySet<string>) {
   const client = useApiClient();
   const channels = useQuery(channelsQuery(client, workspaceId)).data;
   return useMemo(
-    () =>
-      (channels ?? []).filter(
-        (channel) => initial.has(channel.id) || choiceFor(channel, NO_MEDIA).kind === 'ok',
-      ),
+    () => (channels ?? []).filter((channel) => initial.has(channel.id) || takesItems(channel)),
     [channels, initial],
   );
 }

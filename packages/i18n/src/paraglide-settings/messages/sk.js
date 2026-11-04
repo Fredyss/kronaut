@@ -22,9 +22,10 @@
 /** @typedef {{}} Settings_Feed_CancelInputs */
 /** @typedef {{}} Settings_Feed_Channel_GoneInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
-/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_TextInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_UnsupportedInputs */
 /** @typedef {{}} Settings_Feed_ChannelsInputs */
 /** @typedef {{}} Settings_Feed_Channels_HintInputs */
+/** @typedef {{}} Settings_Feed_Channels_Image_HintInputs */
 /** @typedef {{}} Settings_Feed_CheckingInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_DeleteInputs */
 /** @typedef {{}} Settings_Feed_Delete_BodyInputs */
@@ -263,8 +264,8 @@ export const settings_feed_channel_queue = /** @type {(inputs: Settings_Feed_Cha
 	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nemá vo fronte žiadne časy. Pridajte ich na stránke Kanály alebo nové položky ukladajte ako koncepty.`)
 };
 
-export const settings_feed_channel_text = /** @type {(inputs: Settings_Feed_Channel_TextInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nedokáže uverejniť samotný text.`)
+export const settings_feed_channel_unsupported = /** @type {(inputs: Settings_Feed_Channel_UnsupportedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanál ${i?.channel} nedokáže uverejniť samotný text ani text s jedným obrázkom.`)
 };
 
 export const settings_feed_channels = /** @type {(inputs: Settings_Feed_ChannelsInputs) => LocalizedString} */ () => {
@@ -272,7 +273,11 @@ export const settings_feed_channels = /** @type {(inputs: Settings_Feed_Channels
 };
 
 export const settings_feed_channels_hint = /** @type {(inputs: Settings_Feed_Channels_HintInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ponúkajú sa iba kanály, ktoré dokážu uverejniť samotný text bez médií.`)
+	return /** @type {LocalizedString} */ (`Ponúkajú sa iba kanály, ktoré dokážu uverejniť samotný text alebo text s jedným obrázkom.`)
+};
+
+export const settings_feed_channels_image_hint = /** @type {(inputs: Settings_Feed_Channels_Image_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanály, ktoré potrebujú obrázok (napríklad Instagram), dostanú iba položky s obrázkom.`)
 };
 
 export const settings_feed_checking = /** @type {(inputs: Settings_Feed_CheckingInputs) => LocalizedString} */ () => {
@@ -361,7 +366,7 @@ export const settings_feed_never_checked = /** @type {(inputs: Settings_Feed_Nev
 };
 
 export const settings_feed_no_channels = /** @type {(inputs: Settings_Feed_No_ChannelsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Zatiaľ žiadny kanál nedokáže uverejniť samotný text. Najprv nejaký pripojte.`)
+	return /** @type {LocalizedString} */ (`Zatiaľ žiadny kanál nedokáže uverejniť samotný text ani text s jedným obrázkom. Najprv nejaký pripojte.`)
 };
 
 export const settings_feed_pause = /** @type {(inputs: Settings_Feed_PauseInputs) => LocalizedString} */ () => {

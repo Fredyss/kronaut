@@ -1,9 +1,9 @@
-import { accountPostType } from '@kronaut/compose';
 import { decodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError, type IssueDetail } from '../../base/http/errors.ts';
 import type { ProviderRegistry } from '../../base/providers/providers.ts';
 import { loadTimetable } from '../../steps/queue/slots.ts';
+import { canTakeItems } from './pick.ts';
 
 export const URL_MAX = 2048;
 export const NAME_MAX = 100;
@@ -49,19 +49,6 @@ export function feedTemplate(value: string): string {
   return template;
 }
 
-export function textOnlyType(
-  providers: ProviderRegistry,
-  account: { readonly provider: string; readonly capabilities: unknown },
-): string | null {
-  const manifest = providers.get(account.provider)?.manifest;
-  if (manifest === undefined) return null;
-  const types = manifest.postTypes.map((type) =>
-    accountPostType(manifest, type.id, account.capabilities),
-  );
-  const text = types.find((type) => type?.delivery !== 'unsupported' && type?.media.minCount === 0);
-  return text?.id ?? null;
-}
-
 export interface ChannelCheck {
   readonly workspaceId: string;
   readonly channelIds: readonly string[];
@@ -84,7 +71,7 @@ async function channelIssue(
   check: ChannelCheck,
   account: { readonly id: string; readonly provider: string; readonly capabilities: unknown },
 ): Promise<string | null> {
-  if (textOnlyType(providers, account) === null) return 'text_unsupported';
+  if (!canTakeItems(providers, account)) return 'channel_unsupported';
   if (check.mode !== 'queue') return null;
   const { timezone } = await loadTimetable(trx, check.workspaceId, account.id);
   return timezone === null ? 'queue_empty' : null;

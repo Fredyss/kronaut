@@ -22,7 +22,9 @@ const CHANNEL_INDEX = /^body\.channelIds\.(\d+)$/;
 
 function channelError(code: string, channel: string): string | null {
   if (code === 'not_found') return settingsText.settings_feed_channel_gone();
-  if (code === 'text_unsupported') return settingsText.settings_feed_channel_text({ channel });
+  if (code === 'channel_unsupported') {
+    return settingsText.settings_feed_channel_unsupported({ channel });
+  }
   if (code === 'queue_empty') return settingsText.settings_feed_channel_queue({ channel });
   return null;
 }
