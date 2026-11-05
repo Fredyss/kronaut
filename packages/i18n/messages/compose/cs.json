@@ -136,5 +136,9 @@
   "compose_error_tags_unscheduled": "Příspěvek se uložil jako koncept, ale jeho štítky ne, takže ještě není naplánovaný. Dalším uložením to dokončíte.",
   "compose_insert_saved_text": "Vložit uložený text",
   "compose_insert": "Vložit",
-  "compose_add_signature": "Přidat podpis „{name}“"
+  "compose_add_signature": "Přidat podpis „{name}“",
+  "compose_brand_select_all": "Vybrat vše",
+  "compose_brand_clear": "Zrušit výběr",
+  "compose_brand_select_all_of": "Vybrat všechny kanály značky {name}",
+  "compose_brand_clear_of": "Zrušit výběr kanálů značky {name}"
 }

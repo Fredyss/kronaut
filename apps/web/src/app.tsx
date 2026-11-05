@@ -15,6 +15,7 @@ import { isUnauthenticated } from './base/api/errors.ts';
 import { ME_KEY, meQuery } from './base/api/me.ts';
 import { browserLanguages, loadLocale, m, pickLocale } from './base/locale/i18n.ts';
 import { composeSearch, postSearch } from './composer/compose/search.ts';
+import { inboxSearch } from './lists/inbox/search.ts';
 import { canReadSystem } from './lists/system/status.ts';
 import { ChannelsPage, type ChannelsSearch } from './routes/channels.tsx';
 import { LocaleRoot } from './routes/locale-root.tsx';
@@ -116,6 +117,7 @@ const composeRoute = createRoute({
 const inboxRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/inbox',
+  validateSearch: inboxSearch,
   component: lazyRouteComponent(() => import('./routes/inbox.tsx'), 'InboxPage'),
 });
 
@@ -170,6 +172,12 @@ const tagSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'tags',
   component: lazyRouteComponent(() => import('./routes/settings-tags.tsx'), 'TagSettingsPage'),
+});
+
+const brandSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'brands',
+  component: lazyRouteComponent(() => import('./routes/settings-brands.tsx'), 'BrandSettingsPage'),
 });
 
 const savedTextSettingsRoute = createRoute({
@@ -231,6 +239,7 @@ const routeTree = rootRoute.addChildren([
       approvalSettingsRoute,
       notificationSettingsRoute,
       tagSettingsRoute,
+      brandSettingsRoute,
       savedTextSettingsRoute,
       feedSettingsRoute,
       shortLinkSettingsRoute,

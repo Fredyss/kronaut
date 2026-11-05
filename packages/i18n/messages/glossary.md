@@ -34,6 +34,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | feed | zdroj (RSS) | zdroj (RSS) | An RSS or Atom feed whose new items become posts. Never "kanál"; that is a channel. |
 | short link | skrátený odkaz | zkrácený odkaz | The redirect a shortener makes for a long link in a post. |
 | shortener | skracovač | zkracovač | The service, Dub or Kutt, that makes short links. |
+| brand | značka | značka | A client or brand that groups channels; it can have its own approval rules. |
+| archive / restore (a brand) | archivovať / obnoviť | archivovat / obnovit | An archived brand stays in history but can't take channels. |
 
 ## Style
 

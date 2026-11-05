@@ -4,7 +4,32 @@
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
+/** @typedef {{}} Settings_Brand_AddInputs */
+/** @typedef {{}} Settings_Brand_ArchiveInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Archive_OfInputs */
+/** @typedef {{}} Settings_Brand_ArchivedInputs */
+/** @typedef {{}} Settings_Brand_Archived_DoneInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_CreatedInputs */
+/** @typedef {{}} Settings_Brand_In_UseInputs */
+/** @typedef {{}} Settings_Brand_List_IntroInputs */
+/** @typedef {{}} Settings_Brand_List_TitleInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_NameInputs */
+/** @typedef {{}} Settings_Brand_Name_InvalidInputs */
+/** @typedef {{}} Settings_Brand_Name_TakenInputs */
+/** @typedef {{}} Settings_Brand_NewInputs */
+/** @typedef {{}} Settings_Brand_OverrideInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Override_OfInputs */
+/** @typedef {{}} Settings_Brand_Override_RemovedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Policy_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_RequiredInputs */
+/** @typedef {{}} Settings_Brand_SavedInputs */
+/** @typedef {{}} Settings_Brand_StrictestInputs */
+/** @typedef {{}} Settings_Brand_UnarchiveInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Unarchive_OfInputs */
+/** @typedef {{}} Settings_Brand_Unarchived_DoneInputs */
+/** @typedef {{}} Settings_Brand_Uses_WorkspaceInputs */
+/** @typedef {{}} Settings_Brands_EmptyInputs */
 /** @typedef {{}} Settings_Brands_TitleInputs */
 /** @typedef {{}} Settings_ConflictInputs */
 /** @typedef {{}} Settings_DefaultsInputs */
@@ -220,12 +245,116 @@ export const settings_approvals_title = /** @type {(inputs: Settings_Approvals_T
 	return /** @type {LocalizedString} */ (`Schvaľovanie`)
 };
 
+export const settings_brand_add = /** @type {(inputs: Settings_Brand_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať značku`)
+};
+
+export const settings_brand_archive = /** @type {(inputs: Settings_Brand_ArchiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Archivovať`)
+};
+
+export const settings_brand_archive_of = /** @type {(inputs: Settings_Brand_Archive_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Archivovať značku ${i?.name}`)
+};
+
+export const settings_brand_archived = /** @type {(inputs: Settings_Brand_ArchivedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Archivovaná`)
+};
+
+export const settings_brand_archived_done = /** @type {(inputs: Settings_Brand_Archived_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značka je archivovaná`)
+};
+
+export const settings_brand_channels = /** @type {(inputs: Settings_Brand_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanála`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálov`)
+};
+
+export const settings_brand_created = /** @type {(inputs: Settings_Brand_CreatedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Značka ${i?.name} je pridaná`)
+};
+
+export const settings_brand_in_use = /** @type {(inputs: Settings_Brand_In_UseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`K tejto značke ešte patria kanály. Najprv ich presuňte inam.`)
+};
+
+export const settings_brand_list_intro = /** @type {(inputs: Settings_Brand_List_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zoskupte kanály podľa klientov alebo značiek. Každá značka môže mať vlastné pravidlá schvaľovania.`)
+};
+
+export const settings_brand_list_title = /** @type {(inputs: Settings_Brand_List_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značky`)
+};
+
+export const settings_brand_name = /** @type {(inputs: Settings_Brand_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Názov značky ${i?.name}`)
+};
+
+export const settings_brand_name_invalid = /** @type {(inputs: Settings_Brand_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadajte názov s dĺžkou 1 až 120 znakov.`)
+};
+
+export const settings_brand_name_taken = /** @type {(inputs: Settings_Brand_Name_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značka s týmto názvom už existuje.`)
+};
+
+export const settings_brand_new = /** @type {(inputs: Settings_Brand_NewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Názov novej značky`)
+};
+
+export const settings_brand_override = /** @type {(inputs: Settings_Brand_OverrideInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Prepísať pravidlá pracovného priestoru`)
+};
+
+export const settings_brand_override_of = /** @type {(inputs: Settings_Brand_Override_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Prepísať pravidlá pracovného priestoru pre ${i?.name}`)
+};
+
+export const settings_brand_override_removed = /** @type {(inputs: Settings_Brand_Override_RemovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značka sa znova riadi pravidlami pracovného priestoru.`)
+};
+
+export const settings_brand_policy_title = /** @type {(inputs: Settings_Brand_Policy_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Pravidlá schvaľovania pre ${i?.name}`)
+};
+
 export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválenie`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Vyžadujú sa ${i?.count} schválenia`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválenia`);
 	return /** @type {LocalizedString} */ (`Vyžaduje sa ${i?.count} schválení`)
+};
+
+export const settings_brand_saved = /** @type {(inputs: Settings_Brand_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značka je uložená`)
+};
+
+export const settings_brand_strictest = /** @type {(inputs: Settings_Brand_StrictestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pre príspevok do kanálov viacerých značiek platia najprísnejšie pravidlá spomedzi jeho kanálov.`)
+};
+
+export const settings_brand_unarchive = /** @type {(inputs: Settings_Brand_UnarchiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Obnoviť`)
+};
+
+export const settings_brand_unarchive_of = /** @type {(inputs: Settings_Brand_Unarchive_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obnoviť značku ${i?.name}`)
+};
+
+export const settings_brand_unarchived_done = /** @type {(inputs: Settings_Brand_Unarchived_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značka je obnovená`)
+};
+
+export const settings_brand_uses_workspace = /** @type {(inputs: Settings_Brand_Uses_WorkspaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Riadi sa pravidlami pracovného priestoru`)
+};
+
+export const settings_brands_empty = /** @type {(inputs: Settings_Brands_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ tu nie sú žiadne značky.`)
 };
 
 export const settings_brands_title = /** @type {(inputs: Settings_Brands_TitleInputs) => LocalizedString} */ () => {

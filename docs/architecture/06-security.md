@@ -45,7 +45,9 @@
 - **Per-destination content hash** over the canonical JCS payload (canonicalisation rules: ADR-0010).
   - ADR-0010's `\r\n → \n` and NFC are applied together until the text stops changing, so canonicalisation is idempotent. A run of CRs before an LF collapses to one LF (`x\r\r\n` → `x\n`); any other lone CR stays.
 - **Schedule binding:** `approved_scheduled_local/tz/tolerance_min` columns, checked by CHECK.
-- **Policy:** `mode none|required`, with a brand override.
+- **Policy:** `mode none|required`, with an optional override per brand.
+  - A post's policy combines one source per brand among its non-canceled destinations' channels, read live: the brand's override, else the workspace row; a channel without a brand, and a post without destinations, use the workspace row (ADR-0059).
+  - The strictest value wins in each field: `required` if any source requires it, the highest approval count among those, self-approval only if every source allows it, the lowest tolerance. The DB guards apply the same combination.
   - `provision_*` gives each new workspace a `mode='none'` policy with self-approval on, since its only member is the owner.
   - If no policy row applies, the strictest one is used: approval required, no self-approval, tolerance 0.
   - Tightening applies at claim; loosening never auto-approves.

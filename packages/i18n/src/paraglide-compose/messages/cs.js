@@ -7,6 +7,10 @@
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
 /** @typedef {{}} Compose_BackInputs */
+/** @typedef {{}} Compose_Brand_ClearInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Clear_OfInputs */
+/** @typedef {{}} Compose_Brand_Select_AllInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Select_All_OfInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
@@ -129,6 +133,22 @@ export const compose_alt_text_label = /** @type {(inputs: Compose_Alt_Text_Label
 
 export const compose_back = /** @type {(inputs: Compose_BackInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zpět`)
+};
+
+export const compose_brand_clear = /** @type {(inputs: Compose_Brand_ClearInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit výběr`)
+};
+
+export const compose_brand_clear_of = /** @type {(inputs: Compose_Brand_Clear_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Zrušit výběr kanálů značky ${i?.name}`)
+};
+
+export const compose_brand_select_all = /** @type {(inputs: Compose_Brand_Select_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vybrat vše`)
+};
+
+export const compose_brand_select_all_of = /** @type {(inputs: Compose_Brand_Select_All_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vybrat všechny kanály značky ${i?.name}`)
 };
 
 export const compose_channel_image_too_large = /** @type {(inputs: Compose_Channel_Image_Too_LargeInputs) => LocalizedString} */ (i) => {

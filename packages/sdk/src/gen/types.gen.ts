@@ -715,6 +715,119 @@ export type ApprovalsWithdrawResponses = {
 
 export type ApprovalsWithdrawResponse = ApprovalsWithdrawResponses[keyof ApprovalsWithdrawResponses];
 
+export type BrandsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/brands';
+};
+
+export type BrandsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type BrandsListError = BrandsListErrors[keyof BrandsListErrors];
+
+export type BrandsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            archivedAt: string | null;
+            channelCount: number;
+            id: string;
+            name: string;
+            slug: string;
+        }>;
+    };
+};
+
+export type BrandsListResponse = BrandsListResponses[keyof BrandsListResponses];
+
+export type BrandsCreateData = {
+    body: {
+        name: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/brands';
+};
+
+export type BrandsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type BrandsCreateError = BrandsCreateErrors[keyof BrandsCreateErrors];
+
+export type BrandsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        archivedAt: string | null;
+        channelCount: number;
+        id: string;
+        name: string;
+        slug: string;
+    };
+};
+
+export type BrandsCreateResponse = BrandsCreateResponses[keyof BrandsCreateResponses];
+
+export type BrandsUpdateData = {
+    body: {
+        archived?: boolean;
+        name?: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        brandId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/brands/{brandId}';
+};
+
+export type BrandsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type BrandsUpdateError = BrandsUpdateErrors[keyof BrandsUpdateErrors];
+
+export type BrandsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        archivedAt: string | null;
+        channelCount: number;
+        id: string;
+        name: string;
+        slug: string;
+    };
+};
+
+export type BrandsUpdateResponse = BrandsUpdateResponses[keyof BrandsUpdateResponses];
+
 export type ChannelsListData = {
     body?: never;
     path: {
@@ -741,6 +854,7 @@ export type ChannelsListResponses = {
         items: Array<{
             accessExpiresAt: string | null;
             accountKind: string;
+            brandId: string | null;
             connectedAt: string;
             displayName: string;
             handle: string | null;
@@ -877,6 +991,41 @@ export type ChannelsProvidersResponses = {
 };
 
 export type ChannelsProvidersResponse = ChannelsProvidersResponses[keyof ChannelsProvidersResponses];
+
+export type ChannelsSetBrandData = {
+    body: {
+        brandId: string | null;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/{channelId}/brand';
+};
+
+export type ChannelsSetBrandErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSetBrandError = ChannelsSetBrandErrors[keyof ChannelsSetBrandErrors];
+
+export type ChannelsSetBrandResponses = {
+    /**
+     * OK
+     */
+    200: {
+        brandId: string | null;
+    };
+};
+
+export type ChannelsSetBrandResponse = ChannelsSetBrandResponses[keyof ChannelsSetBrandResponses];
 
 export type ChannelsDisconnectData = {
     body?: never;
@@ -1863,6 +2012,7 @@ export type DestinationsNeedsActionData = {
     };
     query?: {
         limit?: string;
+        brand?: string;
     };
     url: '/v1/workspaces/{workspaceId}/needs-action';
 };
@@ -2201,6 +2351,7 @@ export type PostsListData = {
         unscheduled?: string;
         limit?: string;
         tag?: string;
+        brand?: string;
     };
     url: '/v1/workspaces/{workspaceId}/posts';
 };

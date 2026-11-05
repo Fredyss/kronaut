@@ -9,6 +9,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Alt_Text_HintInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Alt_Text_LabelInputs */
 /** @typedef {{}} Compose_BackInputs */
+/** @typedef {{}} Compose_Brand_ClearInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Clear_OfInputs */
+/** @typedef {{}} Compose_Brand_Select_AllInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Select_All_OfInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
@@ -217,6 +221,66 @@ export const compose_back = /** @type {((inputs?: Compose_BackInputs, options?: 
 	if (locale === "sk") return __sk.compose_back(inputs)
 	if (locale === "cs") return __cs.compose_back(inputs)
 	return __en.compose_back(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Clear" |
+*
+* @param {Compose_Brand_ClearInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_brand_clear = /** @type {((inputs?: Compose_Brand_ClearInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Brand_ClearInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_brand_clear(inputs)
+	if (locale === "cs") return __cs.compose_brand_clear(inputs)
+	return __en.compose_brand_clear(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Clear the channels of {name}" |
+*
+* @param {Compose_Brand_Clear_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_brand_clear_of = /** @type {((inputs: Compose_Brand_Clear_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Brand_Clear_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_brand_clear_of(inputs)
+	if (locale === "cs") return __cs.compose_brand_clear_of(inputs)
+	return __en.compose_brand_clear_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Select all" |
+*
+* @param {Compose_Brand_Select_AllInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_brand_select_all = /** @type {((inputs?: Compose_Brand_Select_AllInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Brand_Select_AllInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_brand_select_all(inputs)
+	if (locale === "cs") return __cs.compose_brand_select_all(inputs)
+	return __en.compose_brand_select_all(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Select all channels of {name}" |
+*
+* @param {Compose_Brand_Select_All_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_brand_select_all_of = /** @type {((inputs: Compose_Brand_Select_All_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Brand_Select_All_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_brand_select_all_of(inputs)
+	if (locale === "cs") return __cs.compose_brand_select_all_of(inputs)
+	return __en.compose_brand_select_all_of(inputs)
 });
 /**
 * | output |

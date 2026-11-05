@@ -15,10 +15,13 @@ export function needsActionKey(workspaceId: string) {
   return ['needs-action', workspaceId] as const;
 }
 
-export function needsActionQuery(client: Client, workspaceId: string) {
+export function needsActionQuery(client: Client, workspaceId: string, brand?: string) {
+  const query = brand === undefined ? {} : { brand };
   return queryOptions({
-    queryKey: needsActionKey(workspaceId),
-    queryFn: async () => (await destinationsNeedsAction({ client, path: { workspaceId } })).data,
+    queryKey:
+      brand === undefined ? needsActionKey(workspaceId) : [...needsActionKey(workspaceId), brand],
+    queryFn: async () =>
+      (await destinationsNeedsAction({ client, path: { workspaceId }, query })).data,
     refetchInterval: NEEDS_ACTION_POLL_MS,
     refetchOnWindowFocus: true,
   });

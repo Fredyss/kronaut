@@ -17,6 +17,11 @@ const TAGS_SECTION = {
   label: () => settingsText.settings_tags_title(),
 } as const;
 
+const BRANDS_SECTION = {
+  to: '/settings/brands',
+  label: () => settingsText.settings_brand_list_title(),
+} as const;
+
 const SAVED_TEXTS_SECTION = {
   to: '/settings/saved-texts',
   label: () => settingsText.settings_saved_texts_title(),
@@ -49,7 +54,7 @@ export function SettingsLayout() {
   const writer = SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '');
   const sections = [
     ...SECTIONS,
-    ...(writer ? [TAGS_SECTION] : []),
+    ...(writer ? [TAGS_SECTION, BRANDS_SECTION] : []),
     SAVED_TEXTS_SECTION,
     ...(writer ? [FEEDS_SECTION, SHORT_LINKS_SECTION] : []),
     ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),

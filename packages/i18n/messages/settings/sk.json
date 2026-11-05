@@ -324,5 +324,41 @@
   "settings_short_links_base_url_invalid": "Zadajte odkaz https, napríklad https://kutt.to alebo adresu vlastnej inštancie, bez používateľského mena, hesla a parametrov. Adresa kutt.it nie je podporovaná.",
   "settings_short_links_domain_invalid": "Zadajte názov hostiteľa, napríklad go.example.com, bez https:// a bez cesty.",
   "settings_short_links_api_key_invalid": "Kľúč API je príliš dlhý alebo obsahuje nepovolené znaky.",
-  "settings_short_links_conflict": "Skracovač medzitým niekto zmenil. Obnovte stránku a skúste to znova."
+  "settings_short_links_conflict": "Skracovač medzitým niekto zmenil. Obnovte stránku a skúste to znova.",
+  "settings_brand_list_title": "Značky",
+  "settings_brand_list_intro": "Zoskupte kanály podľa klientov alebo značiek. Každá značka môže mať vlastné pravidlá schvaľovania.",
+  "settings_brands_empty": "Zatiaľ tu nie sú žiadne značky.",
+  "settings_brand_new": "Názov novej značky",
+  "settings_brand_add": "Pridať značku",
+  "settings_brand_created": "Značka {name} je pridaná",
+  "settings_brand_saved": "Značka je uložená",
+  "settings_brand_archived_done": "Značka je archivovaná",
+  "settings_brand_unarchived_done": "Značka je obnovená",
+  "settings_brand_archived": "Archivovaná",
+  "settings_brand_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál",
+        "countPlural=few": "{count} kanály",
+        "countPlural=many": "{count} kanála",
+        "countPlural=*": "{count} kanálov"
+      }
+    }
+  ],
+  "settings_brand_name": "Názov značky {name}",
+  "settings_brand_archive": "Archivovať",
+  "settings_brand_unarchive": "Obnoviť",
+  "settings_brand_archive_of": "Archivovať značku {name}",
+  "settings_brand_unarchive_of": "Obnoviť značku {name}",
+  "settings_brand_name_taken": "Značka s týmto názvom už existuje.",
+  "settings_brand_in_use": "K tejto značke ešte patria kanály. Najprv ich presuňte inam.",
+  "settings_brand_name_invalid": "Zadajte názov s dĺžkou 1 až 120 znakov.",
+  "settings_brand_override": "Prepísať pravidlá pracovného priestoru",
+  "settings_brand_override_of": "Prepísať pravidlá pracovného priestoru pre {name}",
+  "settings_brand_override_removed": "Značka sa znova riadi pravidlami pracovného priestoru.",
+  "settings_brand_uses_workspace": "Riadi sa pravidlami pracovného priestoru",
+  "settings_brand_strictest": "Pre príspevok do kanálov viacerých značiek platia najprísnejšie pravidlá spomedzi jeho kanálov.",
+  "settings_brand_policy_title": "Pravidlá schvaľovania pre {name}"
 }

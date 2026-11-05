@@ -2,6 +2,7 @@ import { decodePublicId, type ScopeUnit } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
+import { recomputePostBrand } from '../../../access/channels/post-brand.ts';
 import type { PostRef } from '../../../access/post-access/locks.ts';
 import { scopeUnit } from '../../../access/post-access/units.ts';
 import { HttpError } from '../../../base/http/errors.ts';
@@ -254,4 +255,5 @@ export async function replaceDestinations(
   }
   await discardPublishProgress(trx, workspaceId, thawed);
   await insertDestinations(trx, post, added);
+  await recomputePostBrand(trx, workspaceId, [post.postId]);
 }

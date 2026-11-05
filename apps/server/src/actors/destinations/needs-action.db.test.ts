@@ -135,7 +135,7 @@ describe('destinations.needs_action', () => {
       // A few test rows make any plan cheap; this checks that the filter can use the partial index at all.
       await sql`set local enable_seqscan = off`.execute(trx);
       await sql`set local enable_nestloop = off`.execute(trx);
-      const rows = await attentionQuery(trx, workspaceId, null)
+      const rows = await attentionQuery(trx, workspaceId, { scope: null })
         .select('d.id')
         .explain<{ 'QUERY PLAN': string }>();
       return rows.map((row) => row['QUERY PLAN']).join('\n');

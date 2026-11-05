@@ -8,6 +8,7 @@ import { m as calendarText } from '../../i18n/calendar.ts';
 import { pollDelay } from '../../records/posts/destinations.ts';
 import {
   draftsQuery,
+  type PostFilter,
   type PostList,
   type PostSummary,
   postsRangeQuery,
@@ -47,7 +48,7 @@ interface BodyProps {
   readonly now: string;
   readonly clock: Temporal.Instant;
   readonly formats: Formats;
-  readonly tag: string | undefined;
+  readonly filter: PostFilter;
 }
 
 export function CalendarBody(props: BodyProps) {
@@ -80,16 +81,16 @@ function CalendarContent({
   now,
   clock,
   formats,
-  tag,
+  filter,
   mover,
 }: BodyProps & { readonly mover: Mover }) {
   const client = useApiClient();
   useEffect(() => mover.restoreFocus());
   const posts = useQuery({
-    ...postsRangeQuery(client, workspaceId, range, tag),
+    ...postsRangeQuery(client, workspaceId, range, filter),
     refetchInterval: (query) => calendarPollDelay(query.state.data?.items, Date.now()),
   });
-  const drafts = useQuery(draftsQuery(client, workspaceId, tag));
+  const drafts = useQuery(draftsQuery(client, workspaceId, filter));
   const items = posts.data?.items;
   const entries = useMemo(() => byDay(items ?? [], formats.timeZone), [items, formats.timeZone]);
   if (posts.data === undefined) {
@@ -102,7 +103,8 @@ function CalendarContent({
     );
   }
   const nothing = posts.data.items.length === 0 && drafts.data?.items.length === 0;
-  if (view === 'list' && tag === undefined && nothing) {
+  const filtered = filter.tag !== undefined || filter.brand !== undefined;
+  if (view === 'list' && !filtered && nothing) {
     return <EmptyState />;
   }
   const grid = { days: range.days, entries, formats, current, now, clock, mover };

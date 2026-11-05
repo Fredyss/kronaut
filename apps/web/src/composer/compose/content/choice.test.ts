@@ -17,6 +17,7 @@ const threads: Channel = {
   postTypes: [],
   signature: null,
   shortenLinks: true,
+  brandId: null,
   preview: 'short-feed',
   insights: true,
 };

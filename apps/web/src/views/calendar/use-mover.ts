@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import type { PostSummary } from '../../records/posts/queries.ts';
-import { type Entry, keptTag } from './entries.ts';
+import { type Entry, keptFilter } from './entries.ts';
 import {
   canLand,
   dayDelta,
@@ -130,7 +130,7 @@ export function useMover({ workspaceId, view, range, timeZone }: MoverProps) {
         if (moved !== null && !range.days.some((d) => d.toString() === day)) {
           void navigate({
             to: '/',
-            search: (prev) => ({ view, date: day, ...keptTag(prev) }),
+            search: (prev) => ({ view, date: day, ...keptFilter(prev) }),
           });
         }
       },

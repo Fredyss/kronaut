@@ -68,12 +68,22 @@ function usePublish(
   return { run, failure };
 }
 
-function useApprovalMode(workspaceId: string, failure: SubmitError | null) {
+function planBrands(list: readonly Channel[], plan: Plan): (string | null)[] {
+  return list
+    .filter((channel) => plan.destinations.some((d) => d.accountId === channel.id))
+    .map((channel) => channel.brandId);
+}
+
+function useApprovalMode(
+  workspaceId: string,
+  failure: SubmitError | null,
+  brandIds: readonly (string | null)[],
+) {
   const client = useApiClient();
   const policy = useQuery(approvalPolicyQuery(client, workspaceId));
   const [forced, setForced] = useState(false);
   const [note, setNote] = useState('');
-  const request = forced || approvalRequired(policy.data, null);
+  const request = forced || approvalRequired(policy.data, brandIds);
   const offer = !request && failure?.step === 'schedule' && refusedForApproval(failure.cause);
   return { request, offer, force: () => setForced(true), note: { value: note, set: setNote } };
 }
@@ -133,7 +143,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     opened,
   );
   const { run, failure } = usePublish(workspaceId, start.onDone, form.start);
-  const approval = useApprovalMode(workspaceId, failure);
+  const approval = useApprovalMode(workspaceId, failure, planBrands(list, plan));
   const { when, whenChanged } = useOpenedWhen(start, approval.request);
   const repeat = useRepeatControl(when.date);
   const [formError, setFormError] = useState<string | null>(null);

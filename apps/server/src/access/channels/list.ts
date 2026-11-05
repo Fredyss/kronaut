@@ -71,6 +71,7 @@ const ChannelSchema = z.object({
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
   shortenLinks: z.boolean(),
+  brandId: z.string().nullable(),
 });
 
 export const channelListRoute = defineRoute({
@@ -184,6 +185,7 @@ export async function listChannels(
       'capabilities',
       'saved_text_id',
       'shorten_links',
+      'brand_id',
     ])
     .where('workspace_id', '=', workspaceId);
   if (scope !== null) {
@@ -220,6 +222,7 @@ export async function listChannels(
       insights: insightsGranted(row.capabilities),
       signature: signatures.get(row.saved_text_id ?? '') ?? null,
       shortenLinks: row.shorten_links,
+      brandId: row.brand_id === null ? null : encodePublicId('brand', row.brand_id),
     });
   });
 }

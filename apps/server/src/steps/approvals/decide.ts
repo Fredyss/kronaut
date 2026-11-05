@@ -7,7 +7,7 @@ import { HttpError } from '../../base/http/errors.ts';
 import { pathId } from '../../base/http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../../base/http/request.ts';
 import { postApprovedEvent, postRejectedEvent } from '../../identity/webhooks/events.ts';
-import { type EffectivePolicy, effectivePolicy } from '../../policy/approval-policy/policy.ts';
+import { type EffectivePolicy, postPolicy } from '../../policy/approval-policy/policy.ts';
 import { ApprovalRequestSchema, readRequest } from './dto.ts';
 import {
   announce,
@@ -133,7 +133,7 @@ export function decideRoutes(): BoundRoute[] {
       const request = await ctx.tenant(async (trx) => {
         const { locked, units, request } = await lockRequest(trx, workspaceId, requestId);
         const user = actingUser(ctx);
-        const policy = await effectivePolicy(trx, workspaceId, locked.brand_id);
+        const policy = await postPolicy(trx, workspaceId, locked.id);
         const allowSelf = policy.allowSelfApproval && snapshotAllowsSelf(request.policy_snapshot);
         ctx.authorize(
           'approvals:decide',

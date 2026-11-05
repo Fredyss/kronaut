@@ -1,5 +1,5 @@
--- tolerance_min is caller-written. It may only narrow the live policy (brand override, else the
--- workspace policy). With no policy the default is 0. The column cap also stops a value that would
+-- tolerance_min is caller-written. It may only narrow the live policy: the lowest window among the brands of the
+-- post's channels (each brand's override, else the workspace policy; ADR-0059). With no policy the default is 0. The column cap also stops a value that would
 -- overflow approved_tolerance_min * 60 in the schedule-binding check.
 
 BEGIN;
@@ -44,8 +44,16 @@ INSERT INTO social_accounts (workspace_id, id, provider, provider_app_id, provid
                              account_kind, display_name) VALUES
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-0000000004d1', 'bluesky',
    '01900000-0000-7000-8000-0000000004c1', 'did:tolerance', 'profile', 'A'),
+  ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-0000000004d3', 'bluesky',
+   '01900000-0000-7000-8000-0000000004c1', 'did:loose', 'profile', 'Loose'),
+  ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-0000000004d4', 'bluesky',
+   '01900000-0000-7000-8000-0000000004c1', 'did:strict', 'profile', 'Strict'),
   ('01900000-0000-7000-8000-000000000402', '01900000-0000-7000-8000-0000000004d2', 'bluesky',
    '01900000-0000-7000-8000-0000000004c1', 'did:no-policy', 'profile', 'B');
+UPDATE social_accounts SET brand_id = '01900000-0000-7000-8000-0000000004e1'
+ WHERE id = '01900000-0000-7000-8000-0000000004d3';
+UPDATE social_accounts SET brand_id = '01900000-0000-7000-8000-0000000004e2'
+ WHERE id = '01900000-0000-7000-8000-0000000004d4';
 
 SELECT set_config('app.actor', 'user:01900000-0000-7000-8000-0000000004a1', true);
 
@@ -55,6 +63,7 @@ INSERT INTO posts (workspace_id, id, brand_id, origin) VALUES
    '01900000-0000-7000-8000-0000000004e1', 'ui'),
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000443',
    '01900000-0000-7000-8000-0000000004e2', 'ui'),
+  ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000444', NULL, 'ui'),
   ('01900000-0000-7000-8000-000000000402', '01900000-0000-7000-8000-000000000448', NULL, 'ui');
 
 INSERT INTO post_revisions (workspace_id, post_id, post_version, snapshot, snapshot_v, content_hash,
@@ -71,13 +80,19 @@ INSERT INTO post_destinations (workspace_id, id, post_id, variant_id, social_acc
    '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'post', 'manual', 'A'),
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000442',
    '01900000-0000-7000-8000-000000000442', '01900000-0000-7000-8000-000000000442',
-   '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'post', 'manual', 'A'),
+   '01900000-0000-7000-8000-0000000004d3', 'bluesky', 'post', 'manual', 'Loose'),
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000443',
    '01900000-0000-7000-8000-000000000443', '01900000-0000-7000-8000-000000000443',
-   '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'post', 'manual', 'A'),
+   '01900000-0000-7000-8000-0000000004d4', 'bluesky', 'post', 'manual', 'Strict'),
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000445',
    '01900000-0000-7000-8000-000000000442', '01900000-0000-7000-8000-000000000442',
-   '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'thread', 'manual', 'A'),
+   '01900000-0000-7000-8000-0000000004d3', 'bluesky', 'thread', 'manual', 'Loose'),
+  ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000446',
+   '01900000-0000-7000-8000-000000000444', '01900000-0000-7000-8000-000000000444',
+   '01900000-0000-7000-8000-0000000004d3', 'bluesky', 'post', 'manual', 'Loose'),
+  ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000447',
+   '01900000-0000-7000-8000-000000000444', '01900000-0000-7000-8000-000000000444',
+   '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'post', 'manual', 'A'),
   ('01900000-0000-7000-8000-000000000401', '01900000-0000-7000-8000-000000000449',
    '01900000-0000-7000-8000-000000000441', '01900000-0000-7000-8000-000000000441',
    '01900000-0000-7000-8000-0000000004d1', 'bluesky', 'comment', 'manual', 'A'),
@@ -121,6 +136,11 @@ SELECT pg_temp.must_fail('brand policy: wider than the brand window',
   'KR004');
 SELECT pg_temp.bound('01900000-0000-7000-8000-000000000442', '01900000-0000-7000-8000-000000000445', 30);
 
+SELECT pg_temp.must_fail('mixed brands: the looser brand window does not apply',
+  $$SELECT pg_temp.bound('01900000-0000-7000-8000-000000000444', '01900000-0000-7000-8000-000000000446', 11)$$,
+  'KR004');
+SELECT pg_temp.bound('01900000-0000-7000-8000-000000000444', '01900000-0000-7000-8000-000000000446', 10);
+
 INSERT INTO approval_request_destinations (workspace_id, request_id, destination_id, content_hash,
                                            schedule_bound)
 VALUES (app_workspace_id(), '01900000-0000-7000-8000-000000000441', '01900000-0000-7000-8000-000000000449',
@@ -150,7 +170,7 @@ SET session_replication_role = origin;
 DO $$
 BEGIN
   IF (SELECT array_agg(tolerance_min ORDER BY destination_id) FROM approval_request_destinations)
-       IS DISTINCT FROM ARRAY[10, 0, 0, 30, 0, NULL] THEN
+       IS DISTINCT FROM ARRAY[10, 0, 0, 30, 10, 0, NULL] THEN
     RAISE EXCEPTION 'unexpected tolerances: %',
       (SELECT array_agg(tolerance_min ORDER BY destination_id) FROM approval_request_destinations);
   END IF;

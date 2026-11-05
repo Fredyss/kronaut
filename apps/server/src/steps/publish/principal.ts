@@ -4,7 +4,7 @@ import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import type { LockedPost } from '../../access/post-access/lock.ts';
 import { type Bound, bindGrantIn, bindUserIn } from '../../base/http/caller/principal.ts';
-import { effectivePolicy } from '../../policy/approval-policy/policy.ts';
+import { postPolicy } from '../../policy/approval-policy/policy.ts';
 
 export interface Scheduler {
   readonly userId: string | null;
@@ -68,7 +68,7 @@ export async function approvalStatus(
       .executeTakeFirst();
     if (request?.state === 'approved') return 'approved';
   }
-  const policy = await effectivePolicy(trx, workspaceId, post.brand_id);
+  const policy = await postPolicy(trx, workspaceId, post.id);
   return policy.mode === 'none' ? 'exempt' : 'missing';
 }
 

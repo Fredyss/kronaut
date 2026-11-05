@@ -7,7 +7,7 @@ import { m } from '../../base/locale/i18n.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
-import { byHour, type Entry, keptTag, slotCompose, slotKey } from './entries.ts';
+import { byHour, type Entry, keptFilter, slotCompose, slotKey } from './entries.ts';
 import { CELL, DROP_OVER, type GridProps, PAST } from './grid.ts';
 import { hourEnded, wallClock } from './time.ts';
 import type { Mover } from './use-mover.ts';
@@ -106,7 +106,7 @@ function HourCell({ day, hour, list, past, formats, mover }: CellProps) {
         {hidden > 0 ? (
           <Link
             to="/"
-            search={(prev) => ({ view: 'day', date, ...keptTag(prev) })}
+            search={(prev) => ({ view: 'day', date, ...keptFilter(prev) })}
             className="relative z-10 self-start rounded px-1 text-muted-foreground text-xs hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
           >
             {calendarText.calendar_more({ count: hidden })}

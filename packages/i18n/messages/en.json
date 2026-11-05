@@ -566,5 +566,12 @@
         "kind=*": "Not shortened."
       }
     }
-  ]
+  ],
+  "brand_filter": "Filter by brand",
+  "brand_filter_all": "All brands",
+  "brand_filter_gone": "Selected brand",
+  "brand_none": "No brand",
+  "channels_brand_of": "Brand of {name}",
+  "channels_brand_saved": "Channel moved to another brand",
+  "channels_brand_archived": "That brand is archived. Pick another one."
 }

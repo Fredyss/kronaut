@@ -4,7 +4,13 @@ import { type AccessScope, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import * as z from 'zod';
-import { excerptOf, loadMains, visibleIn } from '../../access/post-access/reads.ts';
+import {
+  brandFilter,
+  excerptOf,
+  loadMains,
+  onBrand,
+  visibleIn,
+} from '../../access/post-access/reads.ts';
 import { issueDetails } from '../../base/http/input.ts';
 import { invalid } from '../../base/http/issues.ts';
 import { pathId } from '../../base/http/params.ts';
@@ -50,10 +56,10 @@ export const needsActionRoute = defineRoute({
   auth: ['session', 'grant'],
   action: 'posts:read',
   params: z.object({ workspaceId: z.string() }),
-  query: z.object({ limit: z.string().optional() }),
+  query: z.object({ limit: z.string().optional(), brand: z.string().optional() }),
   response: NeedsActionSchema,
   summary: 'List destinations that need action',
-  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}).`,
+  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.`,
   tags: ['destinations'],
 });
 
@@ -66,6 +72,11 @@ const LimitQuery = z.strictObject({
     .optional(),
 });
 
+interface AttentionView {
+  readonly scope: AccessScope | null;
+  readonly brand?: { readonly brandId: string | null } | undefined;
+}
+
 function limitOf(query: z.output<typeof needsActionRoute.query>): number {
   const parsed = LimitQuery.safeParse(query.limit === undefined ? {} : { limit: query.limit });
   if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
@@ -75,8 +86,12 @@ function limitOf(query: z.output<typeof needsActionRoute.query>): number {
 // Literal states, so the planner can match the partial index ix_dest_attention.
 const ATTENTION = sql<boolean>`d.state IN (${sql.join(NEEDS_ACTION.map((state) => sql.lit(state)))})`;
 
-export function attentionQuery(trx: TenantDb, workspaceId: string, scope: AccessScope | null) {
-  const query = trx
+export function attentionQuery(
+  trx: TenantDb,
+  workspaceId: string,
+  { scope, brand }: AttentionView,
+) {
+  let query = trx
     .selectFrom('post_destinations as d')
     .innerJoin('posts as p', (join) =>
       join.onRef('p.workspace_id', '=', 'd.workspace_id').onRef('p.id', '=', 'd.post_id'),
@@ -84,16 +99,17 @@ export function attentionQuery(trx: TenantDb, workspaceId: string, scope: Access
     .where('d.workspace_id', '=', workspaceId)
     .where(ATTENTION)
     .where('p.deleted_at', 'is', null);
+  if (brand !== undefined) query = query.where(onBrand(brand.brandId));
   return scope === null ? query : query.where(visibleIn(scope));
 }
 
 async function loadAttention(
   trx: TenantDb,
   workspaceId: string,
-  scope: AccessScope | null,
+  view: AttentionView,
   limit: number,
 ) {
-  return await attentionQuery(trx, workspaceId, scope)
+  return await attentionQuery(trx, workspaceId, view)
     .innerJoin('social_accounts as a', (join) =>
       join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
     )
@@ -123,11 +139,11 @@ async function loadAttention(
 export async function listNeedsAction(
   trx: TenantDb,
   workspaceId: string,
-  scope: AccessScope | null,
+  view: AttentionView,
   limit: number,
 ): Promise<NeedsActionDto> {
-  const rows = await loadAttention(trx, workspaceId, scope, limit);
-  const { total } = await attentionQuery(trx, workspaceId, scope)
+  const rows = await loadAttention(trx, workspaceId, view, limit);
+  const { total } = await attentionQuery(trx, workspaceId, view)
     .select((eb) => eb.fn.countAll<string>().as('total'))
     .executeTakeFirstOrThrow();
   const postIds = [...new Set(rows.map((row) => row.post_id))];
@@ -164,7 +180,10 @@ export function needsActionRoutes(): BoundRoute[] {
       const decision = ctx.authorize('posts:read', { workspaceId });
       const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
       const limit = limitOf(query);
-      const body = await ctx.tenant((trx) => listNeedsAction(trx, workspaceId, scope, limit));
+      const brand = brandFilter(query.brand);
+      if (brand === 'unknown') return { body: { items: [], total: 0, truncated: false } };
+      const view = { scope, brand };
+      const body = await ctx.tenant((trx) => listNeedsAction(trx, workspaceId, view, limit));
       return { body };
     }),
   ];
