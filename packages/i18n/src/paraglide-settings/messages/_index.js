@@ -94,6 +94,29 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Feeds_EmptyInputs */
 /** @typedef {{}} Settings_Feeds_IntroInputs */
 /** @typedef {{}} Settings_Feeds_TitleInputs */
+/** @typedef {{}} Settings_Group_AddInputs */
+/** @typedef {{}} Settings_Group_CancelInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Group_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_CreatedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_DeleteInputs */
+/** @typedef {{}} Settings_Group_Delete_BodyInputs */
+/** @typedef {{}} Settings_Group_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Delete_TitleInputs */
+/** @typedef {{}} Settings_Group_DeletedInputs */
+/** @typedef {{}} Settings_Group_DoneInputs */
+/** @typedef {{}} Settings_Group_KeepInputs */
+/** @typedef {{}} Settings_Group_MembersInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Members_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_NameInputs */
+/** @typedef {{}} Settings_Group_Name_InvalidInputs */
+/** @typedef {{}} Settings_Group_Name_LabelInputs */
+/** @typedef {{}} Settings_Group_Name_TakenInputs */
+/** @typedef {{}} Settings_Group_NewInputs */
+/** @typedef {{}} Settings_Group_No_ChannelsInputs */
+/** @typedef {{}} Settings_Group_SavedInputs */
+/** @typedef {{}} Settings_Groups_EmptyInputs */
+/** @typedef {{}} Settings_Groups_IntroInputs */
+/** @typedef {{}} Settings_Groups_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -1631,6 +1654,352 @@ export const settings_feeds_title = /** @type {((inputs?: Settings_Feeds_TitleIn
 	if (locale === "sk") return __sk.settings_feeds_title(inputs)
 	if (locale === "cs") return __cs.settings_feeds_title(inputs)
 	return __en.settings_feeds_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add group" |
+*
+* @param {Settings_Group_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_add = /** @type {((inputs?: Settings_Group_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_add(inputs)
+	if (locale === "cs") return __cs.settings_group_add(inputs)
+	return __en.settings_group_add(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Group_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_cancel = /** @type {((inputs?: Settings_Group_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_cancel(inputs)
+	if (locale === "cs") return __cs.settings_group_cancel(inputs)
+	return __en.settings_group_cancel(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} channel" |
+* | * | "{count} channels" |
+*
+* @param {Settings_Group_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_channels = /** @type {((inputs: Settings_Group_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_channels(inputs)
+	if (locale === "cs") return __cs.settings_group_channels(inputs)
+	return __en.settings_group_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Group {name} added" |
+*
+* @param {Settings_Group_CreatedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_created = /** @type {((inputs: Settings_Group_CreatedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_CreatedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_created(inputs)
+	if (locale === "cs") return __cs.settings_group_created(inputs)
+	return __en.settings_group_created(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete group {name}" |
+*
+* @param {Settings_Group_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_delete = /** @type {((inputs: Settings_Group_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_delete(inputs)
+	if (locale === "cs") return __cs.settings_group_delete(inputs)
+	return __en.settings_group_delete(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Posts keep their channels. Only the group goes away." |
+*
+* @param {Settings_Group_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_delete_body = /** @type {((inputs?: Settings_Group_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_delete_body(inputs)
+	if (locale === "cs") return __cs.settings_group_delete_body(inputs)
+	return __en.settings_group_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete group" |
+*
+* @param {Settings_Group_Delete_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_delete_confirm = /** @type {((inputs?: Settings_Group_Delete_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Delete_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_delete_confirm(inputs)
+	if (locale === "cs") return __cs.settings_group_delete_confirm(inputs)
+	return __en.settings_group_delete_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete group “{name}”?" |
+*
+* @param {Settings_Group_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_delete_title = /** @type {((inputs: Settings_Group_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_delete_title(inputs)
+	if (locale === "cs") return __cs.settings_group_delete_title(inputs)
+	return __en.settings_group_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Group deleted" |
+*
+* @param {Settings_Group_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_deleted = /** @type {((inputs?: Settings_Group_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_deleted(inputs)
+	if (locale === "cs") return __cs.settings_group_deleted(inputs)
+	return __en.settings_group_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Done" |
+*
+* @param {Settings_Group_DoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_done = /** @type {((inputs?: Settings_Group_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_done(inputs)
+	if (locale === "cs") return __cs.settings_group_done(inputs)
+	return __en.settings_group_done(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep group" |
+*
+* @param {Settings_Group_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_keep = /** @type {((inputs?: Settings_Group_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_keep(inputs)
+	if (locale === "cs") return __cs.settings_group_keep(inputs)
+	return __en.settings_group_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channels" |
+*
+* @param {Settings_Group_MembersInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_members = /** @type {((inputs?: Settings_Group_MembersInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_MembersInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_members(inputs)
+	if (locale === "cs") return __cs.settings_group_members(inputs)
+	return __en.settings_group_members(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channels of group {name}" |
+*
+* @param {Settings_Group_Members_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_members_of = /** @type {((inputs: Settings_Group_Members_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Members_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_members_of(inputs)
+	if (locale === "cs") return __cs.settings_group_members_of(inputs)
+	return __en.settings_group_members_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Name of group {name}" |
+*
+* @param {Settings_Group_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_name = /** @type {((inputs: Settings_Group_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_name(inputs)
+	if (locale === "cs") return __cs.settings_group_name(inputs)
+	return __en.settings_group_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Enter a name of 1 to 120 characters." |
+*
+* @param {Settings_Group_Name_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_name_invalid = /** @type {((inputs?: Settings_Group_Name_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Name_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_name_invalid(inputs)
+	if (locale === "cs") return __cs.settings_group_name_invalid(inputs)
+	return __en.settings_group_name_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Group name" |
+*
+* @param {Settings_Group_Name_LabelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_name_label = /** @type {((inputs?: Settings_Group_Name_LabelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Name_LabelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_name_label(inputs)
+	if (locale === "cs") return __cs.settings_group_name_label(inputs)
+	return __en.settings_group_name_label(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A group with this name already exists." |
+*
+* @param {Settings_Group_Name_TakenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_name_taken = /** @type {((inputs?: Settings_Group_Name_TakenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_Name_TakenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_name_taken(inputs)
+	if (locale === "cs") return __cs.settings_group_name_taken(inputs)
+	return __en.settings_group_name_taken(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "New group" |
+*
+* @param {Settings_Group_NewInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_new = /** @type {((inputs?: Settings_Group_NewInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_NewInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_new(inputs)
+	if (locale === "cs") return __cs.settings_group_new(inputs)
+	return __en.settings_group_new(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Connect a channel first." |
+*
+* @param {Settings_Group_No_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_no_channels = /** @type {((inputs?: Settings_Group_No_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_No_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_no_channels(inputs)
+	if (locale === "cs") return __cs.settings_group_no_channels(inputs)
+	return __en.settings_group_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Group saved" |
+*
+* @param {Settings_Group_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_group_saved = /** @type {((inputs?: Settings_Group_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Group_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_group_saved(inputs)
+	if (locale === "cs") return __cs.settings_group_saved(inputs)
+	return __en.settings_group_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No groups yet." |
+*
+* @param {Settings_Groups_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_groups_empty = /** @type {((inputs?: Settings_Groups_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Groups_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_groups_empty(inputs)
+	if (locale === "cs") return __cs.settings_groups_empty(inputs)
+	return __en.settings_groups_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Save channels you often post to together as a group. In the composer, a group adds all its channels at once. Groups never change who can see or do what." |
+*
+* @param {Settings_Groups_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_groups_intro = /** @type {((inputs?: Settings_Groups_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Groups_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_groups_intro(inputs)
+	if (locale === "cs") return __cs.settings_groups_intro(inputs)
+	return __en.settings_groups_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Groups" |
+*
+* @param {Settings_Groups_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_groups_title = /** @type {((inputs?: Settings_Groups_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Groups_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_groups_title(inputs)
+	if (locale === "cs") return __cs.settings_groups_title(inputs)
+	return __en.settings_groups_title(inputs)
 });
 /**
 * | output |

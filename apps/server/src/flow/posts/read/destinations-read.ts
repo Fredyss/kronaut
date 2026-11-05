@@ -40,6 +40,7 @@ function destinationRows(trx: TenantDb, workspaceId: string, postId: string) {
       'd.published_at',
       'd.last_error_code',
       'd.skip_signature',
+      'd.source_group_id',
       'd.frozen_signature',
       'ard.destination_id as requested_id',
       'ard.frozen_signature as requested_signature',
@@ -70,6 +71,7 @@ export async function loadDestinations(trx: TenantDb, workspaceId: string, postI
     publishedAt: iso(d.published_at),
     lastErrorCode: d.last_error_code,
     skipSignature: d.skip_signature,
+    sourceGroupId: d.source_group_id === null ? null : encodePublicId('group', d.source_group_id),
     signature: d.requested_id === null ? d.frozen_signature : d.requested_signature,
     signatureHeld: d.state !== 'draft' || d.requested_id !== null,
   }));

@@ -44,6 +44,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Group_Add_OfInputs */
+/** @typedef {{}} Compose_GroupsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_DownInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_UpInputs */
@@ -747,6 +749,36 @@ export const compose_error_upload_channel = /** @type {((inputs: Compose_Error_U
 	if (locale === "sk") return __sk.compose_error_upload_channel(inputs)
 	if (locale === "cs") return __cs.compose_error_upload_channel(inputs)
 	return __en.compose_error_upload_channel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add the channels of group {name}" |
+*
+* @param {Compose_Group_Add_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_group_add_of = /** @type {((inputs: Compose_Group_Add_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Group_Add_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_group_add_of(inputs)
+	if (locale === "cs") return __cs.compose_group_add_of(inputs)
+	return __en.compose_group_add_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add a group" |
+*
+* @param {Compose_GroupsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_groups = /** @type {((inputs?: Compose_GroupsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_GroupsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_groups(inputs)
+	if (locale === "cs") return __cs.compose_groups(inputs)
+	return __en.compose_groups(inputs)
 });
 /**
 * | output |

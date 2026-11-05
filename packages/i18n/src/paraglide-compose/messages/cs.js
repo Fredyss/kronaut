@@ -42,6 +42,8 @@
 /** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Compose_Group_Add_OfInputs */
+/** @typedef {{}} Compose_GroupsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Image_Bad_TypeInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_DownInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_Move_UpInputs */
@@ -277,6 +279,14 @@ export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInpu
 
 export const compose_error_upload_channel = /** @type {(inputs: Compose_Error_Upload_ChannelInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Obrázek ${i?.position} pro ${i?.channel} se nepodařilo nahrát.`)
+};
+
+export const compose_group_add_of = /** @type {(inputs: Compose_Group_Add_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Přidat kanály ze skupiny ${i?.name}`)
+};
+
+export const compose_groups = /** @type {(inputs: Compose_GroupsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přidat skupinu`)
 };
 
 export const compose_image_bad_type = /** @type {(inputs: Compose_Image_Bad_TypeInputs) => LocalizedString} */ (i) => {

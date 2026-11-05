@@ -8,8 +8,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { PostSummary } from '../../records/posts/queries.ts';
-import { type Entry, keptFilter } from './entries.ts';
+import { keptFilter, type PostSummary } from '../../records/posts/queries.ts';
+import type { Entry } from './entries.ts';
 import {
   canLand,
   dayDelta,

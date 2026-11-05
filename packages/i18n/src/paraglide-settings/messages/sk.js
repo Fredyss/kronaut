@@ -92,6 +92,29 @@
 /** @typedef {{}} Settings_Feeds_EmptyInputs */
 /** @typedef {{}} Settings_Feeds_IntroInputs */
 /** @typedef {{}} Settings_Feeds_TitleInputs */
+/** @typedef {{}} Settings_Group_AddInputs */
+/** @typedef {{}} Settings_Group_CancelInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Group_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_CreatedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_DeleteInputs */
+/** @typedef {{}} Settings_Group_Delete_BodyInputs */
+/** @typedef {{}} Settings_Group_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Delete_TitleInputs */
+/** @typedef {{}} Settings_Group_DeletedInputs */
+/** @typedef {{}} Settings_Group_DoneInputs */
+/** @typedef {{}} Settings_Group_KeepInputs */
+/** @typedef {{}} Settings_Group_MembersInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Members_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_NameInputs */
+/** @typedef {{}} Settings_Group_Name_InvalidInputs */
+/** @typedef {{}} Settings_Group_Name_LabelInputs */
+/** @typedef {{}} Settings_Group_Name_TakenInputs */
+/** @typedef {{}} Settings_Group_NewInputs */
+/** @typedef {{}} Settings_Group_No_ChannelsInputs */
+/** @typedef {{}} Settings_Group_SavedInputs */
+/** @typedef {{}} Settings_Groups_EmptyInputs */
+/** @typedef {{}} Settings_Groups_IntroInputs */
+/** @typedef {{}} Settings_Groups_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -611,6 +634,102 @@ export const settings_feeds_intro = /** @type {(inputs: Settings_Feeds_IntroInpu
 
 export const settings_feeds_title = /** @type {(inputs: Settings_Feeds_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zdroje RSS`)
+};
+
+export const settings_group_add = /** @type {(inputs: Settings_Group_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať skupinu`)
+};
+
+export const settings_group_cancel = /** @type {(inputs: Settings_Group_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušiť`)
+};
+
+export const settings_group_channels = /** @type {(inputs: Settings_Group_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanála`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálov`)
+};
+
+export const settings_group_created = /** @type {(inputs: Settings_Group_CreatedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Skupina ${i?.name} je pridaná`)
+};
+
+export const settings_group_delete = /** @type {(inputs: Settings_Group_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť skupinu ${i?.name}`)
+};
+
+export const settings_group_delete_body = /** @type {(inputs: Settings_Group_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevky si svoje kanály ponechajú. Zmizne iba skupina.`)
+};
+
+export const settings_group_delete_confirm = /** @type {(inputs: Settings_Group_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť skupinu`)
+};
+
+export const settings_group_delete_title = /** @type {(inputs: Settings_Group_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť skupinu „${i?.name}“?`)
+};
+
+export const settings_group_deleted = /** @type {(inputs: Settings_Group_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupina je odstránená`)
+};
+
+export const settings_group_done = /** @type {(inputs: Settings_Group_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Hotovo`)
+};
+
+export const settings_group_keep = /** @type {(inputs: Settings_Group_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechať skupinu`)
+};
+
+export const settings_group_members = /** @type {(inputs: Settings_Group_MembersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanály`)
+};
+
+export const settings_group_members_of = /** @type {(inputs: Settings_Group_Members_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanály skupiny ${i?.name}`)
+};
+
+export const settings_group_name = /** @type {(inputs: Settings_Group_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Názov skupiny ${i?.name}`)
+};
+
+export const settings_group_name_invalid = /** @type {(inputs: Settings_Group_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadajte názov s dĺžkou 1 až 120 znakov.`)
+};
+
+export const settings_group_name_label = /** @type {(inputs: Settings_Group_Name_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Názov skupiny`)
+};
+
+export const settings_group_name_taken = /** @type {(inputs: Settings_Group_Name_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupina s týmto názvom už existuje.`)
+};
+
+export const settings_group_new = /** @type {(inputs: Settings_Group_NewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nová skupina`)
+};
+
+export const settings_group_no_channels = /** @type {(inputs: Settings_Group_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Najprv pripojte kanál.`)
+};
+
+export const settings_group_saved = /** @type {(inputs: Settings_Group_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupina je uložená`)
+};
+
+export const settings_groups_empty = /** @type {(inputs: Settings_Groups_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ tu nie sú žiadne skupiny.`)
+};
+
+export const settings_groups_intro = /** @type {(inputs: Settings_Groups_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanály, do ktorých často uverejňujete spolu, si uložte ako skupinu. Pri písaní príspevku potom skupina pridá všetky svoje kanály naraz. Skupiny nikdy nemenia, kto čo vidí alebo smie robiť.`)
+};
+
+export const settings_groups_title = /** @type {(inputs: Settings_Groups_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupiny`)
 };
 
 export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {

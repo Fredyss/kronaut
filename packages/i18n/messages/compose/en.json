@@ -132,5 +132,7 @@
   "compose_brand_select_all": "Select all",
   "compose_brand_clear": "Clear",
   "compose_brand_select_all_of": "Select all channels of {name}",
-  "compose_brand_clear_of": "Clear the channels of {name}"
+  "compose_brand_clear_of": "Clear the channels of {name}",
+  "compose_groups": "Add a group",
+  "compose_group_add_of": "Add the channels of group {name}"
 }

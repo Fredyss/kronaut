@@ -21,18 +21,19 @@ function anyOf(ids: readonly string[]) {
   return sql`${[...ids]}::uuid[]`;
 }
 
+export function accountInScope(scope: AccessScope) {
+  return sql<boolean>`(a.id = ANY(${anyOf(scope.socialAccountIds)})
+    OR a.brand_id = ANY(${anyOf(scope.brandIds)}) OR a.location_id = ANY(${anyOf(scope.locationIds)}))`;
+}
+
 export function visibleIn(scope: AccessScope) {
-  const accounts = anyOf(scope.socialAccountIds);
-  const brands = anyOf(scope.brandIds);
-  const locations = anyOf(scope.locationIds);
   return sql<boolean>`(
     EXISTS (SELECT 1 FROM post_destinations s WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id)
     AND NOT EXISTS (
       SELECT 1 FROM post_destinations s
       JOIN social_accounts a ON a.workspace_id = s.workspace_id AND a.id = s.social_account_id
       WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id
-        AND NOT coalesce(a.id = ANY(${accounts}) OR a.brand_id = ANY(${brands})
-          OR a.location_id = ANY(${locations}), false)))`;
+        AND NOT coalesce(${accountInScope(scope)}, false)))`;
 }
 
 type BrandFilter = { readonly brandId: string | null } | 'unknown' | undefined;
@@ -50,6 +51,22 @@ export function onBrand(brandId: string | null) {
     SELECT 1 FROM post_destinations s
     JOIN social_accounts a ON a.workspace_id = s.workspace_id AND a.id = s.social_account_id
     WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id AND s.state <> 'canceled' AND ${match})`;
+}
+
+type GroupFilter = { readonly groupId: string } | 'unknown' | undefined;
+
+export function groupFilter(param: string | undefined): GroupFilter {
+  if (param === undefined) return undefined;
+  const groupId = decodePublicId('group', param);
+  return groupId === null ? 'unknown' : { groupId };
+}
+
+export function onGroup(groupId: string) {
+  return sql<boolean>`EXISTS (
+    SELECT 1 FROM post_destinations s
+    JOIN account_group_members m ON m.workspace_id = s.workspace_id AND m.social_account_id = s.social_account_id
+    WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id AND s.state <> 'canceled'
+      AND m.group_id = ${groupId})`;
 }
 
 export async function loadMains(trx: TenantDb, workspaceId: string, ids: readonly string[]) {

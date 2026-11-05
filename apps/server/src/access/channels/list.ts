@@ -11,6 +11,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import type { ProviderEntry, ProviderRegistry } from '../../base/providers/providers.ts';
+import { loadChannelGroups } from './groups.ts';
 import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
 const Instant = z.iso.datetime();
@@ -72,6 +73,7 @@ const ChannelSchema = z.object({
   signature: SignatureSchema.nullable(),
   shortenLinks: z.boolean(),
   brandId: z.string().nullable(),
+  groupIds: z.array(z.string()),
 });
 
 export const channelListRoute = defineRoute({
@@ -83,7 +85,8 @@ export const channelListRoute = defineRoute({
   params: z.object({ workspaceId: z.string() }),
   response: z.object({ items: z.array(ChannelSchema) }),
   summary: 'List the connected channels',
-  description: 'A key without posts:read gets signature: null on every channel.',
+  description:
+    'A key without posts:read gets signature: null on every channel, and a key without groups:read gets groupIds: [].',
   tags: ['channels'],
 });
 
@@ -160,13 +163,14 @@ function insightsGranted(capabilities: unknown): boolean {
 interface ChannelListOptions {
   readonly scope: AccessScope | null;
   readonly hideSignatures: boolean;
+  readonly hideGroups: boolean;
 }
 
 export async function listChannels(
   trx: TenantDb,
   workspaceId: string,
   providers: ProviderRegistry,
-  { scope, hideSignatures }: ChannelListOptions,
+  { scope, hideSignatures, hideGroups }: ChannelListOptions,
 ): Promise<z.output<typeof ChannelSchema>[]> {
   let query = trx
     .selectFrom('social_accounts')
@@ -198,6 +202,11 @@ export async function listChannels(
     );
   }
   const rows = await query.orderBy('created_at').orderBy('id').execute();
+  const groupsOf = await loadChannelGroups(
+    trx,
+    workspaceId,
+    hideGroups ? [] : rows.map((row) => row.id),
+  );
   const signatures = await loadSignatures(
     trx,
     workspaceId,
@@ -223,6 +232,7 @@ export async function listChannels(
       signature: signatures.get(row.saved_text_id ?? '') ?? null,
       shortenLinks: row.shorten_links,
       brandId: row.brand_id === null ? null : encodePublicId('brand', row.brand_id),
+      groupIds: groupsOf.get(row.id) ?? [],
     });
   });
 }

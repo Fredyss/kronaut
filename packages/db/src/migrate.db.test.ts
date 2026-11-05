@@ -42,6 +42,8 @@ const ALL = [
   '0031_short_links',
   '0032_brand_policy_guards',
   '0033_brand_name_unique',
+  '0034_account_group_name_unique',
+  '0035_destination_source_group_index',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -132,7 +134,7 @@ describe('migrate', () => {
     );
     expect(rows.map((row) => row.version)).toEqual([
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-      27, 28, 29, 30, 31, 32, 33,
+      27, 28, 29, 30, 31, 32, 33, 34, 35,
     ]);
     expect(rows[0]).toMatchObject({ version: 1, name: 'v1' });
     expect(rows[0]?.sha256).toMatch(/^[0-9a-f]{64}$/);

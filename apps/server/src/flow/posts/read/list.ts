@@ -6,8 +6,10 @@ import * as z from 'zod';
 import {
   brandFilter,
   excerptOf,
+  groupFilter,
   loadMains,
   onBrand,
+  onGroup,
   visibleIn,
 } from '../../../access/post-access/reads.ts';
 import { pathId } from '../../../base/http/params.ts';
@@ -29,7 +31,7 @@ export const postListRoute = defineRoute({
   query: ListQuery,
   response: z.object({ items: z.array(PostSummarySchema), truncated: z.boolean() }),
   summary: 'List posts',
-  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.`,
+  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list. Filters combine.`,
   tags: ['posts'],
 });
 
@@ -49,11 +51,12 @@ interface PostQuery {
   readonly scope: AccessScope | null;
   readonly tagId: string | undefined;
   readonly brand: { readonly brandId: string | null } | undefined;
+  readonly group: { readonly groupId: string } | undefined;
 }
 
 async function loadPosts(
   trx: TenantDb,
-  { workspaceId, scope, tagId, brand }: PostQuery,
+  { workspaceId, scope, tagId, brand, group }: PostQuery,
   filter: ListFilter,
 ) {
   let query = trx
@@ -63,6 +66,7 @@ async function loadPosts(
     .where('p.deleted_at', 'is', null);
   if (scope !== null) query = query.where(visibleIn(scope));
   if (brand !== undefined) query = query.where(onBrand(brand.brandId));
+  if (group !== undefined) query = query.where(onGroup(group.groupId));
   if (tagId !== undefined) {
     query = query.where((eb) =>
       eb.exists(
@@ -179,8 +183,11 @@ export async function listPosts(
 ): Promise<{ items: PostSummaryDto[]; truncated: boolean }> {
   const tagId = filter.tag === undefined ? undefined : decodePublicId('tag', filter.tag);
   const brand = brandFilter(filter.brand);
-  if (tagId === null || brand === 'unknown') return { items: [], truncated: false };
-  const { rows, max } = await loadPosts(trx, { workspaceId, scope, tagId, brand }, filter);
+  const group = groupFilter(filter.group);
+  if (tagId === null || brand === 'unknown' || group === 'unknown') {
+    return { items: [], truncated: false };
+  }
+  const { rows, max } = await loadPosts(trx, { workspaceId, scope, tagId, brand, group }, filter);
   const posts = rows.slice(0, max);
   if (posts.length === 0) return { items: [], truncated: false };
   const ids = posts.map((post) => post.id);

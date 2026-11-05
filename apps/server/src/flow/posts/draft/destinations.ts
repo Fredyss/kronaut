@@ -9,6 +9,7 @@ import { HttpError } from '../../../base/http/errors.ts';
 import type { ProviderRegistry } from '../../../base/providers/providers.ts';
 import type { Resolving } from '../deps.ts';
 import { UNFROZEN } from '../schedule/freeze.ts';
+import { resolveSourceGroups } from './source-groups.ts';
 
 const DestinationInput = z.object({
   accountId: z.string(),
@@ -17,6 +18,7 @@ const DestinationInput = z.object({
   deliveryMode: z.enum(['auto', 'reminder']).optional(),
   variant: z.number().int().min(0).nullable().optional(),
   skipSignature: z.boolean().optional(),
+  sourceGroupId: z.string().nullable().optional(),
 });
 
 export const DestinationsInput = z.array(DestinationInput).superRefine((list, ctx) => {
@@ -41,6 +43,7 @@ export interface ResolvedDestination {
   readonly deliveryMode: 'auto' | 'reminder';
   readonly variant: number | null;
   readonly skipSignature: boolean;
+  readonly sourceGroupId: string | null;
 }
 
 export interface PlacedDestination extends ResolvedDestination {
@@ -62,7 +65,7 @@ function pairKey(accountId: string, publishType: string): string {
 function resolvedOf(
   account: { readonly id: string; readonly provider: string; readonly display_name: string },
   d: DestinationBody,
-  settings: Record<string, unknown>,
+  { settings, sourceGroupId }: Pick<ResolvedDestination, 'settings' | 'sourceGroupId'>,
 ): ResolvedDestination {
   return {
     accountId: account.id,
@@ -73,6 +76,7 @@ function resolvedOf(
     deliveryMode: d.deliveryMode ?? 'auto',
     variant: d.variant ?? null,
     skipSignature: d.skipSignature ?? false,
+    sourceGroupId,
   };
 }
 
@@ -80,6 +84,7 @@ export async function resolveDestinations(
   { trx, workspaceId, details }: Resolving,
   providers: ProviderRegistry,
   list: readonly DestinationBody[],
+  postId?: string,
 ): Promise<{ destinations: ResolvedDestination[]; units: ScopeUnit[] }> {
   const ids = list.map((d) => decodePublicId('socialAccount', d.accountId));
   const known = ids.filter((id) => id !== null);
@@ -93,6 +98,15 @@ export async function resolveDestinations(
           .where('id', 'in', known)
           .execute();
   const byId = new Map(rows.map((row) => [row.id, row]));
+  const groupOf = await resolveSourceGroups(
+    { trx, workspaceId, details },
+    list.map((d, index) => {
+      const id = ids[index];
+      const accountId = id !== null && id !== undefined && byId.has(id) ? id : null;
+      return { index, accountId, publishType: d.publishType, sourceGroupId: d.sourceGroupId };
+    }),
+    postId,
+  );
   const destinations: ResolvedDestination[] = [];
   for (const [index, d] of list.entries()) {
     const path = `body.destinations.${index}`;
@@ -122,7 +136,9 @@ export async function resolveDestinations(
       );
       continue;
     }
-    destinations.push(resolvedOf(account, d, parsed.data as Record<string, unknown>));
+    const settingsOf = parsed.data as Record<string, unknown>;
+    const sourceGroupId = groupOf.get(index) ?? null;
+    destinations.push(resolvedOf(account, d, { settings: settingsOf, sourceGroupId }));
   }
   const units = rows.map((row) => scopeUnit(row.id, row.brand_id, row.location_id));
   return { destinations, units };
@@ -181,6 +197,12 @@ export async function restartPublishProgress(
     .execute();
 }
 
+function selectionOf(sourceGroupId: string | null) {
+  return sourceGroupId === null
+    ? ({ selection_source: 'manual', source_group_id: null } as const)
+    : ({ selection_source: 'group', source_group_id: sourceGroupId } as const);
+}
+
 export async function insertDestinations(
   trx: TenantDb,
   { workspaceId, postId }: PostRef,
@@ -200,7 +222,7 @@ export async function insertDestinations(
         delivery_mode: d.deliveryMode,
         settings: JSON.stringify(d.settings),
         skip_signature: d.skipSignature,
-        selection_source: 'manual',
+        ...selectionOf(d.sourceGroupId),
         account_label: d.accountLabel,
       })),
     )
@@ -244,6 +266,7 @@ export async function replaceDestinations(
         delivery_mode: d.deliveryMode,
         variant_id: d.variantId,
         skip_signature: d.skipSignature,
+        ...selectionOf(d.sourceGroupId),
         ...(row.frozen_post_version === null ? {} : UNFROZEN),
         ...(row.state === 'canceled'
           ? { state: 'draft', state_reason: null, version: sql<number>`version + 1` }

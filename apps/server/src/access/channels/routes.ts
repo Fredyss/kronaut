@@ -19,9 +19,13 @@ function bindList(deps: ChannelRouteDeps) {
     if (workspaceId === null) throw new HttpError('not_found', 'Not found.');
     const decision = ctx.authorize('channels:read', { workspaceId });
     const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
-    const hideSignatures =
-      ctx.principal?.kind === 'grant' && !ctx.principal.scopes.includes('posts:read');
-    const options = { scope, hideSignatures };
+    const grantLacks = (needed: string) =>
+      ctx.principal?.kind === 'grant' && !ctx.principal.scopes.includes(needed);
+    const options = {
+      scope,
+      hideSignatures: grantLacks('posts:read'),
+      hideGroups: grantLacks('groups:read'),
+    };
     const items = await ctx.tenant((trx) =>
       listChannels(trx, workspaceId, deps.providers, options),
     );

@@ -37,6 +37,7 @@ export const PostDestinationSchema = z.object({
   lastErrorCode: z.string().nullable(),
   variant: z.number().int().nonnegative().nullable(),
   skipSignature: z.boolean(),
+  sourceGroupId: z.string().nullable(),
   signature: JsonObject.nullable(),
   signatureHeld: z.boolean(),
 });

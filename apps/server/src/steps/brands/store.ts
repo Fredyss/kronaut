@@ -4,6 +4,7 @@ import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { auditActor } from '../../access/audit/write.ts';
 import { clearChannelBrands } from '../../access/channels/brand.ts';
+import { accountInScope } from '../../access/post-access/reads.ts';
 import { HttpError } from '../../base/http/errors.ts';
 import type { RequestContext } from '../../base/http/request.ts';
 import { freeSlug, slugBase } from './slug.ts';
@@ -54,9 +55,7 @@ function anyOf(ids: readonly string[]) {
 }
 
 function channelIn(scope: AccessScope | null) {
-  if (scope === null) return sql<boolean>`true`;
-  return sql<boolean>`(a.id = ANY(${anyOf(scope.socialAccountIds)})
-    OR a.brand_id = ANY(${anyOf(scope.brandIds)}) OR a.location_id = ANY(${anyOf(scope.locationIds)}))`;
+  return scope === null ? sql<boolean>`true` : accountInScope(scope);
 }
 
 function brandRows(trx: TenantDb, workspaceId: string, scope: AccessScope | null) {

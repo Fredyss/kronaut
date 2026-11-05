@@ -24,7 +24,7 @@ export function CalendarPage() {
   const now = today(timeZone);
   const current = parseDate(search.date) ?? now;
   const firstDay = firstDayOfWeek(locale, browserLanguage());
-  const filter = { tag: search.tag, brand: search.brand };
+  const filter = { tag: search.tag, brand: search.brand, group: search.group };
   const range = visibleRange(view === 'list' ? 'week' : view, current, firstDay, timeZone);
   return (
     <div className="flex w-full flex-1 flex-col md:flex-row">

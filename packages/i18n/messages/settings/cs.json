@@ -360,5 +360,39 @@
   "settings_brand_override_removed": "Značka se znovu řídí pravidly pracovního prostoru.",
   "settings_brand_uses_workspace": "Řídí se pravidly pracovního prostoru",
   "settings_brand_strictest": "Pro příspěvek do kanálů více značek platí nejpřísnější pravidla z jeho kanálů.",
-  "settings_brand_policy_title": "Pravidla schvalování pro {name}"
+  "settings_brand_policy_title": "Pravidla schvalování pro {name}",
+  "settings_groups_title": "Skupiny",
+  "settings_groups_intro": "Kanály, do kterých často zveřejňujete společně, si uložte jako skupinu. Při psaní příspěvku pak skupina přidá všechny své kanály najednou. Skupiny nikdy nemění, kdo co vidí nebo smí dělat.",
+  "settings_groups_empty": "Zatím tu nejsou žádné skupiny.",
+  "settings_group_new": "Nová skupina",
+  "settings_group_name_label": "Název skupiny",
+  "settings_group_add": "Přidat skupinu",
+  "settings_group_cancel": "Zrušit",
+  "settings_group_created": "Skupina {name} je přidaná",
+  "settings_group_saved": "Skupina je uložená",
+  "settings_group_deleted": "Skupina je odstraněná",
+  "settings_group_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál",
+        "countPlural=few": "{count} kanály",
+        "countPlural=many": "{count} kanálu",
+        "countPlural=*": "{count} kanálů"
+      }
+    }
+  ],
+  "settings_group_name": "Název skupiny {name}",
+  "settings_group_members": "Kanály",
+  "settings_group_members_of": "Kanály skupiny {name}",
+  "settings_group_done": "Hotovo",
+  "settings_group_no_channels": "Nejdřív připojte kanál.",
+  "settings_group_delete": "Odstranit skupinu {name}",
+  "settings_group_delete_title": "Odstranit skupinu „{name}“?",
+  "settings_group_delete_body": "Příspěvky si své kanály ponechají. Zmizí jen skupina.",
+  "settings_group_keep": "Ponechat skupinu",
+  "settings_group_delete_confirm": "Odstranit skupinu",
+  "settings_group_name_taken": "Skupina s tímto názvem už existuje.",
+  "settings_group_name_invalid": "Zadejte název o délce 1 až 120 znaků."
 }

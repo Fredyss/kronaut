@@ -23,6 +23,17 @@ describe('brand filter', () => {
   });
 });
 
+describe('group filter', () => {
+  it('keeps a public group id and drops anything else, beside a brand', () => {
+    const group = 'grp_01jbcdefghjkmnpqrstvwxyz01';
+    const brand = 'brand_01jbcdefghjkmnpqrstvwxyz01';
+    expect(calendarSearch({ group, brand })).toEqual({ group, brand });
+    expect(calendarSearch({ group: 'none' })).toEqual({});
+    expect(calendarSearch({ group: 'brand_01jbcdefghjkmnpqrstvwxyz01' })).toEqual({});
+    expect(calendarSearch({ group: [group] })).toEqual({});
+  });
+});
+
 describe('slot to composer', () => {
   it('opens the composer at the slot in the shown time zone', () => {
     const search = slotCompose(slotKey('2026-10-01', 9), 'Europe/Bratislava');

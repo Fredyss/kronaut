@@ -162,7 +162,7 @@ export function updateRoutes(deps: PostRouteDeps): BoundRoute[] {
         const resolved =
           body.destinations === undefined
             ? undefined
-            : await resolveDestinations(resolving, deps.providers, body.destinations);
+            : await resolveDestinations(resolving, deps.providers, body.destinations, postId);
         const units = [...(await postUnits(trx, workspaceId, locked)), ...(resolved?.units ?? [])];
         ctx.authorize('posts:draft', { workspaceId, postId, units });
         checkVersion(locked, body.expectedVersion);

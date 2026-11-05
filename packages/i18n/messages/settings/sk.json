@@ -360,5 +360,39 @@
   "settings_brand_override_removed": "Značka sa znova riadi pravidlami pracovného priestoru.",
   "settings_brand_uses_workspace": "Riadi sa pravidlami pracovného priestoru",
   "settings_brand_strictest": "Pre príspevok do kanálov viacerých značiek platia najprísnejšie pravidlá spomedzi jeho kanálov.",
-  "settings_brand_policy_title": "Pravidlá schvaľovania pre {name}"
+  "settings_brand_policy_title": "Pravidlá schvaľovania pre {name}",
+  "settings_groups_title": "Skupiny",
+  "settings_groups_intro": "Kanály, do ktorých často uverejňujete spolu, si uložte ako skupinu. Pri písaní príspevku potom skupina pridá všetky svoje kanály naraz. Skupiny nikdy nemenia, kto čo vidí alebo smie robiť.",
+  "settings_groups_empty": "Zatiaľ tu nie sú žiadne skupiny.",
+  "settings_group_new": "Nová skupina",
+  "settings_group_name_label": "Názov skupiny",
+  "settings_group_add": "Pridať skupinu",
+  "settings_group_cancel": "Zrušiť",
+  "settings_group_created": "Skupina {name} je pridaná",
+  "settings_group_saved": "Skupina je uložená",
+  "settings_group_deleted": "Skupina je odstránená",
+  "settings_group_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál",
+        "countPlural=few": "{count} kanály",
+        "countPlural=many": "{count} kanála",
+        "countPlural=*": "{count} kanálov"
+      }
+    }
+  ],
+  "settings_group_name": "Názov skupiny {name}",
+  "settings_group_members": "Kanály",
+  "settings_group_members_of": "Kanály skupiny {name}",
+  "settings_group_done": "Hotovo",
+  "settings_group_no_channels": "Najprv pripojte kanál.",
+  "settings_group_delete": "Odstrániť skupinu {name}",
+  "settings_group_delete_title": "Odstrániť skupinu „{name}“?",
+  "settings_group_delete_body": "Príspevky si svoje kanály ponechajú. Zmizne iba skupina.",
+  "settings_group_keep": "Ponechať skupinu",
+  "settings_group_delete_confirm": "Odstrániť skupinu",
+  "settings_group_name_taken": "Skupina s týmto názvom už existuje.",
+  "settings_group_name_invalid": "Zadajte názov s dĺžkou 1 až 120 znakov."
 }

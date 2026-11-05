@@ -1,10 +1,10 @@
 import { brandsCreate, brandsUpdate } from '@kronaut/sdk';
 import { toast } from '@kronaut/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { detailCodes, errorCode, errorStatus } from '../../base/api/errors.ts';
-import { idempotency, type Keyed, keyFor } from '../../base/api/idempotency.ts';
+import { idempotency, keyFor } from '../../base/api/idempotency.ts';
+import { useNamedCreate } from '../../base/api/named-create.ts';
 import { apiErrorMessage } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { brandsKey } from './queries.ts';
@@ -24,19 +24,11 @@ function reportFailure(error: unknown): void {
 
 export function useCreateBrand(workspaceId: string) {
   const client = useApiClient();
-  const queryClient = useQueryClient();
-  const keyed = useRef<Keyed | null>(null);
-  return useMutation({
-    mutationFn: async (name: string) => {
-      keyed.current = keyFor(keyed.current, name);
-      const headers = idempotency(keyed.current);
-      return (await brandsCreate({ client, path: { workspaceId }, body: { name }, headers })).data;
-    },
-    onSuccess: (brand) => {
-      keyed.current = null;
-      toast(settingsText.settings_brand_created({ name: brand.name }));
-    },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: brandsKey(workspaceId) }),
+  return useNamedCreate({
+    queryKey: brandsKey(workspaceId),
+    create: async (name, headers) =>
+      (await brandsCreate({ client, path: { workspaceId }, body: { name }, headers })).data,
+    created: (brand) => toast(settingsText.settings_brand_created({ name: brand.name })),
   });
 }
 

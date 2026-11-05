@@ -103,7 +103,7 @@ function CalendarContent({
     );
   }
   const nothing = posts.data.items.length === 0 && drafts.data?.items.length === 0;
-  const filtered = filter.tag !== undefined || filter.brand !== undefined;
+  const filtered = [filter.tag, filter.brand, filter.group].some((id) => id !== undefined);
   if (view === 'list' && !filtered && nothing) {
     return <EmptyState />;
   }

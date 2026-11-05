@@ -92,6 +92,29 @@
 /** @typedef {{}} Settings_Feeds_EmptyInputs */
 /** @typedef {{}} Settings_Feeds_IntroInputs */
 /** @typedef {{}} Settings_Feeds_TitleInputs */
+/** @typedef {{}} Settings_Group_AddInputs */
+/** @typedef {{}} Settings_Group_CancelInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Group_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_CreatedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_DeleteInputs */
+/** @typedef {{}} Settings_Group_Delete_BodyInputs */
+/** @typedef {{}} Settings_Group_Delete_ConfirmInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Delete_TitleInputs */
+/** @typedef {{}} Settings_Group_DeletedInputs */
+/** @typedef {{}} Settings_Group_DoneInputs */
+/** @typedef {{}} Settings_Group_KeepInputs */
+/** @typedef {{}} Settings_Group_MembersInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_Members_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Group_NameInputs */
+/** @typedef {{}} Settings_Group_Name_InvalidInputs */
+/** @typedef {{}} Settings_Group_Name_LabelInputs */
+/** @typedef {{}} Settings_Group_Name_TakenInputs */
+/** @typedef {{}} Settings_Group_NewInputs */
+/** @typedef {{}} Settings_Group_No_ChannelsInputs */
+/** @typedef {{}} Settings_Group_SavedInputs */
+/** @typedef {{}} Settings_Groups_EmptyInputs */
+/** @typedef {{}} Settings_Groups_IntroInputs */
+/** @typedef {{}} Settings_Groups_TitleInputs */
 /** @typedef {{}} Settings_In_App_NoteInputs */
 /** @typedef {{}} Settings_Name_FailedInputs */
 /** @typedef {{}} Settings_Name_SavedInputs */
@@ -607,6 +630,100 @@ export const settings_feeds_intro = /** @type {(inputs: Settings_Feeds_IntroInpu
 
 export const settings_feeds_title = /** @type {(inputs: Settings_Feeds_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Feeds`)
+};
+
+export const settings_group_add = /** @type {(inputs: Settings_Group_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add group`)
+};
+
+export const settings_group_cancel = /** @type {(inputs: Settings_Group_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_group_channels = /** @type {(inputs: Settings_Group_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel`);
+	return /** @type {LocalizedString} */ (`${i?.count} channels`)
+};
+
+export const settings_group_created = /** @type {(inputs: Settings_Group_CreatedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Group ${i?.name} added`)
+};
+
+export const settings_group_delete = /** @type {(inputs: Settings_Group_DeleteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete group ${i?.name}`)
+};
+
+export const settings_group_delete_body = /** @type {(inputs: Settings_Group_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posts keep their channels. Only the group goes away.`)
+};
+
+export const settings_group_delete_confirm = /** @type {(inputs: Settings_Group_Delete_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete group`)
+};
+
+export const settings_group_delete_title = /** @type {(inputs: Settings_Group_Delete_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete group “${i?.name}”?`)
+};
+
+export const settings_group_deleted = /** @type {(inputs: Settings_Group_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Group deleted`)
+};
+
+export const settings_group_done = /** @type {(inputs: Settings_Group_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Done`)
+};
+
+export const settings_group_keep = /** @type {(inputs: Settings_Group_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep group`)
+};
+
+export const settings_group_members = /** @type {(inputs: Settings_Group_MembersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channels`)
+};
+
+export const settings_group_members_of = /** @type {(inputs: Settings_Group_Members_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Channels of group ${i?.name}`)
+};
+
+export const settings_group_name = /** @type {(inputs: Settings_Group_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Name of group ${i?.name}`)
+};
+
+export const settings_group_name_invalid = /** @type {(inputs: Settings_Group_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Enter a name of 1 to 120 characters.`)
+};
+
+export const settings_group_name_label = /** @type {(inputs: Settings_Group_Name_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Group name`)
+};
+
+export const settings_group_name_taken = /** @type {(inputs: Settings_Group_Name_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A group with this name already exists.`)
+};
+
+export const settings_group_new = /** @type {(inputs: Settings_Group_NewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New group`)
+};
+
+export const settings_group_no_channels = /** @type {(inputs: Settings_Group_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Connect a channel first.`)
+};
+
+export const settings_group_saved = /** @type {(inputs: Settings_Group_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Group saved`)
+};
+
+export const settings_groups_empty = /** @type {(inputs: Settings_Groups_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No groups yet.`)
+};
+
+export const settings_groups_intro = /** @type {(inputs: Settings_Groups_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Save channels you often post to together as a group. In the composer, a group adds all its channels at once. Groups never change who can see or do what.`)
+};
+
+export const settings_groups_title = /** @type {(inputs: Settings_Groups_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Groups`)
 };
 
 export const settings_in_app_note = /** @type {(inputs: Settings_In_App_NoteInputs) => LocalizedString} */ () => {

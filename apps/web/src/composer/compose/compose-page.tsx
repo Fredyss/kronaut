@@ -57,6 +57,8 @@ export function ComposeForm(props: ComposeFormProps) {
               stored={start.opened?.form.stored ?? NOT_STORED}
               selected={selected}
               setSelected={setSelected}
+              sources={form.picks.sources}
+              setSources={form.picks.setSources}
               pending={pending}
             />
             <ContentSection

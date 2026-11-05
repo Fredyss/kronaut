@@ -49,6 +49,14 @@ export function toPlan(
   return { ...plan, usesDefault: plan.destinations.some((d) => d.variant === null) };
 }
 
+export function withSources(plan: Plan, sources: ReadonlyMap<string, string>): Plan {
+  const destinations = plan.destinations.map((destination) => {
+    const sourceGroupId = sources.get(destination.accountId);
+    return sourceGroupId === undefined ? destination : { ...destination, sourceGroupId };
+  });
+  return { ...plan, destinations };
+}
+
 export function goneProblem(
   stored: Kept,
   list: readonly Channel[],

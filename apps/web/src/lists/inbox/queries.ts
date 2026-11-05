@@ -15,11 +15,25 @@ export function needsActionKey(workspaceId: string) {
   return ['needs-action', workspaceId] as const;
 }
 
-export function needsActionQuery(client: Client, workspaceId: string, brand?: string) {
-  const query = brand === undefined ? {} : { brand };
+export interface NeedsActionFilter {
+  readonly brand?: string | undefined;
+  readonly group?: string | undefined;
+}
+
+export function needsActionQuery(
+  client: Client,
+  workspaceId: string,
+  { brand, group }: NeedsActionFilter = {},
+) {
+  const query = {
+    ...(brand === undefined ? {} : { brand }),
+    ...(group === undefined ? {} : { group }),
+  };
+  const filtered = brand !== undefined || group !== undefined;
   return queryOptions({
-    queryKey:
-      brand === undefined ? needsActionKey(workspaceId) : [...needsActionKey(workspaceId), brand],
+    queryKey: filtered
+      ? [...needsActionKey(workspaceId), brand ?? null, group ?? null]
+      : needsActionKey(workspaceId),
     queryFn: async () =>
       (await destinationsNeedsAction({ client, path: { workspaceId }, query })).data,
     refetchInterval: NEEDS_ACTION_POLL_MS,

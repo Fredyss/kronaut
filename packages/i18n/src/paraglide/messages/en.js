@@ -89,6 +89,9 @@
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
+/** @typedef {{}} Channels_Groups_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_Edit_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_OfInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
@@ -189,6 +192,9 @@
 /** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown> }} Evergreen_CopyInputs */
 /** @typedef {{}} Evergreen_LabelInputs */
 /** @typedef {{ reason: NonNullable<unknown> }} Evergreen_ReasonInputs */
+/** @typedef {{}} Group_FilterInputs */
+/** @typedef {{}} Group_Filter_AllInputs */
+/** @typedef {{}} Group_Filter_GoneInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
@@ -762,6 +768,18 @@ export const channels_followers_change = /** @type {(inputs: Channels_Followers_
 	return /** @type {LocalizedString} */ (`${i?.change} in 30 days`)
 };
 
+export const channels_groups_edit = /** @type {(inputs: Channels_Groups_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Groups`)
+};
+
+export const channels_groups_edit_of = /** @type {(inputs: Channels_Groups_Edit_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Change the groups of ${i?.name}`)
+};
+
+export const channels_groups_of = /** @type {(inputs: Channels_Groups_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Groups of ${i?.name}`)
+};
+
 export const channels_handle_label = /** @type {(inputs: Channels_Handle_LabelInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Your handle (optional)`)
 };
@@ -1163,6 +1181,18 @@ export const evergreen_label = /** @type {(inputs: Evergreen_LabelInputs) => Loc
 export const evergreen_reason = /** @type {(inputs: Evergreen_ReasonInputs) => LocalizedString} */ (i) => {
 	if (i?.reason === "owner_lost") return /** @type {LocalizedString} */ (`Removed: its owner can no longer schedule posts.`);
 	return /** @type {LocalizedString} */ (`Removed: a copy couldn't be created.`)
+};
+
+export const group_filter = /** @type {(inputs: Group_FilterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filter by group`)
+};
+
+export const group_filter_all = /** @type {(inputs: Group_Filter_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`All groups`)
+};
+
+export const group_filter_gone = /** @type {(inputs: Group_Filter_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Selected group`)
 };
 
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {

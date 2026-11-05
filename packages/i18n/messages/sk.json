@@ -600,5 +600,11 @@
   "brand_none": "Bez značky",
   "channels_brand_of": "Značka kanála {name}",
   "channels_brand_saved": "Kanál patrí k inej značke",
-  "channels_brand_archived": "Táto značka je archivovaná. Vyberte inú."
+  "channels_brand_archived": "Táto značka je archivovaná. Vyberte inú.",
+  "group_filter": "Filtrovať podľa skupiny",
+  "group_filter_all": "Všetky skupiny",
+  "group_filter_gone": "Vybraná skupina",
+  "channels_groups_of": "Skupiny kanála {name}",
+  "channels_groups_edit": "Skupiny",
+  "channels_groups_edit_of": "Upraviť skupiny kanála {name}"
 }

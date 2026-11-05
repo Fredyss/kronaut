@@ -2403,7 +2403,7 @@
     },
     "/v1/workspaces/{workspaceId}/channels": {
       "get": {
-        "description": "A key without posts:read gets signature: null on every channel.",
+        "description": "A key without posts:read gets signature: null on every channel, and a key without groups:read gets groupIds: [].",
         "operationId": "channels.list",
         "parameters": [
           {
@@ -2454,6 +2454,12 @@
                           },
                           "displayName": {
                             "type": "string"
+                          },
+                          "groupIds": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
                           },
                           "handle": {
                             "type": [
@@ -2873,7 +2879,8 @@
                           "insights",
                           "signature",
                           "shortenLinks",
-                          "brandId"
+                          "brandId",
+                          "groupIds"
                         ],
                         "type": "object"
                       },
@@ -3909,6 +3916,497 @@
           "channels"
         ],
         "x-kronaut-action": "settings:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/groups": {
+      "get": {
+        "description": "The workspace's account groups by name, each with its channels in connection order. A restricted principal gets only the groups with a channel in its scope, and only those channels. Groups never grant access.",
+        "operationId": "groups.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "channelIds": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "channelIds"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "List account groups",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      },
+      "post": {
+        "description": "The name is trimmed and has 1–120 characters (422 name_invalid). A name that differs only in case from another group's is 409 group_name_taken. Owners and admins only.",
+        "operationId": "groups.create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "channelIds": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "channelIds"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Create an account group",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/groups/{groupId}": {
+      "delete": {
+        "description": "Removes the group and its memberships. Posts keep their destinations; those picked through the group lose the reference to it. Owners and admins only.",
+        "operationId": "groups.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Delete an account group",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "patch": {
+        "description": "The name follows the same rules as when creating a group. Owners and admins only.",
+        "operationId": "groups.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "channelIds": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "channelIds"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Rename an account group",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/groups/{groupId}/channels/{channelId}": {
+      "delete": {
+        "description": "Idempotent. An unknown group or channel is 404. Existing posts are not changed. Owners and admins only.",
+        "operationId": "groups.remove_channel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Remove a channel from an account group",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:write",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "put": {
+        "description": "Idempotent. An unknown group or channel is 404. Existing posts are not changed. Owners and admins only.",
+        "operationId": "groups.add_channel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Add a channel to an account group",
+        "tags": [
+          "groups"
+        ],
+        "x-kronaut-action": "groups:write",
         "x-kronaut-auth": [
           "session"
         ]
@@ -7217,7 +7715,7 @@
     },
     "/v1/workspaces/{workspaceId}/needs-action": {
       "get": {
-        "description": "The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.",
+        "description": "The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list. Both filters combine.",
         "operationId": "destinations.needs_action",
         "parameters": [
           {
@@ -7239,6 +7737,14 @@
           {
             "in": "query",
             "name": "brand",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "group",
             "required": false,
             "schema": {
               "type": "string"
@@ -7956,6 +8462,12 @@
                               "skipSignature": {
                                 "type": "boolean"
                               },
+                              "sourceGroupId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
                               "variant": {
                                 "anyOf": [
                                   {
@@ -8216,6 +8728,12 @@
                               "skipSignature": {
                                 "type": "boolean"
                               },
+                              "sourceGroupId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
                               "variant": {
                                 "anyOf": [
                                   {
@@ -8423,7 +8941,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts": {
       "get": {
-        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.",
+        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list. Filters combine.",
         "operationId": "posts.list",
         "parameters": [
           {
@@ -8477,6 +8995,14 @@
           {
             "in": "query",
             "name": "brand",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "group",
             "required": false,
             "schema": {
               "type": "string"
@@ -8794,6 +9320,12 @@
                         "skipSignature": {
                           "type": "boolean"
                         },
+                        "sourceGroupId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "variant": {
                           "anyOf": [
                             {
@@ -9047,6 +9579,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -9103,6 +9641,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -9597,6 +10136,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -9653,6 +10198,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -10026,6 +10572,12 @@
                         "skipSignature": {
                           "type": "boolean"
                         },
+                        "sourceGroupId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "variant": {
                           "anyOf": [
                             {
@@ -10291,6 +10843,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -10347,6 +10905,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -11151,6 +11710,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -11207,6 +11772,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -11668,6 +12234,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -11724,6 +12296,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -12193,6 +12766,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -12249,6 +12828,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -12718,6 +13298,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -12774,6 +13360,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -13300,6 +13887,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -13356,6 +13949,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -13797,6 +14391,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -13853,6 +14453,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -14893,6 +15494,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -14949,6 +15556,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -15546,6 +16154,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -15602,6 +16216,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
@@ -16343,6 +16958,12 @@
                           "skipSignature": {
                             "type": "boolean"
                           },
+                          "sourceGroupId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "state": {
                             "enum": [
                               "draft",
@@ -16399,6 +17020,7 @@
                           "lastErrorCode",
                           "variant",
                           "skipSignature",
+                          "sourceGroupId",
                           "signature",
                           "signatureHeld"
                         ],
