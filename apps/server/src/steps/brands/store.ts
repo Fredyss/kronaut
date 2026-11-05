@@ -3,6 +3,7 @@ import type { AccessScope } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { auditActor } from '../../access/audit/write.ts';
+import { clearChannelBrands } from '../../access/channels/brand.ts';
 import { HttpError } from '../../base/http/errors.ts';
 import type { RequestContext } from '../../base/http/request.ts';
 import { freeSlug, slugBase } from './slug.ts';
@@ -159,17 +160,25 @@ export async function createBrand(
   return created;
 }
 
-async function refuseInUse(trx: TenantDb, { workspaceId, brandId }: BrandRef): Promise<void> {
-  const used = await trx
+// A disconnected channel keeps its brand, so a reconnect would bring it back under an archived brand.
+async function releaseChannels(trx: TenantDb, { workspaceId, brandId }: BrandRef): Promise<number> {
+  const channels = await trx
     .selectFrom('social_accounts')
-    .select('id')
+    .select(['id', 'status'])
     .where('workspace_id', '=', workspaceId)
     .where('brand_id', '=', brandId)
-    .where('status', '<>', 'disconnected')
-    .executeTakeFirst();
-  if (used !== undefined) {
+    .orderBy('id')
+    .forNoKeyUpdate()
+    .execute();
+  if (channels.some((channel) => channel.status !== 'disconnected')) {
     throw new HttpError('brand_in_use', 'Move its channels to another brand before archiving.');
   }
+  await clearChannelBrands(
+    trx,
+    workspaceId,
+    channels.map((channel) => channel.id),
+  );
+  return channels.length;
 }
 
 async function lockBrand(trx: TenantDb, { workspaceId, brandId }: BrandRef) {
@@ -195,7 +204,7 @@ export async function updateBrand(
   const wasArchived = current.archived_at !== null;
   const archived = body.archived ?? wasArchived;
   if (name === current.name && archived === wasArchived) return await readBrand(trx, ref);
-  if (archived && !wasArchived) await refuseInUse(trx, ref);
+  const released = archived && !wasArchived ? await releaseChannels(trx, ref) : 0;
   await uniquely(() =>
     trx
       .updateTable('brands')
@@ -207,7 +216,7 @@ export async function updateBrand(
       .where('id', '=', ref.brandId)
       .execute(),
   );
-  const args = { renamed: name !== current.name, archived };
+  const args = { renamed: name !== current.name, archived, ...(released > 0 ? { released } : {}) };
   await audit(trx, ctx, { ref, action: 'brand.updated', args });
   return await readBrand(trx, ref);
 }

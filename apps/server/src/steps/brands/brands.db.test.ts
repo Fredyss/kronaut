@@ -1,3 +1,4 @@
+import { decodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -129,6 +130,33 @@ describe('brands', () => {
     expect(((await archived.json()) as BrandDto).archivedAt).toEqual(expect.any(String));
     const restored = await patch(brand, { archived: false });
     expect(((await restored.json()) as BrandDto).archivedAt).toBeNull();
+  });
+
+  it('takes the brand off disconnected channels when it is archived', async () => {
+    const brand = await newBrand('Archived on disconnect');
+    await assign(accountA, brand);
+    const accountId = decodePublicId('socialAccount', accountA) ?? '';
+    const setStatus = (status: 'active' | 'disconnected') =>
+      owner.withActor(SYSTEM, (trx) =>
+        trx.updateTable('social_accounts').set({ status }).where('id', '=', accountId).execute(),
+      );
+    await setStatus('disconnected');
+    const archived = await patch(brand, { archived: true });
+    await setStatus('active');
+    expect(archived.status).toBe(200);
+    const row = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('social_accounts')
+        .select('brand_id')
+        .where('id', '=', accountId)
+        .executeTakeFirstOrThrow(),
+    );
+    expect(row.brand_id).toBeNull();
+    expect((await brandAudits(brand)).at(-1)?.args_summary).toEqual({
+      renamed: false,
+      archived: true,
+      released: 1,
+    });
   });
 
   it('lists brands by name with their channel counts', async () => {

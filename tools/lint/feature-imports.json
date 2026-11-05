@@ -103,6 +103,7 @@
   "server/steps/approvals -> policy/approval-policy/policy.ts",
   "server/steps/approvals -> records/notifications/write.ts",
   "server/steps/brands -> access/audit/write.ts",
+  "server/steps/brands -> access/channels/brand.ts",
   "server/steps/publish -> access/post-access/lock.ts",
   "server/steps/publish -> identity/webhooks/events.ts",
   "server/steps/publish -> infrastructure/credentials/credential-store.ts",

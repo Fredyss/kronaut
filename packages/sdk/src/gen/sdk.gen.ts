@@ -321,7 +321,7 @@ export const brandsCreate = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * Rename or archive a brand
  *
- * The name follows the same rules as when creating a brand; the slug stays. Archiving is 409 brand_in_use while a channel that is not disconnected belongs to the brand, and an archived brand cannot be assigned to a channel. Owners and admins only.
+ * The name follows the same rules as when creating a brand; the slug stays. Archiving is 409 brand_in_use while a channel that is not disconnected belongs to the brand; archiving takes the brand off its disconnected channels, so they come back without one when reconnected. An archived brand cannot be assigned to a channel. Owners and admins only.
  */
 export const brandsUpdate = <ThrowOnError extends boolean = true>(options: Options<BrandsUpdateData, ThrowOnError>): RequestResult<BrandsUpdateResponses, BrandsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<BrandsUpdateResponses, BrandsUpdateErrors, ThrowOnError>({
     security: [{

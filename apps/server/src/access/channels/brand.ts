@@ -67,7 +67,12 @@ async function lockChannel(trx: TenantDb, { workspaceId, accountId }: ChannelRef
   return account;
 }
 
-async function unfinishedPosts(trx: TenantDb, { workspaceId, accountId }: ChannelRef) {
+async function unfinishedPosts(
+  trx: TenantDb,
+  workspaceId: string,
+  accountIds: readonly string[],
+): Promise<string[]> {
+  if (accountIds.length === 0) return [];
   const rows = await trx
     .selectFrom('posts as p')
     .select('p.id')
@@ -81,13 +86,28 @@ async function unfinishedPosts(trx: TenantDb, { workspaceId, accountId }: Channe
           .select('d.id')
           .whereRef('d.workspace_id', '=', 'p.workspace_id')
           .whereRef('d.post_id', '=', 'p.id')
-          .where('d.social_account_id', '=', accountId),
+          .where('d.social_account_id', 'in', accountIds),
       ),
     )
     .orderBy('p.id')
     .forNoKeyUpdate()
     .execute();
   return rows.map((row) => row.id);
+}
+
+export async function clearChannelBrands(
+  trx: TenantDb,
+  workspaceId: string,
+  accountIds: readonly string[],
+): Promise<void> {
+  if (accountIds.length === 0) return;
+  await trx
+    .updateTable('social_accounts')
+    .set({ brand_id: null, location_id: null })
+    .where('workspace_id', '=', workspaceId)
+    .where('id', 'in', accountIds)
+    .execute();
+  await recomputePostBrand(trx, workspaceId, await unfinishedPosts(trx, workspaceId, accountIds));
 }
 
 function publicBrand(brandId: string | null): string | null {
@@ -105,7 +125,7 @@ async function setBrand(trx: TenantDb, change: BrandChange): Promise<void> {
     .where('workspace_id', '=', workspaceId)
     .where('id', '=', accountId)
     .execute();
-  await recomputePostBrand(trx, workspaceId, await unfinishedPosts(trx, change.ref));
+  await recomputePostBrand(trx, workspaceId, await unfinishedPosts(trx, workspaceId, [accountId]));
   await trx
     .insertInto('audit_events')
     .values({
