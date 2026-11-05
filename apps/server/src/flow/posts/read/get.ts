@@ -6,7 +6,7 @@ import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
 import { PostSchema, readPost } from './dto.ts';
 
-export const postGetRoute = defineRoute({
+const postGetRoute = defineRoute({
   id: 'posts.get',
   method: 'GET',
   path: '/v1/workspaces/:workspaceId/posts/:postId',

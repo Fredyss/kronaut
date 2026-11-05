@@ -22,7 +22,7 @@ import {
   VariantsInput,
 } from './variants.ts';
 
-export const postCreateRoute = defineRoute({
+const postCreateRoute = defineRoute({
   id: 'posts.create',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts',

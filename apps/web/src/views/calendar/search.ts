@@ -2,7 +2,7 @@ import { isPostId, type SlotSearch, slotSearch } from '../../composer/compose/se
 import { brandParam } from '../../records/brands/search.ts';
 import { groupParam } from '../../records/groups/search.ts';
 
-export const CALENDAR_VIEWS = ['day', 'week', 'month', 'list'] as const;
+const CALENDAR_VIEWS = ['day', 'week', 'month', 'list'] as const;
 
 export type CalendarView = (typeof CALENDAR_VIEWS)[number];
 

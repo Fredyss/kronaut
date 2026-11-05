@@ -25,10 +25,10 @@ import { ResetPasswordPage } from './routes/reset-password.tsx';
 import { AppShell } from './routes/shell.tsx';
 import { calendarSearch } from './views/calendar/search.ts';
 
-export interface RouterContext {
+type RouterContext = {
   readonly queryClient: QueryClient;
   readonly client: Client;
-}
+};
 
 function Root() {
   return (

@@ -23,7 +23,7 @@ import { UNFROZEN } from './freeze.ts';
 
 const UNSCHEDULABLE: ReadonlySet<string> = new Set(['scheduled', 'retry_wait']);
 
-export const postUnscheduleRoute = defineRoute({
+const postUnscheduleRoute = defineRoute({
   id: 'posts.unschedule',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/unschedule',

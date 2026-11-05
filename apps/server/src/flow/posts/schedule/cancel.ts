@@ -25,7 +25,7 @@ export const CANCELABLE: ReadonlySet<string> = new Set(
   ),
 );
 
-export const postCancelRoute = defineRoute({
+const postCancelRoute = defineRoute({
   id: 'posts.cancel',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/cancel',

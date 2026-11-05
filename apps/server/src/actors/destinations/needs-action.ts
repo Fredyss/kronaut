@@ -26,7 +26,7 @@ const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 200;
 const Instant = z.iso.datetime();
 
-export const NeedsActionItemSchema = z.object({
+const NeedsActionItemSchema = z.object({
   destinationId: z.string(),
   version: z.number().int().positive(),
   state: z.enum(NEEDS_ACTION),
@@ -53,7 +53,7 @@ const NeedsActionSchema = z.object({
 
 type NeedsActionDto = z.output<typeof NeedsActionSchema>;
 
-export const needsActionRoute = defineRoute({
+const needsActionRoute = defineRoute({
   id: 'destinations.needs_action',
   method: 'GET',
   path: '/v1/workspaces/:workspaceId/needs-action',
@@ -146,7 +146,7 @@ async function loadAttention(
     .execute();
 }
 
-export async function listNeedsAction(
+async function listNeedsAction(
   trx: TenantDb,
   workspaceId: string,
   view: AttentionView,

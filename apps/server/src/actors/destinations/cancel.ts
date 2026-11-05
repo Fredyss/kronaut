@@ -10,7 +10,7 @@ import { DestinationParams, fromOf, lockMove, lockTarget, movableTo } from './lo
 
 const CANCELABLE = movableTo('canceled');
 
-export const destinationCancelRoute = defineRoute({
+const destinationCancelRoute = defineRoute({
   id: 'destinations.cancel',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/destinations/:destinationId/cancel',

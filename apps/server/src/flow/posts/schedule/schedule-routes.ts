@@ -8,7 +8,7 @@ import { PostSchema, readPost } from '../read/dto.ts';
 import { authorizeSchedule, ScheduleInput, type ScheduleRun, scheduleLocked } from './schedule.ts';
 import { startSeries } from './series-start.ts';
 
-export const postScheduleRoute = defineRoute({
+const postScheduleRoute = defineRoute({
   id: 'posts.schedule',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/schedule',

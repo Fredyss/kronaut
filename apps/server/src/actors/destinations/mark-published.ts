@@ -11,7 +11,7 @@ import { auditResolution, DestinationParams, lockMove, lockTarget, movableTo } f
 
 const MARKABLE = movableTo('published');
 
-export const markPublishedRoute = defineRoute({
+const markPublishedRoute = defineRoute({
   id: 'destinations.mark_published',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/destinations/:destinationId/mark-published',

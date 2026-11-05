@@ -9,7 +9,7 @@ import { ownerColumns } from '../owner/owner.ts';
 import { PostSchema, readPost } from '../read/dto.ts';
 import { clonePost } from './clone.ts';
 
-export const postDuplicateRoute = defineRoute({
+const postDuplicateRoute = defineRoute({
   id: 'posts.duplicate',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/duplicate',

@@ -36,7 +36,7 @@ import {
 
 const EDITABLE_STATES: ReadonlySet<string> = new Set(['draft', 'canceled']);
 
-export const postUpdateRoute = defineRoute({
+const postUpdateRoute = defineRoute({
   id: 'posts.update',
   method: 'PATCH',
   path: '/v1/workspaces/:workspaceId/posts/:postId',

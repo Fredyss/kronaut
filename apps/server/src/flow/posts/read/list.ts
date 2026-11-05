@@ -21,9 +21,9 @@ import { loadPostTags, type PostTagRow, tagFields } from '../../../steps/tags/re
 import { type PostSummaryDto, PostSummarySchema } from './dto.ts';
 import { DRAFTS_DEFAULT_LIMIT, type ListFilter, ListQuery, listFilter } from './list-filter.ts';
 
-export const RANGE_MAX_POSTS = 500;
+const RANGE_MAX_POSTS = 500;
 
-export const postListRoute = defineRoute({
+const postListRoute = defineRoute({
   id: 'posts.list',
   method: 'GET',
   path: '/v1/workspaces/:workspaceId/posts',
@@ -177,7 +177,7 @@ function summaryOf(post: PostRow, { main, destinations, tags }: SummaryParts): P
   });
 }
 
-export async function listPosts(
+async function listPosts(
   trx: TenantDb,
   workspaceId: string,
   scope: AccessScope | null,

@@ -9,20 +9,20 @@ import { loadDestinations } from './destinations-read.ts';
 const JsonObject = z.record(z.string(), z.unknown());
 const Instant = z.iso.datetime();
 
-export const PostMediaSchema = z.object({
+const PostMediaSchema = z.object({
   mediaId: z.string(),
   position: z.number().int().nonnegative(),
   altText: z.string().nullable(),
 });
 
-export const PostItemSchema = z.object({
+const PostItemSchema = z.object({
   position: z.number().int().nonnegative(),
   role: z.enum(['main', 'thread', 'comment']),
   doc: JsonObject,
   media: z.array(PostMediaSchema),
 });
 
-export const PostDestinationSchema = z.object({
+const PostDestinationSchema = z.object({
   id: z.string(),
   accountId: z.string(),
   provider: z.string(),
@@ -43,7 +43,7 @@ export const PostDestinationSchema = z.object({
   signatureHeld: z.boolean(),
 });
 
-export const PostVariantSchema = z.object({ items: z.array(PostItemSchema) });
+const PostVariantSchema = z.object({ items: z.array(PostItemSchema) });
 
 export const PostSchema = z.object({
   id: z.string(),
@@ -195,7 +195,7 @@ function indexVariants(items: readonly LoadedItem[], loaded: readonly LoadedDest
   return { variants, destinations };
 }
 
-export async function findPost(
+async function findPost(
   trx: TenantDb,
   workspaceId: string,
   postId: string,
