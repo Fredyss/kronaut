@@ -36,6 +36,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0016](0016-client-review-links.md) | Client review links |
 | [0033](0033-post-and-variant-model.md) | Post and variant model |
 | [0042](0042-approval-policy-defaults.md) | Approval policy defaults |
+| [0059](0059-approval-policy-from-the-destinations-brands.md) | Approval policy comes from the destinations' brands (extends 0042) |
 
 ## Publishing pipeline
 
