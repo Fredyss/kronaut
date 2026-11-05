@@ -40,7 +40,8 @@ function brandIdOf(value: string | null): string | null {
   return id;
 }
 
-// The share lock makes a concurrent archive wait, so it sees this channel.
+// The share lock makes a concurrent archive wait, so it sees this channel. It is taken before the channel
+// lock because the archive locks the brand first and its channels second.
 async function requireActiveBrand(trx: TenantDb, workspaceId: string, brandId: string) {
   const brand = await trx
     .selectFrom('brands')
@@ -116,8 +117,8 @@ function publicBrand(brandId: string | null): string | null {
 
 async function setBrand(trx: TenantDb, change: BrandChange): Promise<void> {
   const { workspaceId, accountId } = change.ref;
-  const current = await lockChannel(trx, change.ref);
   if (change.brandId !== null) await requireActiveBrand(trx, workspaceId, change.brandId);
+  const current = await lockChannel(trx, change.ref);
   if (current.brand_id === change.brandId) return;
   await trx
     .updateTable('social_accounts')
