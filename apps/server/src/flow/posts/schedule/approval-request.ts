@@ -18,8 +18,8 @@ import type { ProviderRegistry } from '../../../base/providers/providers.ts';
 import { postApprovalRequestedEvent } from '../../../identity/webhooks/events.ts';
 import {
   type EffectivePolicy,
-  effectivePolicy,
   policySnapshot,
+  postPolicy,
 } from '../../../policy/approval-policy/policy.ts';
 import { announce } from '../../../steps/approvals/locked.ts';
 import type { PostRouteDeps } from '../deps.ts';
@@ -156,7 +156,7 @@ export async function openApprovalRequest(
     reason: 'submit' as const,
   };
   const frozen = await freezeTargets(trx, scope, version, targets);
-  const policy = await effectivePolicy(trx, workspaceId, locked.brand_id);
+  const policy = await postPolicy(trx, workspaceId, postId);
   const note = opening.note?.normalize('NFC') ?? null;
   const request = { workspaceId, postId, version, frozen, schedule, policy, note };
   const requestId = await insertRequest(trx, ctx, request);

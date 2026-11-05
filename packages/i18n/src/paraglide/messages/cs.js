@@ -43,6 +43,10 @@
 /** @typedef {{}} Approval_Void_Post_DeletedInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
+/** @typedef {{}} Brand_FilterInputs */
+/** @typedef {{}} Brand_Filter_AllInputs */
+/** @typedef {{}} Brand_Filter_GoneInputs */
+/** @typedef {{}} Brand_NoneInputs */
 /** @typedef {{}} Calendar_TitleInputs */
 /** @typedef {{}} Calendar_UntitledInputs */
 /** @typedef {{}} Calendar_View_DayInputs */
@@ -52,6 +56,9 @@
 /** @typedef {{}} Channel_Status_Needs_ReauthInputs */
 /** @typedef {{}} Channels_AddInputs */
 /** @typedef {{}} Channels_All_NetworksInputs */
+/** @typedef {{}} Channels_Brand_ArchivedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Brand_OfInputs */
+/** @typedef {{}} Channels_Brand_SavedInputs */
 /** @typedef {{}} Channels_Connect_Bad_UrlInputs */
 /** @typedef {{}} Channels_Connect_BodyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connect_ButtonInputs */
@@ -573,6 +580,22 @@ export const approval_withdraw = /** @type {(inputs: Approval_WithdrawInputs) =>
 	return /** @type {LocalizedString} */ (`Stáhnout žádost`)
 };
 
+export const brand_filter = /** @type {(inputs: Brand_FilterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filtrovat podle značky`)
+};
+
+export const brand_filter_all = /** @type {(inputs: Brand_Filter_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Všechny značky`)
+};
+
+export const brand_filter_gone = /** @type {(inputs: Brand_Filter_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vybraná značka`)
+};
+
+export const brand_none = /** @type {(inputs: Brand_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bez značky`)
+};
+
 export const calendar_title = /** @type {(inputs: Calendar_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Kalendář`)
 };
@@ -607,6 +630,18 @@ export const channels_add = /** @type {(inputs: Channels_AddInputs) => Localized
 
 export const channels_all_networks = /** @type {(inputs: Channels_All_NetworksInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Všechny sítě`)
+};
+
+export const channels_brand_archived = /** @type {(inputs: Channels_Brand_ArchivedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tato značka je archivovaná. Vyberte jinou.`)
+};
+
+export const channels_brand_of = /** @type {(inputs: Channels_Brand_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Značka kanálu ${i?.name}`)
+};
+
+export const channels_brand_saved = /** @type {(inputs: Channels_Brand_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanál teď patří k jiné značce`)
 };
 
 export const channels_connect_bad_url = /** @type {(inputs: Channels_Connect_Bad_UrlInputs) => LocalizedString} */ () => {

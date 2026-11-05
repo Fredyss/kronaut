@@ -3,7 +3,13 @@ import { defineRoute } from '@kronaut/contract';
 import { type AccessScope, decodePublicId, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
-import { excerptOf, loadMains, visibleIn } from '../../../access/post-access/reads.ts';
+import {
+  brandFilter,
+  excerptOf,
+  loadMains,
+  onBrand,
+  visibleIn,
+} from '../../../access/post-access/reads.ts';
 import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
 import { iso, plainLocal } from '../../../base/http/time.ts';
@@ -23,7 +29,7 @@ export const postListRoute = defineRoute({
   query: ListQuery,
   response: z.object({ items: z.array(PostSummarySchema), truncated: z.boolean() }),
   summary: 'List posts',
-  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list.`,
+  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.`,
   tags: ['posts'],
 });
 
@@ -42,11 +48,12 @@ interface PostQuery {
   readonly workspaceId: string;
   readonly scope: AccessScope | null;
   readonly tagId: string | undefined;
+  readonly brand: { readonly brandId: string | null } | undefined;
 }
 
 async function loadPosts(
   trx: TenantDb,
-  { workspaceId, scope, tagId }: PostQuery,
+  { workspaceId, scope, tagId, brand }: PostQuery,
   filter: ListFilter,
 ) {
   let query = trx
@@ -55,6 +62,7 @@ async function loadPosts(
     .where('p.workspace_id', '=', workspaceId)
     .where('p.deleted_at', 'is', null);
   if (scope !== null) query = query.where(visibleIn(scope));
+  if (brand !== undefined) query = query.where(onBrand(brand.brandId));
   if (tagId !== undefined) {
     query = query.where((eb) =>
       eb.exists(
@@ -170,8 +178,9 @@ export async function listPosts(
   filter: ListFilter,
 ): Promise<{ items: PostSummaryDto[]; truncated: boolean }> {
   const tagId = filter.tag === undefined ? undefined : decodePublicId('tag', filter.tag);
-  if (tagId === null) return { items: [], truncated: false };
-  const { rows, max } = await loadPosts(trx, { workspaceId, scope, tagId }, filter);
+  const brand = brandFilter(filter.brand);
+  if (tagId === null || brand === 'unknown') return { items: [], truncated: false };
+  const { rows, max } = await loadPosts(trx, { workspaceId, scope, tagId, brand }, filter);
   const posts = rows.slice(0, max);
   if (posts.length === 0) return { items: [], truncated: false };
   const ids = posts.map((post) => post.id);

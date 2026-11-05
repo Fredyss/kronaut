@@ -18,6 +18,7 @@ const SIGNED_IN: Readonly<Record<string, object>> = {
   '/v1/workspaces/ws_1/posts': { items: [], truncated: false },
   '/v1/workspaces/ws_1/channels': { items: [] },
   '/v1/workspaces/ws_1/tags': { items: [] },
+  '/v1/workspaces/ws_1/brands': { items: [] },
   '/v1/workspaces/ws_1/needs-action': { items: [], total: 0, truncated: false },
   '/v1/workspaces/ws_1/notifications': { items: [], unread: 0 },
 };

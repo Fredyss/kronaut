@@ -1,9 +1,10 @@
 import { type DocJson, toPlainText } from '@kronaut/compose';
-import type { AccessScope } from '@kronaut/core';
+import { type AccessScope, decodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 
 const EXCERPT_GRAPHEMES = 140;
+const NO_BRAND = 'none';
 const SEGMENTER = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 export function excerptOf(doc: DocJson): string {
@@ -25,15 +26,30 @@ export function visibleIn(scope: AccessScope) {
   const brands = anyOf(scope.brandIds);
   const locations = anyOf(scope.locationIds);
   return sql<boolean>`(
-    (p.brand_id IS NULL OR coalesce(p.brand_id = ANY(${brands}) OR p.location_id = ANY(${locations}), false))
-    AND (p.brand_id IS NOT NULL OR EXISTS (
-      SELECT 1 FROM post_destinations s WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id))
+    EXISTS (SELECT 1 FROM post_destinations s WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id)
     AND NOT EXISTS (
       SELECT 1 FROM post_destinations s
       JOIN social_accounts a ON a.workspace_id = s.workspace_id AND a.id = s.social_account_id
       WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id
         AND NOT coalesce(a.id = ANY(${accounts}) OR a.brand_id = ANY(${brands})
           OR a.location_id = ANY(${locations}), false)))`;
+}
+
+type BrandFilter = { readonly brandId: string | null } | 'unknown' | undefined;
+
+export function brandFilter(param: string | undefined): BrandFilter {
+  if (param === undefined) return undefined;
+  if (param === NO_BRAND) return { brandId: null };
+  const brandId = decodePublicId('brand', param);
+  return brandId === null ? 'unknown' : { brandId };
+}
+
+export function onBrand(brandId: string | null) {
+  const match = brandId === null ? sql`a.brand_id IS NULL` : sql`a.brand_id = ${brandId}`;
+  return sql<boolean>`EXISTS (
+    SELECT 1 FROM post_destinations s
+    JOIN social_accounts a ON a.workspace_id = s.workspace_id AND a.id = s.social_account_id
+    WHERE s.workspace_id = p.workspace_id AND s.post_id = p.id AND s.state <> 'canceled' AND ${match})`;
 }
 
 export async function loadMains(trx: TenantDb, workspaceId: string, ids: readonly string[]) {

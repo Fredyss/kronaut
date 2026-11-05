@@ -1,6 +1,6 @@
 import { Temporal } from 'temporal-polyfill';
 import { m } from '../../base/locale/i18n.ts';
-import type { PostSummary } from '../../records/posts/queries.ts';
+import type { PostFilter, PostSummary } from '../../records/posts/queries.ts';
 
 type Summary = PostSummary;
 type SummaryDestination = Summary['destinations'][number];
@@ -13,8 +13,8 @@ export interface Entry {
   readonly hour: number;
 }
 
-export function keptTag({ tag }: { readonly tag?: string | undefined }) {
-  return tag === undefined ? {} : { tag };
+export function keptFilter({ tag, brand }: PostFilter) {
+  return { ...(tag === undefined ? {} : { tag }), ...(brand === undefined ? {} : { brand }) };
 }
 
 export function slotKey(day: string, hour: number): string {

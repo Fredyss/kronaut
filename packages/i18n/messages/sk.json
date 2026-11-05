@@ -593,5 +593,12 @@
         "kind=*": "Odkaz sa neskrátil."
       }
     }
-  ]
+  ],
+  "brand_filter": "Filtrovať podľa značky",
+  "brand_filter_all": "Všetky značky",
+  "brand_filter_gone": "Vybraná značka",
+  "brand_none": "Bez značky",
+  "channels_brand_of": "Značka kanála {name}",
+  "channels_brand_saved": "Kanál patrí k inej značke",
+  "channels_brand_archived": "Táto značka je archivovaná. Vyberte inú."
 }

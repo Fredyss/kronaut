@@ -259,6 +259,7 @@ describe('channel listing', () => {
     expect(Object.keys(items[0] ?? {}).sort()).toEqual([
       'accessExpiresAt',
       'accountKind',
+      'brandId',
       'connectedAt',
       'displayName',
       'handle',

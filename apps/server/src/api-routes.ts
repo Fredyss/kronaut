@@ -32,6 +32,7 @@ import { analyticsRoutes } from './records/analytics/routes.ts';
 import { notificationRoutes } from './records/notifications/routes.ts';
 import { shortLinkRoutes } from './records/short-links/routes.ts';
 import { approvalRoutes } from './steps/approvals/routes.ts';
+import { brandRoutes } from './steps/brands/routes.ts';
 import { queueRoutes } from './steps/queue/routes.ts';
 import { savedTextRoutes } from './steps/saved-texts/routes.ts';
 import { tagRoutes } from './steps/tags/routes.ts';
@@ -88,6 +89,7 @@ export function apiRoutes({
     ...seriesRoutes(),
     ...evergreenRoutes(),
     ...tagRoutes(),
+    ...brandRoutes(),
     ...savedTextRoutes(),
     ...rssFeedRoutes({ providers, http: feedHttp }),
     ...analyticsRoutes(),

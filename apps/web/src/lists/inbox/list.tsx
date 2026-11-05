@@ -18,12 +18,17 @@ function Empty() {
   );
 }
 
-export function InboxList({ workspaceId }: { readonly workspaceId: string }) {
+interface InboxListProps {
+  readonly workspaceId: string;
+  readonly brand?: string | undefined;
+}
+
+export function InboxList({ workspaceId, brand }: InboxListProps) {
   const client = useApiClient();
   const { locale } = useLocale();
   const [timeZone] = useState(browserTimeZone);
   const formats = useFormats(locale, timeZone);
-  const list = useQuery(needsActionQuery(client, workspaceId));
+  const list = useQuery(needsActionQuery(client, workspaceId, brand));
   if (list.data === undefined) {
     return list.isError ? (
       <p role="alert" className="text-destructive text-sm">

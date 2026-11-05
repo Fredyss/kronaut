@@ -12,6 +12,17 @@ describe('tag filter', () => {
   });
 });
 
+describe('brand filter', () => {
+  it('keeps a public brand id or none and drops anything else', () => {
+    const brand = 'brand_01jbcdefghjkmnpqrstvwxyz01';
+    expect(calendarSearch({ brand })).toEqual({ brand });
+    expect(calendarSearch({ brand: 'none' })).toEqual({ brand: 'none' });
+    expect(calendarSearch({ brand: 'tag_01jbcdefghjkmnpqrstvwxyz01' })).toEqual({});
+    expect(calendarSearch({ brand: 'acme' })).toEqual({});
+    expect(calendarSearch({ brand: ['none'] })).toEqual({});
+  });
+});
+
 describe('slot to composer', () => {
   it('opens the composer at the slot in the shown time zone', () => {
     const search = slotCompose(slotKey('2026-10-01', 9), 'Europe/Bratislava');

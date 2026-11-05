@@ -4,6 +4,8 @@ import { getRouteApi } from '@tanstack/react-router';
 import { useApiClient } from '../../base/api/client.ts';
 import { tagsQuery } from '../../content/tags/picker.tsx';
 import { m as calendarText } from '../../i18n/calendar.ts';
+import { BrandFilter } from '../../records/brands/brand-filter.tsx';
+import type { PostFilter } from '../../records/posts/queries.ts';
 import type { CalendarSearch } from './search.ts';
 
 const route = getRouteApi('/app/');
@@ -13,7 +15,7 @@ interface TagFilterProps {
   readonly tag: string | undefined;
 }
 
-export function TagFilter({ workspaceId, tag }: TagFilterProps) {
+function TagFilter({ workspaceId, tag }: TagFilterProps) {
   const client = useApiClient();
   const navigate = route.useNavigate();
   const tags = useQuery(tagsQuery(client, workspaceId)).data;
@@ -42,5 +44,23 @@ export function TagFilter({ workspaceId, tag }: TagFilterProps) {
         </option>
       ))}
     </Select>
+  );
+}
+
+export function Filters({ workspaceId, filter }: { workspaceId: string; filter: PostFilter }) {
+  const navigate = route.useNavigate();
+  const chooseBrand = (brand: string | undefined) =>
+    void navigate({
+      to: '/',
+      search: (prev) => {
+        const { brand: _, ...rest } = prev as CalendarSearch;
+        return brand === undefined ? rest : { ...rest, brand };
+      },
+    });
+  return (
+    <>
+      <TagFilter workspaceId={workspaceId} tag={filter.tag} />
+      <BrandFilter workspaceId={workspaceId} brand={filter.brand} onChange={chooseBrand} />
+    </>
   );
 }

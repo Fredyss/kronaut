@@ -6,8 +6,9 @@ import {
   approvalPolicyQuery,
   approvalRequired,
   type PolicyResponse,
-  policyForPost,
+  policyForBrands,
 } from '../../records/approval-policy/queries.ts';
+import { channelsQuery } from '../../records/channels/queries.ts';
 import type { Post } from '../../records/posts/queries.ts';
 import type { PostScope } from './actions.ts';
 import { RequestApproval, ScheduleApproved, ScheduleUnbound } from './follow-up.tsx';
@@ -19,6 +20,7 @@ interface Viewer {
   readonly me: Me;
   readonly canApprove: boolean;
   readonly policy: PolicyResponse | undefined;
+  readonly brandIds: readonly (string | null)[];
 }
 
 function isRequester(request: ApprovalRequest, me: Me): boolean {
@@ -28,7 +30,8 @@ function isRequester(request: ApprovalRequest, me: Me): boolean {
 function OpenActions({ scope, request, viewer }: Actions) {
   const own = isRequester(request, viewer.me);
   const selfAllowed =
-    viewer.policy !== undefined && policyForPost(viewer.policy, null).allowSelfApproval;
+    viewer.policy !== undefined &&
+    policyForBrands(viewer.policy, viewer.brandIds).allowSelfApproval;
   const canDecide = viewer.canApprove && (!own || selfAllowed);
   return (
     <>
@@ -65,15 +68,19 @@ export function ApprovalSection({ workspaceId, post }: { workspaceId: string; po
   const me = useQuery(meQuery(client)).data;
   const requests = useQuery(approvalRequestsQuery(client, workspaceId, post.id));
   const policy = useQuery(approvalPolicyQuery(client, workspaceId)).data;
+  const channels = useQuery(channelsQuery(client, workspaceId)).data ?? [];
+  const brandIds = channels
+    .filter((channel) => post.destinations.some((d) => d.accountId === channel.id))
+    .map((channel) => channel.brandId);
   if (me === undefined || requests.data === undefined) return null;
   const scope = { workspaceId, postId: post.id };
   const request = requests.data[0];
   if (request === undefined) {
-    if (post.publishSummary !== 'draft' || !approvalRequired(policy, null)) return null;
+    if (post.publishSummary !== 'draft' || !approvalRequired(policy, brandIds)) return null;
     return <RequestApproval scope={scope} version={post.version} again={false} />;
   }
   const canApprove = me.workspaces.find((w) => w.id === workspaceId)?.canApprove === true;
-  const viewer = { me, canApprove, policy };
+  const viewer = { me, canApprove, policy, brandIds };
   return (
     <section className="flex flex-col gap-3 rounded-xl border p-4">
       <h2 className="font-medium text-lg">{m.approval_title()}</h2>

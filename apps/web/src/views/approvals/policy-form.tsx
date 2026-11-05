@@ -1,4 +1,4 @@
-import { approvalsPolicyUpdate } from '@kronaut/sdk';
+import { approvalsBrandPolicyUpdate, approvalsPolicyUpdate } from '@kronaut/sdk';
 import {
   Button,
   type ControlIds,
@@ -15,22 +15,23 @@ import { errorCode, errorStatus } from '../../base/api/errors.ts';
 import { idempotency, type Keyed, keyFor } from '../../base/api/idempotency.ts';
 import { apiErrorMessage, m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
-import {
-  approvalPolicyKey,
-  type PolicyResponse,
-  type PolicyValues,
-} from '../../records/approval-policy/queries.ts';
+import { approvalPolicyKey, type PolicyValues } from '../../records/approval-policy/queries.ts';
 
 const APPROVAL_COUNTS = [1, 2, 3, 4, 5] as const;
 const TOLERANCE_MAX = 525_600;
 
-function valuesOf(policy: PolicyResponse): PolicyValues {
-  const { mode, requiredApprovals, allowSelfApproval, rescheduleToleranceMin } =
-    policy.workspace ?? policy.effective;
+function valuesOf(policy: PolicyValues): PolicyValues {
+  const { mode, requiredApprovals, allowSelfApproval, rescheduleToleranceMin } = policy;
   return { mode, requiredApprovals, allowSelfApproval, rescheduleToleranceMin };
 }
 
-function useSavePolicy(workspaceId: string, version: number | undefined) {
+interface PolicyTarget {
+  readonly workspaceId: string;
+  readonly brandId?: string | undefined;
+  readonly version: number | undefined;
+}
+
+function useSavePolicy({ workspaceId, brandId, version }: PolicyTarget) {
   const client = useApiClient();
   const queryClient = useQueryClient();
   const keyed = useRef<Keyed | null>(null);
@@ -39,7 +40,12 @@ function useSavePolicy(workspaceId: string, version: number | undefined) {
       const body = version === undefined ? values : { ...values, expectedVersion: version };
       keyed.current = keyFor(keyed.current, JSON.stringify(body));
       const headers = idempotency(keyed.current);
-      return (await approvalsPolicyUpdate({ client, path: { workspaceId }, body, headers })).data;
+      if (brandId === undefined) {
+        await approvalsPolicyUpdate({ client, path: { workspaceId }, body, headers });
+      } else {
+        const path = { workspaceId, brandId };
+        await approvalsBrandPolicyUpdate({ client, path, body, headers });
+      }
     },
     onSuccess: () => {
       keyed.current = null;
@@ -54,9 +60,9 @@ function useSavePolicy(workspaceId: string, version: number | undefined) {
 
 type SavePolicy = ReturnType<typeof useSavePolicy>;
 
-interface PolicyFormProps {
-  readonly workspaceId: string;
-  readonly policy: PolicyResponse;
+interface PolicyFormProps extends PolicyTarget {
+  readonly title: string;
+  readonly initial: PolicyValues;
   readonly editable: boolean;
 }
 
@@ -104,9 +110,9 @@ function SaveFooter({ save, editable }: { readonly save: SavePolicy; readonly ed
   );
 }
 
-export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
-  const [values, setValues] = useState(() => valuesOf(policy));
-  const save = useSavePolicy(workspaceId, policy.workspace?.version);
+export function PolicyForm({ title, initial, editable, ...target }: PolicyFormProps) {
+  const [values, setValues] = useState(() => valuesOf(initial));
+  const save = useSavePolicy(target);
   const disabled = !editable || save.isPending;
   const set = (patch: Partial<PolicyValues>) => setValues((current) => ({ ...current, ...patch }));
   return (
@@ -116,10 +122,7 @@ export function PolicyForm({ workspaceId, policy, editable }: PolicyFormProps) {
         if (editable && !save.isPending) save.mutate(values);
       }}
     >
-      <SettingsCard
-        title={settingsText.settings_policy_title()}
-        footer={<SaveFooter save={save} editable={editable} />}
-      >
+      <SettingsCard title={title} footer={<SaveFooter save={save} editable={editable} />}>
         <SettingsRow label={settingsText.settings_approval_required()}>
           {(ids) => (
             <Checkbox

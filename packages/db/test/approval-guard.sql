@@ -56,6 +56,16 @@ INSERT INTO posts (workspace_id, id, brand_id, origin)
 SELECT '01900000-0000-7000-8000-000000000001', ('01900000-0000-7000-8000-00000000010' || n)::uuid,
        CASE n WHEN 5 THEN '01900000-0000-7000-8000-0000000000e1'::uuid END, 'ui'
   FROM generate_series(1, 6) n;
+INSERT INTO social_accounts (workspace_id, id, provider, provider_app_id, provider_account_id, account_kind,
+                             display_name, brand_id)
+VALUES ('01900000-0000-7000-8000-000000000001', '01900000-0000-7000-8000-0000000000d1', 'bluesky',
+        '01900000-0000-7000-8000-0000000000f1', 'did:strict', 'profile', 'Strict',
+        '01900000-0000-7000-8000-0000000000e1');
+INSERT INTO post_destinations (workspace_id, id, post_id, variant_id, social_account_id, provider, publish_type,
+                               selection_source, account_label)
+VALUES ('01900000-0000-7000-8000-000000000001', '01900000-0000-7000-8000-0000000003d5',
+        '01900000-0000-7000-8000-000000000105', '01900000-0000-7000-8000-000000000105',
+        '01900000-0000-7000-8000-0000000000d1', 'bluesky', 'post', 'manual', 'Strict');
 INSERT INTO post_revisions (workspace_id, post_id, post_version, snapshot, snapshot_v, content_hash, content_hash_v,
                             reason)
 SELECT workspace_id, id, 1, '{}', 1, decode(repeat('ab', 32), 'hex'), 1, 'submit' FROM posts;

@@ -19,15 +19,31 @@ export function approvalPolicyQuery(client: Client, workspaceId: string) {
   });
 }
 
-export function policyForPost(policy: PolicyResponse, brandId: string | null): PolicyValues {
+function sourceFor(policy: PolicyResponse, brandId: string | null): PolicyValues {
   const override =
     brandId === null ? undefined : policy.brands.find((brand) => brand.brandId === brandId);
   return override ?? policy.effective;
 }
 
+export function policyForBrands(
+  policy: PolicyResponse,
+  brandIds: readonly (string | null)[],
+): PolicyValues {
+  const keys = brandIds.length === 0 ? [null] : [...new Set(brandIds)];
+  const sources = keys.map((brandId) => sourceFor(policy, brandId));
+  const required = sources.filter((source) => source.mode === 'required');
+  const counted = required.length > 0 ? required : sources;
+  return {
+    mode: required.length > 0 ? 'required' : 'none',
+    requiredApprovals: Math.max(1, ...counted.map((source) => source.requiredApprovals)),
+    allowSelfApproval: sources.every((source) => source.allowSelfApproval),
+    rescheduleToleranceMin: Math.min(...sources.map((source) => source.rescheduleToleranceMin)),
+  };
+}
+
 export function approvalRequired(
   policy: PolicyResponse | undefined,
-  brandId: string | null,
+  brandIds: readonly (string | null)[],
 ): boolean {
-  return policy !== undefined && policyForPost(policy, brandId).mode === 'required';
+  return policy !== undefined && policyForBrands(policy, brandIds).mode === 'required';
 }

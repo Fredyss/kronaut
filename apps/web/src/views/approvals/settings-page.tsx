@@ -1,28 +1,14 @@
-import { SettingsCard, SettingsPage, SettingsRow } from '@kronaut/ui';
+import { SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../../base/api/client.ts';
 import { meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
-import { approvalPolicyQuery, type StoredPolicy } from '../../records/approval-policy/queries.ts';
+import { approvalPolicyQuery } from '../../records/approval-policy/queries.ts';
+import { BrandOverrides } from './brand-overrides.tsx';
 import { PolicyForm } from './policy-form.tsx';
 
 const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
-
-function BrandOverrides({ brands }: { readonly brands: readonly StoredPolicy[] }) {
-  if (brands.length === 0) return null;
-  return (
-    <SettingsCard title={settingsText.settings_brands_title()}>
-      {brands.map((brand) => (
-        <SettingsRow key={brand.brandId} label={brand.brandId ?? ''}>
-          {brand.mode === 'required'
-            ? settingsText.settings_brand_required({ count: brand.requiredApprovals })
-            : settingsText.settings_not_required()}
-        </SettingsRow>
-      ))}
-    </SettingsCard>
-  );
-}
 
 function ApprovalSettings({ workspaceId, role }: { workspaceId: string; role: string }) {
   const client = useApiClient();
@@ -48,11 +34,13 @@ function ApprovalSettings({ workspaceId, role }: { workspaceId: string; role: st
       ) : null}
       <PolicyForm
         key={policy.data.workspace?.version ?? 0}
+        title={settingsText.settings_policy_title()}
         workspaceId={workspaceId}
-        policy={policy.data}
+        version={policy.data.workspace?.version}
+        initial={policy.data.workspace ?? policy.data.effective}
         editable={editable}
       />
-      <BrandOverrides brands={policy.data.brands} />
+      <BrandOverrides workspaceId={workspaceId} policy={policy.data} editable={editable} />
     </>
   );
 }

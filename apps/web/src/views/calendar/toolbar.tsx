@@ -6,10 +6,11 @@ import { ImportButton } from '../../actions/post-import/import-button.tsx';
 import type { Formats } from '../../base/locale/formats.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as calendarText } from '../../i18n/calendar.ts';
-import { keptTag } from './entries.ts';
+import type { PostFilter } from '../../records/posts/queries.ts';
+import { keptFilter } from './entries.ts';
 import { ChevronLeft, ChevronRight, GridIcon, ListIcon } from './icons.tsx';
 import type { CalendarView } from './search.ts';
-import { TagFilter } from './tag-filter.tsx';
+import { Filters } from './tag-filter.tsx';
 import { boundary, shift, type VisibleRange } from './time.ts';
 
 const route = getRouteApi('/app/');
@@ -113,14 +114,14 @@ interface ToolbarProps {
   readonly formats: Formats;
   readonly workspaceId: string | undefined;
   readonly role: string | undefined;
-  readonly tag: string | undefined;
+  readonly filter: PostFilter;
 }
 
 export function CalendarToolbar(props: ToolbarProps) {
-  const { view, current, range, formats, workspaceId, role, tag } = props;
+  const { view, current, range, formats, workspaceId, role, filter } = props;
   const navigate = route.useNavigate();
   const date = current.toString();
-  const kept = keptTag({ tag });
+  const kept = keptFilter(filter);
   const pick = (next: CalendarView) =>
     void navigate({ to: '/', search: { view: next, date, ...kept } });
   const [previous, next] = stepLabels(view);
@@ -167,7 +168,7 @@ export function CalendarToolbar(props: ToolbarProps) {
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-2">
-        {workspaceId === undefined ? null : <TagFilter workspaceId={workspaceId} tag={tag} />}
+        {workspaceId === undefined ? null : <Filters workspaceId={workspaceId} filter={filter} />}
         {workspaceId === undefined || role === undefined ? null : (
           <ImportButton workspaceId={workspaceId} role={role} />
         )}

@@ -29,9 +29,7 @@ export async function postUnits(
     .where('d.workspace_id', '=', workspaceId)
     .where('d.post_id', '=', post.id)
     .execute();
-  const units = accounts.map((a) => scopeUnit(a.id, a.brand_id, a.location_id));
-  if (post.brand_id !== null) units.push(scopeUnit(null, post.brand_id, post.location_id));
-  return units;
+  return accounts.map((a) => scopeUnit(a.id, a.brand_id, a.location_id));
 }
 
 export async function postResource(

@@ -53,7 +53,7 @@
    - A heartbeat renews the lease every 30 s.
    - The claim re-runs `authorize()` as the principal that scheduled, never as `system` (which `authorize()` always denies):
      - a trigger records that principal in `scheduled_by_user_id` / `scheduled_by_grant_id` from `app.actor` each time a user or grant schedules or reschedules, and clears it on unschedule;
-     - the claim rebuilds it from the current membership or grant and calls `authorize(principal, 'posts:schedule', …)`. The `approval` input is `approved` when the destination is bound to an approved request; otherwise it comes from the current policy (brand override, then workspace): `exempt` or `missing`;
+     - the claim rebuilds it from the current membership or grant and calls `authorize(principal, 'posts:schedule', …)`. The `approval` input is `approved` when the destination is bound to an approved request; otherwise it comes from the post's current combined policy (ADR-0059): `exempt` or `missing`;
      - any decision other than allow is `blocked/policy_denied`. That covers a `deny` (a member who left, a revoked or expired grant, a missing scope) and a `require_approval` (a tightened approval policy, ADR-0042).
    - The table has no `publishing → draft`, so every pre-check runs while the row is still `scheduled` or `retry_wait`, in the claim transaction, with the post locked and then the destination locked. The first match wins:
 

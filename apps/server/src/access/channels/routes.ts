@@ -1,6 +1,7 @@
 import { decodePublicId } from '@kronaut/core';
 import { HttpError } from '../../base/http/errors.ts';
 import { type BoundRoute, bindRoute } from '../../base/http/request.ts';
+import { bindBrand } from './brand.ts';
 import { bindConnectCallback } from './connect-callback.ts';
 import { bindConnectStart } from './connect-start.ts';
 import { type ChannelRouteDeps, connectsByRedirect, SYSTEM } from './deps.ts';
@@ -55,5 +56,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindDisconnect(deps.providers),
     bindSignature(),
     bindShortenLinks(),
+    bindBrand(),
   ];
 }

@@ -2,7 +2,7 @@ import { defineRoute } from '@kronaut/contract';
 import * as z from 'zod';
 import { pathId } from '../../base/http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../../base/http/request.ts';
-import { effectivePolicy } from './policy.ts';
+import { workspacePolicy } from './policy.ts';
 import {
   ApprovalPolicySchema,
   deletePolicy,
@@ -109,7 +109,7 @@ export function policyRoutes(): BoundRoute[] {
       const body = await ctx.tenant(async (trx) => {
         ctx.authorize('posts:read', { workspaceId });
         const stored = await listPolicies(trx, workspaceId);
-        return { ...stored, effective: valuesOf(await effectivePolicy(trx, workspaceId, null)) };
+        return { ...stored, effective: valuesOf(await workspacePolicy(trx, workspaceId)) };
       });
       return { body };
     }),

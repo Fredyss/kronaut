@@ -49,6 +49,7 @@ export function ComposeForm(props: ComposeFormProps) {
         <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
           <div className="flex min-w-0 flex-col gap-8">
             <ChannelsFieldset
+              workspaceId={workspaceId}
               channels={channels.data}
               failed={channels.isError}
               mediaFor={content.mediaFor}

@@ -45,6 +45,10 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Approval_Void_Post_DeletedInputs */
 /** @typedef {{}} Approval_Void_ScheduleInputs */
 /** @typedef {{}} Approval_WithdrawInputs */
+/** @typedef {{}} Brand_FilterInputs */
+/** @typedef {{}} Brand_Filter_AllInputs */
+/** @typedef {{}} Brand_Filter_GoneInputs */
+/** @typedef {{}} Brand_NoneInputs */
 /** @typedef {{}} Calendar_TitleInputs */
 /** @typedef {{}} Calendar_UntitledInputs */
 /** @typedef {{}} Calendar_View_DayInputs */
@@ -54,6 +58,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channel_Status_Needs_ReauthInputs */
 /** @typedef {{}} Channels_AddInputs */
 /** @typedef {{}} Channels_All_NetworksInputs */
+/** @typedef {{}} Channels_Brand_ArchivedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Brand_OfInputs */
+/** @typedef {{}} Channels_Brand_SavedInputs */
 /** @typedef {{}} Channels_Connect_Bad_UrlInputs */
 /** @typedef {{}} Channels_Connect_BodyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Connect_ButtonInputs */
@@ -1056,6 +1063,66 @@ export const approval_withdraw = /** @type {((inputs?: Approval_WithdrawInputs, 
 /**
 * | output |
 * | --- |
+* | "Filter by brand" |
+*
+* @param {Brand_FilterInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const brand_filter = /** @type {((inputs?: Brand_FilterInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Brand_FilterInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.brand_filter(inputs)
+	if (locale === "cs") return __cs.brand_filter(inputs)
+	return __en.brand_filter(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "All brands" |
+*
+* @param {Brand_Filter_AllInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const brand_filter_all = /** @type {((inputs?: Brand_Filter_AllInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Brand_Filter_AllInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.brand_filter_all(inputs)
+	if (locale === "cs") return __cs.brand_filter_all(inputs)
+	return __en.brand_filter_all(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Selected brand" |
+*
+* @param {Brand_Filter_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const brand_filter_gone = /** @type {((inputs?: Brand_Filter_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Brand_Filter_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.brand_filter_gone(inputs)
+	if (locale === "cs") return __cs.brand_filter_gone(inputs)
+	return __en.brand_filter_gone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No brand" |
+*
+* @param {Brand_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const brand_none = /** @type {((inputs?: Brand_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Brand_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.brand_none(inputs)
+	if (locale === "cs") return __cs.brand_none(inputs)
+	return __en.brand_none(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Calendar" |
 *
 * @param {Calendar_TitleInputs} inputs
@@ -1187,6 +1254,51 @@ export const channels_all_networks = /** @type {((inputs?: Channels_All_Networks
 	if (locale === "sk") return __sk.channels_all_networks(inputs)
 	if (locale === "cs") return __cs.channels_all_networks(inputs)
 	return __en.channels_all_networks(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "That brand is archived. Pick another one." |
+*
+* @param {Channels_Brand_ArchivedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_brand_archived = /** @type {((inputs?: Channels_Brand_ArchivedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Brand_ArchivedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_brand_archived(inputs)
+	if (locale === "cs") return __cs.channels_brand_archived(inputs)
+	return __en.channels_brand_archived(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Brand of {name}" |
+*
+* @param {Channels_Brand_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_brand_of = /** @type {((inputs: Channels_Brand_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Brand_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_brand_of(inputs)
+	if (locale === "cs") return __cs.channels_brand_of(inputs)
+	return __en.channels_brand_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channel moved to another brand" |
+*
+* @param {Channels_Brand_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_brand_saved = /** @type {((inputs?: Channels_Brand_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Brand_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_brand_saved(inputs)
+	if (locale === "cs") return __cs.channels_brand_saved(inputs)
+	return __en.channels_brand_saved(inputs)
 });
 /**
 * | output |

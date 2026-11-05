@@ -1,7 +1,7 @@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { DestinationEventData, WebhookEventInput } from '../../identity/webhooks/events.ts';
-import { effectivePolicy } from '../../policy/approval-policy/policy.ts';
+import { postPolicy } from '../../policy/approval-policy/policy.ts';
 
 const NEEDS_PERSON: ReadonlySet<string> = new Set(['failed', 'unconfirmed', 'awaiting_manual']);
 const APPROVAL_KINDS: ReadonlySet<string> = new Set([
@@ -130,13 +130,7 @@ async function approvalTarget(trx: TenantDb, workspaceId: string, requestId: str
         .onRef('d.workspace_id', '=', 'ard.workspace_id')
         .onRef('d.id', '=', 'ard.destination_id'),
     )
-    .select([
-      'r.post_id',
-      'r.requested_by_user_id',
-      'p.brand_id',
-      'd.provider',
-      'd.social_account_id',
-    ])
+    .select(['r.post_id', 'r.requested_by_user_id', 'd.provider', 'd.social_account_id'])
     .where('r.workspace_id', '=', workspaceId)
     .where('r.id', '=', requestId)
     .orderBy('d.created_at')
@@ -153,7 +147,7 @@ async function notifyApproval(trx: TenantDb, event: WebhookEventInput): Promise<
   const requester = target.requested_by_user_id;
   let audience: Audience;
   if (event.type === 'post.approval_requested') {
-    const policy = await effectivePolicy(trx, workspaceId, target.brand_id);
+    const policy = await postPolicy(trx, workspaceId, target.post_id);
     audience = { kind: 'approvers', except: policy.allowSelfApproval ? null : requester };
   } else if (requester === null) {
     return;

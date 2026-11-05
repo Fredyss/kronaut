@@ -4,7 +4,32 @@
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
+/** @typedef {{}} Settings_Brand_AddInputs */
+/** @typedef {{}} Settings_Brand_ArchiveInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Archive_OfInputs */
+/** @typedef {{}} Settings_Brand_ArchivedInputs */
+/** @typedef {{}} Settings_Brand_Archived_DoneInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_ChannelsInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_CreatedInputs */
+/** @typedef {{}} Settings_Brand_In_UseInputs */
+/** @typedef {{}} Settings_Brand_List_IntroInputs */
+/** @typedef {{}} Settings_Brand_List_TitleInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_NameInputs */
+/** @typedef {{}} Settings_Brand_Name_InvalidInputs */
+/** @typedef {{}} Settings_Brand_Name_TakenInputs */
+/** @typedef {{}} Settings_Brand_NewInputs */
+/** @typedef {{}} Settings_Brand_OverrideInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Override_OfInputs */
+/** @typedef {{}} Settings_Brand_Override_RemovedInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Policy_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Settings_Brand_RequiredInputs */
+/** @typedef {{}} Settings_Brand_SavedInputs */
+/** @typedef {{}} Settings_Brand_StrictestInputs */
+/** @typedef {{}} Settings_Brand_UnarchiveInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Brand_Unarchive_OfInputs */
+/** @typedef {{}} Settings_Brand_Unarchived_DoneInputs */
+/** @typedef {{}} Settings_Brand_Uses_WorkspaceInputs */
+/** @typedef {{}} Settings_Brands_EmptyInputs */
 /** @typedef {{}} Settings_Brands_TitleInputs */
 /** @typedef {{}} Settings_ConflictInputs */
 /** @typedef {{}} Settings_DefaultsInputs */
@@ -220,10 +245,112 @@ export const settings_approvals_title = /** @type {(inputs: Settings_Approvals_T
 	return /** @type {LocalizedString} */ (`Approvals`)
 };
 
+export const settings_brand_add = /** @type {(inputs: Settings_Brand_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add brand`)
+};
+
+export const settings_brand_archive = /** @type {(inputs: Settings_Brand_ArchiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Archive`)
+};
+
+export const settings_brand_archive_of = /** @type {(inputs: Settings_Brand_Archive_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Archive brand ${i?.name}`)
+};
+
+export const settings_brand_archived = /** @type {(inputs: Settings_Brand_ArchivedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Archived`)
+};
+
+export const settings_brand_archived_done = /** @type {(inputs: Settings_Brand_Archived_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Brand archived`)
+};
+
+export const settings_brand_channels = /** @type {(inputs: Settings_Brand_ChannelsInputs) => LocalizedString} */ (i) => {
+	const countPlural = registry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel`);
+	return /** @type {LocalizedString} */ (`${i?.count} channels`)
+};
+
+export const settings_brand_created = /** @type {(inputs: Settings_Brand_CreatedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Brand ${i?.name} added`)
+};
+
+export const settings_brand_in_use = /** @type {(inputs: Settings_Brand_In_UseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This brand still has channels. Move its channels first.`)
+};
+
+export const settings_brand_list_intro = /** @type {(inputs: Settings_Brand_List_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Group channels by client or brand. Each brand can have its own approval rules.`)
+};
+
+export const settings_brand_list_title = /** @type {(inputs: Settings_Brand_List_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Brands`)
+};
+
+export const settings_brand_name = /** @type {(inputs: Settings_Brand_NameInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Name of brand ${i?.name}`)
+};
+
+export const settings_brand_name_invalid = /** @type {(inputs: Settings_Brand_Name_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Enter a name of 1 to 120 characters.`)
+};
+
+export const settings_brand_name_taken = /** @type {(inputs: Settings_Brand_Name_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A brand with this name already exists.`)
+};
+
+export const settings_brand_new = /** @type {(inputs: Settings_Brand_NewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New brand name`)
+};
+
+export const settings_brand_override = /** @type {(inputs: Settings_Brand_OverrideInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Override workspace policy`)
+};
+
+export const settings_brand_override_of = /** @type {(inputs: Settings_Brand_Override_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Override workspace policy for ${i?.name}`)
+};
+
+export const settings_brand_override_removed = /** @type {(inputs: Settings_Brand_Override_RemovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The brand follows the workspace rules again.`)
+};
+
+export const settings_brand_policy_title = /** @type {(inputs: Settings_Brand_Policy_TitleInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Approval rules for ${i?.name}`)
+};
+
 export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
 	const countPlural = registry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approval`);
 	return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approvals`)
+};
+
+export const settings_brand_saved = /** @type {(inputs: Settings_Brand_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Brand saved`)
+};
+
+export const settings_brand_strictest = /** @type {(inputs: Settings_Brand_StrictestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A post that goes to channels of several brands follows the strictest rules among its channels.`)
+};
+
+export const settings_brand_unarchive = /** @type {(inputs: Settings_Brand_UnarchiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Restore`)
+};
+
+export const settings_brand_unarchive_of = /** @type {(inputs: Settings_Brand_Unarchive_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Restore brand ${i?.name}`)
+};
+
+export const settings_brand_unarchived_done = /** @type {(inputs: Settings_Brand_Unarchived_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Brand restored`)
+};
+
+export const settings_brand_uses_workspace = /** @type {(inputs: Settings_Brand_Uses_WorkspaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Follows the workspace rules`)
+};
+
+export const settings_brands_empty = /** @type {(inputs: Settings_Brands_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No brands yet.`)
 };
 
 export const settings_brands_title = /** @type {(inputs: Settings_Brands_TitleInputs) => LocalizedString} */ () => {

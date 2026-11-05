@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
-import { keptTag } from './entries.ts';
+import { keptFilter } from './entries.ts';
 import { CELL, DROP_OVER, type GridProps, PAST } from './grid.ts';
 
 const MONTH_CHIPS = 3;
@@ -57,7 +57,7 @@ export function MonthGrid({ days, entries, formats, current, now, mover }: GridP
               {hidden > 0 ? (
                 <Link
                   to="/"
-                  search={(prev) => ({ view: 'week', date: key, ...keptTag(prev) })}
+                  search={(prev) => ({ view: 'week', date: key, ...keptFilter(prev) })}
                   className="rounded px-1 text-muted-foreground text-xs hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   {calendarText.calendar_more({ count: hidden })}

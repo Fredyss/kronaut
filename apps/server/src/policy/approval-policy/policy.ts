@@ -1,5 +1,4 @@
 import type { TenantDb } from '@kronaut/db';
-import { sql } from 'kysely';
 
 export interface EffectivePolicy {
   readonly id: string | null;
@@ -40,31 +39,89 @@ export function policyOf(row: PolicyRow | undefined): EffectivePolicy {
   };
 }
 
-export async function effectivePolicy(
+interface ScopedPolicyRow extends PolicyRow {
+  readonly brand_id: string | null;
+}
+
+function combined(sources: readonly EffectivePolicy[]): EffectivePolicy {
+  const required = sources.filter((source) => source.mode === 'required');
+  const counted = required.length > 0 ? required : sources;
+  const ids = new Set(sources.map((source) => source.id));
+  const [only] = sources;
+  const single = ids.size === 1 && only !== undefined;
+  return {
+    id: single ? only.id : null,
+    version: single ? only.version : null,
+    mode: required.length > 0 ? 'required' : 'none',
+    requiredApprovals: Math.max(1, ...counted.map((source) => source.requiredApprovals)),
+    allowSelfApproval: sources.every((source) => source.allowSelfApproval),
+    rescheduleToleranceMin: Math.min(...sources.map((source) => source.rescheduleToleranceMin)),
+  };
+}
+
+export function combinePolicies(
+  brands: readonly (string | null)[],
+  rows: readonly ScopedPolicyRow[],
+): EffectivePolicy {
+  const workspace = rows.find((row) => row.brand_id === null);
+  const brandRow = (brandId: string | null) =>
+    (brandId === null ? undefined : rows.find((row) => row.brand_id === brandId)) ?? workspace;
+  const keys = brands.length === 0 ? [null] : [...new Set(brands)];
+  return combined(keys.map((brandId) => policyOf(brandRow(brandId))));
+}
+
+const POLICY_COLUMNS = [
+  'brand_id',
+  'id',
+  'version',
+  'mode',
+  'required_approvals',
+  'allow_self_approval',
+  'reschedule_tolerance_min',
+] as const;
+
+export async function workspacePolicy(
   trx: TenantDb,
   workspaceId: string,
-  brandId: string | null,
 ): Promise<EffectivePolicy> {
   const row = await trx
     .selectFrom('approval_policies')
-    .select([
-      'id',
-      'version',
-      'mode',
-      'required_approvals',
-      'allow_self_approval',
-      'reschedule_tolerance_min',
-    ])
+    .select(POLICY_COLUMNS)
     .where('workspace_id', '=', workspaceId)
-    .where((eb) =>
-      brandId === null
-        ? eb('brand_id', 'is', null)
-        : eb.or([eb('brand_id', '=', brandId), eb('brand_id', 'is', null)]),
-    )
-    .orderBy(sql`brand_id nulls last`)
-    .limit(1)
+    .where('brand_id', 'is', null)
     .executeTakeFirst();
   return policyOf(row);
+}
+
+export async function postPolicy(
+  trx: TenantDb,
+  workspaceId: string,
+  postId: string,
+): Promise<EffectivePolicy> {
+  const destinations = await trx
+    .selectFrom('post_destinations as d')
+    .innerJoin('social_accounts as a', (join) =>
+      join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
+    )
+    .select('a.brand_id')
+    .distinct()
+    .where('d.workspace_id', '=', workspaceId)
+    .where('d.post_id', '=', postId)
+    .where('d.state', '<>', 'canceled')
+    .execute();
+  const brands = destinations.map((row) => row.brand_id);
+  const brandIds = brands.filter((brandId) => brandId !== null);
+  const rows = await trx
+    .selectFrom('approval_policies')
+    .select(POLICY_COLUMNS)
+    .where('workspace_id', '=', workspaceId)
+    .where((eb) =>
+      brandIds.length === 0
+        ? eb('brand_id', 'is', null)
+        : eb.or([eb('brand_id', 'is', null), eb('brand_id', 'in', brandIds)]),
+    )
+    .execute();
+  return combinePolicies(brands, rows);
 }
 
 export function policySnapshot(policy: EffectivePolicy): string {

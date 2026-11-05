@@ -1,6 +1,6 @@
 -- The requester is the acting principal and cannot approve their own request unless the live policy
 -- and the request snapshot both allow it. The live policy's approval count is a floor, and reviewer
--- votes count on a request an agent opened.
+-- votes count on a request an agent opened. A post's brand policy comes from its channels' brands (ADR-0059).
 
 BEGIN;
 
@@ -27,6 +27,14 @@ INSERT INTO approval_policies (workspace_id, brand_id, mode, required_approvals,
   ('01900000-0000-7000-8000-000000000301', NULL, 'required', 1, false),
   ('01900000-0000-7000-8000-000000000301', '01900000-0000-7000-8000-000000000321', 'required', 1, true),
   ('01900000-0000-7000-8000-000000000301', '01900000-0000-7000-8000-000000000322', 'required', 2, false);
+INSERT INTO provider_apps (id, provider, instance_host, client_id)
+VALUES ('01900000-0000-7000-8000-0000000003e1', 'bluesky', '', 'requester-app');
+INSERT INTO social_accounts (workspace_id, id, provider, provider_app_id, provider_account_id, account_kind,
+                             display_name, brand_id)
+SELECT '01900000-0000-7000-8000-000000000301', ('01900000-0000-7000-8000-00000000036' || n)::uuid, 'bluesky',
+       '01900000-0000-7000-8000-0000000003e1', 'did:requester-' || n, 'profile', 'Channel ' || n,
+       ('01900000-0000-7000-8000-00000000032' || n)::uuid
+  FROM generate_series(1, 3) n;
 
 SET ROLE kronaut_app;
 SELECT set_config('app.workspace_id', '01900000-0000-7000-8000-000000000301', true);
@@ -48,6 +56,12 @@ BEGIN
     INSERT INTO post_revisions (workspace_id, post_id, post_version, snapshot, snapshot_v,
                                 content_hash, content_hash_v, reason)
     VALUES (app_workspace_id(), p.id, 1, '{}', 1, decode(repeat('ab', 32), 'hex'), 1, 'submit');
+    CONTINUE WHEN p.brand_id IS NULL;
+    INSERT INTO post_variants (workspace_id, id, post_id, is_default) VALUES (app_workspace_id(), p.id, p.id, true);
+    INSERT INTO post_destinations (workspace_id, post_id, variant_id, social_account_id, provider, publish_type,
+                                   selection_source, account_label)
+    SELECT app_workspace_id(), p.id, p.id, a.id, 'bluesky', 'post', 'manual', a.display_name
+      FROM social_accounts a WHERE a.brand_id = p.brand_id;
   END LOOP;
 END $$;
 

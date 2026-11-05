@@ -13,11 +13,17 @@ export const ListQuery = z.object({
   unscheduled: z.string().optional(),
   limit: z.string().optional(),
   tag: z.string().optional(),
+  brand: z.string().optional(),
 });
 
 const Instant = z.iso.datetime({ offset: true });
 
-const RangeQuery = z.strictObject({ from: Instant, to: Instant, tag: z.string().optional() });
+const RangeQuery = z.strictObject({
+  from: Instant,
+  to: Instant,
+  tag: z.string().optional(),
+  brand: z.string().optional(),
+});
 
 const UnscheduledQuery = z.strictObject({
   unscheduled: z.literal('true'),
@@ -28,15 +34,24 @@ const UnscheduledQuery = z.strictObject({
     .pipe(z.number().int().min(1).max(100))
     .optional(),
   tag: z.string().optional(),
+  brand: z.string().optional(),
 });
 
+interface Labels {
+  readonly tag?: string;
+  readonly brand?: string;
+}
+
 export type ListFilter =
-  | { readonly kind: 'range'; readonly from: Date; readonly to: Date; readonly tag?: string }
-  | { readonly kind: 'unscheduled'; readonly limit: number; readonly tag?: string };
+  | ({ readonly kind: 'range'; readonly from: Date; readonly to: Date } & Labels)
+  | ({ readonly kind: 'unscheduled'; readonly limit: number } & Labels);
 
 export function listFilter(query: z.output<typeof ListQuery>): ListFilter {
   const present = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined));
-  const tag = query.tag === undefined ? {} : { tag: query.tag };
+  const tag = {
+    ...(query.tag === undefined ? {} : { tag: query.tag }),
+    ...(query.brand === undefined ? {} : { brand: query.brand }),
+  };
   if ('unscheduled' in present) {
     const parsed = UnscheduledQuery.safeParse(present);
     if (!parsed.success) throw invalid(issueDetails('query', parsed.error));

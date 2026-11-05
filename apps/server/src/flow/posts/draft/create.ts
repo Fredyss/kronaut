@@ -3,6 +3,7 @@ import type { Principal, ScopeUnit } from '@kronaut/core';
 import type { DB, TenantDb } from '@kronaut/db';
 import type { Insertable } from 'kysely';
 import * as z from 'zod';
+import { recomputePostBrand } from '../../../access/channels/post-brand.ts';
 import { HttpError, type IssueDetail } from '../../../base/http/errors.ts';
 import { unprocessable } from '../../../base/http/issues.ts';
 import { pathId } from '../../../base/http/params.ts';
@@ -87,6 +88,7 @@ export async function insertDraft(
   const defaultId = await insertVariant(trx, ref, true, items);
   const variantIds = await insertVariants(trx, ref, variants);
   await insertDestinations(trx, ref, place(destinations, defaultId, variantIds));
+  await recomputePostBrand(trx, workspaceId, [postId]);
   return postId;
 }
 

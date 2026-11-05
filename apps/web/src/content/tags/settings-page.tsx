@@ -9,12 +9,13 @@ import {
   toast,
 } from '@kronaut/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
 import { meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
+import { NameField } from '../../base/ui/name-field.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { postsKey } from '../../records/posts/queries.ts';
 import {
@@ -72,47 +73,6 @@ function useTagWrites(workspaceId: string, tagId: string, onDeleted: () => void)
   return { update, remove };
 }
 
-function NameField({
-  tag,
-  onRename,
-}: {
-  readonly tag: Tag;
-  onRename(name: string, onRefused: () => void): void;
-}) {
-  const [name, setName] = useState(tag.name);
-  const [stored, setStored] = useState(tag.name);
-  const sent = useRef<string | null>(null);
-  if (stored !== tag.name) {
-    setStored(tag.name);
-    setName(tag.name);
-  }
-  const commit = () => {
-    const next = name.normalize('NFC').trim();
-    if (next === '' || next === tag.name) return setName(tag.name);
-    if (next === sent.current) return;
-    sent.current = next;
-    setName(next);
-    onRename(next, () => {
-      sent.current = null;
-      setName(tag.name);
-    });
-  };
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') commit();
-  };
-  return (
-    <input
-      aria-label={settingsText.settings_tag_name({ name: tag.name })}
-      value={name}
-      maxLength={TAG_NAME_MAX}
-      onChange={(event) => setName(event.currentTarget.value)}
-      onBlur={commit}
-      onKeyDown={onKeyDown}
-      className="h-8 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-sm focus-visible:outline-2 focus-visible:outline-ring"
-    />
-  );
-}
-
 function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; readonly tag: Tag }) {
   const row = useRef<HTMLLIElement>(null);
   const { update, remove } = useTagWrites(workspaceId, tag.id, () => focusNeighbour(row.current));
@@ -121,7 +81,9 @@ function EditableRow({ workspaceId, tag }: { readonly workspaceId: string; reado
     <li ref={row} className="flex flex-wrap items-center gap-3 px-6 py-3">
       <TagDots tags={[tag]} />
       <NameField
-        tag={tag}
+        name={tag.name}
+        label={settingsText.settings_tag_name({ name: tag.name })}
+        maxLength={TAG_NAME_MAX}
         onRename={(name, onRefused) => update.mutate({ name }, { onError: onRefused })}
       />
       <Select
