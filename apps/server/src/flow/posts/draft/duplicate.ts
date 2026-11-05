@@ -46,7 +46,7 @@ export function duplicateRoutes(deps: PostRouteDeps): BoundRoute[] {
             seriesId: null,
           },
         );
-        const copy = await readPost(trx, workspaceId, copyId);
+        const copy = await readPost(trx, workspaceId, copyId, ctx.principal);
         await writePostAudit(trx, {
           ctx,
           post: { workspaceId, postId: copyId },

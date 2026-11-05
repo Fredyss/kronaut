@@ -48,7 +48,7 @@ export function scheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
           const resource = { workspaceId, postId, units };
           await startSeries(trx, ctx, { resource, body, repeat: body.repeat });
         }
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

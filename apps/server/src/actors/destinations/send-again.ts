@@ -88,7 +88,7 @@ export function sendAgainRoutes(deps: PostRouteDeps): BoundRoute[] {
           row,
           postVersion: version,
         });
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

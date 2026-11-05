@@ -53,7 +53,12 @@ function destinationRows(trx: TenantDb, workspaceId: string, postId: string) {
     .execute();
 }
 
-export async function loadDestinations(trx: TenantDb, workspaceId: string, postId: string) {
+export async function loadDestinations(
+  trx: TenantDb,
+  workspaceId: string,
+  postId: string,
+  hideGroups: boolean,
+) {
   const destinations = await destinationRows(trx, workspaceId, postId);
   return destinations.map((d) => ({
     variantId: d.is_default === false ? d.variant_id : null,
@@ -71,7 +76,8 @@ export async function loadDestinations(trx: TenantDb, workspaceId: string, postI
     publishedAt: iso(d.published_at),
     lastErrorCode: d.last_error_code,
     skipSignature: d.skip_signature,
-    sourceGroupId: d.source_group_id === null ? null : encodePublicId('group', d.source_group_id),
+    sourceGroupId:
+      hideGroups || d.source_group_id === null ? null : encodePublicId('group', d.source_group_id),
     signature: d.requested_id === null ? d.frozen_signature : d.requested_signature,
     signatureHeld: d.state !== 'draft' || d.requested_id !== null,
   }));

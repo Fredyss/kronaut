@@ -1,5 +1,6 @@
 import { decodePublicId } from '@kronaut/core';
 import { HttpError } from '../../base/http/errors.ts';
+import { grantLacks, hidesGroups } from '../../base/http/grant-scopes.ts';
 import { type BoundRoute, bindRoute } from '../../base/http/request.ts';
 import { bindBrand } from './brand.ts';
 import { bindConnectCallback } from './connect-callback.ts';
@@ -19,12 +20,10 @@ function bindList(deps: ChannelRouteDeps) {
     if (workspaceId === null) throw new HttpError('not_found', 'Not found.');
     const decision = ctx.authorize('channels:read', { workspaceId });
     const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
-    const grantLacks = (needed: string) =>
-      ctx.principal?.kind === 'grant' && !ctx.principal.scopes.includes(needed);
     const options = {
       scope,
-      hideSignatures: grantLacks('posts:read'),
-      hideGroups: grantLacks('groups:read'),
+      hideSignatures: grantLacks(ctx.principal, 'posts:read'),
+      hideGroups: hidesGroups(ctx.principal),
     };
     const items = await ctx.tenant((trx) =>
       listChannels(trx, workspaceId, deps.providers, options),

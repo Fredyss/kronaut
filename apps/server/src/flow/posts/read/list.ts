@@ -12,6 +12,8 @@ import {
   onGroup,
   visibleIn,
 } from '../../../access/post-access/reads.ts';
+import { denyError } from '../../../base/http/errors.ts';
+import { hidesGroups } from '../../../base/http/grant-scopes.ts';
 import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
 import { iso, plainLocal } from '../../../base/http/time.ts';
@@ -31,7 +33,7 @@ export const postListRoute = defineRoute({
   query: ListQuery,
   response: z.object({ items: z.array(PostSummarySchema), truncated: z.boolean() }),
   summary: 'List posts',
-  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list. Filters combine.`,
+  description: `Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most ${RANGE_MAX_POSTS} posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default ${DRAFTS_DEFAULT_LIMIT}). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list, and a key without groups:read gets 403. Filters combine.`,
   tags: ['posts'],
 });
 
@@ -217,6 +219,8 @@ export function listRoutes(): BoundRoute[] {
       const decision = ctx.authorize('posts:read', { workspaceId });
       const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
       const filter = listFilter(query);
+      if (filter.group !== undefined && hidesGroups(ctx.principal))
+        throw denyError('scope_missing');
       const body = await ctx.tenant((trx) => listPosts(trx, workspaceId, scope, filter));
       return { body };
     }),

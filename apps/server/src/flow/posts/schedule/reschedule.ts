@@ -82,7 +82,7 @@ export function rescheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
           kept: keptBindings(rows),
         };
         await scheduleLocked(trx, run, drafts);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

@@ -97,7 +97,7 @@ export function unscheduleRoutes(): BoundRoute[] {
         checkVersion(locked, body.expectedVersion);
         const rows = await lockDestinations(trx, workspaceId, postId);
         await unscheduleLocked(trx, workspaceId, postId, rows);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

@@ -13,6 +13,8 @@ import {
   onGroup,
   visibleIn,
 } from '../../access/post-access/reads.ts';
+import { denyError } from '../../base/http/errors.ts';
+import { hidesGroups } from '../../base/http/grant-scopes.ts';
 import { issueDetails } from '../../base/http/input.ts';
 import { invalid } from '../../base/http/issues.ts';
 import { pathId } from '../../base/http/params.ts';
@@ -65,7 +67,7 @@ export const needsActionRoute = defineRoute({
   }),
   response: NeedsActionSchema,
   summary: 'List destinations that need action',
-  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list. Both filters combine.`,
+  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list, and a key without groups:read gets 403. Both filters combine.`,
   tags: ['destinations'],
 });
 
@@ -189,6 +191,7 @@ export function needsActionRoutes(): BoundRoute[] {
       const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
       const limit = limitOf(query);
       const brand = brandFilter(query.brand);
+      if (query.group !== undefined && hidesGroups(ctx.principal)) throw denyError('scope_missing');
       const group = groupFilter(query.group);
       if (brand === 'unknown' || group === 'unknown') {
         return { body: { items: [], total: 0, truncated: false } };

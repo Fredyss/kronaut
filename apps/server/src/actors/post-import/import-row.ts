@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 import { type CurrentPost, lockCurrent, lockDestinations } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
 import { HttpError } from '../../base/http/errors.ts';
+import { hidesGroups } from '../../base/http/grant-scopes.ts';
 import type { RequestContext } from '../../base/http/request.ts';
 import type { ProviderRegistry } from '../../base/providers/providers.ts';
 import { authorOf, insertDraft } from '../../flow/posts/draft/create.ts';
@@ -64,6 +65,7 @@ export async function importRow(
     workspaceId,
     body: { items: row.items, destinations: row.destinations },
     columns: { schedule_mode: 'unscheduled', ...authorOf(ctx.principal), origin: 'import' },
+    ignoreGroupPicks: hidesGroups(ctx.principal),
     authorize: (units) => ctx.authorize('posts:draft', { workspaceId, units }),
   });
   const locked = await lockCurrent(trx, workspaceId, postId);

@@ -9,6 +9,7 @@ import {
 } from '../../../access/post-access/locks.ts';
 import { postUnits } from '../../../access/post-access/units.ts';
 import { HttpError, type IssueDetail } from '../../../base/http/errors.ts';
+import { hidesGroups } from '../../../base/http/grant-scopes.ts';
 import { unprocessable } from '../../../base/http/issues.ts';
 import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
@@ -53,7 +54,7 @@ export const postUpdateRoute = defineRoute({
   idempotency: true,
   summary: 'Edit a draft post',
   description:
-    'Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled.',
+    'Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the destination already stores is kept unchecked; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.',
   tags: ['posts'],
 });
 
@@ -162,7 +163,10 @@ export function updateRoutes(deps: PostRouteDeps): BoundRoute[] {
         const resolved =
           body.destinations === undefined
             ? undefined
-            : await resolveDestinations(resolving, deps.providers, body.destinations, postId);
+            : await resolveDestinations(resolving, deps.providers, body.destinations, {
+                postId,
+                ignore: hidesGroups(ctx.principal),
+              });
         const units = [...(await postUnits(trx, workspaceId, locked)), ...(resolved?.units ?? [])];
         ctx.authorize('posts:draft', { workspaceId, postId, units });
         checkVersion(locked, body.expectedVersion);
@@ -176,7 +180,7 @@ export function updateRoutes(deps: PostRouteDeps): BoundRoute[] {
 
         const change = { body, items, variants, existing, resolved };
         await applyChange(trx, { workspaceId, postId }, change);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

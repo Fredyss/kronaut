@@ -8,6 +8,11 @@ export interface GroupPick {
   readonly sourceGroupId: string | null | undefined;
 }
 
+export interface GroupPicking {
+  readonly postId?: string;
+  readonly ignore: boolean;
+}
+
 function pickKey(accountId: string | null, publishType: string): string {
   return `${accountId}\n${publishType}`;
 }
@@ -68,12 +73,14 @@ async function lockPicked(
 }
 
 // A pick the destination already stores is kept even if the channel has left the group since: the client
-// sends it back unchanged on every edit.
+// sends it back unchanged on every edit. When picks are ignored, nothing is read or locked, so a caller
+// without groups:read cannot probe which groups exist.
 export async function resolveSourceGroups(
   resolving: Resolving,
   picks: readonly GroupPick[],
-  postId?: string,
+  { postId, ignore }: GroupPicking,
 ): Promise<ReadonlyMap<number, string>> {
+  if (ignore) return new Map();
   const decoded = picks.flatMap(({ index, accountId, publishType, sourceGroupId }) =>
     sourceGroupId === null || sourceGroupId === undefined
       ? []

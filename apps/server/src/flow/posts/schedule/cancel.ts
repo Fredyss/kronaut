@@ -80,7 +80,7 @@ export function cancelRoutes(): BoundRoute[] {
         }
         await bumpPost(trx, workspaceId, postId);
         await requestStop(trx, workspaceId, stopping);
-        if (canceled.length === 0) return await readPost(trx, workspaceId, postId);
+        if (canceled.length === 0) return await readPost(trx, workspaceId, postId, ctx.principal);
 
         await cancelLocked(
           trx,
@@ -88,7 +88,7 @@ export function cancelRoutes(): BoundRoute[] {
           { workspaceId, postId },
           canceled.map((row) => ({ row, reason: 'user_canceled' })),
         );
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

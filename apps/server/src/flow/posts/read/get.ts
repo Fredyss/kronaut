@@ -15,6 +15,8 @@ export const postGetRoute = defineRoute({
   params: z.object({ workspaceId: z.string(), postId: z.string() }),
   response: PostSchema,
   summary: 'Get a post',
+  description:
+    'A key without groups:read gets sourceGroupId: null on every destination, here and on every route that returns a post.',
   tags: ['posts'],
 });
 
@@ -34,7 +36,7 @@ export function getRoutes(): BoundRoute[] {
         if (row === undefined) throw new HttpError('not_found', 'Post not found.');
         const units = await postUnits(trx, workspaceId, row);
         ctx.authorize('posts:read', { workspaceId, postId, units });
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

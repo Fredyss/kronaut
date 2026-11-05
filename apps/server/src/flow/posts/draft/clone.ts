@@ -144,6 +144,7 @@ export async function clonePost(
       series_id: input.seriesId,
       agent_dirty: tainted(source),
     },
+    ignoreGroupPicks: true,
     authorize: (units) => deps.acting.authorize('posts:draft', { workspaceId, units }),
   });
   await copyPostTags(trx, workspaceId, input.sourceId, copyId);

@@ -7715,7 +7715,7 @@
     },
     "/v1/workspaces/{workspaceId}/needs-action": {
       "get": {
-        "description": "The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list. Both filters combine.",
+        "description": "The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list, and a key without groups:read gets 403. Both filters combine.",
         "operationId": "destinations.needs_action",
         "parameters": [
           {
@@ -8941,7 +8941,7 @@
     },
     "/v1/workspaces/{workspaceId}/posts": {
       "get": {
-        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list. Filters combine.",
+        "description": "Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list, and a key without groups:read gets 403. Filters combine.",
         "operationId": "posts.list",
         "parameters": [
           {
@@ -9267,6 +9267,7 @@
         ]
       },
       "post": {
+        "description": "A destination with sourceGroupId was picked through that group: it must exist (422 not_found) and the channel must be in it (422 not_in_group). A key without groups:read has every sourceGroupId ignored and stored as null, unchecked.",
         "operationId": "posts.create",
         "parameters": [
           {
@@ -10019,6 +10020,7 @@
         ]
       },
       "get": {
+        "description": "A key without groups:read gets sourceGroupId: null on every destination, here and on every route that returns a post.",
         "operationId": "posts.get",
         "parameters": [
           {
@@ -10510,7 +10512,7 @@
         ]
       },
       "patch": {
-        "description": "Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled.",
+        "description": "Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the destination already stores is kept unchecked; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.",
         "operationId": "posts.update",
         "parameters": [
           {

@@ -192,7 +192,7 @@ export function approvalRequestRoutes(deps: PostRouteDeps): BoundRoute[] {
             repeat: body.repeat,
           });
         }
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

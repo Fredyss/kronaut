@@ -884,7 +884,7 @@ export const mediaUsage = <ThrowOnError extends boolean = true>(options: Options
 /**
  * List destinations that need action
  *
- * The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list. Both filters combine.
+ * The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list, and a key without groups:read gets 403. Both filters combine.
  */
 export const destinationsNeedsAction = <ThrowOnError extends boolean = true>(options: Options<DestinationsNeedsActionData, ThrowOnError>): RequestResult<DestinationsNeedsActionResponses, DestinationsNeedsActionErrors, ThrowOnError> => (options.client ?? client).get<DestinationsNeedsActionResponses, DestinationsNeedsActionErrors, ThrowOnError>({
     security: [{
@@ -1005,7 +1005,7 @@ export const postsImportCheck = <ThrowOnError extends boolean = true>(options: O
 /**
  * List posts
  *
- * Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list. Filters combine.
+ * Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list, and a key without groups:read gets 403. Filters combine.
  */
 export const postsList = <ThrowOnError extends boolean = true>(options: Options<PostsListData, ThrowOnError>): RequestResult<PostsListResponses, PostsListErrors, ThrowOnError> => (options.client ?? client).get<PostsListResponses, PostsListErrors, ThrowOnError>({
     security: [{
@@ -1019,6 +1019,8 @@ export const postsList = <ThrowOnError extends boolean = true>(options: Options<
 
 /**
  * Create a draft post
+ *
+ * A destination with sourceGroupId was picked through that group: it must exist (422 not_found) and the channel must be in it (422 not_in_group). A key without groups:read has every sourceGroupId ignored and stored as null, unchecked.
  */
 export const postsCreate = <ThrowOnError extends boolean = true>(options: Options<PostsCreateData, ThrowOnError>): RequestResult<PostsCreateResponses, PostsCreateErrors, ThrowOnError> => (options.client ?? client).post<PostsCreateResponses, PostsCreateErrors, ThrowOnError>({
     security: [{
@@ -1051,6 +1053,8 @@ export const postsDelete = <ThrowOnError extends boolean = true>(options: Option
 
 /**
  * Get a post
+ *
+ * A key without groups:read gets sourceGroupId: null on every destination, here and on every route that returns a post.
  */
 export const postsGet = <ThrowOnError extends boolean = true>(options: Options<PostsGetData, ThrowOnError>): RequestResult<PostsGetResponses, PostsGetErrors, ThrowOnError> => (options.client ?? client).get<PostsGetResponses, PostsGetErrors, ThrowOnError>({
     security: [{
@@ -1065,7 +1069,7 @@ export const postsGet = <ThrowOnError extends boolean = true>(options: Options<P
 /**
  * Edit a draft post
  *
- * Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled.
+ * Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the destination already stores is kept unchecked; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.
  */
 export const postsUpdate = <ThrowOnError extends boolean = true>(options: Options<PostsUpdateData, ThrowOnError>): RequestResult<PostsUpdateResponses, PostsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<PostsUpdateResponses, PostsUpdateErrors, ThrowOnError>({
     security: [{
