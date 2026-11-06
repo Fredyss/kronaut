@@ -27,6 +27,7 @@ describe('status table', () => {
     ['brand_name_taken', 409],
     ['brand_in_use', 409],
     ['brand_archived', 409],
+    ['group_name_taken', 409],
     ['idempotency_key_reused', 409],
     ['idempotency_key_required', 428],
     ['payload_too_large', 413],

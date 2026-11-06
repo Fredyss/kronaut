@@ -10,7 +10,7 @@ import { DestinationParams, fromOf, lockMove, lockTarget, movableTo } from './lo
 
 const CANCELABLE = movableTo('canceled');
 
-export const destinationCancelRoute = defineRoute({
+const destinationCancelRoute = defineRoute({
   id: 'destinations.cancel',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/destinations/:destinationId/cancel',
@@ -49,7 +49,7 @@ export function destinationCancelRoutes(): BoundRoute[] {
         await bumpPost(trx, workspaceId, postId);
         const reason = row.state === 'awaiting_manual' ? 'skipped_manual' : 'user_canceled';
         await cancelLocked(trx, ctx, target, [{ row, reason, args: fromOf(row) }]);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

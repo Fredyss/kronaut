@@ -18,7 +18,7 @@ import { authorizeUnschedule, unscheduleLocked } from './unschedule.ts';
 
 const IN_FLIGHT: ReadonlySet<string> = new Set(['publishing', 'verifying', 'retry_wait']);
 
-export const postRescheduleRoute = defineRoute({
+const postRescheduleRoute = defineRoute({
   id: 'posts.reschedule',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/reschedule',
@@ -82,7 +82,7 @@ export function rescheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
           kept: keptBindings(rows),
         };
         await scheduleLocked(trx, run, drafts);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

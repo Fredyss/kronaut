@@ -1,7 +1,8 @@
 import { isPostId, type SlotSearch, slotSearch } from '../../composer/compose/search.ts';
 import { brandParam } from '../../records/brands/search.ts';
+import { groupParam } from '../../records/groups/search.ts';
 
-export const CALENDAR_VIEWS = ['day', 'week', 'month', 'list'] as const;
+const CALENDAR_VIEWS = ['day', 'week', 'month', 'list'] as const;
 
 export type CalendarView = (typeof CALENDAR_VIEWS)[number];
 
@@ -11,6 +12,7 @@ export interface CalendarSearch extends SlotSearch {
   readonly compose?: string;
   readonly tag?: string;
   readonly brand?: string;
+  readonly group?: string;
 }
 
 const PLAIN_DATE = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
@@ -23,6 +25,7 @@ function isView(value: unknown): value is CalendarView {
 export function calendarSearch(search: Record<string, unknown>): CalendarSearch {
   const { view, date, tag } = search;
   const brand = brandParam(search.brand);
+  const group = groupParam(search.group);
   return {
     ...(isView(view) ? { view } : {}),
     ...(typeof date === 'string' && PLAIN_DATE.test(date) ? { date } : {}),
@@ -30,5 +33,6 @@ export function calendarSearch(search: Record<string, unknown>): CalendarSearch 
     ...(isPostId(search.compose) ? { compose: search.compose } : {}),
     ...(typeof tag === 'string' && TAG_ID.test(tag) ? { tag } : {}),
     ...(brand === undefined ? {} : { brand }),
+    ...(group === undefined ? {} : { group }),
   };
 }

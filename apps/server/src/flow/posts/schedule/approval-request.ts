@@ -38,7 +38,7 @@ import {
 
 const NOTE_MAX = 2000;
 
-export const requestApprovalRoute = defineRoute({
+const requestApprovalRoute = defineRoute({
   id: 'posts.request_approval',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/approval-requests',
@@ -192,7 +192,7 @@ export function approvalRequestRoutes(deps: PostRouteDeps): BoundRoute[] {
             repeat: body.repeat,
           });
         }
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

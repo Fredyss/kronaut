@@ -9,7 +9,7 @@ import { ownerColumns } from '../owner/owner.ts';
 import { PostSchema, readPost } from '../read/dto.ts';
 import { clonePost } from './clone.ts';
 
-export const postDuplicateRoute = defineRoute({
+const postDuplicateRoute = defineRoute({
   id: 'posts.duplicate',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/duplicate',
@@ -46,7 +46,7 @@ export function duplicateRoutes(deps: PostRouteDeps): BoundRoute[] {
             seriesId: null,
           },
         );
-        const copy = await readPost(trx, workspaceId, copyId);
+        const copy = await readPost(trx, workspaceId, copyId, ctx.principal);
         await writePostAudit(trx, {
           ctx,
           post: { workspaceId, postId: copyId },

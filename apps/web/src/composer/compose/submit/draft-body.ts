@@ -35,6 +35,7 @@ function toItems(content: ComposeContent, ids: ReadonlyMap<string, string>): Dra
 
 function toDestination(destination: ComposeDestination) {
   const { accountId, publishType, variant, settings, deliveryMode, skipSignature } = destination;
+  const { sourceGroupId } = destination;
   return {
     accountId,
     publishType,
@@ -42,6 +43,7 @@ function toDestination(destination: ComposeDestination) {
     ...(deliveryMode === undefined ? {} : { deliveryMode }),
     ...(variant === null ? {} : { variant }),
     ...(skipSignature === undefined ? {} : { skipSignature }),
+    ...(sourceGroupId === undefined ? {} : { sourceGroupId }),
   };
 }
 

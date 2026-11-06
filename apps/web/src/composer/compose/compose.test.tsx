@@ -12,7 +12,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-async function fillIn() {
+async function addContent() {
   fireEvent.change(await screen.findByLabelText('Text'), { target: { value: 'Hello' } });
   const input = document.querySelector<HTMLInputElement>('input[type=file]');
   if (input === null) throw new Error('no file input');
@@ -24,6 +24,10 @@ async function fillIn() {
   fireEvent.change(await screen.findByLabelText('Alt text for image 1'), {
     target: { value: 'A cat' },
   });
+}
+
+async function fillIn() {
+  await addContent();
   fireEvent.click(await screen.findByRole('checkbox', { name: /Ada on Bluesky/ }));
   fireEvent.click(screen.getByRole('checkbox', { name: /Ada on Instagram/ }));
 }
@@ -66,6 +70,26 @@ describe('composer', () => {
     const keys = mutations().map((c) => c.key);
     expect(keys.every((key) => key !== null && /^[0-9a-f-]{36}$/.test(key))).toBe(true);
     expect(new Set(keys).size).toBe(3);
+  });
+
+  it('adds the channels of a group chip and sends that group with each of them', async () => {
+    const launch = { id: 'grp_1', name: 'Launch', channelIds: ['acct_bsky', 'acct_ig'] };
+    const { router, mutations } = mount((call) =>
+      call.path === '/v1/workspaces/ws_1/groups' ? Response.json({ items: [launch] }) : undefined,
+    );
+    await addContent();
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Add the channels of group Launch' }),
+    );
+    const instagram = screen.getByRole('checkbox', { name: /Ada on Instagram/ });
+    expect((instagram as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    expect(mutations()[1]?.body).toEqual({
+      ...CREATE_BODY,
+      destinations: CREATE_BODY.destinations.map((d) => ({ ...d, sourceGroupId: 'grp_1' })),
+    });
   });
 
   it('tags a new post once it exists, and makes no tag call without tags', async () => {

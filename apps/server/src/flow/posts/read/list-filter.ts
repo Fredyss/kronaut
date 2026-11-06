@@ -14,6 +14,7 @@ export const ListQuery = z.object({
   limit: z.string().optional(),
   tag: z.string().optional(),
   brand: z.string().optional(),
+  group: z.string().optional(),
 });
 
 const Instant = z.iso.datetime({ offset: true });
@@ -23,6 +24,7 @@ const RangeQuery = z.strictObject({
   to: Instant,
   tag: z.string().optional(),
   brand: z.string().optional(),
+  group: z.string().optional(),
 });
 
 const UnscheduledQuery = z.strictObject({
@@ -35,11 +37,13 @@ const UnscheduledQuery = z.strictObject({
     .optional(),
   tag: z.string().optional(),
   brand: z.string().optional(),
+  group: z.string().optional(),
 });
 
 interface Labels {
   readonly tag?: string;
   readonly brand?: string;
+  readonly group?: string;
 }
 
 export type ListFilter =
@@ -51,6 +55,7 @@ export function listFilter(query: z.output<typeof ListQuery>): ListFilter {
   const tag = {
     ...(query.tag === undefined ? {} : { tag: query.tag }),
     ...(query.brand === undefined ? {} : { brand: query.brand }),
+    ...(query.group === undefined ? {} : { group: query.group }),
   };
   if ('unscheduled' in present) {
     const parsed = UnscheduledQuery.safeParse(present);

@@ -5,6 +5,7 @@ import type { Insertable } from 'kysely';
 import * as z from 'zod';
 import { recomputePostBrand } from '../../../access/channels/post-brand.ts';
 import { HttpError, type IssueDetail } from '../../../base/http/errors.ts';
+import { hidesGroups } from '../../../base/http/grant-scopes.ts';
 import { unprocessable } from '../../../base/http/issues.ts';
 import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
@@ -21,7 +22,7 @@ import {
   VariantsInput,
 } from './variants.ts';
 
-export const postCreateRoute = defineRoute({
+const postCreateRoute = defineRoute({
   id: 'posts.create',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts',
@@ -38,6 +39,8 @@ export const postCreateRoute = defineRoute({
   status: 201,
   idempotency: true,
   summary: 'Create a draft post',
+  description:
+    'A destination with sourceGroupId was picked through that group: it must exist (422 not_found) and the channel must be in it (422 not_in_group). A key without groups:read has every sourceGroupId ignored and stored as null, unchecked.',
   tags: ['posts'],
 });
 
@@ -48,6 +51,7 @@ export interface DraftSpec {
   readonly workspaceId: string;
   readonly body: CreateBody;
   readonly columns: PostColumns;
+  readonly ignoreGroupPicks: boolean;
   authorize(units: readonly ScopeUnit[]): void;
 }
 
@@ -70,7 +74,9 @@ export async function insertDraft(
   const details: IssueDetail[] = [];
   const resolving = { trx, workspaceId, details };
   const listed = body.destinations ?? [];
-  const { destinations, units } = await resolveDestinations(resolving, providers, listed);
+  const { destinations, units } = await resolveDestinations(resolving, providers, listed, {
+    ignore: spec.ignoreGroupPicks,
+  });
   spec.authorize(units);
   const items = await resolveItems(resolving, body.items, 'body.items');
   const variants = await resolveVariants(resolving, body.variants ?? [], listed);
@@ -102,9 +108,10 @@ export function createRoutes(deps: PostRouteDeps): BoundRoute[] {
           workspaceId,
           body,
           columns: { schedule_mode: 'unscheduled', ...author },
+          ignoreGroupPicks: hidesGroups(ctx.principal),
           authorize: (units) => ctx.authorize('posts:draft', { workspaceId, units }),
         });
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { status: 201, body: post };
     }),

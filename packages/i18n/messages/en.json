@@ -573,5 +573,11 @@
   "brand_none": "No brand",
   "channels_brand_of": "Brand of {name}",
   "channels_brand_saved": "Channel moved to another brand",
-  "channels_brand_archived": "That brand is archived. Pick another one."
+  "channels_brand_archived": "That brand is archived. Pick another one.",
+  "group_filter": "Filter by group",
+  "group_filter_all": "All groups",
+  "group_filter_gone": "Selected group",
+  "channels_groups_of": "Groups of {name}",
+  "channels_groups_edit": "Groups",
+  "channels_groups_edit_of": "Change the groups of {name}"
 }

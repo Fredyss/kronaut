@@ -2,9 +2,9 @@ import { cn } from '@kronaut/ui';
 import { Link } from '@tanstack/react-router';
 import { Temporal } from 'temporal-polyfill';
 import { m as calendarText } from '../../i18n/calendar.ts';
+import { keptFilter } from '../../records/posts/queries.ts';
 import { ChipList } from './chip.tsx';
 import { DayMark } from './day-mark.tsx';
-import { keptFilter } from './entries.ts';
 import { CELL, DROP_OVER, type GridProps, PAST } from './grid.ts';
 
 const MONTH_CHIPS = 3;

@@ -262,6 +262,7 @@ describe('channel listing', () => {
       'brandId',
       'connectedAt',
       'displayName',
+      'groupIds',
       'handle',
       'id',
       'insights',

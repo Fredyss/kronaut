@@ -8,6 +8,7 @@ import type { PostTag } from '../../content/tags/tags.ts';
 import { approvalPolicyQuery, approvalRequired } from '../../records/approval-policy/queries.ts';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
 import { type Post, postKey, postsKey } from '../../records/posts/queries.ts';
+import { type Sources, storedSources } from './content/group-picks.ts';
 import { useContents } from './content/use-contents.ts';
 import type { OpenedForm } from './from-post.ts';
 import { formFingerprint } from './submit/draft-body.ts';
@@ -19,6 +20,7 @@ import {
   planInput,
   toPlan,
   videoProblem,
+  withSources,
 } from './submit/plan.ts';
 import { type ComposeInput, createSubmitter, type OpenedPost } from './submit/submit.ts';
 import { refusedForApproval, SubmitError } from './submit/submit-error.ts';
@@ -118,11 +120,15 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
   const [selected, setSelected] = useState<ReadonlySet<string>>(
     () => opened?.form.selected ?? new Set(),
   );
+  const [sources, setSources] = useState<Sources>(() =>
+    storedSources(opened?.post.destinations ?? []),
+  );
   const [tags, setTags] = useState<readonly PostTag[]>(() => opened?.post.tags ?? []);
   const [creating, setCreating] = useState(false);
   const list = channels.data ?? opened?.channels ?? [];
   const content = useContents(workspaceId, list, selected, opened?.form);
-  const plan = toPlan(list, content, selected, opened?.post.destinations ?? []);
+  const stored = opened?.post.destinations ?? [];
+  const plan = withSources(toPlan(list, content, selected, stored), sources);
   const fingerprint = opened === undefined ? '' : formFingerprint(planInput(plan, content));
   const [start] = useState(() =>
     opened === undefined ? undefined : { post: opened.post, fingerprint },
@@ -133,14 +139,25 @@ function useOpenedForm(workspaceId: string, opened: OpenedCompose | undefined) {
       : fingerprint !== start.fingerprint;
   const dirty = changed || !sameTags(tags, opened?.post.tags ?? []);
   const tagField = { value: tags, set: setTags, creating, setCreating };
-  return { channels, list, selected, setSelected, content, plan, tags: tagField, start, dirty };
+  const picks = { sources, setSources };
+  return {
+    channels,
+    list,
+    selected,
+    setSelected,
+    picks,
+    content,
+    plan,
+    tags: tagField,
+    start,
+    dirty,
+  };
 }
 
 export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
-  const { opened } = start;
   const { channels, list, selected, setSelected, content, plan, ...form } = useOpenedForm(
     workspaceId,
-    opened,
+    start.opened,
   );
   const { run, failure } = usePublish(workspaceId, start.onDone, form.start);
   const approval = useApprovalMode(workspaceId, failure, planBrands(list, plan));
@@ -151,7 +168,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const pending = run.isPending;
   const { locale } = useLocale();
   const flagged = [...limitFlags, ...content.unusable];
-  const gone = goneProblem(opened?.post.destinations ?? [], list, selected, locale);
+  const gone = goneProblem(start.opened?.post.destinations ?? [], list, selected, locale);
   const blocked = flagged.length > 0 || gone !== null;
   const queue = usePlanQueue(workspaceId, list, plan);
   const requesting = approval.request && when.mode !== 'draft';
@@ -189,6 +206,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     content,
     selected,
     setSelected,
+    picks: form.picks,
     tags: form.tags,
     when,
     repeat,

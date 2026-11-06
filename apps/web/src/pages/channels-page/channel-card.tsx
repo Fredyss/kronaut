@@ -13,6 +13,7 @@ import type { Channel } from '../../records/channels/queries.ts';
 import { statusLabel } from '../../records/channels/status-label.ts';
 import { httpsUrl } from '../../records/posts/destinations.ts';
 import { ChannelBrand } from './channel-brand.tsx';
+import { ChannelGroups } from './channel-groups.tsx';
 
 const Followers = lazy(() =>
   import('../../records/channels/followers.tsx').then((module) => ({ default: module.Followers })),
@@ -123,6 +124,7 @@ function ChannelCard(props: CardProps) {
         <ChannelSignature channel={channel} />
         <ChannelShortenLinks channel={channel} />
         <ChannelBrand channel={channel} />
+        <ChannelGroups channel={channel} />
       </div>
       <CardActions {...props} panel={panel} setPanel={setPanel} />
       {onDisconnect === null || panel !== 'confirm' ? null : (

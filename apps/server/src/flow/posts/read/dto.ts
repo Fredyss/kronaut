@@ -1,6 +1,7 @@
-import { DESTINATION_STATES, encodePublicId } from '@kronaut/core';
+import { DESTINATION_STATES, encodePublicId, type Principal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { hidesGroups } from '../../../base/http/grant-scopes.ts';
 import { iso, plainLocal } from '../../../base/http/time.ts';
 import { loadPostTags, PostTagSchema, tagFields } from '../../../steps/tags/read.ts';
 import { loadDestinations } from './destinations-read.ts';
@@ -8,20 +9,20 @@ import { loadDestinations } from './destinations-read.ts';
 const JsonObject = z.record(z.string(), z.unknown());
 const Instant = z.iso.datetime();
 
-export const PostMediaSchema = z.object({
+const PostMediaSchema = z.object({
   mediaId: z.string(),
   position: z.number().int().nonnegative(),
   altText: z.string().nullable(),
 });
 
-export const PostItemSchema = z.object({
+const PostItemSchema = z.object({
   position: z.number().int().nonnegative(),
   role: z.enum(['main', 'thread', 'comment']),
   doc: JsonObject,
   media: z.array(PostMediaSchema),
 });
 
-export const PostDestinationSchema = z.object({
+const PostDestinationSchema = z.object({
   id: z.string(),
   accountId: z.string(),
   provider: z.string(),
@@ -37,11 +38,12 @@ export const PostDestinationSchema = z.object({
   lastErrorCode: z.string().nullable(),
   variant: z.number().int().nonnegative().nullable(),
   skipSignature: z.boolean(),
+  sourceGroupId: z.string().nullable(),
   signature: JsonObject.nullable(),
   signatureHeld: z.boolean(),
 });
 
-export const PostVariantSchema = z.object({ items: z.array(PostItemSchema) });
+const PostVariantSchema = z.object({ items: z.array(PostItemSchema) });
 
 export const PostSchema = z.object({
   id: z.string(),
@@ -193,10 +195,11 @@ function indexVariants(items: readonly LoadedItem[], loaded: readonly LoadedDest
   return { variants, destinations };
 }
 
-export async function findPost(
+async function findPost(
   trx: TenantDb,
   workspaceId: string,
   postId: string,
+  viewer: Principal | null,
 ): Promise<PostDto | null> {
   const post = await loadPost(trx, workspaceId, postId);
   if (post === undefined) return null;
@@ -204,7 +207,7 @@ export async function findPost(
   const loaded = await loadItems(trx, workspaceId, postId);
   const { variants, destinations } = indexVariants(
     loaded,
-    await loadDestinations(trx, workspaceId, postId),
+    await loadDestinations(trx, workspaceId, postId, hidesGroups(viewer)),
   );
   const items = loaded.filter((item) => item.isDefault).map(itemOf);
   const tags = (await loadPostTags(trx, workspaceId, [postId])).get(postId) ?? [];
@@ -232,8 +235,9 @@ export async function readPost(
   trx: TenantDb,
   workspaceId: string,
   postId: string,
+  viewer: Principal | null,
 ): Promise<PostDto> {
-  const post = await findPost(trx, workspaceId, postId);
+  const post = await findPost(trx, workspaceId, postId, viewer);
   if (post === null) throw new Error(`post ${postId} vanished inside its own transaction`);
   return post;
 }

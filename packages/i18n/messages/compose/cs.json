@@ -140,5 +140,7 @@
   "compose_brand_select_all": "Vybrat vše",
   "compose_brand_clear": "Zrušit výběr",
   "compose_brand_select_all_of": "Vybrat všechny kanály značky {name}",
-  "compose_brand_clear_of": "Zrušit výběr kanálů značky {name}"
+  "compose_brand_clear_of": "Zrušit výběr kanálů značky {name}",
+  "compose_groups": "Přidat skupinu",
+  "compose_group_add_of": "Přidat kanály ze skupiny {name}"
 }

@@ -46,6 +46,7 @@ export interface ComposeDestination {
   readonly settings?: Destination['settings'];
   readonly deliveryMode?: Destination['deliveryMode'];
   readonly skipSignature?: boolean;
+  readonly sourceGroupId?: string;
 }
 
 export type ScheduleWhen =

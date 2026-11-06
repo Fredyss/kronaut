@@ -10,6 +10,7 @@ import type { Channel } from '../../../records/channels/queries.ts';
 import { channel } from '../testing.tsx';
 import { ChannelsFieldset } from './channel-picker.tsx';
 import { NO_MEDIA } from './choice.ts';
+import type { Sources } from './group-picks.ts';
 
 afterEach(cleanup);
 
@@ -29,11 +30,14 @@ const CHANNELS = [
 ] as unknown as readonly Channel[];
 
 function mount() {
-  const fetch = async () =>
-    Response.json({ items: [brand('brand_a', 'Acme'), brand('brand_z', 'Zeta')] });
+  const fetch = async (raw: Request | URL | string) =>
+    (raw as Request).url.endsWith('/groups')
+      ? Response.json({ items: [] })
+      : Response.json({ items: [brand('brand_a', 'Acme'), brand('brand_z', 'Zeta')] });
   const client = createApiClient({ baseUrl: 'http://kronaut.test', fetch });
   function Host() {
     const [selected, setSelected] = useState<ReadonlySet<string>>(new Set(['acct_3']));
+    const [sources, setSources] = useState<Sources>(new Map());
     return (
       <ChannelsFieldset
         workspaceId="ws_1"
@@ -44,6 +48,8 @@ function mount() {
         stored={new Set()}
         selected={selected}
         setSelected={setSelected}
+        sources={sources}
+        setSources={setSources}
         pending={false}
       />
     );

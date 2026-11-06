@@ -6,7 +6,7 @@ import { useLocale } from '../../base/locale/context.ts';
 import { useFormats } from '../../base/locale/formats.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as inboxText } from '../../i18n/inbox.ts';
-import { needsActionQuery } from './queries.ts';
+import { type NeedsActionFilter, needsActionQuery } from './queries.ts';
 import { InboxRow } from './row.tsx';
 
 function Empty() {
@@ -20,15 +20,15 @@ function Empty() {
 
 interface InboxListProps {
   readonly workspaceId: string;
-  readonly brand?: string | undefined;
+  readonly filter: NeedsActionFilter;
 }
 
-export function InboxList({ workspaceId, brand }: InboxListProps) {
+export function InboxList({ workspaceId, filter }: InboxListProps) {
   const client = useApiClient();
   const { locale } = useLocale();
   const [timeZone] = useState(browserTimeZone);
   const formats = useFormats(locale, timeZone);
-  const list = useQuery(needsActionQuery(client, workspaceId, brand));
+  const list = useQuery(needsActionQuery(client, workspaceId, filter));
   if (list.data === undefined) {
     return list.isError ? (
       <p role="alert" className="text-destructive text-sm">

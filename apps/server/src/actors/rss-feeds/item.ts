@@ -105,6 +105,7 @@ async function draftOf(trx: TenantDb, env: OwnerEnv, { feed, content, targets }:
     workspaceId,
     body: bodyOf(content, targets),
     columns: { schedule_mode: 'unscheduled', ...authorOf(acting.principal), origin: 'rss' },
+    ignoreGroupPicks: true,
     authorize: (units) => acting.authorize('posts:draft', { workspaceId, units }),
   });
   return { acting, postId };

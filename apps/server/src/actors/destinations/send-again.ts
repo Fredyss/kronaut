@@ -20,7 +20,7 @@ const RESENDABLE = movableTo('scheduled');
 
 const Resend = { ...ScheduleCommon, acknowledgeDuplicate: z.boolean().optional() };
 
-export const sendAgainRoute = defineRoute({
+const sendAgainRoute = defineRoute({
   id: 'destinations.send_again',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/destinations/:destinationId/send-again',
@@ -88,7 +88,7 @@ export function sendAgainRoutes(deps: PostRouteDeps): BoundRoute[] {
           row,
           postVersion: version,
         });
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

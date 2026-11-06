@@ -344,5 +344,37 @@
   "settings_brand_override_removed": "The brand follows the workspace rules again.",
   "settings_brand_uses_workspace": "Follows the workspace rules",
   "settings_brand_strictest": "A post that goes to channels of several brands follows the strictest rules among its channels.",
-  "settings_brand_policy_title": "Approval rules for {name}"
+  "settings_brand_policy_title": "Approval rules for {name}",
+  "settings_groups_title": "Groups",
+  "settings_groups_intro": "Save channels you often post to together as a group. In the composer, a group adds all its channels at once. Groups never change who can see or do what.",
+  "settings_groups_empty": "No groups yet.",
+  "settings_group_new": "New group",
+  "settings_group_name_label": "Group name",
+  "settings_group_add": "Add group",
+  "settings_group_cancel": "Cancel",
+  "settings_group_created": "Group {name} added",
+  "settings_group_saved": "Group saved",
+  "settings_group_deleted": "Group deleted",
+  "settings_group_channels": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} channel",
+        "countPlural=*": "{count} channels"
+      }
+    }
+  ],
+  "settings_group_name": "Name of group {name}",
+  "settings_group_members": "Channels",
+  "settings_group_members_of": "Channels of group {name}",
+  "settings_group_done": "Done",
+  "settings_group_no_channels": "Connect a channel first.",
+  "settings_group_delete": "Delete group {name}",
+  "settings_group_delete_title": "Delete group “{name}”?",
+  "settings_group_delete_body": "Posts keep their channels. Only the group goes away.",
+  "settings_group_keep": "Keep group",
+  "settings_group_delete_confirm": "Delete group",
+  "settings_group_name_taken": "A group with this name already exists.",
+  "settings_group_name_invalid": "Enter a name of 1 to 120 characters."
 }

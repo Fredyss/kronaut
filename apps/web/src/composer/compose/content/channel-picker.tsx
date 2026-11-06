@@ -9,7 +9,10 @@ import { m as composeText } from '../../../i18n/compose.ts';
 import { type Brand, brandsQuery, groupByBrand } from '../../../records/brands/queries.ts';
 import type { Channel } from '../../../records/channels/queries.ts';
 import { statusLabel } from '../../../records/channels/status-label.ts';
+import { type Group, groupsQuery } from '../../../records/groups/queries.ts';
 import { choiceFor, type MediaFacts } from './choice.ts';
+import { GroupChips } from './group-chips.tsx';
+import { groupSources, manualSources, type Sources, toggled } from './group-picks.ts';
 
 export function channelHint(
   channel: Channel,
@@ -37,15 +40,18 @@ export function channelHint(
 interface PickerProps {
   readonly channels: readonly Channel[];
   readonly brands: readonly Brand[] | undefined;
+  readonly groups: readonly Group[] | undefined;
   readonly mediaFor: (channelId: string) => MediaFacts;
   readonly customized: (channelId: string) => boolean;
   readonly selected: ReadonlySet<string>;
   readonly disabled: boolean;
   readonly toggle: (ids: readonly string[], on: boolean) => void;
+  readonly addGroup: (groupId: string, ids: readonly string[]) => void;
 }
 
 interface Row {
   readonly channel: Channel;
+  readonly brandId: string | null;
   readonly hint: string | null;
   readonly usable: boolean;
 }
@@ -129,8 +135,27 @@ function BrandGroup({
   );
 }
 
+function BrandRows({ rows, picker }: { rows: readonly Row[]; picker: PickerProps }) {
+  const { brands } = picker;
+  if (brands === undefined || brands.length === 0) {
+    return <ChannelRows rows={rows} picker={picker} />;
+  }
+  return (
+    <div className="flex flex-col gap-4">
+      {groupByBrand(rows, brands).map(({ brand, items }) => (
+        <BrandGroup
+          key={brand?.id ?? ''}
+          name={brand === null ? m.brand_none() : brand.name}
+          rows={items}
+          picker={picker}
+        />
+      ))}
+    </div>
+  );
+}
+
 function ChannelPicker(picker: PickerProps) {
-  const { channels, brands, mediaFor, customized, selected } = picker;
+  const { channels, mediaFor, customized, selected } = picker;
   const { locale } = useLocale();
   if (channels.length === 0) {
     return (
@@ -142,25 +167,23 @@ function ChannelPicker(picker: PickerProps) {
       </p>
     );
   }
-  const rowsOf = (items: readonly Channel[]): Row[] =>
-    items.map((channel) => {
-      const choice = choiceFor(channel, mediaFor(channel.id));
-      const usable = choice.kind === 'ok' || (customized(channel.id) && selected.has(channel.id));
-      return { channel, hint: channelHint(channel, choice, locale), usable };
-    });
-  if (brands === undefined || brands.length === 0) {
-    return <ChannelRows rows={rowsOf(channels)} picker={picker} />;
-  }
+  const rows = channels.map((channel): Row => {
+    const choice = choiceFor(channel, mediaFor(channel.id));
+    const usable = choice.kind === 'ok' || (customized(channel.id) && selected.has(channel.id));
+    const hint = channelHint(channel, choice, locale);
+    return { channel, brandId: channel.brandId, hint, usable };
+  });
+  const usable = new Set(rows.filter((row) => row.usable).map((row) => row.channel.id));
   return (
     <div className="flex flex-col gap-4">
-      {groupByBrand(channels, brands).map(({ brand, items }) => (
-        <BrandGroup
-          key={brand?.id ?? ''}
-          name={brand === null ? m.brand_none() : brand.name}
-          rows={rowsOf(items)}
-          picker={picker}
-        />
-      ))}
+      <GroupChips
+        groups={picker.groups}
+        usable={usable}
+        selected={selected}
+        disabled={picker.disabled}
+        onPick={picker.addGroup}
+      />
+      <BrandRows rows={rows} picker={picker} />
     </div>
   );
 }
@@ -174,6 +197,8 @@ interface ChannelsFieldsetProps {
   readonly stored: ReadonlySet<string>;
   readonly selected: ReadonlySet<string>;
   readonly setSelected: Dispatch<SetStateAction<ReadonlySet<string>>>;
+  readonly sources: Sources;
+  readonly setSources: Dispatch<SetStateAction<Sources>>;
   readonly pending: boolean;
 }
 
@@ -186,10 +211,13 @@ export function ChannelsFieldset({
   stored,
   selected,
   setSelected,
+  sources,
+  setSources,
   pending,
 }: ChannelsFieldsetProps) {
   const client = useApiClient();
   const brands = useQuery(brandsQuery(client, workspaceId)).data;
+  const groups = useQuery(groupsQuery(client, workspaceId)).data;
   const held = (id: string) => stored.has(id) && selected.has(id);
   return (
     <fieldset className="flex flex-col gap-3">
@@ -203,20 +231,19 @@ export function ChannelsFieldset({
         <ChannelPicker
           channels={channels.filter(({ id, status }) => status !== 'disconnected' || held(id))}
           brands={brands}
+          groups={groups}
           mediaFor={mediaFor}
           customized={(id) => customized(id) || held(id)}
           selected={selected}
           disabled={pending}
-          toggle={(ids, on) =>
-            setSelected((current) => {
-              const next = new Set(current);
-              for (const id of ids) {
-                if (on) next.add(id);
-                else next.delete(id);
-              }
-              return next;
-            })
-          }
+          toggle={(ids, on) => {
+            setSources(manualSources(sources, selected, ids, on));
+            setSelected(toggled(selected, ids, on));
+          }}
+          addGroup={(groupId, ids) => {
+            setSources(groupSources(sources, selected, groupId, ids));
+            setSelected(toggled(selected, ids, true));
+          }}
         />
       )}
     </fieldset>

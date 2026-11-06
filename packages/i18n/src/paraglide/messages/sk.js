@@ -89,6 +89,9 @@
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
+/** @typedef {{}} Channels_Groups_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_Edit_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_OfInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
@@ -189,6 +192,9 @@
 /** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown> }} Evergreen_CopyInputs */
 /** @typedef {{}} Evergreen_LabelInputs */
 /** @typedef {{ reason: NonNullable<unknown> }} Evergreen_ReasonInputs */
+/** @typedef {{}} Group_FilterInputs */
+/** @typedef {{}} Group_Filter_AllInputs */
+/** @typedef {{}} Group_Filter_GoneInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
@@ -768,6 +774,18 @@ export const channels_followers_change = /** @type {(inputs: Channels_Followers_
 	return /** @type {LocalizedString} */ (`${i?.change} za 30 dní`)
 };
 
+export const channels_groups_edit = /** @type {(inputs: Channels_Groups_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupiny`)
+};
+
+export const channels_groups_edit_of = /** @type {(inputs: Channels_Groups_Edit_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Upraviť skupiny kanála ${i?.name}`)
+};
+
+export const channels_groups_of = /** @type {(inputs: Channels_Groups_OfInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Skupiny kanála ${i?.name}`)
+};
+
 export const channels_handle_label = /** @type {(inputs: Channels_Handle_LabelInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vaše používateľské meno (nepovinné)`)
 };
@@ -1171,6 +1189,18 @@ export const evergreen_label = /** @type {(inputs: Evergreen_LabelInputs) => Loc
 export const evergreen_reason = /** @type {(inputs: Evergreen_ReasonInputs) => LocalizedString} */ (i) => {
 	if (i?.reason === "owner_lost") return /** @type {LocalizedString} */ (`Vyradený: jeho vlastník už nemôže plánovať príspevky.`);
 	return /** @type {LocalizedString} */ (`Vyradený: kópiu sa nepodarilo vytvoriť.`)
+};
+
+export const group_filter = /** @type {(inputs: Group_FilterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filtrovať podľa skupiny`)
+};
+
+export const group_filter_all = /** @type {(inputs: Group_Filter_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Všetky skupiny`)
+};
+
+export const group_filter_gone = /** @type {(inputs: Group_Filter_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vybraná skupina`)
 };
 
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {

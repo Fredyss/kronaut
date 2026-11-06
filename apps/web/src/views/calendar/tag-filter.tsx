@@ -5,6 +5,7 @@ import { useApiClient } from '../../base/api/client.ts';
 import { tagsQuery } from '../../content/tags/picker.tsx';
 import { m as calendarText } from '../../i18n/calendar.ts';
 import { BrandFilter } from '../../records/brands/brand-filter.tsx';
+import { GroupFilter } from '../../records/groups/group-filter.tsx';
 import type { PostFilter } from '../../records/posts/queries.ts';
 import type { CalendarSearch } from './search.ts';
 
@@ -49,18 +50,19 @@ function TagFilter({ workspaceId, tag }: TagFilterProps) {
 
 export function Filters({ workspaceId, filter }: { workspaceId: string; filter: PostFilter }) {
   const navigate = route.useNavigate();
-  const chooseBrand = (brand: string | undefined) =>
+  const choose = (key: 'brand' | 'group') => (value: string | undefined) =>
     void navigate({
       to: '/',
       search: (prev) => {
-        const { brand: _, ...rest } = prev as CalendarSearch;
-        return brand === undefined ? rest : { ...rest, brand };
+        const { [key]: _, ...rest } = prev as CalendarSearch;
+        return value === undefined ? rest : { ...rest, [key]: value };
       },
     });
   return (
     <>
       <TagFilter workspaceId={workspaceId} tag={filter.tag} />
-      <BrandFilter workspaceId={workspaceId} brand={filter.brand} onChange={chooseBrand} />
+      <BrandFilter workspaceId={workspaceId} brand={filter.brand} onChange={choose('brand')} />
+      <GroupFilter workspaceId={workspaceId} group={filter.group} onChange={choose('group')} />
     </>
   );
 }

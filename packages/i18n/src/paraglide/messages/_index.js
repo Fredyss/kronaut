@@ -91,6 +91,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
+/** @typedef {{}} Channels_Groups_EditInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_Edit_OfInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_OfInputs */
 /** @typedef {{}} Channels_Handle_LabelInputs */
 /** @typedef {{}} Channels_Handle_PlaceholderInputs */
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
@@ -191,6 +194,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown>, when: NonNullable<unknown> }} Evergreen_CopyInputs */
 /** @typedef {{}} Evergreen_LabelInputs */
 /** @typedef {{ reason: NonNullable<unknown> }} Evergreen_ReasonInputs */
+/** @typedef {{}} Group_FilterInputs */
+/** @typedef {{}} Group_Filter_AllInputs */
+/** @typedef {{}} Group_Filter_GoneInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_BadgeInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Inbox_Badge_OverflowInputs */
 /** @typedef {{}} Inbox_CancelInputs */
@@ -1754,6 +1760,51 @@ export const channels_followers_change = /** @type {((inputs: Channels_Followers
 /**
 * | output |
 * | --- |
+* | "Groups" |
+*
+* @param {Channels_Groups_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_groups_edit = /** @type {((inputs?: Channels_Groups_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Groups_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_groups_edit(inputs)
+	if (locale === "cs") return __cs.channels_groups_edit(inputs)
+	return __en.channels_groups_edit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Change the groups of {name}" |
+*
+* @param {Channels_Groups_Edit_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_groups_edit_of = /** @type {((inputs: Channels_Groups_Edit_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Groups_Edit_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_groups_edit_of(inputs)
+	if (locale === "cs") return __cs.channels_groups_edit_of(inputs)
+	return __en.channels_groups_edit_of(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Groups of {name}" |
+*
+* @param {Channels_Groups_OfInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_groups_of = /** @type {((inputs: Channels_Groups_OfInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Groups_OfInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_groups_of(inputs)
+	if (locale === "cs") return __cs.channels_groups_of(inputs)
+	return __en.channels_groups_of(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Your handle (optional)" |
 *
 * @param {Channels_Handle_LabelInputs} inputs
@@ -3252,6 +3303,51 @@ export const evergreen_reason = /** @type {((inputs: Evergreen_ReasonInputs, opt
 	if (locale === "sk") return __sk.evergreen_reason(inputs)
 	if (locale === "cs") return __cs.evergreen_reason(inputs)
 	return __en.evergreen_reason(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Filter by group" |
+*
+* @param {Group_FilterInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const group_filter = /** @type {((inputs?: Group_FilterInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Group_FilterInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.group_filter(inputs)
+	if (locale === "cs") return __cs.group_filter(inputs)
+	return __en.group_filter(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "All groups" |
+*
+* @param {Group_Filter_AllInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const group_filter_all = /** @type {((inputs?: Group_Filter_AllInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Group_Filter_AllInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.group_filter_all(inputs)
+	if (locale === "cs") return __cs.group_filter_all(inputs)
+	return __en.group_filter_all(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Selected group" |
+*
+* @param {Group_Filter_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const group_filter_gone = /** @type {((inputs?: Group_Filter_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Group_Filter_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.group_filter_gone(inputs)
+	if (locale === "cs") return __cs.group_filter_gone(inputs)
+	return __en.group_filter_gone(inputs)
 });
 /**
 * | countPlural | output |

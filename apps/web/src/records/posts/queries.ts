@@ -34,10 +34,15 @@ export function postsKey(workspaceId: string) {
 export interface PostFilter {
   readonly tag?: string | undefined;
   readonly brand?: string | undefined;
+  readonly group?: string | undefined;
 }
 
-function filterQuery({ tag, brand }: PostFilter) {
-  return { ...(tag === undefined ? {} : { tag }), ...(brand === undefined ? {} : { brand }) };
+export function keptFilter({ tag, brand, group }: PostFilter) {
+  return {
+    ...(tag === undefined ? {} : { tag }),
+    ...(brand === undefined ? {} : { brand }),
+    ...(group === undefined ? {} : { group }),
+  };
 }
 
 export function postsRangeQuery(
@@ -46,22 +51,22 @@ export function postsRangeQuery(
   { from, to }: DayRange,
   filter: PostFilter = {},
 ) {
-  const query = { from, to, ...filterQuery(filter) };
+  const query = { from, to, ...keptFilter(filter) };
   return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'range', from, to, filter.tag, filter.brand],
+    queryKey: [...postsKey(workspaceId), 'range', from, to, filter.tag, filter.brand, filter.group],
     queryFn: async () => (await postsList({ client, path: { workspaceId }, query })).data,
   });
 }
 
 export function draftsQuery(client: Client, workspaceId: string, filter: PostFilter = {}) {
   return queryOptions({
-    queryKey: [...postsKey(workspaceId), 'unscheduled', filter.tag, filter.brand],
+    queryKey: [...postsKey(workspaceId), 'unscheduled', filter.tag, filter.brand, filter.group],
     queryFn: async () =>
       (
         await postsList({
           client,
           path: { workspaceId },
-          query: { unscheduled: 'true', ...filterQuery(filter) },
+          query: { unscheduled: 'true', ...keptFilter(filter) },
         })
       ).data,
   });

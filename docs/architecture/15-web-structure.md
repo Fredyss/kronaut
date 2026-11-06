@@ -18,13 +18,13 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 
 | Tier | Tier folder | Features | Owns |
 |---|---|---|---|
-| 1. Pages | `pages/` | `post-page`, `channels-page`, `shell`, `settings` | Pages that put several features on one screen, the app chrome, the account and notification settings |
+| 1. Pages | `pages/` | `post-page`, `channels-page`, `groups-page`, `shell`, `settings` | Pages that put several features on one screen (the group settings page lists channels in each group's members dialog), the app chrome, the account and notification settings |
 | 2. Views | `views/` | `calendar`, `approvals`, `evergreen` | The planning calendar, approval requests and decisions, the evergreen section |
 | 3. Actions | `actions/` | `post-actions`, `post-import`, `notifications` | Post menus and dialogs that open the composer, the CSV import dialog, the notification bell and panel |
 | 4. Lists | `lists/` | `inbox`, `media`, `system`, `rss-feeds` | The needs-action inbox, the media library, system status, RSS feeds |
 | 5. Composer | `composer/` | `compose` | Drafting, editing, scheduling and submitting a post |
 | 6. Content | `content/` | `saved-texts`, `tags`, `series`, `short-links` | Reusable text and channel signatures, labels, repeat rules, link shortening |
-| 7. Records | `records/` | `posts`, `channels`, `brands`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, brands with their settings page and filter, the approval policy, metrics, sign-in, the theme |
+| 7. Records | `records/` | `posts`, `channels`, `brands`, `groups`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, brands with their settings page and filter, account groups with their queries, writes and filter, the approval policy, metrics, sign-in, the theme |
 | Base | `base/` | `api`, `locale`, `providers`, `ui`, plus `@kronaut/*` | Client and errors, messages and formatting, platform names, app-wide UI |
 
 A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. Type-only imports are outside both.

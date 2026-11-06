@@ -11,7 +11,7 @@ import { auditResolution, DestinationParams, lockMove, lockTarget, movableTo } f
 
 const MARKABLE = movableTo('published');
 
-export const markPublishedRoute = defineRoute({
+const markPublishedRoute = defineRoute({
   id: 'destinations.mark_published',
   method: 'POST',
   path: '/v1/workspaces/:workspaceId/posts/:postId/destinations/:destinationId/mark-published',
@@ -61,7 +61,7 @@ export function markPublishedRoutes(): BoundRoute[] {
           postVersion: row.frozen_post_version,
         });
         await recordPostSettlement(trx, workspaceId, postId);
-        return await readPost(trx, workspaceId, postId);
+        return await readPost(trx, workspaceId, postId, ctx.principal);
       });
       return { body: post };
     }),

@@ -25,10 +25,10 @@ import { ResetPasswordPage } from './routes/reset-password.tsx';
 import { AppShell } from './routes/shell.tsx';
 import { calendarSearch } from './views/calendar/search.ts';
 
-export interface RouterContext {
+type RouterContext = {
   readonly queryClient: QueryClient;
   readonly client: Client;
-}
+};
 
 function Root() {
   return (
@@ -180,6 +180,12 @@ const brandSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('./routes/settings-brands.tsx'), 'BrandSettingsPage'),
 });
 
+const groupSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'groups',
+  component: lazyRouteComponent(() => import('./routes/settings-groups.tsx'), 'GroupSettingsPage'),
+});
+
 const savedTextSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'saved-texts',
@@ -240,6 +246,7 @@ const routeTree = rootRoute.addChildren([
       notificationSettingsRoute,
       tagSettingsRoute,
       brandSettingsRoute,
+      groupSettingsRoute,
       savedTextSettingsRoute,
       feedSettingsRoute,
       shortLinkSettingsRoute,

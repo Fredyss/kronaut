@@ -36,6 +36,7 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | shortener | skracovač | zkracovač | The service, Dub or Kutt, that makes short links. |
 | brand | značka | značka | A client or brand that groups channels; it can have its own approval rules. |
 | archive / restore (a brand) | archivovať / obnoviť | archivovat / obnovit | An archived brand stays in history but can't take channels. |
+| group | skupina (2–4 skupiny, 5+ skupín) | skupina (2–4 skupiny, 5+ skupin) | A saved set of channels the composer adds at once. It never grants access; not a brand. |
 
 ## Style
 

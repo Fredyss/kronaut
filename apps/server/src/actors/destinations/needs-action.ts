@@ -7,10 +7,14 @@ import * as z from 'zod';
 import {
   brandFilter,
   excerptOf,
+  groupFilter,
   loadMains,
   onBrand,
+  onGroup,
   visibleIn,
 } from '../../access/post-access/reads.ts';
+import { denyError } from '../../base/http/errors.ts';
+import { hidesGroups } from '../../base/http/grant-scopes.ts';
 import { issueDetails } from '../../base/http/input.ts';
 import { invalid } from '../../base/http/issues.ts';
 import { pathId } from '../../base/http/params.ts';
@@ -22,7 +26,7 @@ const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 200;
 const Instant = z.iso.datetime();
 
-export const NeedsActionItemSchema = z.object({
+const NeedsActionItemSchema = z.object({
   destinationId: z.string(),
   version: z.number().int().positive(),
   state: z.enum(NEEDS_ACTION),
@@ -49,17 +53,21 @@ const NeedsActionSchema = z.object({
 
 type NeedsActionDto = z.output<typeof NeedsActionSchema>;
 
-export const needsActionRoute = defineRoute({
+const needsActionRoute = defineRoute({
   id: 'destinations.needs_action',
   method: 'GET',
   path: '/v1/workspaces/:workspaceId/needs-action',
   auth: ['session', 'grant'],
   action: 'posts:read',
   params: z.object({ workspaceId: z.string() }),
-  query: z.object({ limit: z.string().optional(), brand: z.string().optional() }),
+  query: z.object({
+    limit: z.string().optional(),
+    brand: z.string().optional(),
+    group: z.string().optional(),
+  }),
   response: NeedsActionSchema,
   summary: 'List destinations that need action',
-  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.`,
+  description: `The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–${MAX_LIMIT}, default ${DEFAULT_LIMIT}). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list, and a key without groups:read gets 403. Both filters combine.`,
   tags: ['destinations'],
 });
 
@@ -75,6 +83,7 @@ const LimitQuery = z.strictObject({
 interface AttentionView {
   readonly scope: AccessScope | null;
   readonly brand?: { readonly brandId: string | null } | undefined;
+  readonly group?: { readonly groupId: string } | undefined;
 }
 
 function limitOf(query: z.output<typeof needsActionRoute.query>): number {
@@ -89,7 +98,7 @@ const ATTENTION = sql<boolean>`d.state IN (${sql.join(NEEDS_ACTION.map((state) =
 export function attentionQuery(
   trx: TenantDb,
   workspaceId: string,
-  { scope, brand }: AttentionView,
+  { scope, brand, group }: AttentionView,
 ) {
   let query = trx
     .selectFrom('post_destinations as d')
@@ -100,6 +109,7 @@ export function attentionQuery(
     .where(ATTENTION)
     .where('p.deleted_at', 'is', null);
   if (brand !== undefined) query = query.where(onBrand(brand.brandId));
+  if (group !== undefined) query = query.where(onGroup(group.groupId));
   return scope === null ? query : query.where(visibleIn(scope));
 }
 
@@ -136,7 +146,7 @@ async function loadAttention(
     .execute();
 }
 
-export async function listNeedsAction(
+async function listNeedsAction(
   trx: TenantDb,
   workspaceId: string,
   view: AttentionView,
@@ -181,8 +191,12 @@ export function needsActionRoutes(): BoundRoute[] {
       const scope = decision.kind === 'allow_scoped' ? decision.scope : null;
       const limit = limitOf(query);
       const brand = brandFilter(query.brand);
-      if (brand === 'unknown') return { body: { items: [], total: 0, truncated: false } };
-      const view = { scope, brand };
+      if (query.group !== undefined && hidesGroups(ctx.principal)) throw denyError('scope_missing');
+      const group = groupFilter(query.group);
+      if (brand === 'unknown' || group === 'unknown') {
+        return { body: { items: [], total: 0, truncated: false } };
+      }
+      const view = { scope, brand, group };
       const body = await ctx.tenant((trx) => listNeedsAction(trx, workspaceId, view, limit));
       return { body };
     }),

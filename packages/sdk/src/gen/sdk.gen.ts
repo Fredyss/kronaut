@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.ts';
 import { type Client, type ClientMeta, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client/index.ts';
-import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, BrandsCreateData, BrandsCreateErrors, BrandsCreateResponses, BrandsListData, BrandsListErrors, BrandsListResponses, BrandsUpdateData, BrandsUpdateErrors, BrandsUpdateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetBrandData, ChannelsSetBrandErrors, ChannelsSetBrandResponses, ChannelsSetShortenLinksData, ChannelsSetShortenLinksErrors, ChannelsSetShortenLinksResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, LinkShortenerConnectData, LinkShortenerConnectErrors, LinkShortenerConnectResponses, LinkShortenerGetData, LinkShortenerGetErrors, LinkShortenerGetResponses, LinkShortenerRemoveData, LinkShortenerRemoveErrors, LinkShortenerRemoveResponses, LinkShortenerUpdateData, LinkShortenerUpdateErrors, LinkShortenerUpdateResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, RssFeedsCreateData, RssFeedsCreateErrors, RssFeedsCreateResponses, RssFeedsDeleteData, RssFeedsDeleteErrors, RssFeedsDeleteResponses, RssFeedsListData, RssFeedsListErrors, RssFeedsListResponses, RssFeedsUpdateData, RssFeedsUpdateErrors, RssFeedsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, ShortLinksPostData, ShortLinksPostErrors, ShortLinksPostResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
+import type { AnalyticsChannelMetricsData, AnalyticsChannelMetricsErrors, AnalyticsChannelMetricsResponses, AnalyticsPostMetricsData, AnalyticsPostMetricsErrors, AnalyticsPostMetricsResponses, ApprovalsBrandPolicyDeleteData, ApprovalsBrandPolicyDeleteErrors, ApprovalsBrandPolicyDeleteResponses, ApprovalsBrandPolicyUpdateData, ApprovalsBrandPolicyUpdateErrors, ApprovalsBrandPolicyUpdateResponses, ApprovalsDecideData, ApprovalsDecideErrors, ApprovalsDecideResponses, ApprovalsPolicyData, ApprovalsPolicyErrors, ApprovalsPolicyResponses, ApprovalsPolicyUpdateData, ApprovalsPolicyUpdateErrors, ApprovalsPolicyUpdateResponses, ApprovalsWithdrawData, ApprovalsWithdrawErrors, ApprovalsWithdrawResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutErrors, AuthLogoutResponses, AuthMeData, AuthMeErrors, AuthMeResponses, AuthMeUpdateData, AuthMeUpdateErrors, AuthMeUpdateResponses, AuthPasswordChangeData, AuthPasswordChangeErrors, AuthPasswordChangeResponses, AuthPasswordResetData, AuthPasswordResetErrors, AuthPasswordResetResponses, AuthReauthenticateData, AuthReauthenticateErrors, AuthReauthenticateResponses, BrandsCreateData, BrandsCreateErrors, BrandsCreateResponses, BrandsListData, BrandsListErrors, BrandsListResponses, BrandsUpdateData, BrandsUpdateErrors, BrandsUpdateResponses, ChannelsConnectCallbackData, ChannelsConnectCallbackErrors, ChannelsConnectCallbackResponses, ChannelsConnectStartData, ChannelsConnectStartErrors, ChannelsConnectStartResponses, ChannelsDisconnectData, ChannelsDisconnectErrors, ChannelsDisconnectResponses, ChannelsListData, ChannelsListErrors, ChannelsListResponses, ChannelsProvidersData, ChannelsProvidersErrors, ChannelsProvidersResponses, ChannelsQueueData, ChannelsQueueErrors, ChannelsQueueResponses, ChannelsQueueUpdateData, ChannelsQueueUpdateErrors, ChannelsQueueUpdateResponses, ChannelsSetBrandData, ChannelsSetBrandErrors, ChannelsSetBrandResponses, ChannelsSetShortenLinksData, ChannelsSetShortenLinksErrors, ChannelsSetShortenLinksResponses, ChannelsSetSignatureData, ChannelsSetSignatureErrors, ChannelsSetSignatureResponses, DestinationsCancelData, DestinationsCancelErrors, DestinationsCancelResponses, DestinationsMarkPublishedData, DestinationsMarkPublishedErrors, DestinationsMarkPublishedResponses, DestinationsNeedsActionData, DestinationsNeedsActionErrors, DestinationsNeedsActionResponses, DestinationsSendAgainData, DestinationsSendAgainErrors, DestinationsSendAgainResponses, EvergreenGetData, EvergreenGetErrors, EvergreenGetResponses, EvergreenMarkData, EvergreenMarkErrors, EvergreenMarkResponses, EvergreenUnmarkData, EvergreenUnmarkErrors, EvergreenUnmarkResponses, GroupsAddChannelData, GroupsAddChannelErrors, GroupsAddChannelResponses, GroupsCreateData, GroupsCreateErrors, GroupsCreateResponses, GroupsDeleteData, GroupsDeleteErrors, GroupsDeleteResponses, GroupsListData, GroupsListErrors, GroupsListResponses, GroupsRemoveChannelData, GroupsRemoveChannelErrors, GroupsRemoveChannelResponses, GroupsUpdateData, GroupsUpdateErrors, GroupsUpdateResponses, LinkShortenerConnectData, LinkShortenerConnectErrors, LinkShortenerConnectResponses, LinkShortenerGetData, LinkShortenerGetErrors, LinkShortenerGetResponses, LinkShortenerRemoveData, LinkShortenerRemoveErrors, LinkShortenerRemoveResponses, LinkShortenerUpdateData, LinkShortenerUpdateErrors, LinkShortenerUpdateResponses, MediaClearAiData, MediaClearAiErrors, MediaClearAiResponses, MediaDeleteData, MediaDeleteErrors, MediaDeleteResponses, MediaGetData, MediaGetErrors, MediaGetResponses, MediaImportCreateData, MediaImportCreateErrors, MediaImportCreateResponses, MediaImportGetData, MediaImportGetErrors, MediaImportGetResponses, MediaListData, MediaListErrors, MediaListResponses, MediaMarkAiData, MediaMarkAiErrors, MediaMarkAiResponses, MediaUpdateData, MediaUpdateErrors, MediaUpdateResponses, MediaUploadData, MediaUploadErrors, MediaUploadResponses, MediaUsageData, MediaUsageErrors, MediaUsageResponses, MediaVideoCompleteData, MediaVideoCompleteErrors, MediaVideoCompleteResponses, MediaVideoPartData, MediaVideoPartErrors, MediaVideoPartResponses, MediaVideoUploadData, MediaVideoUploadErrors, MediaVideoUploadResponses, MetaDeauthorizeData, MetaDeauthorizeErrors, MetaDeauthorizeResponses, MetaDeletionData, MetaDeletionErrors, MetaDeletionResponses, MetaDeletionStatusData, MetaDeletionStatusErrors, MetaDeletionStatusResponses, NotificationsListData, NotificationsListErrors, NotificationsListResponses, NotificationsMarkReadData, NotificationsMarkReadErrors, NotificationsMarkReadResponses, NotificationsPreferencesData, NotificationsPreferencesErrors, NotificationsPreferencesResponses, NotificationsPreferencesUpdateData, NotificationsPreferencesUpdateErrors, NotificationsPreferencesUpdateResponses, OauthPublicDocumentData, OauthPublicDocumentErrors, OauthPublicDocumentResponses, PostsApprovalRequestsData, PostsApprovalRequestsErrors, PostsApprovalRequestsResponses, PostsCancelData, PostsCancelErrors, PostsCancelResponses, PostsCreateData, PostsCreateErrors, PostsCreateResponses, PostsDeleteData, PostsDeleteErrors, PostsDeleteResponses, PostsDuplicateData, PostsDuplicateErrors, PostsDuplicateResponses, PostsGetData, PostsGetErrors, PostsGetResponses, PostsImportCheckData, PostsImportCheckErrors, PostsImportCheckResponses, PostsImportData, PostsImportErrors, PostsImportResponses, PostsListData, PostsListErrors, PostsListResponses, PostsRequestApprovalData, PostsRequestApprovalErrors, PostsRequestApprovalResponses, PostsRescheduleData, PostsRescheduleErrors, PostsRescheduleResponses, PostsScheduleData, PostsScheduleErrors, PostsScheduleResponses, PostsTagsReplaceData, PostsTagsReplaceErrors, PostsTagsReplaceResponses, PostsUnscheduleData, PostsUnscheduleErrors, PostsUnscheduleResponses, PostsUpdateData, PostsUpdateErrors, PostsUpdateResponses, RssFeedsCreateData, RssFeedsCreateErrors, RssFeedsCreateResponses, RssFeedsDeleteData, RssFeedsDeleteErrors, RssFeedsDeleteResponses, RssFeedsListData, RssFeedsListErrors, RssFeedsListResponses, RssFeedsUpdateData, RssFeedsUpdateErrors, RssFeedsUpdateResponses, SavedTextsCreateData, SavedTextsCreateErrors, SavedTextsCreateResponses, SavedTextsDeleteData, SavedTextsDeleteErrors, SavedTextsDeleteResponses, SavedTextsListData, SavedTextsListErrors, SavedTextsListResponses, SavedTextsUpdateData, SavedTextsUpdateErrors, SavedTextsUpdateResponses, SeriesGetData, SeriesGetErrors, SeriesGetResponses, SeriesResumeData, SeriesResumeErrors, SeriesResumeResponses, SeriesStopData, SeriesStopErrors, SeriesStopResponses, ShortLinksPostData, ShortLinksPostErrors, ShortLinksPostResponses, SystemHealthData, SystemHealthErrors, SystemHealthResponses, SystemReadyData, SystemReadyErrors, SystemReadyResponses, SystemStatusData, SystemStatusErrors, SystemStatusResponses, TagsCreateData, TagsCreateErrors, TagsCreateResponses, TagsDeleteData, TagsDeleteErrors, TagsDeleteResponses, TagsListData, TagsListErrors, TagsListResponses, TagsUpdateData, TagsUpdateErrors, TagsUpdateResponses } from './types.gen.ts';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -340,7 +340,7 @@ export const brandsUpdate = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * List the connected channels
  *
- * A key without posts:read gets signature: null on every channel.
+ * A key without posts:read gets signature: null on every channel, and a key without groups:read gets groupIds: [].
  */
 export const channelsList = <ThrowOnError extends boolean = true>(options: Options<ChannelsListData, ThrowOnError>): RequestResult<ChannelsListResponses, ChannelsListErrors, ThrowOnError> => (options.client ?? client).get<ChannelsListResponses, ChannelsListErrors, ThrowOnError>({
     security: [{
@@ -501,6 +501,104 @@ export const channelsSetShortenLinks = <ThrowOnError extends boolean = true>(opt
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * List account groups
+ *
+ * The workspace's account groups by name, each with its channels in connection order. A restricted principal gets only the groups with a channel in its scope, and only those channels. Groups never grant access.
+ */
+export const groupsList = <ThrowOnError extends boolean = true>(options: Options<GroupsListData, ThrowOnError>): RequestResult<GroupsListResponses, GroupsListErrors, ThrowOnError> => (options.client ?? client).get<GroupsListResponses, GroupsListErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }, { scheme: 'bearer', type: 'http' }],
+    url: '/v1/workspaces/{workspaceId}/groups',
+    ...options
+});
+
+/**
+ * Create an account group
+ *
+ * The name is trimmed and has 1–120 characters (422 name_invalid). A name that differs only in case from another group's is 409 group_name_taken. Owners and admins only.
+ */
+export const groupsCreate = <ThrowOnError extends boolean = true>(options: Options<GroupsCreateData, ThrowOnError>): RequestResult<GroupsCreateResponses, GroupsCreateErrors, ThrowOnError> => (options.client ?? client).post<GroupsCreateResponses, GroupsCreateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/groups',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete an account group
+ *
+ * Removes the group and its memberships. Posts keep their destinations; those picked through the group lose the reference to it. Owners and admins only.
+ */
+export const groupsDelete = <ThrowOnError extends boolean = true>(options: Options<GroupsDeleteData, ThrowOnError>): RequestResult<GroupsDeleteResponses, GroupsDeleteErrors, ThrowOnError> => (options.client ?? client).delete<GroupsDeleteResponses, GroupsDeleteErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}',
+    ...options
+});
+
+/**
+ * Rename an account group
+ *
+ * The name follows the same rules as when creating a group. Owners and admins only.
+ */
+export const groupsUpdate = <ThrowOnError extends boolean = true>(options: Options<GroupsUpdateData, ThrowOnError>): RequestResult<GroupsUpdateResponses, GroupsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<GroupsUpdateResponses, GroupsUpdateErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove a channel from an account group
+ *
+ * Idempotent. An unknown group or channel is 404. Existing posts are not changed. Owners and admins only.
+ */
+export const groupsRemoveChannel = <ThrowOnError extends boolean = true>(options: Options<GroupsRemoveChannelData, ThrowOnError>): RequestResult<GroupsRemoveChannelResponses, GroupsRemoveChannelErrors, ThrowOnError> => (options.client ?? client).delete<GroupsRemoveChannelResponses, GroupsRemoveChannelErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}/channels/{channelId}',
+    ...options
+});
+
+/**
+ * Add a channel to an account group
+ *
+ * Idempotent. An unknown group or channel is 404. Existing posts are not changed. Owners and admins only.
+ */
+export const groupsAddChannel = <ThrowOnError extends boolean = true>(options: Options<GroupsAddChannelData, ThrowOnError>): RequestResult<GroupsAddChannelResponses, GroupsAddChannelErrors, ThrowOnError> => (options.client ?? client).put<GroupsAddChannelResponses, GroupsAddChannelErrors, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: '__Host-kronaut_session',
+            type: 'apiKey'
+        }],
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}/channels/{channelId}',
+    ...options
 });
 
 /**
@@ -786,7 +884,7 @@ export const mediaUsage = <ThrowOnError extends boolean = true>(options: Options
 /**
  * List destinations that need action
  *
- * The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.
+ * The unconfirmed, failed, blocked and awaiting-manual destinations of the posts the caller can see, newest first (limit 1–200, default 100). With brand, only the destinations of posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the destinations of posts with a non-canceled destination on a channel in that group; an unknown group gives an empty list, and a key without groups:read gets 403. Both filters combine.
  */
 export const destinationsNeedsAction = <ThrowOnError extends boolean = true>(options: Options<DestinationsNeedsActionData, ThrowOnError>): RequestResult<DestinationsNeedsActionResponses, DestinationsNeedsActionErrors, ThrowOnError> => (options.client ?? client).get<DestinationsNeedsActionResponses, DestinationsNeedsActionErrors, ThrowOnError>({
     security: [{
@@ -907,7 +1005,7 @@ export const postsImportCheck = <ThrowOnError extends boolean = true>(options: O
 /**
  * List posts
  *
- * Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list.
+ * Either the posts with a destination scheduled in [from, to) (ISO instants, at most 42 days apart; at most 500 posts), or with unscheduled=true the posts with no scheduled destination, newest first (limit 1–100, default 50). With tag, only the posts that have that tag; an unknown tag gives an empty list. With brand, only the posts with a destination on a channel of that brand, or with none on a channel without a brand; an unknown brand gives an empty list. With group, only the posts with a non-canceled destination on a channel that is in that group now; an unknown group gives an empty list, and a key without groups:read gets 403. Filters combine.
  */
 export const postsList = <ThrowOnError extends boolean = true>(options: Options<PostsListData, ThrowOnError>): RequestResult<PostsListResponses, PostsListErrors, ThrowOnError> => (options.client ?? client).get<PostsListResponses, PostsListErrors, ThrowOnError>({
     security: [{
@@ -921,6 +1019,8 @@ export const postsList = <ThrowOnError extends boolean = true>(options: Options<
 
 /**
  * Create a draft post
+ *
+ * A destination with sourceGroupId was picked through that group: it must exist (422 not_found) and the channel must be in it (422 not_in_group). A key without groups:read has every sourceGroupId ignored and stored as null, unchecked.
  */
 export const postsCreate = <ThrowOnError extends boolean = true>(options: Options<PostsCreateData, ThrowOnError>): RequestResult<PostsCreateResponses, PostsCreateErrors, ThrowOnError> => (options.client ?? client).post<PostsCreateResponses, PostsCreateErrors, ThrowOnError>({
     security: [{
@@ -953,6 +1053,8 @@ export const postsDelete = <ThrowOnError extends boolean = true>(options: Option
 
 /**
  * Get a post
+ *
+ * A key without groups:read gets sourceGroupId: null on every destination, here and on every route that returns a post.
  */
 export const postsGet = <ThrowOnError extends boolean = true>(options: Options<PostsGetData, ThrowOnError>): RequestResult<PostsGetResponses, PostsGetErrors, ThrowOnError> => (options.client ?? client).get<PostsGetResponses, PostsGetErrors, ThrowOnError>({
     security: [{
@@ -967,7 +1069,7 @@ export const postsGet = <ThrowOnError extends boolean = true>(options: Options<P
 /**
  * Edit a draft post
  *
- * Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled.
+ * Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the destination already stores is kept unchecked; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.
  */
 export const postsUpdate = <ThrowOnError extends boolean = true>(options: Options<PostsUpdateData, ThrowOnError>): RequestResult<PostsUpdateResponses, PostsUpdateErrors, ThrowOnError> => (options.client ?? client).patch<PostsUpdateResponses, PostsUpdateErrors, ThrowOnError>({
     security: [{

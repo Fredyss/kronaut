@@ -857,6 +857,7 @@ export type ChannelsListResponses = {
             brandId: string | null;
             connectedAt: string;
             displayName: string;
+            groupIds: Array<string>;
             handle: string | null;
             id: string;
             insights: boolean;
@@ -1257,6 +1258,207 @@ export type ChannelsSetShortenLinksResponses = {
 };
 
 export type ChannelsSetShortenLinksResponse = ChannelsSetShortenLinksResponses[keyof ChannelsSetShortenLinksResponses];
+
+export type GroupsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups';
+};
+
+export type GroupsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsListError = GroupsListErrors[keyof GroupsListErrors];
+
+export type GroupsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            channelIds: Array<string>;
+            id: string;
+            name: string;
+        }>;
+    };
+};
+
+export type GroupsListResponse = GroupsListResponses[keyof GroupsListResponses];
+
+export type GroupsCreateData = {
+    body: {
+        name: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups';
+};
+
+export type GroupsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsCreateError = GroupsCreateErrors[keyof GroupsCreateErrors];
+
+export type GroupsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        channelIds: Array<string>;
+        id: string;
+        name: string;
+    };
+};
+
+export type GroupsCreateResponse = GroupsCreateResponses[keyof GroupsCreateResponses];
+
+export type GroupsDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        groupId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}';
+};
+
+export type GroupsDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsDeleteError = GroupsDeleteErrors[keyof GroupsDeleteErrors];
+
+export type GroupsDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type GroupsDeleteResponse = GroupsDeleteResponses[keyof GroupsDeleteResponses];
+
+export type GroupsUpdateData = {
+    body: {
+        name: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        groupId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}';
+};
+
+export type GroupsUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsUpdateError = GroupsUpdateErrors[keyof GroupsUpdateErrors];
+
+export type GroupsUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        channelIds: Array<string>;
+        id: string;
+        name: string;
+    };
+};
+
+export type GroupsUpdateResponse = GroupsUpdateResponses[keyof GroupsUpdateResponses];
+
+export type GroupsRemoveChannelData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        groupId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}/channels/{channelId}';
+};
+
+export type GroupsRemoveChannelErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsRemoveChannelError = GroupsRemoveChannelErrors[keyof GroupsRemoveChannelErrors];
+
+export type GroupsRemoveChannelResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type GroupsRemoveChannelResponse = GroupsRemoveChannelResponses[keyof GroupsRemoveChannelResponses];
+
+export type GroupsAddChannelData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        groupId: string;
+        channelId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/groups/{groupId}/channels/{channelId}';
+};
+
+export type GroupsAddChannelErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GroupsAddChannelError = GroupsAddChannelErrors[keyof GroupsAddChannelErrors];
+
+export type GroupsAddChannelResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type GroupsAddChannelResponse = GroupsAddChannelResponses[keyof GroupsAddChannelResponses];
 
 export type LinkShortenerRemoveData = {
     body?: never;
@@ -2013,6 +2215,7 @@ export type DestinationsNeedsActionData = {
     query?: {
         limit?: string;
         brand?: string;
+        group?: string;
     };
     url: '/v1/workspaces/{workspaceId}/needs-action';
 };
@@ -2225,6 +2428,7 @@ export type PostsImportData = {
                     [key: string]: unknown;
                 };
                 skipSignature?: boolean;
+                sourceGroupId?: string | null;
                 variant?: number | null;
             }>;
             items: Array<{
@@ -2290,6 +2494,7 @@ export type PostsImportCheckData = {
                     [key: string]: unknown;
                 };
                 skipSignature?: boolean;
+                sourceGroupId?: string | null;
                 variant?: number | null;
             }>;
             items: Array<{
@@ -2352,6 +2557,7 @@ export type PostsListData = {
         limit?: string;
         tag?: string;
         brand?: string;
+        group?: string;
     };
     url: '/v1/workspaces/{workspaceId}/posts';
 };
@@ -2414,6 +2620,7 @@ export type PostsCreateData = {
                 [key: string]: unknown;
             };
             skipSignature?: boolean;
+            sourceGroupId?: string | null;
             variant?: number | null;
         }>;
         items: Array<{
@@ -2483,6 +2690,7 @@ export type PostsCreateResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2608,6 +2816,7 @@ export type PostsGetResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2669,6 +2878,7 @@ export type PostsUpdateData = {
                 [key: string]: unknown;
             };
             skipSignature?: boolean;
+            sourceGroupId?: string | null;
             variant?: number | null;
         }>;
         expectedVersion: number;
@@ -2740,6 +2950,7 @@ export type PostsUpdateResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -2908,6 +3119,7 @@ export type PostsRequestApprovalResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3007,6 +3219,7 @@ export type PostsCancelResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3107,6 +3320,7 @@ export type DestinationsCancelResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3207,6 +3421,7 @@ export type DestinationsMarkPublishedResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3317,6 +3532,7 @@ export type DestinationsSendAgainResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3414,6 +3630,7 @@ export type PostsDuplicateResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3674,6 +3891,7 @@ export type PostsRescheduleResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3793,6 +4011,7 @@ export type PostsScheduleResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
@@ -3971,6 +4190,7 @@ export type PostsUnscheduleResponses = {
             } | null;
             signatureHeld: boolean;
             skipSignature: boolean;
+            sourceGroupId: string | null;
             state: 'draft' | 'scheduled' | 'publishing' | 'retry_wait' | 'verifying' | 'published' | 'unconfirmed' | 'failed' | 'blocked' | 'awaiting_manual' | 'canceled';
             stateReason: string | null;
             variant: number | null;
