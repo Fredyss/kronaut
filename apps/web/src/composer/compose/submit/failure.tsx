@@ -6,6 +6,7 @@ import { m as composeText } from '../../../i18n/compose.ts';
 import type { Channel } from '../../../records/channels/queries.ts';
 import { destinationIndex, issueMessage } from '../issues.ts';
 import {
+  isStalePick,
   MarkedImageError,
   refusedForApproval,
   type SubmitError,
@@ -107,7 +108,9 @@ export function Failure({
         <ul className="list-disc pl-5">
           {details.map((detail) => {
             const channel = channelName(detail.path);
-            const message = issueMessage(detail.code);
+            const message = isStalePick(detail)
+              ? composeText.compose_issue_group_changed()
+              : issueMessage(detail.code);
             return (
               <li key={`${detail.path}|${detail.code}`}>
                 {channel === null ? message : m.compose_issue_on_channel({ channel, message })}

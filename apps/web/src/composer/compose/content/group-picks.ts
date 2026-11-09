@@ -48,3 +48,9 @@ export function groupSources(
   }
   return next;
 }
+
+export function withoutPicks(sources: Sources, accountIds: readonly string[]): Sources {
+  const next = new Map(sources);
+  for (const id of accountIds) next.delete(id);
+  return next;
+}

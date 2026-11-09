@@ -4,7 +4,6 @@ import type { Resolving } from '../deps.ts';
 export interface GroupPick {
   readonly index: number;
   readonly accountId: string | null;
-  readonly publishType: string;
   readonly sourceGroupId: string | null | undefined;
 }
 
@@ -13,29 +12,20 @@ export interface GroupPicking {
   readonly ignore: boolean;
 }
 
-function pickKey(accountId: string | null, publishType: string): string {
-  return `${accountId}\n${publishType}`;
+function memberKey(groupId: string, accountId: string): string {
+  return `${groupId}\n${accountId}`;
 }
 
 async function storedPicks({ trx, workspaceId }: Resolving, postId: string | undefined) {
-  if (postId === undefined) return new Map<string, string>();
+  if (postId === undefined) return new Set<string>();
   const rows = await trx
     .selectFrom('post_destinations')
-    .select(['social_account_id', 'publish_type', 'source_group_id'])
+    .select(['social_account_id', 'source_group_id'])
     .where('workspace_id', '=', workspaceId)
     .where('post_id', '=', postId)
     .where('source_group_id', 'is not', null)
     .execute();
-  return new Map(
-    rows.map((row) => [
-      pickKey(row.social_account_id, row.publish_type),
-      row.source_group_id ?? '',
-    ]),
-  );
-}
-
-function memberKey(groupId: string, accountId: string): string {
-  return `${groupId}\n${accountId}`;
+  return new Set(rows.map((row) => memberKey(row.source_group_id ?? '', row.social_account_id)));
 }
 
 // Share locks, taken before any destination row: a group delete locks the group first and its destinations
@@ -72,26 +62,19 @@ async function lockPicked(
   };
 }
 
-// A pick the destination already stores is kept even if the channel has left the group since: the client
-// sends it back unchanged on every edit. When picks are ignored, nothing is read or locked, so a caller
-// without groups:read cannot probe which groups exist.
+// A group the channel already has on this post is kept even if the channel has left the group since: the
+// client sends it back unchanged on every edit, also when new media changes the post type. When picks are
+// ignored, nothing is read or locked, so a caller without groups:read cannot probe which groups exist.
 export async function resolveSourceGroups(
   resolving: Resolving,
   picks: readonly GroupPick[],
   { postId, ignore }: GroupPicking,
 ): Promise<ReadonlyMap<number, string>> {
   if (ignore) return new Map();
-  const decoded = picks.flatMap(({ index, accountId, publishType, sourceGroupId }) =>
+  const decoded = picks.flatMap(({ index, accountId, sourceGroupId }) =>
     sourceGroupId === null || sourceGroupId === undefined
       ? []
-      : [
-          {
-            index,
-            accountId,
-            key: pickKey(accountId, publishType),
-            groupId: decodePublicId('group', sourceGroupId),
-          },
-        ],
+      : [{ index, accountId, groupId: decodePublicId('group', sourceGroupId) }],
   );
   if (decoded.length === 0) return new Map();
   const stored = await storedPicks(resolving, postId);
@@ -102,13 +85,13 @@ export async function resolveSourceGroups(
       ? { groups: new Set<string>(), members: new Set<string>() }
       : await lockPicked(resolving, groupIds, accountIds);
   const picked = new Map<number, string>();
-  for (const { index, accountId, key, groupId } of decoded) {
+  for (const { index, accountId, groupId } of decoded) {
     const path = `body.destinations.${index}.sourceGroupId`;
     if (groupId === null || !locked.groups.has(groupId)) {
       resolving.details.push({ path, code: 'not_found' });
     } else if (
       accountId !== null &&
-      stored.get(key) !== groupId &&
+      !stored.has(memberKey(groupId, accountId)) &&
       !locked.members.has(memberKey(groupId, accountId))
     ) {
       resolving.details.push({ path, code: 'not_in_group' });

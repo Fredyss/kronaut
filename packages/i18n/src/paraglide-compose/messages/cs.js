@@ -56,6 +56,7 @@
 /** @typedef {{}} Compose_InheritsInputs */
 /** @typedef {{}} Compose_InsertInputs */
 /** @typedef {{}} Compose_Insert_Saved_TextInputs */
+/** @typedef {{}} Compose_Issue_Group_ChangedInputs */
 /** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
@@ -343,6 +344,10 @@ export const compose_insert = /** @type {(inputs: Compose_InsertInputs) => Local
 
 export const compose_insert_saved_text = /** @type {(inputs: Compose_Insert_Saved_TextInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Vložit uložený text`)
+};
+
+export const compose_issue_group_changed = /** @type {(inputs: Compose_Issue_Group_ChangedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skupina, přes kterou jste tento kanál vybrali, se mezitím změnila. Kanál se teď bere jako vybraný ručně. Uložte znovu.`)
 };
 
 export const compose_keep_draft = /** @type {(inputs: Compose_Keep_DraftInputs) => LocalizedString} */ () => {
