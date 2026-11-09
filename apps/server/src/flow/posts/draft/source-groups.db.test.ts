@@ -174,4 +174,21 @@ describe('sourceGroupId on destinations', () => {
     expect(resent.status).toBe(200);
     expect(sources((await resent.json()) as PostDto)).toEqual([[accountA, moved.id]]);
   });
+
+  it('never lets a group stored on one channel admit another channel', async () => {
+    const pair = await newGroup('Pair');
+    await join(pair, accountB);
+    const post = await pickedPost([accountB, pair.id]);
+    const refused = await call('PATCH', `posts/${post.id}`, ownerAuth, {
+      expectedVersion: post.version,
+      destinations: pickedBody([
+        [accountA, pair.id],
+        [accountB, pair.id],
+      ]).destinations,
+    });
+    expect(refused.status).toBe(422);
+    expect((await errorOf(refused)).details).toEqual([
+      { path: 'body.destinations.0.sourceGroupId', code: 'not_in_group' },
+    ]);
+  });
 });

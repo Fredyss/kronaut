@@ -966,7 +966,7 @@ export const compose_insert_saved_text = /** @type {((inputs?: Compose_Insert_Sa
 /**
 * | output |
 * | --- |
-* | "The group you picked this channel through has changed. The channel now counts as picked by hand. Save again." |
+* | "The group you picked this channel through has changed, so the channel now counts as picked by hand." |
 *
 * @param {Compose_Issue_Group_ChangedInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options

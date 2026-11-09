@@ -339,7 +339,7 @@ export const compose_insert_saved_text = /** @type {(inputs: Compose_Insert_Save
 };
 
 export const compose_issue_group_changed = /** @type {(inputs: Compose_Issue_Group_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`The group you picked this channel through has changed. The channel now counts as picked by hand. Save again.`)
+	return /** @type {LocalizedString} */ (`The group you picked this channel through has changed, so the channel now counts as picked by hand.`)
 };
 
 export const compose_keep_draft = /** @type {(inputs: Compose_Keep_DraftInputs) => LocalizedString} */ () => {

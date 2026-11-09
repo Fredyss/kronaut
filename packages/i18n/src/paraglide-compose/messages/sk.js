@@ -347,7 +347,7 @@ export const compose_insert_saved_text = /** @type {(inputs: Compose_Insert_Save
 };
 
 export const compose_issue_group_changed = /** @type {(inputs: Compose_Issue_Group_ChangedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Skupina, cez ktorú ste tento kanál vybrali, sa medzitým zmenila. Kanál sa teraz berie ako vybraný ručne. Uložte znova.`)
+	return /** @type {LocalizedString} */ (`Skupina, cez ktorú ste tento kanál vybrali, sa medzitým zmenila, preto sa kanál teraz považuje za vybraný ručne.`)
 };
 
 export const compose_keep_draft = /** @type {(inputs: Compose_Keep_DraftInputs) => LocalizedString} */ () => {

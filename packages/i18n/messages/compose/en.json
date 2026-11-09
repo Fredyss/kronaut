@@ -135,5 +135,5 @@
   "compose_brand_clear_of": "Clear the channels of {name}",
   "compose_groups": "Add a group",
   "compose_group_add_of": "Add the channels of group {name}",
-  "compose_issue_group_changed": "The group you picked this channel through has changed. The channel now counts as picked by hand. Save again."
+  "compose_issue_group_changed": "The group you picked this channel through has changed, so the channel now counts as picked by hand."
 }

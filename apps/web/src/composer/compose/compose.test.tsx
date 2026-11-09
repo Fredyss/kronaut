@@ -117,7 +117,7 @@ describe('composer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
 
     await screen.findByText(
-      'Ada on Instagram: The group you picked this channel through has changed. The channel now counts as picked by hand. Save again.',
+      'Ada on Instagram: The group you picked this channel through has changed, so the channel now counts as picked by hand.',
     );
     fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
 
