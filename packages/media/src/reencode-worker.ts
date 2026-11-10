@@ -1,6 +1,7 @@
 import { parentPort, workerData } from 'node:worker_threads';
-import sharp, { type Sharp } from 'sharp';
+import sharp, { type Sharp, type SharpOptions } from 'sharp';
 import {
+  MEDIA_IMAGE_MAX_DECODED_BYTES,
   MEDIA_IMAGE_MAX_PIXELS,
   type ReencodeFormat,
   type ReencodeJob,
@@ -8,6 +9,37 @@ import {
 } from './reencode.ts';
 
 const PIXEL_LIMIT_RE = /exceeds pixel limit/i;
+const SAMPLE_BYTES: Readonly<Record<string, number>> = {
+  uchar: 1,
+  char: 1,
+  ushort: 2,
+  short: 2,
+  uint: 4,
+  int: 4,
+  float: 4,
+  complex: 8,
+  double: 8,
+  dpcomplex: 16,
+};
+
+function inputOptions(job: ReencodeJob): SharpOptions {
+  return {
+    limitInputPixels: MEDIA_IMAGE_MAX_PIXELS,
+    failOn: 'error',
+    animated: job.format === 'webp',
+  };
+}
+
+// The pixel limit alone lets a 16-bit image decode to twice the memory of an 8-bit one.
+async function decodedBytes(job: ReencodeJob): Promise<number> {
+  const {
+    width = 0,
+    height = 0,
+    channels = 4,
+    depth = '',
+  } = await sharp(job.bytes, inputOptions(job)).metadata();
+  return width * height * channels * (SAMPLE_BYTES[depth] ?? 8);
+}
 
 function encode(pipeline: Sharp, format: ReencodeFormat): Sharp {
   if (format === 'jpeg') return pipeline.jpeg({ quality: 90 });
@@ -17,13 +49,10 @@ function encode(pipeline: Sharp, format: ReencodeFormat): Sharp {
 
 async function run(job: ReencodeJob): Promise<ReencodeReply> {
   try {
-    const pipeline = sharp(job.bytes, {
-      limitInputPixels: MEDIA_IMAGE_MAX_PIXELS,
-      failOn: 'error',
-      animated: job.format === 'webp',
-    })
-      .rotate()
-      .toColorspace('srgb');
+    if ((await decodedBytes(job)) > MEDIA_IMAGE_MAX_DECODED_BYTES) {
+      return { ok: false, kind: 'too_many_bytes', message: 'image decodes to too many bytes' };
+    }
+    const pipeline = sharp(job.bytes, inputOptions(job)).rotate().toColorspace('srgb');
     const { data, info } = await encode(pipeline, job.format).toBuffer({ resolveWithObject: true });
     return {
       ok: true,

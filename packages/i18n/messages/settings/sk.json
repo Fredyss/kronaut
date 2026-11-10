@@ -324,6 +324,7 @@
   "settings_short_links_base_url_invalid": "Zadajte odkaz https, napríklad https://kutt.to alebo adresu vlastnej inštancie, bez používateľského mena, hesla a parametrov. Adresa kutt.it nie je podporovaná.",
   "settings_short_links_domain_invalid": "Zadajte názov hostiteľa, napríklad go.example.com, bez https:// a bez cesty.",
   "settings_short_links_api_key_invalid": "Kľúč API je príliš dlhý alebo obsahuje nepovolené znaky.",
+  "settings_short_links_api_key_required": "Pri novej adrese zadajte kľúč API znova.",
   "settings_short_links_conflict": "Skracovač medzitým niekto zmenil. Obnovte stránku a skúste to znova.",
   "settings_brand_list_title": "Značky",
   "settings_brand_list_intro": "Zoskupte kanály podľa klientov alebo značiek. Každá značka môže mať vlastné pravidlá schvaľovania.",

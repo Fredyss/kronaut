@@ -8,6 +8,19 @@ export interface VideoToolOptions {
   readonly threads?: number;
 }
 
+export type VideoContainer = 'mov' | 'matroska';
+
+export interface VideoInput {
+  readonly path: string;
+  readonly container: VideoContainer;
+}
+
+// Left to probe the format itself, ffmpeg reads playlists and manifests (HLS, DASH, concat)
+// and fetches every URL they name, outside packages/egress.
+export function inputArgs(input: VideoInput): string[] {
+  return ['-protocol_whitelist', 'file', '-f', input.container, '-i', input.path];
+}
+
 export type VideoToolErrorKind = 'missing' | 'failed' | 'killed' | 'timeout';
 
 export class VideoToolError extends Error {
@@ -65,6 +78,11 @@ class StdoutBuffer {
   }
 }
 
+export function toolEnv(): Record<string, string> {
+  const path = process.env.PATH;
+  return path === undefined ? {} : { PATH: path };
+}
+
 function lowerPriority(pid: number | undefined): void {
   if (pid === undefined) return;
   try {
@@ -74,7 +92,7 @@ function lowerPriority(pid: number | undefined): void {
 
 export function runTool(bin: string, args: readonly string[], timeoutMs: number): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'], env: toolEnv() });
     lowerPriority(child.pid);
     const stdout = new StdoutBuffer();
     const stderr = new StderrTail();

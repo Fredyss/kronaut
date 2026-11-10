@@ -215,6 +215,24 @@ describe('withdrawing', () => {
     expect(twice.status).toBe(409);
     expect(await webhookEventsOf(request)).toHaveLength(1);
   });
+
+  it('keeps a copy of agent-written content in need of an approval', async () => {
+    const agent = await insertGrant({ scopes: ['posts:read', 'posts:draft', 'posts:submit'] });
+    const post = await requested(await create(agent, draft(accountA)), {}, agent);
+    expect((await withdrawCall(await openRequestOf(post), agent)).status).toBe(200);
+
+    const duplicated = await call('POST', `posts/${post.id}/duplicate`, ownerAuth);
+    expect(duplicated.status).toBe(201);
+    const copy = (await duplicated.json()) as PostDto;
+    const response = await scheduleCall(copy, { mode: 'asap' });
+    expect(response.status).toBe(403);
+    expect((await errorOf(response)).code).toBe('approval_required');
+
+    const human = await create(ownerAuth, draft(accountA));
+    const plain = await call('POST', `posts/${human.id}/duplicate`, ownerAuth);
+    const scheduled = await scheduleCall((await plain.json()) as PostDto, { mode: 'asap' });
+    expect(scheduled.status).toBe(200);
+  });
 });
 
 describe('editing under review', () => {

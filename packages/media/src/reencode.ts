@@ -1,9 +1,10 @@
 import { Worker } from 'node:worker_threads';
 
 export type ReencodeFormat = 'jpeg' | 'png' | 'webp';
-export type ReencodeErrorKind = 'undecodable' | 'too_many_pixels';
+export type ReencodeErrorKind = 'undecodable' | 'too_many_pixels' | 'too_many_bytes';
 
 export const MEDIA_IMAGE_MAX_PIXELS = 50_000_000;
+export const MEDIA_IMAGE_MAX_DECODED_BYTES = MEDIA_IMAGE_MAX_PIXELS * 4;
 export const MAX_CONCURRENT_REENCODES = 2;
 
 export interface ReencodedImage {

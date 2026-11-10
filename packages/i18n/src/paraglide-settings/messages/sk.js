@@ -160,6 +160,7 @@
 /** @typedef {{}} Settings_Short_Links_Api_Key_InvalidInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_KeepInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_MissingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_RequiredInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_SetInputs */
 /** @typedef {{}} Settings_Short_Links_Base_UrlInputs */
 /** @typedef {{}} Settings_Short_Links_Base_Url_HintInputs */
@@ -914,6 +915,10 @@ export const settings_short_links_api_key_keep = /** @type {(inputs: Settings_Sh
 
 export const settings_short_links_api_key_missing = /** @type {(inputs: Settings_Short_Links_Api_Key_MissingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Kľúč API chýba`)
+};
+
+export const settings_short_links_api_key_required = /** @type {(inputs: Settings_Short_Links_Api_Key_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pri novej adrese zadajte kľúč API znova.`)
 };
 
 export const settings_short_links_api_key_set = /** @type {(inputs: Settings_Short_Links_Api_Key_SetInputs) => LocalizedString} */ () => {

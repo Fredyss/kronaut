@@ -1,6 +1,7 @@
 -- The requester is the acting principal and cannot approve their own request unless the live policy
 -- and the request snapshot both allow it. The live policy's approval count is a floor, and reviewer
--- votes count on a request an agent opened. A post's brand policy comes from its channels' brands (ADR-0059).
+-- votes count on a request an agent opened, but its sponsor's do not. A post's brand policy comes from its
+-- channels' brands (ADR-0059).
 
 BEGIN;
 
@@ -49,7 +50,8 @@ BEGIN
     ('01900000-0000-7000-8000-000000000343', '01900000-0000-7000-8000-000000000321'),
     ('01900000-0000-7000-8000-000000000344', '01900000-0000-7000-8000-000000000323'),
     ('01900000-0000-7000-8000-000000000345', '01900000-0000-7000-8000-000000000322'),
-    ('01900000-0000-7000-8000-000000000346', NULL)) AS t(id, brand_id)
+    ('01900000-0000-7000-8000-000000000346', NULL),
+    ('01900000-0000-7000-8000-000000000347', NULL)) AS t(id, brand_id)
   LOOP
     INSERT INTO posts (workspace_id, id, brand_id, origin)
     VALUES (app_workspace_id(), p.id, p.brand_id, 'ui');
@@ -176,6 +178,27 @@ VALUES (app_workspace_id(), '01900000-0000-7000-8000-000000000356', 'approve', '
         '01900000-0000-7000-8000-0000000003d1', 'client@example.test', now());
 UPDATE approval_requests SET state = 'approved', resolved_at = now()
  WHERE id = '01900000-0000-7000-8000-000000000356';
+
+SELECT set_config('app.actor', 'grant:01900000-0000-7000-8000-0000000003c1', true);
+INSERT INTO approval_requests (workspace_id, id, post_id, post_version, content_hash, content_hash_v,
+                               policy_snapshot, required_approvals, requested_by_grant_id)
+VALUES (app_workspace_id(), '01900000-0000-7000-8000-000000000357', '01900000-0000-7000-8000-000000000347', 1,
+        decode(repeat('ab', 32), 'hex'), 1, '{}', 1, '01900000-0000-7000-8000-0000000003c1');
+
+SELECT set_config('app.actor', 'user:01900000-0000-7000-8000-0000000003a1', true);
+INSERT INTO approval_decisions (workspace_id, request_id, decision, approver_kind, user_id, session_reauth_at)
+VALUES (app_workspace_id(), '01900000-0000-7000-8000-000000000357', 'approve', 'user',
+        '01900000-0000-7000-8000-0000000003a1', now());
+
+DO $$
+BEGIN
+  UPDATE approval_requests SET state = 'approved', resolved_at = now()
+   WHERE id = '01900000-0000-7000-8000-000000000357';
+  RAISE EXCEPTION 'the sponsor approved their own key''s request';
+EXCEPTION
+  WHEN SQLSTATE 'KR004' THEN
+    NULL;
+END $$;
 
 DO $$
 DECLARE approved uuid[];

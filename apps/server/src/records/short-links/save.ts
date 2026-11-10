@@ -142,10 +142,16 @@ function nextConfig(
   body: ShortenerChange,
 ) {
   const { provider } = stored;
+  const baseUrl =
+    body.baseUrl === undefined ? stored.base_url : shortenerBaseUrl(provider, body.baseUrl);
+  if (baseUrl !== stored.base_url && body.apiKey === undefined) {
+    throw new HttpError('unprocessable', 'A new base URL needs the API key again.', {
+      details: [{ path: 'body.apiKey', code: 'api_key_required' }],
+    });
+  }
   return {
     provider,
-    baseUrl:
-      body.baseUrl === undefined ? stored.base_url : shortenerBaseUrl(provider, body.baseUrl),
+    baseUrl,
     domain: body.domain === undefined ? stored.domain : shortenerDomain(body.domain),
     key:
       body.apiKey === undefined

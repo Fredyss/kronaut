@@ -1,6 +1,8 @@
 import {
+  inputArgs,
   runTool,
   VIDEO_TOOL_TIMEOUT_MS,
+  type VideoInput,
   VideoToolError,
   type VideoToolOptions,
 } from './video-run.ts';
@@ -99,12 +101,12 @@ export function parseProbe(json: string): VideoProbe {
 }
 
 export async function probeVideo(
-  path: string,
+  input: VideoInput,
   options: VideoToolOptions = {},
 ): Promise<VideoProbe> {
   const stdout = await runTool(
     options.ffprobe ?? 'ffprobe',
-    ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', path],
+    ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', ...inputArgs(input)],
     options.timeoutMs ?? VIDEO_TOOL_TIMEOUT_MS,
   );
   return parseProbe(stdout.toString('utf8'));

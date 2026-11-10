@@ -24,7 +24,7 @@ const ShortenerSchema = z.object({
   updatedAt: z.iso.datetime(),
 });
 
-const KEY_RULES = `The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is \`${DUB_BASE_URL}\` for Dub; for Kutt it is required, an \`https\` link of up to ${BASE_URL_MAX} characters to \`https://kutt.to\` or your own instance, stored without \`/api/v2\` (422 base_url_invalid; \`kutt.it\` is refused). The domain is an optional custom short domain of up to ${DOMAIN_MAX} characters (422 domain_invalid). The key has up to ${API_KEY_MAX} printable characters (422 api_key_invalid). Owners and admins only.`;
+const KEY_RULES = `The API key is never returned (the response shows only hasKey). Saving checks the key with one read-only call: a refused key is 422 shortener_unauthorized, a shortener that can't be reached 422 shortener_unreachable. The base URL is \`${DUB_BASE_URL}\` for Dub; for Kutt it is required, an \`https\` link of up to ${BASE_URL_MAX} characters to \`https://kutt.to\` or your own instance, stored without \`/api/v2\` (422 base_url_invalid; \`kutt.it\` is refused). The domain is an optional custom short domain of up to ${DOMAIN_MAX} characters (422 domain_invalid). The key has up to ${API_KEY_MAX} printable characters (422 api_key_invalid). A new base URL needs the key again (422 api_key_required), so a stored key is never sent to another host. Owners and admins only.`;
 
 const shortenerGetRoute = defineRoute({
   id: 'link_shortener.get',

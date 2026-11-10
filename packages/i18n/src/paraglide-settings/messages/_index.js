@@ -162,6 +162,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Short_Links_Api_Key_InvalidInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_KeepInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_MissingInputs */
+/** @typedef {{}} Settings_Short_Links_Api_Key_RequiredInputs */
 /** @typedef {{}} Settings_Short_Links_Api_Key_SetInputs */
 /** @typedef {{}} Settings_Short_Links_Base_UrlInputs */
 /** @typedef {{}} Settings_Short_Links_Base_Url_HintInputs */
@@ -2676,6 +2677,21 @@ export const settings_short_links_api_key_missing = /** @type {((inputs?: Settin
 	if (locale === "sk") return __sk.settings_short_links_api_key_missing(inputs)
 	if (locale === "cs") return __cs.settings_short_links_api_key_missing(inputs)
 	return __en.settings_short_links_api_key_missing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A new address needs the API key again." |
+*
+* @param {Settings_Short_Links_Api_Key_RequiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_short_links_api_key_required = /** @type {((inputs?: Settings_Short_Links_Api_Key_RequiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Short_Links_Api_Key_RequiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_short_links_api_key_required(inputs)
+	if (locale === "cs") return __cs.settings_short_links_api_key_required(inputs)
+	return __en.settings_short_links_api_key_required(inputs)
 });
 /**
 * | output |

@@ -35,6 +35,8 @@ const lines: string[] = [];
 const workspaces: string[] = [];
 const accounts: Record<string, string> = {};
 
+const BASE64URL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
 function sign(payload: unknown, secret: string): string {
   const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${createHmac('sha256', secret).update(encoded).digest('base64url')}.${encoded}`;
@@ -285,6 +287,18 @@ describe('meta data deletion', () => {
   it('returns the same code for a replayed request', async () => {
     const replay = await callback('facebook/deletion', sign(payload(), FB_SECRET));
     expect(((await replay.json()) as { confirmation_code: string }).confirmation_code).toBe(code);
+  });
+
+  it('treats a re-encoded signature as a replay of the same request', async () => {
+    const [signature = '', encoded = ''] = sign(payload(), FB_SECRET).split('.');
+    const last = BASE64URL_ALPHABET.indexOf(signature.slice(-1));
+    const lowBitsSet = `${signature.slice(0, -1)}${BASE64URL_ALPHABET[last | 3]}`;
+    expect(lowBitsSet).not.toBe(signature);
+    for (const variant of [`${signature}=`, `${signature}==`, lowBitsSet]) {
+      const replay = await callback('facebook/deletion', `${variant}.${encoded}`);
+      expect(replay.status).toBe(200);
+      expect(((await replay.json()) as { confirmation_code: string }).confirmation_code).toBe(code);
+    }
   });
 
   it('treats the same signed request on deauthorize as a separate request', async () => {

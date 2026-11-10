@@ -65,7 +65,17 @@ async function loadSource(trx: TenantDb, input: CloneInput) {
     .orderBy('created_at')
     .orderBy('id')
     .execute();
-  return { post, variants, items, media, destinations };
+  const revisions = await trx
+    .selectFrom('revision_destinations')
+    .distinctOn(['social_account_id', 'publish_type'])
+    .select(['social_account_id', 'publish_type', 'agent_authored'])
+    .where('workspace_id', '=', workspaceId)
+    .where('post_id', '=', postId)
+    .orderBy('social_account_id')
+    .orderBy('publish_type')
+    .orderBy('post_version', 'desc')
+    .execute();
+  return { post, variants, items, media, destinations, revisions };
 }
 
 type Source = Awaited<ReturnType<typeof loadSource>>;
@@ -108,9 +118,18 @@ function bodyOf(source: Source) {
   };
 }
 
-// Agent-written content stays agent-written in the copy, so it still needs an approval.
+// Agent-written content stays agent-written in the copy, so it still needs an approval. Recording a
+// revision clears agent_dirty, so a destination's latest revision is checked too.
 function tainted(source: Source): boolean {
-  return source.post.agent_dirty || source.destinations.some((d) => d.agent_content);
+  const authored = (d: Source['destinations'][number]) =>
+    d.agent_content ||
+    source.revisions.some(
+      (r) =>
+        r.agent_authored &&
+        r.social_account_id === d.social_account_id &&
+        r.publish_type === d.publish_type,
+    );
+  return source.post.agent_dirty || source.destinations.some(authored);
 }
 
 function scheduleOf(at: CloneInput['at']) {

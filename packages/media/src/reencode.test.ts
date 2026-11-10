@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
 import {
   MAX_CONCURRENT_REENCODES,
+  MEDIA_IMAGE_MAX_DECODED_BYTES,
   MEDIA_IMAGE_MAX_PIXELS,
   ReencodeError,
   reencodeImage,
@@ -187,6 +188,19 @@ describe('reencodeImage', () => {
     expect(error).toBeInstanceOf(ReencodeError);
     expect(error).toMatchObject({ kind: 'too_many_pixels' });
   });
+
+  it('refuses a 16-bit image that decodes past the byte budget and keeps a small one', async () => {
+    const deep = (width: number) =>
+      solid(width, width, 4).png({ compressionLevel: 9 }).toColourspace('rgb16').toBuffer();
+    const large = await deep(6000);
+    expect(6000 * 6000).toBeLessThan(MEDIA_IMAGE_MAX_PIXELS);
+    expect(6000 * 6000 * 4 * 2).toBeGreaterThan(MEDIA_IMAGE_MAX_DECODED_BYTES);
+    expect((await sharp(large).metadata()).depth).toBe('ushort');
+    const error = await rejection(reencodeImage(large, 'png'));
+    expect(error).toBeInstanceOf(ReencodeError);
+    expect(error).toMatchObject({ kind: 'too_many_bytes' });
+    expect(await reencodeImage(await deep(64), 'png')).toMatchObject({ width: 64, height: 64 });
+  }, 60_000);
 
   it('counts the pixels of every animation frame against the limit', async () => {
     const width = 5000;

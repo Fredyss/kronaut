@@ -53,9 +53,12 @@ describe('login', () => {
     await screen.findByRole('heading', { name: 'Sign in' });
     expect(router.state.location.pathname).toBe('/login');
     expect(router.state.location.search).toEqual({ next: '/?view=week' });
-    expect(
-      ['//evil.test/x', 'https://evil.test/', '/\\evil.test', 'javascript:alert(1)'].map(safeNext),
-    ).toEqual(['/', '/', '/', '/']);
+    const offsite = ['//evil.test/x', 'https://evil.test/', '/\\evil.test', 'javascript:alert(1)'];
+    const collapsing = ['/.//evil.test', '/a/..//evil.test', '/%2e//evil.test'];
+    expect([...offsite, ...collapsing].map(safeNext)).toEqual(
+      [...offsite, ...collapsing].map(() => '/'),
+    );
+    expect(safeNext('/posts/a//b?x=1')).toBe('/posts/a//b?x=1');
 
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'ada@example.test' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'correct horse' } });

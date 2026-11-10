@@ -7,12 +7,16 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { convertVideo, extractPoster, POSTER_MAX_SIDE } from './video-convert.ts';
 import { probeVideo } from './video-probe.ts';
-import { VideoToolError } from './video-run.ts';
+import { runTool, type VideoInput, VideoToolError } from './video-run.ts';
 
 const hasFfmpeg = spawnSync('ffmpeg', ['-version']).status === 0;
 const SLOW_MS = 120_000;
 
 let dir: string;
+
+function mp4(path: string): VideoInput {
+  return { path, container: 'mov' };
+}
 
 function lavfi(output: string, size: string, audio: boolean): void {
   const args = ['-hide_banner', '-nostdin', '-loglevel', 'error', '-y'];
@@ -73,12 +77,12 @@ describe.skipIf(!hasFfmpeg)('video tools against ffmpeg', () => {
     async ({ name, audio, width, height }) => {
       const input = join(dir, `${name}.mp4`);
       const output = join(dir, `${name}-master.mp4`);
-      const probe = await probeVideo(input);
+      const probe = await probeVideo(mp4(input));
       expect(probe.video).toMatchObject({ width, height, rotation: 0, frameRate: 30 });
       expect(probe.audio).toBe(audio);
       expect(probe.durationMs).toBeGreaterThanOrEqual(3900);
 
-      await convertVideo(input, output, probe);
+      await convertVideo(mp4(input), output, probe);
       const [video, ...rest] = streams(output);
       expect(video).toMatchObject({ codec_type: 'video', codec_name: 'h264', profile: 'High' });
       expect(video).toMatchObject({ pix_fmt: 'yuv420p', width, height });
@@ -104,28 +108,54 @@ describe.skipIf(!hasFfmpeg)('video tools against ffmpeg', () => {
 
   it('reports a missing binary', async () => {
     const input = join(dir, 'landscape.mp4');
-    await expectKind(probeVideo(input, { ffprobe: join(dir, 'no-ffprobe') }), 'missing');
+    await expectKind(probeVideo(mp4(input), { ffprobe: join(dir, 'no-ffprobe') }), 'missing');
     await expectKind(extractPoster(input, 4000, { ffmpeg: join(dir, 'no-ffmpeg') }), 'missing');
   });
 
   it('reports a garbage input as failed', async () => {
     const garbage = join(dir, 'garbage.mp4');
     await writeFile(garbage, randomBytes(4096));
-    await expectKind(probeVideo(garbage), 'failed');
+    await expectKind(probeVideo(mp4(garbage)), 'failed');
+  });
+
+  it('does not follow a playlist that names other files', async () => {
+    const playlist = join(dir, 'playlist');
+    await writeFile(playlist, 'ffconcat version 1.0\nfile landscape.mp4\n');
+    await expectKind(probeVideo(mp4(playlist)), 'failed');
+    await expectKind(probeVideo({ path: playlist, container: 'matroska' }), 'failed');
+  });
+
+  it('runs a tool with PATH as its only environment variable', async () => {
+    const tool = join(dir, 'print-env');
+    await writeFile(tool, '#!/bin/sh\nenv\n');
+    await chmod(tool, 0o755);
+    process.env.KRONAUT_KEK_CANARY = 'CANARY_kek';
+    try {
+      const names = (await runTool(tool, [], 5000))
+        .toString('utf8')
+        .split('\n')
+        .filter((line) => line !== '')
+        .map((line) => line.split('=')[0]);
+      expect(names.filter((name) => name !== 'PWD' && name !== 'SHLVL' && name !== '_')).toEqual([
+        'PATH',
+      ]);
+    } finally {
+      delete process.env.KRONAUT_KEK_CANARY;
+    }
   });
 
   it('reports a tool killed by a signal as killed', async () => {
     const tool = join(dir, 'self-kill');
     await writeFile(tool, '#!/bin/sh\nkill -9 $$\n');
     await chmod(tool, 0o755);
-    await expectKind(probeVideo(join(dir, 'landscape.mp4'), { ffprobe: tool }), 'killed');
+    await expectKind(probeVideo(mp4(join(dir, 'landscape.mp4')), { ffprobe: tool }), 'killed');
   });
 
   it('kills a run that exceeds its timeout', async () => {
     const input = join(dir, 'landscape.mp4');
-    const probe = await probeVideo(input);
+    const probe = await probeVideo(mp4(input));
     await expectKind(
-      convertVideo(input, join(dir, 'slow.mp4'), probe, { timeoutMs: 1 }),
+      convertVideo(mp4(input), join(dir, 'slow.mp4'), probe, { timeoutMs: 1 }),
       'timeout',
     );
   });

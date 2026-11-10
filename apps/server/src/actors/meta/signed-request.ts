@@ -36,8 +36,14 @@ export function verifySignedRequest(signedRequest: string, secret: string): stri
   return payloadUserId(encodedPayload);
 }
 
+// Padding and the unused low bits of the last character don't change the decoded signature, so
+// the signature is hashed in its canonical encoding: every spelling of one request dedupes.
 export function requestHash(signedRequest: string): Buffer {
-  return createHash('sha256').update(signedRequest, 'utf8').digest();
+  const dot = signedRequest.indexOf('.');
+  const signature = Buffer.from(signedRequest.slice(0, dot), 'base64url').toString('base64url');
+  return createHash('sha256')
+    .update(`${signature}${signedRequest.slice(dot)}`, 'utf8')
+    .digest();
 }
 
 export function subjectHmac(key: Uint8Array, userId: string): Buffer {

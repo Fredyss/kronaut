@@ -12,6 +12,9 @@
   - `PULL_FROM_URL` from a **verified domain** (required for photo posts). `FILE_UPLOAD` is not used from servers.
   - The `init` call is the public step. SELF_ONLY posts never return a post id (`verify.mode=none`).
 - **Video** (ADR-0054): chunked upload in 8 MiB parts, at most 300 MB; a background job converts each video with ffmpeg into one H.264/AAC MP4 master that every network publishes unchanged. Range requests are served for video.
+  - The joined source must start as MP4 (`ftyp` at byte 4) or WebM (EBML), or it is `video_unreadable` before any tool runs.
+  - ffprobe and ffmpeg read it only as that container (`-f mov` or `-f matroska`) and only through the `file` protocol, so a playlist or manifest can't make them fetch a URL or open another file. Their only environment variable is `PATH`.
+- **Images:** at most 50 MP, and at most 200 MB once decoded (width × height × channels × bytes per sample), so a 16-bit image can't decode to twice the memory of an 8-bit one.
 - **Upload** (ADR-0054): images are one JSON request. A video goes through `POST …/media/uploads`, one raw `PUT …/media/:mediaId/parts/:n` per 8 MiB part and `POST …/media/:mediaId/complete`, which queues the conversion. Parts are staged as files under `<data>/media/.staging/<key>/`, and an unfinished upload expires after 24 h.
 - **Import from a link:** `POST …/media/imports` with an `https` URL answers 202 at once, and `GET …/media/imports/:importId` reports `pending`, `fetching`, `done` or `failed` plus the asset.
   - A job downloads the file through `packages/egress` (any public host, port 443, 5 redirects, 300 MB, 10 minutes in all) and reads the type from the bytes, never from the file name or `Content-Type`.

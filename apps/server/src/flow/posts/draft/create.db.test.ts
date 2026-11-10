@@ -152,6 +152,31 @@ describe('post routes', () => {
     expect(await originOf(post)).toBe('ui');
   });
 
+  it('marks a post agent-written when a grant only changes its delivery mode', async () => {
+    const destination = { accountId: accountA, publishType: 'post' };
+    const post = await create(ownerAuth, {
+      ...draft(),
+      destinations: [{ ...destination, deliveryMode: 'reminder' }],
+    });
+    const dirty = async () =>
+      (
+        await owner.withActor(SYSTEM, (trx) =>
+          trx
+            .selectFrom('posts')
+            .select('agent_dirty')
+            .where('id', '=', internal(post.id))
+            .executeTakeFirstOrThrow(),
+        )
+      ).agent_dirty;
+    expect(await dirty()).toBe(false);
+    const response = await call('PATCH', `posts/${post.id}`, grantAuth, {
+      expectedVersion: post.version,
+      destinations: [{ ...destination, deliveryMode: 'auto' }],
+    });
+    expect(response.status).toBe(200);
+    expect(await dirty()).toBe(true);
+  });
+
   it('lets a grant draft with origin api and refuses a viewer', async () => {
     const post = await create(grantAuth, draft());
     expect(await originOf(post)).toBe('api');

@@ -44,9 +44,16 @@ async function reencode(bytes: Uint8Array, format: ImageFormat): Promise<Uint8Ar
     return (await reencodeImage(bytes, format)).bytes;
   } catch (error) {
     if (!(error instanceof ReencodeError)) throw error;
-    throw error.kind === 'too_many_pixels'
-      ? new MediaError('invalid_request', 'image exceeds 50 megapixels')
-      : new MediaError('invalid_request', 'image is corrupt or truncated');
+    if (error.kind === 'too_many_pixels') {
+      throw new MediaError('invalid_request', 'image exceeds 50 megapixels');
+    }
+    if (error.kind === 'too_many_bytes') {
+      throw new MediaError(
+        'invalid_request',
+        'image exceeds 200 MB decoded; save it with 8 bits per channel',
+      );
+    }
+    throw new MediaError('invalid_request', 'image is corrupt or truncated');
   }
 }
 

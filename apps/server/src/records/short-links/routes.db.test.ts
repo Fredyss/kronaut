@@ -177,6 +177,31 @@ describe('changing and removing the shortener', () => {
     expect(events[1]?.args_summary).toEqual({ base_url: false, domain: true, api_key: false });
     expect(events[2]?.args_summary).toEqual({ base_url: false, domain: false, api_key: true });
   });
+
+  it('needs the key again for a new base URL, so the stored key never goes to another host', async () => {
+    server.reply({ body: { apikey: KEY } });
+    await shortenerCall('POST', { provider: 'kutt', baseUrl: 'https://kutt.to', apiKey: KEY });
+
+    const moved = await shortenerCall('PATCH', { baseUrl: 'https://links.example.test' });
+    expect(moved.status).toBe(422);
+    expect(detailCode(moved.json)).toBe('api_key_required');
+    expect(server.calls).toHaveLength(1);
+    expect((await storedRows())[0]?.base_url).toBe('https://kutt.to');
+
+    server.reply({ body: {} });
+    const same = await shortenerCall('PATCH', { baseUrl: 'https://kutt.to/api/v2' });
+    expect(same.status).toBe(200);
+    expect(server.calls[1]?.url).toBe('https://kutt.to/api/v2/users');
+
+    server.reply({ body: {} });
+    const rekeyed = await shortenerCall('PATCH', {
+      baseUrl: 'https://links.example.test',
+      apiKey: NEW_KEY,
+    });
+    expect(rekeyed.json).toMatchObject({ baseUrl: 'https://links.example.test', hasKey: true });
+    expect(server.calls[2]?.url).toBe('https://links.example.test/api/v2/users');
+    expect(server.calls[2]?.headers['x-api-key']).toBe(NEW_KEY);
+  });
 });
 
 describe('the channel switch', () => {

@@ -79,6 +79,20 @@ END $$;
 
 UPDATE posts SET agent_dirty = false WHERE id = '01900000-0000-7000-8000-000000000101';
 
+DO $$
+DECLARE t text;
+BEGIN
+  FOREACH t IN ARRAY ARRAY['revision_destinations', 'post_revisions'] LOOP
+    BEGIN
+      EXECUTE format('DELETE FROM %I WHERE post_id = %L', t, '01900000-0000-7000-8000-000000000101');
+      RAISE EXCEPTION 'the app deleted from %', t;
+    EXCEPTION
+      WHEN insufficient_privilege THEN
+        NULL;
+    END;
+  END LOOP;
+END $$;
+
 SELECT set_config('app.actor', 'grant:01900000-0000-7000-8000-0000000000aa', true);
 UPDATE variant_items SET doc = '{"type":"doc","text":"agent again"}'
  WHERE id = '01900000-0000-7000-8000-000000000103';

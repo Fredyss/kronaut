@@ -9,6 +9,8 @@ export function safeNext(raw: unknown): string {
   } catch {
     return '/';
   }
-  if (url.origin !== PROBE_ORIGIN || url.pathname === '/login') return '/';
+  if (url.origin !== PROBE_ORIGIN || url.pathname === '/login' || url.pathname.startsWith('//')) {
+    return '/';
+  }
   return `${url.pathname}${url.search}${url.hash}`;
 }

@@ -1,4 +1,5 @@
 import type { VideoProbe } from './video-probe.ts';
+import { inputArgs, type VideoInput } from './video-run.ts';
 
 const MAX_SIDE = 1920;
 const MIN_RATE = 24;
@@ -25,7 +26,7 @@ function frameRate(probe: VideoProbe): number {
 }
 
 export function masterArgs(
-  input: string,
+  input: VideoInput,
   output: string,
   probe: VideoProbe,
   threads: number,
@@ -41,7 +42,7 @@ export function masterArgs(
   ].join(',');
   const audio = probe.audio ? ['-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2'] : ['-an'];
   return [
-    ...['-hide_banner', '-nostdin', '-y', '-threads', String(threads), '-i', input],
+    ...['-hide_banner', '-nostdin', '-y', '-threads', String(threads), ...inputArgs(input)],
     ...['-map', '0:v:0', ...(probe.audio ? ['-map', '0:a:0'] : [])],
     ...['-map_metadata', '-1', '-map_chapters', '-1', '-sn', '-dn'],
     ...['-vf', filters],

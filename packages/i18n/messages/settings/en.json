@@ -310,6 +310,7 @@
   "settings_short_links_base_url_invalid": "Enter an https link, such as https://kutt.to or your own instance, without a user name, password or query. kutt.it isn't supported.",
   "settings_short_links_domain_invalid": "Enter a host name such as go.example.com, without https:// or a path.",
   "settings_short_links_api_key_invalid": "The API key is too long or has characters that aren't allowed.",
+  "settings_short_links_api_key_required": "A new address needs the API key again.",
   "settings_short_links_conflict": "The shortener was changed in the meantime. Reload the page and try again.",
   "settings_brand_list_title": "Brands",
   "settings_brand_list_intro": "Group channels by client or brand. Each brand can have its own approval rules.",

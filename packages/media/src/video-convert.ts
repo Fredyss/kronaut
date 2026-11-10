@@ -2,9 +2,11 @@ import sharp from 'sharp';
 import { masterArgs } from './video-args.ts';
 import type { VideoProbe } from './video-probe.ts';
 import {
+  inputArgs,
   runTool,
   VIDEO_TOOL_THREADS,
   VIDEO_TOOL_TIMEOUT_MS,
+  type VideoInput,
   VideoToolError,
   type VideoToolOptions,
 } from './video-run.ts';
@@ -12,7 +14,7 @@ import {
 export const POSTER_MAX_SIDE = 768;
 
 export async function convertVideo(
-  input: string,
+  input: VideoInput,
   output: string,
   probe: VideoProbe,
   options: VideoToolOptions = {},
@@ -33,7 +35,8 @@ export async function extractPoster(
   const frame = await runTool(
     options.ffmpeg ?? 'ffmpeg',
     [
-      ...['-hide_banner', '-nostdin', '-ss', seconds, '-i', master],
+      ...['-hide_banner', '-nostdin', '-ss', seconds],
+      ...inputArgs({ path: master, container: 'mov' }),
       ...['-frames:v', '1', '-c:v', 'mjpeg', '-q:v', '3', '-f', 'image2pipe', '-'],
     ],
     options.timeoutMs ?? VIDEO_TOOL_TIMEOUT_MS,

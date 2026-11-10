@@ -11,6 +11,7 @@ const FIELD_ERRORS: Readonly<Record<string, readonly [Field, () => string]>> = {
   shortener_unreachable: ['baseUrl', () => settingsText.settings_short_links_unreachable()],
   domain_invalid: ['domain', () => settingsText.settings_short_links_domain_invalid()],
   api_key_invalid: ['apiKey', () => settingsText.settings_short_links_api_key_invalid()],
+  api_key_required: ['apiKey', () => settingsText.settings_short_links_api_key_required()],
   shortener_unauthorized: ['apiKey', () => settingsText.settings_short_links_unauthorized()],
 };
 

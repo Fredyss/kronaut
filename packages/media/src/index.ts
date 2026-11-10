@@ -14,5 +14,10 @@ export { masterArgs } from './video-args.ts';
 export { convertVideo, extractPoster, POSTER_MAX_SIDE } from './video-convert.ts';
 export type { VideoProbe, VideoStreamInfo } from './video-probe.ts';
 export { probeVideo } from './video-probe.ts';
-export type { VideoToolErrorKind, VideoToolOptions } from './video-run.ts';
+export type {
+  VideoContainer,
+  VideoInput,
+  VideoToolErrorKind,
+  VideoToolOptions,
+} from './video-run.ts';
 export { VIDEO_TOOL_TIMEOUT_MS, VideoToolError } from './video-run.ts';

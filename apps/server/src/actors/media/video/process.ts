@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { open, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import type { Actor, Database } from '@kronaut/db';
@@ -10,6 +10,8 @@ import {
   type MediaStore,
   probeVideo,
   storageKey,
+  type VideoContainer,
+  type VideoInput,
   VideoToolError,
   type VideoToolOptions,
 } from '@kronaut/media';
@@ -18,6 +20,7 @@ import type { Logger } from 'pino';
 import * as z from 'zod';
 import type { MediaJob } from '../../../infrastructure/jobs/jobs.ts';
 import { removeIfUnreferenced } from '../key-lock.ts';
+import { isMp4, isWebm } from '../sniff/sniff-mp4.ts';
 import type { Staging } from '../staging.ts';
 import {
   finishMedia,
@@ -40,6 +43,7 @@ export type MediaProcessOutcome = 'ready' | 'duplicate' | 'rejected' | 'skipped'
 const SYSTEM: Actor = { kind: 'system' };
 const MIN_DURATION_MS = 3000;
 const MAX_DURATION_MS = 900_000;
+const SNIFF_BYTES = 8;
 
 const PayloadSchema = z.object({
   workspaceId: z.uuid(),
@@ -121,7 +125,26 @@ async function tool<T>(run: () => Promise<T>, final: boolean, source = false): P
   }
 }
 
-async function probeSource(source: string, tools: VideoToolOptions | undefined, final: boolean) {
+async function containerOf(path: string): Promise<VideoContainer> {
+  const handle = await open(path, 'r');
+  let head: Uint8Array;
+  try {
+    const buffer = new Uint8Array(SNIFF_BYTES);
+    const { bytesRead } = await handle.read(buffer, 0, SNIFF_BYTES, 0);
+    head = buffer.subarray(0, bytesRead);
+  } finally {
+    await handle.close();
+  }
+  if (isMp4(head)) return 'mov';
+  if (isWebm(head)) return 'matroska';
+  throw new VideoRejected('video_unreadable');
+}
+
+async function probeSource(
+  source: VideoInput,
+  tools: VideoToolOptions | undefined,
+  final: boolean,
+) {
   const probe = await tool(() => probeVideo(source, tools), final, true);
   if (probe.video === null) throw new VideoRejected('video_stream_missing');
   if (probe.durationMs === null) throw new VideoRejected('video_unreadable');
@@ -147,9 +170,10 @@ async function convert(deps: MediaProcessDeps, job: MediaJob, key: string, final
   const source = join(dir, 'source');
   const master = join(dir, 'master.mp4');
   const sourceSha256 = await joinParts(deps.staging, key, source);
-  const probe = await probeSource(source, deps.tools, final);
-  await tool(() => convertVideo(source, master, probe, deps.tools), final);
-  const out = await tool(() => probeVideo(master, deps.tools), final);
+  const input: VideoInput = { path: source, container: await containerOf(source) };
+  const probe = await probeSource(input, deps.tools, final);
+  await tool(() => convertVideo(input, master, probe, deps.tools), final);
+  const out = await tool(() => probeVideo({ path: master, container: 'mov' }, deps.tools), final);
   if (out.video === null || out.durationMs === null) throw new VideoRejected('video_unreadable');
   if ((await stat(master)).size > VIDEO_MAX_BYTES) throw new VideoRejected('video_too_large');
   const hashed = await hashFile(master);

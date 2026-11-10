@@ -214,6 +214,11 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
     await expectRejected(new Uint8Array(64 * 1024), 'video_unreadable');
   });
 
+  it('rejects a playlist that names other files as video_unreadable', async () => {
+    const playlist = 'ffconcat version 1.0\nfile short.mp4\n'.padEnd(64 * 1024, '\n');
+    await expectRejected(new TextEncoder().encode(playlist), 'video_unreadable');
+  });
+
   it('rejects a second upload of the same video as a duplicate of the first', async () => {
     const data = await video('dupe', 4, 500);
     const first = await upload(a, data);

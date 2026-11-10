@@ -44,6 +44,7 @@ const ALL = [
   '0033_brand_name_unique',
   '0034_account_group_name_unique',
   '0035_destination_source_group_index',
+  '0036_guard_gaps',
 ];
 
 let container: StartedPostgreSqlContainer;

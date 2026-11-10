@@ -35,6 +35,12 @@ describe('shortenerErrors', () => {
     expect(shortenerErrors(host)).toEqual({
       baseUrl: settingsText.settings_short_links_unreachable(),
     });
+    const moved = refused(422, 'unprocessable', [
+      { path: 'body.apiKey', code: 'api_key_required' },
+    ]);
+    expect(shortenerErrors(moved)).toEqual({
+      apiKey: settingsText.settings_short_links_api_key_required(),
+    });
   });
 
   it('shows a conflict and unknown failures for the whole form', () => {

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { masterArgs } from './video-args.ts';
 import type { VideoProbe, VideoStreamInfo } from './video-probe.ts';
+import type { VideoInput } from './video-run.ts';
+
+const IN: VideoInput = { path: 'in', container: 'mov' };
 
 function probe(video: Partial<VideoStreamInfo>, audio = true): VideoProbe {
   return {
@@ -22,13 +25,14 @@ function filterOf(args: readonly string[]): string {
 describe('masterArgs', () => {
   it('builds the full master profile for a 4K 59.94 fps source with audio', () => {
     const args = masterArgs(
-      'in.mov',
+      { path: 'in.mov', container: 'mov' },
       'out.mp4',
       probe({ width: 3840, height: 2160, frameRate: 59.94006 }),
       2,
     );
     expect(args).toEqual([
-      ...['-hide_banner', '-nostdin', '-y', '-threads', '2', '-i', 'in.mov'],
+      ...['-hide_banner', '-nostdin', '-y', '-threads', '2'],
+      ...['-protocol_whitelist', 'file', '-f', 'mov', '-i', 'in.mov'],
       ...['-map', '0:v:0', '-map', '0:a:0'],
       ...['-map_metadata', '-1', '-map_chapters', '-1', '-sn', '-dn'],
       '-vf',
@@ -46,30 +50,30 @@ describe('masterArgs', () => {
 
   it('swaps the dimensions of a source rotated by 90 or 270 degrees', () => {
     for (const rotation of [90, 270] as const) {
-      const args = masterArgs('in', 'out', probe({ width: 1920, height: 1080, rotation }), 2);
+      const args = masterArgs(IN, 'out', probe({ width: 1920, height: 1080, rotation }), 2);
       expect(filterOf(args)).toMatch(/^scale=w=1080:h=1920:/);
     }
-    const flipped = masterArgs('in', 'out', probe({ width: 1920, height: 1080, rotation: 180 }), 2);
+    const flipped = masterArgs(IN, 'out', probe({ width: 1920, height: 1080, rotation: 180 }), 2);
     expect(filterOf(flipped)).toMatch(/^scale=w=1920:h=1080:/);
   });
 
   it('never upscales a small source', () => {
-    const args = masterArgs('in', 'out', probe({ width: 640, height: 360 }), 2);
+    const args = masterArgs(IN, 'out', probe({ width: 640, height: 360 }), 2);
     expect(filterOf(args)).toMatch(/^scale=w=640:h=360:/);
   });
 
   it('rounds odd sizes down to even', () => {
-    expect(filterOf(masterArgs('in', 'out', probe({ width: 641, height: 361 }), 2))).toMatch(
+    expect(filterOf(masterArgs(IN, 'out', probe({ width: 641, height: 361 }), 2))).toMatch(
       /^scale=w=640:h=360:/,
     );
-    expect(filterOf(masterArgs('in', 'out', probe({ width: 3000, height: 1999 }), 2))).toMatch(
+    expect(filterOf(masterArgs(IN, 'out', probe({ width: 3000, height: 1999 }), 2))).toMatch(
       /^scale=w=1920:h=1278:/,
     );
   });
 
   it('clamps the frame rate to 24–60 and defaults to 30', () => {
     const at = (frameRate: number | null) => {
-      const args = masterArgs('in', 'out', probe({ frameRate }), 2);
+      const args = masterArgs(IN, 'out', probe({ frameRate }), 2);
       return [
         filterOf(args).match(/fps=([^,]+)/)?.[1],
         argAfter(args, '-g'),
@@ -83,7 +87,7 @@ describe('masterArgs', () => {
   });
 
   it('drops audio when the source has none', () => {
-    const args = masterArgs('in', 'out', probe({}, false), 3);
+    const args = masterArgs(IN, 'out', probe({}, false), 3);
     expect(args).toContain('-an');
     expect(args).not.toContain('0:a:0');
     expect(args).not.toContain('-c:a');
@@ -91,7 +95,7 @@ describe('masterArgs', () => {
   });
 
   it('refuses a probe without a video stream', () => {
-    expect(() => masterArgs('in', 'out', { durationMs: 1, video: null, audio: true }, 2)).toThrow(
+    expect(() => masterArgs(IN, 'out', { durationMs: 1, video: null, audio: true }, 2)).toThrow(
       TypeError,
     );
   });
