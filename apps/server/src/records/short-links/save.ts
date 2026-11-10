@@ -160,6 +160,14 @@ function nextConfig(
   } satisfies ShortenerConfig;
 }
 
+// The key was checked against the base URL read before the call, so a concurrent change of
+// either must not pair one request's base URL with another's key.
+function movedUnder(before: StoredShortener, current: StoredShortener): boolean {
+  return (
+    current.base_url !== before.base_url || !current.key_ciphertext.equals(before.key_ciphertext)
+  );
+}
+
 export async function updateShortener(
   ctx: Ctx,
   deps: SaveDeps,
@@ -173,7 +181,9 @@ export async function updateShortener(
   return await ctx.tenant(async (trx) => {
     const current = await loadShortener(trx, workspaceId, true);
     if (current === null) throw NONE();
-    if (current.id !== before.id) throw new HttpError('conflict', 'The link shortener changed.');
+    if (current.id !== before.id || (body.apiKey === undefined && movedUnder(before, current))) {
+      throw new HttpError('conflict', 'The link shortener changed.');
+    }
     await trx
       .updateTable('link_shorteners')
       .set({

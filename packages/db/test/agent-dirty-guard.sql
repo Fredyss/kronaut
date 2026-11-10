@@ -82,9 +82,10 @@ UPDATE posts SET agent_dirty = false WHERE id = '01900000-0000-7000-8000-0000000
 DO $$
 DECLARE t text;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['revision_destinations', 'post_revisions'] LOOP
+  FOREACH t IN ARRAY ARRAY['revision_destinations', 'post_revisions', 'approval_requests',
+                           'approval_request_destinations', 'approval_decisions'] LOOP
     BEGIN
-      EXECUTE format('DELETE FROM %I WHERE post_id = %L', t, '01900000-0000-7000-8000-000000000101');
+      EXECUTE format('DELETE FROM %I', t);
       RAISE EXCEPTION 'the app deleted from %', t;
     EXCEPTION
       WHEN insufficient_privilege THEN

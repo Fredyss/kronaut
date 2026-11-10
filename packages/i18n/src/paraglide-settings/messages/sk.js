@@ -910,7 +910,7 @@ export const settings_short_links_api_key_invalid = /** @type {(inputs: Settings
 };
 
 export const settings_short_links_api_key_keep = /** @type {(inputs: Settings_Short_Links_Api_Key_KeepInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Ak pole necháte prázdne, zostane súčasný kľúč.`)
+	return /** @type {LocalizedString} */ (`Ak pole necháte prázdne, zostane súčasný kľúč. Pri novej adrese ho zadajte znova.`)
 };
 
 export const settings_short_links_api_key_missing = /** @type {(inputs: Settings_Short_Links_Api_Key_MissingInputs) => LocalizedString} */ () => {

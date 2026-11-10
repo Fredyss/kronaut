@@ -2651,7 +2651,7 @@ export const settings_short_links_api_key_invalid = /** @type {((inputs?: Settin
 /**
 * | output |
 * | --- |
-* | "Leave empty to keep the current key." |
+* | "Leave empty to keep the current key. A new address needs the key again." |
 *
 * @param {Settings_Short_Links_Api_Key_KeepInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options

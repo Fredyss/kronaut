@@ -305,7 +305,7 @@
   "settings_short_links_domain": "Vlastná doména (nepovinné)",
   "settings_short_links_domain_none": "Predvolená doména služby",
   "settings_short_links_api_key": "Kľúč API",
-  "settings_short_links_api_key_keep": "Ak pole necháte prázdne, zostane súčasný kľúč.",
+  "settings_short_links_api_key_keep": "Ak pole necháte prázdne, zostane súčasný kľúč. Pri novej adrese ho zadajte znova.",
   "settings_short_links_api_key_set": "Kľúč API je nastavený",
   "settings_short_links_api_key_missing": "Kľúč API chýba",
   "settings_short_links_connect": "Pripojiť",

@@ -69,7 +69,7 @@
   - `CHECK agent_content → approval_required`.
   - A human saving a checkpoint does not launder agent content.
   - A copy (duplicate, series occurrence, evergreen) starts `agent_dirty` when the source is dirty or a copied destination's latest revision is agent-authored, so it still needs an approval.
-  - Revisions and approval evidence can't be deleted by `kronaut_app`; only a post's own cascade removes them.
+  - `kronaut_app` can't delete revisions, approval requests or their destinations and decisions directly; they go only with the post or destination they belong to.
 - **MCP tools:** `get_brand_context`, `list_channels`, `list_account_groups`, `draft_campaign`, `update_draft`, `add_media_from_url`, `validate_draft`, `preview_post`, `request_approval`, `schedule_approved_post`, `get_publish_status`, `cancel_scheduled_post`, `get_post_metrics` (Phase 2).
   - Mutating tools require an idempotency key.
   - Third-party text is returned wrapped as `{untrusted:true, source, text}`.

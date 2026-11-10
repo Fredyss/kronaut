@@ -78,7 +78,7 @@ class StdoutBuffer {
   }
 }
 
-export function toolEnv(): Record<string, string> {
+function toolEnv(): Record<string, string> {
   const path = process.env.PATH;
   return path === undefined ? {} : { PATH: path };
 }

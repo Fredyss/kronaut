@@ -214,9 +214,21 @@ describe.skipIf(!hasFfmpeg)('media process', () => {
     await expectRejected(new Uint8Array(64 * 1024), 'video_unreadable');
   });
 
-  it('rejects a playlist that names other files as video_unreadable', async () => {
+  it('rejects a playlist as video_unreadable before any tool runs', async () => {
     const playlist = 'ffconcat version 1.0\nfile short.mp4\n'.padEnd(64 * 1024, '\n');
-    await expectRejected(new TextEncoder().encode(playlist), 'video_unreadable');
+    const { job, key } = await upload(a, new TextEncoder().encode(playlist));
+    const missing = { ...deps, tools: { ffmpeg: '/nonexistent', ffprobe: '/nonexistent' } };
+    expect(await runMediaProcess(missing, job)).toBe('rejected');
+    expect(await row(job.id)).toMatchObject({ rejected_reason: 'video_unreadable' });
+    await expectGone(key);
+  });
+
+  it('converts a QuickTime file whose first atom is not ftyp', async () => {
+    const data = await video('quicktime', 4, 900);
+    expect(Buffer.from(data.subarray(4, 8)).toString('latin1')).toBe('ftyp');
+    data.set(Buffer.from('free', 'latin1'), 4);
+    const { job } = await upload(a, data);
+    expect(await runMediaProcess(deps, job)).toBe('ready');
   });
 
   it('rejects a second upload of the same video as a duplicate of the first', async () => {

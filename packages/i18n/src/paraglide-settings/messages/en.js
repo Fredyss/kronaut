@@ -902,7 +902,7 @@ export const settings_short_links_api_key_invalid = /** @type {(inputs: Settings
 };
 
 export const settings_short_links_api_key_keep = /** @type {(inputs: Settings_Short_Links_Api_Key_KeepInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Leave empty to keep the current key.`)
+	return /** @type {LocalizedString} */ (`Leave empty to keep the current key. A new address needs the key again.`)
 };
 
 export const settings_short_links_api_key_missing = /** @type {(inputs: Settings_Short_Links_Api_Key_MissingInputs) => LocalizedString} */ () => {

@@ -7,8 +7,17 @@ export const WEBM_MIME = 'video/webm';
 const FTYP = [0x66, 0x74, 0x79, 0x70] as const;
 const EBML = [0x1a, 0x45, 0xdf, 0xa3] as const;
 
+const QUICKTIME_ATOMS = ['moov', 'mdat', 'wide', 'free', 'skip', 'pnot'].map((atom) =>
+  [...atom].map((c) => c.charCodeAt(0)),
+);
+
 export function isMp4(head: Uint8Array): boolean {
   return startsWith(head, 4, FTYP);
+}
+
+// Older QuickTime files start with another top-level atom than ftyp.
+export function isQuickTime(head: Uint8Array): boolean {
+  return QUICKTIME_ATOMS.some((atom) => startsWith(head, 4, atom));
 }
 
 export function isWebm(head: Uint8Array): boolean {

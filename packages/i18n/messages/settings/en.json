@@ -291,7 +291,7 @@
   "settings_short_links_domain": "Custom domain (optional)",
   "settings_short_links_domain_none": "The service's default",
   "settings_short_links_api_key": "API key",
-  "settings_short_links_api_key_keep": "Leave empty to keep the current key.",
+  "settings_short_links_api_key_keep": "Leave empty to keep the current key. A new address needs the key again.",
   "settings_short_links_api_key_set": "API key set",
   "settings_short_links_api_key_missing": "No API key",
   "settings_short_links_connect": "Connect",

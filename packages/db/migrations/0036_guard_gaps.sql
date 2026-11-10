@@ -140,6 +140,7 @@ BEGIN
 END $$;
 
 -- Revisions and approval evidence are history: deleting a newer tainted revision would let an identical human
--- revision drop agent authorship (ADR-0012). Cascades from deleting a post still run as the table owner.
-REVOKE DELETE ON post_revisions, revision_destinations, approval_request_destinations, approval_decisions
-  FROM kronaut_app;
+-- revision drop agent authorship (ADR-0012), and deleting a newer rejected request would let an older approval
+-- count again. Cascades from deleting a post or a destination still run as the table owner.
+REVOKE DELETE ON post_revisions, revision_destinations, approval_requests, approval_request_destinations,
+  approval_decisions FROM kronaut_app;

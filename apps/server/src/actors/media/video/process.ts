@@ -20,7 +20,7 @@ import type { Logger } from 'pino';
 import * as z from 'zod';
 import type { MediaJob } from '../../../infrastructure/jobs/jobs.ts';
 import { removeIfUnreferenced } from '../key-lock.ts';
-import { isMp4, isWebm } from '../sniff/sniff-mp4.ts';
+import { isMp4, isQuickTime, isWebm } from '../sniff/sniff-mp4.ts';
 import type { Staging } from '../staging.ts';
 import {
   finishMedia,
@@ -135,7 +135,7 @@ async function containerOf(path: string): Promise<VideoContainer> {
   } finally {
     await handle.close();
   }
-  if (isMp4(head)) return 'mov';
+  if (isMp4(head) || isQuickTime(head)) return 'mov';
   if (isWebm(head)) return 'matroska';
   throw new VideoRejected('video_unreadable');
 }
