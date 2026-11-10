@@ -116,9 +116,10 @@
   "video_check_failed": "selhalo ({reason})",
   "video_check_skipped": "přeskočeno",
   "video_check_no_credential": "kanál nemá uložené přihlašovací údaje; znovu ho připojte",
+  "video_check_unreadable": "Kronaut nedokáže přečíst uložené přihlašovací údaje kanálu; znovu ho připojte",
   "video_check_expired": "uložený přístupový token vypršel nebo brzy vyprší; spusťte server, aby token obnovil, a pak kontrolu zopakujte",
   "video_verdict_ready": "video na Bluesky může pro tento kanál fungovat: PDS vydá relaci Kronautu token pro nahrávání a videoslužba její tokeny přijímá",
   "video_verdict_account_blocked": "relace funguje, ale tento účet teď nemůže nahrávat video; podívejte se na limity výše",
   "video_verdict_upload_refused": "PDS odmítá vydat relaci Kronautu token pro nahrávání, přestože jiné tokeny vydá",
-  "video_verdict_inconclusive": "zatím bez odpovědi; podívejte se na kontroly výše a zopakujte je později"
+  "video_verdict_inconclusive": "bez jasné odpovědi; řádky výše ukazují, co vrátil každý krok"
 }

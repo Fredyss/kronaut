@@ -122,9 +122,10 @@
   "video_check_failed": "failed ({reason})",
   "video_check_skipped": "skipped",
   "video_check_no_credential": "this channel has no stored credential; reconnect it",
+  "video_check_unreadable": "Kronaut can't read this channel's stored credential; reconnect it",
   "video_check_expired": "the stored access token has expired or is about to; start the server so it refreshes the token, then run the check again",
   "video_verdict_ready": "Bluesky video can work for this channel: the PDS issues the upload token to Kronaut's session, and the video service accepts its tokens",
   "video_verdict_account_blocked": "the session works, but this account can't upload video right now; see the limits above",
   "video_verdict_upload_refused": "the PDS refuses the upload token to Kronaut's session, though it issues other tokens",
-  "video_verdict_inconclusive": "no answer yet; see the checks above and run the check again later"
+  "video_verdict_inconclusive": "no clear answer; the lines above show what each step returned"
 }

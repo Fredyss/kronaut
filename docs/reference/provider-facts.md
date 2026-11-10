@@ -547,7 +547,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - B9 https://atproto.com/specs/xrpc
 - B10 https://bsky.social/.well-known/oauth-authorization-server
 - B11 https://github.com/bluesky-social/atproto/tree/main/lexicons (canonical for `com.atproto.*`: com/atproto/repo/createRecord, getRecord, putRecord, uploadBlob; com/atproto/server/getServiceAuth)
-- B12 https://atproto.com/specs/permission (on 2026-11-10, B2 and B12 were read from their source in https://github.com/bluesky-social/atproto-website, because atproto.com wasn't reachable from the session)
+- B12 https://atproto.com/specs/permission (on 2026-11-10, B2 and B12 were read from their source in https://github.com/bluesky-social/atproto-website)
 - B13 https://atproto.com/guides/oauth-patterns and https://atproto.com/guides/permission-requests
 - B14 https://atproto.com/specs/tid
 - B15 https://web.plc.directory/spec/v0.1/did-plc and https://w3c-ccg.github.io/did-method-web/

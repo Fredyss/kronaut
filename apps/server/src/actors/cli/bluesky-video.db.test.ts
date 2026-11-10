@@ -84,10 +84,19 @@ describe('finding Bluesky channels for the video check', () => {
         id: encodePublicId('socialAccount', alice),
         handle: 'alice.example.com',
         did: 'did:plc:aliceaaaaaaaaaaaaaaaaaaa',
-        credentials: { did: 'did:plc:aliceaaaaaaaaaaaaaaaaaaa', marker: 'alice.example.com' },
-        accessExpiresAt: new Date(LATER.epochMilliseconds),
+        credential: {
+          kind: 'stored',
+          value: { did: 'did:plc:aliceaaaaaaaaaaaaaaaaaaa', marker: 'alice.example.com' },
+          accessExpiresAt: new Date(LATER.epochMilliseconds),
+        },
       },
     ]);
+  });
+
+  it('marks a credential it cannot open instead of failing the run', async () => {
+    const other = createKeyring(new Map([[1, randomBytes(32)]]));
+    const channels = await findBlueskyChannels({ db: fixture.db, keyring: other });
+    expect(channels.map((channel) => channel.credential)).toEqual([{ kind: 'unreadable' }]);
   });
 
   it('matches a handle without case or a leading @, or a DID', async () => {
@@ -97,6 +106,16 @@ describe('finding Bluesky channels for the video check', () => {
       expect(found.map((channel) => channel.handle)).toEqual(['alice.example.com']);
     }
     expect(await findBlueskyChannels(deps, 'bob.example.com')).toEqual([]);
+  });
+
+  it('reports a channel whose stored credential is not a Bluesky session, without a request', async () => {
+    const run = await cli('bluesky', 'video-check', 'alice.example.com');
+    expect(run.code).toBe(0);
+    expect(run.stdout.split('\n')).toEqual([
+      `alice.example.com  ${encodePublicId('socialAccount', alice)}`,
+      "  Kronaut can't read this channel's stored credential; reconnect it",
+      '',
+    ]);
   });
 
   it('fails when no channel matches, and rejects extra handles and unknown subcommands', async () => {

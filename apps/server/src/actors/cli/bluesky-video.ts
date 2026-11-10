@@ -1,7 +1,8 @@
 import { encodePublicId } from '@kronaut/core';
-import type { Keyring } from '@kronaut/credentials';
+import { CredentialError, type Keyring } from '@kronaut/credentials';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
-import type { VideoCheckReport } from '@kronaut/providers/bluesky/video-check';
+import { displayHandle, type VideoCheckReport } from '@kronaut/providers/bluesky/video-check';
+import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { loadCredential } from '../../infrastructure/credentials/credential-store.ts';
 
@@ -10,12 +11,16 @@ const BLUESKY = 'bluesky';
 const WORKSPACE_PAGE = 100;
 const EXPIRY_MARGIN_MS = 60_000;
 
+export type ChannelCredential =
+  | { readonly kind: 'missing' }
+  | { readonly kind: 'unreadable' }
+  | { readonly kind: 'stored'; readonly value: unknown; readonly accessExpiresAt: Date | null };
+
 export interface BlueskyChannel {
   readonly id: string;
   readonly handle: string | null;
   readonly did: string;
-  readonly credentials: unknown;
-  readonly accessExpiresAt: Date | null;
+  readonly credential: ChannelCredential;
 }
 
 export interface FindDeps {
@@ -25,6 +30,7 @@ export interface FindDeps {
 
 export type ChannelCheck =
   | { readonly kind: 'no_credential' }
+  | { readonly kind: 'unreadable' }
   | { readonly kind: 'expired' }
   | { readonly kind: 'checked'; readonly report: VideoCheckReport };
 
@@ -48,54 +54,67 @@ async function workspaceIds(db: Database): Promise<string[]> {
   }
 }
 
+async function credentialOf(
+  trx: TenantDb,
+  keyring: Keyring,
+  ref: { readonly workspaceId: string; readonly socialAccountId: string },
+): Promise<ChannelCredential> {
+  try {
+    const stored = await loadCredential(trx, keyring, { ...ref, kind: 'oauth' });
+    if (stored === null) return { kind: 'missing' };
+    return { kind: 'stored', value: stored.value, accessExpiresAt: stored.accessExpiresAt };
+  } catch (err) {
+    if (err instanceof CredentialError) return { kind: 'unreadable' };
+    throw err;
+  }
+}
+
+function wanted(filter: string | undefined): string | undefined {
+  return filter?.trim().replace(/^@/, '').toLowerCase();
+}
+
 async function channelsIn(
   trx: TenantDb,
   keyring: Keyring,
   workspaceId: string,
+  filter: string | undefined,
 ): Promise<BlueskyChannel[]> {
-  const accounts = await trx
+  let query = trx
     .selectFrom('social_accounts')
     .select(['id', 'handle', 'provider_account_id'])
     .where('workspace_id', '=', workspaceId)
     .where('provider', '=', BLUESKY)
-    .where('status', '=', 'active')
-    .orderBy('created_at')
-    .execute();
+    .where('status', '=', 'active');
+  if (filter !== undefined) {
+    query = query.where((eb) =>
+      eb.or([eb('provider_account_id', '=', filter), eb(sql<string>`lower(handle)`, '=', filter)]),
+    );
+  }
   const channels: BlueskyChannel[] = [];
-  for (const account of accounts) {
-    const credential = await loadCredential(trx, keyring, {
-      workspaceId,
-      socialAccountId: account.id,
-      kind: 'oauth',
-    });
+  for (const account of await query.orderBy('created_at').execute()) {
     channels.push({
       id: encodePublicId('socialAccount', account.id),
       handle: account.handle,
       did: account.provider_account_id,
-      credentials: credential?.value ?? null,
-      accessExpiresAt: credential?.accessExpiresAt ?? null,
+      credential: await credentialOf(trx, keyring, { workspaceId, socialAccountId: account.id }),
     });
   }
   return channels;
-}
-
-function matches(channel: BlueskyChannel, filter: string): boolean {
-  const wanted = filter.trim().replace(/^@/, '').toLowerCase();
-  return channel.did === wanted || channel.handle?.toLowerCase() === wanted;
 }
 
 export async function findBlueskyChannels(
   deps: FindDeps,
   filter?: string,
 ): Promise<BlueskyChannel[]> {
+  const match = wanted(filter);
   const found: BlueskyChannel[] = [];
   for (const workspaceId of await workspaceIds(deps.db)) {
     const channels = await deps.db.withTenant(workspaceId, CLI, (trx) =>
-      channelsIn(trx, deps.keyring, workspaceId),
+      channelsIn(trx, deps.keyring, workspaceId, match),
     );
     found.push(...channels);
   }
-  return filter === undefined ? found : found.filter((channel) => matches(channel, filter));
+  return found;
 }
 
 function expired(at: Date | null, now: Temporal.Instant): boolean {
@@ -107,13 +126,18 @@ function expired(at: Date | null, now: Temporal.Instant): boolean {
 }
 
 async function checkOne(
-  channel: BlueskyChannel,
+  { credential }: BlueskyChannel,
   check: VideoChecker,
   now: Temporal.Instant,
 ): Promise<ChannelCheck> {
-  if (channel.credentials === null) return { kind: 'no_credential' };
-  if (expired(channel.accessExpiresAt, now)) return { kind: 'expired' };
-  return { kind: 'checked', report: await check(channel.credentials) };
+  if (credential.kind === 'missing') return { kind: 'no_credential' };
+  if (credential.kind === 'unreadable') return { kind: 'unreadable' };
+  if (expired(credential.accessExpiresAt, now)) return { kind: 'expired' };
+  try {
+    return { kind: 'checked', report: await check(credential.value) };
+  } catch {
+    return { kind: 'unreadable' };
+  }
 }
 
 export async function checkBlueskyChannels(
@@ -125,7 +149,7 @@ export async function checkBlueskyChannels(
   for (const channel of channels) {
     checked.push({
       id: channel.id,
-      name: channel.handle ?? channel.did,
+      name: displayHandle(channel.handle) ?? channel.did,
       check: await checkOne(channel, check, now()),
     });
   }

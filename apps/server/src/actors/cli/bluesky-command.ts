@@ -12,6 +12,7 @@ import { runtimes } from '@kronaut/providers/runtime';
 import { Temporal } from 'temporal-polyfill';
 import { createBaseContext, createProviderRegistry } from '../../base/providers/providers.ts';
 import {
+  type ChannelCheck,
   type CheckedChannel,
   checkBlueskyChannels,
   findBlueskyChannels,
@@ -41,7 +42,9 @@ function resultText(m: CliMessages, result: VideoCheckResult): string {
       return result.code === undefined ? refused : `${refused} ${result.code}`;
     }
     case 'failed':
-      return m.video_check_failed({ reason: result.kind });
+      return m.video_check_failed({
+        reason: result.code === undefined ? result.kind : `${result.kind}: ${result.code}`,
+      });
     case 'skipped':
       return m.video_check_skipped({});
   }
@@ -65,11 +68,15 @@ function verdictText(m: CliMessages, verdict: VideoVerdict): string {
   return m.video_verdict_inconclusive({});
 }
 
+function skippedText(m: CliMessages, check: Exclude<ChannelCheck, { kind: 'checked' }>): string {
+  if (check.kind === 'no_credential') return m.video_check_no_credential({});
+  if (check.kind === 'unreadable') return m.video_check_unreadable({});
+  return m.video_check_expired({});
+}
+
 export function renderChannel(m: CliMessages, { id, name, check }: CheckedChannel): string {
   const lines = [`${name}  ${id}`];
-  if (check.kind === 'no_credential')
-    return [...lines, `  ${m.video_check_no_credential({})}`].join('\n');
-  if (check.kind === 'expired') return [...lines, `  ${m.video_check_expired({})}`].join('\n');
+  if (check.kind !== 'checked') return [...lines, `  ${skippedText(m, check)}`].join('\n');
   const { report } = check;
   for (const { id: checkId, result } of report.checks) {
     const limits =

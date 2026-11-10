@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { egressError, type ScriptedExchange, scriptedHttp, TEST_NOW } from '../_kit/testing.ts';
 import type { BlueskyCredentials } from './credentials.ts';
 import { generateDpopKey } from './dpop.ts';
-import { AS, context, DID, PDS, TOKEN } from './testing.ts';
+import { AS, context, DID, failureOf, PDS, TOKEN } from './testing.ts';
 import {
   checkVideoAuth,
+  displayHandle,
   VIDEO_SERVICE_DID,
   VIDEO_SERVICE_URL,
   type VideoCheckReport,
@@ -166,5 +167,47 @@ describe('bluesky video check', () => {
       code: 'AuthMissing',
     });
     expect(videoVerdict(rejected.report)).toBe('inconclusive');
+  });
+  it('fails with a provider error, before any request, when the stored credential is invalid', async () => {
+    const http = scriptedHttp([]);
+    for (const value of [{ did: DID }, { ...credentials, pds: 'not a url' }]) {
+      expect(await failureOf(checkVideoAuth(context(http), value))).toEqual({
+        kind: 'permanent',
+        code: 'credentials_invalid',
+      });
+    }
+    http.assertDone();
+  });
+
+  it('keeps the code of a permanent failure, such as a blocked host', async () => {
+    const { report } = await run([
+      minted('upload'),
+      minted('video'),
+      minted('limits'),
+      { url: LIMITS, error: egressError('blocked_private_address') },
+    ]);
+    expect(outcomes(report).upload_limits).toEqual({
+      outcome: 'failed',
+      kind: 'permanent',
+      code: 'egress_blocked',
+    });
+  });
+
+  it('does not read a refused expiry as a refusal of the session', async () => {
+    const { report } = await run([
+      refused(400, 'BadExpiration'),
+      minted('video'),
+      minted('limits'),
+      limits({ canUpload: true }),
+    ]);
+    expect(videoVerdict(report)).toBe('inconclusive');
+  });
+
+  it('shows a handle only when it is a plain, lowercase handle', () => {
+    expect(displayHandle('alice.bsky.social')).toBe('alice.bsky.social');
+    expect(displayHandle('Alice.bsky.social')).toBeUndefined();
+    expect(displayHandle('alice.bsky.social\u001b]52;c;x\u0007')).toBeUndefined();
+    expect(displayHandle('a\nverdict: ok.example.com')).toBeUndefined();
+    expect(displayHandle(null)).toBeUndefined();
   });
 });

@@ -25,6 +25,8 @@ packages/
     src/<id>/             manifest.ts, runtime.ts, runtime.test.ts, one module per concern
                           exports: @kronaut/providers/manifests (browser-safe)
                                    @kronaut/providers/runtime  (server only)
+                                   @kronaut/providers/bluesky/video-check (server only: the
+                                     `kronaut bluesky video-check` diagnostic, outside the runtime contract)
   ui/                     styled UI primitives with no translated text (13-code-structure.md); network previews live in apps/web
 infra/
   compose/                compose.yaml for self-host and local dev

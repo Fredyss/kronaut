@@ -32,7 +32,30 @@ describe('rendering the Bluesky video check', () => {
 
   it('prints why a channel was not checked', () => {
     const m = cliMessages('cs');
-    const text = renderChannel(m, { id: 'acct_x', name: 'a', check: { kind: 'expired' } });
-    expect(text).toBe(`a  acct_x\n  ${m.video_check_expired({})}`);
+    const expired = renderChannel(m, { id: 'acct_x', name: 'a', check: { kind: 'expired' } });
+    expect(expired).toBe(`a  acct_x\n  ${m.video_check_expired({})}`);
+    const unreadable = renderChannel(m, { id: 'acct_x', name: 'a', check: { kind: 'unreadable' } });
+    expect(unreadable).toBe(`a  acct_x\n  ${m.video_check_unreadable({})}`);
+  });
+
+  it('prints the code of a failed check after its kind', () => {
+    const report: VideoCheckReport = {
+      checks: [
+        {
+          id: 'upload_token',
+          result: { outcome: 'failed', kind: 'permanent', code: 'egress_blocked' },
+        },
+        { id: 'video_token', result: { outcome: 'failed', kind: 'transient' } },
+      ],
+    };
+    const lines = renderChannel(cliMessages('en'), {
+      id: 'acct_x',
+      name: 'a',
+      check: { kind: 'checked', report },
+    }).split('\n');
+    expect(lines.slice(1, 3)).toEqual([
+      '  upload_token  failed (permanent: egress_blocked)',
+      '  video_token   failed (transient)',
+    ]);
   });
 });

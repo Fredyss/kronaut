@@ -84,6 +84,7 @@
 /** @typedef {{}} Video_Check_OkInputs */
 /** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
 /** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Check_UnreadableInputs */
 /** @typedef {{}} Video_Verdict_Account_BlockedInputs */
 /** @typedef {{}} Video_Verdict_InconclusiveInputs */
 /** @typedef {{}} Video_Verdict_ReadyInputs */
@@ -440,12 +441,16 @@ export const video_check_skipped = /** @type {(inputs: Video_Check_SkippedInputs
 	return /** @type {LocalizedString} */ (`skipped`)
 };
 
+export const video_check_unreadable = /** @type {(inputs: Video_Check_UnreadableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut can't read this channel's stored credential; reconnect it`)
+};
+
 export const video_verdict_account_blocked = /** @type {(inputs: Video_Verdict_Account_BlockedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`the session works, but this account can't upload video right now; see the limits above`)
 };
 
 export const video_verdict_inconclusive = /** @type {(inputs: Video_Verdict_InconclusiveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`no answer yet; see the checks above and run the check again later`)
+	return /** @type {LocalizedString} */ (`no clear answer; the lines above show what each step returned`)
 };
 
 export const video_verdict_ready = /** @type {(inputs: Video_Verdict_ReadyInputs) => LocalizedString} */ () => {

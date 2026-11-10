@@ -1,8 +1,9 @@
-import { type BaseContext, isProviderFailure } from '@kronaut/core';
+import { type BaseContext, isProviderFailure, ProviderFailure } from '@kronaut/core';
 import * as z from 'zod';
 import { send, tryJson } from '../_kit/http.ts';
-import { blueskyCredentials } from './credentials.ts';
+import { type BlueskyCredentials, blueskyCredentials } from './credentials.ts';
 import { epochSeconds, errorCode, type ResourceClient, resourceClient } from './dpop.ts';
+import { normalizeHandle } from './identity.ts';
 
 export const VIDEO_SERVICE_URL = 'https://video.bsky.app';
 export const VIDEO_SERVICE_DID = 'did:web:video.bsky.app';
@@ -15,13 +16,14 @@ const LIMITS_TOKEN_TTL_S = 60;
 const CODE = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
 const UNPRINTABLE = /[\p{Cc}\p{Cf}]+/gu;
 const MESSAGE_MAX = 200;
+const BAD_EXPIRATION = 'BadExpiration';
 
 export type VideoCheckId = 'upload_token' | 'video_token' | 'limits_token' | 'upload_limits';
 
 export type VideoCheckResult =
   | { readonly outcome: 'ok' }
   | { readonly outcome: 'refused'; readonly status: number; readonly code?: string }
-  | { readonly outcome: 'failed'; readonly kind: string }
+  | { readonly outcome: 'failed'; readonly kind: string; readonly code?: string }
   | { readonly outcome: 'skipped' };
 
 export interface VideoCheck {
@@ -69,9 +71,16 @@ interface TokenRequest {
   readonly ttlSeconds: number;
 }
 
-function errorCodeOf(body: unknown): string | undefined {
-  const code = errorCode(body);
+function plainCode(code: string | undefined): string | undefined {
   return code !== undefined && CODE.test(code) ? code : undefined;
+}
+
+function errorCodeOf(body: unknown): string | undefined {
+  return plainCode(errorCode(body));
+}
+
+export function displayHandle(handle: string | null): string | undefined {
+  return handle !== null && normalizeHandle(handle) === handle ? handle : undefined;
 }
 
 function printable(text: string): string | undefined {
@@ -106,9 +115,19 @@ async function attempt<T>(run: () => Promise<Step<T>>): Promise<Step<T>> {
   try {
     return await run();
   } catch (err) {
-    if (isProviderFailure(err)) return { result: { outcome: 'failed', kind: err.error.kind } };
-    throw err;
+    if (!isProviderFailure(err)) throw err;
+    const code = plainCode('code' in err.error ? err.error.code : undefined);
+    return {
+      result: { outcome: 'failed', kind: err.error.kind, ...(code === undefined ? {} : { code }) },
+    };
   }
+}
+
+function parsedCredentials(value: unknown): BlueskyCredentials {
+  const parsed = blueskyCredentials.safeParse(value);
+  if (!parsed.success || !URL.canParse(parsed.data.pds))
+    throw new ProviderFailure({ kind: 'permanent', code: 'credentials_invalid' });
+  return parsed.data;
 }
 
 async function mint(
@@ -139,7 +158,7 @@ async function readLimits(ctx: BaseContext, token: string): Promise<Step<UploadL
 }
 
 export async function checkVideoAuth(ctx: BaseContext, value: unknown): Promise<VideoCheckReport> {
-  const credentials = blueskyCredentials.parse(value);
+  const credentials = parsedCredentials(value);
   const client = resourceClient(ctx, {
     accessToken: credentials.accessToken,
     dpopJwk: credentials.dpopJwk,
@@ -177,12 +196,17 @@ function resultOf(report: VideoCheckReport, id: VideoCheckId): VideoCheckResult 
   return report.checks.find((check) => check.id === id)?.result;
 }
 
+function refusedOutright(result: VideoCheckResult | undefined): boolean {
+  return result?.outcome === 'refused' && result.code !== BAD_EXPIRATION;
+}
+
 export function videoVerdict(report: VideoCheckReport): VideoVerdict {
-  const upload = resultOf(report, 'upload_token')?.outcome;
+  const uploadResult = resultOf(report, 'upload_token');
+  const upload = uploadResult?.outcome;
   const otherMinted = (['video_token', 'limits_token'] as const).some(
     (id) => resultOf(report, id)?.outcome === 'ok',
   );
-  if (upload === 'refused' && otherMinted) return 'upload_refused';
+  if (refusedOutright(uploadResult) && otherMinted) return 'upload_refused';
   const limits = report.limits;
   if (
     upload !== 'ok' ||

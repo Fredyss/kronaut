@@ -86,6 +86,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Video_Check_OkInputs */
 /** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
 /** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Check_UnreadableInputs */
 /** @typedef {{}} Video_Verdict_Account_BlockedInputs */
 /** @typedef {{}} Video_Verdict_InconclusiveInputs */
 /** @typedef {{}} Video_Verdict_ReadyInputs */
@@ -1377,6 +1378,21 @@ export const video_check_skipped = /** @type {((inputs?: Video_Check_SkippedInpu
 /**
 * | output |
 * | --- |
+* | "Kronaut can't read this channel's stored credential; reconnect it" |
+*
+* @param {Video_Check_UnreadableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_unreadable = /** @type {((inputs?: Video_Check_UnreadableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_UnreadableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_unreadable(inputs)
+	if (locale === "cs") return __cs.video_check_unreadable(inputs)
+	return __en.video_check_unreadable(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "the session works, but this account can't upload video right now; see the limits above" |
 *
 * @param {Video_Verdict_Account_BlockedInputs} inputs
@@ -1392,7 +1408,7 @@ export const video_verdict_account_blocked = /** @type {((inputs?: Video_Verdict
 /**
 * | output |
 * | --- |
-* | "no answer yet; see the checks above and run the check again later" |
+* | "no clear answer; the lines above show what each step returned" |
 *
 * @param {Video_Verdict_InconclusiveInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options

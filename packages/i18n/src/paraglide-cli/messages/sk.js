@@ -84,6 +84,7 @@
 /** @typedef {{}} Video_Check_OkInputs */
 /** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
 /** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Check_UnreadableInputs */
 /** @typedef {{}} Video_Verdict_Account_BlockedInputs */
 /** @typedef {{}} Video_Verdict_InconclusiveInputs */
 /** @typedef {{}} Video_Verdict_ReadyInputs */
@@ -442,12 +443,16 @@ export const video_check_skipped = /** @type {(inputs: Video_Check_SkippedInputs
 	return /** @type {LocalizedString} */ (`vynechané`)
 };
 
+export const video_check_unreadable = /** @type {(inputs: Video_Check_UnreadableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut nevie prečítať uložené prihlasovacie údaje kanála; znova ho pripojte`)
+};
+
 export const video_verdict_account_blocked = /** @type {(inputs: Video_Verdict_Account_BlockedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`relácia funguje, ale tento účet teraz nemôže nahrávať video; pozrite si limity vyššie`)
 };
 
 export const video_verdict_inconclusive = /** @type {(inputs: Video_Verdict_InconclusiveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`zatiaľ bez odpovede; pozrite si kontroly vyššie a zopakujte ich neskôr`)
+	return /** @type {LocalizedString} */ (`bez jasnej odpovede; riadky vyššie ukazujú, čo vrátil každý krok`)
 };
 
 export const video_verdict_ready = /** @type {(inputs: Video_Verdict_ReadyInputs) => LocalizedString} */ () => {
