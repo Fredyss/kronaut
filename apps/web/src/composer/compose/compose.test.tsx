@@ -92,6 +92,45 @@ describe('composer', () => {
     });
   });
 
+  it('drops a stale group pick when the server refuses it, and publishes on retry', async () => {
+    const launch = { id: 'grp_1', name: 'Launch', channelIds: ['acct_bsky', 'acct_ig'] };
+    let refused = false;
+    const { router, mutations } = mount((call) => {
+      if (call.path === '/v1/workspaces/ws_1/groups') return Response.json({ items: [launch] });
+      if (call.path !== '/v1/workspaces/ws_1/posts' || refused) return undefined;
+      refused = true;
+      return Response.json(
+        {
+          error: {
+            code: 'unprocessable',
+            message: 'The post could not be saved.',
+            details: [{ path: 'body.destinations.1.sourceGroupId', code: 'not_in_group' }],
+          },
+        },
+        { status: 422 },
+      );
+    });
+    await addContent();
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Add the channels of group Launch' }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await screen.findByText(
+      'Ada on Instagram: The group you picked this channel through has changed, so the channel now counts as picked by hand.',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Publish now' }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/posts/post_1'));
+    const created = mutations().filter((c) => c.path === '/v1/workspaces/ws_1/posts');
+    expect(created[1]?.body).toEqual({
+      ...CREATE_BODY,
+      destinations: CREATE_BODY.destinations.map((d) =>
+        d.accountId === 'acct_bsky' ? { ...d, sourceGroupId: 'grp_1' } : d,
+      ),
+    });
+  });
+
   it('tags a new post once it exists, and makes no tag call without tags', async () => {
     const launch = { id: 'tag_1', name: 'Launch', color: 'teal', postCount: 0 };
     const { router, mutations } = mount((call) => {

@@ -54,7 +54,7 @@ const postUpdateRoute = defineRoute({
   idempotency: true,
   summary: 'Edit a draft post',
   description:
-    'Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the destination already stores is kept unchecked; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.',
+    'Each field given replaces that part whole; variants and destinations replace together. Every destination must be a draft or canceled. A sourceGroupId the channel already has on this post is kept unchecked, even when the post type changes; a new one is checked as on create, and leaving it out clears it. A key without groups:read has every sourceGroupId ignored, unchecked: each destination keeps the one it stores, and a new destination gets none.',
   tags: ['posts'],
 });
 

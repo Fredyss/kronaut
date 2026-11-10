@@ -1,14 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { type FormEvent, useState } from 'react';
+import { type Dispatch, type FormEvent, type SetStateAction, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { useLocale } from '../../base/locale/context.ts';
 import { m } from '../../base/locale/i18n.ts';
 import type { PostTag } from '../../content/tags/tags.ts';
 import { approvalPolicyQuery, approvalRequired } from '../../records/approval-policy/queries.ts';
 import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
+import { groupsKey } from '../../records/groups/queries.ts';
 import { type Post, postKey, postsKey } from '../../records/posts/queries.ts';
-import { type Sources, storedSources } from './content/group-picks.ts';
+import { type Sources, storedSources, withoutPicks } from './content/group-picks.ts';
 import { useContents } from './content/use-contents.ts';
 import type { OpenedForm } from './from-post.ts';
 import { formFingerprint } from './submit/draft-body.ts';
@@ -23,7 +24,7 @@ import {
   withSources,
 } from './submit/plan.ts';
 import { type ComposeInput, createSubmitter, type OpenedPost } from './submit/submit.ts';
-import { refusedForApproval, SubmitError } from './submit/submit-error.ts';
+import { refusedForApproval, SubmitError, stalePickAccounts } from './submit/submit-error.ts';
 import { useOpenedWhen } from './when/opened-when.ts';
 import { useQueueChoice } from './when/queue-choice.ts';
 import { type RepeatControl, useRepeatControl } from './when/repeat.ts';
@@ -48,6 +49,7 @@ function usePublish(
   workspaceId: string,
   onDone: ((post: Post) => void) | undefined,
   opened: OpenedPost | undefined,
+  onRefused: (error: SubmitError) => void,
 ) {
   const client = useApiClient();
   const queryClient = useQueryClient();
@@ -61,13 +63,38 @@ function usePublish(
       if (onDone !== undefined) return onDone(post);
       await navigate({ to: '/posts/$postId', params: { postId: post.id } });
     },
-    onError: () => queryClient.invalidateQueries({ queryKey: postsKey(workspaceId) }),
+    onError: (error) => {
+      if (error instanceof SubmitError) onRefused(error);
+      return queryClient.invalidateQueries({ queryKey: postsKey(workspaceId) });
+    },
   });
   const failure =
     run.error === null || run.error instanceof SubmitError
       ? run.error
       : new SubmitError('create', run.error, []);
   return { run, failure };
+}
+
+function useStalePickReset(workspaceId: string, setSources: Dispatch<SetStateAction<Sources>>) {
+  const queryClient = useQueryClient();
+  return (error: SubmitError) => {
+    const stale = stalePickAccounts(error);
+    if (stale.length === 0) return;
+    setSources((current) => withoutPicks(current, stale));
+    void queryClient.invalidateQueries({ queryKey: groupsKey(workspaceId) });
+  };
+}
+
+function usePublishing(
+  workspaceId: string,
+  onDone: ((post: Post) => void) | undefined,
+  form: {
+    readonly start: OpenedPost | undefined;
+    readonly picks: { readonly setSources: Dispatch<SetStateAction<Sources>> };
+  },
+) {
+  const onRefused = useStalePickReset(workspaceId, form.picks.setSources);
+  return usePublish(workspaceId, onDone, form.start, onRefused);
 }
 
 function planBrands(list: readonly Channel[], plan: Plan): (string | null)[] {
@@ -159,7 +186,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     workspaceId,
     start.opened,
   );
-  const { run, failure } = usePublish(workspaceId, start.onDone, form.start);
+  const { run, failure } = usePublishing(workspaceId, start.onDone, form);
   const approval = useApprovalMode(workspaceId, failure, planBrands(list, plan));
   const { when, whenChanged } = useOpenedWhen(start, approval.request);
   const repeat = useRepeatControl(when.date);

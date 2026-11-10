@@ -1,4 +1,5 @@
-import { detailCodes, errorCode } from '../../../base/api/errors.ts';
+import { detailCodes, errorCode, errorDetails } from '../../../base/api/errors.ts';
+import { destinationIndex } from '../issues.ts';
 
 export interface SubmitTarget {
   readonly accountId: string;
@@ -51,4 +52,22 @@ export class SubmitError extends Error {
     this.destinations = destinations;
     this.image = image;
   }
+}
+
+export function isStalePick(detail: { readonly path: string; readonly code: string }): boolean {
+  return (
+    detail.path.endsWith('.sourceGroupId') &&
+    (detail.code === 'not_in_group' || detail.code === 'not_found')
+  );
+}
+
+export function stalePickAccounts(error: SubmitError): string[] {
+  const accounts = new Set<string>();
+  for (const detail of errorDetails(error.cause)) {
+    if (!isStalePick(detail)) continue;
+    const index = destinationIndex(detail.path);
+    const accountId = index === null ? undefined : error.destinations[index]?.accountId;
+    if (accountId !== undefined) accounts.add(accountId);
+  }
+  return [...accounts];
 }

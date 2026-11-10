@@ -88,7 +88,7 @@ function picksOf(
   return list.map((d, index) => {
     const id = ids[index];
     const accountId = id !== null && id !== undefined && known.has(id) ? id : null;
-    return { index, accountId, publishType: d.publishType, sourceGroupId: d.sourceGroupId };
+    return { index, accountId, sourceGroupId: d.sourceGroupId };
   });
 }
 

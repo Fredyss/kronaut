@@ -142,5 +142,6 @@
   "compose_brand_select_all_of": "Vybrať všetky kanály značky {name}",
   "compose_brand_clear_of": "Zrušiť výber kanálov značky {name}",
   "compose_groups": "Pridať skupinu",
-  "compose_group_add_of": "Pridať kanály zo skupiny {name}"
+  "compose_group_add_of": "Pridať kanály zo skupiny {name}",
+  "compose_issue_group_changed": "Skupina, cez ktorú ste tento kanál vybrali, sa medzitým zmenila, preto sa kanál teraz považuje za vybraný ručne."
 }

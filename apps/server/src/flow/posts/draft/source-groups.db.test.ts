@@ -154,4 +154,41 @@ describe('sourceGroupId on destinations', () => {
       { path: 'body.destinations.0.sourceGroupId', code: 'not_in_group' },
     ]);
   });
+
+  it('keeps a stored pick when the channel comes back with another post type', async () => {
+    const moved = await newGroup('Moved');
+    await join(moved, accountA);
+    const post = await pickedPost([accountA, moved.id]);
+    await leave(moved, accountA);
+    await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .updateTable('post_destinations')
+        .set({ publish_type: 'story' })
+        .where('post_id', '=', internal(post.id))
+        .execute(),
+    );
+    const resent = await call('PATCH', `posts/${post.id}`, ownerAuth, {
+      expectedVersion: post.version,
+      destinations: pickedBody([[accountA, moved.id]]).destinations,
+    });
+    expect(resent.status).toBe(200);
+    expect(sources((await resent.json()) as PostDto)).toEqual([[accountA, moved.id]]);
+  });
+
+  it('never lets a group stored on one channel admit another channel', async () => {
+    const pair = await newGroup('Pair');
+    await join(pair, accountB);
+    const post = await pickedPost([accountB, pair.id]);
+    const refused = await call('PATCH', `posts/${post.id}`, ownerAuth, {
+      expectedVersion: post.version,
+      destinations: pickedBody([
+        [accountA, pair.id],
+        [accountB, pair.id],
+      ]).destinations,
+    });
+    expect(refused.status).toBe(422);
+    expect((await errorOf(refused)).details).toEqual([
+      { path: 'body.destinations.0.sourceGroupId', code: 'not_in_group' },
+    ]);
+  });
 });

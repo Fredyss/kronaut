@@ -58,6 +58,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_InheritsInputs */
 /** @typedef {{}} Compose_InsertInputs */
 /** @typedef {{}} Compose_Insert_Saved_TextInputs */
+/** @typedef {{}} Compose_Issue_Group_ChangedInputs */
 /** @typedef {{}} Compose_Keep_DraftInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
@@ -961,6 +962,21 @@ export const compose_insert_saved_text = /** @type {((inputs?: Compose_Insert_Sa
 	if (locale === "sk") return __sk.compose_insert_saved_text(inputs)
 	if (locale === "cs") return __cs.compose_insert_saved_text(inputs)
 	return __en.compose_insert_saved_text(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The group you picked this channel through has changed, so the channel now counts as picked by hand." |
+*
+* @param {Compose_Issue_Group_ChangedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_issue_group_changed = /** @type {((inputs?: Compose_Issue_Group_ChangedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Issue_Group_ChangedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_issue_group_changed(inputs)
+	if (locale === "cs") return __cs.compose_issue_group_changed(inputs)
+	return __en.compose_issue_group_changed(inputs)
 });
 /**
 * | output |
