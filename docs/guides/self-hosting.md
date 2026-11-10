@@ -142,6 +142,19 @@ Kronaut posts to a member's personal LinkedIn profile, not to a LinkedIn Page. E
 - **Reconnecting:** LinkedIn gives these apps no refresh tokens, so every connection lasts 60 days. Kronaut sends an expiring notice 7 days ahead; the member then reconnects LinkedIn from Channels.
 - **Unconfirmed posts:** Kronaut can't read LinkedIn posts back. If LinkedIn's answer to a send gets lost, the post is marked unconfirmed rather than sent twice; check the profile before sending it again.
 
+### Bluesky video check
+
+Kronaut doesn't post video to Bluesky yet. Bluesky's docs don't say whether its video service accepts uploads from an OAuth session like Kronaut's, so this check finds out on a real channel ([ADR-0054](../adr/0054-video-pipeline.md)). It runs in the `app` container, the one that can reach Bluesky:
+
+```sh
+docker compose exec app kronaut bluesky video-check
+docker compose exec app kronaut bluesky video-check alice.bsky.social
+```
+
+- **What it does:** for each connected Bluesky channel, or the one you name, it asks the channel's server for the tokens a video upload needs, then reads the account's daily video quota. It never uploads, never posts and never prints a token.
+- **Before you run it:** connect a Bluesky channel and keep the server running, so its access token stays fresh.
+- **The last line per channel** says whether Bluesky video can work for it. Send the whole output with an issue or a pull request about Bluesky video.
+
 ## 6. Backups, upgrades and logs
 
 The `backup` service starts with the stack and makes an encrypted archive every night. Set up the backup recipient and the backup dir below before the first `docker compose up`; until the recipient is set, the service logs an error at each scheduled time and makes no archive.

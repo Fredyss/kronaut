@@ -1,5 +1,6 @@
 import type { CliMessages } from '@kronaut/i18n/cli';
 import { backupCommand, exportCommand, importCommand } from './actors/cli/backup-command.ts';
+import { blueskyCommand } from './actors/cli/bluesky-command.ts';
 import { locale, logger, messages, stderrLogger } from './actors/cli/context.ts';
 import { CommandError, UsageError } from './actors/cli/errors.ts';
 import {
@@ -34,6 +35,7 @@ function usage(m: CliMessages): string {
     '  kronaut provider-app key activate <app-id> <kid>',
     '  kronaut provider-app key delete <app-id> <kid>',
     '  kronaut provider-app key list <app-id>',
+    '  kronaut bluesky video-check [<handle>]',
   ].join('\n');
 }
 
@@ -63,6 +65,9 @@ async function run(argv: readonly string[]): Promise<void> {
       return;
     case 'provider-app':
       await providerAppCommand(rest);
+      return;
+    case 'bluesky':
+      await blueskyCommand(rest);
       return;
     default:
       throw new UsageError((m) => m.unknown_command({}));

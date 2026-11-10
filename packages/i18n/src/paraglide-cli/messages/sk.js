@@ -21,6 +21,7 @@
 /** @typedef {{}} Db_Url_InvalidInputs */
 /** @typedef {{}} Db_Url_PasswordInputs */
 /** @typedef {{}} Email_InvalidInputs */
+/** @typedef {{}} Expected_At_Most_One_HandleInputs */
 /** @typedef {{}} Expected_One_ArchiveInputs */
 /** @typedef {{}} Expected_One_EmailInputs */
 /** @typedef {{}} Expected_One_ProviderInputs */
@@ -40,6 +41,7 @@
 /** @typedef {{ format: NonNullable<unknown> }} Manifest_Wrong_FormatInputs */
 /** @typedef {{ epoch: NonNullable<unknown>, reason: NonNullable<unknown> }} Media_Copy_FailedInputs */
 /** @typedef {{}} Never_StartedInputs */
+/** @typedef {{}} No_Bluesky_ChannelInputs */
 /** @typedef {{}} No_MigrationsInputs */
 /** @typedef {{}} No_SchemaInputs */
 /** @typedef {{ option: NonNullable<unknown> }} Option_EmptyInputs */
@@ -66,6 +68,7 @@
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown>, found: NonNullable<unknown> }} Tool_VersionInputs */
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown> }} Tool_Version_UnknownInputs */
 /** @typedef {{}} Unexpected_ErrorInputs */
+/** @typedef {{}} Unknown_Bluesky_CommandInputs */
 /** @typedef {{}} Unknown_CommandInputs */
 /** @typedef {{}} Unknown_Key_CommandInputs */
 /** @typedef {{}} Unknown_Provider_App_CommandInputs */
@@ -75,6 +78,16 @@
 /** @typedef {{}} Usage_TitleInputs */
 /** @typedef {{}} User_Email_TakenInputs */
 /** @typedef {{}} User_Not_FoundInputs */
+/** @typedef {{}} Video_Check_ExpiredInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Video_Check_FailedInputs */
+/** @typedef {{}} Video_Check_No_CredentialInputs */
+/** @typedef {{}} Video_Check_OkInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
+/** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Verdict_Account_BlockedInputs */
+/** @typedef {{}} Video_Verdict_InconclusiveInputs */
+/** @typedef {{}} Video_Verdict_ReadyInputs */
+/** @typedef {{}} Video_Verdict_Upload_RefusedInputs */
 /** @typedef {{}} Workspace_Slug_TakenInputs */
 /** @typedef {{}} Wrong_Argument_CountInputs */
 import * as registry from "../registry.js"
@@ -168,6 +181,10 @@ export const email_invalid = /** @type {(inputs: Email_InvalidInputs) => Localiz
 	return /** @type {LocalizedString} */ (`--email musí byť e-mailová adresa`)
 };
 
+export const expected_at_most_one_handle = /** @type {(inputs: Expected_At_Most_One_HandleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`zadajte najviac jedno používateľské meno`)
+};
+
 export const expected_one_archive = /** @type {(inputs: Expected_One_ArchiveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`zadajte práve jeden súbor archívu`)
 };
@@ -247,6 +264,10 @@ export const media_copy_failed = /** @type {(inputs: Media_Copy_FailedInputs) =>
 
 export const never_started = /** @type {(inputs: Never_StartedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`inštancia sa ešte nikdy nespustila; spustite raz server a potom exportujte`)
+};
+
+export const no_bluesky_channel = /** @type {(inputs: No_Bluesky_ChannelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`nenašiel sa žiadny pripojený kanál Bluesky`)
 };
 
 export const no_migrations = /** @type {(inputs: No_MigrationsInputs) => LocalizedString} */ () => {
@@ -357,6 +378,10 @@ export const unexpected_error = /** @type {(inputs: Unexpected_ErrorInputs) => L
 	return /** @type {LocalizedString} */ (`neočakávaná chyba`)
 };
 
+export const unknown_bluesky_command = /** @type {(inputs: Unknown_Bluesky_CommandInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`neznámy príkaz bluesky`)
+};
+
 export const unknown_command = /** @type {(inputs: Unknown_CommandInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`neznámy príkaz`)
 };
@@ -391,6 +416,46 @@ export const user_email_taken = /** @type {(inputs: User_Email_TakenInputs) => L
 
 export const user_not_found = /** @type {(inputs: User_Not_FoundInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`žiadny aktívny používateľ nemá tento e-mail`)
+};
+
+export const video_check_expired = /** @type {(inputs: Video_Check_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`uložený prístupový token vypršal alebo čoskoro vyprší; spustite server, aby token obnovil, a potom kontrolu zopakujte`)
+};
+
+export const video_check_failed = /** @type {(inputs: Video_Check_FailedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`zlyhalo (${i?.reason})`)
+};
+
+export const video_check_no_credential = /** @type {(inputs: Video_Check_No_CredentialInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`kanál nemá uložené prihlasovacie údaje; znova ho pripojte`)
+};
+
+export const video_check_ok = /** @type {(inputs: Video_Check_OkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`v poriadku`)
+};
+
+export const video_check_refused = /** @type {(inputs: Video_Check_RefusedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`odmietnuté (HTTP ${i?.status})`)
+};
+
+export const video_check_skipped = /** @type {(inputs: Video_Check_SkippedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`vynechané`)
+};
+
+export const video_verdict_account_blocked = /** @type {(inputs: Video_Verdict_Account_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`relácia funguje, ale tento účet teraz nemôže nahrávať video; pozrite si limity vyššie`)
+};
+
+export const video_verdict_inconclusive = /** @type {(inputs: Video_Verdict_InconclusiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`zatiaľ bez odpovede; pozrite si kontroly vyššie a zopakujte ich neskôr`)
+};
+
+export const video_verdict_ready = /** @type {(inputs: Video_Verdict_ReadyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`video na Bluesky môže pre tento kanál fungovať: PDS vydá relácii Kronautu token na nahrávanie a videoslužba jej tokeny prijíma`)
+};
+
+export const video_verdict_upload_refused = /** @type {(inputs: Video_Verdict_Upload_RefusedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`PDS odmieta vydať relácii Kronautu token na nahrávanie, hoci iné tokeny vydá`)
 };
 
 export const workspace_slug_taken = /** @type {(inputs: Workspace_Slug_TakenInputs) => LocalizedString} */ () => {

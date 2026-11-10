@@ -18,9 +18,9 @@
 - **Ops and tests:** healthchecks, pino, canary + route-enumeration tests.
 - **Measure:** IG container timings and media fetch windows.
 
-**Phase 1: Daily-usable owner MVP** (scope cut in ADR-0052)
+**Phase 1: Daily-usable owner MVP** (scope cut in ADR-0052): done
 
-- **Done:**
+- **Shipped:**
   - calendar drag and undo, with Temporal wall-time math
   - approval policy + approval step with step-up
   - needs-action inbox with "Send again"
@@ -30,13 +30,14 @@
   - providers: Bluesky, Instagram (feed/carousel), Mastodon, Threads (text, image, carousel)
   - editor: live text counters and text-limit checks
   - nightly backups with the 7 + 4 rotation and a restore test through quarantine
-- **Remaining for the MVP:**
   - editor: per-destination variants, basic previews
-  - providers: Facebook Page, LinkedIn personal (Telegram only if it fits in ≤ 2 days)
+  - providers: Facebook Page, LinkedIn personal
+- **Telegram** was in only if it fit in ≤ 2 days; it moved to Phase 2.
 - **App reviews:** start the Meta/LinkedIn/TikTok/Google platform reviews **at the Phase 1 release**; reviews take weeks and require a working product.
 
 **Phase 1.1**
 
+- **Status:** everything ADR-0052 moved here has shipped except Bluesky video. It waits on ADR-0054's live test of OAuth service auth, which `kronaut bluesky video-check` runs on an instance ([Self-hosting](../guides/self-hosting.md#bluesky-video-check)).
 - **Video:** Instagram Reels and video for every provider.
 - **Editor:** threads (reply chains) and first comment; the remaining platform-mandated UX.
 - **Media library page.**
@@ -46,7 +47,7 @@
 
 **Phase 2: Feature parity**
 
-- **Providers:** YouTube, TikTok (hosted-only in practice), X, Pinterest, LinkedIn Page (CMA, needs a legal org), Google Business Profile, Discord, Reddit. Then the long tail on demand: Lemmy, WordPress, dev.to, Hashnode, Medium, Tumblr, Nostr, Farcaster, Slack…
+- **Providers:** YouTube, TikTok (hosted-only in practice), X, Pinterest, LinkedIn Page (CMA, needs a legal org), Google Business Profile, Discord, Reddit, Telegram (moved from Phase 1). Then the long tail on demand: Lemmy, WordPress, dev.to, Hashnode, Medium, Tumblr, Nostr, Farcaster, Slack…
 - **Planning and content tools:**
   - Analytics snapshots.
   - Queue slots / "add to queue".

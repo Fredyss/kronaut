@@ -21,6 +21,7 @@
 /** @typedef {{}} Db_Url_InvalidInputs */
 /** @typedef {{}} Db_Url_PasswordInputs */
 /** @typedef {{}} Email_InvalidInputs */
+/** @typedef {{}} Expected_At_Most_One_HandleInputs */
 /** @typedef {{}} Expected_One_ArchiveInputs */
 /** @typedef {{}} Expected_One_EmailInputs */
 /** @typedef {{}} Expected_One_ProviderInputs */
@@ -40,6 +41,7 @@
 /** @typedef {{ format: NonNullable<unknown> }} Manifest_Wrong_FormatInputs */
 /** @typedef {{ epoch: NonNullable<unknown>, reason: NonNullable<unknown> }} Media_Copy_FailedInputs */
 /** @typedef {{}} Never_StartedInputs */
+/** @typedef {{}} No_Bluesky_ChannelInputs */
 /** @typedef {{}} No_MigrationsInputs */
 /** @typedef {{}} No_SchemaInputs */
 /** @typedef {{ option: NonNullable<unknown> }} Option_EmptyInputs */
@@ -66,6 +68,7 @@
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown>, found: NonNullable<unknown> }} Tool_VersionInputs */
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown> }} Tool_Version_UnknownInputs */
 /** @typedef {{}} Unexpected_ErrorInputs */
+/** @typedef {{}} Unknown_Bluesky_CommandInputs */
 /** @typedef {{}} Unknown_CommandInputs */
 /** @typedef {{}} Unknown_Key_CommandInputs */
 /** @typedef {{}} Unknown_Provider_App_CommandInputs */
@@ -75,6 +78,16 @@
 /** @typedef {{}} Usage_TitleInputs */
 /** @typedef {{}} User_Email_TakenInputs */
 /** @typedef {{}} User_Not_FoundInputs */
+/** @typedef {{}} Video_Check_ExpiredInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Video_Check_FailedInputs */
+/** @typedef {{}} Video_Check_No_CredentialInputs */
+/** @typedef {{}} Video_Check_OkInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
+/** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Verdict_Account_BlockedInputs */
+/** @typedef {{}} Video_Verdict_InconclusiveInputs */
+/** @typedef {{}} Video_Verdict_ReadyInputs */
+/** @typedef {{}} Video_Verdict_Upload_RefusedInputs */
 /** @typedef {{}} Workspace_Slug_TakenInputs */
 /** @typedef {{}} Wrong_Argument_CountInputs */
 import * as registry from "../registry.js"
@@ -168,6 +181,10 @@ export const email_invalid = /** @type {(inputs: Email_InvalidInputs) => Localiz
 	return /** @type {LocalizedString} */ (`--email must be an email address`)
 };
 
+export const expected_at_most_one_handle = /** @type {(inputs: Expected_At_Most_One_HandleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`expected at most one handle`)
+};
+
 export const expected_one_archive = /** @type {(inputs: Expected_One_ArchiveInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`expected one archive file`)
 };
@@ -246,6 +263,10 @@ export const media_copy_failed = /** @type {(inputs: Media_Copy_FailedInputs) =>
 
 export const never_started = /** @type {(inputs: Never_StartedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`the instance has never started; start the server once, then export`)
+};
+
+export const no_bluesky_channel = /** @type {(inputs: No_Bluesky_ChannelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`no connected Bluesky channel found`)
 };
 
 export const no_migrations = /** @type {(inputs: No_MigrationsInputs) => LocalizedString} */ () => {
@@ -355,6 +376,10 @@ export const unexpected_error = /** @type {(inputs: Unexpected_ErrorInputs) => L
 	return /** @type {LocalizedString} */ (`an unexpected error`)
 };
 
+export const unknown_bluesky_command = /** @type {(inputs: Unknown_Bluesky_CommandInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`unknown bluesky command`)
+};
+
 export const unknown_command = /** @type {(inputs: Unknown_CommandInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`unknown command`)
 };
@@ -389,6 +414,46 @@ export const user_email_taken = /** @type {(inputs: User_Email_TakenInputs) => L
 
 export const user_not_found = /** @type {(inputs: User_Not_FoundInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`no active user has this email`)
+};
+
+export const video_check_expired = /** @type {(inputs: Video_Check_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`the stored access token has expired or is about to; start the server so it refreshes the token, then run the check again`)
+};
+
+export const video_check_failed = /** @type {(inputs: Video_Check_FailedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`failed (${i?.reason})`)
+};
+
+export const video_check_no_credential = /** @type {(inputs: Video_Check_No_CredentialInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`this channel has no stored credential; reconnect it`)
+};
+
+export const video_check_ok = /** @type {(inputs: Video_Check_OkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`ok`)
+};
+
+export const video_check_refused = /** @type {(inputs: Video_Check_RefusedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`refused (HTTP ${i?.status})`)
+};
+
+export const video_check_skipped = /** @type {(inputs: Video_Check_SkippedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`skipped`)
+};
+
+export const video_verdict_account_blocked = /** @type {(inputs: Video_Verdict_Account_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`the session works, but this account can't upload video right now; see the limits above`)
+};
+
+export const video_verdict_inconclusive = /** @type {(inputs: Video_Verdict_InconclusiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`no answer yet; see the checks above and run the check again later`)
+};
+
+export const video_verdict_ready = /** @type {(inputs: Video_Verdict_ReadyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bluesky video can work for this channel: the PDS issues the upload token to Kronaut's session, and the video service accepts its tokens`)
+};
+
+export const video_verdict_upload_refused = /** @type {(inputs: Video_Verdict_Upload_RefusedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`the PDS refuses the upload token to Kronaut's session, though it issues other tokens`)
 };
 
 export const workspace_slug_taken = /** @type {(inputs: Workspace_Slug_TakenInputs) => LocalizedString} */ () => {

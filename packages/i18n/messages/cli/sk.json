@@ -107,5 +107,18 @@
   "target_db_not_empty": "cieľová databáza nie je prázdna",
   "target_media_not_empty": "cieľový priečinok médií nie je prázdny",
   "restored_no_state": "obnovená databáza nemá stav inštancie",
-  "media_copy_failed": "databáza je obnovená a v karanténe (epocha obnovy {epoch}), ale kopírovanie médií zlyhalo: {reason}"
+  "media_copy_failed": "databáza je obnovená a v karanténe (epocha obnovy {epoch}), ale kopírovanie médií zlyhalo: {reason}",
+  "unknown_bluesky_command": "neznámy príkaz bluesky",
+  "expected_at_most_one_handle": "zadajte najviac jedno používateľské meno",
+  "no_bluesky_channel": "nenašiel sa žiadny pripojený kanál Bluesky",
+  "video_check_ok": "v poriadku",
+  "video_check_refused": "odmietnuté (HTTP {status})",
+  "video_check_failed": "zlyhalo ({reason})",
+  "video_check_skipped": "vynechané",
+  "video_check_no_credential": "kanál nemá uložené prihlasovacie údaje; znova ho pripojte",
+  "video_check_expired": "uložený prístupový token vypršal alebo čoskoro vyprší; spustite server, aby token obnovil, a potom kontrolu zopakujte",
+  "video_verdict_ready": "video na Bluesky môže pre tento kanál fungovať: PDS vydá relácii Kronautu token na nahrávanie a videoslužba jej tokeny prijíma",
+  "video_verdict_account_blocked": "relácia funguje, ale tento účet teraz nemôže nahrávať video; pozrite si limity vyššie",
+  "video_verdict_upload_refused": "PDS odmieta vydať relácii Kronautu token na nahrávanie, hoci iné tokeny vydá",
+  "video_verdict_inconclusive": "zatiaľ bez odpovede; pozrite si kontroly vyššie a zopakujte ich neskôr"
 }

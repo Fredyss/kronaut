@@ -257,12 +257,18 @@ Bluesky re-verified 2026-10-23 (specs, guides, lexicons, live AS/PDS metadata an
   - Features: `mention {did}`, `link {uri}` (the full URL, even when the text shortens it), `tag {tag}` (without `#`, ≤64 graphemes).
 
 
-Bluesky video facts checked 2026-10-27 (B3, B7, B18, B19).
+Bluesky video facts checked 2026-10-27 (B3, B7, B18, B19); service auth re-checked 2026-11-10 (B2, B3, B11, B12, B18).
 - **Video service** (B18): `com.atproto.server.getServiceAuth {aud: did:web:<PDS host>, lxm: com.atproto.repo.uploadBlob, exp}`; `POST https://video.bsky.app/xrpc/app.bsky.video.uploadVideo?did&name` with the service token and the body; poll `app.bsky.video.getJobStatus` until `jobStatus.blob`; post with `app.bsky.embed.video {video, aspectRatio, alt?}`. An `already_exists` error still carries the blob. Bluesky-hosted accounts need a verified email.
 - **Multipart** (B3, since 2026-08-12): `startUpload {sizeBytes, mimeType, durationMs?, width?, height?}` → `{jobId, partSizeBytes, partCount, expiresAt}`; idempotent `uploadPart` and `finishUpload`; errors `VideoTooLarge`, `VideoTooLong`, `BadAspectRatio`, `DailyLimitExceeded`, `TooManyOpenUploads`, `UploadForbidden`, `ServiceOverloaded`, with undocumented thresholds.
 - **Job states:** `JOB_STATE_CREATED`, `ENCODING`, `ENCODED`, `SCANNING`, `SCANNED`, `UPLOADING`, `UPLOADED`, `COMPLETED`, `FAILED`; `failureCode` `validation_failure`, `encoding_failure`, `pds_upload_failure`, `pds_upload_unsupported_blob_size`, `generic_failure`.
 - **Limits:** `video/mp4` only, ≤300,000,000 bytes (raised 2026-08-11); duration, resolution and codec limits undocumented. `getUploadLimits` returns the daily quota; an unauthenticated call is 401 (B19).
 - **OAuth:** `authCreatePosts` grants the `app.bsky.video.*` methods with `inheritAud`, while the tutorial mints `lxm=com.atproto.repo.uploadBlob` for the PDS. Which `aud`/`lxm` the video service accepts from an OAuth session is undocumented and needs a live test.
+  - `getServiceAuth` (B11): `aud` is required (a DID or `did#serviceId`); `lxm` is an NSID; `exp` is Unix seconds, 60 s by default, and the PDS may bound it by the requested scope (error `BadExpiration`). It returns `{token}`. The tutorial asks for 30 min on the upload token and sends it to `uploadVideo` as `Authorization: Bearer` (B18).
+  - The permission spec counts minting a token through `getServiceAuth` as an `rpc` permission, keyed by `lxm` and `aud` (B12). `transition:generic`, which Kronaut requests, includes "the ability to generate service auth tokens for the specific API endpoints the client has access to", and blob upload is one of them (B2). No source confirms that a PDS mints the tutorial's token for an OAuth session.
+  - `getUploadLimits` returns `{canUpload, remainingDailyVideos?, remainingDailyBytes?, message?, error?}` (B3). The tutorial doesn't name the audience or `lxm` its token needs; Kronaut assumes the service's own DID, `did:web:video.bsky.app`.
+  - `getSession` reports the email and its confirmation only with `transition:email` (B2), which Kronaut doesn't request, so `canUpload` is the check for the verified email.
+  - `authCreatePosts` now also lists `startUpload`, `uploadPart`, `finishUpload`, `abortUpload` and `getUploadStatus` (B3).
+  - **Live test:** `kronaut bluesky video-check` asks a connected channel's PDS for the tutorial's upload token and the two video-service tokens, then reads `getUploadLimits`. It never uploads or posts, and it never prints a token.
 - One embed per post: a video can't be combined with images. `alt` is optional; `captions` takes up to 20 VTT files.
 
 **Mastodon**
@@ -540,8 +546,8 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - B8 https://atproto.com/specs/record-key
 - B9 https://atproto.com/specs/xrpc
 - B10 https://bsky.social/.well-known/oauth-authorization-server
-- B11 https://github.com/bluesky-social/atproto/tree/main/lexicons (canonical for `com.atproto.*`: com/atproto/repo/createRecord, getRecord, putRecord, uploadBlob)
-- B12 https://atproto.com/specs/permission
+- B11 https://github.com/bluesky-social/atproto/tree/main/lexicons (canonical for `com.atproto.*`: com/atproto/repo/createRecord, getRecord, putRecord, uploadBlob; com/atproto/server/getServiceAuth)
+- B12 https://atproto.com/specs/permission (on 2026-11-10, B2 and B12 were read from their source in https://github.com/bluesky-social/atproto-website, because atproto.com wasn't reachable from the session)
 - B13 https://atproto.com/guides/oauth-patterns and https://atproto.com/guides/permission-requests
 - B14 https://atproto.com/specs/tid
 - B15 https://web.plc.directory/spec/v0.1/did-plc and https://w3c-ccg.github.io/did-method-web/

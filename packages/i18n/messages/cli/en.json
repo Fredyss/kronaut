@@ -113,5 +113,18 @@
   "target_db_not_empty": "the target database is not empty",
   "target_media_not_empty": "the target media directory is not empty",
   "restored_no_state": "the restored database has no instance state",
-  "media_copy_failed": "the database is restored and quarantined (restore epoch {epoch}), but copying media failed: {reason}"
+  "media_copy_failed": "the database is restored and quarantined (restore epoch {epoch}), but copying media failed: {reason}",
+  "unknown_bluesky_command": "unknown bluesky command",
+  "expected_at_most_one_handle": "expected at most one handle",
+  "no_bluesky_channel": "no connected Bluesky channel found",
+  "video_check_ok": "ok",
+  "video_check_refused": "refused (HTTP {status})",
+  "video_check_failed": "failed ({reason})",
+  "video_check_skipped": "skipped",
+  "video_check_no_credential": "this channel has no stored credential; reconnect it",
+  "video_check_expired": "the stored access token has expired or is about to; start the server so it refreshes the token, then run the check again",
+  "video_verdict_ready": "Bluesky video can work for this channel: the PDS issues the upload token to Kronaut's session, and the video service accepts its tokens",
+  "video_verdict_account_blocked": "the session works, but this account can't upload video right now; see the limits above",
+  "video_verdict_upload_refused": "the PDS refuses the upload token to Kronaut's session, though it issues other tokens",
+  "video_verdict_inconclusive": "no answer yet; see the checks above and run the check again later"
 }

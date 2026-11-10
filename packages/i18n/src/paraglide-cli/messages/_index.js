@@ -23,6 +23,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Db_Url_InvalidInputs */
 /** @typedef {{}} Db_Url_PasswordInputs */
 /** @typedef {{}} Email_InvalidInputs */
+/** @typedef {{}} Expected_At_Most_One_HandleInputs */
 /** @typedef {{}} Expected_One_ArchiveInputs */
 /** @typedef {{}} Expected_One_EmailInputs */
 /** @typedef {{}} Expected_One_ProviderInputs */
@@ -42,6 +43,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ format: NonNullable<unknown> }} Manifest_Wrong_FormatInputs */
 /** @typedef {{ epoch: NonNullable<unknown>, reason: NonNullable<unknown> }} Media_Copy_FailedInputs */
 /** @typedef {{}} Never_StartedInputs */
+/** @typedef {{}} No_Bluesky_ChannelInputs */
 /** @typedef {{}} No_MigrationsInputs */
 /** @typedef {{}} No_SchemaInputs */
 /** @typedef {{ option: NonNullable<unknown> }} Option_EmptyInputs */
@@ -68,6 +70,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown>, found: NonNullable<unknown> }} Tool_VersionInputs */
 /** @typedef {{ tool: NonNullable<unknown>, major: NonNullable<unknown> }} Tool_Version_UnknownInputs */
 /** @typedef {{}} Unexpected_ErrorInputs */
+/** @typedef {{}} Unknown_Bluesky_CommandInputs */
 /** @typedef {{}} Unknown_CommandInputs */
 /** @typedef {{}} Unknown_Key_CommandInputs */
 /** @typedef {{}} Unknown_Provider_App_CommandInputs */
@@ -77,6 +80,16 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Usage_TitleInputs */
 /** @typedef {{}} User_Email_TakenInputs */
 /** @typedef {{}} User_Not_FoundInputs */
+/** @typedef {{}} Video_Check_ExpiredInputs */
+/** @typedef {{ reason: NonNullable<unknown> }} Video_Check_FailedInputs */
+/** @typedef {{}} Video_Check_No_CredentialInputs */
+/** @typedef {{}} Video_Check_OkInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Video_Check_RefusedInputs */
+/** @typedef {{}} Video_Check_SkippedInputs */
+/** @typedef {{}} Video_Verdict_Account_BlockedInputs */
+/** @typedef {{}} Video_Verdict_InconclusiveInputs */
+/** @typedef {{}} Video_Verdict_ReadyInputs */
+/** @typedef {{}} Video_Verdict_Upload_RefusedInputs */
 /** @typedef {{}} Workspace_Slug_TakenInputs */
 /** @typedef {{}} Wrong_Argument_CountInputs */
 import * as __en from "./en.js"
@@ -415,6 +428,21 @@ export const email_invalid = /** @type {((inputs?: Email_InvalidInputs, options?
 /**
 * | output |
 * | --- |
+* | "expected at most one handle" |
+*
+* @param {Expected_At_Most_One_HandleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const expected_at_most_one_handle = /** @type {((inputs?: Expected_At_Most_One_HandleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Expected_At_Most_One_HandleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.expected_at_most_one_handle(inputs)
+	if (locale === "cs") return __cs.expected_at_most_one_handle(inputs)
+	return __en.expected_at_most_one_handle(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "expected one archive file" |
 *
 * @param {Expected_One_ArchiveInputs} inputs
@@ -698,6 +726,21 @@ export const never_started = /** @type {((inputs?: Never_StartedInputs, options?
 	if (locale === "sk") return __sk.never_started(inputs)
 	if (locale === "cs") return __cs.never_started(inputs)
 	return __en.never_started(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "no connected Bluesky channel found" |
+*
+* @param {No_Bluesky_ChannelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const no_bluesky_channel = /** @type {((inputs?: No_Bluesky_ChannelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<No_Bluesky_ChannelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.no_bluesky_channel(inputs)
+	if (locale === "cs") return __cs.no_bluesky_channel(inputs)
+	return __en.no_bluesky_channel(inputs)
 });
 /**
 * | output |
@@ -1094,6 +1137,21 @@ export const unexpected_error = /** @type {((inputs?: Unexpected_ErrorInputs, op
 /**
 * | output |
 * | --- |
+* | "unknown bluesky command" |
+*
+* @param {Unknown_Bluesky_CommandInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const unknown_bluesky_command = /** @type {((inputs?: Unknown_Bluesky_CommandInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Unknown_Bluesky_CommandInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.unknown_bluesky_command(inputs)
+	if (locale === "cs") return __cs.unknown_bluesky_command(inputs)
+	return __en.unknown_bluesky_command(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "unknown command" |
 *
 * @param {Unknown_CommandInputs} inputs
@@ -1225,6 +1283,156 @@ export const user_not_found = /** @type {((inputs?: User_Not_FoundInputs, option
 	if (locale === "sk") return __sk.user_not_found(inputs)
 	if (locale === "cs") return __cs.user_not_found(inputs)
 	return __en.user_not_found(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "the stored access token has expired or is about to; start the server so it refreshes the token, then run the check again" |
+*
+* @param {Video_Check_ExpiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_expired = /** @type {((inputs?: Video_Check_ExpiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_ExpiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_expired(inputs)
+	if (locale === "cs") return __cs.video_check_expired(inputs)
+	return __en.video_check_expired(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "failed ({reason})" |
+*
+* @param {Video_Check_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_failed = /** @type {((inputs: Video_Check_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_failed(inputs)
+	if (locale === "cs") return __cs.video_check_failed(inputs)
+	return __en.video_check_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "this channel has no stored credential; reconnect it" |
+*
+* @param {Video_Check_No_CredentialInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_no_credential = /** @type {((inputs?: Video_Check_No_CredentialInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_No_CredentialInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_no_credential(inputs)
+	if (locale === "cs") return __cs.video_check_no_credential(inputs)
+	return __en.video_check_no_credential(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "ok" |
+*
+* @param {Video_Check_OkInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_ok = /** @type {((inputs?: Video_Check_OkInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_OkInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_ok(inputs)
+	if (locale === "cs") return __cs.video_check_ok(inputs)
+	return __en.video_check_ok(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "refused (HTTP {status})" |
+*
+* @param {Video_Check_RefusedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_refused = /** @type {((inputs: Video_Check_RefusedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_RefusedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_refused(inputs)
+	if (locale === "cs") return __cs.video_check_refused(inputs)
+	return __en.video_check_refused(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "skipped" |
+*
+* @param {Video_Check_SkippedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_check_skipped = /** @type {((inputs?: Video_Check_SkippedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Check_SkippedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_check_skipped(inputs)
+	if (locale === "cs") return __cs.video_check_skipped(inputs)
+	return __en.video_check_skipped(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "the session works, but this account can't upload video right now; see the limits above" |
+*
+* @param {Video_Verdict_Account_BlockedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_verdict_account_blocked = /** @type {((inputs?: Video_Verdict_Account_BlockedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Verdict_Account_BlockedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_verdict_account_blocked(inputs)
+	if (locale === "cs") return __cs.video_verdict_account_blocked(inputs)
+	return __en.video_verdict_account_blocked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "no answer yet; see the checks above and run the check again later" |
+*
+* @param {Video_Verdict_InconclusiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_verdict_inconclusive = /** @type {((inputs?: Video_Verdict_InconclusiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Verdict_InconclusiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_verdict_inconclusive(inputs)
+	if (locale === "cs") return __cs.video_verdict_inconclusive(inputs)
+	return __en.video_verdict_inconclusive(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Bluesky video can work for this channel: the PDS issues the upload token to Kronaut's session, and the video service accepts its tokens" |
+*
+* @param {Video_Verdict_ReadyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_verdict_ready = /** @type {((inputs?: Video_Verdict_ReadyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Verdict_ReadyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_verdict_ready(inputs)
+	if (locale === "cs") return __cs.video_verdict_ready(inputs)
+	return __en.video_verdict_ready(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "the PDS refuses the upload token to Kronaut's session, though it issues other tokens" |
+*
+* @param {Video_Verdict_Upload_RefusedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const video_verdict_upload_refused = /** @type {((inputs?: Video_Verdict_Upload_RefusedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Video_Verdict_Upload_RefusedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.video_verdict_upload_refused(inputs)
+	if (locale === "cs") return __cs.video_verdict_upload_refused(inputs)
+	return __en.video_verdict_upload_refused(inputs)
 });
 /**
 * | output |
