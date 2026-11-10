@@ -1,7 +1,10 @@
 FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS pg
 ARG PG_MAJOR=17
 ARG PGDG_FINGERPRINT=B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+# The libraries copied below carry no dpkg record, so the image scan can't flag them;
+# upgrade first so they get the security fixes the base image may not have yet.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends ca-certificates curl gnupg patchelf \
  && { curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o /tmp/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
       || curl -fsSL --connect-timeout 15 --retry 3 --retry-all-errors -o /tmp/pgdg.asc https://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc; } \
