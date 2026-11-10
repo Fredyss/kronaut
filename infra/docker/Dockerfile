@@ -9,10 +9,12 @@ RUN apt-get update \
  && gpg --dearmor -o /usr/share/keyrings/pgdg.gpg /tmp/pgdg.asc \
  && echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
  && apt-get update \
+ && apt-get upgrade -y --no-install-recommends \
  && apt-get install -y --no-install-recommends "postgresql-client-${PG_MAJOR}" \
  && rm -rf /var/lib/apt/lists/*
 # Only glibc is left to the runtime image (same trixie release); every other library the
-# tools resolve is copied, and the binaries find them through an $ORIGIN rpath.
+# tools resolve is copied, and the binaries find them through an $ORIGIN rpath. The upgrade
+# above matters because those copies ship with security fixes the slim base may lack.
 RUN set -eu; \
     mkdir -p /opt/pg/bin /opt/pg/lib; \
     for tool in pg_dump pg_restore psql; do cp "/usr/lib/postgresql/${PG_MAJOR}/bin/${tool}" /opt/pg/bin/; done; \
@@ -157,7 +159,7 @@ RUN pnpm install --frozen-lockfile --prod --filter '@kronaut/server...' --filter
 COPY tools/licenses tools/licenses
 RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:b8cec4b2f2126ff7bd034ec9ac207ffb3272667dfdc48376e3b035d3270549ba
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:088a01637f22908632ba09018be2e0b516f2fa6f7869c191d29491139db43c78
 COPY --from=pg /opt/pg /opt/pg
 COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=deps /app /app
