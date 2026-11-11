@@ -103,7 +103,7 @@
 /** @typedef {{}} Home_Empty_TitleInputs */
 /** @typedef {{}} Nav_New_PostInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_ScheduledInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const calendar_add_channel = /** @type {(inputs: Calendar_Add_ChannelInputs) => LocalizedString} */ () => {
@@ -219,7 +219,7 @@ export const calendar_import_error_media_failed = /** @type {(inputs: Calendar_I
 };
 
 export const calendar_import_error_media_file_too_many = /** @type {(inputs: Calendar_Import_Error_Media_File_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} odkaz na médium. Rozdělte ho na menší soubory.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} odkazy na média. Rozdělte ho na menší soubory.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} odkazu na média. Rozdělte ho na menší soubory.`);
@@ -243,7 +243,7 @@ export const calendar_import_error_media_rejected = /** @type {(inputs: Calendar
 };
 
 export const calendar_import_error_media_too_many = /** @type {(inputs: Calendar_Import_Error_Media_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Řádek může mít nejvýš ${i?.count} odkaz na médium.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Řádek může mít nejvýš ${i?.count} odkazy na média.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Řádek může mít nejvýš ${i?.count} odkazu na média.`);
@@ -271,7 +271,7 @@ export const calendar_import_error_too_large = /** @type {(inputs: Calendar_Impo
 };
 
 export const calendar_import_error_too_many = /** @type {(inputs: Calendar_Import_Error_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvek. Rozdělte ho na menší soubory.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvky. Rozdělte ho na menší soubory.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Soubor má víc než ${i?.count} příspěvku. Rozdělte ho na menší soubory.`);
@@ -303,7 +303,7 @@ export const calendar_import_fetch_stopped = /** @type {(inputs: Calendar_Import
 };
 
 export const calendar_import_fetching = /** @type {(inputs: Calendar_Import_FetchingInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("cs", i?.total, {}, true);
+	const totalPlural = __paraglideRegistry.plural("cs", i?.total, {}, true);
 	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Stahují se média: odkaz ${i?.current} z ${i?.total}…`);
 	if (totalPlural === "few") return /** @type {LocalizedString} */ (`Stahují se média: odkaz ${i?.current} z ${i?.total}…`);
 	if (totalPlural === "many") return /** @type {LocalizedString} */ (`Stahují se média: odkaz ${i?.current} z ${i?.total}…`);
@@ -343,7 +343,7 @@ export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInpu
 };
 
 export const calendar_import_media_hint = /** @type {(inputs: Calendar_Import_Media_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Do sloupce media napište nejvýš ${i?.count} odkaz https; víc odkazů oddělte mezerou nebo znakem |. Před kontrolou souboru se stáhnou do knihovny médií.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Do sloupce media napište nejvýš ${i?.count} odkazy https oddělené mezerou nebo znakem |. Před kontrolou souboru se stáhnou do knihovny médií.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Do sloupce media napište nejvýš ${i?.count} odkazu https odděleného mezerou nebo znakem |. Před kontrolou souboru se stáhnou do knihovny médií.`);
@@ -359,7 +359,7 @@ export const calendar_import_open = /** @type {(inputs: Calendar_Import_OpenInpu
 };
 
 export const calendar_import_problems = /** @type {(inputs: Calendar_Import_ProblemsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`V souboru je ${i?.count} chyba. Opravte ho a vyberte znovu.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`V souboru jsou ${i?.count} chyby. Opravte ho a vyberte znovu.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`V souboru je ${i?.count} chyby. Opravte ho a vyberte znovu.`);
@@ -367,7 +367,7 @@ export const calendar_import_problems = /** @type {(inputs: Calendar_Import_Prob
 };
 
 export const calendar_import_ready = /** @type {(inputs: Calendar_Import_ReadyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek je připravený k importu.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky jsou připravené k importu.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku je připraveno k importu.`);
@@ -375,7 +375,7 @@ export const calendar_import_ready = /** @type {(inputs: Calendar_Import_ReadyIn
 };
 
 export const calendar_import_requested = /** @type {(inputs: Calendar_Import_RequestedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek čeká na schválení.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky čekají na schválení.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku čeká na schválení.`);
@@ -387,7 +387,7 @@ export const calendar_import_requested_queue = /** @type {(inputs: Calendar_Impo
 };
 
 export const calendar_import_scheduled = /** @type {(inputs: Calendar_Import_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} příspěvek je naplánovaný.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} příspěvky jsou naplánované.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} příspěvku je naplánováno.`);
@@ -415,7 +415,7 @@ export const calendar_load_failed = /** @type {(inputs: Calendar_Load_FailedInpu
 };
 
 export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`+${i?.count} další`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`+${i?.count} další`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`+${i?.count} dalšího`);
@@ -559,7 +559,7 @@ export const nav_new_post = /** @type {(inputs: Nav_New_PostInputs) => Localized
 };
 
 export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} naplánovaný příspěvek`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} naplánované příspěvky`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} naplánovaného příspěvku`);
