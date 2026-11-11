@@ -224,7 +224,7 @@
     },
     "/v1/auth/login": {
       "post": {
-        "description": "A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count.",
+        "description": "A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count, and neither does an attempt answered with 429.",
         "operationId": "auth.login",
         "requestBody": {
           "content": {

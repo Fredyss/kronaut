@@ -36,7 +36,7 @@ export const systemReady = <ThrowOnError extends boolean = true>(options?: Optio
 /**
  * Sign in with email and password
  *
- * A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count.
+ * A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count, and neither does an attempt answered with 429.
  */
 export const authLogin = <ThrowOnError extends boolean = true>(options: Options<AuthLoginData, ThrowOnError>): RequestResult<AuthLoginResponses, AuthLoginErrors, ThrowOnError> => (options.client ?? client).post<AuthLoginResponses, AuthLoginErrors, ThrowOnError>({
     url: '/v1/auth/login',

@@ -1,36 +1,49 @@
 import { isIP } from 'node:net';
 
 const CLOUDFLARE_HEADER = 'cf-connecting-ip';
-const MAPPED_V4 = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i;
 const V6_GROUPS = 8;
-const V6_PREFIX_GROUPS = 3;
+const V4_MAPPED = 0xffff;
 
 function v4Prefix(address: string): string {
   return `${address.split('.').slice(0, 3).join('.')}.0/24`;
 }
 
-function v6Prefix(address: string): string {
+function groupsOf(part: string): number[] {
+  if (!part.includes('.')) return [Number.parseInt(part, 16)];
+  const [a = 0, b = 0, c = 0, d = 0] = part.split('.').map(Number);
+  return [a * 256 + b, c * 256 + d];
+}
+
+function v6Groups(address: string): number[] {
   const [head = '', tail] = address.split('::');
-  const left = head === '' ? [] : head.split(':');
-  const right = tail === undefined || tail === '' ? [] : tail.split(':');
-  const width = right.length + (right.at(-1)?.includes('.') ? 1 : 0);
-  const gap = tail === undefined ? 0 : V6_GROUPS - left.length - width;
-  const groups = [...left, ...Array.from({ length: gap }, () => '0'), ...right];
-  const kept = groups.slice(0, V6_PREFIX_GROUPS).map((group) => Number.parseInt(group, 16));
-  return `${kept.map((group) => group.toString(16)).join(':')}::/48`;
+  const parse = (side: string) => (side === '' ? [] : side.split(':').flatMap(groupsOf));
+  const left = parse(head);
+  const right = tail === undefined ? [] : parse(tail);
+  const gap = tail === undefined ? 0 : V6_GROUPS - left.length - right.length;
+  return [...left, ...Array.from({ length: gap }, () => 0), ...right];
+}
+
+function v6Prefix(address: string): string {
+  const groups = v6Groups(address);
+  const [high = 0, low = 0] = groups.slice(6);
+  if (groups.slice(0, 5).every((group) => group === 0) && groups[5] === V4_MAPPED) {
+    return `${high >> 8}.${high & 255}.${low >> 8}.0/24`;
+  }
+  return `${groups
+    .slice(0, 3)
+    .map((group) => group.toString(16))
+    .join(':')}::/48`;
 }
 
 export function addressPrefix(address: string | null | undefined): string | null {
-  if (address === null || address === undefined) return null;
-  const plain = MAPPED_V4.exec(address)?.[1] ?? address;
+  const plain = address?.split('%')[0] ?? '';
   const family = isIP(plain);
   if (family === 4) return v4Prefix(plain);
-  if (family === 6 && !plain.includes('%')) return v6Prefix(plain);
-  return null;
+  return family === 6 ? v6Prefix(plain) : null;
 }
 
-// Cloudflare sets cf-connecting-ip itself, so it is trusted only on a request whose Access
-// assertion was verified: that request came through Cloudflare. X-Forwarded-For is never read.
+// A verified Access assertion shows who is calling, not which way the request came, so
+// cf-connecting-ip is only as good as the tunnel being the one way in. X-Forwarded-For is never read.
 export function clientPrefix(
   accessVerified: boolean,
   request: Request,

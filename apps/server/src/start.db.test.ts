@@ -3,6 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { request } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { encodePublicId } from '@kronaut/core';
 import { createDatabase, type Database } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { createLocalStore, deriveMediaSigningKey, signMediaPath, storageKey } from '@kronaut/media';
@@ -13,6 +14,7 @@ import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { pngFixture } from './actors/media/testing.ts';
 import type { ServerConfig, ServerRole } from './base/config/config.ts';
+import { createTestUser, PASSWORD } from './base/http/testing.ts';
 import { recordCronRun } from './infrastructure/jobs/cron-run.ts';
 import { CRON_TASKS } from './infrastructure/jobs/cron-tasks.ts';
 import { startHeartbeat } from './infrastructure/jobs/heartbeat.ts';
@@ -80,6 +82,50 @@ function send(port: number | null, path: string, body?: Buffer): Promise<number>
     );
     req.once('error', reject);
     req.end(body);
+  });
+}
+
+interface Reply {
+  readonly status: number;
+  readonly cookie: string;
+  readonly body: unknown;
+}
+
+function exchange(port: number | null, path: string, sent?: object, cookie = ''): Promise<Reply> {
+  const headers = {
+    'content-type': 'application/json',
+    'idempotency-key': randomUUID(),
+    origin: 'http://localhost',
+    cookie,
+  };
+  return new Promise((resolve, reject) => {
+    const req = request(
+      { host: '127.0.0.1', port: port ?? 0, path, method: sent ? 'POST' : 'GET', headers },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.once('end', () =>
+          resolve({
+            status: res.statusCode ?? 0,
+            cookie: res.headers['set-cookie']?.[0]?.split(';')[0] ?? '',
+            body: JSON.parse(Buffer.concat(chunks).toString('utf8') || 'null'),
+          }),
+        );
+      },
+    );
+    req.once('error', reject);
+    req.end(sent === undefined ? undefined : JSON.stringify(sent));
+  });
+}
+
+async function workspaceOf(label: string): Promise<string> {
+  const userId = await createTestUser(app, label);
+  return await app.withActor({ kind: 'user', id: userId }, async (trx) => {
+    const result = await sql<{ workspace_id: string }>`
+      select workspace_id
+        from provision_organization(${label}, ${label}, ${label}, 'Europe/Bratislava')
+    `.execute(trx);
+    return encodePublicId('workspace', result.rows[0]?.workspace_id ?? '');
   });
 }
 
@@ -187,6 +233,34 @@ describe('startServer', () => {
       expect(await heartbeatOf('start-media')).toBeUndefined();
     } finally {
       await server.stop();
+    }
+  });
+
+  it('serves a link the API signed when the two roles share only the media key', async () => {
+    const mediaKey = randomBytes(32);
+    const media = { ...config('media', 'key-media'), secret: null, mediaKey };
+    const servers = await Promise.all([
+      startServer({ ...config('api', 'key-api'), mediaKey }, { logger, onFailure, env }),
+      startServer(media, { logger, onFailure }),
+    ]);
+    try {
+      const [api, served] = servers;
+      const workspace = await workspaceOf('keyed');
+      const login = { email: 'keyed@example.test', password: PASSWORD };
+      const { cookie } = await exchange(api.port, '/v1/auth/login', login);
+      const upload = { dataBase64: Buffer.from(pngFixture({ width: 3 })).toString('base64') };
+      const path = `/v1/workspaces/${workspace}/media`;
+      expect((await exchange(api.port, path, upload, cookie)).status).toBe(201);
+      const library = (await exchange(api.port, path, undefined, cookie)).body as {
+        items: { previewUrl: string }[];
+      };
+      const link = new URL(library.items[0]?.previewUrl ?? '');
+      expect(await send(served.port, `${link.pathname}${link.search}`)).toBe(200);
+      const expiresAt = Number(link.searchParams.get('exp'));
+      const storage = link.pathname.slice('/m/'.length);
+      expect(await send(served.port, signMediaPath(randomBytes(32), storage, expiresAt))).toBe(404);
+    } finally {
+      await Promise.all(servers.map((server) => server.stop()));
     }
   });
 

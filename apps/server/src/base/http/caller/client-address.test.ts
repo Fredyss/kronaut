@@ -9,6 +9,8 @@ describe('addressPrefix', () => {
   it('keeps the /24 of an IPv4 address, mapped or not', () => {
     expect(addressPrefix('203.0.113.77')).toBe('203.0.113.0/24');
     expect(addressPrefix('::ffff:203.0.113.77')).toBe('203.0.113.0/24');
+    expect(addressPrefix('::ffff:cb00:714d')).toBe('203.0.113.0/24');
+    expect(addressPrefix('0:0:0:0:0:ffff:203.0.113.77')).toBe('203.0.113.0/24');
   });
 
   it('keeps the /48 of an IPv6 address however it is written', () => {
@@ -18,18 +20,11 @@ describe('addressPrefix', () => {
     expect(addressPrefix('1::2:3:4:5:6:7')).toBe('1:0:2::/48');
     expect(addressPrefix('::1')).toBe('0:0:0::/48');
     expect(addressPrefix('64:ff9b::192.0.2.1')).toBe('64:ff9b:0::/48');
+    expect(addressPrefix('fe80::1%eth0')).toBe('fe80:0:0::/48');
   });
 
   it('refuses anything that is not one plain address', () => {
-    const refused = [
-      null,
-      undefined,
-      '',
-      'localhost',
-      '203.0.113.7, 10.0.0.1',
-      '1.2.3',
-      'fe80::1%eth0',
-    ];
+    const refused = [null, undefined, '', 'localhost', '203.0.113.7, 10.0.0.1', '1.2.3', '%eth0'];
     expect(refused.map(addressPrefix)).toEqual(refused.map(() => null));
   });
 });

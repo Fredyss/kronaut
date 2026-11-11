@@ -87,7 +87,6 @@ function masterSecret(config: ServerConfig): Uint8Array {
   return config.secret;
 }
 
-// Without KRONAUT_MEDIA_KEY the key is derived, as before the media role had a key of its own.
 function mediaKeyOf(config: ServerConfig): Uint8Array {
   return config.mediaKey ?? deriveMediaSigningKey(masterSecret(config));
 }

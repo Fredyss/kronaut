@@ -28,10 +28,13 @@ export async function takeWindowQuota(
   return result.rows.length === 1;
 }
 
+// One statement per key, in the caller's order: a caller that takes several buckets returns them
+// in the order it took them, so a take and a return never wait on each other's row locks.
 export async function returnWindowQuota(trx: TenantDb, keys: readonly string[]): Promise<void> {
-  if (keys.length === 0) return;
-  await sql`
-    update rate_buckets set tokens = least(capacity, tokens + 1), updated_at = now()
-     where key = any(${keys}::text[])
-  `.execute(trx);
+  for (const key of keys) {
+    await sql`
+      update rate_buckets set tokens = least(capacity, tokens + 1), updated_at = now()
+       where key = ${key}
+    `.execute(trx);
+  }
 }

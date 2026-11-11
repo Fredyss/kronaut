@@ -39,7 +39,7 @@ export const loginRoute = defineRoute({
   response: z.object({ userId: z.string() }),
   summary: 'Sign in with email and password',
   description:
-    'A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count.',
+    'A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count, and neither does an attempt answered with 429.',
   tags: ['auth'],
 });
 
@@ -103,6 +103,15 @@ async function admitLogin(deps: AuthDeps, ctx: RequestContext, email: string): P
   return slot;
 }
 
+// The session exists by now, so a slot that can't be given back must not fail the sign-in.
+async function releaseLogin(deps: AuthDeps, ctx: RequestContext, slot: LoginSlot): Promise<void> {
+  try {
+    await deps.db.withActor({ kind: 'system' }, (trx) => returnLoginSlot(trx, slot));
+  } catch (err) {
+    ctx.logger.warn({ err }, 'a sign-in slot was not given back');
+  }
+}
+
 function bindLogin(deps: AuthDeps) {
   return bindRoute(loginRoute, async ({ body }, ctx) => {
     const email = normalizeEmail(body.email);
@@ -123,7 +132,6 @@ function bindLogin(deps: AuthDeps) {
     const userId = account.user_id;
     const created = await deps.db.withActor({ kind: 'user', id: userId }, async (trx) => {
       const session = await createSession(trx, deps.keys.session, userId, ctx.now);
-      await returnLoginSlot(trx, slot);
       await recordEvent(trx, ctx, {
         kind: 'auth.login_succeeded',
         userId,
@@ -131,6 +139,7 @@ function bindLogin(deps: AuthDeps) {
       });
       return session;
     });
+    await releaseLogin(deps, ctx, slot);
     ctx.setCookie(SESSION_COOKIE, created.token, { maxAgeSeconds: SESSION_ABSOLUTE_MS / 1000 });
     return { body: { userId: encodePublicId('user', userId) } };
   });
