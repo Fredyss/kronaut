@@ -1,4 +1,4 @@
-import { encodePublicId } from '@kronaut/core';
+import { decodePublicId, encodePublicId } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -38,15 +38,19 @@ afterAll(async () => {
   await test?.stop();
 });
 
-function stored(post: PostDto) {
-  return owner.withActor(SYSTEM, (trx) =>
+async function stored(post: PostDto) {
+  const rows = await owner.withActor(SYSTEM, (trx) =>
     trx
       .selectFrom('post_destinations')
       .select(['social_account_id', 'selection_source', 'source_group_id'])
       .where('post_id', '=', internal(post.id))
-      .orderBy('created_at')
-      .orderBy('id')
       .execute(),
+  );
+  return new Map(
+    rows.map((row) => [
+      encodePublicId('socialAccount', row.social_account_id),
+      [row.selection_source, row.source_group_id],
+    ]),
   );
 }
 
@@ -67,10 +71,12 @@ describe('sourceGroupId on destinations', () => {
       [accountA, group.id],
       [accountB, null],
     ]);
-    expect((await stored(post)).map((row) => [row.selection_source, row.source_group_id])).toEqual([
-      ['group', expect.any(String)],
-      ['manual', null],
-    ]);
+    expect(await stored(post)).toEqual(
+      new Map([
+        [accountA, ['group', decodePublicId('group', group.id)]],
+        [accountB, ['manual', null]],
+      ]),
+    );
   });
 
   it('refuses a channel that is not in the group', async () => {
@@ -111,7 +117,7 @@ describe('sourceGroupId on destinations', () => {
     });
     expect(again.status).toBe(200);
     expect(sources((await again.json()) as PostDto)).toEqual([[accountA, null]]);
-    expect((await stored(post)).map((row) => row.selection_source)).toEqual(['manual']);
+    expect(await stored(post)).toEqual(new Map([[accountA, ['manual', null]]]));
   });
 
   it('leaves the post untouched when the channel leaves the group later', async () => {
