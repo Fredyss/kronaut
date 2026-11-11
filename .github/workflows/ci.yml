@@ -68,16 +68,17 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - timeout-minutes: 8
+      - timeout-minutes: 10
         run: |
           apt=(sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=15 -o Acquire::https::Timeout=15)
           for attempt in 1 2 3; do
-            timeout 90 "${apt[@]}" update --error-on=any \
-              && "${apt[@]}" install -y --no-install-recommends ffmpeg \
+            timeout 90 "${apt[@]}" update \
+              && timeout 120 "${apt[@]}" install -y --no-install-recommends --download-only ffmpeg \
+              && "${apt[@]}" install -y --no-install-recommends --no-download ffmpeg \
               && exit 0
-            sleep $((attempt * 15))
+            [ "$attempt" = 3 ] || sleep $((attempt * 15))
           done
-          echo "::error::Could not install ffmpeg from the Ubuntu archive after 3 attempts"
+          echo "::error::Could not install ffmpeg with apt after 3 attempts"
           exit 1
       - run: ffmpeg -version
       - run: pnpm test:db
