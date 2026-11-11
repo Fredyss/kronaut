@@ -47,6 +47,34 @@ describe('loadServerConfig', () => {
     );
   });
 
+  it('lets the media role run on its own key without the master secret', () => {
+    const key = Buffer.alloc(32, 9).toString('base64');
+    const media = load({ KRONAUT_SECRET: undefined, KRONAUT_MEDIA_KEY: key }, ['--role=media']);
+    expect(media.secret).toBeNull();
+    expect(media.mediaKey).toEqual(new Uint8Array(32).fill(9));
+    const both = load({ KRONAUT_MEDIA_KEY: key }, ['--role=media']);
+    expect(both.secret).toBeNull();
+    const derived = load({}, ['--role=media']);
+    expect(derived.secret).toHaveLength(32);
+    expect(derived.mediaKey).toBeNull();
+    const none = failure(() => load({ KRONAUT_SECRET: undefined }, ['--role=media']));
+    expect(none.variable).toBe('KRONAUT_MEDIA_KEY');
+  });
+
+  it('keeps the master secret required for the other roles and checks the media key', () => {
+    const key = Buffer.alloc(32, 9).toString('base64');
+    const api = load({ KRONAUT_MEDIA_KEY: key }, ['--role=api']);
+    expect(api.secret).toHaveLength(32);
+    expect(api.mediaKey).toHaveLength(32);
+    expect(load({}).mediaKey).toBeNull();
+    const missing = failure(() => load({ KRONAUT_SECRET: undefined, KRONAUT_MEDIA_KEY: key }));
+    expect(missing.variable).toBe('KRONAUT_SECRET');
+    const long = Buffer.alloc(48, 9).toString('base64');
+    const wrong = failure(() => load({ KRONAUT_MEDIA_KEY: long }));
+    expect(wrong.variable).toBe('KRONAUT_MEDIA_KEY');
+    expect(wrong.message).not.toContain(long);
+  });
+
   it('names the variable and never echoes a secret', () => {
     const error = failure(() => load({ KRONAUT_SECRET: Buffer.alloc(16).toString('base64') }));
     expect(error.variable).toBe('KRONAUT_SECRET');

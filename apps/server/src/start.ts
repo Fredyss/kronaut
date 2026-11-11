@@ -82,10 +82,20 @@ async function fence(db: Database, instanceId: string, logger: Logger): Promise<
   if (paused) logger.warn({ instanceId }, 'publishing is paused');
 }
 
+function masterSecret(config: ServerConfig): Uint8Array {
+  if (config.secret === null) throw new Error('this role runs without KRONAUT_SECRET');
+  return config.secret;
+}
+
+// Without KRONAUT_MEDIA_KEY the key is derived, as before the media role had a key of its own.
+function mediaKeyOf(config: ServerConfig): Uint8Array {
+  return config.mediaKey ?? deriveMediaSigningKey(masterSecret(config));
+}
+
 async function startMedia(config: ServerConfig, clock: Clock): Promise<StartedServer> {
   const media = createMediaServer({
     store: createLocalStore(join(config.dataDir, 'media')),
-    signingKey: deriveMediaSigningKey(config.secret),
+    signingKey: mediaKeyOf(config),
     clock,
   });
   const http = await listen(media.fetch, config.port);
@@ -158,7 +168,7 @@ async function startWorker(boot: Boot): Promise<void> {
     media: createMediaAccess({
       db,
       store,
-      signingKey: deriveMediaSigningKey(config.secret),
+      signingKey: mediaKeyOf(config),
       mediaBaseUrl: config.mediaUrl,
       clock,
     }),
@@ -221,7 +231,7 @@ async function startApi(boot: Boot): Promise<void> {
   const access = state.access;
   const deps: HttpDeps = {
     db,
-    keys: deriveHttpKeys(config.secret),
+    keys: deriveHttpKeys(masterSecret(config)),
     logger,
     clock,
     publicBaseUrl: config.publicUrl.origin,
@@ -235,7 +245,7 @@ async function startApi(boot: Boot): Promise<void> {
   const store = createLocalStore(join(config.dataDir, 'media'));
   const staging = stagingIn(config.dataDir);
   const signer = createMediaSigner({
-    signingKey: deriveMediaSigningKey(config.secret),
+    signingKey: mediaKeyOf(config),
     mediaBaseUrl: config.mediaUrl,
     clock,
   });

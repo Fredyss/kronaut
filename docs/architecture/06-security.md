@@ -2,7 +2,7 @@
 
 | Threat | Kronaut control | Enforced by |
 |---|---|---|
-| Upload path traversal | no request-derived paths; storage key = `sha256(workspace_id ‖ master_sha256)`; key regex; media served by a separate role without DB creds | fuzz test (encoded `..`, `%2f`, Unicode, symlink) |
+| Upload path traversal | no request-derived paths; storage key = `sha256(workspace_id ‖ master_sha256)`; key regex; media served by a separate role without DB creds or the master secret (it holds only the media signing key, [Media](07-media.md)) | fuzz test (encoded `..`, `%2f`, Unicode, symlink) |
 | Predictable secrets from a non-crypto PRNG | a single `randomToken()` (`crypto.randomBytes(32)`) | GritQL ban on `Math.random` in server code |
 | Routes public by accident (allowlist-based auth) | `defineRoute({auth: 'session'\|'grant'\|'reviewer'\|'public', action, …})` required; deny by default; every route calls `authorize()` | route-enumeration test: every route 401s unless it is in the committed public-route snapshot (CODEOWNERS) |
 | Long-lived session tokens; one secret reused for signing and encryption | opaque DB sessions, `__Host-` cookie, HttpOnly, Secure, SameSite=Lax, 7 d idle / 30 d absolute; logout-all = delete rows; a password change revokes all | no JWT lib for sessions; expiry tests |

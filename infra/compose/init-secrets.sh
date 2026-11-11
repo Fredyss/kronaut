@@ -64,6 +64,7 @@ login postgres_app_password database_url kronaut_app_login
 login postgres_operator_password operator_database_url kronaut_operator_login
 single instance_id "$(uuid)"
 single kronaut_secret "$(base64_unpadded 32)"
+single media_signing_key "$(base64_unpadded 32)"
 single kek_1 "$(base64_unpadded 32)"
 if ! exists backup_recipient; then
   : > "$dir/backup_recipient"

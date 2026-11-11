@@ -17,7 +17,6 @@ x-instance-env: &instance-env
   KRONAUT_PUBLIC_URL: ${KRONAUT_PUBLIC_URL:?set KRONAUT_PUBLIC_URL in .env}
   KRONAUT_MEDIA_URL: ${KRONAUT_MEDIA_URL:?set KRONAUT_MEDIA_URL in .env}
   KRONAUT_INSTANCE_ID_FILE: /run/secrets/instance_id
-  KRONAUT_SECRET_FILE: /run/secrets/kronaut_secret
   KRONAUT_DATA_DIR: /data
   KRONAUT_LOG_LEVEL: ${KRONAUT_LOG_LEVEL:-info}
   KRONAUT_INSTANCE_ADMINS: ${KRONAUT_INSTANCE_ADMINS:-}
@@ -70,6 +69,8 @@ services:
     command: [--role=all]
     environment:
       <<: *instance-env
+      KRONAUT_SECRET_FILE: /run/secrets/kronaut_secret
+      KRONAUT_MEDIA_KEY_FILE: /run/secrets/media_signing_key
       KRONAUT_DATABASE_URL_FILE: /run/secrets/database_url
       KRONAUT_KEK_1_FILE: /run/secrets/kek_1
       ACCESS_AUD: ${ACCESS_AUD:?set ACCESS_AUD in .env}
@@ -80,7 +81,7 @@ services:
       KRONAUT_SMTP_PASSWORD_FILE: /run/secrets/smtp_password
       KRONAUT_SMTP_FROM: ${KRONAUT_SMTP_FROM:-}
       KRONAUT_SMTP_TLS: ${KRONAUT_SMTP_TLS:-}
-    secrets: [instance_id, kronaut_secret, database_url, kek_1, smtp_password]
+    secrets: [instance_id, kronaut_secret, media_signing_key, database_url, kek_1, smtp_password]
     volumes:
       - data:/data
     networks: [db, egress]
@@ -102,8 +103,10 @@ services:
   media:
     <<: *kronaut
     command: [--role=media]
-    environment: *instance-env
-    secrets: [instance_id, kronaut_secret]
+    environment:
+      <<: *instance-env
+      KRONAUT_MEDIA_KEY_FILE: /run/secrets/media_signing_key
+    secrets: [instance_id, media_signing_key]
     volumes:
       - data:/data:ro
     networks: [media]
@@ -163,6 +166,7 @@ services:
     command: [kronaut]
     environment:
       <<: *instance-env
+      KRONAUT_SECRET_FILE: /run/secrets/kronaut_secret
       KRONAUT_DATABASE_URL_FILE: /run/secrets/database_url
       KRONAUT_MIGRATION_DATABASE_URL_FILE: /run/secrets/migration_database_url
       KRONAUT_OPERATOR_DATABASE_URL_FILE: /run/secrets/operator_database_url
@@ -205,6 +209,8 @@ secrets:
     file: ${KRONAUT_SECRETS_DIR:-../../secrets}/instance_id
   kronaut_secret:
     file: ${KRONAUT_SECRETS_DIR:-../../secrets}/kronaut_secret
+  media_signing_key:
+    file: ${KRONAUT_SECRETS_DIR:-../../secrets}/media_signing_key
   kek_1:
     file: ${KRONAUT_SECRETS_DIR:-../../secrets}/kek_1
   backup_recipient:

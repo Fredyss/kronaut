@@ -42,7 +42,7 @@ function config(
   port: number,
   mediaPort: number,
   dataDir: string,
-): ServerConfig {
+): ServerConfig & { secret: Uint8Array } {
   return {
     role: 'api',
     port,
@@ -52,6 +52,7 @@ function config(
     dataDir,
     instanceId: randomUUID(),
     secret: randomBytes(32),
+    mediaKey: null,
     access: null,
     logLevel: 'silent',
     workerId: 'e2e-api',

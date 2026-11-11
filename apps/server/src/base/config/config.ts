@@ -35,7 +35,8 @@ export interface ServerConfig {
   readonly mediaUrl: URL;
   readonly dataDir: string;
   readonly instanceId: string;
-  readonly secret: Uint8Array;
+  readonly secret: Uint8Array | null;
+  readonly mediaKey: Uint8Array | null;
   readonly access: AccessConfig | null;
   readonly logLevel: LogLevel;
   readonly workerId: string;
@@ -49,6 +50,7 @@ const BASE64 = /^[A-Za-z0-9+/_-]+={0,2}$/;
 const TEAM_DOMAIN = /^[a-z0-9-]+\.cloudflareaccess\.com$/;
 const WORKER_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const MIN_SECRET_BYTES = 32;
+const MEDIA_KEY_BYTES = 32;
 const SMTPS_PORT = 465;
 const LOCAL_HOSTS: ReadonlySet<string> = new Set(['localhost', '127.0.0.1', '[::1]']);
 
@@ -219,6 +221,32 @@ function parseInstanceAdmins(value: string | undefined): string[] {
   return emails;
 }
 
+function parseMediaKey(env: Env, readFile: ReadFile): Uint8Array | null {
+  const value = envValue(env, 'KRONAUT_MEDIA_KEY', readFile);
+  if (value === undefined) return null;
+  const key = parseSecret('KRONAUT_MEDIA_KEY', value);
+  if (key.byteLength !== MEDIA_KEY_BYTES) {
+    key.fill(0);
+    throw new ConfigError('KRONAUT_MEDIA_KEY', `must decode to exactly ${MEDIA_KEY_BYTES} bytes`);
+  }
+  return key;
+}
+
+// The media role is served without Access, so with its own key it never reads KRONAUT_SECRET.
+function parseSecrets(
+  env: Env,
+  role: ServerRole,
+  readFile: ReadFile,
+): Pick<ServerConfig, 'secret' | 'mediaKey'> {
+  const mediaKey = parseMediaKey(env, readFile);
+  if (role === 'media' && mediaKey !== null) return { secret: null, mediaKey };
+  if (role === 'media' && envValue(env, 'KRONAUT_SECRET', readFile) === undefined) {
+    throw new ConfigError('KRONAUT_MEDIA_KEY', 'is required for the media role');
+  }
+  const secret = parseSecret('KRONAUT_SECRET', requireEnv(env, 'KRONAUT_SECRET', readFile));
+  return { secret, mediaKey };
+}
+
 function parseWebDir(value: string | undefined): string | null {
   return value === undefined ? null : resolve(value);
 }
@@ -251,7 +279,7 @@ export function loadServerConfig(
     mediaUrl,
     dataDir: resolve(envValue(env, 'KRONAUT_DATA_DIR', readFile) ?? './data'),
     instanceId: parseUuid('KRONAUT_INSTANCE_ID', requireEnv(env, 'KRONAUT_INSTANCE_ID', readFile)),
-    secret: parseSecret('KRONAUT_SECRET', requireEnv(env, 'KRONAUT_SECRET', readFile)),
+    ...parseSecrets(env, role, readFile),
     access: parseAccess(env, readFile),
     logLevel: parseLogLevel(envValue(env, 'KRONAUT_LOG_LEVEL', readFile)),
     workerId: parseWorkerId(envValue(env, 'KRONAUT_WORKER_ID', readFile), role),

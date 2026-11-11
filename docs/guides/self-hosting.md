@@ -21,7 +21,7 @@ cp .env.example .env
 ```
 
 - **`init-secrets.sh`:**
-  - Writes every missing file in `secrets/` at the repository root and never overwrites an existing one. It creates the Postgres superuser, app login and operator login passwords, the matching database URLs, `instance_id`, `kronaut_secret`, the first KEK (`kek_1`) and an empty `backup_recipient`.
+  - Writes every missing file in `secrets/` at the repository root and never overwrites an existing one. It creates the Postgres superuser, app login and operator login passwords, the matching database URLs, `instance_id`, `kronaut_secret`, `media_signing_key`, the first KEK (`kek_1`) and an empty `backup_recipient`.
   - Then sets each file to mode `0400`, owned by the one container user that reads it. Files named `postgres_*` go to uid 70 (the Postgres image), and all others go to uid 65532 (the Kronaut and cloudflared images). On Linux the script does this through a short-lived `alpine` container, so you don't need `sudo`. On macOS it only sets the mode.
   - Afterwards you can no longer read the files as your own user. That is intended.
   - Rerunning the script is safe. It fixes the owner and mode of files you added by hand, such as the tunnel token.
@@ -192,7 +192,9 @@ The `backup` service starts with the stack and makes an encrypted archive every 
   ```
 
   The instance comes up in restore quarantine. Review the paused posts, then run `docker compose run --rm cli kronaut release`.
-- **Upgrade:** `git pull`, then `docker compose up -d --build`. `migrate` runs automatically before the new `app` starts.
+- **Upgrade:** `git pull`, then `sh init-secrets.sh`, then `docker compose up -d --build`. `migrate` runs automatically before the new `app` starts.
+  - The script only adds secret files a new release needs and keeps the rest. Without it, a release with a new file stops at `bind source path does not exist`.
+  - The release that adds `media_signing_key` changes the key that signs media links. Links signed before the upgrade stop working, so a post being sent at that moment retries with a fresh link.
 - **Logs:** `docker compose logs -f app`, or `media`, `migrate`, `backup`, `cloudflared`, `postgres`. Logs are JSON lines and never contain secrets.
 - **Local database access (debugging only):** `postgres` sits on an internal network, so a published port also needs a second network. Create `compose.override.yaml` next to `compose.yaml`; compose picks it up automatically. Delete it when you are done.
 

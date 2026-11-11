@@ -53,6 +53,7 @@ function config(role: ServerRole, workerId: string, instanceId = INSTANCE_ID): S
     dataDir,
     instanceId,
     secret: randomBytes(32),
+    mediaKey: null,
     access: null,
     logLevel: 'silent',
     workerId,
@@ -167,15 +168,20 @@ describe('startServer', () => {
     }
   });
 
-  it('serves signed media without a database', async () => {
-    const media = config('media', 'start-media');
+  it.each([
+    { name: 'its own key and no master secret', own: true },
+    { name: 'a key derived from the master secret', own: false },
+  ])('serves signed media without a database, with $name', async ({ own }) => {
+    const base = config('media', 'start-media');
+    const media = own ? { ...base, secret: null, mediaKey: randomBytes(32) } : base;
+    const signingKey = media.mediaKey ?? deriveMediaSigningKey(base.secret ?? new Uint8Array());
     const png = pngFixture();
     const key = storageKey(randomUUID(), createHash('sha256').update(png).digest());
     await createLocalStore(join(dataDir, 'media')).put(key, png);
     const server = await startServer(media, { logger, onFailure });
     try {
       const expiresAt = Math.floor(Temporal.Now.instant().epochMilliseconds / 1000) + 600;
-      const path = signMediaPath(deriveMediaSigningKey(media.secret), key, expiresAt);
+      const path = signMediaPath(signingKey, key, expiresAt);
       expect(await send(server.port, path)).toBe(200);
       expect(await send(server.port, '/healthz')).toBe(404);
       expect(await heartbeatOf('start-media')).toBeUndefined();

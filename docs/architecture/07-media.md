@@ -5,6 +5,8 @@
   - IG/Threads/TikTok fetch media from it, OAuth callbacks need it, and Bluesky's confidential client publishes its client-metadata URL on it (ADR-0035).
   - Setup checks reachability before connecting the first channel.
 - **Signed URLs:** `?exp=&sig=` HMAC.
+  - **Key:** `KRONAUT_MEDIA_KEY`, 32 random bytes that `init-secrets.sh` writes as `media_signing_key`. The app signs with it and the media role verifies with it. The media role is the one service reachable without Access, so in the compose stack it mounts this key and not `kronaut_secret`: reading its secrets gives no session, grant or reset key.
+  - Without `KRONAUT_MEDIA_KEY`, every role derives the key from `KRONAUT_SECRET` (HKDF, `kronaut/media-url/v1`), as a single-process or development setup does.
   - **Signed at attempt time**, with TTL ~1 h for images and ~6 h for video; re-signed on each retry.
   - IG/Threads containers live 24 h.
   - Meta/TikTok fetch windows are measured in Phase 0.
