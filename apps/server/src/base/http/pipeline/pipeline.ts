@@ -1,6 +1,7 @@
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { checkAccess } from '../caller/access-check.ts';
+import { clientPrefix } from '../caller/client-address.ts';
 import { errorBody, HttpError } from '../errors.ts';
 import { readLimited } from '../input.ts';
 import type { HttpDeps } from './kernel.ts';
@@ -16,12 +17,20 @@ export interface Kernel {
   readonly maxBody: number;
 }
 
+export interface Arrival {
+  readonly request: Request;
+  readonly requestId: string;
+  readonly logger: Logger;
+  readonly remoteAddress: string | undefined;
+}
+
 export interface Inbound {
   readonly request: Request;
   readonly url: URL;
   readonly requestId: string;
   readonly logger: Logger;
   readonly now: Temporal.Instant;
+  readonly ipPrefix: string | null;
 }
 
 const NOT_FOUND = 'Not found.';
@@ -41,15 +50,11 @@ function methodNotAllowed(kernel: Kernel, allow: readonly string[], requestId: s
   return respond(405, errorBody(error, requestId), headers);
 }
 
-export async function pipeline(
-  kernel: Kernel,
-  request: Request,
-  requestId: string,
-  logger: Logger,
-): Promise<Response> {
+export async function pipeline(kernel: Kernel, arrival: Arrival): Promise<Response> {
   const { deps } = kernel;
+  const { request, requestId, logger } = arrival;
   const url = new URL(request.url);
-  await checkAccess(deps.access, request, url, logger);
+  const verified = await checkAccess(deps.access, request, url, logger);
   const now = deps.clock();
   const matched = kernel.route(request.method, url.pathname);
   if (matched.kind === 'not_found') {
@@ -64,6 +69,7 @@ export async function pipeline(
   if (matched.kind === 'method_not_allowed') {
     return methodNotAllowed(kernel, matched.allow, requestId);
   }
-  const inbound: Inbound = { request, url, requestId, logger, now };
+  const ipPrefix = clientPrefix(verified, request, arrival.remoteAddress);
+  const inbound: Inbound = { request, url, requestId, logger, now, ipPrefix };
   return await serveRoute(kernel, { ...inbound, matched, raw, raised });
 }

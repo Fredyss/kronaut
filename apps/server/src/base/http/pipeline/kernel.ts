@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { HttpBindings } from '@hono/node-server';
 import type { Database } from '@kronaut/db';
 import { Hono } from 'hono';
 import type { Logger } from 'pino';
@@ -24,6 +25,7 @@ export interface HttpKeys {
   readonly reset: Uint8Array;
   readonly oauthPending: Uint8Array;
   readonly metaSubject: Uint8Array;
+  readonly loginThrottle: Uint8Array;
 }
 
 export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
@@ -33,6 +35,7 @@ export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
     reset: purposeKey(secret, 'reset-token/v1'),
     oauthPending: purposeKey(secret, 'oauth-pending/v1'),
     metaSubject: purposeKey(secret, 'meta-subject/v1'),
+    loginThrottle: purposeKey(secret, 'login-throttle/v1'),
   };
 }
 
@@ -65,19 +68,21 @@ export function createHttpApp(deps: HttpDeps, routes: readonly BoundRoute[]): Ho
     maxBody: deps.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES,
   };
 
-  const handle = async (request: Request): Promise<Response> => {
+  const handle = async (request: Request, env: unknown): Promise<Response> => {
     const inbound = request.headers.get('x-request-id');
     const requestId = inbound !== null && REQUEST_ID.test(inbound) ? inbound : randomUUID();
     const logger = deps.logger.child({ requestId });
+    const remoteAddress = (env as Partial<HttpBindings> | undefined)?.incoming?.socket
+      ?.remoteAddress;
     try {
-      return await pipeline(kernel, request, requestId, logger);
+      return await pipeline(kernel, { request, requestId, logger, remoteAddress });
     } catch (err) {
       return failure(err, requestId, logger, kernel.hsts);
     }
   };
 
   const app = new Hono();
-  app.all('*', (c) => handle(c.req.raw));
+  app.all('*', (c) => handle(c.req.raw, c.env));
   app.onError((err) => {
     const requestId = randomUUID();
     return failure(err, requestId, deps.logger.child({ requestId }), kernel.hsts);

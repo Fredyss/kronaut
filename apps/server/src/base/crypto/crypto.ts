@@ -7,7 +7,8 @@ export type KeyPurpose =
   | 'reset-token/v1'
   | 'oauth-state/v1'
   | 'oauth-pending/v1'
-  | 'meta-subject/v1';
+  | 'meta-subject/v1'
+  | 'login-throttle/v1';
 
 export const TOKEN_PREFIX = {
   session: 'kro_sess_',

@@ -3,10 +3,11 @@ import { encodePublicId, SELF_ACTION } from '@kronaut/core';
 import * as z from 'zod';
 import { HttpError } from '../../base/http/errors.ts';
 import type { HttpDeps } from '../../base/http/pipeline/kernel.ts';
-import { type BoundRoute, bindRoute } from '../../base/http/request.ts';
+import { type BoundRoute, bindRoute, type RequestContext } from '../../base/http/request.ts';
 import { EMAIL_MAX_LENGTH, normalizeEmail } from './email.ts';
 import { recordEvent, requireSession } from './events.ts';
 import { isInstanceAdmin } from './instance-admins.ts';
+import { type LoginSlot, returnLoginSlot, takeLoginSlot } from './login-throttle.ts';
 import { checkPassword, hashPassword, verifyPassword } from './password.ts';
 import { readUser, SESSION_INVALID, UserSchema } from './profile.ts';
 import { passwordBinding, RESET_TOKEN_MAX_LENGTH, verifyResetToken } from './reset-token.ts';
@@ -23,6 +24,7 @@ export const LOGIN_PASSWORD_MAX_LENGTH = 1024;
 
 const INVALID_CREDENTIALS = 'The email or password is incorrect.';
 const INVALID_RESET_LINK = 'The link is invalid or has expired.';
+const TOO_MANY_ATTEMPTS = 'Too many sign-in attempts. Try again later.';
 
 export const loginRoute = defineRoute({
   id: 'auth.login',
@@ -36,6 +38,8 @@ export const loginRoute = defineRoute({
   }),
   response: z.object({ userId: z.string() }),
   summary: 'Sign in with email and password',
+  description:
+    'A wrong email or password is 401. Failed attempts are counted per address, per address and email, and per email; past a limit every attempt is 429 rate_limited until its window ends, whatever the password. A successful sign-in does not count.',
   tags: ['auth'],
 });
 
@@ -87,9 +91,22 @@ export const meRoute = defineRoute({
 
 export type AuthDeps = Pick<HttpDeps, 'db' | 'keys' | 'instanceAdmins'>;
 
+// The slot is taken whether or not the account exists, so a 429 says nothing about an email.
+async function admitLogin(deps: AuthDeps, ctx: RequestContext, email: string): Promise<LoginSlot> {
+  const slot = await deps.db.withActor({ kind: 'system' }, (trx) =>
+    takeLoginSlot(trx, deps.keys.loginThrottle, { email, ipPrefix: ctx.ipPrefix }),
+  );
+  if (slot.blockedBy !== null) {
+    ctx.logger.warn({ limit: slot.blockedBy }, 'sign-in throttled');
+    throw new HttpError('rate_limited', TOO_MANY_ATTEMPTS);
+  }
+  return slot;
+}
+
 function bindLogin(deps: AuthDeps) {
   return bindRoute(loginRoute, async ({ body }, ctx) => {
     const email = normalizeEmail(body.email);
+    const slot = await admitLogin(deps, ctx, email);
     const account = await deps.db.withActor({ kind: 'system' }, (trx) => lookupLogin(trx, email));
     const verified = await verifyPassword(account?.password_hash ?? null, body.password);
     if (account === undefined || !verified || account.totp_enabled) {
@@ -106,6 +123,7 @@ function bindLogin(deps: AuthDeps) {
     const userId = account.user_id;
     const created = await deps.db.withActor({ kind: 'user', id: userId }, async (trx) => {
       const session = await createSession(trx, deps.keys.session, userId, ctx.now);
+      await returnLoginSlot(trx, slot);
       await recordEvent(trx, ctx, {
         kind: 'auth.login_succeeded',
         userId,

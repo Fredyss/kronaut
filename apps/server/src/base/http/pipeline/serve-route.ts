@@ -85,6 +85,7 @@ async function prepare(kernel: Kernel, req: Authorized): Promise<Prepared> {
     cookies: req.cookies,
     setCookies,
     state,
+    ipPrefix: req.ipPrefix,
     acceptLanguage: request.headers.get('accept-language'),
   });
   const execution: Execution = { bound: matched.bound, input, ctx, logger: req.logger, state };

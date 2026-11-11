@@ -27,3 +27,11 @@ export async function takeWindowQuota(
   `.execute(trx);
   return result.rows.length === 1;
 }
+
+export async function returnWindowQuota(trx: TenantDb, keys: readonly string[]): Promise<void> {
+  if (keys.length === 0) return;
+  await sql`
+    update rate_buckets set tokens = least(capacity, tokens + 1), updated_at = now()
+     where key = any(${keys}::text[])
+  `.execute(trx);
+}

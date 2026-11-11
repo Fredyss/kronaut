@@ -144,4 +144,4 @@
   - `/healthz` reports the process; `/readyz` reports the DB and `worker_heartbeats`.
   - Cron health stays out of `/readyz`: a failed maintenance run does not stop the API from serving requests, and a red probe would take the whole instance out of rotation. A failed run is logged at error level, and the admin page shows the last `cron_runs` row per task.
   - Instance-level incidents (`provider_app_incidents`) appear on the admin page; hosted also gets a status page (Phase 3).
-- **Rate limits for our own API:** per-grant and per-IP buckets in the same `rate_buckets` table. Redis is not used.
+- **Rate limits for our own API:** per-grant and per-IP buckets in the same `rate_buckets` table. Redis is not used. Sign-in has its limits today ([Security](06-security.md)); a throttled attempt is logged at warn as `sign-in throttled` with the limit that stopped it (`address`, `pair` or `email`), never the email or address.

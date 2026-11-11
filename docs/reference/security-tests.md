@@ -49,4 +49,6 @@
 - **Audit:**
   - `AUD-01 audit_coverage`
   - `AUD-02 audit_immutability_and_seal`
-- **Rate limits:** `RL-01 per_principal_limits` (XFF ignored)
+- **Rate limits:**
+  - `RL-01 per_principal_limits` (XFF ignored)
+  - `RL-02 sign_in_throttle` (failures per address, per address and email, and per email; a success doesn't count; an unknown email is counted the same)

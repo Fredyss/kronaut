@@ -85,6 +85,7 @@
   "server/flow/posts -> steps/publish/transition.ts",
   "server/flow/posts -> steps/queue/slots.ts",
   "server/flow/posts -> steps/tags/read.ts",
+  "server/identity/auth -> infrastructure/quota/window-quota.ts",
   "server/policy/approval-policy -> access/audit/write.ts",
   "server/records/analytics -> access/channels/channel-ref.ts",
   "server/records/analytics -> access/post-access/units.ts",

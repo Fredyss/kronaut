@@ -19,12 +19,12 @@ export async function checkAccess(
   request: Request,
   url: URL,
   logger: Logger,
-): Promise<void> {
-  if (gate !== undefined && !accessExempt(request.method, url.pathname)) {
-    const verdict = await gate.verify(request.headers.get(ACCESS_HEADER));
-    if (!verdict.ok) {
-      logger.warn({ reason: verdict.reason }, 'Access assertion rejected');
-      throw new HttpError('forbidden', ACCESS_DENIED);
-    }
+): Promise<boolean> {
+  if (gate === undefined || accessExempt(request.method, url.pathname)) return false;
+  const verdict = await gate.verify(request.headers.get(ACCESS_HEADER));
+  if (!verdict.ok) {
+    logger.warn({ reason: verdict.reason }, 'Access assertion rejected');
+    throw new HttpError('forbidden', ACCESS_DENIED);
   }
+  return true;
 }
