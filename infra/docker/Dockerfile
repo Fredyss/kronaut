@@ -91,7 +91,7 @@ RUN set -eu; \
     /opt/ffmpeg/bin/ffmpeg -hide_banner -muxers | awk '{ print $2 }' | grep -qxF mp4 || { echo "missing muxer mp4" >&2; exit 1; }; \
     /opt/ffmpeg/bin/ffprobe -version
 
-FROM node:24.22.0-trixie-slim@sha256:a6155384446670e9719bdc4fd0ebe4d4b29fb32a8d6aa523da3547a6cfbcf22c AS node-build
+FROM node:24.22.1-trixie-slim@sha256:89c5244bc22a9bc3287d89ebc7e49b9cb5bb84cd40e6175ac3421d5a9f68b95a AS node-build
 
 FROM node-build AS deps
 ARG PNPM_VERSION=12.14.0
