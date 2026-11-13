@@ -99,7 +99,7 @@
 /** @typedef {{}} Compose_Video_RetryInputs */
 /** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
 /** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const compose_add_comment = /** @type {(inputs: Compose_Add_CommentInputs) => LocalizedString} */ () => {
@@ -123,7 +123,7 @@ export const compose_ai_generated_label = /** @type {(inputs: Compose_Ai_Generat
 };
 
 export const compose_alt_text_hint = /** @type {(inputs: Compose_Alt_Text_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Popište obrázek pro lidi, kteří ho nevidí. Nejvýš ${i?.count} znak.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Popište obrázek pro lidi, kteří ho nevidí. Nejvýš ${i?.count} znaky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Popište obrázek pro lidi, kteří ho nevidí. Nejvýš ${i?.count} znaku.`);
@@ -167,7 +167,7 @@ export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_N
 };
 
 export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Tato síť přijme nejvýš ${i?.count} obrázek.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Tato síť přijme nejvýš ${i?.count} obrázky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Tato síť přijme nejvýš ${i?.count} obrázku.`);
@@ -315,7 +315,7 @@ export const compose_images_add = /** @type {(inputs: Compose_Images_AddInputs) 
 };
 
 export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Nejvýš ${i?.count} obrázek ve formátu JPEG, PNG nebo WebP, každý do ${i?.max}.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Nejvýš ${i?.count} obrázky ve formátu JPEG, PNG nebo WebP, každý do ${i?.max}.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Nejvýš ${i?.count} obrázku ve formátu JPEG, PNG nebo WebP, každý do ${i?.max}.`);
@@ -323,7 +323,7 @@ export const compose_images_hint = /** @type {(inputs: Compose_Images_HintInputs
 };
 
 export const compose_images_limit = /** @type {(inputs: Compose_Images_LimitInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Příspěvek může mít nejvýš ${i?.count} obrázek.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Příspěvek může mít nejvýš ${i?.count} obrázky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Příspěvek může mít nejvýš ${i?.count} obrázku.`);

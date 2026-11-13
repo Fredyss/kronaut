@@ -389,7 +389,7 @@
 /** @typedef {{}} Theme_LightInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Workspace_LabelInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const account_logout = /** @type {(inputs: Account_LogoutInputs) => LocalizedString} */ () => {
@@ -471,7 +471,7 @@ export const approval_outside_schedule = /** @type {(inputs: Approval_Outside_Sc
 };
 
 export const approval_progress = /** @type {(inputs: Approval_ProgressInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.approved} of ${i?.count} approval`);
 	return /** @type {LocalizedString} */ (`${i?.approved} of ${i?.count} approvals`)
 };
@@ -553,7 +553,7 @@ export const approval_title = /** @type {(inputs: Approval_TitleInputs) => Local
 };
 
 export const approval_tolerance = /** @type {(inputs: Approval_ToleranceInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`± ${i?.count} minute`);
 	return /** @type {LocalizedString} */ (`± ${i?.count} minutes`)
 };
@@ -751,7 +751,7 @@ export const channels_error_state_invalid = /** @type {(inputs: Channels_Error_S
 };
 
 export const channels_error_too_many_accounts = /** @type {(inputs: Channels_Error_Too_Many_AccountsInputs) => LocalizedString} */ (i) => {
-	const maxPlural = registry.plural("en", i?.max, {}, true);
+	const maxPlural = __paraglideRegistry.plural("en", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`Too many accounts were shared. Connect again and select at most ${i?.max} account.`);
 	return /** @type {LocalizedString} */ (`Too many accounts were shared. Connect again and select at most ${i?.max} accounts.`)
 };
@@ -921,7 +921,7 @@ export const compose_limit_too_long = /** @type {(inputs: Compose_Limit_Too_Long
 };
 
 export const compose_limit_too_many_links = /** @type {(inputs: Compose_Limit_Too_Many_LinksInputs) => LocalizedString} */ (i) => {
-	const maxPlural = registry.plural("en", i?.max, {}, true);
+	const maxPlural = __paraglideRegistry.plural("en", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`${i?.channel} allows up to ${i?.max} link`);
 	return /** @type {LocalizedString} */ (`${i?.channel} allows up to ${i?.max} links`)
 };
@@ -1196,7 +1196,7 @@ export const group_filter_gone = /** @type {(inputs: Group_Filter_GoneInputs) =>
 };
 
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} item needs action`);
 	return /** @type {LocalizedString} */ (`${i?.count} items need action`)
 };
@@ -1378,7 +1378,7 @@ export const login_title = /** @type {(inputs: Login_TitleInputs) => LocalizedSt
 };
 
 export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Done. Kronaut deleted the data of ${i?.count} channel.`);
 	return /** @type {LocalizedString} */ (`Done. Kronaut deleted the data of ${i?.count} channels.`)
 };
@@ -1456,7 +1456,7 @@ export const notification_unconfirmed = /** @type {(inputs: Notification_Unconfi
 };
 
 export const notifications_button = /** @type {(inputs: Notifications_ButtonInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Notifications, ${i?.count} unread`);
 	return /** @type {LocalizedString} */ (`Notifications, ${i?.count} unread`)
 };
@@ -1486,7 +1486,7 @@ export const notifications_unread = /** @type {(inputs: Notifications_UnreadInpu
 };
 
 export const password_min_length = /** @type {(inputs: Password_Min_LengthInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Use at least ${i?.count} character.`);
 	return /** @type {LocalizedString} */ (`Use at least ${i?.count} characters.`)
 };
@@ -1536,7 +1536,7 @@ export const post_delete_live = /** @type {(inputs: Post_Delete_LiveInputs) => L
 };
 
 export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`It stays live on ${i?.count} channel: deleting removes it from Kronaut, not from the network.`);
 	return /** @type {LocalizedString} */ (`It stays live on ${i?.count} channels: deleting removes it from Kronaut, not from the network.`)
 };
@@ -1546,7 +1546,7 @@ export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) =>
 };
 
 export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channel; Kronaut couldn't confirm it. Deleting doesn't remove it from the network.`);
 	return /** @type {LocalizedString} */ (`It may already be live on ${i?.count} channels; Kronaut couldn't confirm them. Deleting doesn't remove it from the network.`)
 };
@@ -1580,7 +1580,7 @@ export const post_edit_title = /** @type {(inputs: Post_Edit_TitleInputs) => Loc
 };
 
 export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} image`);
 	return /** @type {LocalizedString} */ (`${i?.count} images`)
 };
@@ -1894,7 +1894,7 @@ export const reset_title = /** @type {(inputs: Reset_TitleInputs) => LocalizedSt
 };
 
 export const series_count = /** @type {(inputs: Series_CountInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Ends after ${i?.count} post`);
 	return /** @type {LocalizedString} */ (`Ends after ${i?.count} posts`)
 };
@@ -1908,7 +1908,7 @@ export const series_resume = /** @type {(inputs: Series_ResumeInputs) => Localiz
 };
 
 export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Every day`);
 	if (i?.freq === "weekly" && countPlural === "one") return /** @type {LocalizedString} */ (`Every week on ${i?.days}`);
 	if (i?.freq === "daily") return /** @type {LocalizedString} */ (`Every ${i?.count} days`);
@@ -1957,7 +1957,7 @@ export const tags_exists = /** @type {(inputs: Tags_ExistsInputs) => LocalizedSt
 };
 
 export const tags_full = /** @type {(inputs: Tags_FullInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} tag.`);
 	return /** @type {LocalizedString} */ (`A post can have at most ${i?.count} tags.`)
 };

@@ -77,7 +77,7 @@
 /** @typedef {{}} User_Not_FoundInputs */
 /** @typedef {{}} Workspace_Slug_TakenInputs */
 /** @typedef {{}} Wrong_Argument_CountInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const archive_changed = /** @type {(inputs: Archive_ChangedInputs) => LocalizedString} */ () => {
@@ -217,13 +217,13 @@ export const key_not_next = /** @type {(inputs: Key_Not_NextInputs) => Localized
 };
 
 export const key_recently_retired = /** @type {(inputs: Key_Recently_RetiredInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`key ${i?.kid} was retired less than ${i?.count} minute ago; connects started before the rotation may still need it`);
 	return /** @type {LocalizedString} */ (`key ${i?.kid} was retired less than ${i?.count} minutes ago; connects started before the rotation may still need it`)
 };
 
 export const keyring_missing = /** @type {(inputs: Keyring_MissingInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`the keyring lacks KEK version ${i?.versions}; set KRONAUT_KEK_<n> before importing`);
 	return /** @type {LocalizedString} */ (`the keyring lacks KEK versions ${i?.versions}; set KRONAUT_KEK_<n> for each before importing`)
 };
@@ -265,7 +265,7 @@ export const option_required = /** @type {(inputs: Option_RequiredInputs) => Loc
 };
 
 export const option_too_long = /** @type {(inputs: Option_Too_LongInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.option} must be at most ${i?.count} character`);
 	return /** @type {LocalizedString} */ (`${i?.option} must be at most ${i?.count} characters`)
 };

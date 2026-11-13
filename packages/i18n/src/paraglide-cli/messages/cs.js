@@ -77,7 +77,7 @@
 /** @typedef {{}} User_Not_FoundInputs */
 /** @typedef {{}} Workspace_Slug_TakenInputs */
 /** @typedef {{}} Wrong_Argument_CountInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const archive_changed = /** @type {(inputs: Archive_ChangedInputs) => LocalizedString} */ () => {
@@ -217,14 +217,14 @@ export const key_not_next = /** @type {(inputs: Key_Not_NextInputs) => Localized
 };
 
 export const key_recently_retired = /** @type {(inputs: Key_Recently_RetiredInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`klíč ${i?.kid} byl vyřazen před méně než ${i?.count} minutou; připojení kanálů zahájená před výměnou klíče ho mohou ještě potřebovat`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`klíč ${i?.kid} byl vyřazen před méně než ${i?.count} minuty; připojení kanálů zahájená před výměnou klíče ho mohou ještě potřebovat`);
 	return /** @type {LocalizedString} */ (`klíč ${i?.kid} byl vyřazen před méně než ${i?.count} minutami; připojení kanálů zahájená před výměnou klíče ho mohou ještě potřebovat`)
 };
 
 export const keyring_missing = /** @type {(inputs: Keyring_MissingInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`v sadě klíčů chybí verze KEK ${i?.versions}; před importem nastavte KRONAUT_KEK_<n>`);
 	return /** @type {LocalizedString} */ (`v sadě klíčů chybí verze KEK ${i?.versions}; před importem nastavte KRONAUT_KEK_<n> pro každou z nich`)
 };
@@ -266,7 +266,7 @@ export const option_required = /** @type {(inputs: Option_RequiredInputs) => Loc
 };
 
 export const option_too_long = /** @type {(inputs: Option_Too_LongInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("cs", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`hodnota ${i?.option} může mít nejvýše ${i?.count} znak`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`hodnota ${i?.option} může mít nejvýše ${i?.count} znaky`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`hodnota ${i?.option} může mít nejvýše ${i?.count} znaku`);

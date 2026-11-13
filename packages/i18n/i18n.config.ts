@@ -8,6 +8,7 @@ const COMPILER = {
   emitPrettierIgnore: false,
   emitReadme: false,
   includeEslintDisableComment: false,
+  isDevelopment: 'false',
 } as const satisfies Omit<CompilerOptions, 'project' | 'outdir'>;
 
 function project(name: string, outdir: string) {
