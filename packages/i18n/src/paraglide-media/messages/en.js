@@ -39,7 +39,7 @@
 /** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
 /** @typedef {{}} Media_Usage_TitleInputs */
 /** @typedef {{}} Media_Usage_UntitledInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const media_ai_badge = /** @type {(inputs: Media_Ai_BadgeInputs) => LocalizedString} */ () => {
@@ -59,7 +59,7 @@ export const media_ai_removed = /** @type {(inputs: Media_Ai_RemovedInputs) => L
 };
 
 export const media_alt_hint = /** @type {(inputs: Media_Alt_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`New posts start with this description. Posts that already use the file keep their own. Up to ${i?.count} character.`);
 	return /** @type {LocalizedString} */ (`New posts start with this description. Posts that already use the file keep their own. Up to ${i?.count} characters.`)
 };
@@ -133,7 +133,7 @@ export const media_filter_videos = /** @type {(inputs: Media_Filter_VideosInputs
 };
 
 export const media_in_use = /** @type {(inputs: Media_In_UseInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Used in ${i?.count} post`);
 	return /** @type {LocalizedString} */ (`Used in ${i?.count} posts`)
 };

@@ -389,7 +389,7 @@
 /** @typedef {{}} Theme_LightInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Workspace_LabelInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const account_logout = /** @type {(inputs: Account_LogoutInputs) => LocalizedString} */ () => {
@@ -471,7 +471,7 @@ export const approval_outside_schedule = /** @type {(inputs: Approval_Outside_Sc
 };
 
 export const approval_progress = /** @type {(inputs: Approval_ProgressInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.approved} z ${i?.count} potrebného schválenia`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.approved} z ${i?.count} potrebných schválení`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.approved} z ${i?.count} potrebného schválenia`);
@@ -555,7 +555,7 @@ export const approval_title = /** @type {(inputs: Approval_TitleInputs) => Local
 };
 
 export const approval_tolerance = /** @type {(inputs: Approval_ToleranceInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`± ${i?.count} minúta`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`± ${i?.count} minúty`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`± ${i?.count} minúty`);
@@ -755,7 +755,7 @@ export const channels_error_state_invalid = /** @type {(inputs: Channels_Error_S
 };
 
 export const channels_error_too_many_accounts = /** @type {(inputs: Channels_Error_Too_Many_AccountsInputs) => LocalizedString} */ (i) => {
-	const maxPlural = registry.plural("sk", i?.max, {}, true);
+	const maxPlural = __paraglideRegistry.plural("sk", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`Sprístupnili ste priveľa účtov. Pripojte kanál znova a vyberte najviac ${i?.max} účet.`);
 	if (maxPlural === "few") return /** @type {LocalizedString} */ (`Sprístupnili ste priveľa účtov. Pripojte kanál znova a vyberte najviac ${i?.max} účty.`);
 	if (maxPlural === "many") return /** @type {LocalizedString} */ (`Sprístupnili ste priveľa účtov. Pripojte kanál znova a vyberte najviac ${i?.max} účtu.`);
@@ -927,7 +927,7 @@ export const compose_limit_too_long = /** @type {(inputs: Compose_Limit_Too_Long
 };
 
 export const compose_limit_too_many_links = /** @type {(inputs: Compose_Limit_Too_Many_LinksInputs) => LocalizedString} */ (i) => {
-	const maxPlural = registry.plural("sk", i?.max, {}, true);
+	const maxPlural = __paraglideRegistry.plural("sk", i?.max, {}, true);
 	if (maxPlural === "one") return /** @type {LocalizedString} */ (`${i?.channel} povoľuje najviac ${i?.max} odkaz`);
 	if (maxPlural === "few") return /** @type {LocalizedString} */ (`${i?.channel} povoľuje najviac ${i?.max} odkazy`);
 	if (maxPlural === "many") return /** @type {LocalizedString} */ (`${i?.channel} povoľuje najviac ${i?.max} odkazu`);
@@ -1204,7 +1204,7 @@ export const group_filter_gone = /** @type {(inputs: Group_Filter_GoneInputs) =>
 };
 
 export const inbox_badge = /** @type {(inputs: Inbox_BadgeInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} položka čaká na riešenie`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} položky čakajú na riešenie`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} položky čaká na riešenie`);
@@ -1388,7 +1388,7 @@ export const login_title = /** @type {(inputs: Login_TitleInputs) => LocalizedSt
 };
 
 export const meta_status_completed = /** @type {(inputs: Meta_Status_CompletedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanála.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanálov.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Hotovo. Kronaut vymazal údaje z ${i?.count} kanála.`);
@@ -1468,7 +1468,7 @@ export const notification_unconfirmed = /** @type {(inputs: Notification_Unconfi
 };
 
 export const notifications_button = /** @type {(inputs: Notifications_ButtonInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Upozornenia, ${i?.count} neprečítané`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Upozornenia, ${i?.count} neprečítané`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Upozornenia, ${i?.count} neprečítaného`);
@@ -1500,7 +1500,7 @@ export const notifications_unread = /** @type {(inputs: Notifications_UnreadInpu
 };
 
 export const password_min_length = /** @type {(inputs: Password_Min_LengthInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Heslo musí mať aspoň ${i?.count} znak.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Heslo musí mať aspoň ${i?.count} znaky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Heslo musí mať aspoň ${i?.count} znaku.`);
@@ -1552,7 +1552,7 @@ export const post_delete_live = /** @type {(inputs: Post_Delete_LiveInputs) => L
 };
 
 export const post_delete_published = /** @type {(inputs: Post_Delete_PublishedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Na sieti zostáva uverejnený (${i?.count} kanál). Odstránením zmizne iba z Kronautu, nie zo siete.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Na sieti zostáva uverejnený (${i?.count} kanály). Odstránením zmizne iba z Kronautu, nie zo siete.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Na sieti zostáva uverejnený (${i?.count} kanála). Odstránením zmizne iba z Kronautu, nie zo siete.`);
@@ -1564,7 +1564,7 @@ export const post_delete_title = /** @type {(inputs: Post_Delete_TitleInputs) =>
 };
 
 export const post_delete_unconfirmed = /** @type {(inputs: Post_Delete_UnconfirmedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Na sieti už môže byť uverejnený (${i?.count} kanál), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Na sieti už môže byť uverejnený (${i?.count} kanály), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Na sieti už môže byť uverejnený (${i?.count} kanála), Kronaut to nevedel overiť. Odstránenie ho zo siete nezmaže.`);
@@ -1600,7 +1600,7 @@ export const post_edit_title = /** @type {(inputs: Post_Edit_TitleInputs) => Loc
 };
 
 export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} obrázok`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} obrázky`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} obrázka`);
@@ -1916,7 +1916,7 @@ export const reset_title = /** @type {(inputs: Reset_TitleInputs) => LocalizedSt
 };
 
 export const series_count = /** @type {(inputs: Series_CountInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Končí po ${i?.count} príspevku`);
 	return /** @type {LocalizedString} */ (`Končí po ${i?.count} príspevkoch`)
 };
@@ -1930,7 +1930,7 @@ export const series_resume = /** @type {(inputs: Series_ResumeInputs) => Localiz
 };
 
 export const series_rule = /** @type {(inputs: Series_RuleInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (i?.freq === "daily" && countPlural === "one") return /** @type {LocalizedString} */ (`Každý deň`);
 	if (i?.freq === "daily" && countPlural === "few") return /** @type {LocalizedString} */ (`Každé ${i?.count} dni`);
 	if (i?.freq === "weekly" && countPlural === "one") return /** @type {LocalizedString} */ (`Každý týždeň: ${i?.days}`);
@@ -1982,7 +1982,7 @@ export const tags_exists = /** @type {(inputs: Tags_ExistsInputs) => LocalizedSt
 };
 
 export const tags_full = /** @type {(inputs: Tags_FullInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítok.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Príspevok môže mať najviac ${i?.count} štítka.`);

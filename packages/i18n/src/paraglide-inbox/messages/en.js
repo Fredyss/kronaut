@@ -14,7 +14,7 @@
 /** @typedef {{}} Inbox_Send_AgainInputs */
 /** @typedef {{}} Inbox_Sent_AgainInputs */
 /** @typedef {{ shown: NonNullable<unknown>, total: NonNullable<unknown> }} Inbox_TruncatedInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const inbox_canceled = /** @type {(inputs: Inbox_CanceledInputs) => LocalizedString} */ () => {
@@ -74,7 +74,7 @@ export const inbox_sent_again = /** @type {(inputs: Inbox_Sent_AgainInputs) => L
 };
 
 export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("en", i?.total, {}, true);
+	const totalPlural = __paraglideRegistry.plural("en", i?.total, {}, true);
 	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} item.`);
 	return /** @type {LocalizedString} */ (`Showing only the newest ${i?.shown} of ${i?.total} items.`)
 };

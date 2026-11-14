@@ -39,7 +39,7 @@
 /** @typedef {{ when: NonNullable<unknown> }} Media_Usage_ScheduledInputs */
 /** @typedef {{}} Media_Usage_TitleInputs */
 /** @typedef {{}} Media_Usage_UntitledInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const media_ai_badge = /** @type {(inputs: Media_Ai_BadgeInputs) => LocalizedString} */ () => {
@@ -59,7 +59,7 @@ export const media_ai_removed = /** @type {(inputs: Media_Ai_RemovedInputs) => L
 };
 
 export const media_alt_hint = /** @type {(inputs: Media_Alt_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znak.`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znaky.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Nové príspevky začnú s týmto opisom. Príspevky, ktoré súbor už používajú, si ponechajú svoj. Najviac ${i?.count} znaku.`);
@@ -135,7 +135,7 @@ export const media_filter_videos = /** @type {(inputs: Media_Filter_VideosInputs
 };
 
 export const media_in_use = /** @type {(inputs: Media_In_UseInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("sk", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevku`);
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevkoch`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Použité v ${i?.count} príspevku`);

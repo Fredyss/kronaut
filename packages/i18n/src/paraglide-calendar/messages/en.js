@@ -103,7 +103,7 @@
 /** @typedef {{}} Home_Empty_TitleInputs */
 /** @typedef {{}} Nav_New_PostInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_ScheduledInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const calendar_add_channel = /** @type {(inputs: Calendar_Add_ChannelInputs) => LocalizedString} */ () => {
@@ -219,7 +219,7 @@ export const calendar_import_error_media_failed = /** @type {(inputs: Calendar_I
 };
 
 export const calendar_import_error_media_file_too_many = /** @type {(inputs: Calendar_Import_Error_Media_File_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`The file has more than ${i?.count} media link. Split it into smaller files.`);
 	return /** @type {LocalizedString} */ (`The file has more than ${i?.count} media links. Split it into smaller files.`)
 };
@@ -241,7 +241,7 @@ export const calendar_import_error_media_rejected = /** @type {(inputs: Calendar
 };
 
 export const calendar_import_error_media_too_many = /** @type {(inputs: Calendar_Import_Error_Media_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`A row can have at most ${i?.count} media link.`);
 	return /** @type {LocalizedString} */ (`A row can have at most ${i?.count} media links.`)
 };
@@ -267,7 +267,7 @@ export const calendar_import_error_too_large = /** @type {(inputs: Calendar_Impo
 };
 
 export const calendar_import_error_too_many = /** @type {(inputs: Calendar_Import_Error_Too_ManyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`The file has more than ${i?.count} post. Split it into smaller files.`);
 	return /** @type {LocalizedString} */ (`The file has more than ${i?.count} posts. Split it into smaller files.`)
 };
@@ -297,7 +297,7 @@ export const calendar_import_fetch_stopped = /** @type {(inputs: Calendar_Import
 };
 
 export const calendar_import_fetching = /** @type {(inputs: Calendar_Import_FetchingInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("en", i?.total, {}, true);
+	const totalPlural = __paraglideRegistry.plural("en", i?.total, {}, true);
 	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Fetching media: link ${i?.current} of ${i?.total}…`);
 	return /** @type {LocalizedString} */ (`Fetching media: link ${i?.current} of ${i?.total}…`)
 };
@@ -335,7 +335,7 @@ export const calendar_import_line = /** @type {(inputs: Calendar_Import_LineInpu
 };
 
 export const calendar_import_media_hint = /** @type {(inputs: Calendar_Import_Media_HintInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`In the media column, list up to ${i?.count} https link, separated by spaces or |. Links are fetched into the media library before the file is checked.`);
 	return /** @type {LocalizedString} */ (`In the media column, list up to ${i?.count} https links, separated by spaces or |. Links are fetched into the media library before the file is checked.`)
 };
@@ -349,19 +349,19 @@ export const calendar_import_open = /** @type {(inputs: Calendar_Import_OpenInpu
 };
 
 export const calendar_import_problems = /** @type {(inputs: Calendar_Import_ProblemsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} problem to fix. Fix the file and pick it again.`);
 	return /** @type {LocalizedString} */ (`${i?.count} problems to fix. Fix the file and pick it again.`)
 };
 
 export const calendar_import_ready = /** @type {(inputs: Calendar_Import_ReadyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post is ready to import.`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts are ready to import.`)
 };
 
 export const calendar_import_requested = /** @type {(inputs: Calendar_Import_RequestedInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post sent for approval.`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts sent for approval.`)
 };
@@ -371,7 +371,7 @@ export const calendar_import_requested_queue = /** @type {(inputs: Calendar_Impo
 };
 
 export const calendar_import_scheduled = /** @type {(inputs: Calendar_Import_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post scheduled.`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts scheduled.`)
 };
@@ -397,7 +397,7 @@ export const calendar_load_failed = /** @type {(inputs: Calendar_Load_FailedInpu
 };
 
 export const calendar_more = /** @type {(inputs: Calendar_MoreInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`+${i?.count} more`);
 	return /** @type {LocalizedString} */ (`+${i?.count} more`)
 };
@@ -539,7 +539,7 @@ export const nav_new_post = /** @type {(inputs: Nav_New_PostInputs) => Localized
 };
 
 export const posts_scheduled = /** @type {(inputs: Posts_ScheduledInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post scheduled`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts scheduled`)
 };

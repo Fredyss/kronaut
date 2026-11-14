@@ -14,7 +14,7 @@
 /** @typedef {{}} Inbox_Send_AgainInputs */
 /** @typedef {{}} Inbox_Sent_AgainInputs */
 /** @typedef {{ shown: NonNullable<unknown>, total: NonNullable<unknown> }} Inbox_TruncatedInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const inbox_canceled = /** @type {(inputs: Inbox_CanceledInputs) => LocalizedString} */ () => {
@@ -74,7 +74,7 @@ export const inbox_sent_again = /** @type {(inputs: Inbox_Sent_AgainInputs) => L
 };
 
 export const inbox_truncated = /** @type {(inputs: Inbox_TruncatedInputs) => LocalizedString} */ (i) => {
-	const totalPlural = registry.plural("sk", i?.total, {}, true);
+	const totalPlural = __paraglideRegistry.plural("sk", i?.total, {}, true);
 	if (totalPlural === "one") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položky.`);
 	if (totalPlural === "few") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položiek.`);
 	if (totalPlural === "many") return /** @type {LocalizedString} */ (`Zobrazujú sa len najnovšie: ${i?.shown} z ${i?.total} položky.`);

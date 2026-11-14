@@ -245,7 +245,7 @@
 /** @typedef {{}} Theme_Option_DarkInputs */
 /** @typedef {{}} Theme_Option_LightInputs */
 /** @typedef {{}} Theme_Option_SystemInputs */
-import * as registry from "../registry.js"
+import * as __paraglideRegistry from "../registry.js"
 
 
 export const settings_account_title = /** @type {(inputs: Settings_Account_TitleInputs) => LocalizedString} */ () => {
@@ -289,7 +289,7 @@ export const settings_brand_archived_done = /** @type {(inputs: Settings_Brand_A
 };
 
 export const settings_brand_channels = /** @type {(inputs: Settings_Brand_ChannelsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel`);
 	return /** @type {LocalizedString} */ (`${i?.count} channels`)
 };
@@ -343,7 +343,7 @@ export const settings_brand_policy_title = /** @type {(inputs: Settings_Brand_Po
 };
 
 export const settings_brand_required = /** @type {(inputs: Settings_Brand_RequiredInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approval`);
 	return /** @type {LocalizedString} */ (`Approval required: ${i?.count} approvals`)
 };
@@ -641,7 +641,7 @@ export const settings_group_cancel = /** @type {(inputs: Settings_Group_CancelIn
 };
 
 export const settings_group_channels = /** @type {(inputs: Settings_Group_ChannelsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel`);
 	return /** @type {LocalizedString} */ (`${i?.count} channels`)
 };
@@ -819,7 +819,7 @@ export const settings_saved_text_delete_body = /** @type {(inputs: Settings_Save
 };
 
 export const settings_saved_text_delete_channels = /** @type {(inputs: Settings_Saved_Text_Delete_ChannelsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel loses it as its signature.`);
 	return /** @type {LocalizedString} */ (`${i?.count} channels lose it as their signature.`)
 };
@@ -1047,7 +1047,7 @@ export const settings_tag_delete = /** @type {(inputs: Settings_Tag_DeleteInputs
 };
 
 export const settings_tag_delete_body = /** @type {(inputs: Settings_Tag_Delete_BodyInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`It will be removed from ${i?.count} post.`);
 	return /** @type {LocalizedString} */ (`It will be removed from ${i?.count} posts.`)
 };
@@ -1073,7 +1073,7 @@ export const settings_tag_name = /** @type {(inputs: Settings_Tag_NameInputs) =>
 };
 
 export const settings_tag_posts = /** @type {(inputs: Settings_Tag_PostsInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} post`);
 	return /** @type {LocalizedString} */ (`${i?.count} posts`)
 };
@@ -1107,7 +1107,7 @@ export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs
 };
 
 export const system_api_days_left = /** @type {(inputs: System_Api_Days_LeftInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} day left`);
 	return /** @type {LocalizedString} */ (`${i?.count} days left`)
 };
@@ -1173,7 +1173,7 @@ export const system_incident_app_suspended = /** @type {(inputs: System_Incident
 };
 
 export const system_incident_occurrences = /** @type {(inputs: System_Incident_OccurrencesInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} occurrence`);
 	return /** @type {LocalizedString} */ (`${i?.count} occurrences`)
 };
@@ -1235,7 +1235,7 @@ export const system_slo_title = /** @type {(inputs: System_Slo_TitleInputs) => L
 };
 
 export const system_slo_total = /** @type {(inputs: System_Slo_TotalInputs) => LocalizedString} */ (i) => {
-	const countPlural = registry.plural("en", i?.count, {}, true);
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} automatic post`);
 	return /** @type {LocalizedString} */ (`${i?.count} automatic posts`)
 };
