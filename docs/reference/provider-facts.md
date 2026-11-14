@@ -379,11 +379,47 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - The post may reference a video that is still processing: `lifecycleState` can come back `PUBLISH_REQUESTED`, which is "published asynchronously once the processing has successfully completed", or `PUBLISH_FAILED` (L3, L22). `content.media.altText` covers "image or video" (L22); `title` is optional.
 - Kronaut publishes one master MP4 as the `video` post type: init, 4 MiB parts, finalize, then a status read while it is `PROCESSING` (polled every 30 s for up to 30 min). If the status read is refused (401 or 403), it posts anyway and relies on `PUBLISH_REQUESTED`. Upload URLs are never stored; a crash before finalize starts a new upload. Captions, thumbnail and title aren't sent. The 75 KB minimum file size isn't checked.
 
-**YouTube**
-- **Upload quota.** The upload bucket is 100/day **per project**, so the bucket key is `app:`, not `account:`. Other calls, such as thumbnails, use the 10,000-unit bucket. Both reset at midnight Pacific.
-- **Resumable upload.** It returns a session URI. Storing it allows resume and status queries after a crash, which is a natural `status_by_ref`.
-- **Composer limits.** Title ≤100 **characters**; description ≤5,000 **bytes**; `<` and `>` are forbidden in both.
-- **Upload status.** It can become `rejected` or `failed` after the id is returned.
+**YouTube** (Data API v3)
+
+YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2).
+- **Quota** (Y1, Y3).
+  - `videos.insert` costs 1 call from its **own bucket of 100 calls/day per Cloud project**, shared by the whole install, so the bucket key is `app:`. Its cost fell from about 1,600 to about 100 units on 2025-12-04, and it got its own bucket on 2026-06-01.
+  - Every other method shares the 10,000-unit bucket: `videos.list` and `channels.list` 1, `videos.update` and `videos.delete` 50. Everything resets at midnight Pacific.
+  - More quota needs the compliance audit and quota extension form (Y11).
+- **Unaudited projects** (Y2, Y3). Since 2026-11-02, videos from unverified projects are **no longer locked to private**. Before that, projects created after 2020-07-28 posted private-only until audited. An omitted `privacyStatus` defaults to `public`, though account settings may make it `private`.
+- **Upload** (Y2, Y5).
+  - `POST https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status` with the video resource as JSON, plus `X-Upload-Content-Length` and `X-Upload-Content-Type`. The response is 200 with the session URI in `Location`. Initiating creates no video.
+  - Chunks are `PUT` to the session URI. Each is a multiple of 256 KiB, except the last. A non-final chunk gets 308 with a `Range: bytes=0-N` header. Completion is 201 (or 200) with the video resource, whose `id` is the video id.
+  - **Status query:** an empty `PUT` with `Content-Range: bytes */TOTAL`. It returns the completion response if the upload finished, or 308 with the received `Range`; no `Range` means nothing arrived. Resume from `N+1` and never assume the last chunk landed. The session lifetime is undocumented ("finite"); 404 means it expired.
+  - Retry 500, 502, 503 and 504 with backoff. Other 4xx are permanent.
+- **Scopes** (Y2, Y6, Y10, G2). Insert takes `youtube.upload`, `youtube`, `youtube.force-ssl` or `youtubepartner`. `channels.list mine=true` needs a read scope, so Kronaut asks for `youtube.upload youtube.readonly`. `videos.update` and `videos.delete` need `youtube` or `youtube.force-ssl`. Sensitive-scope verification is needed only beyond the unverified-app user cap (number not documented).
+- **Video resource** (Y4).
+  - Title ≤100 **characters** and description ≤5,000 **bytes**; `<` and `>` are forbidden in both. Tags total ≤500 characters, commas included. `categoryId` is required on update; on insert it isn't documented as required.
+  - `status`: `privacyStatus` `public | unlisted | private`; `publishAt` only while private and never published; `selfDeclaredMadeForKids`; `containsSyntheticMedia` (the realistic altered or synthetic content disclosure); `embeddable`, `license`, `publicStatsViewable`. `notifySubscribers` is a query parameter, default true.
+  - The made-for-kids fields change only when the request sets them (Y3, 2026-10-15); otherwise the channel's default applies.
+- **Shorts** (Y12). There's no API flag. A square or vertical video up to 3 minutes becomes a Short; 16:9 stays long-form.
+- **After upload** (Y4). `status.uploadStatus` is `uploaded | processed | failed | rejected | deleted`, so a video can be `rejected` or `failed` after its id is returned.
+  - `failureReason`: `codec`, `conversion`, `emptyFile`, `invalidFile`, `tooSmall`, `uploadAborted`.
+  - `rejectionReason`: `claim`, `copyright`, `duplicate`, `inappropriate`, `legal`, `length`, `termsOfUse`, `trademark`, `uploaderAccountClosed`, `uploaderAccountSuspended`.
+- **Errors** (Y2, Y7).
+  - 400: `invalidTitle`, `invalidDescription`, `invalidTags`, `invalidCategoryId`, `mediaBodyRequired`, and `uploadLimitExceeded`, which is the channel's own daily upload limit, not API quota.
+  - 401: `authorizationRequired`, and `youtubeSignupRequired` when the account has no channel.
+  - 403: `forbidden`, `forbiddenPrivacySetting`, `insufficientPermissions`, and `quotaExceeded` (any method).
+- **Channel** (Y6, Y13). `channels.list part=snippet mine=true` returns `id`, `snippet.title`, `snippet.customUrl` and `snippet.thumbnails`. How Brand Account channels are picked at consent isn't documented.
+- **Statistics** (Y4, Y9, Y3). `videos.list part=statistics` gives `viewCount`, `likeCount` and `commentCount`; `dislikeCount` goes only to the owner. `videos.batchGetStats` (2026-06-03) costs 1 unit from its own bucket. `subscriberCount` is rounded down to 3 significant figures, and `hiddenSubscriberCount` flags hidden counts.
+- **OAuth** (G1, G2).
+  - Authorize at `https://accounts.google.com/o/oauth2/v2/auth`, token at `https://oauth2.googleapis.com/token`, revoke with a POST to `https://oauth2.googleapis.com/revoke`.
+  - A refresh token comes back only with `access_type=offline`, and again on later grants only with `prompt=consent`. It is reused, not rotated.
+  - Each client keeps at most 100 refresh tokens per account, and the oldest is silently invalidated. A token unused for 6 months dies.
+  - An External consent screen in **Testing** status issues refresh tokens that **expire after 7 days**, so a self-hoster sets it to "In production".
+  - Revoking a token also revokes its grant for every client in the project.
+- **Developer Policies** (Y8).
+  - III.A: link the YouTube Terms of Service and the Google Privacy Policy, and offer a way to revoke.
+  - III.E.3: an uploader must show a clear public, unlisted or private choice, and may change a video's privacy only on the user's instruction.
+  - III.C.3: nothing the user typed may be truncated, appended to or otherwise changed without explicit consent. The app may suggest values.
+  - III.I.2: no uploads without the user's prior, specific and express consent.
+  - III.E.4: statistics may be kept if authorization is re-checked every 30 days; other stored API data is refreshed or deleted within 30 days. Delete a user's data within 7 days of a request.
+  - III.D.2.c: revoke the token at once on in-app revocation, and delete the authorized data within 7 days (within 30 when access is revoked on Google's side).
 
 **TikTok**
 - **Mandatory UX.** The upload page must:
@@ -587,7 +623,17 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 - Y2 https://developers.google.com/youtube/v3/docs/videos/insert
 - Y3 https://developers.google.com/youtube/v3/revision_history
 - Y4 https://developers.google.com/youtube/v3/docs/videos
+- Y5 https://developers.google.com/youtube/v3/guides/using_resumable_upload_protocol
+- Y6 https://developers.google.com/youtube/v3/docs/channels/list
+- Y7 https://developers.google.com/youtube/v3/docs/errors
+- Y8 https://developers.google.com/youtube/terms/developer-policies
+- Y9 https://developers.google.com/youtube/v3/docs/videos/list
+- Y10 https://developers.google.com/youtube/v3/docs/videos/delete
+- Y11 https://developers.google.com/youtube/v3/guides/quota_and_compliance_audits
+- Y12 https://support.google.com/youtube/answer/15424877
+- Y13 https://developers.google.com/youtube/v3/docs/channels
 - G1 https://developers.google.com/identity/protocols/oauth2
+- G2 https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
 - K1 https://developers.tiktok.com/doc/content-sharing-guidelines
 - K2 https://developers.tiktok.com/doc/content-posting-api-reference-direct-post
 - K3 https://developers.tiktok.com/doc/oauth-user-access-token-management
