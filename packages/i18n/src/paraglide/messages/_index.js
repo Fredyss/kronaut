@@ -91,6 +91,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
+/** @typedef {{}} Channels_Google_AccessInputs */
+/** @typedef {{}} Channels_Google_PrivacyInputs */
 /** @typedef {{}} Channels_Groups_EditInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_Edit_OfInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_OfInputs */
@@ -116,6 +118,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Signature_SavedInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Channels_Youtube_TermsInputs */
 /** @typedef {{}} CloseInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
@@ -128,6 +131,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Limit_ChannelInputs */
+/** @typedef {{ channel: NonNullable<unknown>, chars: NonNullable<unknown> }} Compose_Limit_ForbiddenInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
@@ -206,6 +210,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
+/** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -221,6 +226,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
+/** @typedef {{}} Issue_Setting_RequiredInputs */
 /** @typedef {{}} Issue_Tag_UnknownInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
@@ -322,6 +328,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
 /** @typedef {{}} Queue_EvergreenInputs */
 /** @typedef {{}} Queue_SavedInputs */
@@ -1760,6 +1767,36 @@ export const channels_followers_change = /** @type {((inputs: Channels_Followers
 /**
 * | output |
 * | --- |
+* | "Manage access at Google" |
+*
+* @param {Channels_Google_AccessInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_google_access = /** @type {((inputs?: Channels_Google_AccessInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Google_AccessInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_google_access(inputs)
+	if (locale === "cs") return __cs.channels_google_access(inputs)
+	return __en.channels_google_access(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Google Privacy Policy" |
+*
+* @param {Channels_Google_PrivacyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_google_privacy = /** @type {((inputs?: Channels_Google_PrivacyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Google_PrivacyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_google_privacy(inputs)
+	if (locale === "cs") return __cs.channels_google_privacy(inputs)
+	return __en.channels_google_privacy(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Groups" |
 *
 * @param {Channels_Groups_EditInputs} inputs
@@ -2135,6 +2172,21 @@ export const channels_title = /** @type {((inputs?: Channels_TitleInputs, option
 /**
 * | output |
 * | --- |
+* | "YouTube Terms of Service" |
+*
+* @param {Channels_Youtube_TermsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_youtube_terms = /** @type {((inputs?: Channels_Youtube_TermsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Youtube_TermsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_youtube_terms(inputs)
+	if (locale === "cs") return __cs.channels_youtube_terms(inputs)
+	return __en.channels_youtube_terms(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Close" |
 *
 * @param {CloseInputs} inputs
@@ -2311,6 +2363,21 @@ export const compose_limit_channel = /** @type {((inputs: Compose_Limit_ChannelI
 	if (locale === "sk") return __sk.compose_limit_channel(inputs)
 	if (locale === "cs") return __cs.compose_limit_channel(inputs)
 	return __en.compose_limit_channel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The text for {channel} can't contain {chars}" |
+*
+* @param {Compose_Limit_ForbiddenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_limit_forbidden = /** @type {((inputs: Compose_Limit_ForbiddenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Limit_ForbiddenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_limit_forbidden(inputs)
+	if (locale === "cs") return __cs.compose_limit_forbidden(inputs)
+	return __en.compose_limit_forbidden(inputs)
 });
 /**
 * | output |
@@ -3488,6 +3555,21 @@ export const issue_file_too_large = /** @type {((inputs?: Issue_File_Too_LargeIn
 /**
 * | output |
 * | --- |
+* | "The text contains characters this network doesn't allow." |
+*
+* @param {Issue_Forbidden_CharactersInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_forbidden_characters = /** @type {((inputs?: Issue_Forbidden_CharactersInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Forbidden_CharactersInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_forbidden_characters(inputs)
+	if (locale === "cs") return __cs.issue_forbidden_characters(inputs)
+	return __en.issue_forbidden_characters(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The video's frame rate is too high for this network." |
 *
 * @param {Issue_Frame_Rate_Too_HighInputs} inputs
@@ -3709,6 +3791,21 @@ export const issue_resolution_too_high = /** @type {((inputs?: Issue_Resolution_
 	if (locale === "sk") return __sk.issue_resolution_too_high(inputs)
 	if (locale === "cs") return __cs.issue_resolution_too_high(inputs)
 	return __en.issue_resolution_too_high(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A required setting for this network is missing." |
+*
+* @param {Issue_Setting_RequiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_setting_required = /** @type {((inputs?: Issue_Setting_RequiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Setting_RequiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_setting_required(inputs)
+	if (locale === "cs") return __cs.issue_setting_required(inputs)
+	return __en.issue_setting_required(inputs)
 });
 /**
 * | output |
@@ -5238,6 +5335,21 @@ export const provider_threads = /** @type {((inputs?: Provider_ThreadsInputs, op
 	if (locale === "sk") return __sk.provider_threads(inputs)
 	if (locale === "cs") return __cs.provider_threads(inputs)
 	return __en.provider_threads(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "YouTube" |
+*
+* @param {Provider_YoutubeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_youtube = /** @type {((inputs?: Provider_YoutubeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_YoutubeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_youtube(inputs)
+	if (locale === "cs") return __cs.provider_youtube(inputs)
+	return __en.provider_youtube(inputs)
 });
 /**
 * | output |

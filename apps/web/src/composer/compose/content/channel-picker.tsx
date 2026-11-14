@@ -21,6 +21,7 @@ export function channelHint(
 ): string | null {
   if (channel.status !== 'active') return statusLabel(channel.status);
   if (choice.kind === 'needs_image') return composeText.compose_channel_needs_image();
+  if (choice.kind === 'needs_video') return composeText.compose_channel_needs_video();
   if (choice.kind === 'image_type_unsupported') return composeText.compose_channel_image_type();
   if (choice.kind === 'too_many_images')
     return composeText.compose_channel_too_many_images({ count: choice.max });

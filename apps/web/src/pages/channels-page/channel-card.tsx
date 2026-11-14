@@ -1,4 +1,4 @@
-import { Button } from '@kronaut/ui';
+import { Button, buttonVariants } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
@@ -72,6 +72,16 @@ function CardActions({ channel, onReconnect, onDisconnect, pending, ...rest }: A
           {m.channels_disconnect()}
         </Button>
       )}
+      {channel.provider === 'youtube' ? (
+        <a
+          href="https://myaccount.google.com/permissions"
+          target="_blank"
+          rel="noreferrer"
+          className={buttonVariants({ size: 'sm', variant: 'ghost' })}
+        >
+          {m.channels_google_access()}
+        </a>
+      ) : null}
     </div>
   );
 }

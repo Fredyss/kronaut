@@ -43,6 +43,11 @@
     - consent text and commercial-content disclosure
     - live `creator_info` before posting
   - **Pinterest:** a board picker and a video cover.
+  - **YouTube** (Developer Policies, [provider facts](../reference/provider-facts.md)):
+    - per destination, a required title (≤100, no `<` or `>`) with a "Use first line" button that only suggests and never cuts
+    - visibility: public (default), unlisted or private; audience: channel default, made for kids or not
+    - links to the YouTube Terms of Service and Google Privacy Policy at connect, and to Google's permissions page per channel
+    - a missing title blocks scheduling, not draft save (`requiredSettings`)
   - **X:** shows the cost per post (higher with a link) from the manifest `cost`.
 - **Approval:**
   - Draft → In review → Approved → Scheduled.
