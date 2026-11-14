@@ -6,6 +6,7 @@ export { countLinks, countText } from './count.ts';
 export { toPlainText } from './plain-text.ts';
 export { appendSignature } from './signature.ts';
 export type { IssueCode, ValidationIssue } from './validate.ts';
+export { validateSettings } from './validate-settings.ts';
 
 export type TextRules = Pick<PostTypeSpec, 'text' | 'maxLinks'>;
 

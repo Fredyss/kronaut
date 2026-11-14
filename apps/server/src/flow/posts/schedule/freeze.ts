@@ -6,6 +6,7 @@ import {
   type IssueCode,
   type ValidationIssue,
   validate,
+  validateSettings,
 } from '@kronaut/compose';
 import type { DB, TenantDb } from '@kronaut/db';
 import { sql, type UpdateObject } from 'kysely';
@@ -183,6 +184,11 @@ function snapshotOf(
 
 type Snapshot = ReturnType<typeof snapshotOf>;
 
+function issuePath(index: number, issue: ValidationIssue): string {
+  const path = `destinations.${index}`;
+  return issue.field === undefined ? path : `${path}.settings.${issue.field}`;
+}
+
 function preflight(
   input: FreezeInput,
   snapshot: Snapshot,
@@ -193,15 +199,18 @@ function preflight(
   const checked = prepared.map((p) => {
     const { socialAccountId, publishType } = p.target;
     const resolved = resolveDestination(snapshot, { socialAccountId, publishType });
-    const issues = validate(
-      p.entry.manifest,
-      publishType,
-      draftItems(resolved),
-      accounts.get(socialAccountId)?.capabilities,
-    );
+    const issues = [
+      ...validate(
+        p.entry.manifest,
+        publishType,
+        draftItems(resolved),
+        accounts.get(socialAccountId)?.capabilities,
+      ),
+      ...validateSettings(p.entry.manifest, p.settings),
+    ];
     for (const issue of issues) {
       if (!WARNING_CODES.has(issue.code) || !input.acknowledged.has(issue.code)) {
-        details.push({ path: `destinations.${p.target.index}`, code: issue.code });
+        details.push({ path: issuePath(p.target.index, issue), code: issue.code });
       }
     }
     return { p, resolved, issues };

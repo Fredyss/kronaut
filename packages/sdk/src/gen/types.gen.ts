@@ -870,6 +870,7 @@ export type ChannelsListResponses = {
                         urlWeight?: number;
                     }>;
                 } | null;
+                forbiddenChars?: string;
                 id: string;
                 imageAspect: {
                     max: {
@@ -912,6 +913,7 @@ export type ChannelsListResponses = {
             preview: 'short-feed' | 'pro-feed' | 'media-grid' | 'vertical-video' | 'chat' | 'article';
             profileUrl: string | null;
             provider: string;
+            requiredSettings: Array<string>;
             shortenLinks: boolean;
             signature: {
                 doc: {

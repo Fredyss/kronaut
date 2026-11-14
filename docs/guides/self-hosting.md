@@ -109,6 +109,7 @@ printf '%s' "$INSTAGRAM_APP_SECRET" | docker compose run --rm -T cli kronaut pro
 printf '%s' "$THREADS_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register threads --client-id <threads app id>
 printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register facebook --client-id <meta app id>
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
+printf '%s' "$GOOGLE_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register youtube --client-id <google client id>
 ```
 
 ### Meta analytics
@@ -141,6 +142,17 @@ Kronaut posts to a member's personal LinkedIn profile, not to a LinkedIn Page. E
 - **Posts:** text, 1 image, or 2–20 JPEG or PNG images of up to 8 MB, with optional alt text.
 - **Reconnecting:** LinkedIn gives these apps no refresh tokens, so every connection lasts 60 days. Kronaut sends an expiring notice 7 days ahead; the member then reconnects LinkedIn from Channels.
 - **Unconfirmed posts:** Kronaut can't read LinkedIn posts back. If LinkedIn's answer to a send gets lost, the post is marked unconfirmed rather than sent twice; check the profile before sending it again.
+
+### YouTube
+
+Kronaut uploads videos to the YouTube channels of the Google account that connects. Each upload needs a title.
+
+- **In the Google Cloud console:**
+  - Create a project and enable the **YouTube Data API v3**.
+  - Set up the OAuth consent screen as **External** and publish it **In production**. In Testing, Google's refresh tokens die after 7 days and every channel has to reconnect. For your own use, the unverified-app warning at sign-in is expected.
+  - Create an OAuth client of type **Web application** with the redirect URI `https://kronaut.example.com/v1/oauth/youtube/callback`, using your own host.
+  - Register it with its client ID and client secret, using the `register youtube` command above.
+- **Quota:** a Cloud project gets 100 uploads a day, shared by every channel of the install. It resets at midnight Pacific time.
 
 ## 6. Backups, upgrades and logs
 

@@ -2533,6 +2533,9 @@
                                     }
                                   ]
                                 },
+                                "forbiddenChars": {
+                                  "type": "string"
+                                },
                                 "id": {
                                   "type": "string"
                                 },
@@ -2812,6 +2815,12 @@
                           "provider": {
                             "type": "string"
                           },
+                          "requiredSettings": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
                           "shortenLinks": {
                             "type": "boolean"
                           },
@@ -2875,6 +2884,7 @@
                           "connectedAt",
                           "lastErrorCode",
                           "postTypes",
+                          "requiredSettings",
                           "preview",
                           "insights",
                           "signature",

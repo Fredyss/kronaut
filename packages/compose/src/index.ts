@@ -8,3 +8,4 @@ export * from './schema.ts';
 export * from './signature.ts';
 export * from './text.ts';
 export * from './validate.ts';
+export * from './validate-settings.ts';
