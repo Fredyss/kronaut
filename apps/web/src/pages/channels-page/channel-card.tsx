@@ -140,6 +140,7 @@ function ChannelCard(props: CardProps) {
       {onDisconnect === null || panel !== 'confirm' ? null : (
         <DisconnectConfirm
           name={channel.displayName}
+          provider={channel.provider}
           pending={disconnecting}
           onConfirm={onDisconnect}
           onClose={() => setPanel(null)}

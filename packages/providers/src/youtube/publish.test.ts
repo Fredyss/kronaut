@@ -212,6 +212,10 @@ describe('youtube publish', () => {
       { kind: 'ambiguous', detail: 'timeout' },
     ],
     [{ ...uploaded(), json: { id: 'not a video id' } }, { kind: 'ambiguous' }],
+    [
+      googleError(401, 'authorizationRequired', 'PUT', SESSION),
+      { kind: 'ambiguous', detail: '401/authorizationRequired' },
+    ],
     [googleError(403, 'forbidden', 'PUT', SESSION), { kind: 'permanent', code: 'forbidden' }],
   ])('maps a chunk failure after the marker: %#', async (exchange, expected) => {
     const { error } = await publish([initiated(), exchange]);

@@ -73,6 +73,7 @@
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
@@ -711,6 +712,10 @@ export const channels_disconnect_body = /** @type {(inputs: Channels_Disconnect_
 
 export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconnect_ConfirmInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Odpojit kanál`)
+};
+
+export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tím se zruší i přístup Kronautu u Googlu. Ostatní kanály YouTube připojené přes stejný účet Google bude potřeba připojit znovu.`)
 };
 
 export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedInputs) => LocalizedString} */ (i) => {

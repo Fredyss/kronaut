@@ -26,7 +26,7 @@ export const youtubeManifest: ProviderManifest<YoutubeSettings> = {
   id: 'youtube',
   apiVersion: { version: 'v3' },
   availability: { state: 'experimental' },
-  auth: { kind: 'oauth', refresh: 'reusable', accessTtlMs: HOUR_MS, warnLeadMs: 7 * 24 * HOUR_MS },
+  auth: { kind: 'oauth', refresh: 'reusable', accessTtlMs: HOUR_MS, warnLeadMs: HOUR_MS / 4 },
   postTypes: [
     {
       id: 'video',

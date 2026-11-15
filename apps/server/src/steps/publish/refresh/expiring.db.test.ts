@@ -208,6 +208,18 @@ describe('channel.expiring', () => {
     expect(await incidents(accountId)).toEqual([]);
   });
 
+  it('never warns a reusable credential is expiring, even when its refresh fails', async () => {
+    const { fake } = fixture;
+    fake.configureAuth({ refresh: 'reusable', warnLeadMs: 60 * MINUTE_MS });
+    const accountId = await fixture.connectAccount(fixture.appId, {
+      accessExpiresAt: inMs(5 * MINUTE_MS),
+    });
+    fake.scriptRefresh({ kind: 'fail', error: { kind: 'transient' } });
+
+    expect(await sweep()).toMatchObject({ due: 1, transient: 1, expiring: 0 });
+    expect(await incidents(accountId)).toEqual([]);
+  });
+
   it('warns when a failed refresh leaves the credential inside half the warn lead', async () => {
     const { fake } = fixture;
     fake.configureAuth({ refresh: 'self_refresh', warnLeadMs: 60 * MINUTE_MS });

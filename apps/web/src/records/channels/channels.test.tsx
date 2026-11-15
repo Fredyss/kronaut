@@ -191,6 +191,7 @@ describe('channels page', () => {
     screen.getByText(
       "Disconnect Ada on Bluesky? Scheduled posts to it won't be published. You can connect it again later.",
     );
+    expect(screen.queryByText(/revokes Kronaut's access at Google/)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Disconnect channel' }));
     await screen.findByText('Ada on Bluesky disconnected.');
     expect(disconnects).toEqual(['/v1/workspaces/ws_1/channels/acct_1/disconnect']);
@@ -199,6 +200,13 @@ describe('channels page', () => {
     mount('/channels', [], { role: 'viewer' });
     await screen.findByText('Ada on Bluesky');
     expect(screen.queryByRole('button', { name: 'Disconnect' })).toBeNull();
+    cleanup();
+
+    const tube = { ...CHANNEL, provider: 'youtube', displayName: 'Ada on YouTube' };
+    mount('/channels', [], { channels: [tube] });
+    await screen.findByText('Ada on YouTube');
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
+    screen.getByText(/Other YouTube channels connected with the same Google account/);
   });
 
   it('shows a localised toast for ?error= and clears the param', async () => {

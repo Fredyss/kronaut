@@ -73,6 +73,7 @@
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
@@ -707,6 +708,10 @@ export const channels_disconnect_body = /** @type {(inputs: Channels_Disconnect_
 
 export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconnect_ConfirmInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Disconnect channel`)
+};
+
+export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.`)
 };
 
 export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedInputs) => LocalizedString} */ (i) => {

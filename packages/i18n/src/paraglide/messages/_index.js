@@ -75,6 +75,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
@@ -1522,6 +1523,21 @@ export const channels_disconnect_confirm = /** @type {((inputs?: Channels_Discon
 	if (locale === "sk") return __sk.channels_disconnect_confirm(inputs)
 	if (locale === "cs") return __cs.channels_disconnect_confirm(inputs)
 	return __en.channels_disconnect_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect." |
+*
+* @param {Channels_Disconnect_GoogleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_google = /** @type {((inputs?: Channels_Disconnect_GoogleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_GoogleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_google(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_google(inputs)
+	return __en.channels_disconnect_google(inputs)
 });
 /**
 * | output |

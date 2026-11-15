@@ -79,6 +79,7 @@
   "queue_saved": "Queue saved.",
   "queue_evergreen": "Free slots are filled from evergreen posts 24 h ahead.",
   "channels_disconnect_body": "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later.",
+  "channels_disconnect_google": "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.",
   "channels_disconnect_confirm": "Disconnect channel",
   "channels_disconnected": "{name} disconnected.",
   "channels_open_profile": "Open profile",

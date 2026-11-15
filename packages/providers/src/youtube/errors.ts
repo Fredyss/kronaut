@@ -80,6 +80,8 @@ function failureFromBody(
     failureForStatus(status, effect, {
       known: () => rejection(status, reason, now),
       rateLimited: () => ({ kind: effect === 'public' ? 'ambiguous' : 'transient', detail }),
+      unauthorized: () =>
+        effect === 'public' ? { kind: 'ambiguous', detail } : { kind: 'auth_expired' },
       serverDetail: detail,
     }),
   );
