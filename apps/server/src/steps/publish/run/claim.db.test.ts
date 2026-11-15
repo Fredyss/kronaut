@@ -223,6 +223,21 @@ describe('publish job', () => {
     });
   });
 
+  it('fails a scheduled destination that lacks a setting the provider now requires', async () => {
+    const seeded = await seed();
+    fake.requireSettings(['title']);
+    try {
+      await publish(seeded);
+    } finally {
+      fake.requireSettings([]);
+    }
+    expect(await destination(seeded)).toMatchObject({
+      state: 'failed',
+      last_error_code: 'preflight_invalid',
+      last_error_message: 'setting_required',
+    });
+  });
+
   it('re-enqueues without an attempt while the account is busy', async () => {
     const busy = await seed();
     await updateDestination(

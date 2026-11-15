@@ -103,6 +103,7 @@ export interface FakeProvider {
   configureChain(chain: FakeChainConfig): void;
   scriptRefresh(...behaviours: FakeRefresh[]): void;
   configureAuth(config: FakeAuthConfig): void;
+  requireSettings(keys: readonly string[]): void;
 }
 
 export const fakeManifest: ProviderManifest = {
@@ -159,6 +160,7 @@ export function fakeProvider(): FakeProvider {
   let config = fakeVerifyDefaults;
   let auth: FakeAuthConfig = fakeManifest.auth;
   let chain: FakeChainConfig = {};
+  let required: readonly string[] = [];
   const manifest: ProviderManifest = {
     ...fakeManifest,
     get postTypes() {
@@ -169,6 +171,9 @@ export function fakeProvider(): FakeProvider {
     },
     get verify() {
       return { mode: config.mode, windowMs: config.windowMs };
+    },
+    get requiredSettings() {
+      return required;
     },
   };
   const poll = fakePoll(q);
@@ -211,6 +216,9 @@ export function fakeProvider(): FakeProvider {
       auth = next;
       if (next.refresh === 'none') delete runtime.refresh;
       else runtime.refresh = refresh;
+    },
+    requireSettings: (keys) => {
+      required = keys;
     },
   };
 }

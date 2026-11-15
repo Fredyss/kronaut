@@ -381,7 +381,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 
 **YouTube** (Data API v3)
 
-YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2).
+YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15).
 - **Quota** (Y1, Y3).
   - `videos.insert` costs 1 call from its **own bucket of 100 calls/day per Cloud project**, shared by the whole install, so the bucket key is `app:`. Its cost fell from about 1,600 to about 100 units on 2025-12-04, and it got its own bucket on 2026-06-01.
   - Every other method shares the 10,000-unit bucket: `videos.list` and `channels.list` 1, `videos.update` and `videos.delete` 50. Everything resets at midnight Pacific.
@@ -413,6 +413,8 @@ YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2).
   - Each client keeps at most 100 refresh tokens per account, and the oldest is silently invalidated. A token unused for 6 months dies.
   - An External consent screen in **Testing** status issues refresh tokens that **expire after 7 days**, so a self-hoster sets it to "In production".
   - Revoking a token also revokes its grant for every client in the project.
+  - **Time-based access** (G3, checked 2026-11-15): the consent screen may let the user grant access for a limited time. The refresh token then expires after that duration, and `refresh_token_expires_in` gives the time remaining.
+  - **Errors** (G3): `invalid_grant` means the code or refresh token is invalid, expired or revoked. `invalid_client` means the client secret is incorrect, and `deleted_client` that the client was deleted (restorable within 30 days). The guide lists the last two under the consent errors; Kronaut maps them to `app_config` wherever they appear.
 - **Developer Policies** (Y8).
   - III.A: link the YouTube Terms of Service and the Google Privacy Policy, and offer a way to revoke.
   - III.E.3: an uploader must show a clear public, unlisted or private choice, and may change a video's privacy only on the user's instruction.
@@ -634,6 +636,7 @@ YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2).
 - Y13 https://developers.google.com/youtube/v3/docs/channels
 - G1 https://developers.google.com/identity/protocols/oauth2
 - G2 https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
+- G3 https://developers.google.com/identity/protocols/oauth2/web-server
 - K1 https://developers.tiktok.com/doc/content-sharing-guidelines
 - K2 https://developers.tiktok.com/doc/content-posting-api-reference-direct-post
 - K3 https://developers.tiktok.com/doc/oauth-user-access-token-management

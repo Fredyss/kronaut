@@ -46,15 +46,20 @@ describe('youtube refresh', () => {
     expect(JSON.stringify(http.calls)).not.toContain(TOKEN);
   });
 
-  it('takes a refresh token the response returns', async () => {
+  it('takes a refresh token the response returns, and the end of a time-limited grant', async () => {
     const { issued } = await refresh({
       method: 'POST',
       url: TOKEN_URL,
-      json: { access_token: 'access-2', expires_in: 3599, refresh_token: 'refresh-2' },
+      json: {
+        access_token: 'access-2',
+        expires_in: 3599,
+        refresh_token: 'refresh-2',
+        refresh_token_expires_in: 86_400,
+      },
     });
-    expect((await issued).credentials).toEqual({
-      accessToken: 'access-2',
-      refreshToken: 'refresh-2',
+    expect(await issued).toMatchObject({
+      credentials: { accessToken: 'access-2', refreshToken: 'refresh-2' },
+      refreshExpiresAt: TEST_NOW.add({ seconds: 86_400 }),
     });
   });
 
@@ -63,6 +68,8 @@ describe('youtube refresh', () => {
     [503, {}, { kind: 'transient', detail: 'http_503' }],
     [429, {}, { kind: 'transient', detail: 'http_429' }],
     [400, { error: 'invalid_request' }, { kind: 'permanent', code: 'refresh_failed' }],
+    [401, { error: 'invalid_client' }, { kind: 'app_config', code: 'client_invalid' }],
+    [401, { error: 'deleted_client' }, { kind: 'app_config', code: 'client_deleted' }],
   ])('maps a %i refusal', async (status, json, error) => {
     const { issued } = await refresh({ method: 'POST', url: TOKEN_URL, status, json });
     await expect(issued).rejects.toMatchObject({ error });

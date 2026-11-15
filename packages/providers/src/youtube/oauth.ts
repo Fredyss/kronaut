@@ -6,6 +6,7 @@ import {
   type RefreshInput,
   type RevokeInput,
 } from '@kronaut/core';
+import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { readJson, send, tryJson } from '../_kit/http.ts';
 import { permanent } from '../_kit/meta-graph.ts';
@@ -30,6 +31,7 @@ const tokenResponse = z.looseObject({
   expires_in: z.number().int().positive(),
   scope: z.string().optional(),
   refresh_token: z.string().min(1).optional(),
+  refresh_token_expires_in: z.number().int().positive().optional(),
 });
 export type TokenResponse = z.infer<typeof tokenResponse>;
 
@@ -64,6 +66,25 @@ async function errorOf(response: ProviderHttpResponse): Promise<string | undefin
   return oauthError.safeParse(await tryJson(response)).data?.error;
 }
 
+const CLIENT_ERRORS: Readonly<Record<string, string>> = {
+  invalid_client: 'client_invalid',
+  deleted_client: 'client_deleted',
+};
+
+function clientFailure(error: string | undefined): ProviderFailure | undefined {
+  const code =
+    error !== undefined && Object.hasOwn(CLIENT_ERRORS, error) ? CLIENT_ERRORS[error] : undefined;
+  return code === undefined ? undefined : new ProviderFailure({ kind: 'app_config', code });
+}
+
+export function refreshExpiry(
+  now: Temporal.Instant,
+  token: TokenResponse,
+): { readonly refreshExpiresAt?: Temporal.Instant } {
+  const seconds = token.refresh_token_expires_in;
+  return seconds === undefined ? {} : { refreshExpiresAt: now.add({ seconds }) };
+}
+
 function postForm(ctx: BaseContext, url: string, form: Record<string, string>) {
   return send(ctx, 'private', url, {
     method: 'POST',
@@ -82,8 +103,12 @@ export async function exchangeCode(ctx: BaseContext, grant: CodeGrant): Promise<
     code_verifier: grant.verifier,
   });
   if (retryable(response.status)) throw transient(response.status);
-  if (!isSuccess(response.status))
-    throw permanent('code_exchange_failed', `http_${response.status}`);
+  if (!isSuccess(response.status)) {
+    throw (
+      clientFailure(await errorOf(response)) ??
+      permanent('code_exchange_failed', `http_${response.status}`)
+    );
+  }
   return readJson(response, tokenResponse, 'private');
 }
 
@@ -99,9 +124,12 @@ export async function refreshAccess(
   });
   const { status } = response;
   if (retryable(status)) throw transient(status);
-  if (status === 400 && (await errorOf(response)) === 'invalid_grant')
-    throw new ProviderFailure({ kind: 'auth_revoked' });
-  if (!isSuccess(status)) throw permanent('refresh_failed', `http_${status}`);
+  if (!isSuccess(status)) {
+    const error = await errorOf(response);
+    if (status === 400 && error === 'invalid_grant')
+      throw new ProviderFailure({ kind: 'auth_revoked' });
+    throw clientFailure(error) ?? permanent('refresh_failed', `http_${status}`);
+  }
   const token = await readJson(response, tokenResponse, 'private');
   const granted = scopesOf(token.scope);
   return {
@@ -111,6 +139,7 @@ export async function refreshAccess(
     },
     grantedScopes: granted.length === 0 ? [...SCOPES] : granted,
     accessExpiresAt: ctx.now().add({ seconds: token.expires_in }),
+    ...refreshExpiry(ctx.now(), token),
   };
 }
 

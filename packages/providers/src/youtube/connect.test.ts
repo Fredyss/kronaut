@@ -131,6 +131,23 @@ describe('youtube connect', () => {
     ]);
   });
 
+  it('records when a time-limited grant ends', async () => {
+    const { accounts } = await finish([
+      token({ refresh_token_expires_in: 604_800 }),
+      channels([{ id: 'UCaaaaaaaaaaaaaaaaaaaaaa', snippet: { title: 'Main' } }]),
+    ]);
+    expect(accounts?.[0]?.refreshExpiresAt).toEqual(TEST_NOW.add({ seconds: 604_800 }));
+  });
+
+  it.each([
+    ['invalid_client', 'client_invalid'],
+    ['deleted_client', 'client_deleted'],
+  ])('reports a %s code exchange as an app problem', async (reason, code) => {
+    const refused = { method: 'POST', url: TOKEN_URL, status: 401, json: { error: reason } };
+    const { error } = await finish([refused]);
+    expect(error).toEqual({ kind: 'app_config', code });
+  });
+
   it('returns no accounts when the login has no channel', async () => {
     const { accounts } = await finish([token(), channels()]);
     expect(accounts).toEqual([]);

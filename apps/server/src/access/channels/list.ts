@@ -173,18 +173,21 @@ function insightsGranted(capabilities: unknown): boolean {
   return insightsCapability.safeParse(capabilities).success;
 }
 
+function shownExpiry(
+  entry: ProviderEntry | undefined,
+  row: { readonly access_expires_at: Date | null; readonly refresh_expires_at: Date | null },
+): string | null {
+  const reusable = entry?.manifest.auth.refresh === 'reusable';
+  return iso(reusable ? row.refresh_expires_at : row.access_expires_at);
+}
+
 interface ChannelListOptions {
   readonly scope: AccessScope | null;
   readonly hideSignatures: boolean;
   readonly hideGroups: boolean;
 }
 
-export async function listChannels(
-  trx: TenantDb,
-  workspaceId: string,
-  providers: ProviderRegistry,
-  { scope, hideSignatures, hideGroups }: ChannelListOptions,
-): Promise<z.output<typeof ChannelSchema>[]> {
+function channelRows(trx: TenantDb, workspaceId: string, scope: AccessScope | null) {
   let query = trx
     .selectFrom('social_accounts')
     .select([
@@ -197,6 +200,7 @@ export async function listChannels(
       'status',
       'status_reason',
       'access_expires_at',
+      'refresh_expires_at',
       'created_at',
       'last_error_code',
       'capabilities',
@@ -214,7 +218,16 @@ export async function listChannels(
       ]),
     );
   }
-  const rows = await query.orderBy('created_at').orderBy('id').execute();
+  return query.orderBy('created_at').orderBy('id').execute();
+}
+
+export async function listChannels(
+  trx: TenantDb,
+  workspaceId: string,
+  providers: ProviderRegistry,
+  { scope, hideSignatures, hideGroups }: ChannelListOptions,
+): Promise<z.output<typeof ChannelSchema>[]> {
+  const rows = await channelRows(trx, workspaceId, scope);
   const groupsOf = await loadChannelGroups(
     trx,
     workspaceId,
@@ -236,7 +249,7 @@ export async function listChannels(
       profileUrl: row.profile_url,
       status: row.status,
       statusReason: row.status_reason,
-      accessExpiresAt: iso(row.access_expires_at),
+      accessExpiresAt: shownExpiry(entry, row),
       connectedAt: row.created_at.toISOString(),
       lastErrorCode: row.last_error_code,
       ...providerRules(entry, row.capabilities),
