@@ -176,6 +176,8 @@ Phase 0 rules:
   - `warnLeadMs`, if it can't be refreshed (refresh kind `none`, or no `refresh()`), checked by the warning pass;
   - half of `warnLeadMs`, if the refresh pass's refresh didn't renew it (`transient`, `skipped` or `app`), so one failed run doesn't warn. A `rejected` refresh already flags the account `needs_reauth` and doesn't count.
 
+  A `reusable` credential is never expiring. Its refresh token has no known end and its access token is renewed whenever it falls due, so a dead refresh token shows up as `auth_revoked` or `auth_expired` at the next refresh, claim or publish instead of as a warning.
+
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
 
 ## Channel signature
