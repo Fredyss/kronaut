@@ -29,6 +29,7 @@
     "enabled": true,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
+    "excludedCommands": ["git push *", "git fetch *"],
     "filesystem": {
       "denyRead": [
         "./.env",
