@@ -99,9 +99,11 @@ const channelsRoute = createRoute({
   validateSearch: (search: Record<string, unknown>): ChannelsSearch => {
     const connected = searchValue(search.connected, PUBLIC_ID_LIST_MAX);
     const error = searchValue(search.error);
+    const pick = searchValue(search.pick);
     return {
       ...(connected === undefined ? {} : { connected }),
       ...(error === undefined ? {} : { error }),
+      ...(pick === undefined ? {} : { pick }),
     };
   },
   component: ChannelsPage,

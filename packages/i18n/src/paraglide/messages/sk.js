@@ -75,6 +75,7 @@
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
 /** @typedef {{}} Channels_Disconnect_DiscordInputs */
+/** @typedef {{}} Channels_Disconnect_Discord_BotInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -102,6 +103,11 @@
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_Pick_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConnectedInputs */
+/** @typedef {{}} Channels_Pick_ExpiredInputs */
+/** @typedef {{}} Channels_Pick_TitleInputs */
 /** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -222,6 +228,8 @@
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
+/** @typedef {{}} Issue_Missing_AccessInputs */
+/** @typedef {{}} Issue_Missing_PermissionsInputs */
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
@@ -326,6 +334,7 @@
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
 /** @typedef {{}} Provider_DiscordInputs */
+/** @typedef {{}} Provider_Discord_BotInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -730,6 +739,10 @@ export const channels_disconnect_discord = /** @type {(inputs: Channels_Disconne
 	return /** @type {LocalizedString} */ (`Z kanála na Discorde sa tým odstráni aj webhook Kronautu.`)
 };
 
+export const channels_disconnect_discord_bot = /** @type {(inputs: Channels_Disconnect_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bot Kronautu zostane na serveri Discord, kým ho neodstránite v nastaveniach servera.`)
+};
+
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tým sa zruší aj prístup Kronautu v Google. Ostatné kanály YouTube pripojené cez rovnaký účet Google bude treba pripojiť znova.`)
 };
@@ -840,6 +853,34 @@ export const channels_not_set_up = /** @type {(inputs: Channels_Not_Set_UpInputs
 
 export const channels_open_profile = /** @type {(inputs: Channels_Open_ProfileInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Otvoriť profil`)
+};
+
+export const channels_pick_body = /** @type {(inputs: Channels_Pick_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte kanály, do ktorých má Kronaut uverejňovať. Ďalšie môžete pripojiť neskôr.`)
+};
+
+export const channels_pick_confirm = /** @type {(inputs: Channels_Pick_ConfirmInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Pripojiť ${i?.count} kanál`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Pripojiť ${i?.count} kanály`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Pripojiť ${i?.count} kanála`);
+	return /** @type {LocalizedString} */ (`Pripojiť ${i?.count} kanálov`)
+};
+
+export const channels_pick_connected = /** @type {(inputs: Channels_Pick_ConnectedInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál je pripojený.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály sú pripojené.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanála je pripojených.`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálov je pripojených.`)
+};
+
+export const channels_pick_expired = /** @type {(inputs: Channels_Pick_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Platnosť výberu vypršala. Spustite pripojenie znova a vyberte kanály.`)
+};
+
+export const channels_pick_title = /** @type {(inputs: Channels_Pick_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte kanály na pripojenie`)
 };
 
 export const channels_queue = /** @type {(inputs: Channels_QueueInputs) => LocalizedString} */ () => {
@@ -1331,6 +1372,14 @@ export const issue_mime_unsupported = /** @type {(inputs: Issue_Mime_Unsupported
 	return /** @type {LocalizedString} */ (`Táto sieť neprijíma tento formát obrázka.`)
 };
 
+export const issue_missing_access = /** @type {(inputs: Issue_Missing_AccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Bot Kronautu tento kanál Discordu nevidí. Udeľte mu tam oprávnenie View Channel alebo kanál pripojte znova.`)
+};
+
+export const issue_missing_permissions = /** @type {(inputs: Issue_Missing_PermissionsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Botovi Kronautu v tomto kanáli Discordu chýba oprávnenie. Udeľte mu tam View Channel, Send Messages a Attach Files a skúste to znova.`)
+};
+
 export const issue_not_ready = /** @type {(inputs: Issue_Not_ReadyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Obrázok sa ešte spracúva. Skúste to o chvíľu.`)
 };
@@ -1777,6 +1826,10 @@ export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => L
 
 export const provider_discord = /** @type {(inputs: Provider_DiscordInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Discord`)
+};
+
+export const provider_discord_bot = /** @type {(inputs: Provider_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord (bot)`)
 };
 
 export const provider_facebook = /** @type {(inputs: Provider_FacebookInputs) => LocalizedString} */ () => {

@@ -83,6 +83,7 @@
   "channels_disconnect_body": "Odpojiť {name}? Príspevky naplánované do tohto kanála sa nezverejnia. Neskôr ho môžete znova pripojiť.",
   "channels_disconnect_google": "Tým sa zruší aj prístup Kronautu v Google. Ostatné kanály YouTube pripojené cez rovnaký účet Google bude treba pripojiť znova.",
   "channels_disconnect_discord": "Z kanála na Discorde sa tým odstráni aj webhook Kronautu.",
+  "channels_disconnect_discord_bot": "Bot Kronautu zostane na serveri Discord, kým ho neodstránite v nastaveniach servera.",
   "channels_disconnect_data": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -105,6 +106,33 @@
   "channels_connected_named": "Kanál {name} je pripojený.",
   "channels_connected_list": "Pripojené kanály: {names}.",
   "channels_connected": "Kanál je pripojený.",
+  "channels_pick_title": "Vyberte kanály na pripojenie",
+  "channels_pick_body": "Vyberte kanály, do ktorých má Kronaut uverejňovať. Ďalšie môžete pripojiť neskôr.",
+  "channels_pick_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Pripojiť {count} kanál",
+        "countPlural=few": "Pripojiť {count} kanály",
+        "countPlural=many": "Pripojiť {count} kanála",
+        "countPlural=*": "Pripojiť {count} kanálov"
+      }
+    }
+  ],
+  "channels_pick_expired": "Platnosť výberu vypršala. Spustite pripojenie znova a vyberte kanály.",
+  "channels_pick_connected": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál je pripojený.",
+        "countPlural=few": "{count} kanály sú pripojené.",
+        "countPlural=many": "{count} kanála je pripojených.",
+        "countPlural=*": "{count} kanálov je pripojených."
+      }
+    }
+  ],
   "channel_status_active": "Aktívny",
   "channel_status_needs_reauth": "Treba znova pripojiť",
   "channel_status_disabled": "Vypnutý",
@@ -136,6 +164,7 @@
   "channels_connect_bad_url": "Sieť vrátila nebezpečnú prihlasovaciu adresu, preto sa pripájanie zastavilo.",
   "provider_bluesky": "Bluesky",
   "provider_discord": "Discord",
+  "provider_discord_bot": "Discord (bot)",
   "provider_facebook": "Facebook",
   "provider_instagram": "Instagram",
   "provider_linkedin": "LinkedIn",
@@ -590,6 +619,8 @@
   "issue_setting_required": "Chýba povinné nastavenie pre túto sieť.",
   "issue_forbidden_characters": "Text obsahuje znaky, ktoré táto sieť nepovoľuje.",
   "issue_forum_channel_unsupported": "Kronaut nevie uverejňovať vo fórach ani v mediálnych kanáloch Discordu. Pripojte textový kanál.",
+  "issue_missing_permissions": "Botovi Kronautu v tomto kanáli Discordu chýba oprávnenie. Udeľte mu tam View Channel, Send Messages a Attach Files a skúste to znova.",
+  "issue_missing_access": "Bot Kronautu tento kanál Discordu nevidí. Udeľte mu tam oprávnenie View Channel alebo kanál pripojte znova.",
   "channels_signature": "Podpis",
   "channels_signature_none": "Žiadny",
   "channels_signature_named": "Podpis: {name}",

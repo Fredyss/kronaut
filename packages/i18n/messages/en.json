@@ -81,6 +81,7 @@
   "channels_disconnect_body": "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later.",
   "channels_disconnect_google": "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.",
   "channels_disconnect_discord": "This also removes Kronaut's webhook from the Discord channel.",
+  "channels_disconnect_discord_bot": "Kronaut's bot stays in the Discord server until you remove it in the server settings.",
   "channels_disconnect_data": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -101,6 +102,29 @@
   "channels_connected_named": "{name} is connected.",
   "channels_connected_list": "Connected: {names}.",
   "channels_connected": "The channel is connected.",
+  "channels_pick_title": "Choose channels to connect",
+  "channels_pick_body": "Pick the channels Kronaut should post to. You can connect more later.",
+  "channels_pick_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Connect {count} channel",
+        "countPlural=*": "Connect {count} channels"
+      }
+    }
+  ],
+  "channels_pick_expired": "This selection expired. Connect again to choose channels.",
+  "channels_pick_connected": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} channel is connected.",
+        "countPlural=*": "{count} channels are connected."
+      }
+    }
+  ],
   "channel_status_active": "Active",
   "channel_status_needs_reauth": "Needs reconnecting",
   "channel_status_disabled": "Disabled",
@@ -130,6 +154,7 @@
   "channels_connect_bad_url": "The network returned an unsafe sign-in address, so connecting stopped.",
   "provider_bluesky": "Bluesky",
   "provider_discord": "Discord",
+  "provider_discord_bot": "Discord (bot)",
   "provider_facebook": "Facebook",
   "provider_instagram": "Instagram",
   "provider_linkedin": "LinkedIn",
@@ -561,6 +586,8 @@
   "issue_setting_required": "A required setting for this network is missing.",
   "issue_forbidden_characters": "The text contains characters this network doesn't allow.",
   "issue_forum_channel_unsupported": "Kronaut can't post to Discord forum or media channels. Connect a text channel instead.",
+  "issue_missing_permissions": "Kronaut's bot lacks a permission in this Discord channel. Give it View Channel, Send Messages and Attach Files there, then try again.",
+  "issue_missing_access": "Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again.",
   "channels_signature": "Signature",
   "channels_signature_none": "None",
   "channels_signature_named": "Signature: {name}",

@@ -37,7 +37,7 @@ export let keyring: Keyring;
 export let app: Hono;
 export let gated: Hono;
 export let workspaceId: string;
-let ownerId: string;
+export let ownerId: string;
 export let owner: string;
 export let admin: string;
 export let editor: string;

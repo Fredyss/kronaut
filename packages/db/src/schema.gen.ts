@@ -754,6 +754,10 @@ export interface ProviderAppKeys {
 }
 
 export interface ProviderApps {
+  bot_token_ciphertext: Buffer | null;
+  bot_token_kek_version: number | null;
+  bot_token_nonce: Buffer | null;
+  bot_token_wrapped_dek: Buffer | null;
   client_id: string;
   client_secret_ciphertext: Buffer | null;
   client_secret_nonce: Buffer | null;

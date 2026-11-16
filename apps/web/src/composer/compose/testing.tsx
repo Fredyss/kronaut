@@ -39,17 +39,19 @@ const BLUESKY_TEXT = [
   { counting: 'graphemes', max: 300 },
   { counting: 'utf8-bytes', max: 3000 },
 ];
+const DISCORD_RULES = [
+  {
+    id: 'message',
+    text: [{ counting: 'utf16', max: 2000 }],
+    maxLinks: null,
+    imageAspect: null,
+    video: null,
+  },
+];
 const RULES: Record<string, unknown[]> = {
   bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null, video: null }],
-  discord: [
-    {
-      id: 'message',
-      text: [{ counting: 'utf16', max: 2000 }],
-      maxLinks: null,
-      imageAspect: null,
-      video: null,
-    },
-  ],
+  discord: DISCORD_RULES,
+  discord_bot: DISCORD_RULES,
   threads: [
     {
       id: 'post',
@@ -82,6 +84,7 @@ const RULES: Record<string, unknown[]> = {
 const PREVIEWS: Record<string, string> = {
   bluesky: 'short-feed',
   discord: 'short-feed',
+  discord_bot: 'short-feed',
   facebook: 'pro-feed',
   instagram: 'media-grid',
   linkedin: 'pro-feed',

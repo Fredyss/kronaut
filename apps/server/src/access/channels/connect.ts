@@ -275,3 +275,18 @@ export async function persistConnection(
   }
   return id;
 }
+
+export type ConnectionTarget = Omit<Connection, 'account'>;
+
+export async function persistConnections(
+  trx: TenantDb,
+  keyring: Keyring,
+  target: ConnectionTarget,
+  accounts: readonly ConnectedAccount<unknown>[],
+): Promise<string[]> {
+  const ids: string[] = [];
+  for (const account of accounts) {
+    ids.push(await persistConnection(trx, keyring, { ...target, account }));
+  }
+  return ids;
+}

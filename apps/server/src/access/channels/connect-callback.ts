@@ -19,10 +19,11 @@ import {
   consumePending,
   openPending,
   type PendingRecord,
-  persistConnection,
+  persistConnections,
   sha256Hex,
   stateKey,
 } from './connect.ts';
+import { ConnectFailure, loggable, providerReason } from './connect-failure.ts';
 import {
   type ChannelRouteDeps,
   loadApp,
@@ -31,21 +32,9 @@ import {
   redirectUri,
 } from './deps.ts';
 import { markAppMisconfigured } from './instance-apps.ts';
+import { offerSelection } from './selection/pending.ts';
 
-export const CONNECT_ERRORS = [
-  'state_invalid',
-  'session_mismatch',
-  'forbidden',
-  'provider_denied',
-  'provider_error',
-  'app_config',
-  'no_accounts',
-  'too_many_accounts',
-  'server_error',
-] as const;
-export type ConnectError = (typeof CONNECT_ERRORS)[number];
-
-export const connectCallbackRoute = defineRoute({
+const connectCallbackRoute = defineRoute({
   id: 'channels.connect_callback',
   method: 'GET',
   path: '/v1/oauth/:provider/callback',
@@ -58,20 +47,6 @@ export const connectCallbackRoute = defineRoute({
   summary: 'Finish connecting a channel after the provider redirects back',
   tags: ['channels'],
 });
-
-type FailureReason = Readonly<Record<string, string>>;
-
-class ConnectFailure extends Error {
-  readonly code: ConnectError;
-  readonly reason: FailureReason;
-
-  constructor(code: ConnectError, reason: FailureReason = {}) {
-    super(`connect failed: ${code}`);
-    this.name = 'ConnectFailure';
-    this.code = code;
-    this.reason = reason;
-  }
-}
 
 interface Claimed {
   readonly params: Record<string, string>;
@@ -94,20 +69,6 @@ interface Connected {
   readonly accounts: readonly ConnectedAccount<unknown>[];
 }
 
-const LOGGABLE_CODE = /^[A-Za-z0-9_.:-]{1,64}$/;
-
-function loggable(value: string): string {
-  return LOGGABLE_CODE.test(value) ? value : 'unrecognised';
-}
-
-function providerReason(err: unknown): FailureReason {
-  if (!isProviderFailure(err)) return { providerKind: 'unexpected' };
-  const { error } = err;
-  return error.kind === 'permanent' || error.kind === 'app_config'
-    ? { providerKind: error.kind, providerCode: loggable(error.code) }
-    : { providerKind: error.kind };
-}
-
 function stringParams(query: Readonly<Record<string, unknown>>): Record<string, string> | null {
   const params: Record<string, string> = {};
   for (const [name, value] of Object.entries(query)) {
@@ -117,7 +78,15 @@ function stringParams(query: Readonly<Record<string, unknown>>): Record<string, 
   return params;
 }
 
-function channelsUrl(deps: ChannelRouteDeps, name: 'connected' | 'error', value: string): string {
+type Finished =
+  | { readonly kind: 'connected'; readonly ids: readonly string[] }
+  | { readonly kind: 'pick'; readonly selectionId: string };
+
+function publicAccountId(id: string): string {
+  return encodePublicId('socialAccount', id);
+}
+
+function channelsUrl(deps: ChannelRouteDeps, name: 'connected' | 'error' | 'pick', value: string) {
   const url = new URL('/channels', deps.publicBaseUrl);
   url.searchParams.set(name, value);
   return url.toString();
@@ -209,28 +178,20 @@ async function saveConnections(
   ctx: RequestContext,
   { record, entry, accounts }: Connected,
 ): Promise<string[]> {
-  const { manifest } = entry;
+  const target = {
+    workspaceId: record.workspace_id,
+    userId: record.user_id,
+    provider: entry.manifest.id,
+    providerAppId: record.provider_app_id,
+    clientKeyId: record.client_key_id,
+    credentialKind: entry.manifest.auth.kind,
+    requestId: ctx.requestId,
+  };
   try {
     return await deps.db.withTenant(
       record.workspace_id,
       { kind: 'user', id: record.user_id },
-      async (trx) => {
-        const ids: string[] = [];
-        for (const account of accounts) {
-          const id = await persistConnection(trx, deps.keyring, {
-            workspaceId: record.workspace_id,
-            userId: record.user_id,
-            provider: manifest.id,
-            providerAppId: record.provider_app_id,
-            clientKeyId: record.client_key_id,
-            credentialKind: manifest.auth.kind,
-            account,
-            requestId: ctx.requestId,
-          });
-          ids.push(id);
-        }
-        return ids;
-      },
+      (trx) => persistConnections(trx, deps.keyring, target, accounts),
     );
   } catch (err) {
     ctx.logger.error({ err }, 'channel connect could not be saved');
@@ -243,7 +204,7 @@ async function finish(
   provider: string,
   query: Readonly<Record<string, unknown>>,
   ctx: RequestContext,
-): Promise<string[]> {
+): Promise<Finished> {
   const { params, kvKey, record } = await claim(deps, provider, query);
   await checkCaller(deps, record, ctx);
 
@@ -273,17 +234,22 @@ async function finish(
     params,
   });
   if (accounts.length === 0) throw new ConnectFailure('no_accounts');
+  if (entry.manifest.auth.connectPicker === 'kronaut') {
+    return { kind: 'pick', selectionId: await offerSelection(deps, record, accounts) };
+  }
   if (accounts.length > MAX_CONNECT_ACCOUNTS) throw new ConnectFailure('too_many_accounts');
-  return await saveConnections(deps, ctx, { record, entry, accounts });
+  return { kind: 'connected', ids: await saveConnections(deps, ctx, { record, entry, accounts }) };
 }
 
 export function bindConnectCallback(deps: ChannelRouteDeps) {
   return bindRoute(connectCallbackRoute, async ({ params, query }, ctx) => {
     let location: string;
     try {
-      const accountIds = await finish(deps, params.provider, query, ctx);
-      const connected = accountIds.map((id) => encodePublicId('socialAccount', id));
-      location = channelsUrl(deps, 'connected', connected.join(','));
+      const finished = await finish(deps, params.provider, query, ctx);
+      location =
+        finished.kind === 'pick'
+          ? channelsUrl(deps, 'pick', finished.selectionId)
+          : channelsUrl(deps, 'connected', finished.ids.map(publicAccountId).join(','));
     } catch (err) {
       const code = err instanceof ConnectFailure ? err.code : 'server_error';
       if (!(err instanceof ConnectFailure)) {

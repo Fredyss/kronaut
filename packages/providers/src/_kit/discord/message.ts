@@ -47,14 +47,22 @@ export function checkMessage(item: PublishItem): void {
   if (total > MESSAGE_MAX_BYTES) throw permanent('too_large');
 }
 
+export type MessageFields = Readonly<Record<string, unknown>>;
+
+interface MessageParts {
+  readonly item: PublishItem;
+  readonly settings: DiscordMessageSettings;
+  readonly extra: MessageFields;
+}
+
 function payload(
-  item: PublishItem,
-  settings: DiscordMessageSettings,
+  { item, settings, extra }: MessageParts,
   attachments: readonly Attachment[],
 ): Record<string, unknown> {
   const parse = settings.pingEveryone ? ['users', 'roles', 'everyone'] : ['users', 'roles'];
   return {
     ...(item.text === '' ? {} : { content: item.text }),
+    ...extra,
     allowed_mentions: { parse },
     ...(settings.silent ? { flags: SUPPRESS_NOTIFICATIONS } : {}),
     ...(attachments.length === 0 ? {} : { attachments }),
@@ -71,9 +79,11 @@ export async function messageBody(
   ctx: PublishContext,
   item: PublishItem,
   settings: DiscordMessageSettings,
+  extra: MessageFields = {},
 ): Promise<MessageBody> {
+  const parts = { item, settings, extra };
   if (item.media.length === 0) {
-    return { contentType: 'application/json', body: JSON.stringify(payload(item, settings, [])) };
+    return { contentType: 'application/json', body: JSON.stringify(payload(parts, [])) };
   }
   const attachments: Attachment[] = [];
   const files: FilePart[] = [];
@@ -83,7 +93,7 @@ export async function messageBody(
     const bytes = await ctx.media.read(ref.id);
     files.push({ name: `files[${id}]`, filename: attachment.filename, mime: ref.mime, bytes });
   }
-  const json = JSON.stringify(payload(item, settings, attachments));
+  const json = JSON.stringify(payload(parts, attachments));
   const { type, body } = multipartFiles({ payload_json: json }, files);
   return { contentType: type, body };
 }

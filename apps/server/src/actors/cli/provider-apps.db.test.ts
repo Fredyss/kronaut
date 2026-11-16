@@ -225,4 +225,52 @@ describe('provider app keys CLI', () => {
       for (const text of printed) expect(text).not.toContain(secret);
     },
   );
+
+  it('registers discord_bot with the client secret and bot token sealed apart, never echoed', async () => {
+    const secret = `CANARY_bot_secret_${randomBytes(12).toString('hex')}`;
+    const token = `CANARY_bot_token_${randomBytes(12).toString('hex')}`;
+    const before = output.length;
+    const register = [
+      'provider-app',
+      'register',
+      'discord_bot',
+      '--client-id',
+      '1234567890123456789',
+    ];
+    expect((await cliWithStdin(`${secret}\n`, ...register)).code).not.toBe(0);
+    expect(output.at(-1)).toContain('the client secret and the bot token on stdin, one per line');
+    const first = await cliWithStdin(`${secret}\n${token}\n`, ...register);
+    expect(first.code).toBe(0);
+    const appId = first.stdout;
+
+    const row = await fixture.owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('provider_apps')
+        .select(['client_secret_ciphertext', 'bot_token_ciphertext', 'bot_token_kek_version'])
+        .where('id', '=', appId)
+        .executeTakeFirstOrThrow(),
+    );
+    expect(row.bot_token_kek_version).toBe(1);
+    expect(row.bot_token_ciphertext?.toString('utf8')).not.toContain(token);
+    expect(row.bot_token_ciphertext?.equals(row.client_secret_ciphertext ?? Buffer.alloc(0))).toBe(
+      false,
+    );
+    const loaded = await fixture.db.withActor(SYSTEM, (trx) =>
+      loadProviderApp(trx, fixture.keyring, { id: appId }, { publicBaseUrl: PUBLIC_URL }),
+    );
+    expect(loaded?.app).toMatchObject({ clientSecret: secret, botToken: token });
+    for (const text of output.slice(before)) {
+      expect(text).not.toContain(secret);
+      expect(text).not.toContain(token);
+    }
+
+    const partial = fixture.owner.withActor(SYSTEM, (trx) =>
+      trx
+        .updateTable('provider_apps')
+        .set({ bot_token_nonce: null })
+        .where('id', '=', appId)
+        .execute(),
+    );
+    await expect(partial).rejects.toThrow(/ck_provider_apps_bot_token/);
+  });
 });

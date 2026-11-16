@@ -27,7 +27,11 @@ export interface ChannelRouteDeps {
 export const SYSTEM: Actor = { kind: 'system' };
 export const PROVIDER_ID = /^[a-z0-9_]{2,32}$/;
 
-const REDIRECT_CONNECT_KINDS: ReadonlySet<CredentialKind> = new Set(['oauth', 'page_token']);
+const REDIRECT_CONNECT_KINDS: ReadonlySet<CredentialKind> = new Set([
+  'oauth',
+  'page_token',
+  'bot_token',
+]);
 
 export function connectsByRedirect(manifest: ProviderManifest): boolean {
   return REDIRECT_CONNECT_KINDS.has(manifest.auth.kind);

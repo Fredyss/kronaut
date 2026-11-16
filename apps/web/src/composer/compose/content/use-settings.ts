@@ -9,6 +9,7 @@ export type Settings = Destination['settings'];
 
 const DEFAULTS: Readonly<Record<string, Settings>> = {
   discord: DISCORD_DEFAULT,
+  discord_bot: DISCORD_DEFAULT,
   youtube: YOUTUBE_DEFAULT,
 };
 const NONE: ReadonlyMap<string, Settings> = new Map();

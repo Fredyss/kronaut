@@ -92,6 +92,8 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0055](0055-reply-chains-and-first-comment.md) | Reply chains and first comment, published one item at a time |
 | [0057](0057-meta-data-deletion-and-deauthorize-callbacks.md) | Meta data deletion and deauthorize callbacks |
 | [0060](0060-provider-data-retention.md) | Provider data retention |
+| [0061](0061-instance-bot-token.md) | The instance bot token is a second app secret |
+| [0062](0062-kronaut-picker-for-providers-without-one.md) | Kronaut picks the channels when the network's dialog can't (extends 0053) |
 
 ## Defaults
 

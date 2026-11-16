@@ -9,6 +9,7 @@
 - `0004_user_workspaces_can_approve`: `auth_user_workspaces()` also returns `can_approve`, so `/v1/me` reads it in one query.
 - `0005_membership_email_muted`: `memberships` gains `email_muted text[] NOT NULL DEFAULT '{}'`, checked to hold only `failures`, `approvals` and `channels`: the notification email groups the member turned off in that workspace.
 - `0006_provider_app_redirect_uri`: `provider_apps` gains `redirect_uri text NOT NULL DEFAULT ''`, the callback a per-instance app was registered with (ADR-0051); a connect reuses an instance app only when it matches the current callback.
+- `0037_provider_app_bot_token`: `provider_apps` gains the sealed bot token (`bot_token_ciphertext`, `_nonce`, `_wrapped_dek`, `_kek_version`), all four set or all null (ADR-0061).
 
 **Conventions**
 
@@ -39,7 +40,7 @@
 | Billing seam (ADR-0019) | `organizations`, `entitlement_overrides`, `usage_counters` |
 | Identity | `users`, `sessions`, `security_events`, `memberships` (role + `can_approve`), `deletion_receipts` |
 | Context | `brands`, `locations`, `campaigns`, `account_groups`, `account_group_members` |
-| Channels | `provider_apps` (status active\|misconfigured\|disabled, review_state), `provider_app_keys` (client signing keys, ADR-0050), `provider_app_incidents`, `social_accounts`, `account_credentials` (DEK-wrapped ciphertext, refresh lease, `version`, `client_key_id` binding the session to its signing key), `channel_incidents`, `queue_slots` (weekday + local time + zone per channel) |
+| Channels | `provider_apps` (status active\|misconfigured\|disabled, review_state; client secret and, from migration 37, an optional bot token, each sealed with its own DEK, ADR-0061), `provider_app_keys` (client signing keys, ADR-0050), `provider_app_incidents`, `social_accounts`, `account_credentials` (DEK-wrapped ciphertext, refresh lease, `version`, `client_key_id` binding the session to its signing key), `channel_incidents`, `queue_slots` (weekday + local time + zone per channel) |
 | Machine access (ADR-0013/14) | `access_grants`, `grant_tokens`, `access_scopes`, `idempotency_keys` |
 | Content (ADR-0033) | `posts` (origin, `agent_dirty`, schedule_mode, `publish_summary`, `series_id`, soft delete), `post_series` (RRULE subset + `dtstart_local` + zone, owner, state), `evergreen_posts` (pool, owner, state) + `evergreen_runs` (one row per copy: channel, slot, copy post), `tags` (name, color) + `post_tags`, `saved_texts` (name, doc), `rss_feeds` (URL, mode, template, owner, state, last answer's validators, last error) + `rss_feed_channels` + `rss_items` (SHA-256 item key, outcome, `attempts`, post, `media_import_id`, `last_seen_at`; the rendered `text` and `alt_text` only while `fetching_media`), `post_variants`, `variant_items`, `post_revisions` + `revision_destinations` (immutable snapshots with hashes) |
 | Media (ADR-0023) | `media_assets` (immutable master, sha256, per-workspace storage key), `media_renditions`, `item_media`, `destination_media`, `media_imports` (a download from a link; holds the URL only while open) |

@@ -111,6 +111,7 @@ printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
 printf '%s' "$GOOGLE_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register youtube --client-id <google client id>
 printf '%s' "$DISCORD_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register discord --client-id <discord client id>
+printf '%s\n%s\n' "$DISCORD_CLIENT_SECRET" "$DISCORD_BOT_TOKEN" | docker compose run --rm -T cli kronaut provider-app register discord_bot --client-id <discord client id>
 ```
 
 ### Meta analytics
@@ -166,6 +167,19 @@ Kronaut posts to Discord server channels through a webhook. The person who conne
 - **Posts:** text up to 2,000 characters and up to 10 JPEG, PNG, GIF, WebP or MP4 files of up to 20 MiB each, 25 MiB together. Forum and media channels aren't supported.
 - **Disconnecting** deletes Kronaut's webhook from the channel. Connecting the same channel again creates a new webhook; delete the old one under the channel's Integrations settings if it is still listed.
 - **Unconfirmed posts:** if Discord's answer to a send gets lost, the post is marked unconfirmed rather than sent twice; check the channel before sending it again.
+
+### Discord (bot)
+
+"Discord (bot)" posts as one Kronaut bot instead of a webhook per channel. The person who connects adds the bot to a server in Discord's dialog, then ticks the channels Kronaut should post to. Every workspace on your install uses the same bot.
+
+- **In the Discord Developer Portal**, in the same application as above:
+  - On the Bot page, copy the bot token (reset it if it was never shown). Treat it like a password: anyone with it can post as your bot everywhere it is.
+  - On the OAuth2 page, add the redirect `https://kronaut.example.com/v1/oauth/discord_bot/callback`, using your own host.
+  - Register it with its client ID, client secret and bot token, using the `register discord_bot` command above: the secret on the first line of stdin, the token on the second.
+- **Permissions:** the bot asks for View Channel, Send Messages, Embed Links, Attach Files, Read Message History and Mention Everyone. A channel whose permission overrides take one of these away fails with a note saying which one is missing.
+- **Posts:** the same as the webhook: text up to 2,000 characters and up to 10 files. Text and announcement channels only.
+- **Unconfirmed posts:** after a lost answer, Kronaut reads the channel's recent messages to find the bot's post before it gives up and marks it unconfirmed.
+- **Disconnecting** stops Kronaut posting to that channel. The bot stays in the server until a server admin removes it under Server Settings → Integrations.
 
 ## 6. Backups, upgrades and logs
 

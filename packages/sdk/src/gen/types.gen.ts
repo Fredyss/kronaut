@@ -996,6 +996,107 @@ export type ChannelsProvidersResponses = {
 
 export type ChannelsProvidersResponse = ChannelsProvidersResponses[keyof ChannelsProvidersResponses];
 
+export type ChannelsSelectionCancelData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        selectionId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/selections/{selectionId}';
+};
+
+export type ChannelsSelectionCancelErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSelectionCancelError = ChannelsSelectionCancelErrors[keyof ChannelsSelectionCancelErrors];
+
+export type ChannelsSelectionCancelResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type ChannelsSelectionCancelResponse = ChannelsSelectionCancelResponses[keyof ChannelsSelectionCancelResponses];
+
+export type ChannelsSelectionReadData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        selectionId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/selections/{selectionId}';
+};
+
+export type ChannelsSelectionReadErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSelectionReadError = ChannelsSelectionReadErrors[keyof ChannelsSelectionReadErrors];
+
+export type ChannelsSelectionReadResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            displayName: string;
+            handle: string | null;
+            id: string;
+        }>;
+        provider: string;
+    };
+};
+
+export type ChannelsSelectionReadResponse = ChannelsSelectionReadResponses[keyof ChannelsSelectionReadResponses];
+
+export type ChannelsSelectionConfirmData = {
+    body: {
+        accounts: Array<string>;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        selectionId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/channels/selections/{selectionId}/confirm';
+};
+
+export type ChannelsSelectionConfirmErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ChannelsSelectionConfirmError = ChannelsSelectionConfirmErrors[keyof ChannelsSelectionConfirmErrors];
+
+export type ChannelsSelectionConfirmResponses = {
+    /**
+     * OK
+     */
+    200: {
+        connected: Array<string>;
+    };
+};
+
+export type ChannelsSelectionConfirmResponse = ChannelsSelectionConfirmResponses[keyof ChannelsSelectionConfirmResponses];
+
 export type ChannelsSetBrandData = {
     body: {
         brandId: string | null;
