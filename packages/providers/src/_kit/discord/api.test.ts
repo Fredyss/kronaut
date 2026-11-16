@@ -24,6 +24,12 @@ const at = (ms: number) => TEST_NOW.add({ milliseconds: ms });
 describe('discord error mapping', () => {
   it.each([
     ['404', response(404, { code: 10015, message: 'Unknown Webhook' }), { kind: 'auth_revoked' }],
+    ['404 without a body', response(404, ''), { kind: 'auth_revoked' }],
+    [
+      '10008 unknown message',
+      response(404, { code: 10008, message: 'Unknown Message' }),
+      { kind: 'permanent', code: 'not_found' },
+    ],
     ['10015 on another status', response(400, { code: 10015 }), { kind: 'auth_revoked' }],
     ['401 invalid token', response(401, { code: 50027 }), { kind: 'auth_revoked' }],
     ['413', response(413, 'too big'), { kind: 'permanent', code: 'too_large', detail: 'http_413' }],
