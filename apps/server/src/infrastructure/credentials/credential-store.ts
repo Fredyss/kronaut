@@ -9,12 +9,7 @@ import { openValue, sealValue } from './credential-seal.ts';
 
 export {
   loadProviderApp,
-  NIL_WORKSPACE_ID,
-  type ProviderAppOptions,
-  type ProviderAppWhere,
-  type SealedAppSecret,
   type SigningKeyRequest,
-  type StoredProviderApp,
   sealAppSecret,
   sealBotToken,
 } from './provider-app-store.ts';

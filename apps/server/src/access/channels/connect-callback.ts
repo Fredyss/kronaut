@@ -34,7 +34,7 @@ import {
 import { markAppMisconfigured } from './instance-apps.ts';
 import { offerSelection } from './selection/pending.ts';
 
-export const connectCallbackRoute = defineRoute({
+const connectCallbackRoute = defineRoute({
   id: 'channels.connect_callback',
   method: 'GET',
   path: '/v1/oauth/:provider/callback',

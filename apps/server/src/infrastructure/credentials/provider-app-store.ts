@@ -9,7 +9,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import { loadPublishedKeys, loadSigningKeys, type SigningKeys } from './signing-keys.ts';
 
-export const NIL_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
+const NIL_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
 
 export interface StoredProviderApp {
   readonly id: string;

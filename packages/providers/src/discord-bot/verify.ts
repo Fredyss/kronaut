@@ -40,17 +40,13 @@ function found({ guildId, channelId }: DiscordBotCredentials, id: string): Verif
 
 function matcher(input: Input, since: Temporal.Instant): (message: Message) => boolean {
   const nonce = messageNonce(input.destinationId);
-  const item = input.items[0];
-  const text = item?.text.normalize('NFC').trim() ?? '';
-  const files = item?.media.length ?? 0;
+  // One bot posts for every destination in the channel, so the same text proves nothing; only our nonce does.
   return (message) => {
     if (message.author.id !== input.credentials.botUserId) return false;
-    if (message.nonce !== undefined && message.nonce !== null)
-      return String(message.nonce) === nonce;
+    if (message.nonce === undefined || message.nonce === null) return false;
     const at = instantOf(message.timestamp);
     if (at === undefined || Temporal.Instant.compare(at, since) < 0) return false;
-    const content = (message.content ?? '').normalize('NFC').trim();
-    return content === text && (message.attachments?.length ?? 0) === files;
+    return String(message.nonce) === nonce;
   };
 }
 

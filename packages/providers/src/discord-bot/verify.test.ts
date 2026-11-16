@@ -41,13 +41,9 @@ describe('discord_bot verify', () => {
     expect(calls[0]?.headers.authorization).toBe(`Bot ${BOT_TOKEN}`);
   });
 
-  it('falls back to the same text by the bot after the send', async () => {
-    const list = [
-      message('1', { author: { id: '42' } }),
-      message('2', { timestamp: TEST_NOW.subtract({ minutes: 10 }).toString() }),
-      message(MESSAGE_ID),
-    ];
-    expect((await verify(list)).result).toMatchObject({ kind: 'found', remoteId: MESSAGE_ID });
+  it('never claims a message by the same text alone, since every destination posts as one bot', async () => {
+    const list = [message('1', { author: { id: '42' }, nonce: NONCE }), message(MESSAGE_ID)];
+    expect((await verify(list)).result).toEqual({ kind: 'inconclusive' });
   });
 
   it('stays inconclusive without a match, outside the window or on an error', async () => {
