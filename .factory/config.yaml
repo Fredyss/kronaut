@@ -34,9 +34,10 @@ reference_feature:
 
 commands:
   check: pnpm check && pnpm test:db && pnpm test:e2e
+  install: pnpm install --frozen-lockfile
   typecheck: pnpm typecheck
   lint: pnpm lint
-  test: pnpm test
+  test: pnpm test && pnpm test:db
   test_report: pnpm exec vitest run --reporter=json
   mutation: null
   stubs: null
@@ -74,6 +75,19 @@ technologies:
     packages:
       - sharp
 
+test_globs:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/testing.ts"
+  - "**/testing.tsx"
+  - "**/testing/**"
+  - apps/server/e2e/**
+
+dependency_files:
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+
 shared_paths:
   - package.json
   - pnpm-lock.yaml
@@ -101,3 +115,22 @@ protected_paths:
   - .nvmrc
   - packages/db/schema/v1.sql
   - infra/**
+
+secrets:
+  example_file: infra/compose/.env.example
+
+limits:
+  max_rounds: 5
+
+risk:
+  high_paths:
+    - apps/server/src/identity/**
+    - apps/server/src/access/**
+    - apps/server/src/policy/**
+    - apps/server/src/infrastructure/credentials/**
+    - apps/server/src/base/http/**
+    - apps/server/src/base/crypto/**
+    - packages/credentials/**
+    - packages/egress/**
+    - packages/db/migrations/**
+  max_diff_lines: 400
