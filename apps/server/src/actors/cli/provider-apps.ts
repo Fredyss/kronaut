@@ -10,7 +10,13 @@ import { CommandError } from './errors.ts';
 const CLI: Actor = { kind: 'cli' };
 const BLUESKY = 'bluesky';
 const BLUESKY_METADATA_PATH = '/oauth/bluesky/oauth-client-metadata.json';
-export type SecretAppProvider = 'facebook' | 'instagram' | 'linkedin' | 'threads' | 'youtube';
+export type SecretAppProvider =
+  | 'discord'
+  | 'facebook'
+  | 'instagram'
+  | 'linkedin'
+  | 'threads'
+  | 'youtube';
 
 export interface ProviderAppCommandDeps {
   readonly db: Database;

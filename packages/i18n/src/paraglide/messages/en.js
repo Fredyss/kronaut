@@ -74,6 +74,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
+/** @typedef {{}} Channels_Disconnect_DiscordInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -211,6 +212,7 @@
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
+/** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -323,6 +325,7 @@
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
+/** @typedef {{}} Provider_DiscordInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -715,6 +718,10 @@ export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_
 	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`Kronaut deletes this channel's name and stats within ${i?.count} day after you disconnect it.`);
 	return /** @type {LocalizedString} */ (`Kronaut deletes this channel's name and stats within ${i?.count} days after you disconnect it.`)
+};
+
+export const channels_disconnect_discord = /** @type {(inputs: Channels_Disconnect_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This also removes Kronaut's webhook from the Discord channel.`)
 };
 
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
@@ -1272,6 +1279,10 @@ export const issue_forbidden_characters = /** @type {(inputs: Issue_Forbidden_Ch
 	return /** @type {LocalizedString} */ (`The text contains characters this network doesn't allow.`)
 };
 
+export const issue_forum_channel_unsupported = /** @type {(inputs: Issue_Forum_Channel_UnsupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut can't post to Discord forum or media channels. Connect a text channel instead.`)
+};
+
 export const issue_frame_rate_too_high = /** @type {(inputs: Issue_Frame_Rate_Too_HighInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video's frame rate is too high for this network.`)
 };
@@ -1738,6 +1749,10 @@ export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Bluesky`)
+};
+
+export const provider_discord = /** @type {(inputs: Provider_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord`)
 };
 
 export const provider_facebook = /** @type {(inputs: Provider_FacebookInputs) => LocalizedString} */ () => {

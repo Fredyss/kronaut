@@ -30,6 +30,7 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   tag_unknown: () => m.issue_tag_unknown(),
   setting_required: () => m.issue_setting_required(),
   forbidden_characters: () => m.issue_forbidden_characters(),
+  forum_channel_unsupported: () => m.issue_forum_channel_unsupported(),
 };
 
 export function issueMessage(code: string): string {

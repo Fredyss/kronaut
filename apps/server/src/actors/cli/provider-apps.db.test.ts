@@ -185,6 +185,7 @@ describe('provider app keys CLI', () => {
   });
 
   it.each([
+    ['discord', '1234567890123456789', 'a discord app is already registered'],
     ['facebook', '1234567890123456', 'a facebook app is already registered'],
     ['instagram', '990011223344', 'an instagram app is already registered'],
     ['linkedin', '86abcdef123xyz', 'a linkedin app is already registered'],

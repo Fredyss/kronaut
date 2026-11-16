@@ -292,7 +292,7 @@ export const provider_app_not_found = /** @type {(inputs: Provider_App_Not_Found
 };
 
 export const provider_unsupported = /** @type {(inputs: Provider_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`only bluesky, facebook, instagram, linkedin, threads or youtube can be registered`)
+	return /** @type {LocalizedString} */ (`only bluesky, discord, facebook, instagram, linkedin, threads or youtube can be registered`)
 };
 
 export const restored_no_state = /** @type {(inputs: Restored_No_StateInputs) => LocalizedString} */ () => {

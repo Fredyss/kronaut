@@ -112,6 +112,13 @@ describe('video publish choice', () => {
     expect(choiceFor(youtube, images(0))).toEqual({ kind: 'needs_video' });
   });
 
+  it('publishes text, images or a video to Discord as one message', () => {
+    const discord: Channel = { ...threads, id: 'acct_dc', provider: 'discord' };
+    expect(choiceFor(discord, images(0))).toEqual({ kind: 'ok', publishType: 'message' });
+    expect(choiceFor(discord, VIDEO)).toEqual({ kind: 'ok', publishType: 'message' });
+    expect(choiceFor(discord, images(11))).toEqual({ kind: 'too_many_images', max: 10 });
+  });
+
   it('marks video as unsupported on the other networks', () => {
     const bluesky: Channel = { ...threads, id: 'acct_bsky', provider: 'bluesky' };
     expect(choiceFor(bluesky, VIDEO)).toEqual({ kind: 'video_unsupported' });

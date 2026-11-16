@@ -41,6 +41,15 @@ export const BLUESKY_TEXT = [
 ];
 export const RULES: Record<string, unknown[]> = {
   bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null, video: null }],
+  discord: [
+    {
+      id: 'message',
+      text: [{ counting: 'utf16', max: 2000 }],
+      maxLinks: null,
+      imageAspect: null,
+      video: null,
+    },
+  ],
   threads: [
     {
       id: 'post',
@@ -72,6 +81,7 @@ export const RULES: Record<string, unknown[]> = {
 
 const PREVIEWS: Record<string, string> = {
   bluesky: 'short-feed',
+  discord: 'short-feed',
   facebook: 'pro-feed',
   instagram: 'media-grid',
   linkedin: 'pro-feed',

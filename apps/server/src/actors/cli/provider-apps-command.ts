@@ -15,6 +15,7 @@ import {
 
 const META_APP_ID = /^\d{1,32}$/;
 const CLIENT_IDS: Readonly<Record<SecretAppProvider, RegExp>> = {
+  discord: /^\d{17,20}$/,
   facebook: META_APP_ID,
   instagram: META_APP_ID,
   linkedin: /^[A-Za-z0-9]{1,64}$/,

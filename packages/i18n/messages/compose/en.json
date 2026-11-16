@@ -145,6 +145,8 @@
   "compose_youtube_audience_default": "Channel default",
   "compose_youtube_kids": "Made for kids",
   "compose_youtube_not_kids": "Not made for kids",
+  "compose_discord_silent": "Send without notifications",
+  "compose_discord_ping_everyone": "Allow @everyone and @here",
   "compose_brand_select_all": "Select all",
   "compose_brand_clear": "Clear",
   "compose_brand_select_all_of": "Select all channels of {name}",
