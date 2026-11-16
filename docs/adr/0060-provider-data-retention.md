@@ -30,7 +30,7 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 
 **What stays:** posts, `post_destinations` and their remote ids and permalinks. They are the user's own record of what Kronaut published for them, not data read from the API. A strict reading of III.D.2.3 could count a video id as Authorized Data; if Google's review says so, the purge also clears `remote_id` and `remote_url`.
 
-**Re-check every 30 days:** the daily follower read of an `active` channel (`channels.list part=snippet,statistics mine=true`) is the authorization re-check of III.E.4.b. It also returns the channel's title and custom URL, so `accountMetrics` returns a `profile` and the server overwrites `display_name`, `handle` and `profile_url` while the channel is still `active`; that is the refresh of III.E.4.c. A channel whose token fails goes `needs_reauth` through the refresh path and is purged after `lapsedDays`.
+**Re-check every 30 days:** the daily follower read of an `active` channel (`channels.list part=snippet,statistics mine=true`) is the authorization re-check of III.E.4.b. It also returns the channel's title and custom URL, so `accountMetrics` returns a `profile` and the server overwrites `display_name`, `handle` and `profile_url` while the channel is still `active`; that is the refresh of III.E.4.c. A channel whose token fails goes `needs_reauth` through the refresh path or a failed follower read, and is purged after `lapsedDays`.
 
 **Reconnect:** connect overwrites the name, handle and profile URL, so a purged channel comes back whole. Metrics from before the purge are gone.
 
@@ -49,5 +49,5 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 
 - A provider whose policies set deadlines declares them in its manifest; the purge needs no provider code.
 - Metrics of a YouTube channel disconnected for 7 days are gone, even if it is reconnected later.
-- The `needs_reauth` rule depends on the refresh path flagging a dead grant; a channel stuck `active` with a dead token is still re-checked daily by the follower read.
+- A dead grant reaches `needs_reauth` two ways: the refresh path flags it, and so does the daily follower read of a provider with `dataRetention` when the read fails with `auth_revoked`, `auth_expired` or `permanent` (a `permanent` failure counts as `auth_revoked`). Either way `lapsedDays` then applies. Other providers keep only marking the read as checked.
 - Revisit when: Google's compliance audit reads the policies more strictly (remote ids), or another network sets a deadline the two fields can't express.

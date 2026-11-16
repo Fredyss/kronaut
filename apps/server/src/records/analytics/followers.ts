@@ -10,8 +10,10 @@ import { sql } from 'kysely';
 import type { ChannelRef } from '../../access/channels/channel-ref.ts';
 import { createBaseContext, type ProviderEntry } from '../../base/providers/providers.ts';
 import {
+  type DeadGrant,
   errorFields,
   metricValue,
+  type PullDeps,
   type Run,
   type Source,
   sourceOf,
@@ -127,6 +129,27 @@ async function countAttempt(trx: TenantDb, channel: ChannelRef, day: string) {
   if (row.attempts >= MAX_ATTEMPTS) await markChecked(trx, channel, day);
 }
 
+function deadGrant(failure: ProviderError): DeadGrant['incident'] | null {
+  if (failure.kind === 'auth_revoked' || failure.kind === 'auth_expired') return failure.kind;
+  return failure.kind === 'permanent' ? 'auth_revoked' : null;
+}
+
+async function flagDeadGrant(
+  trx: TenantDb,
+  deps: PullDeps,
+  channel: FollowerChannel,
+  failure: ProviderError,
+) {
+  const incident = deadGrant(failure);
+  if (incident === null || channel.entry.manifest.dataRetention === undefined) return;
+  await deps.flagAccount(trx, {
+    workspaceId: channel.workspaceId,
+    socialAccountId: channel.accountId,
+    fence: channel.source.fence,
+    incident,
+  });
+}
+
 async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChannel[]> {
   const providers = run.deps.providers
     .list()
@@ -201,6 +224,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
       return await deferRead(trx, channel, resumeAt(now, failure));
     }
     if (failure?.kind === 'transient') return await countAttempt(trx, channel, readAt.day);
+    if (failure !== null) await flagDeadGrant(trx, deps, channel, failure);
     if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }

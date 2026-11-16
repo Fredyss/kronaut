@@ -36,6 +36,7 @@ import {
   viewerAuth,
   workspaceId,
 } from '../../flow/posts/testing.ts';
+import { flagAccount } from '../../steps/publish/incidents.ts';
 import { publishDeps, runPublish } from '../../steps/publish/task.ts';
 import { pullAnalytics } from './pull.ts';
 
@@ -47,6 +48,7 @@ const replies = new Map<string, Reply>();
 let thrown: ProviderError | null = null;
 let followers: number | null = 10;
 let followerError: ProviderError | null = null;
+const followerFailures = new Map<string, ProviderError>();
 const followerCalls = new Map<string, number>();
 const profiles = new Map<string, AccountProfile>();
 const lapseDuringRead = new Set<string>();
@@ -81,7 +83,7 @@ async function lapse(providerAccountId: string): Promise<void> {
   );
 }
 
-function registry() {
+function registry(retainData = false) {
   const runtime: ProviderRuntime = {
     ...fake.runtime,
     analytics: async (_ctx, input) => {
@@ -91,7 +93,8 @@ function registry() {
     accountMetrics: async (_ctx, input): Promise<AccountMetrics> => {
       const id = input.account.providerAccountId;
       followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
-      if (followerError !== null) throw new ProviderFailure(followerError);
+      const failure = followerFailures.get(id) ?? followerError;
+      if (failure !== null) throw new ProviderFailure(failure);
       if (lapseDuringRead.has(id)) await lapse(id);
       const profile = profiles.get(id);
       return { followers, apiVersion: 'v-test', ...(profile === undefined ? {} : { profile }) };
@@ -103,6 +106,7 @@ function registry() {
       windowHours === undefined ? type : { ...type, analytics: { windowHours } },
     ),
     capabilities: { analytics: true, delete: false },
+    ...(retainData ? { dataRetention: { disconnectedDays: 7, lapsedDays: 30 } } : {}),
   };
   return createProviderRegistry([manifest], [runtime], () => ({}) as HttpClient);
 }
@@ -185,14 +189,15 @@ async function pin(destinationId: string): Promise<void> {
   });
 }
 
-function pullAt(at: Temporal.Instant) {
+function pullAt(at: Temporal.Instant, retainData = false) {
   return pullAnalytics({
     db,
     keyring,
-    providers: registry(),
+    providers: registry(retainData),
     logger,
     publicBaseUrl: BASE,
     now: () => at,
+    flagAccount,
   });
 }
 
@@ -427,6 +432,29 @@ describe('analytics pulls', () => {
         { id: lapsed, display_name: 'lapsed', handle: null, profile_url: null },
       ]),
     );
+  });
+
+  it('a failed follower read lapses the channel only for a provider with data retention', async () => {
+    const retained = decodePublicId('socialAccount', await insertAccount('dead-grant')) ?? '';
+    const plain = decodePublicId('socialAccount', await insertAccount('dead-plain')) ?? '';
+    const dead: ProviderError = { kind: 'permanent', code: 'channel_gone' };
+    followerFailures.set('fake-dead-grant', dead);
+    await pullAt(Temporal.Instant.from('2027-04-01T10:00:00Z'), true);
+    followerFailures.set('fake-dead-plain', dead);
+    await pullAt(Temporal.Instant.from('2027-04-02T10:00:00Z'));
+    followerFailures.clear();
+    const statuses = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('social_accounts')
+        .select(['id', 'status', 'status_reason'])
+        .where('id', 'in', [retained, plain])
+        .orderBy('status')
+        .execute(),
+    );
+    expect(statuses).toEqual([
+      { id: plain, status: 'active', status_reason: null },
+      { id: retained, status: 'needs_reauth', status_reason: 'auth_revoked' },
+    ]);
   });
 
   it('a stopped channel is pushed back and does not starve a healthy one', async () => {

@@ -15,10 +15,24 @@ import {
 } from '../../infrastructure/credentials/credential-store.ts';
 import type { RefreshDeps } from '../../steps/publish/refresh/refresh.ts';
 
+export interface CredentialVersion {
+  readonly id: string;
+  readonly version: number;
+}
+
+export interface DeadGrant {
+  readonly workspaceId: string;
+  readonly socialAccountId: string;
+  readonly fence: CredentialVersion;
+  readonly incident: 'auth_revoked' | 'auth_expired';
+}
+
 export type PullDeps = Pick<
   RefreshDeps,
   'db' | 'keyring' | 'providers' | 'logger' | 'publicBaseUrl' | 'now'
->;
+> & {
+  readonly flagAccount: (trx: TenantDb, target: DeadGrant) => Promise<boolean>;
+};
 
 export type Counts = Record<
   | 'channels'
@@ -45,6 +59,7 @@ export interface Source {
   readonly app: ProviderApp;
   readonly account: Account;
   readonly credentials: unknown;
+  readonly fence: CredentialVersion;
 }
 
 export async function loadSource(
@@ -80,6 +95,7 @@ export async function loadSource(
       ...(account.handle === null ? {} : { handle: account.handle }),
     },
     credentials: entry.runtime.parseCredentials(credential.value),
+    fence: { id: credential.id, version: credential.version },
   };
 }
 
