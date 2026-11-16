@@ -39,7 +39,7 @@ async function account(status: string, ageDays: number, provider?: string): Prom
       .updateTable('social_accounts')
       .set({
         status,
-        status_changed_at: sql<Date>`now() - make_interval(days => ${ageDays})`,
+        status_changed_at: sql<Date>`now() - make_interval(secs => ${ageDays * 86_400})`,
       })
       .where('id', '=', id)
       .execute(),
@@ -182,9 +182,11 @@ describe('provider data retention', () => {
   it("purges a lapsed channel's data and keeps its publish record, once", async () => {
     const cases = {
       disconnected: await account('disconnected', 8, RETAINED),
-      recentDisconnect: await account('disconnected', 6, RETAINED),
+      marginDisconnect: await account('disconnected', 5.5, RETAINED),
+      recentDisconnect: await account('disconnected', 4, RETAINED),
       lapsed: await account('needs_reauth', 31, RETAINED),
-      recentLapse: await account('needs_reauth', 29, RETAINED),
+      marginLapse: await account('needs_reauth', 28.5, RETAINED),
+      recentLapse: await account('needs_reauth', 27, RETAINED),
       otherProvider: await account('disconnected', 8),
     };
     const destinations = new Map<string, string>();
@@ -199,7 +201,7 @@ describe('provider data retention', () => {
         .execute(),
     );
 
-    expect(await runRetention()).toMatchObject({ credentials: 0, purgedAccounts: 2 });
+    expect(await runRetention()).toMatchObject({ credentials: 0, purgedAccounts: 4 });
     expect(await runRetention()).toMatchObject({ purgedAccounts: 0 });
 
     const state = (id: string) => stateOf(id, destinations.get(id) ?? '');
@@ -207,12 +209,16 @@ describe('provider data retention', () => {
     const kept = { displayName: 'Fake account', wiped: false, data: [1, 1, 1], audits: 0 };
     expect(await state(cases.disconnected)).toEqual({ ...purged, audits: 1 });
     expect(await state(cases.lapsed)).toEqual({ ...purged, audits: 1 });
+    expect(await state(cases.marginDisconnect)).toEqual({ ...purged, audits: 1 });
+    expect(await state(cases.marginLapse)).toEqual({ ...purged, audits: 1 });
     expect(await state(cases.recentDisconnect)).toMatchObject(kept);
     expect(await state(cases.recentLapse)).toMatchObject(kept);
     expect(await state(cases.otherProvider)).toMatchObject(kept);
     const credentials = await withCredentials();
     expect(credentials).not.toContain(cases.disconnected);
     expect(credentials).not.toContain(cases.lapsed);
+    expect(credentials).not.toContain(cases.marginDisconnect);
+    expect(credentials).not.toContain(cases.marginLapse);
     expect(credentials).toEqual(
       expect.arrayContaining([cases.recentDisconnect, cases.recentLapse, cases.otherProvider]),
     );

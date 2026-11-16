@@ -4,6 +4,8 @@ import type { ProviderRegistry } from '../../base/providers/providers.ts';
 import { auditSystem, wipeProfile } from './disconnect.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
+// The task runs daily; the margin keeps the purge inside the policy deadline despite the run interval plus one missed run or the day it takes to flag a dead grant.
+const PURGE_MARGIN_DAYS = 2;
 
 export interface RetentionRule {
   readonly provider: string;
@@ -34,7 +36,11 @@ export function retentionRules(providers: ProviderRegistry): RetentionRule[] {
 function statusOlderThan(eb: Accounts, status: string, days: number) {
   return eb.and([
     eb('a.status', '=', status),
-    eb('a.status_changed_at', '<', sql<Date>`now() - make_interval(days => ${days})`),
+    eb(
+      'a.status_changed_at',
+      '<',
+      sql<Date>`now() - make_interval(days => greatest(${days}::int - ${PURGE_MARGIN_DAYS}::int, 0))`,
+    ),
   ]);
 }
 

@@ -20,7 +20,7 @@ Until now a disconnected channel kept its name, handle, profile URL and metrics 
 
 **Per-provider rule in the manifest:** `dataRetention?: {disconnectedDays, lapsedDays}`. YouTube sets `{disconnectedDays: 7, lapsedDays: 30}`. No other manifest sets it. Conformance requires whole days of at least 1.
 
-**Purge:** the daily `credential_retention` task, per workspace through `sweep_workspaces` and `withTenant()`, purges each channel of such a provider that is `disconnected` for longer than `disconnectedDays` or `needs_reauth` for longer than `lapsedDays` (measured from `status_changed_at`). A purge:
+**Purge:** the daily `credential_retention` task, per workspace through `sweep_workspaces` and `withTenant()`, purges each channel of such a provider that is `disconnected` for longer than `disconnectedDays` or `needs_reauth` for longer than `lapsedDays`, minus a margin of 2 days (measured from `status_changed_at`; never below 0). The manifest holds the policy figures; the margin covers the daily run interval plus one missed run, or the day it takes to flag a dead grant, so the purge lands inside the deadline. A purge:
 - deletes its `account_credentials`;
 - sets `handle`, `profile_url` and `provider_subject_id` to null and `display_name` to `''`, the same wipe as the Meta data deletion (ADR-0057);
 - deletes its `account_daily_metrics`, and the `post_metric_snapshots` and `destination_metric_pulls` of its destinations;
