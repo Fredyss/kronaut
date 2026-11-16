@@ -23,7 +23,6 @@ export interface ProviderUi {
   readonly followers?: boolean;
   readonly insights?: boolean;
   readonly googleGrant?: boolean;
-  readonly dataRetentionDays?: number;
   readonly maxImageBytes: number;
   readonly imageTypes: readonly string[];
   publishType(media: PublishMedia): PublishChoice;
@@ -112,7 +111,6 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     badge: 'bg-red-600',
     followers: true,
     googleGrant: true,
-    dataRetentionDays: 7,
     loginHint: false,
     instance: false,
     maxImageBytes: 0,

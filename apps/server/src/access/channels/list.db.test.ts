@@ -263,6 +263,7 @@ describe('channel listing', () => {
       'accountKind',
       'brandId',
       'connectedAt',
+      'dataRetentionDays',
       'displayName',
       'groupIds',
       'handle',
@@ -298,6 +299,11 @@ describe('channel listing', () => {
     const text = await response.text();
     expect(text).not.toContain('CANARY_');
     const { items } = JSON.parse(text) as { items: Record<string, unknown>[] };
+    expect(items.map(({ provider, dataRetentionDays }) => [provider, dataRetentionDays])).toEqual([
+      ['mastodon', null],
+      ['threads', null],
+      ['youtube', 7],
+    ]);
     const rules = items.map(({ provider, postTypes, requiredSettings }) => ({
       provider,
       postTypes,
