@@ -56,6 +56,8 @@ describe('discord_bot analytics', () => {
       { status: 401, json: { code: 0 } },
       { kind: 'app_config', code: 'bot_token_invalid' },
     ],
+    [{ status: 403, json: { code: 50_001 } }, { kind: 'auth_revoked' }],
+    [{ status: 403, json: { code: 50_013 } }, { kind: 'auth_revoked' }],
   ])('stops the channel on %o, without the token', async (reply, thrown) => {
     const { result } = await analytics([{ url: `${MESSAGES}/7`, ...reply }], ['7', '8']);
     expect(result).toMatchObject({ thrown });
