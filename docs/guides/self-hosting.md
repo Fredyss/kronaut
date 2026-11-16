@@ -110,6 +110,7 @@ printf '%s' "$THREADS_APP_SECRET" | docker compose run --rm -T cli kronaut provi
 printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register facebook --client-id <meta app id>
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
 printf '%s' "$GOOGLE_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register youtube --client-id <google client id>
+printf '%s' "$DISCORD_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register discord --client-id <discord client id>
 ```
 
 ### Meta analytics
@@ -153,6 +154,18 @@ Kronaut uploads videos to the YouTube channels of the Google account that connec
   - Create an OAuth client of type **Web application** with the redirect URI `https://kronaut.example.com/v1/oauth/youtube/callback`, using your own host.
   - Register it with its client ID and client secret, using the `register youtube` command above.
 - **Quota:** a Cloud project gets 100 uploads a day, shared by every channel of the install. It resets at midnight Pacific time.
+
+### Discord
+
+Kronaut posts to Discord server channels through a webhook. The person who connects picks a server and a text channel in Discord's dialog, and each channel becomes its own Kronaut channel. No bot is needed.
+
+- **In the Discord Developer Portal:**
+  - Create an application on [discord.com/developers/applications](https://discord.com/developers/applications).
+  - On the OAuth2 page, add the redirect `https://kronaut.example.com/v1/oauth/discord/callback`, using your own host, and copy the Client ID and Client Secret.
+  - Register it with its client ID and client secret, using the `register discord` command above.
+- **Posts:** text up to 2,000 characters and up to 10 JPEG, PNG, GIF, WebP or MP4 files of up to 20 MiB each, 25 MiB together. Forum and media channels aren't supported.
+- **Disconnecting** deletes Kronaut's webhook from the channel. Connecting the same channel again creates a new webhook; delete the old one under the channel's Integrations settings if it is still listed.
+- **Unconfirmed posts:** if Discord's answer to a send gets lost, the post is marked unconfirmed rather than sent twice; check the channel before sending it again.
 
 ## 6. Backups, upgrades and logs
 
