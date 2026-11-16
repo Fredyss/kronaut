@@ -1,0 +1,103 @@
+version: 1
+
+default_branch: main
+
+docs:
+  stack:
+    - docs/architecture/01-stack.md
+  feature_guide:
+    - docs/architecture/02-repo-layout.md
+    - docs/architecture/13-code-structure.md
+    - docs/architecture/14-scheduling-flow.md
+    - docs/architecture/15-web-structure.md
+  decisions: docs/adr/
+  instructions:
+    - CLAUDE.md
+  extra:
+    - docs/architecture/06-security.md
+
+specs:
+  prds: docs/specs/
+  tasks: docs/specs/tasks/
+
+reference_feature:
+  name: Saved texts
+  why: Smallest feature that crosses every layer, from the web settings page through a defineRoute route and a tenant store to a DB test
+  files:
+    - apps/web/src/content/saved-texts/settings-page.tsx
+    - apps/web/src/content/saved-texts/form.tsx
+    - apps/web/src/content/saved-texts/writes.ts
+    - apps/web/src/content/saved-texts/saved-texts.ts
+    - apps/server/src/steps/saved-texts/routes.ts
+    - apps/server/src/steps/saved-texts/store.ts
+    - apps/server/src/steps/saved-texts/saved-texts.db.test.ts
+
+commands:
+  check: pnpm check && pnpm test:db && pnpm test:e2e
+  typecheck: pnpm typecheck
+  lint: pnpm lint
+  test: pnpm test
+  test_report: pnpm exec vitest run --reporter=json
+  mutation: null
+  stubs: null
+
+technologies:
+  - name: Node 24 and TypeScript
+    class: foundational
+  - name: Postgres 17
+    class: foundational
+  - name: Hono with defineRoute
+    class: foundational
+  - name: Zod contracts and OpenAPI
+    class: foundational
+  - name: Kysely
+    class: foundational
+    packages:
+      - kysely
+  - name: graphile-worker
+    class: foundational
+    packages:
+      - graphile-worker
+  - name: React, Vite and TanStack
+    class: foundational
+  - name: Outbound HTTP
+    class: swappable
+    adapter: packages/egress/
+    packages:
+      - undici
+  - name: Social platform APIs
+    class: swappable
+    adapter: packages/providers/
+  - name: Image processing
+    class: swappable
+    adapter: packages/media/
+    packages:
+      - sharp
+
+shared_paths:
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+  - apps/server/src/api-routes.ts
+  - tools/lint/feature-imports.json
+  - packages/db/migrations/**
+  - packages/i18n/messages/**
+  - packages/contract/openapi.json
+  - apps/server/src/base/http/public-routes.json
+  - packages/sdk/src/gen/**
+
+protected_paths:
+  - .github/**
+  - biome.json
+  - tools/biome/**
+  - tools/licenses/**
+  - tools/lint/*.ts
+  - tools/tsconfig.json
+  - tsconfig*.json
+  - vitest*.config.ts
+  - .jscpd.json
+  - .fallowrc.json
+  - .gitleaks.toml
+  - .nvmrc
+  - packages/db/schema/v1.sql
+  - infra/**
