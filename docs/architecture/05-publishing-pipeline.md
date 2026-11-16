@@ -177,6 +177,7 @@ Phase 0 rules:
   - half of `warnLeadMs`, if the refresh pass's refresh didn't renew it (`transient`, `skipped` or `app`), so one failed run doesn't warn. A `rejected` refresh already flags the account `needs_reauth` and doesn't count.
 
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
+- **Shown expiry:** the channel list's `accessExpiresAt` is read from the current credential (the one of the manifest's `auth.kind`), so every persisted refresh moves it. It is the refresh token's end under `rotating`, `single_use` and `reusable`, and the access token's under `self_refresh` and `none`. The expiry columns on `social_accounts` are a connect-time copy and are not read.
 
 ## Channel signature
 

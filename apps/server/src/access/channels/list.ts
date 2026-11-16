@@ -11,6 +11,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import type { ProviderEntry, ProviderRegistry } from '../../base/providers/providers.ts';
+import { loadCredentialExpiries, shownExpiry } from './expiry.ts';
 import { loadChannelGroups } from './groups.ts';
 import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
@@ -104,10 +105,6 @@ export const channelProvidersRoute = defineRoute({
   tags: ['channels'],
 });
 
-function iso(value: Date | null): string | null {
-  return value === null ? null : value.toISOString();
-}
-
 function imageAspect(image: ImageLimits | undefined) {
   if (image?.minAspect === undefined || image.maxAspect === undefined) return null;
   return { min: { ...image.minAspect }, max: { ...image.maxAspect } };
@@ -166,12 +163,7 @@ interface ChannelListOptions {
   readonly hideGroups: boolean;
 }
 
-export async function listChannels(
-  trx: TenantDb,
-  workspaceId: string,
-  providers: ProviderRegistry,
-  { scope, hideSignatures, hideGroups }: ChannelListOptions,
-): Promise<z.output<typeof ChannelSchema>[]> {
+function channelRows(trx: TenantDb, workspaceId: string, scope: AccessScope | null) {
   let query = trx
     .selectFrom('social_accounts')
     .select([
@@ -183,7 +175,6 @@ export async function listChannels(
       'profile_url',
       'status',
       'status_reason',
-      'access_expires_at',
       'created_at',
       'last_error_code',
       'capabilities',
@@ -201,7 +192,21 @@ export async function listChannels(
       ]),
     );
   }
-  const rows = await query.orderBy('created_at').orderBy('id').execute();
+  return query.orderBy('created_at').orderBy('id').execute();
+}
+
+export async function listChannels(
+  trx: TenantDb,
+  workspaceId: string,
+  providers: ProviderRegistry,
+  { scope, hideSignatures, hideGroups }: ChannelListOptions,
+): Promise<z.output<typeof ChannelSchema>[]> {
+  const rows = await channelRows(trx, workspaceId, scope);
+  const expiries = await loadCredentialExpiries(
+    trx,
+    workspaceId,
+    rows.map((row) => row.id),
+  );
   const groupsOf = await loadChannelGroups(
     trx,
     workspaceId,
@@ -223,7 +228,7 @@ export async function listChannels(
       profileUrl: row.profile_url,
       status: row.status,
       statusReason: row.status_reason,
-      accessExpiresAt: iso(row.access_expires_at),
+      accessExpiresAt: shownExpiry(entry, expiries.get(row.id)),
       connectedAt: row.created_at.toISOString(),
       lastErrorCode: row.last_error_code,
       postTypes: postTypes(entry, row.capabilities),
