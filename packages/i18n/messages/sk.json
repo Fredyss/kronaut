@@ -105,6 +105,33 @@
   "channels_connected_named": "Kanál {name} je pripojený.",
   "channels_connected_list": "Pripojené kanály: {names}.",
   "channels_connected": "Kanál je pripojený.",
+  "channels_pick_title": "Vyberte kanály na pripojenie",
+  "channels_pick_body": "Vyberte kanály, do ktorých má Kronaut uverejňovať. Ďalšie môžete pripojiť neskôr.",
+  "channels_pick_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Pripojiť {count} kanál",
+        "countPlural=few": "Pripojiť {count} kanály",
+        "countPlural=many": "Pripojiť {count} kanála",
+        "countPlural=*": "Pripojiť {count} kanálov"
+      }
+    }
+  ],
+  "channels_pick_expired": "Platnosť výberu vypršala. Spustite pripojenie znova a vyberte kanály.",
+  "channels_pick_connected": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál je pripojený.",
+        "countPlural=few": "{count} kanály sú pripojené.",
+        "countPlural=many": "{count} kanála je pripojených.",
+        "countPlural=*": "{count} kanálov je pripojených."
+      }
+    }
+  ],
   "channel_status_active": "Aktívny",
   "channel_status_needs_reauth": "Treba znova pripojiť",
   "channel_status_disabled": "Vypnutý",

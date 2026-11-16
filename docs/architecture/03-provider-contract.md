@@ -10,6 +10,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
   - `availability{state, caveatKey}`
   - `auth`: kind, plus `refresh` (one of `none | self_refresh | reusable | rotating | single_use`), access/refresh TTLs and `warnLead`.
   - `auth.instanceScoped`: the provider's apps are per server (Mastodon). The server registers one on demand through `registerApp` at connect start (ADR-0051); the conformance kit fails an instance-scoped provider without `registerApp`.
+  - `auth.connectPicker: 'kronaut'`: the network's dialog can't pick the accounts (Discord's bot install picks only a server), so Kronaut shows a picker over the accounts `connectFinish` returns (ADR-0062). Only for a provider whose account credentials hold **no secret**, only ids; the secret lives in the provider app. Conformance fails it with an `auth.refresh` other than `none`.
 - **Content limits**
   - Text limits and counting strategy: `x-weighted` (twitter-text), `mastodon` (graphemes, each link as the limit's `urlWeight`, a remote mention as its username part), `threads` (graphemes, an emoji or flag cluster as its UTF-8 bytes), `graphemes`, `utf16`, or `utf8-bytes`.
     - **Composite limits** are allowed: Bluesky checks 300 graphemes *and* 3,000 bytes.
@@ -43,6 +44,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
   - An empty list fails the connect with `no_accounts`.
   - The server saves every returned account in one transaction, each credential with the manifest's `auth.kind`. It never changes accounts the list leaves out.
   - An intermediate token, such as Facebook's long-lived user token, stays inside `connectFinish`; it is never stored or returned.
+  - With `auth.connectPicker: 'kronaut'`, the server stores the list sealed in `ephemeral_kv` for 15 minutes instead, and saves only the accounts the person ticks, through the same path (ADR-0062).
 - Each account `connectFinish` returns may carry `capabilities` (per-account limits, such as a Mastodon server's `/api/v2/instance` configuration); the server stores them in `social_accounts.capabilities`.
 - `publish` runs the step list and returns `{remoteId,url} | {pending}`.
 - `poll`, `verify?`, `analytics?`.

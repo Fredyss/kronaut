@@ -192,6 +192,7 @@
   "web/pages/channels-page -> records/channels/connect-option.tsx",
   "web/pages/channels-page -> records/channels/disconnect.tsx",
   "web/pages/channels-page -> records/channels/followers.tsx",
+  "web/pages/channels-page -> records/channels/pick-channels.tsx",
   "web/pages/channels-page -> records/channels/queries.ts",
   "web/pages/channels-page -> records/channels/queue-editor.tsx",
   "web/pages/channels-page -> records/channels/queue.ts",

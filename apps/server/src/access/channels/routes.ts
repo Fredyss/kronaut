@@ -9,6 +9,7 @@ import { type ChannelRouteDeps, connectsByRedirect, SYSTEM } from './deps.ts';
 import { bindDisconnect } from './disconnect-routes.ts';
 import { channelListRoute, channelProvidersRoute, listChannels, readyProviders } from './list.ts';
 import { bindPublicDocument } from './public-document.ts';
+import { selectionRoutes } from './selection/selection-routes.ts';
 import { bindShortenLinks } from './shorten-links.ts';
 import { bindSignature } from './signature.ts';
 
@@ -60,5 +61,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindSignature(),
     bindShortenLinks(),
     bindBrand(),
+    ...selectionRoutes(deps),
   ];
 }

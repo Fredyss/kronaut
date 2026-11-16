@@ -101,6 +101,29 @@
   "channels_connected_named": "{name} is connected.",
   "channels_connected_list": "Connected: {names}.",
   "channels_connected": "The channel is connected.",
+  "channels_pick_title": "Choose channels to connect",
+  "channels_pick_body": "Pick the channels Kronaut should post to. You can connect more later.",
+  "channels_pick_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Connect {count} channel",
+        "countPlural=*": "Connect {count} channels"
+      }
+    }
+  ],
+  "channels_pick_expired": "This selection expired. Connect again to choose channels.",
+  "channels_pick_connected": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} channel is connected.",
+        "countPlural=*": "{count} channels are connected."
+      }
+    }
+  ],
   "channel_status_active": "Active",
   "channel_status_needs_reauth": "Needs reconnecting",
   "channel_status_disabled": "Disabled",

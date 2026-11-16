@@ -102,6 +102,11 @@
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_Pick_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConnectedInputs */
+/** @typedef {{}} Channels_Pick_ExpiredInputs */
+/** @typedef {{}} Channels_Pick_TitleInputs */
 /** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -840,6 +845,34 @@ export const channels_not_set_up = /** @type {(inputs: Channels_Not_Set_UpInputs
 
 export const channels_open_profile = /** @type {(inputs: Channels_Open_ProfileInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Otevřít profil`)
+};
+
+export const channels_pick_body = /** @type {(inputs: Channels_Pick_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte kanály, do kterých má Kronaut zveřejňovat. Další můžete připojit později.`)
+};
+
+export const channels_pick_confirm = /** @type {(inputs: Channels_Pick_ConfirmInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Připojit ${i?.count} kanál`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Připojit ${i?.count} kanály`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Připojit ${i?.count} kanálu`);
+	return /** @type {LocalizedString} */ (`Připojit ${i?.count} kanálů`)
+};
+
+export const channels_pick_connected = /** @type {(inputs: Channels_Pick_ConnectedInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál je připojený.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály jsou připojené.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanálu je připojeno.`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálů je připojeno.`)
+};
+
+export const channels_pick_expired = /** @type {(inputs: Channels_Pick_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Platnost výběru vypršela. Spusťte připojení znovu a vyberte kanály.`)
+};
+
+export const channels_pick_title = /** @type {(inputs: Channels_Pick_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte kanály k připojení`)
 };
 
 export const channels_queue = /** @type {(inputs: Channels_QueueInputs) => LocalizedString} */ () => {

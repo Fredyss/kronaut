@@ -104,6 +104,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_Pick_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConnectedInputs */
+/** @typedef {{}} Channels_Pick_ExpiredInputs */
+/** @typedef {{}} Channels_Pick_TitleInputs */
 /** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -1964,6 +1969,83 @@ export const channels_open_profile = /** @type {((inputs?: Channels_Open_Profile
 	if (locale === "sk") return __sk.channels_open_profile(inputs)
 	if (locale === "cs") return __cs.channels_open_profile(inputs)
 	return __en.channels_open_profile(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pick the channels Kronaut should post to. You can connect more later." |
+*
+* @param {Channels_Pick_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_body = /** @type {((inputs?: Channels_Pick_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_body(inputs)
+	if (locale === "cs") return __cs.channels_pick_body(inputs)
+	return __en.channels_pick_body(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "Connect {count} channel" |
+* | * | "Connect {count} channels" |
+*
+* @param {Channels_Pick_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_confirm = /** @type {((inputs: Channels_Pick_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_confirm(inputs)
+	if (locale === "cs") return __cs.channels_pick_confirm(inputs)
+	return __en.channels_pick_confirm(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} channel is connected." |
+* | * | "{count} channels are connected." |
+*
+* @param {Channels_Pick_ConnectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_connected = /** @type {((inputs: Channels_Pick_ConnectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ConnectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_connected(inputs)
+	if (locale === "cs") return __cs.channels_pick_connected(inputs)
+	return __en.channels_pick_connected(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This selection expired. Connect again to choose channels." |
+*
+* @param {Channels_Pick_ExpiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_expired = /** @type {((inputs?: Channels_Pick_ExpiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ExpiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_expired(inputs)
+	if (locale === "cs") return __cs.channels_pick_expired(inputs)
+	return __en.channels_pick_expired(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Choose channels to connect" |
+*
+* @param {Channels_Pick_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_title = /** @type {((inputs?: Channels_Pick_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_title(inputs)
+	if (locale === "cs") return __cs.channels_pick_title(inputs)
+	return __en.channels_pick_title(inputs)
 });
 /**
 * | output |

@@ -89,6 +89,7 @@ export interface ProviderManifest<S = unknown> {
     readonly refreshTtlMs?: number;
     readonly warnLeadMs: number;
     readonly instanceScoped?: boolean;
+    readonly connectPicker?: 'kronaut';
   };
   readonly postTypes: readonly PostTypeSpec[];
   readonly settings: z.ZodType<S>;

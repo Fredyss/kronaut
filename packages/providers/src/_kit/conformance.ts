@@ -45,6 +45,8 @@ export function conformanceProblems(
     problems.push(`refresh ${manifest.auth.refresh} without runtime.refresh`);
   if (manifest.auth.instanceScoped === true && runtime.registerApp === undefined)
     problems.push('instanceScoped without runtime.registerApp');
+  if (manifest.auth.connectPicker === 'kronaut' && manifest.auth.refresh !== 'none')
+    problems.push('a Kronaut picker needs accounts without refreshable secrets');
   if (manifest.verify.mode !== 'none' && runtime.verify === undefined)
     problems.push(`verify ${manifest.verify.mode} without runtime.verify`);
   if (manifest.capabilities.analytics && runtime.analytics === undefined)

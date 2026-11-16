@@ -1,7 +1,7 @@
 import { channelsConnectStart } from '@kronaut/sdk';
 import { Button, toast } from '@kronaut/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getRouteApi } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
@@ -12,6 +12,7 @@ import { ANALYTICS_ROLES } from '../../records/analytics/roles.ts';
 import { AddChannelDialog } from '../../records/channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../../records/channels/connect-option.tsx';
 import { DISCONNECT_ROLES, useDisconnect } from '../../records/channels/disconnect.tsx';
+import { PickChannels } from '../../records/channels/pick-channels.tsx';
 import { type Channel, channelsQuery, connectableQuery } from '../../records/channels/queries.ts';
 import { QUEUE_ROLES } from '../../records/channels/queue.ts';
 import { SearchToasts } from '../../records/channels/search-toasts.tsx';
@@ -21,6 +22,7 @@ import { ChannelList } from './channel-card.tsx';
 export interface ChannelsSearch {
   readonly connected?: string;
   readonly error?: string;
+  readonly pick?: string;
 }
 
 const route = getRouteApi('/app/channels');
@@ -63,6 +65,14 @@ function useConnect(workspaceId: string) {
       toast(connectError(error, attempt.body).text, 'destructive');
     },
   });
+}
+
+function PendingPick({ workspaceId }: { readonly workspaceId: string }) {
+  const { pick } = route.useSearch();
+  const navigate = useNavigate();
+  if (pick === undefined) return null;
+  const close = () => void navigate({ to: '/channels', search: {}, replace: true });
+  return <PickChannels workspaceId={workspaceId} selectionId={pick} onClose={close} />;
 }
 
 function Channels({ workspaceId, role }: { readonly workspaceId: string; readonly role: string }) {
@@ -136,6 +146,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
           })}
         />
       )}
+      <PendingPick workspaceId={workspaceId} />
       {providers === undefined || adding === null ? null : (
         <AddChannelDialog
           available={providers}
