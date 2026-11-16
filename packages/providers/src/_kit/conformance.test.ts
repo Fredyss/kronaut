@@ -59,7 +59,7 @@ describe('conformanceProblems', () => {
     if (type === undefined) throw new Error('fixture');
     const manifest: ProviderManifest = {
       ...MANIFEST,
-      auth: { ...MANIFEST.auth, instanceScoped: true },
+      auth: { ...MANIFEST.auth, instanceScoped: true, connectPicker: 'kronaut' },
       egressHosts: [],
       postTypes: [
         {
@@ -86,6 +86,7 @@ describe('conformanceProblems', () => {
       'post: analytics window must cover the first pull at 1 h',
       'refresh rotating without runtime.refresh',
       'instanceScoped without runtime.registerApp',
+      'a Kronaut picker needs accounts without refreshable secrets',
       'verify deterministic_id without runtime.verify',
       'settings reject {}',
       'data retention days must be whole and at least 1',

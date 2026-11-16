@@ -23,6 +23,8 @@ export interface ProviderUi {
   readonly followers?: boolean;
   readonly insights?: boolean;
   readonly googleGrant?: boolean;
+  readonly removesWebhook?: boolean;
+  readonly botStays?: boolean;
   readonly maxImageBytes: number;
   readonly imageTypes: readonly string[];
   publishType(media: PublishMedia): PublishChoice;
@@ -36,6 +38,17 @@ function imagePost(max: number | null) {
   };
 }
 
+const DISCORD: Omit<ProviderUi, 'name'> = {
+  badge: 'bg-indigo-600',
+  followers: false,
+  loginHint: false,
+  instance: false,
+  maxImageBytes: 20 * 1024 * 1024,
+  imageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+  publishType: ({ images }) =>
+    images > 10 ? { kind: 'too_many_images', max: 10 } : { kind: 'ok', publishType: 'message' },
+};
+
 const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
   bluesky: {
     name: () => m.provider_bluesky(),
@@ -47,6 +60,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     imageTypes: ['image/jpeg', 'image/png', 'image/webp'],
     publishType: imagePost(null),
   },
+  discord: { ...DISCORD, name: () => m.provider_discord(), removesWebhook: true },
+  discord_bot: { ...DISCORD, name: () => m.provider_discord_bot(), botStays: true },
   facebook: {
     name: () => m.provider_facebook(),
     badge: 'bg-blue-600',

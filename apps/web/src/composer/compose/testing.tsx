@@ -30,17 +30,28 @@ export function pickFiles(files: readonly File[]): void {
   fireEvent.change(input);
 }
 
-export const ME = {
+const ME = {
   user: { id: 'usr_1', displayName: 'Ada', email: 'ada@example.test', locale: 'en' },
   workspaces: [{ id: 'ws_1', name: 'Studio', role: 'owner', canApprove: true }],
 };
 
-export const BLUESKY_TEXT = [
+const BLUESKY_TEXT = [
   { counting: 'graphemes', max: 300 },
   { counting: 'utf8-bytes', max: 3000 },
 ];
-export const RULES: Record<string, unknown[]> = {
+const DISCORD_RULES = [
+  {
+    id: 'message',
+    text: [{ counting: 'utf16', max: 2000 }],
+    maxLinks: null,
+    imageAspect: null,
+    video: null,
+  },
+];
+const RULES: Record<string, unknown[]> = {
   bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null, video: null }],
+  discord: DISCORD_RULES,
+  discord_bot: DISCORD_RULES,
   threads: [
     {
       id: 'post',
@@ -72,6 +83,8 @@ export const RULES: Record<string, unknown[]> = {
 
 const PREVIEWS: Record<string, string> = {
   bluesky: 'short-feed',
+  discord: 'short-feed',
+  discord_bot: 'short-feed',
   facebook: 'pro-feed',
   instagram: 'media-grid',
   linkedin: 'pro-feed',
@@ -100,7 +113,7 @@ export function channel(id: string, provider: string, displayName: string) {
   };
 }
 
-export const CHANNELS = [
+const CHANNELS = [
   channel('acct_bsky', 'bluesky', 'Ada on Bluesky'),
   channel('acct_ig', 'instagram', 'Ada on Instagram'),
 ];
@@ -171,7 +184,7 @@ export const MEDIA_ASSET = {
   aiGenerated: false,
 };
 
-export function defaultResponse(path: string): Response {
+function defaultResponse(path: string): Response {
   if (path === '/v1/me') return Response.json(ME);
   if (path === '/v1/workspaces/ws_1/approval-policy') return Response.json(policy('none'));
   if (path === '/v1/workspaces/ws_1/channels') return Response.json({ items: CHANNELS });

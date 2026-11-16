@@ -89,6 +89,7 @@ export interface ProviderManifest<S = unknown> {
     readonly refreshTtlMs?: number;
     readonly warnLeadMs: number;
     readonly instanceScoped?: boolean;
+    readonly connectPicker?: 'kronaut';
   };
   readonly postTypes: readonly PostTypeSpec[];
   readonly settings: z.ZodType<S>;
@@ -152,6 +153,7 @@ export interface ClientSigningKey {
 export interface ProviderApp {
   readonly clientId: string;
   readonly clientSecret?: string;
+  readonly botToken?: string;
   readonly publicBaseUrl: string;
   readonly signingKey?: ClientSigningKey;
   readonly publishedKeys?: readonly Jwk[];

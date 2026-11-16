@@ -76,6 +76,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
+/** @typedef {{}} Channels_Disconnect_DiscordInputs */
+/** @typedef {{}} Channels_Disconnect_Discord_BotInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -103,6 +105,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_Pick_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConnectedInputs */
+/** @typedef {{}} Channels_Pick_ExpiredInputs */
+/** @typedef {{}} Channels_Pick_TitleInputs */
 /** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -213,6 +220,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
+/** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -222,6 +230,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
+/** @typedef {{}} Issue_Missing_AccessInputs */
+/** @typedef {{}} Issue_Missing_PermissionsInputs */
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
@@ -325,6 +335,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
+/** @typedef {{}} Provider_DiscordInputs */
+/** @typedef {{}} Provider_Discord_BotInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -1544,6 +1556,36 @@ export const channels_disconnect_data = /** @type {((inputs: Channels_Disconnect
 /**
 * | output |
 * | --- |
+* | "This also removes Kronaut's webhook from the Discord channel." |
+*
+* @param {Channels_Disconnect_DiscordInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_discord = /** @type {((inputs?: Channels_Disconnect_DiscordInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_DiscordInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_discord(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_discord(inputs)
+	return __en.channels_disconnect_discord(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut's bot stays in the Discord server until you remove it in the server settings." |
+*
+* @param {Channels_Disconnect_Discord_BotInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_discord_bot = /** @type {((inputs?: Channels_Disconnect_Discord_BotInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_Discord_BotInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_discord_bot(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_discord_bot(inputs)
+	return __en.channels_disconnect_discord_bot(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect." |
 *
 * @param {Channels_Disconnect_GoogleInputs} inputs
@@ -1946,6 +1988,83 @@ export const channels_open_profile = /** @type {((inputs?: Channels_Open_Profile
 	if (locale === "sk") return __sk.channels_open_profile(inputs)
 	if (locale === "cs") return __cs.channels_open_profile(inputs)
 	return __en.channels_open_profile(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pick the channels Kronaut should post to. You can connect more later." |
+*
+* @param {Channels_Pick_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_body = /** @type {((inputs?: Channels_Pick_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_body(inputs)
+	if (locale === "cs") return __cs.channels_pick_body(inputs)
+	return __en.channels_pick_body(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "Connect {count} channel" |
+* | * | "Connect {count} channels" |
+*
+* @param {Channels_Pick_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_confirm = /** @type {((inputs: Channels_Pick_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_confirm(inputs)
+	if (locale === "cs") return __cs.channels_pick_confirm(inputs)
+	return __en.channels_pick_confirm(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} channel is connected." |
+* | * | "{count} channels are connected." |
+*
+* @param {Channels_Pick_ConnectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_connected = /** @type {((inputs: Channels_Pick_ConnectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ConnectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_connected(inputs)
+	if (locale === "cs") return __cs.channels_pick_connected(inputs)
+	return __en.channels_pick_connected(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This selection expired. Connect again to choose channels." |
+*
+* @param {Channels_Pick_ExpiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_expired = /** @type {((inputs?: Channels_Pick_ExpiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_ExpiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_expired(inputs)
+	if (locale === "cs") return __cs.channels_pick_expired(inputs)
+	return __en.channels_pick_expired(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Choose channels to connect" |
+*
+* @param {Channels_Pick_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_pick_title = /** @type {((inputs?: Channels_Pick_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Pick_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_pick_title(inputs)
+	if (locale === "cs") return __cs.channels_pick_title(inputs)
+	return __en.channels_pick_title(inputs)
 });
 /**
 * | output |
@@ -3603,6 +3722,21 @@ export const issue_forbidden_characters = /** @type {((inputs?: Issue_Forbidden_
 /**
 * | output |
 * | --- |
+* | "Kronaut can't post to Discord forum or media channels. Connect a text channel instead." |
+*
+* @param {Issue_Forum_Channel_UnsupportedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_forum_channel_unsupported = /** @type {((inputs?: Issue_Forum_Channel_UnsupportedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Forum_Channel_UnsupportedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_forum_channel_unsupported(inputs)
+	if (locale === "cs") return __cs.issue_forum_channel_unsupported(inputs)
+	return __en.issue_forum_channel_unsupported(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The video's frame rate is too high for this network." |
 *
 * @param {Issue_Frame_Rate_Too_HighInputs} inputs
@@ -3734,6 +3868,36 @@ export const issue_mime_unsupported = /** @type {((inputs?: Issue_Mime_Unsupport
 	if (locale === "sk") return __sk.issue_mime_unsupported(inputs)
 	if (locale === "cs") return __cs.issue_mime_unsupported(inputs)
 	return __en.issue_mime_unsupported(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again." |
+*
+* @param {Issue_Missing_AccessInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_missing_access = /** @type {((inputs?: Issue_Missing_AccessInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Missing_AccessInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_missing_access(inputs)
+	if (locale === "cs") return __cs.issue_missing_access(inputs)
+	return __en.issue_missing_access(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut's bot lacks a permission in this Discord channel. Give it View Channel, Send Messages and Attach Files there, then try again." |
+*
+* @param {Issue_Missing_PermissionsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_missing_permissions = /** @type {((inputs?: Issue_Missing_PermissionsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Missing_PermissionsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_missing_permissions(inputs)
+	if (locale === "cs") return __cs.issue_missing_permissions(inputs)
+	return __en.issue_missing_permissions(inputs)
 });
 /**
 * | output |
@@ -5293,6 +5457,36 @@ export const provider_bluesky = /** @type {((inputs?: Provider_BlueskyInputs, op
 	if (locale === "sk") return __sk.provider_bluesky(inputs)
 	if (locale === "cs") return __cs.provider_bluesky(inputs)
 	return __en.provider_bluesky(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Discord" |
+*
+* @param {Provider_DiscordInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_discord = /** @type {((inputs?: Provider_DiscordInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_DiscordInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_discord(inputs)
+	if (locale === "cs") return __cs.provider_discord(inputs)
+	return __en.provider_discord(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Discord (bot)" |
+*
+* @param {Provider_Discord_BotInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_discord_bot = /** @type {((inputs?: Provider_Discord_BotInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_Discord_BotInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_discord_bot(inputs)
+	if (locale === "cs") return __cs.provider_discord_bot(inputs)
+	return __en.provider_discord_bot(inputs)
 });
 /**
 * | output |

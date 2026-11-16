@@ -82,6 +82,8 @@
   "queue_evergreen": "Volné termíny se 24 h předem doplní nadčasovými příspěvky.",
   "channels_disconnect_body": "Odpojit {name}? Příspěvky naplánované do tohoto kanálu se nezveřejní. Později ho můžete znovu připojit.",
   "channels_disconnect_google": "Tím se zruší i přístup Kronautu u Googlu. Ostatní kanály YouTube připojené přes stejný účet Google bude potřeba připojit znovu.",
+  "channels_disconnect_discord": "Z kanálu na Discordu se tím odebere i webhook Kronautu.",
+  "channels_disconnect_discord_bot": "Bot Kronautu zůstane na serveru Discord, dokud ho neodeberete v nastavení serveru.",
   "channels_disconnect_data": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -104,6 +106,33 @@
   "channels_connected_named": "Kanál {name} je připojený.",
   "channels_connected_list": "Připojené kanály: {names}.",
   "channels_connected": "Kanál je připojený.",
+  "channels_pick_title": "Vyberte kanály k připojení",
+  "channels_pick_body": "Vyberte kanály, do kterých má Kronaut zveřejňovat. Další můžete připojit později.",
+  "channels_pick_confirm": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Připojit {count} kanál",
+        "countPlural=few": "Připojit {count} kanály",
+        "countPlural=many": "Připojit {count} kanálu",
+        "countPlural=*": "Připojit {count} kanálů"
+      }
+    }
+  ],
+  "channels_pick_expired": "Platnost výběru vypršela. Spusťte připojení znovu a vyberte kanály.",
+  "channels_pick_connected": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál je připojený.",
+        "countPlural=few": "{count} kanály jsou připojené.",
+        "countPlural=many": "{count} kanálu je připojeno.",
+        "countPlural=*": "{count} kanálů je připojeno."
+      }
+    }
+  ],
   "channel_status_active": "Aktivní",
   "channel_status_needs_reauth": "Je třeba znovu připojit",
   "channel_status_disabled": "Vypnutý",
@@ -134,6 +163,8 @@
   "channels_connect_unavailable": "Síť je momentálně nedostupná. Zkuste to později.",
   "channels_connect_bad_url": "Síť vrátila nebezpečnou přihlašovací adresu, proto se připojování zastavilo.",
   "provider_bluesky": "Bluesky",
+  "provider_discord": "Discord",
+  "provider_discord_bot": "Discord (bot)",
   "provider_facebook": "Facebook",
   "provider_instagram": "Instagram",
   "provider_linkedin": "LinkedIn",
@@ -587,6 +618,9 @@
   "issue_tag_unknown": "Tento štítek už neexistuje. Odeberte ho a uložte znovu.",
   "issue_setting_required": "Chybí povinné nastavení pro tuto síť.",
   "issue_forbidden_characters": "Text obsahuje znaky, které tato síť nepovoluje.",
+  "issue_forum_channel_unsupported": "Kronaut neumí zveřejňovat ve fórech ani v mediálních kanálech Discordu. Připojte textový kanál.",
+  "issue_missing_permissions": "Botovi Kronautu v tomto kanálu Discordu chybí oprávnění. Udělte mu tam View Channel, Send Messages a Attach Files a zkuste to znovu.",
+  "issue_missing_access": "Bot Kronautu tento kanál Discordu nevidí. Udělte mu tam oprávnění View Channel nebo kanál připojte znovu.",
   "channels_signature": "Podpis",
   "channels_signature_none": "Žádný",
   "channels_signature_named": "Podpis: {name}",

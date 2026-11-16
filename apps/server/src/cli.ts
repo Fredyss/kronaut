@@ -14,6 +14,7 @@ import { ConfigError } from './base/config/config.ts';
 function usage(m: CliMessages): string {
   const appSecret = `(${m.usage_app_secret_stdin({})})`;
   const clientSecret = `(${m.usage_client_secret_stdin({})})`;
+  const botSecrets = `(${m.usage_bot_token_stdin({})})`;
   return [
     m.usage_title({}),
     '  kronaut migrate',
@@ -26,6 +27,8 @@ function usage(m: CliMessages): string {
     '  kronaut backup run --dir <dir>',
     '  kronaut backup schedule --dir <dir>',
     '  kronaut provider-app register bluesky',
+    `  kronaut provider-app register discord --client-id <discord client id>    ${clientSecret}`,
+    `  kronaut provider-app register discord_bot --client-id <discord client id> ${botSecrets}`,
     `  kronaut provider-app register facebook --client-id <meta app id>         ${appSecret}`,
     `  kronaut provider-app register instagram --client-id <instagram app id>   ${appSecret}`,
     `  kronaut provider-app register linkedin --client-id <linkedin client id>  ${clientSecret}`,

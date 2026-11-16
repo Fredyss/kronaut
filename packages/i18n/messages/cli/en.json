@@ -3,6 +3,7 @@
   "usage_title": "usage:",
   "usage_app_secret_stdin": "app secret on stdin",
   "usage_client_secret_stdin": "client secret on stdin",
+  "usage_bot_token_stdin": "client secret, then bot token, one per line on stdin",
   "config_error": "configuration error",
   "unexpected_error": "an unexpected error",
   "unknown_command": "unknown command",
@@ -34,9 +35,10 @@
   "secret_stdin_tty": "pipe the app secret on stdin",
   "secret_stdin_empty": "the app secret on stdin is empty",
   "secret_stdin_lines": "the app secret on stdin must be one line",
+  "bot_token_stdin_lines": "pipe the client secret and the bot token on stdin, one per line",
   "expected_one_provider": "expected one provider",
   "bluesky_client_id": "bluesky takes no --client-id",
-  "provider_unsupported": "only bluesky, facebook, instagram, linkedin, threads or youtube can be registered",
+  "provider_unsupported": "only bluesky, discord, discord_bot, facebook, instagram, linkedin, threads or youtube can be registered",
   "provider_app_exists": [
     {
       "declarations": ["input provider"],

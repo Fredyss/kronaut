@@ -56,6 +56,12 @@ export function DisconnectConfirm(props: ConfirmProps) {
       {ui.googleGrant === true ? (
         <p className="text-muted-foreground">{m.channels_disconnect_google()}</p>
       ) : null}
+      {ui.removesWebhook === true ? (
+        <p className="text-muted-foreground">{m.channels_disconnect_discord()}</p>
+      ) : null}
+      {ui.botStays === true ? (
+        <p className="text-muted-foreground">{m.channels_disconnect_discord_bot()}</p>
+      ) : null}
       {dataRetentionDays === null ? null : (
         <p className="text-muted-foreground">
           {m.channels_disconnect_data({ count: dataRetentionDays })}

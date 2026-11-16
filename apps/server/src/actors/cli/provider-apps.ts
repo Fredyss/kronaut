@@ -3,14 +3,21 @@ import type { Actor, Database } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { STATE_TTL_SECONDS } from '../../access/channels/connect.ts';
-import { sealAppSecret } from '../../infrastructure/credentials/credential-store.ts';
+import { sealAppSecret, sealBotToken } from '../../infrastructure/credentials/credential-store.ts';
 import { createSigningKey } from '../../infrastructure/credentials/signing-keys.ts';
 import { CommandError } from './errors.ts';
 
 const CLI: Actor = { kind: 'cli' };
 const BLUESKY = 'bluesky';
 const BLUESKY_METADATA_PATH = '/oauth/bluesky/oauth-client-metadata.json';
-export type SecretAppProvider = 'facebook' | 'instagram' | 'linkedin' | 'threads' | 'youtube';
+export type SecretAppProvider =
+  | 'discord'
+  | 'discord_bot'
+  | 'facebook'
+  | 'instagram'
+  | 'linkedin'
+  | 'threads'
+  | 'youtube';
 
 export interface ProviderAppCommandDeps {
   readonly db: Database;
@@ -58,12 +65,19 @@ export async function registerBluesky(
   return id;
 }
 
+export interface AppSecrets {
+  readonly clientSecret: string;
+  readonly botToken?: string;
+}
+
 export async function registerSecretApp(
   deps: ProviderAppCommandDeps & { readonly keyring: Keyring },
   provider: SecretAppProvider,
   clientId: string,
-  clientSecret: string,
+  secrets: string | AppSecrets,
 ): Promise<string> {
+  const { clientSecret, botToken } =
+    typeof secrets === 'string' ? { clientSecret: secrets, botToken: undefined } : secrets;
   const id = await deps.db.withActor(CLI, async (trx) => {
     await sql`select pg_advisory_xact_lock(hashtextextended(${`provider_app_register:${provider}`}, 0))`.execute(
       trx,
@@ -86,7 +100,10 @@ export async function registerSecretApp(
       .executeTakeFirstOrThrow();
     await trx
       .updateTable('provider_apps')
-      .set(sealAppSecret(deps.keyring, row.id, provider, clientSecret))
+      .set({
+        ...sealAppSecret(deps.keyring, row.id, provider, clientSecret),
+        ...(botToken === undefined ? {} : sealBotToken(deps.keyring, row.id, provider, botToken)),
+      })
       .where('id', '=', row.id)
       .execute();
     return row.id;

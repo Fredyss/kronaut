@@ -26,6 +26,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{}} Compose_Discord_Ping_EveryoneInputs */
+/** @typedef {{}} Compose_Discord_SilentInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
 /** @typedef {{}} Compose_Edit_Queue_NoteInputs */
 /** @typedef {{}} Compose_Edit_Review_NoteInputs */
@@ -496,6 +498,36 @@ export const compose_customized = /** @type {((inputs?: Compose_CustomizedInputs
 	if (locale === "sk") return __sk.compose_customized(inputs)
 	if (locale === "cs") return __cs.compose_customized(inputs)
 	return __en.compose_customized(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Allow @everyone and @here" |
+*
+* @param {Compose_Discord_Ping_EveryoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_discord_ping_everyone = /** @type {((inputs?: Compose_Discord_Ping_EveryoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Discord_Ping_EveryoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_discord_ping_everyone(inputs)
+	if (locale === "cs") return __cs.compose_discord_ping_everyone(inputs)
+	return __en.compose_discord_ping_everyone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Send without notifications" |
+*
+* @param {Compose_Discord_SilentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_discord_silent = /** @type {((inputs?: Compose_Discord_SilentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Discord_SilentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_discord_silent(inputs)
+	if (locale === "cs") return __cs.compose_discord_silent(inputs)
+	return __en.compose_discord_silent(inputs)
 });
 /**
 * | output |

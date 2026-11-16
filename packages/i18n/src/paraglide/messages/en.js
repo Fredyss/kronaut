@@ -74,6 +74,8 @@
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
+/** @typedef {{}} Channels_Disconnect_DiscordInputs */
+/** @typedef {{}} Channels_Disconnect_Discord_BotInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -101,6 +103,11 @@
 /** @typedef {{}} Channels_Insights_ReconnectInputs */
 /** @typedef {{}} Channels_Not_Set_UpInputs */
 /** @typedef {{}} Channels_Open_ProfileInputs */
+/** @typedef {{}} Channels_Pick_BodyInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Pick_ConnectedInputs */
+/** @typedef {{}} Channels_Pick_ExpiredInputs */
+/** @typedef {{}} Channels_Pick_TitleInputs */
 /** @typedef {{}} Channels_QueueInputs */
 /** @typedef {{}} Channels_ReconnectInputs */
 /** @typedef {{}} Channels_Server_InvalidInputs */
@@ -211,6 +218,7 @@
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
+/** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -220,6 +228,8 @@
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
+/** @typedef {{}} Issue_Missing_AccessInputs */
+/** @typedef {{}} Issue_Missing_PermissionsInputs */
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
@@ -323,6 +333,8 @@
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
+/** @typedef {{}} Provider_DiscordInputs */
+/** @typedef {{}} Provider_Discord_BotInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -717,6 +729,14 @@ export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_
 	return /** @type {LocalizedString} */ (`Kronaut deletes this channel's name and stats within ${i?.count} days after you disconnect it.`)
 };
 
+export const channels_disconnect_discord = /** @type {(inputs: Channels_Disconnect_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This also removes Kronaut's webhook from the Discord channel.`)
+};
+
+export const channels_disconnect_discord_bot = /** @type {(inputs: Channels_Disconnect_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot stays in the Discord server until you remove it in the server settings.`)
+};
+
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.`)
 };
@@ -825,6 +845,30 @@ export const channels_not_set_up = /** @type {(inputs: Channels_Not_Set_UpInputs
 
 export const channels_open_profile = /** @type {(inputs: Channels_Open_ProfileInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Open profile`)
+};
+
+export const channels_pick_body = /** @type {(inputs: Channels_Pick_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pick the channels Kronaut should post to. You can connect more later.`)
+};
+
+export const channels_pick_confirm = /** @type {(inputs: Channels_Pick_ConfirmInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Connect ${i?.count} channel`);
+	return /** @type {LocalizedString} */ (`Connect ${i?.count} channels`)
+};
+
+export const channels_pick_connected = /** @type {(inputs: Channels_Pick_ConnectedInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} channel is connected.`);
+	return /** @type {LocalizedString} */ (`${i?.count} channels are connected.`)
+};
+
+export const channels_pick_expired = /** @type {(inputs: Channels_Pick_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This selection expired. Connect again to choose channels.`)
+};
+
+export const channels_pick_title = /** @type {(inputs: Channels_Pick_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Choose channels to connect`)
 };
 
 export const channels_queue = /** @type {(inputs: Channels_QueueInputs) => LocalizedString} */ () => {
@@ -1272,6 +1316,10 @@ export const issue_forbidden_characters = /** @type {(inputs: Issue_Forbidden_Ch
 	return /** @type {LocalizedString} */ (`The text contains characters this network doesn't allow.`)
 };
 
+export const issue_forum_channel_unsupported = /** @type {(inputs: Issue_Forum_Channel_UnsupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut can't post to Discord forum or media channels. Connect a text channel instead.`)
+};
+
 export const issue_frame_rate_too_high = /** @type {(inputs: Issue_Frame_Rate_Too_HighInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video's frame rate is too high for this network.`)
 };
@@ -1306,6 +1354,14 @@ export const issue_media_not_allowed = /** @type {(inputs: Issue_Media_Not_Allow
 
 export const issue_mime_unsupported = /** @type {(inputs: Issue_Mime_UnsupportedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This network doesn't accept this image format.`)
+};
+
+export const issue_missing_access = /** @type {(inputs: Issue_Missing_AccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again.`)
+};
+
+export const issue_missing_permissions = /** @type {(inputs: Issue_Missing_PermissionsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot lacks a permission in this Discord channel. Give it View Channel, Send Messages and Attach Files there, then try again.`)
 };
 
 export const issue_not_ready = /** @type {(inputs: Issue_Not_ReadyInputs) => LocalizedString} */ () => {
@@ -1738,6 +1794,14 @@ export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Bluesky`)
+};
+
+export const provider_discord = /** @type {(inputs: Provider_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord`)
+};
+
+export const provider_discord_bot = /** @type {(inputs: Provider_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord (bot)`)
 };
 
 export const provider_facebook = /** @type {(inputs: Provider_FacebookInputs) => LocalizedString} */ () => {

@@ -14,7 +14,10 @@ export interface MultipartBody {
 
 const encoder = new TextEncoder();
 
-export function multipart(fields: Readonly<Record<string, string>>, file: FilePart): MultipartBody {
+export function multipartFiles(
+  fields: Readonly<Record<string, string>>,
+  files: readonly FilePart[],
+): MultipartBody {
   const boundary = `kronaut-${randomBytes(16).toString('hex')}`;
   const head = Object.entries(fields)
     .map(
@@ -22,13 +25,17 @@ export function multipart(fields: Readonly<Record<string, string>>, file: FilePa
         `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`,
     )
     .join('');
-  const parts = [
-    encoder.encode(
-      `${head}--${boundary}\r\nContent-Disposition: form-data; name="${file.name}"; filename="${file.filename}"\r\nContent-Type: ${file.mime}\r\n\r\n`,
-    ),
-    file.bytes,
-    encoder.encode(`\r\n--${boundary}--\r\n`),
-  ];
+  const parts: Uint8Array[] = [encoder.encode(head)];
+  for (const file of files) {
+    parts.push(
+      encoder.encode(
+        `--${boundary}\r\nContent-Disposition: form-data; name="${file.name}"; filename="${file.filename}"\r\nContent-Type: ${file.mime}\r\n\r\n`,
+      ),
+      file.bytes,
+      encoder.encode('\r\n'),
+    );
+  }
+  parts.push(encoder.encode(`--${boundary}--\r\n`));
   const body = new Uint8Array(parts.reduce((sum, part) => sum + part.byteLength, 0));
   let offset = 0;
   for (const part of parts) {
@@ -36,4 +43,8 @@ export function multipart(fields: Readonly<Record<string, string>>, file: FilePa
     offset += part.byteLength;
   }
   return { type: `multipart/form-data; boundary=${boundary}`, body };
+}
+
+export function multipart(fields: Readonly<Record<string, string>>, file: FilePart): MultipartBody {
+  return multipartFiles(fields, [file]);
 }

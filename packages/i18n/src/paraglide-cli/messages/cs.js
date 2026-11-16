@@ -17,6 +17,7 @@
 /** @typedef {{}} Backup_ModeInputs */
 /** @typedef {{}} Backup_Time_InvalidInputs */
 /** @typedef {{}} Bluesky_Client_IdInputs */
+/** @typedef {{}} Bot_Token_Stdin_LinesInputs */
 /** @typedef {{}} Config_ErrorInputs */
 /** @typedef {{}} Db_Url_InvalidInputs */
 /** @typedef {{}} Db_Url_PasswordInputs */
@@ -71,6 +72,7 @@
 /** @typedef {{}} Unknown_Provider_App_CommandInputs */
 /** @typedef {{}} Unknown_User_CommandInputs */
 /** @typedef {{}} Usage_App_Secret_StdinInputs */
+/** @typedef {{}} Usage_Bot_Token_StdinInputs */
 /** @typedef {{}} Usage_Client_Secret_StdinInputs */
 /** @typedef {{}} Usage_TitleInputs */
 /** @typedef {{}} User_Email_TakenInputs */
@@ -150,6 +152,10 @@ export const backup_time_invalid = /** @type {(inputs: Backup_Time_InvalidInputs
 
 export const bluesky_client_id = /** @type {(inputs: Bluesky_Client_IdInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`bluesky nepoužívá --client-id`)
+};
+
+export const bot_token_stdin_lines = /** @type {(inputs: Bot_Token_Stdin_LinesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`na stdin pošlete tajný klíč klienta a token bota, každý na samostatném řádku`)
 };
 
 export const config_error = /** @type {(inputs: Config_ErrorInputs) => LocalizedString} */ () => {
@@ -294,7 +300,7 @@ export const provider_app_not_found = /** @type {(inputs: Provider_App_Not_Found
 };
 
 export const provider_unsupported = /** @type {(inputs: Provider_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`zaregistrovat lze jen bluesky, facebook, instagram, linkedin, threads nebo youtube`)
+	return /** @type {LocalizedString} */ (`zaregistrovat lze jen bluesky, discord, discord_bot, facebook, instagram, linkedin, threads nebo youtube`)
 };
 
 export const restored_no_state = /** @type {(inputs: Restored_No_StateInputs) => LocalizedString} */ () => {
@@ -375,6 +381,10 @@ export const unknown_user_command = /** @type {(inputs: Unknown_User_CommandInpu
 
 export const usage_app_secret_stdin = /** @type {(inputs: Usage_App_Secret_StdinInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`tajný klíč aplikace na stdin`)
+};
+
+export const usage_bot_token_stdin = /** @type {(inputs: Usage_Bot_Token_StdinInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`tajný klíč klienta a pod ním token bota, každý na vlastním řádku na stdin`)
 };
 
 export const usage_client_secret_stdin = /** @type {(inputs: Usage_Client_Secret_StdinInputs) => LocalizedString} */ () => {

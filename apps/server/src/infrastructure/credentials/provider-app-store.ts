@@ -1,9 +1,15 @@
 import type { ClientSigningKey, Jwk, ProviderApp } from '@kronaut/core';
-import { type Keyring, openCredential, sealCredential } from '@kronaut/credentials';
+import {
+  type CredentialAad,
+  type Keyring,
+  openCredential,
+  type SealedCredential,
+  sealCredential,
+} from '@kronaut/credentials';
 import type { TenantDb } from '@kronaut/db';
 import { loadPublishedKeys, loadSigningKeys, type SigningKeys } from './signing-keys.ts';
 
-export const NIL_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
+const NIL_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
 
 export interface StoredProviderApp {
   readonly id: string;
@@ -25,6 +31,13 @@ export interface SealedAppSecret {
   readonly kek_version: number;
 }
 
+export interface SealedBotToken {
+  readonly bot_token_ciphertext: Buffer;
+  readonly bot_token_nonce: Buffer;
+  readonly bot_token_wrapped_dek: Buffer;
+  readonly bot_token_kek_version: number;
+}
+
 export type ProviderAppWhere =
   | { readonly id: string }
   | { readonly provider: string; readonly instanceHost: string };
@@ -41,15 +54,46 @@ interface AppRow {
   readonly client_secret_nonce: Buffer | null;
   readonly client_secret_wrapped_dek: Buffer | null;
   readonly kek_version: number | null;
+  readonly bot_token_ciphertext: Buffer | null;
+  readonly bot_token_nonce: Buffer | null;
+  readonly bot_token_wrapped_dek: Buffer | null;
+  readonly bot_token_kek_version: number | null;
 }
 
 interface MutableApp {
   clientId: string;
   publicBaseUrl: string;
   clientSecret?: string;
+  botToken?: string;
   signingKey?: ClientSigningKey;
   publishedKeys?: readonly Jwk[];
   instanceHost?: string;
+}
+
+function secretAad(appId: string, provider: string): CredentialAad {
+  return { credentialId: appId, workspaceId: NIL_WORKSPACE_ID, provider };
+}
+
+function botTokenAad(appId: string, provider: string): CredentialAad {
+  return { credentialId: appId, workspaceId: NIL_WORKSPACE_ID, provider: `bot_${provider}` };
+}
+
+function sealText(keyring: Keyring, aad: CredentialAad, text: string): SealedCredential {
+  const plaintext = Buffer.from(text, 'utf8');
+  try {
+    return sealCredential(keyring, aad, plaintext);
+  } finally {
+    plaintext.fill(0);
+  }
+}
+
+function openText(keyring: Keyring, aad: CredentialAad, sealed: SealedCredential): string {
+  const plaintext = openCredential(keyring, aad, sealed);
+  try {
+    return plaintext.toString('utf8');
+  } finally {
+    plaintext.fill(0);
+  }
 }
 
 export function sealAppSecret(
@@ -58,22 +102,28 @@ export function sealAppSecret(
   provider: string,
   secret: string,
 ): SealedAppSecret {
-  const plaintext = Buffer.from(secret, 'utf8');
-  try {
-    const sealed = sealCredential(
-      keyring,
-      { credentialId: appId, workspaceId: NIL_WORKSPACE_ID, provider },
-      plaintext,
-    );
-    return {
-      client_secret_ciphertext: sealed.ciphertext,
-      client_secret_nonce: sealed.nonce,
-      client_secret_wrapped_dek: sealed.wrappedDek,
-      kek_version: sealed.kekVersion,
-    };
-  } finally {
-    plaintext.fill(0);
-  }
+  const sealed = sealText(keyring, secretAad(appId, provider), secret);
+  return {
+    client_secret_ciphertext: sealed.ciphertext,
+    client_secret_nonce: sealed.nonce,
+    client_secret_wrapped_dek: sealed.wrappedDek,
+    kek_version: sealed.kekVersion,
+  };
+}
+
+export function sealBotToken(
+  keyring: Keyring,
+  appId: string,
+  provider: string,
+  token: string,
+): SealedBotToken {
+  const sealed = sealText(keyring, botTokenAad(appId, provider), token);
+  return {
+    bot_token_ciphertext: sealed.ciphertext,
+    bot_token_nonce: sealed.nonce,
+    bot_token_wrapped_dek: sealed.wrappedDek,
+    bot_token_kek_version: sealed.kekVersion,
+  };
 }
 
 function chooseSigningKey(
@@ -84,29 +134,34 @@ function chooseSigningKey(
   return keys.keyId === null ? undefined : loaded.byId(keys.keyId);
 }
 
-function openAppSecret(keyring: Keyring, row: AppRow, app: MutableApp): void {
+function openAppSecrets(keyring: Keyring, row: AppRow, app: MutableApp): void {
   if (
     row.client_secret_ciphertext !== null &&
     row.client_secret_nonce !== null &&
     row.client_secret_wrapped_dek !== null &&
     row.kek_version !== null
   ) {
-    const plaintext = openCredential(
-      keyring,
-      { credentialId: row.id, workspaceId: NIL_WORKSPACE_ID, provider: row.provider },
-      {
-        ciphertext: row.client_secret_ciphertext,
-        nonce: row.client_secret_nonce,
-        wrappedDek: row.client_secret_wrapped_dek,
-        kekVersion: row.kek_version,
-        aadV: 1,
-      },
-    );
-    try {
-      app.clientSecret = plaintext.toString('utf8');
-    } finally {
-      plaintext.fill(0);
-    }
+    app.clientSecret = openText(keyring, secretAad(row.id, row.provider), {
+      ciphertext: row.client_secret_ciphertext,
+      nonce: row.client_secret_nonce,
+      wrappedDek: row.client_secret_wrapped_dek,
+      kekVersion: row.kek_version,
+      aadV: 1,
+    });
+  }
+  if (
+    row.bot_token_ciphertext !== null &&
+    row.bot_token_nonce !== null &&
+    row.bot_token_wrapped_dek !== null &&
+    row.bot_token_kek_version !== null
+  ) {
+    app.botToken = openText(keyring, botTokenAad(row.id, row.provider), {
+      ciphertext: row.bot_token_ciphertext,
+      nonce: row.bot_token_nonce,
+      wrappedDek: row.bot_token_wrapped_dek,
+      kekVersion: row.bot_token_kek_version,
+      aadV: 1,
+    });
   }
 }
 
@@ -148,6 +203,10 @@ export async function loadProviderApp(
       'client_secret_nonce',
       'client_secret_wrapped_dek',
       'kek_version',
+      'bot_token_ciphertext',
+      'bot_token_nonce',
+      'bot_token_wrapped_dek',
+      'bot_token_kek_version',
     ]);
   query =
     'id' in where
@@ -166,7 +225,7 @@ export async function loadProviderApp(
     publicBaseUrl: options.publicBaseUrl,
     ...(row.instance_host === '' ? {} : { instanceHost: row.instance_host }),
   };
-  openAppSecret(keyring, row, app);
+  openAppSecrets(keyring, row, app);
   const signingKeyMissing = await attachKeys(db, keyring, row.id, { keys: options.keys, app });
   return { id: row.id, provider: row.provider, status: row.status, app, signingKeyMissing };
 }
