@@ -30,8 +30,8 @@ export function expiringAt(
   now: Temporal.Instant,
   renewal: Renewal,
 ): Date | null {
-  const byRefresh = consumesToken(auth.refresh) || auth.refresh === 'reusable';
-  const at = byRefresh ? credential.refreshExpiresAt : credential.accessExpiresAt;
+  if (auth.refresh === 'reusable') return null;
+  const at = consumesToken(auth.refresh) ? credential.refreshExpiresAt : credential.accessExpiresAt;
   const leadMs = leadFor(auth, renewal);
   if (at === null || leadMs === null) return null;
   return at.getTime() <= now.epochMilliseconds + leadMs ? at : null;
