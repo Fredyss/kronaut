@@ -82,6 +82,7 @@ test_globs:
   - "**/testing.tsx"
   - "**/testing/**"
   - apps/server/e2e/**
+  - packages/db/test/**
 
 dependency_files:
   - package.json
@@ -98,23 +99,32 @@ shared_paths:
   - packages/i18n/messages/**
   - packages/contract/openapi.json
   - apps/server/src/base/http/public-routes.json
+  - infra/compose/.env.example
   - packages/sdk/src/gen/**
 
 protected_paths:
   - .github/**
+  - .claude/settings.json
+  - CLAUDE.md
   - biome.json
   - tools/biome/**
   - tools/licenses/**
   - tools/lint/*.ts
   - tools/tsconfig.json
   - tsconfig*.json
+  - "**/tsconfig*.json"
   - vitest*.config.ts
+  - apps/server/e2e/playwright.config.ts
+  - apps/web/.size-limit.js
   - .jscpd.json
   - .fallowrc.json
   - .gitleaks.toml
   - .nvmrc
   - packages/db/schema/v1.sql
-  - infra/**
+  - infra/docker/**
+  - infra/compose/compose.yaml
+  - infra/compose/init-secrets.sh
+  - infra/compose/postgres-init/**
 
 secrets:
   example_file: infra/compose/.env.example
@@ -133,6 +143,13 @@ risk:
     - packages/credentials/**
     - packages/egress/**
     - packages/db/migrations/**
+    - packages/db/src/**
+    - packages/core/src/authz.ts
+    - packages/core/src/roles.ts
+    - packages/core/src/actions.ts
+    - packages/contract/src/define-route.ts
+    - apps/server/src/steps/publish/**
+    - apps/server/src/steps/approvals/**
   max_diff_lines: 400
 
 host_commands:
