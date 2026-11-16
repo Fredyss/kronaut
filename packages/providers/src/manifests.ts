@@ -1,5 +1,6 @@
 import type { ProviderManifest } from '@kronaut/core';
 import { blueskyManifest } from './bluesky/manifest.ts';
+import { discordManifest } from './discord/manifest.ts';
 import { facebookManifest } from './facebook/manifest.ts';
 import { instagramManifest } from './instagram/manifest.ts';
 import { linkedinManifest } from './linkedin/manifest.ts';
@@ -9,6 +10,7 @@ import { youtubeManifest } from './youtube/manifest.ts';
 
 export const manifests: readonly ProviderManifest[] = [
   blueskyManifest,
+  discordManifest,
   facebookManifest,
   instagramManifest,
   linkedinManifest,
