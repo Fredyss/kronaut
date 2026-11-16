@@ -85,8 +85,8 @@
       "declarations": ["input count", "local countPlural = count: plural"],
       "selectors": ["countPlural"],
       "match": {
-        "countPlural=one": "Kronaut deletes this channel's name and stats {count} day after you disconnect it.",
-        "countPlural=*": "Kronaut deletes this channel's name and stats {count} days after you disconnect it."
+        "countPlural=one": "Kronaut deletes this channel's name and stats within {count} day after you disconnect it.",
+        "countPlural=*": "Kronaut deletes this channel's name and stats within {count} days after you disconnect it."
       }
     }
   ],

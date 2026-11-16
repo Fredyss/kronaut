@@ -421,40 +421,38 @@ describe('analytics pulls', () => {
         .where('id', 'in', [renamed, lapsed])
         .execute(),
     );
+    const stored = { display_name: 'Renamed', handle: '@renamed', profile_url: 'https://x.test/r' };
     expect(names).toEqual(
       expect.arrayContaining([
-        {
-          id: renamed,
-          display_name: 'Renamed',
-          handle: '@renamed',
-          profile_url: 'https://x.test/r',
-        },
+        { id: renamed, ...stored },
         { id: lapsed, display_name: 'lapsed', handle: null, profile_url: null },
       ]),
     );
   });
 
-  it('a failed follower read lapses the channel only for a provider with data retention', async () => {
-    const retained = decodePublicId('socialAccount', await insertAccount('dead-grant')) ?? '';
-    const plain = decodePublicId('socialAccount', await insertAccount('dead-plain')) ?? '';
-    const dead: ProviderError = { kind: 'permanent', code: 'channel_gone' };
-    followerFailures.set('fake-dead-grant', dead);
+  it('only a proven dead grant lapses the channel, and only with data retention', async () => {
+    const gone: ProviderError = { kind: 'permanent', code: 'channel_missing' };
+    const cases: [string, ProviderError | null, string][] = [
+      ['gone', gone, 'needs_reauth'],
+      ['revoked', { kind: 'auth_revoked' }, 'needs_reauth'],
+      ['odd', { kind: 'permanent', code: 'unexpected_status' }, 'active'],
+      ['expired', { kind: 'auth_expired' }, 'active'],
+      ['plain', null, 'active'],
+    ];
+    const ids: string[] = [];
+    for (const [name, failure] of cases) {
+      ids.push(decodePublicId('socialAccount', await insertAccount(`dead-${name}`)) ?? '');
+      if (failure !== null) followerFailures.set(`fake-dead-${name}`, failure);
+    }
     await pullAt(Temporal.Instant.from('2027-04-01T10:00:00Z'), true);
-    followerFailures.set('fake-dead-plain', dead);
+    followerFailures.set('fake-dead-plain', gone);
     await pullAt(Temporal.Instant.from('2027-04-02T10:00:00Z'));
     followerFailures.clear();
-    const statuses = await owner.withActor(SYSTEM, (trx) =>
-      trx
-        .selectFrom('social_accounts')
-        .select(['id', 'status', 'status_reason'])
-        .where('id', 'in', [retained, plain])
-        .orderBy('status')
-        .execute(),
+    const rows = await owner.withActor(SYSTEM, (trx) =>
+      trx.selectFrom('social_accounts').select(['id', 'status']).where('id', 'in', ids).execute(),
     );
-    expect(statuses).toEqual([
-      { id: plain, status: 'active', status_reason: null },
-      { id: retained, status: 'needs_reauth', status_reason: 'auth_revoked' },
-    ]);
+    const status = new Map(rows.map((row) => [row.id, row.status]));
+    expect(ids.map((id) => status.get(id))).toEqual(cases.map(([, , expected]) => expected));
   });
 
   it('a stopped channel is pushed back and does not starve a healthy one', async () => {

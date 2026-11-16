@@ -717,10 +717,10 @@ export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconne
 
 export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_DataInputs) => LocalizedString} */ (i) => {
 	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
-	if (countPlural === "one") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu ${i?.count} den po jeho odpojení.`);
-	if (countPlural === "few") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu ${i?.count} dny po jeho odpojení.`);
-	if (countPlural === "many") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu ${i?.count} dne po jeho odpojení.`);
-	return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu ${i?.count} dní po jeho odpojení.`)
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu do ${i?.count} dne od jeho odpojení.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu do ${i?.count} dnů od jeho odpojení.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu do ${i?.count} dne od jeho odpojení.`);
+	return /** @type {LocalizedString} */ (`Kronaut smaže název a statistiky tohoto kanálu do ${i?.count} dnů od jeho odpojení.`)
 };
 
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {

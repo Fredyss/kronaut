@@ -36,7 +36,7 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 
 **Other providers:** unchanged. Without `dataRetention`, credentials are purged 30 days after disconnect and nothing else is deleted.
 
-**UI:** the YouTube disconnect dialog says the channel's name and stats are deleted 7 days after disconnecting.
+**UI:** the YouTube disconnect dialog says the channel's name and stats are deleted within 7 days of disconnecting (the policy figure; the margin makes it sooner).
 
 ## Options considered
 
@@ -49,5 +49,5 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 
 - A provider whose policies set deadlines declares them in its manifest; the purge needs no provider code.
 - Metrics of a YouTube channel disconnected for 7 days are gone, even if it is reconnected later.
-- A dead grant reaches `needs_reauth` two ways: the refresh path flags it, and so does the daily follower read of a provider with `dataRetention` when the read fails with `auth_revoked`, `auth_expired` or `permanent` (a `permanent` failure counts as `auth_revoked`). Either way `lapsedDays` then applies. Other providers keep only marking the read as checked.
+- A dead grant reaches `needs_reauth` two ways: the refresh path flags it, and so does the daily follower read of a provider with `dataRetention` when the read proves the grant or the channel gone: `auth_revoked`, or `permanent` with `channel_missing`. An expired access token (`auth_expired`) is left to the refresh path, and any other `permanent` failure (an unknown 4xx, schema drift, an egress block) only marks the read checked, because it can hit every channel at once. Either way `lapsedDays` then applies. Other providers keep only marking the read as checked.
 - Revisit when: Google's compliance audit reads the policies more strictly (remote ids), or another network sets a deadline the two fields can't express.

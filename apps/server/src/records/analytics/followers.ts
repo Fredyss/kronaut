@@ -129,9 +129,10 @@ async function countAttempt(trx: TenantDb, channel: ChannelRef, day: string) {
   if (row.attempts >= MAX_ATTEMPTS) await markChecked(trx, channel, day);
 }
 
+// Only failures that prove the grant or the channel gone; an expired access token is the refresh path's call, and an unknown 4xx or schema drift can hit every channel at once.
 function deadGrant(failure: ProviderError): DeadGrant['incident'] | null {
-  if (failure.kind === 'auth_revoked' || failure.kind === 'auth_expired') return failure.kind;
-  return failure.kind === 'permanent' ? 'auth_revoked' : null;
+  if (failure.kind === 'auth_revoked') return 'auth_revoked';
+  return failure.kind === 'permanent' && failure.code === 'channel_missing' ? 'auth_revoked' : null;
 }
 
 async function flagDeadGrant(

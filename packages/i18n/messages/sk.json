@@ -87,10 +87,10 @@
       "declarations": ["input count", "local countPlural = count: plural"],
       "selectors": ["countPlural"],
       "match": {
-        "countPlural=one": "Kronaut vymaže názov a štatistiky tohto kanála {count} deň po jeho odpojení.",
-        "countPlural=few": "Kronaut vymaže názov a štatistiky tohto kanála {count} dni po jeho odpojení.",
-        "countPlural=many": "Kronaut vymaže názov a štatistiky tohto kanála {count} dňa po jeho odpojení.",
-        "countPlural=*": "Kronaut vymaže názov a štatistiky tohto kanála {count} dní po jeho odpojení."
+        "countPlural=one": "Kronaut vymaže názov a štatistiky tohto kanála do {count} dňa od jeho odpojenia.",
+        "countPlural=few": "Kronaut vymaže názov a štatistiky tohto kanála do {count} dní od jeho odpojenia.",
+        "countPlural=many": "Kronaut vymaže názov a štatistiky tohto kanála do {count} dňa od jeho odpojenia.",
+        "countPlural=*": "Kronaut vymaže názov a štatistiky tohto kanála do {count} dní od jeho odpojenia."
       }
     }
   ],

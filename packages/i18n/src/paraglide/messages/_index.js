@@ -1528,8 +1528,8 @@ export const channels_disconnect_confirm = /** @type {((inputs?: Channels_Discon
 /**
 * | countPlural | output |
 * | --- | --- |
-* | "one" | "Kronaut deletes this channel's name and stats {count} day after you disconnect it." |
-* | * | "Kronaut deletes this channel's name and stats {count} days after you disconnect it." |
+* | "one" | "Kronaut deletes this channel's name and stats within {count} day after you disconnect it." |
+* | * | "Kronaut deletes this channel's name and stats within {count} days after you disconnect it." |
 *
 * @param {Channels_Disconnect_DataInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
