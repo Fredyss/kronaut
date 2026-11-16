@@ -14,6 +14,7 @@
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
+/** @typedef {{}} Compose_Channel_Needs_VideoInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
 /** @typedef {{}} Compose_Channel_UnsupportedInputs */
 /** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
@@ -40,6 +41,7 @@
 /** @typedef {{}} Compose_Error_TagsInputs */
 /** @typedef {{}} Compose_Error_Tags_OpenedInputs */
 /** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
+/** @typedef {{ network: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Title_MissingInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Group_Add_OfInputs */
@@ -99,6 +101,20 @@
 /** @typedef {{}} Compose_Video_RetryInputs */
 /** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
 /** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
+/** @typedef {{}} Compose_Youtube_AudienceInputs */
+/** @typedef {{}} Compose_Youtube_Audience_DefaultInputs */
+/** @typedef {{}} Compose_Youtube_First_LineInputs */
+/** @typedef {{}} Compose_Youtube_KidsInputs */
+/** @typedef {{}} Compose_Youtube_Not_KidsInputs */
+/** @typedef {{}} Compose_Youtube_PrivateInputs */
+/** @typedef {{}} Compose_Youtube_PublicInputs */
+/** @typedef {{}} Compose_Youtube_RequiredInputs */
+/** @typedef {{}} Compose_Youtube_TitleInputs */
+/** @typedef {{ chars: NonNullable<unknown> }} Compose_Youtube_Title_CharsInputs */
+/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Youtube_Title_CountInputs */
+/** @typedef {{}} Compose_Youtube_Title_Too_LongInputs */
+/** @typedef {{}} Compose_Youtube_UnlistedInputs */
+/** @typedef {{}} Compose_Youtube_VisibilityInputs */
 import * as __paraglideRegistry from "../registry.js"
 
 
@@ -164,6 +180,10 @@ export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Im
 
 export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Potřebuje obrázek nebo video.`)
+};
+
+export const compose_channel_needs_video = /** @type {(inputs: Compose_Channel_Needs_VideoInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Potřebuje video.`)
 };
 
 export const compose_channel_too_many_images = /** @type {(inputs: Compose_Channel_Too_Many_ImagesInputs) => LocalizedString} */ (i) => {
@@ -272,6 +292,10 @@ export const compose_error_tags_opened = /** @type {(inputs: Compose_Error_Tags_
 
 export const compose_error_tags_unscheduled = /** @type {(inputs: Compose_Error_Tags_UnscheduledInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Příspěvek se uložil jako koncept, ale jeho štítky ne, takže ještě není naplánovaný. Dalším uložením to dokončíte.`)
+};
+
+export const compose_error_title_missing = /** @type {(inputs: Compose_Error_Title_MissingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Doplňte název pro ${i?.channel} (${i?.network}).`)
 };
 
 export const compose_error_upload = /** @type {(inputs: Compose_Error_UploadInputs) => LocalizedString} */ (i) => {
@@ -516,4 +540,60 @@ export const compose_video_too_big = /** @type {(inputs: Compose_Video_Too_BigIn
 
 export const compose_video_uploading = /** @type {(inputs: Compose_Video_UploadingInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Nahrává se… ${i?.percent}`)
+};
+
+export const compose_youtube_audience = /** @type {(inputs: Compose_Youtube_AudienceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Publikum`)
+};
+
+export const compose_youtube_audience_default = /** @type {(inputs: Compose_Youtube_Audience_DefaultInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Podle nastavení kanálu`)
+};
+
+export const compose_youtube_first_line = /** @type {(inputs: Compose_Youtube_First_LineInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Použít první řádek`)
+};
+
+export const compose_youtube_kids = /** @type {(inputs: Compose_Youtube_KidsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Určeno pro děti`)
+};
+
+export const compose_youtube_not_kids = /** @type {(inputs: Compose_Youtube_Not_KidsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Není určeno pro děti`)
+};
+
+export const compose_youtube_private = /** @type {(inputs: Compose_Youtube_PrivateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Soukromé`)
+};
+
+export const compose_youtube_public = /** @type {(inputs: Compose_Youtube_PublicInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Veřejné`)
+};
+
+export const compose_youtube_required = /** @type {(inputs: Compose_Youtube_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Povinné`)
+};
+
+export const compose_youtube_title = /** @type {(inputs: Compose_Youtube_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Název`)
+};
+
+export const compose_youtube_title_chars = /** @type {(inputs: Compose_Youtube_Title_CharsInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Název nesmí obsahovat ${i?.chars}.`)
+};
+
+export const compose_youtube_title_count = /** @type {(inputs: Compose_Youtube_Title_CountInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.count} / ${i?.max}`)
+};
+
+export const compose_youtube_title_too_long = /** @type {(inputs: Compose_Youtube_Title_Too_LongInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Název je příliš dlouhý.`)
+};
+
+export const compose_youtube_unlisted = /** @type {(inputs: Compose_Youtube_UnlistedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Neveřejné`)
+};
+
+export const compose_youtube_visibility = /** @type {(inputs: Compose_Youtube_VisibilityInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Viditelnost`)
 };

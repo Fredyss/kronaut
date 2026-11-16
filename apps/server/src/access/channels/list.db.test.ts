@@ -169,6 +169,7 @@ beforeAll(async () => {
         { provider: 'instagram', client_id: 'ig-client', status: 'disabled' },
         { provider: 'threads', client_id: '1122334455667788' },
         { provider: 'mastodon', instance_host: 'social.example', client_id: 'masto-client' },
+        { provider: 'youtube', client_id: '123456789012-abc.apps.googleusercontent.com' },
       ])
       .execute();
     const { id: pendingApp } = await trx
@@ -203,6 +204,7 @@ beforeAll(async () => {
     },
   });
   await addAccount(rulesId, ownerId, 'thr', { provider: 'threads' });
+  await addAccount(rulesId, ownerId, 'tube', { provider: 'youtube' });
   const previewId = await provision(ownerId, 'ws-preview');
   previewWorkspace = encodePublicId('workspace', previewId);
   await addAccount(previewId, ownerId, 'gram', {
@@ -271,6 +273,7 @@ describe('channel listing', () => {
       'preview',
       'profileUrl',
       'provider',
+      'requiredSettings',
       'shortenLinks',
       'signature',
       'status',
@@ -295,9 +298,15 @@ describe('channel listing', () => {
     const text = await response.text();
     expect(text).not.toContain('CANARY_');
     const { items } = JSON.parse(text) as { items: Record<string, unknown>[] };
-    expect(items.map(({ provider, postTypes }) => ({ provider, postTypes }))).toEqual([
+    const rules = items.map(({ provider, postTypes, requiredSettings }) => ({
+      provider,
+      postTypes,
+      requiredSettings,
+    }));
+    expect(rules).toEqual([
       {
         provider: 'mastodon',
+        requiredSettings: [],
         postTypes: [
           {
             id: 'post',
@@ -329,6 +338,7 @@ describe('channel listing', () => {
       },
       {
         provider: 'threads',
+        requiredSettings: [],
         postTypes: [
           {
             id: 'post',
@@ -358,7 +368,32 @@ describe('channel listing', () => {
           },
         ],
       },
+      {
+        provider: 'youtube',
+        requiredSettings: ['title'],
+        postTypes: [
+          {
+            id: 'video',
+            text: [{ counting: 'utf8-bytes', max: 5_000 }],
+            maxLinks: null,
+            forbiddenChars: '<>',
+            imageAspect: null,
+            video: {
+              mimes: ['video/mp4'],
+              maxBytes: 256_000_000_000,
+              minDurationMs: 3_000,
+              maxDurationMs: 900_000,
+              aspect: null,
+              maxFrameRate: null,
+              maxPixels: null,
+            },
+            thread: null,
+            comment: null,
+          },
+        ],
+      },
     ]);
+    expect(JSON.stringify(rules.slice(0, 2))).not.toContain('forbiddenChars');
   });
 
   it('returns the preview archetype and the image aspect range from the manifest', async () => {
@@ -402,6 +437,7 @@ describe('channel listing', () => {
         { id: FAKE_PROVIDER, availability: 'stable' },
         { id: 'mastodon', availability: 'experimental' },
         { id: 'threads', availability: 'experimental' },
+        { id: 'youtube', availability: 'experimental' },
       ],
     });
     expect((await get('/providers', { cookie: viewer })).status).toBe(403);

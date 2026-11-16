@@ -73,6 +73,7 @@
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
 /** @typedef {{}} Channels_Empty_TitleInputs */
@@ -89,6 +90,8 @@
 /** @typedef {{ date: NonNullable<unknown> }} Channels_ExpiresInputs */
 /** @typedef {{ value: NonNullable<unknown> }} Channels_FollowersInputs */
 /** @typedef {{ change: NonNullable<unknown> }} Channels_Followers_ChangeInputs */
+/** @typedef {{}} Channels_Google_AccessInputs */
+/** @typedef {{}} Channels_Google_PrivacyInputs */
 /** @typedef {{}} Channels_Groups_EditInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_Edit_OfInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Groups_OfInputs */
@@ -114,6 +117,7 @@
 /** @typedef {{}} Channels_Signature_SavedInputs */
 /** @typedef {{}} Channels_SubtitleInputs */
 /** @typedef {{}} Channels_TitleInputs */
+/** @typedef {{}} Channels_Youtube_TermsInputs */
 /** @typedef {{}} CloseInputs */
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
@@ -126,6 +130,7 @@
 /** @typedef {{ channel: NonNullable<unknown>, message: NonNullable<unknown> }} Compose_Issue_On_ChannelInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Issue_Reply_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Limit_ChannelInputs */
+/** @typedef {{ channel: NonNullable<unknown>, chars: NonNullable<unknown> }} Compose_Limit_ForbiddenInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_LongInputs */
 /** @typedef {{ channel: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_Too_Many_LinksInputs */
 /** @typedef {{ network: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Limit_UsageInputs */
@@ -204,6 +209,7 @@
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
+/** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -219,6 +225,7 @@
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
+/** @typedef {{}} Issue_Setting_RequiredInputs */
 /** @typedef {{}} Issue_Tag_UnknownInputs */
 /** @typedef {{}} Issue_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Too_Few_MediaInputs */
@@ -320,6 +327,7 @@
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
 /** @typedef {{}} Queue_EvergreenInputs */
 /** @typedef {{}} Queue_SavedInputs */
@@ -702,6 +710,10 @@ export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconne
 	return /** @type {LocalizedString} */ (`Disconnect channel`)
 };
 
+export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.`)
+};
+
 export const channels_disconnected = /** @type {(inputs: Channels_DisconnectedInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.name} disconnected.`)
 };
@@ -766,6 +778,14 @@ export const channels_followers = /** @type {(inputs: Channels_FollowersInputs) 
 
 export const channels_followers_change = /** @type {(inputs: Channels_Followers_ChangeInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.change} in 30 days`)
+};
+
+export const channels_google_access = /** @type {(inputs: Channels_Google_AccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Manage access at Google`)
+};
+
+export const channels_google_privacy = /** @type {(inputs: Channels_Google_PrivacyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Google Privacy Policy`)
 };
 
 export const channels_groups_edit = /** @type {(inputs: Channels_Groups_EditInputs) => LocalizedString} */ () => {
@@ -868,6 +888,10 @@ export const channels_title = /** @type {(inputs: Channels_TitleInputs) => Local
 	return /** @type {LocalizedString} */ (`Channels`)
 };
 
+export const channels_youtube_terms = /** @type {(inputs: Channels_Youtube_TermsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`YouTube Terms of Service`)
+};
+
 export const close = /** @type {(inputs: CloseInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Close`)
 };
@@ -914,6 +938,10 @@ export const compose_issue_reply_empty = /** @type {(inputs: Compose_Issue_Reply
 
 export const compose_limit_channel = /** @type {(inputs: Compose_Limit_ChannelInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.channel} (${i?.network})`)
+};
+
+export const compose_limit_forbidden = /** @type {(inputs: Compose_Limit_ForbiddenInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The text for ${i?.channel} can't contain ${i?.chars}`)
 };
 
 export const compose_limit_too_long = /** @type {(inputs: Compose_Limit_Too_LongInputs) => LocalizedString} */ (i) => {
@@ -1233,6 +1261,10 @@ export const issue_file_too_large = /** @type {(inputs: Issue_File_Too_LargeInpu
 	return /** @type {LocalizedString} */ (`An image file is too large.`)
 };
 
+export const issue_forbidden_characters = /** @type {(inputs: Issue_Forbidden_CharactersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The text contains characters this network doesn't allow.`)
+};
+
 export const issue_frame_rate_too_high = /** @type {(inputs: Issue_Frame_Rate_Too_HighInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video's frame rate is too high for this network.`)
 };
@@ -1291,6 +1323,10 @@ export const issue_queue_full = /** @type {(inputs: Issue_Queue_FullInputs) => L
 
 export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_Too_HighInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`The video's resolution is too high for this network.`)
+};
+
+export const issue_setting_required = /** @type {(inputs: Issue_Setting_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`A required setting for this network is missing.`)
 };
 
 export const issue_tag_unknown = /** @type {(inputs: Issue_Tag_UnknownInputs) => LocalizedString} */ () => {
@@ -1715,6 +1751,10 @@ export const provider_mastodon = /** @type {(inputs: Provider_MastodonInputs) =>
 
 export const provider_threads = /** @type {(inputs: Provider_ThreadsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Threads`)
+};
+
+export const provider_youtube = /** @type {(inputs: Provider_YoutubeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`YouTube`)
 };
 
 export const queue_add = /** @type {(inputs: Queue_AddInputs) => LocalizedString} */ () => {

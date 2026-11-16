@@ -31,7 +31,7 @@
 2. **Infra before value.**
    - Mitigation: the Phase 0 gate is a real published post on Bluesky and IG, not a perfect security layer. The schema is complete, but code is built only for the gate.
 3. **Feature parity is limited by platforms, not code.** Measure "providers usable with a fresh dev app" and show the limits honestly (ADR-0043).
-   - **YouTube:** `videos.insert` has its own bucket of 100/day **per Cloud project**, shared by the whole install. Whether unverified projects post private-only is unclear in the docs, so detect it at runtime.
+   - **YouTube:** `videos.insert` has its own bucket of 100/day **per Cloud project**, shared by the whole install. The private-only lock on unverified projects was lifted on 2026-11-02. A consent screen left in Testing issues refresh tokens that die after 7 days.
    - **TikTok:** the audit rejects "tools for accounts you/your team manage", so it is effectively **hosted-only**.
    - **LinkedIn Pages:** CMA needs a **registered legal organisation**.
    - **Pinterest:** apps registered after 2026-09-14 get `PINNER_DATA_ACCESS_DENIED` for non-business accounts.

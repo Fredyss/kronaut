@@ -16,6 +16,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
+/** @typedef {{}} Compose_Channel_Needs_VideoInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
 /** @typedef {{}} Compose_Channel_UnsupportedInputs */
 /** @typedef {{}} Compose_Channel_Video_UnsupportedInputs */
@@ -42,6 +43,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Error_TagsInputs */
 /** @typedef {{}} Compose_Error_Tags_OpenedInputs */
 /** @typedef {{}} Compose_Error_Tags_UnscheduledInputs */
+/** @typedef {{ network: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Title_MissingInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_UploadInputs */
 /** @typedef {{ position: NonNullable<unknown>, channel: NonNullable<unknown> }} Compose_Error_Upload_ChannelInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Group_Add_OfInputs */
@@ -101,6 +103,20 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Video_RetryInputs */
 /** @typedef {{ name: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Video_Too_BigInputs */
 /** @typedef {{ percent: NonNullable<unknown> }} Compose_Video_UploadingInputs */
+/** @typedef {{}} Compose_Youtube_AudienceInputs */
+/** @typedef {{}} Compose_Youtube_Audience_DefaultInputs */
+/** @typedef {{}} Compose_Youtube_First_LineInputs */
+/** @typedef {{}} Compose_Youtube_KidsInputs */
+/** @typedef {{}} Compose_Youtube_Not_KidsInputs */
+/** @typedef {{}} Compose_Youtube_PrivateInputs */
+/** @typedef {{}} Compose_Youtube_PublicInputs */
+/** @typedef {{}} Compose_Youtube_RequiredInputs */
+/** @typedef {{}} Compose_Youtube_TitleInputs */
+/** @typedef {{ chars: NonNullable<unknown> }} Compose_Youtube_Title_CharsInputs */
+/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Youtube_Title_CountInputs */
+/** @typedef {{}} Compose_Youtube_Title_Too_LongInputs */
+/** @typedef {{}} Compose_Youtube_UnlistedInputs */
+/** @typedef {{}} Compose_Youtube_VisibilityInputs */
 import * as __en from "./en.js"
 import * as __sk from "./sk.js"
 import * as __cs from "./cs.js"
@@ -329,6 +345,21 @@ export const compose_channel_needs_image = /** @type {((inputs?: Compose_Channel
 	if (locale === "sk") return __sk.compose_channel_needs_image(inputs)
 	if (locale === "cs") return __cs.compose_channel_needs_image(inputs)
 	return __en.compose_channel_needs_image(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Needs a video." |
+*
+* @param {Compose_Channel_Needs_VideoInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_channel_needs_video = /** @type {((inputs?: Compose_Channel_Needs_VideoInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Channel_Needs_VideoInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_channel_needs_video(inputs)
+	if (locale === "cs") return __cs.compose_channel_needs_video(inputs)
+	return __en.compose_channel_needs_video(inputs)
 });
 /**
 * | countPlural | output |
@@ -720,6 +751,21 @@ export const compose_error_tags_unscheduled = /** @type {((inputs?: Compose_Erro
 	if (locale === "sk") return __sk.compose_error_tags_unscheduled(inputs)
 	if (locale === "cs") return __cs.compose_error_tags_unscheduled(inputs)
 	return __en.compose_error_tags_unscheduled(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add a {network} title for {channel}." |
+*
+* @param {Compose_Error_Title_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_title_missing = /** @type {((inputs: Compose_Error_Title_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Title_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_title_missing(inputs)
+	if (locale === "cs") return __cs.compose_error_title_missing(inputs)
+	return __en.compose_error_title_missing(inputs)
 });
 /**
 * | output |
@@ -1607,4 +1653,214 @@ export const compose_video_uploading = /** @type {((inputs: Compose_Video_Upload
 	if (locale === "sk") return __sk.compose_video_uploading(inputs)
 	if (locale === "cs") return __cs.compose_video_uploading(inputs)
 	return __en.compose_video_uploading(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Audience" |
+*
+* @param {Compose_Youtube_AudienceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_audience = /** @type {((inputs?: Compose_Youtube_AudienceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_AudienceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_audience(inputs)
+	if (locale === "cs") return __cs.compose_youtube_audience(inputs)
+	return __en.compose_youtube_audience(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channel default" |
+*
+* @param {Compose_Youtube_Audience_DefaultInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_audience_default = /** @type {((inputs?: Compose_Youtube_Audience_DefaultInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_Audience_DefaultInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_audience_default(inputs)
+	if (locale === "cs") return __cs.compose_youtube_audience_default(inputs)
+	return __en.compose_youtube_audience_default(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Use first line" |
+*
+* @param {Compose_Youtube_First_LineInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_first_line = /** @type {((inputs?: Compose_Youtube_First_LineInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_First_LineInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_first_line(inputs)
+	if (locale === "cs") return __cs.compose_youtube_first_line(inputs)
+	return __en.compose_youtube_first_line(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Made for kids" |
+*
+* @param {Compose_Youtube_KidsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_kids = /** @type {((inputs?: Compose_Youtube_KidsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_KidsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_kids(inputs)
+	if (locale === "cs") return __cs.compose_youtube_kids(inputs)
+	return __en.compose_youtube_kids(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Not made for kids" |
+*
+* @param {Compose_Youtube_Not_KidsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_not_kids = /** @type {((inputs?: Compose_Youtube_Not_KidsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_Not_KidsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_not_kids(inputs)
+	if (locale === "cs") return __cs.compose_youtube_not_kids(inputs)
+	return __en.compose_youtube_not_kids(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Private" |
+*
+* @param {Compose_Youtube_PrivateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_private = /** @type {((inputs?: Compose_Youtube_PrivateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_PrivateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_private(inputs)
+	if (locale === "cs") return __cs.compose_youtube_private(inputs)
+	return __en.compose_youtube_private(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Public" |
+*
+* @param {Compose_Youtube_PublicInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_public = /** @type {((inputs?: Compose_Youtube_PublicInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_PublicInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_public(inputs)
+	if (locale === "cs") return __cs.compose_youtube_public(inputs)
+	return __en.compose_youtube_public(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Required" |
+*
+* @param {Compose_Youtube_RequiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_required = /** @type {((inputs?: Compose_Youtube_RequiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_RequiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_required(inputs)
+	if (locale === "cs") return __cs.compose_youtube_required(inputs)
+	return __en.compose_youtube_required(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Title" |
+*
+* @param {Compose_Youtube_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_title = /** @type {((inputs?: Compose_Youtube_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_title(inputs)
+	if (locale === "cs") return __cs.compose_youtube_title(inputs)
+	return __en.compose_youtube_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The title can't contain {chars}." |
+*
+* @param {Compose_Youtube_Title_CharsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_title_chars = /** @type {((inputs: Compose_Youtube_Title_CharsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_Title_CharsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_title_chars(inputs)
+	if (locale === "cs") return __cs.compose_youtube_title_chars(inputs)
+	return __en.compose_youtube_title_chars(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{count} / {max}" |
+*
+* @param {Compose_Youtube_Title_CountInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_title_count = /** @type {((inputs: Compose_Youtube_Title_CountInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_Title_CountInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_title_count(inputs)
+	if (locale === "cs") return __cs.compose_youtube_title_count(inputs)
+	return __en.compose_youtube_title_count(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The title is too long." |
+*
+* @param {Compose_Youtube_Title_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_title_too_long = /** @type {((inputs?: Compose_Youtube_Title_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_Title_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_title_too_long(inputs)
+	if (locale === "cs") return __cs.compose_youtube_title_too_long(inputs)
+	return __en.compose_youtube_title_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Unlisted" |
+*
+* @param {Compose_Youtube_UnlistedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_unlisted = /** @type {((inputs?: Compose_Youtube_UnlistedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_UnlistedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_unlisted(inputs)
+	if (locale === "cs") return __cs.compose_youtube_unlisted(inputs)
+	return __en.compose_youtube_unlisted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Visibility" |
+*
+* @param {Compose_Youtube_VisibilityInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_youtube_visibility = /** @type {((inputs?: Compose_Youtube_VisibilityInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Youtube_VisibilityInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_youtube_visibility(inputs)
+	if (locale === "cs") return __cs.compose_youtube_visibility(inputs)
+	return __en.compose_youtube_visibility(inputs)
 });

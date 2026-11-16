@@ -28,6 +28,8 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   unknown_post_type: () => m.issue_unknown_post_type(),
   too_large: () => m.issue_too_large(),
   tag_unknown: () => m.issue_tag_unknown(),
+  setting_required: () => m.issue_setting_required(),
+  forbidden_characters: () => m.issue_forbidden_characters(),
 };
 
 export function issueMessage(code: string): string {

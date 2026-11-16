@@ -32,14 +32,14 @@ function Tile({ provider, available, pending, onPick }: TileProps) {
   const noteId = useId();
   const name = ui.name();
   return (
-    <li>
+    <li className="flex flex-col gap-2">
       <button
         type="button"
         disabled={!available || pending}
         aria-label={m.channels_connect_button({ name })}
         aria-describedby={available ? undefined : noteId}
         onClick={() => onPick(provider)}
-        className="flex h-full w-full flex-col items-center gap-2 rounded-xl border p-4 text-center text-sm transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+        className="flex w-full flex-1 flex-col items-center gap-2 rounded-xl border p-4 text-center text-sm transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
       >
         <span
           aria-hidden="true"
@@ -58,7 +58,27 @@ function Tile({ provider, available, pending, onPick }: TileProps) {
           </span>
         )}
       </button>
+      {provider === 'youtube' ? <GoogleTerms /> : null}
     </li>
+  );
+}
+
+function GoogleTerms() {
+  const link = 'underline underline-offset-4';
+  return (
+    <p className="flex flex-wrap justify-center gap-x-2 text-center text-muted-foreground text-xs">
+      <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className={link}>
+        {m.channels_youtube_terms()}
+      </a>
+      <a
+        href="https://policies.google.com/privacy"
+        target="_blank"
+        rel="noreferrer"
+        className={link}
+      >
+        {m.channels_google_privacy()}
+      </a>
+    </p>
   );
 }
 

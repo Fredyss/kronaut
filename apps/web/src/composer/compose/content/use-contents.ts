@@ -19,6 +19,7 @@ import {
   reset,
 } from './contents.ts';
 import { itemSupport, itemsState, postTypeFor } from './items.ts';
+import { useSettings } from './use-settings.ts';
 import { useSignatures } from './use-signatures.ts';
 
 function videoIds(contents: Contents): string[] {
@@ -73,6 +74,7 @@ export function useContents(
       (choiceOf(channel).kind === 'ok' || contents.customized.has(channel.id)),
   );
   const signatures = useSignatures(seed);
+  const settings = useSettings(seed);
   const stored = seed?.stored;
   const keeps = (id: string) => contents.customized.has(id) || stored?.has(id) === true;
   const shown = active !== null && tabs.some((channel) => channel.id === active) ? active : null;
@@ -90,6 +92,7 @@ export function useContents(
   return {
     contents,
     ...signatures,
+    ...settings,
     tabs,
     active: shown,
     select: setActive,

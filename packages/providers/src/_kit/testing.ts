@@ -141,7 +141,7 @@ export function assertPublicSendOrder(events: readonly string[], manifest: Provi
   );
   if (at === -1) throw new Error('no public step ran');
   const [saved, request] = events.slice(at + 1);
-  if (saved !== 'checkpoint' || request?.startsWith('request:POST ') !== true)
+  if (saved !== 'checkpoint' || !/^request:(?:POST|PUT) /.test(request ?? ''))
     throw new Error(`public step must checkpoint, then send: ${events.slice(at).join(', ')}`);
 }
 

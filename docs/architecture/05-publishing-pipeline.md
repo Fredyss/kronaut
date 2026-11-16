@@ -94,7 +94,7 @@
 | `permanent` | `failed` with a localised message ([Frontend](08-frontend.md)) |
 | `duplicate` | `published` if a remoteId is known, otherwise `verifying` |
 | `ambiguous` before `public_send_at` | `retry_wait/interrupted_safe` |
-| `ambiguous` after `public_send_at` | `verifying` → the manifest's `verify.mode` decides `published` or `unconfirmed`. Verifiers: Mastodon reads the account's recent statuses (`list_recent_match`, read-only; matched on the uploaded media ids, else the plain text), Bluesky deterministic rkey, IG/Threads container status (`status_by_ref`). Every Mastodon send carries an `Idempotency-Key` derived from the destination and item position (kept 1 h by the server), so a re-send within the hour returns the original status instead of a duplicate |
+| `ambiguous` after `public_send_at` | `verifying` → the manifest's `verify.mode` decides `published` or `unconfirmed`. Verifiers: Mastodon reads the account's recent statuses (`list_recent_match`, read-only; matched on the uploaded media ids, else the plain text), Bluesky deterministic rkey, IG/Threads container status (`status_by_ref`), YouTube the resumable upload session's status (`status_by_ref`: completed is found, incomplete is absent and the retry resumes the session, 404 is inconclusive). Every Mastodon send carries an `Idempotency-Key` derived from the destination and item position (kept 1 h by the server), so a re-send within the hour returns the original status instead of a duplicate |
 | A read fails after a successful send | Never reaches `plan()`: the provider wraps the read in `afterSend()`, so the destination still ends `published`, at worst without the permalink |
 
 ## Lease reaper
@@ -172,9 +172,11 @@ Phase 0 rules:
   | `ambiguous`, or a thrown error, under `rotating` / `single_use` | **kept until it expires**, so the next holder sees a takeover | `retry_wait/transient_error` | retried next run |
 
   A thrown error is mapped with `toProviderFailure` using effect `public` under `rotating` / `single_use` (sending the request may have used up the token) and `private` otherwise. Account side effects use the version fence at the version the refresh started from, so a credential another holder replaced is never flagged. The refresh HTTP call gets its own abort signal and is not aborted when the destination lease is lost.
-- **Expiring (`auth_expiring`):** the relevant expiry is the refresh token's under `rotating` / `single_use` and the access token's otherwise. A credential is expiring when that expiry falls within:
+- **Expiring (`auth_expiring`):** the relevant expiry is the refresh token's under `rotating` / `single_use` and the access token's otherwise; a `reusable` credential is never expiring. A credential is expiring when that expiry falls within:
   - `warnLeadMs`, if it can't be refreshed (refresh kind `none`, or no `refresh()`), checked by the warning pass;
   - half of `warnLeadMs`, if the refresh pass's refresh didn't renew it (`transient`, `skipped` or `app`), so one failed run doesn't warn. A `rejected` refresh already flags the account `needs_reauth` and doesn't count.
+
+  A `reusable` refresh token usually has no known end. A grant the user gave for a limited time does have one (`refresh_expires_at`), but it raises no warning either: the user chose that end at consent. Either way, a dead refresh token shows up as `auth_revoked` at the next refresh, and a broken OAuth client as an `app_config` incident.
 
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
 

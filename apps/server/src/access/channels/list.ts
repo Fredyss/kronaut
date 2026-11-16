@@ -39,6 +39,7 @@ const PostTypeRulesSchema = z.object({
   id: z.string(),
   text: z.array(TextLimitSchema),
   maxLinks: z.number().int().nullable(),
+  forbiddenChars: z.string().optional(),
   imageAspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
   video: z
     .object({
@@ -68,6 +69,7 @@ const ChannelSchema = z.object({
   connectedAt: Instant,
   lastErrorCode: z.string().nullable(),
   postTypes: z.array(PostTypeRulesSchema),
+  requiredSettings: z.array(z.string()),
   preview: z.enum(PREVIEW_ARCHETYPES),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
@@ -145,6 +147,9 @@ function postTypes(
         id,
         text: [...postType.text],
         maxLinks: postType.maxLinks ?? null,
+        ...(postType.forbiddenChars === undefined
+          ? {}
+          : { forbiddenChars: postType.forbiddenChars }),
         imageAspect: imageAspect(postType.media.image),
         video: videoRules(postType.media.video),
         thread: postType.thread === undefined ? null : { maxItems: postType.thread.maxItems },
@@ -154,10 +159,26 @@ function postTypes(
   });
 }
 
+function providerRules(entry: ProviderEntry | undefined, capabilities: unknown) {
+  return {
+    postTypes: postTypes(entry, capabilities),
+    requiredSettings: [...(entry?.manifest.requiredSettings ?? [])],
+    preview: entry?.manifest.preview ?? 'short-feed',
+  };
+}
+
 const insightsCapability = z.looseObject({ insights: z.literal(true) });
 
 function insightsGranted(capabilities: unknown): boolean {
   return insightsCapability.safeParse(capabilities).success;
+}
+
+function shownExpiry(
+  entry: ProviderEntry | undefined,
+  row: { readonly access_expires_at: Date | null; readonly refresh_expires_at: Date | null },
+): string | null {
+  const reusable = entry?.manifest.auth.refresh === 'reusable';
+  return iso(reusable ? row.refresh_expires_at : row.access_expires_at);
 }
 
 interface ChannelListOptions {
@@ -166,12 +187,7 @@ interface ChannelListOptions {
   readonly hideGroups: boolean;
 }
 
-export async function listChannels(
-  trx: TenantDb,
-  workspaceId: string,
-  providers: ProviderRegistry,
-  { scope, hideSignatures, hideGroups }: ChannelListOptions,
-): Promise<z.output<typeof ChannelSchema>[]> {
+function channelRows(trx: TenantDb, workspaceId: string, scope: AccessScope | null) {
   let query = trx
     .selectFrom('social_accounts')
     .select([
@@ -184,6 +200,7 @@ export async function listChannels(
       'status',
       'status_reason',
       'access_expires_at',
+      'refresh_expires_at',
       'created_at',
       'last_error_code',
       'capabilities',
@@ -201,7 +218,16 @@ export async function listChannels(
       ]),
     );
   }
-  const rows = await query.orderBy('created_at').orderBy('id').execute();
+  return query.orderBy('created_at').orderBy('id').execute();
+}
+
+export async function listChannels(
+  trx: TenantDb,
+  workspaceId: string,
+  providers: ProviderRegistry,
+  { scope, hideSignatures, hideGroups }: ChannelListOptions,
+): Promise<z.output<typeof ChannelSchema>[]> {
+  const rows = await channelRows(trx, workspaceId, scope);
   const groupsOf = await loadChannelGroups(
     trx,
     workspaceId,
@@ -223,11 +249,10 @@ export async function listChannels(
       profileUrl: row.profile_url,
       status: row.status,
       statusReason: row.status_reason,
-      accessExpiresAt: iso(row.access_expires_at),
+      accessExpiresAt: shownExpiry(entry, row),
       connectedAt: row.created_at.toISOString(),
       lastErrorCode: row.last_error_code,
-      postTypes: postTypes(entry, row.capabilities),
-      preview: entry?.manifest.preview ?? 'short-feed',
+      ...providerRules(entry, row.capabilities),
       insights: insightsGranted(row.capabilities),
       signature: signatures.get(row.saved_text_id ?? '') ?? null,
       shortenLinks: row.shorten_links,

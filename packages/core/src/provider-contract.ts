@@ -62,6 +62,7 @@ export interface PostTypeSpec {
   readonly steps: readonly PostStep[];
   readonly text: readonly TextLimit[];
   readonly maxLinks?: number;
+  readonly forbiddenChars?: string;
   readonly media: MediaLimits;
   readonly async?: AsyncLimits;
   readonly thread?: { readonly maxItems: number; readonly media: MediaLimits };
@@ -91,6 +92,7 @@ export interface ProviderManifest<S = unknown> {
   };
   readonly postTypes: readonly PostTypeSpec[];
   readonly settings: z.ZodType<S>;
+  readonly requiredSettings?: readonly string[];
   readonly cost: {
     readonly model: 'free' | 'per_post';
     readonly perPost?: {

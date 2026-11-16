@@ -14,15 +14,20 @@ import {
 } from './provider-apps.ts';
 
 const META_APP_ID = /^\d{1,32}$/;
-const LINKEDIN_CLIENT_ID = /^[A-Za-z0-9]{1,64}$/;
-const SECRET_APP_PROVIDERS: readonly string[] = ['facebook', 'instagram', 'linkedin', 'threads'];
+const CLIENT_IDS: Readonly<Record<SecretAppProvider, RegExp>> = {
+  facebook: META_APP_ID,
+  instagram: META_APP_ID,
+  linkedin: /^[A-Za-z0-9]{1,64}$/,
+  threads: META_APP_ID,
+  youtube: /^[0-9]{1,32}-[a-z0-9]{1,64}\.apps\.googleusercontent\.com$/,
+};
 
 function isSecretAppProvider(provider: string): provider is SecretAppProvider {
-  return SECRET_APP_PROVIDERS.includes(provider);
+  return Object.hasOwn(CLIENT_IDS, provider);
 }
 
 function clientIdValid(provider: SecretAppProvider, clientId: string): boolean {
-  return (provider === 'linkedin' ? LINKEDIN_CLIENT_ID : META_APP_ID).test(clientId);
+  return CLIENT_IDS[provider].test(clientId);
 }
 
 function withOperator<T>(fn: (deps: ProviderAppCommandDeps) => Promise<T>): Promise<T> {

@@ -38,7 +38,7 @@
   "secret_stdin_lines": "tajný kľúč aplikácie na stdin musí byť na jednom riadku",
   "expected_one_provider": "zadajte práve jednu sieť",
   "bluesky_client_id": "bluesky nepoužíva --client-id",
-  "provider_unsupported": "zaregistrovať sa dá len bluesky, facebook, instagram, linkedin alebo threads",
+  "provider_unsupported": "zaregistrovať sa dá len bluesky, facebook, instagram, linkedin, threads alebo youtube",
   "provider_app_exists": "aplikácia pre {provider} je už zaregistrovaná: {id}",
   "provider_app_not_found": "žiadna aplikácia siete nemá toto id",
   "key_not_found": "táto aplikácia nemá kľúč s týmto kid",

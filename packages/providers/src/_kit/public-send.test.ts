@@ -39,6 +39,10 @@ describe('assertPublicSendOrder', () => {
   it('accepts step, checkpoint, then the send', () => {
     const events = ['step:upload', 'step:send', 'checkpoint', 'request:POST https://x'];
     expect(() => assertPublicSendOrder(events, manifest)).not.toThrow();
+    const put = ['step:send', 'checkpoint', 'request:PUT https://x'];
+    expect(() => assertPublicSendOrder(put, manifest)).not.toThrow();
+    const read = ['step:send', 'checkpoint', 'request:GET https://x'];
+    expect(() => assertPublicSendOrder(read, manifest)).toThrow(/must checkpoint/);
   });
 
   it('refuses a send before the checkpoint', () => {

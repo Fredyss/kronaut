@@ -5,6 +5,7 @@ import { instagramManifest } from './instagram/manifest.ts';
 import { linkedinManifest } from './linkedin/manifest.ts';
 import { mastodonManifest } from './mastodon/manifest.ts';
 import { threadsManifest } from './threads/manifest.ts';
+import { youtubeManifest } from './youtube/manifest.ts';
 
 export const manifests: readonly ProviderManifest[] = [
   blueskyManifest,
@@ -13,4 +14,5 @@ export const manifests: readonly ProviderManifest[] = [
   linkedinManifest,
   mastodonManifest,
   threadsManifest,
+  youtubeManifest,
 ];

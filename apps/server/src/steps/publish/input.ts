@@ -1,4 +1,4 @@
-import { validate } from '@kronaut/compose';
+import { type ValidationIssue, validate, validateSettings } from '@kronaut/compose';
 import type {
   PostTypeSpec,
   ProviderApp,
@@ -90,6 +90,14 @@ export async function readResolved(
   }
 }
 
+function unacked(
+  acked: ReadonlySet<string> | null,
+  issues: () => readonly ValidationIssue[],
+): string | undefined {
+  if (acked === null) return undefined;
+  return issues().find((candidate) => !acked.has(candidate.code))?.code;
+}
+
 export async function prepareInput(
   deps: Pick<PublishDeps, 'keyring' | 'publicBaseUrl'>,
   trx: TenantDb,
@@ -110,19 +118,16 @@ export async function prepareInput(
   });
   const items = publishItems(resolved);
   const { acked } = options;
-  if (acked !== null) {
-    const issue = validate(
-      entry.manifest,
-      options.publishType,
-      draftItems(resolved),
-      account.capabilities,
-    ).find((candidate) => !acked.has(candidate.code));
-    if (issue !== undefined) return fail('preflight_invalid', issue.code);
-  }
+  const issue = unacked(acked, () =>
+    validate(entry.manifest, options.publishType, draftItems(resolved), account.capabilities),
+  );
+  if (issue !== undefined) return fail('preflight_invalid', issue);
   const postType = entry.manifest.postTypes.find((spec) => spec.id === options.publishType);
   if (postType === undefined) return fail('preflight_invalid', 'unknown_post_type');
   const settings = entry.manifest.settings.safeParse(resolved.destination.settings);
   if (!settings.success) return fail('preflight_invalid', 'settings_invalid');
+  const missing = unacked(acked, () => validateSettings(entry.manifest, settings.data));
+  if (missing !== undefined) return fail('preflight_invalid', missing);
 
   const credential = await loadCredential(trx, deps.keyring, {
     workspaceId: options.workspaceId,

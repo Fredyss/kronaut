@@ -294,7 +294,7 @@ export const provider_app_not_found = /** @type {(inputs: Provider_App_Not_Found
 };
 
 export const provider_unsupported = /** @type {(inputs: Provider_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`zaregistrovat lze jen bluesky, facebook, instagram, linkedin nebo threads`)
+	return /** @type {LocalizedString} */ (`zaregistrovat lze jen bluesky, facebook, instagram, linkedin, threads nebo youtube`)
 };
 
 export const restored_no_state = /** @type {(inputs: Restored_No_StateInputs) => LocalizedString} */ () => {

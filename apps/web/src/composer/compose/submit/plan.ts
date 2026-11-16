@@ -1,3 +1,4 @@
+import { m } from '../../../base/locale/i18n.ts';
 import { providerUi } from '../../../base/providers/ui.ts';
 import { m as composeText } from '../../../i18n/compose.ts';
 import type { Channel } from '../../../records/channels/queries.ts';
@@ -6,7 +7,8 @@ import type { Destination } from '../../../records/posts/queries.ts';
 import { choiceFor } from '../content/choice.ts';
 import { type Content, effective } from '../content/contents.ts';
 import type { ContentsState } from '../content/use-contents.ts';
-import { blankItemProblem } from '../issues.ts';
+import { invalidTitle } from '../content/youtube.ts';
+import { blankItemProblem, issueMessage } from '../issues.ts';
 import type { VideoRegistry } from '../media/use-video.ts';
 import { waitProblem } from '../media/video-text.ts';
 import type { ComposeContent, ComposeDestination, ComposeInput } from './submit.ts';
@@ -43,8 +45,17 @@ export function toPlan(
     const variant = custom ? plan.variants.length - 1 : null;
     const { publishType } = choice;
     const carried = kept(stored, channel.id, publishType);
+    const settings = state.settingsOf(channel);
+    const own = settings === undefined ? {} : { settings };
     const skip = state.skipped.has(channel.id) ? { skipSignature: true } : {};
-    plan.destinations.push({ accountId: channel.id, publishType, variant, ...carried, ...skip });
+    plan.destinations.push({
+      accountId: channel.id,
+      publishType,
+      variant,
+      ...carried,
+      ...own,
+      ...skip,
+    });
   }
   return { ...plan, usesDefault: plan.destinations.some((d) => d.variant === null) };
 }
@@ -98,6 +109,42 @@ export function videoProblem(plan: Plan, base: Content, videos: VideoRegistry, l
     if (problem !== null) return problem;
   }
   return null;
+}
+
+export interface MissingSetting {
+  readonly channel: Channel;
+  readonly field: string;
+}
+
+type Settings = ComposeDestination['settings'];
+
+function missingField(channel: Channel, settings: Settings): string | undefined {
+  return channel.requiredSettings.find((field) => {
+    const value = settings !== undefined && Object.hasOwn(settings, field) ? settings[field] : null;
+    return typeof value !== 'string' || value.trim() === '';
+  });
+}
+
+export function settingsCheck(plan: Plan, list: readonly Channel[]) {
+  const invalid: string[] = [];
+  const missing: MissingSetting[] = [];
+  for (const { accountId, settings } of plan.destinations) {
+    const channel = list.find((candidate) => candidate.id === accountId);
+    if (channel === undefined) continue;
+    if (channel.provider === 'youtube' && invalidTitle(settings)) invalid.push(accountId);
+    const field = missingField(channel, settings);
+    if (field !== undefined) missing.push({ channel, field });
+  }
+  return { invalid, missing };
+}
+
+export function settingProblem({ channel, field }: MissingSetting): string {
+  const name = channel.displayName;
+  if (field !== 'title') {
+    return m.compose_issue_on_channel({ channel: name, message: issueMessage('setting_required') });
+  }
+  const network = providerUi(channel.provider).name();
+  return composeText.compose_error_title_missing({ network, channel: name });
 }
 
 function toCompose(content: Content, videos: VideoRegistry): ComposeContent {
