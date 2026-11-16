@@ -81,7 +81,10 @@ test_globs:
   - "**/testing.ts"
   - "**/testing.tsx"
   - "**/testing/**"
-  - apps/server/e2e/**
+  - "apps/server/e2e/**/*.e2e.ts"
+  - apps/server/e2e/env.ts
+  - apps/server/e2e/global-setup.ts
+  - apps/server/e2e/seed.ts
   - packages/db/test/**
 
 dependency_files:
