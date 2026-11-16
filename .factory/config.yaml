@@ -1,0 +1,160 @@
+version: 1
+
+default_branch: main
+
+docs:
+  stack:
+    - docs/architecture/01-stack.md
+  feature_guide:
+    - docs/architecture/02-repo-layout.md
+    - docs/architecture/13-code-structure.md
+    - docs/architecture/14-scheduling-flow.md
+    - docs/architecture/15-web-structure.md
+  decisions: docs/adr/
+  instructions:
+    - CLAUDE.md
+  extra:
+    - docs/architecture/06-security.md
+
+specs:
+  prds: docs/specs/
+  tasks: docs/specs/tasks/
+
+reference_feature:
+  name: Saved texts
+  why: Smallest feature that crosses every layer, from the web settings page through a defineRoute route and a tenant store to a DB test
+  files:
+    - apps/web/src/content/saved-texts/settings-page.tsx
+    - apps/web/src/content/saved-texts/form.tsx
+    - apps/web/src/content/saved-texts/writes.ts
+    - apps/web/src/content/saved-texts/saved-texts.ts
+    - apps/server/src/steps/saved-texts/routes.ts
+    - apps/server/src/steps/saved-texts/store.ts
+    - apps/server/src/steps/saved-texts/saved-texts.db.test.ts
+
+commands:
+  check: pnpm check
+  install: pnpm install --frozen-lockfile
+  typecheck: pnpm typecheck
+  lint: pnpm lint
+  test: pnpm test
+  test_report: pnpm exec vitest run --reporter=json
+  mutation: null
+  stubs: null
+
+technologies:
+  - name: Node 24 and TypeScript
+    class: foundational
+  - name: Postgres 17
+    class: foundational
+  - name: Hono with defineRoute
+    class: foundational
+  - name: Zod contracts and OpenAPI
+    class: foundational
+  - name: Kysely
+    class: foundational
+    packages:
+      - kysely
+  - name: graphile-worker
+    class: foundational
+    packages:
+      - graphile-worker
+  - name: React, Vite and TanStack
+    class: foundational
+  - name: Outbound HTTP
+    class: swappable
+    adapter: packages/egress/
+    packages:
+      - undici
+  - name: Social platform APIs
+    class: swappable
+    adapter: packages/providers/
+  - name: Image processing
+    class: swappable
+    adapter: packages/media/
+    packages:
+      - sharp
+
+test_globs:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/testing.ts"
+  - "**/testing.tsx"
+  - "**/testing/**"
+  - "apps/server/e2e/**/*.e2e.ts"
+  - apps/server/e2e/env.ts
+  - apps/server/e2e/global-setup.ts
+  - apps/server/e2e/seed.ts
+  - packages/db/test/**
+
+dependency_files:
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+
+shared_paths:
+  - package.json
+  - pnpm-lock.yaml
+  - pnpm-workspace.yaml
+  - apps/server/src/api-routes.ts
+  - tools/lint/feature-imports.json
+  - packages/db/migrations/**
+  - packages/i18n/messages/**
+  - packages/contract/openapi.json
+  - apps/server/src/base/http/public-routes.json
+  - infra/compose/.env.example
+  - packages/sdk/src/gen/**
+
+protected_paths:
+  - .github/**
+  - .claude/settings.json
+  - CLAUDE.md
+  - biome.json
+  - tools/biome/**
+  - tools/licenses/**
+  - tools/lint/*.ts
+  - tools/tsconfig.json
+  - tsconfig*.json
+  - "**/tsconfig*.json"
+  - vitest*.config.ts
+  - apps/server/e2e/playwright.config.ts
+  - apps/web/.size-limit.js
+  - .jscpd.json
+  - .fallowrc.json
+  - .gitleaks.toml
+  - .nvmrc
+  - packages/db/schema/v1.sql
+  - infra/docker/**
+  - infra/compose/compose.yaml
+  - infra/compose/init-secrets.sh
+  - infra/compose/postgres-init/**
+
+secrets:
+  example_file: infra/compose/.env.example
+
+limits:
+  max_rounds: 5
+
+risk:
+  high_paths:
+    - apps/server/src/identity/**
+    - apps/server/src/access/**
+    - apps/server/src/policy/**
+    - apps/server/src/infrastructure/credentials/**
+    - apps/server/src/base/http/**
+    - apps/server/src/base/crypto/**
+    - packages/credentials/**
+    - packages/egress/**
+    - packages/db/migrations/**
+    - packages/db/src/**
+    - packages/core/src/authz.ts
+    - packages/core/src/roles.ts
+    - packages/core/src/actions.ts
+    - packages/contract/src/define-route.ts
+    - apps/server/src/steps/publish/**
+    - apps/server/src/steps/approvals/**
+  max_diff_lines: 400
+
+host_commands:
+  check: pnpm check && pnpm test:db && pnpm test:e2e
+  test: pnpm test && pnpm test:db
