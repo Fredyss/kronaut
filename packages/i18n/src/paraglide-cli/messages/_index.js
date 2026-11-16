@@ -19,6 +19,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Backup_ModeInputs */
 /** @typedef {{}} Backup_Time_InvalidInputs */
 /** @typedef {{}} Bluesky_Client_IdInputs */
+/** @typedef {{}} Bot_Token_Stdin_LinesInputs */
 /** @typedef {{}} Config_ErrorInputs */
 /** @typedef {{}} Db_Url_InvalidInputs */
 /** @typedef {{}} Db_Url_PasswordInputs */
@@ -73,6 +74,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Unknown_Provider_App_CommandInputs */
 /** @typedef {{}} Unknown_User_CommandInputs */
 /** @typedef {{}} Usage_App_Secret_StdinInputs */
+/** @typedef {{}} Usage_Bot_Token_StdinInputs */
 /** @typedef {{}} Usage_Client_Secret_StdinInputs */
 /** @typedef {{}} Usage_TitleInputs */
 /** @typedef {{}} User_Email_TakenInputs */
@@ -351,6 +353,21 @@ export const bluesky_client_id = /** @type {((inputs?: Bluesky_Client_IdInputs, 
 	if (locale === "sk") return __sk.bluesky_client_id(inputs)
 	if (locale === "cs") return __cs.bluesky_client_id(inputs)
 	return __en.bluesky_client_id(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "pipe the client secret and the bot token on stdin, one per line" |
+*
+* @param {Bot_Token_Stdin_LinesInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const bot_token_stdin_lines = /** @type {((inputs?: Bot_Token_Stdin_LinesInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Bot_Token_Stdin_LinesInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.bot_token_stdin_lines(inputs)
+	if (locale === "cs") return __cs.bot_token_stdin_lines(inputs)
+	return __en.bot_token_stdin_lines(inputs)
 });
 /**
 * | output |
@@ -854,7 +871,7 @@ export const provider_app_not_found = /** @type {((inputs?: Provider_App_Not_Fou
 /**
 * | output |
 * | --- |
-* | "only bluesky, discord, facebook, instagram, linkedin, threads or youtube can be registered" |
+* | "only bluesky, discord, discord_bot, facebook, instagram, linkedin, threads or youtube can be registered" |
 *
 * @param {Provider_UnsupportedInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
@@ -1165,6 +1182,21 @@ export const usage_app_secret_stdin = /** @type {((inputs?: Usage_App_Secret_Std
 	if (locale === "sk") return __sk.usage_app_secret_stdin(inputs)
 	if (locale === "cs") return __cs.usage_app_secret_stdin(inputs)
 	return __en.usage_app_secret_stdin(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "client secret, then bot token, one per line on stdin" |
+*
+* @param {Usage_Bot_Token_StdinInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const usage_bot_token_stdin = /** @type {((inputs?: Usage_Bot_Token_StdinInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Usage_Bot_Token_StdinInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.usage_bot_token_stdin(inputs)
+	if (locale === "cs") return __cs.usage_bot_token_stdin(inputs)
+	return __en.usage_bot_token_stdin(inputs)
 });
 /**
 * | output |

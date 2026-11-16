@@ -39,6 +39,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 
 - `connect`, `refresh`.
 - `registerApp?(ctx, {instanceHost, redirectUri, clientName, website?})` → `{clientId, clientSecret}`: required when `auth.instanceScoped`. The server seals the secret and stores the `provider_apps` row with `instance_host`.
+- `ProviderApp.botToken`: an app-level secret next to `clientSecret`, sealed in its own `provider_apps` columns (ADR-0061). `discord_bot` posts with it for every channel. Providers never log or return it, and a rejected token is `app_config`.
 - `ProviderApp.instanceHost` names the server of an instance-scoped app; providers build every URL from it, never from response data.
 - `connectFinish` returns a list of accounts (ADR-0053). Single-account providers return one; Facebook returns one per Page the person shared and can create content on.
   - An empty list fails the connect with `no_accounts`.

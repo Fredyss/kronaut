@@ -62,6 +62,10 @@
   - `echo -n "$SECRET" | kronaut provider-app register linkedin --client-id <linkedin client id>` works like the Instagram command, with the app's Client Secret on stdin. It refuses while an active LinkedIn app is registered.
   - Self-serve apps get no refresh tokens: an access token lasts 60 days, the channel gets the expiring notice 7 days ahead, and the member must reconnect.
   - LinkedIn gives a self-serve app no way to read posts back, so `verify.mode` is `none`: an ambiguous send (timeout, 5xx, a 201 without `x-restli-id`) goes to `unconfirmed` and is never sent again automatically.
+- **Discord bot setup (ADR-0061, ADR-0062)**: `discord_bot` posts as one bot for the whole instance.
+  - In the same Discord application as `discord`, open the Bot page, copy (or reset) the bot token, and keep it out of shell history. On the OAuth2 page, add the redirect `<KRONAUT_PUBLIC_URL>/v1/oauth/discord_bot/callback`.
+  - `printf '%s\n%s\n' "$CLIENT_SECRET" "$BOT_TOKEN" | kronaut provider-app register discord_bot --client-id <discord client id>` reads the client secret and then the bot token from stdin, one per line, seals each with its own DEK and prints the app id. It refuses while an active `discord_bot` app is registered.
+  - A rejected bot token (401) is `app_config`: the `discord_bot` app is marked misconfigured with one app incident, and no channel is flagged.
 - **Notification email (SMTP)**: optional. With `KRONAUT_SMTP_HOST` unset, nothing is emailed and the `notification_email` job is not registered.
   - `KRONAUT_SMTP_HOST` (for example `smtp.example.com`) and `KRONAUT_SMTP_PORT` (default 587).
   - `KRONAUT_SMTP_USER` and `KRONAUT_SMTP_PASSWORD` or `KRONAUT_SMTP_PASSWORD_FILE`: optional, but each needs the other. An empty password file counts as no password.
@@ -110,7 +114,7 @@
   - Workspace export is an async zip.
   - User erasure nulls the PII on `users`; audit rows keep the bare uuid.
   - Hosted workspace deletion has a 7-day grace period, then a cascade, then a `deletion_receipts` row.
-  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon, YouTube; Discord deletes its webhook), and credentials are purged after 30 d.
+  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon, YouTube; Discord deletes its webhook; the Discord bot stays in the server until its admins remove it), and credentials are purged after 30 d.
   - A provider whose manifest sets `dataRetention` (YouTube) goes further (ADR-0060): the daily `credential_retention` task purges a channel `disconnected` longer than `disconnectedDays` or `needs_reauth` longer than `lapsedDays` (`disconnectedDays` when the reason is `grant_revoked`: a sibling channel of a revoked shared grant), each minus a 2-day margin so a missed daily run still lands inside the policy deadline. The purge deletes its credentials, wipes its name, handle, profile URL and subject id, deletes its `account_daily_metrics` and the `post_metric_snapshots` and `destination_metric_pulls` of its destinations, and writes one `channel.data_purged` audit event. Posts and destinations, with their remote ids and permalinks, stay. The run summary counts `purgedAccounts`; reconnecting refills the name and handle.
 - **Migrations (ADR-0024)**
   - Changes follow expand → deploy → contract.

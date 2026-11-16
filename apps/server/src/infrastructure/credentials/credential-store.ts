@@ -16,6 +16,7 @@ export {
   type SigningKeyRequest,
   type StoredProviderApp,
   sealAppSecret,
+  sealBotToken,
 } from './provider-app-store.ts';
 
 export interface CredentialWrite {

@@ -11,10 +11,15 @@ import { failureForStatus } from '../status-failure.ts';
 
 export const DISCORD_API = 'https://discord.com/api/v10';
 
+const UNKNOWN_CHANNEL = 10_003;
 const UNKNOWN_WEBHOOK = 10_015;
+const MISSING_ACCESS = 50_001;
+const MISSING_PERMISSIONS = 50_013;
 const ENTITY_TOO_LARGE = 40_005;
 const FORUM_NEEDS_THREAD = 220_001;
 const RATE_LIMIT_FALLBACK_MS = 60_000;
+
+export type DiscordAuth = 'webhook' | 'bot';
 
 export const snowflake = z.string().regex(/^\d{1,20}$/);
 
@@ -37,7 +42,18 @@ export function messageUrl(guildId: string, channelId: string, messageId: string
   return `${channelUrl(guildId, channelId)}/${messageId}`;
 }
 
-function knownError(status: number, code: number | undefined, detail: string) {
+function botError(code: number | undefined, detail: string) {
+  if (code === MISSING_PERMISSIONS)
+    return { kind: 'permanent', code: 'missing_permissions', detail } as const;
+  if (code === MISSING_ACCESS)
+    return { kind: 'permanent', code: 'missing_access', detail } as const;
+  if (code === UNKNOWN_CHANNEL) return { kind: 'auth_revoked' } as const;
+  return undefined;
+}
+
+function knownError(status: number, code: number | undefined, detail: string, auth: DiscordAuth) {
+  const bot = auth === 'bot' ? botError(code, detail) : undefined;
+  if (bot !== undefined) return bot;
   if (status === 404 || code === UNKNOWN_WEBHOOK) return { kind: 'auth_revoked' } as const;
   if (status === 413 || code === ENTITY_TOO_LARGE)
     return { kind: 'permanent', code: 'too_large', detail } as const;
@@ -63,15 +79,19 @@ export async function discordFailure(
   response: ProviderHttpResponse,
   effect: StepEffect,
   now: Temporal.Instant,
+  auth: DiscordAuth = 'webhook',
 ): Promise<ProviderFailure> {
   const body = errorBody.safeParse(await tryJson(response)).data ?? {};
   const { status } = response;
   const detail = body.code === undefined ? `http_${status}` : `${status}/${body.code}`;
   return new ProviderFailure(
     failureForStatus(status, effect, {
-      known: () => knownError(status, body.code, detail),
+      known: () => knownError(status, body.code, detail, auth),
       rateLimited: () => rateLimited(response, body, now),
-      unauthorized: () => ({ kind: 'auth_revoked' }),
+      unauthorized: () =>
+        auth === 'bot'
+          ? { kind: 'app_config', code: 'bot_token_invalid' }
+          : { kind: 'auth_revoked' },
       clientError: () => ({ kind: 'permanent', code: 'request_rejected', detail }),
       serverDetail: detail,
     }),

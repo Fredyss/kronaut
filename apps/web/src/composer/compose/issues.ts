@@ -31,6 +31,8 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   setting_required: () => m.issue_setting_required(),
   forbidden_characters: () => m.issue_forbidden_characters(),
   forum_channel_unsupported: () => m.issue_forum_channel_unsupported(),
+  missing_permissions: () => m.issue_missing_permissions(),
+  missing_access: () => m.issue_missing_access(),
 };
 
 export function issueMessage(code: string): string {

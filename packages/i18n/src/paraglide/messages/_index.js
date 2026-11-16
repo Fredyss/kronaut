@@ -77,6 +77,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
 /** @typedef {{}} Channels_Disconnect_DiscordInputs */
+/** @typedef {{}} Channels_Disconnect_Discord_BotInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -229,6 +230,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
+/** @typedef {{}} Issue_Missing_AccessInputs */
+/** @typedef {{}} Issue_Missing_PermissionsInputs */
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
@@ -333,6 +336,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
 /** @typedef {{}} Provider_DiscordInputs */
+/** @typedef {{}} Provider_Discord_BotInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -1563,6 +1567,21 @@ export const channels_disconnect_discord = /** @type {((inputs?: Channels_Discon
 	if (locale === "sk") return __sk.channels_disconnect_discord(inputs)
 	if (locale === "cs") return __cs.channels_disconnect_discord(inputs)
 	return __en.channels_disconnect_discord(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut's bot stays in the Discord server until you remove it in the server settings." |
+*
+* @param {Channels_Disconnect_Discord_BotInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_discord_bot = /** @type {((inputs?: Channels_Disconnect_Discord_BotInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_Discord_BotInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_discord_bot(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_discord_bot(inputs)
+	return __en.channels_disconnect_discord_bot(inputs)
 });
 /**
 * | output |
@@ -3853,6 +3872,36 @@ export const issue_mime_unsupported = /** @type {((inputs?: Issue_Mime_Unsupport
 /**
 * | output |
 * | --- |
+* | "Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again." |
+*
+* @param {Issue_Missing_AccessInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_missing_access = /** @type {((inputs?: Issue_Missing_AccessInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Missing_AccessInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_missing_access(inputs)
+	if (locale === "cs") return __cs.issue_missing_access(inputs)
+	return __en.issue_missing_access(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Kronaut's bot lacks a permission in this Discord channel. Give it View Channel, Send Messages and Attach Files there, then try again." |
+*
+* @param {Issue_Missing_PermissionsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_missing_permissions = /** @type {((inputs?: Issue_Missing_PermissionsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Missing_PermissionsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_missing_permissions(inputs)
+	if (locale === "cs") return __cs.issue_missing_permissions(inputs)
+	return __en.issue_missing_permissions(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "An image is still being processed. Try again in a moment." |
 *
 * @param {Issue_Not_ReadyInputs} inputs
@@ -5423,6 +5472,21 @@ export const provider_discord = /** @type {((inputs?: Provider_DiscordInputs, op
 	if (locale === "sk") return __sk.provider_discord(inputs)
 	if (locale === "cs") return __cs.provider_discord(inputs)
 	return __en.provider_discord(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Discord (bot)" |
+*
+* @param {Provider_Discord_BotInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_discord_bot = /** @type {((inputs?: Provider_Discord_BotInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_Discord_BotInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_discord_bot(inputs)
+	if (locale === "cs") return __cs.provider_discord_bot(inputs)
+	return __en.provider_discord_bot(inputs)
 });
 /**
 * | output |

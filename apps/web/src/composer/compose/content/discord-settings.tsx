@@ -3,7 +3,7 @@ import { useId } from 'react';
 import { providerUi } from '../../../base/providers/ui.ts';
 import { m as composeText } from '../../../i18n/compose.ts';
 import type { Channel } from '../../../records/channels/queries.ts';
-import { discordFields } from './discord.ts';
+import { DISCORD_PROVIDERS, discordFields } from './discord.ts';
 import type { ContentsState } from './use-contents.ts';
 
 interface ToggleProps {
@@ -35,7 +35,7 @@ interface DiscordSettingsProps {
 }
 
 export function DiscordSettings({ state, channel, pending }: DiscordSettingsProps) {
-  if (channel === undefined || channel.provider !== 'discord') return null;
+  if (channel === undefined || !DISCORD_PROVIDERS.has(channel.provider)) return null;
   const settings = state.settingsOf(channel);
   if (settings === undefined) return null;
   const fields = discordFields(settings);

@@ -448,6 +448,26 @@ Discord section verified 2026-11-16 (D1–D7; `discord.com/developers/docs` redi
   - Kronaut's mapping: 404 or `10015` and 401 → `auth_revoked` (the channel must reconnect); 429 → `rate_limited` until `retry_after` (`global` → app, else account); 5xx → `transient`, ambiguous after the send; 413 or `40005` → `too_large`; `220001` → `forum_channel_unsupported`; other 4xx → permanent. There is no lookup for an ambiguous send, so `verify.mode` is `none` and it becomes `unconfirmed`.
 - **Disconnect.** Kronaut deletes its webhook (`DELETE /webhooks/{id}/{token}`); 204 and 404 both count as done.
 
+**Discord bot** (`discord_bot`, one instance bot, API v10)
+
+Verified 2026-11-16 (D1, D3–D11).
+- **Install** (D1). Asking for scopes beyond `bot` and `applications.commands`, or sending `response_type=code` with a redirect, continues a bot install into a full authorization code grant. The redirect then carries `code`, `state`, `guild_id` and `permissions`. **`guild_id` "should only be used as a hint as to the relationship between your bot and a guild".** The token exchange (same endpoint as above) also returns a `guild` object for the server the bot was added to. The person is offered only servers "in which they have proper permissions". `permissions` is the integer of the bot's requested permission bits.
+  - Kronaut's mapping (ADR-0061): `response_type=code`, `scope=bot`, `permissions=248832`, `state`, `redirect_uri`. Only the exchange's `guild` names the server; the user's access and refresh tokens are discarded.
+- **Bot auth** (D4). `Authorization: Bot <token>`. HTTP API clients must send a `User-Agent` of the form `DiscordBot ($url, $versionNumber)`; requests without a valid one may be blocked. Kronaut sends `DiscordBot (<KRONAUT_PUBLIC_URL>, 1)`.
+- **Gateway** (D1, D4, D5, D11). Nothing on these pages says a bot must connect to the Gateway before it can send through the HTTP API; D11 says "HTTP API restrictions are independent of Gateway restrictions". **Unverified, live-test item:** whether a bot that never identified can create messages.
+- **Bot user** (D6). `GET /users/@me` "returns the user object of the requester's account" (`id`, `username`, `bot`). The page documents only OAuth2 scopes for it, not bot tokens. **Unverified, live-test item**, though bot tokens act as the bot user on most routes (D1: bots "have full access to most API routes without using bearer tokens").
+- **Channels** (D8, D9). `GET /guilds/{guild.id}/channels` returns the server's channels without threads. **From 2026-11-16 it omits every channel the bot can't view**; categories stay visible if a child is. `position` sorts channels, ties by id. Types: `GUILD_TEXT` 0, `GUILD_ANNOUNCEMENT` 5 (bots can post there with the right permissions); a category has at most 50 channels.
+  - Kronaut's mapping: types 0 and 5 only, ordered by `position` then id, offered in Kronaut's picker (ADR-0062). `providerAccountId` is the channel id, `displayName` `#<name>`, `handle` the server name.
+- **Create Message** (D5). `POST /channels/{channel.id}/messages` needs `SEND_MESSAGES` in a guild channel; content ≤ 2,000 characters, request ≤ 25 MiB; same files and `payload_json` as the webhook. `nonce` (integer or string, ≤ 25 characters) with `enforce_nonce: true` is checked "for uniqueness in the past few minutes": a message from the same author with that nonce is returned instead of a new one.
+  - Kronaut's mapping: the nonce is the first 25 characters of base64url(SHA-256(destination id)), so a resend of the same destination within minutes returns the first message. Ambiguous sends are still never retried automatically.
+- **Read back** (D5). `GET /channels/{channel.id}/messages` takes `limit` 1–100 (default 50) and one of `around`, `before` or `after`. It needs `VIEW_CHANNEL`; without `READ_MESSAGE_HISTORY` it returns no messages. The message object has an optional `nonce`, "used for validating a message was sent".
+  - Kronaut's mapping: `verify.mode` `list_recent_match`, window 1 h, as for Mastodon. It reads the last 50 messages and matches the bot's author id plus our nonce when the message carries one, else the same text and file count sent after the send. No match is inconclusive.
+- **Permissions** (D10). `VIEW_CHANNEL` 1 << 10, `SEND_MESSAGES` 1 << 11, `MANAGE_MESSAGES` 1 << 13, `EMBED_LINKS` 1 << 14, `ATTACH_FILES` 1 << 15, `READ_MESSAGE_HISTORY` 1 << 16, `MENTION_EVERYONE` 1 << 17. Channel overwrites apply after role permissions, so a channel can deny what the bot's role grants.
+- **Rate limits** (D3). Bots get up to 50 requests per second globally per token, plus per-route buckets (`X-RateLimit-Bucket`). 10,000 responses with 401, 403 or 429 in 10 minutes earn a temporary IP ban.
+- **Errors** (D7). `10003` Unknown channel, `50001` Missing access, `50013` "You lack permissions to perform that action". 401: "The `Authorization` header was missing or invalid".
+  - Kronaut's mapping: `50013` → permanent `missing_permissions`, `50001` → permanent `missing_access` (both say which permissions the bot needs in that channel); 404 or `10003` → `auth_revoked` (the channel is gone, reconnect); 401 → `app_config` `bot_token_invalid` (one token for every channel, so an app incident); a global 429 → `rate_limited` with scope `app`; the rest as for the webhook.
+- **Disconnect.** There's no revoke: the bot stays in the server until its admins remove it.
+
 **TikTok**
 - **Mandatory UX.** The upload page must:
   - show the creator's nickname, read live from `creator_info`;
@@ -671,6 +691,10 @@ Discord section verified 2026-11-16 (D1–D7; `discord.com/developers/docs` redi
 - D5 https://docs.discord.com/developers/resources/message
 - D6 https://docs.discord.com/developers/resources/user
 - D7 https://docs.discord.com/developers/topics/opcodes-and-status-codes
+- D8 https://docs.discord.com/developers/resources/guild
+- D9 https://docs.discord.com/developers/resources/channel
+- D10 https://docs.discord.com/developers/topics/permissions
+- D11 https://docs.discord.com/developers/events/gateway
 - K1 https://developers.tiktok.com/doc/content-sharing-guidelines
 - K2 https://developers.tiktok.com/doc/content-posting-api-reference-direct-post
 - K3 https://developers.tiktok.com/doc/oauth-user-access-token-management

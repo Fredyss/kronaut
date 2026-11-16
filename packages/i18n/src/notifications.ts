@@ -39,6 +39,7 @@ const LINES = {
 const PROVIDERS = {
   bluesky: 'provider_bluesky',
   discord: 'provider_discord',
+  discord_bot: 'provider_discord_bot',
   facebook: 'provider_facebook',
   instagram: 'provider_instagram',
   linkedin: 'provider_linkedin',

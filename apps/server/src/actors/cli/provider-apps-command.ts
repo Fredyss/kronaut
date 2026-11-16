@@ -3,6 +3,7 @@ import { parseBaseUrl, parseUuid, requireEnv } from '../../base/config/config.ts
 import { keyring, positionals, stderrLogger, withDatabase } from './context.ts';
 import { UsageError } from './errors.ts';
 import {
+  type AppSecrets,
   activateKey,
   createKey,
   deleteKey,
@@ -16,6 +17,7 @@ import {
 const META_APP_ID = /^\d{1,32}$/;
 const CLIENT_IDS: Readonly<Record<SecretAppProvider, RegExp>> = {
   discord: /^\d{17,20}$/,
+  discord_bot: /^\d{17,20}$/,
   facebook: META_APP_ID,
   instagram: META_APP_ID,
   linkedin: /^[A-Za-z0-9]{1,64}$/,
@@ -63,17 +65,30 @@ async function keyCommand(args: readonly string[]): Promise<void> {
   throw new UsageError((m) => m.unknown_key_command({}));
 }
 
-async function readStdinSecret(): Promise<string> {
+async function readStdin(): Promise<string> {
   if (process.stdin.isTTY) throw new UsageError((m) => m.secret_stdin_tty({}));
   const chunks: Buffer[] = [];
   for await (const chunk of process.stdin) chunks.push(Buffer.from(chunk as Uint8Array));
   const raw = Buffer.concat(chunks);
   for (const chunk of chunks) chunk.fill(0);
-  const secret = raw.toString('utf8').trim();
+  const text = raw.toString('utf8').trim();
   raw.fill(0);
-  if (secret === '') throw new UsageError((m) => m.secret_stdin_empty({}));
-  if (/[\r\n]/.test(secret)) throw new UsageError((m) => m.secret_stdin_lines({}));
-  return secret;
+  if (text === '') throw new UsageError((m) => m.secret_stdin_empty({}));
+  return text;
+}
+
+async function readStdinSecrets(provider: SecretAppProvider): Promise<AppSecrets> {
+  const text = await readStdin();
+  if (provider !== 'discord_bot') {
+    if (/[\r\n]/.test(text)) throw new UsageError((m) => m.secret_stdin_lines({}));
+    return { clientSecret: text };
+  }
+  const [clientSecret = '', botToken = '', ...rest] = text
+    .split(/\r?\n/)
+    .map((line) => line.trim());
+  if (clientSecret === '' || botToken === '' || rest.length > 0)
+    throw new UsageError((m) => m.bot_token_stdin_lines({}));
+  return { clientSecret, botToken };
 }
 
 async function registerCommand(args: readonly string[]): Promise<void> {
@@ -102,10 +117,10 @@ async function registerCommand(args: readonly string[]): Promise<void> {
       const option = `--client-id <${provider} app id>`;
       throw new UsageError((m) => m.option_required({ option }));
     }
-    const secret = await readStdinSecret();
+    const secrets = await readStdinSecrets(provider);
     const ring = keyring();
     const id = await withOperator((deps) =>
-      registerSecretApp({ ...deps, keyring: ring }, provider, clientId, secret),
+      registerSecretApp({ ...deps, keyring: ring }, provider, clientId, secrets),
     );
     process.stdout.write(`${id}\n`);
     return;

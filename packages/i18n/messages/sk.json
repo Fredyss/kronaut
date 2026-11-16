@@ -83,6 +83,7 @@
   "channels_disconnect_body": "Odpojiť {name}? Príspevky naplánované do tohto kanála sa nezverejnia. Neskôr ho môžete znova pripojiť.",
   "channels_disconnect_google": "Tým sa zruší aj prístup Kronautu v Google. Ostatné kanály YouTube pripojené cez rovnaký účet Google bude treba pripojiť znova.",
   "channels_disconnect_discord": "Z kanála na Discorde sa tým odstráni aj webhook Kronautu.",
+  "channels_disconnect_discord_bot": "Bot Kronautu zostane na serveri Discord, kým ho neodstránite v nastaveniach servera.",
   "channels_disconnect_data": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -163,6 +164,7 @@
   "channels_connect_bad_url": "Sieť vrátila nebezpečnú prihlasovaciu adresu, preto sa pripájanie zastavilo.",
   "provider_bluesky": "Bluesky",
   "provider_discord": "Discord",
+  "provider_discord_bot": "Discord (bot)",
   "provider_facebook": "Facebook",
   "provider_instagram": "Instagram",
   "provider_linkedin": "LinkedIn",
@@ -617,6 +619,8 @@
   "issue_setting_required": "Chýba povinné nastavenie pre túto sieť.",
   "issue_forbidden_characters": "Text obsahuje znaky, ktoré táto sieť nepovoľuje.",
   "issue_forum_channel_unsupported": "Kronaut nevie uverejňovať vo fórach ani v mediálnych kanáloch Discordu. Pripojte textový kanál.",
+  "issue_missing_permissions": "Botovi Kronautu v tomto kanáli Discordu chýba oprávnenie. Udeľte mu tam View Channel, Send Messages a Attach Files a skúste to znova.",
+  "issue_missing_access": "Bot Kronautu tento kanál Discordu nevidí. Udeľte mu tam oprávnenie View Channel alebo kanál pripojte znova.",
   "channels_signature": "Podpis",
   "channels_signature_none": "Žiadny",
   "channels_signature_named": "Podpis: {name}",

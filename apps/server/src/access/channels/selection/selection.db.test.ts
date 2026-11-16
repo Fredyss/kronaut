@@ -37,7 +37,7 @@ let test: TestDatabase;
 const picksManifest: ProviderManifest = {
   ...fakeManifest,
   id: FAKE_PICKS,
-  auth: { kind: 'oauth', refresh: 'none', warnLeadMs: 0, connectPicker: 'kronaut' },
+  auth: { kind: 'bot_token', refresh: 'none', warnLeadMs: 0, connectPicker: 'kronaut' },
 };
 
 const picksRuntime: ProviderRuntime = {
@@ -174,7 +174,7 @@ describe('connect selection', () => {
       loadCredential(trx, keyring, {
         workspaceId,
         socialAccountId: rows[0]?.id ?? '',
-        kind: 'oauth',
+        kind: 'bot_token',
       }),
     );
     expect(credential?.value).toEqual({ guildId: '1', channelId: '40' });

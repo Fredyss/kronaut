@@ -153,6 +153,7 @@ export interface ClientSigningKey {
 export interface ProviderApp {
   readonly clientId: string;
   readonly clientSecret?: string;
+  readonly botToken?: string;
   readonly publicBaseUrl: string;
   readonly signingKey?: ClientSigningKey;
   readonly publishedKeys?: readonly Jwk[];

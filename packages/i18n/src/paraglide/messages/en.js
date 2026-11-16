@@ -75,6 +75,7 @@
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
 /** @typedef {{}} Channels_Disconnect_DiscordInputs */
+/** @typedef {{}} Channels_Disconnect_Discord_BotInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -227,6 +228,8 @@
 /** @typedef {{}} Issue_Invalid_Time_ZoneInputs */
 /** @typedef {{}} Issue_Media_Not_AllowedInputs */
 /** @typedef {{}} Issue_Mime_UnsupportedInputs */
+/** @typedef {{}} Issue_Missing_AccessInputs */
+/** @typedef {{}} Issue_Missing_PermissionsInputs */
 /** @typedef {{}} Issue_Not_ReadyInputs */
 /** @typedef {{}} Issue_Post_Type_UnavailableInputs */
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
@@ -331,6 +334,7 @@
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
 /** @typedef {{}} Provider_DiscordInputs */
+/** @typedef {{}} Provider_Discord_BotInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -727,6 +731,10 @@ export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_
 
 export const channels_disconnect_discord = /** @type {(inputs: Channels_Disconnect_DiscordInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This also removes Kronaut's webhook from the Discord channel.`)
+};
+
+export const channels_disconnect_discord_bot = /** @type {(inputs: Channels_Disconnect_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot stays in the Discord server until you remove it in the server settings.`)
 };
 
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
@@ -1348,6 +1356,14 @@ export const issue_mime_unsupported = /** @type {(inputs: Issue_Mime_Unsupported
 	return /** @type {LocalizedString} */ (`This network doesn't accept this image format.`)
 };
 
+export const issue_missing_access = /** @type {(inputs: Issue_Missing_AccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again.`)
+};
+
+export const issue_missing_permissions = /** @type {(inputs: Issue_Missing_PermissionsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut's bot lacks a permission in this Discord channel. Give it View Channel, Send Messages and Attach Files there, then try again.`)
+};
+
 export const issue_not_ready = /** @type {(inputs: Issue_Not_ReadyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`An image is still being processed. Try again in a moment.`)
 };
@@ -1782,6 +1798,10 @@ export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => L
 
 export const provider_discord = /** @type {(inputs: Provider_DiscordInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Discord`)
+};
+
+export const provider_discord_bot = /** @type {(inputs: Provider_Discord_BotInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord (bot)`)
 };
 
 export const provider_facebook = /** @type {(inputs: Provider_FacebookInputs) => LocalizedString} */ () => {

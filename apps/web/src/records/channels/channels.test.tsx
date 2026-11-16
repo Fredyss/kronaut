@@ -214,6 +214,13 @@ describe('channels page', () => {
     await screen.findByText('Ada Lounge');
     fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
     screen.getByText("This also removes Kronaut's webhook from the Discord channel.");
+    cleanup();
+
+    mount('/channels', [], { channels: [{ ...discord, provider: 'discord_bot' }] });
+    await screen.findByText('Ada Lounge');
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
+    screen.getByText(/bot stays in the Discord server until you remove it/);
+    expect(screen.queryByText(/removes Kronaut's webhook/)).toBeNull();
   });
 
   it('shows a localised toast for ?error= and clears the param', async () => {
