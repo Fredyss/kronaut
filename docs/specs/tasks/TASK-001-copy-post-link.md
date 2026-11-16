@@ -31,6 +31,8 @@ if_unsure:
   - If Biome's file or function line limit fires on post-page.tsx or DestinationRow, stop and report; do not extract or refactor to get under it.
   - Use the classes text-foreground underline underline-offset-4 exactly as given, although the string already appears elsewhere; no shared component. PRD-001 decides this, and the "Don't copy primitive styling" rule in docs/architecture/13-code-structure.md is about packages/ui primitives such as selects and dialogs, not a text-link style.
   - Treat anything that goes wrong while copying (clipboard missing, writeText missing, a synchronous throw, a rejection) as the one failure case with the destructive toast.
+  - Add the three keys after post_view in the order post_copy_link, post_link_copied, post_link_copy_failed, in all three files.
+  - In the test file, use one afterEach that clicks every "Dismiss" button, then calls cleanup, then restores the clipboard; if navigator.clipboard had no own descriptor, delete the own property instead of redefining it.
   - In the test file, sharing the app and client setup through a helper inside post-page.test.tsx is allowed, as long as the existing assertions stay as they are.
   - If the session can build the web app, also run `pnpm --filter @kronaut/web size` after `pnpm check`; if a budget is exceeded, stop and report.
 out_of_scope:
