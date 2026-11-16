@@ -2,6 +2,7 @@ import type { Actor, Database, DB, TenantDb } from '@kronaut/db';
 import { type ExpressionBuilder, sql } from 'kysely';
 import type { ProviderRegistry } from '../../base/providers/providers.ts';
 import { auditSystem, wipeProfile } from './disconnect.ts';
+import { GRANT_REVOKED } from './revoke.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
 // The task runs daily; the margin keeps the purge inside the policy deadline despite the run interval plus one missed run or the day it takes to flag a dead grant.
@@ -104,6 +105,10 @@ async function lapsedAccounts(trx: TenantDb, purge: DataPurge): Promise<string[]
     .where((eb) =>
       eb.or([
         statusOlderThan(eb, 'disconnected', rule.disconnectedDays),
+        eb.and([
+          eb('a.status_reason', '=', GRANT_REVOKED),
+          statusOlderThan(eb, 'needs_reauth', rule.disconnectedDays),
+        ]),
         statusOlderThan(eb, 'needs_reauth', rule.lapsedDays),
       ]),
     )

@@ -30,7 +30,12 @@ afterAll(async () => {
   await test?.stop();
 });
 
-async function account(status: string, ageDays: number, provider?: string): Promise<string> {
+async function account(
+  status: string,
+  ageDays: number,
+  provider?: string,
+  reason?: string,
+): Promise<string> {
   const id = await (provider === undefined
     ? fixture.connectAccount(fixture.appId)
     : fixture.connectAccount(retainedApp, { provider }));
@@ -39,6 +44,7 @@ async function account(status: string, ageDays: number, provider?: string): Prom
       .updateTable('social_accounts')
       .set({
         status,
+        status_reason: reason ?? null,
         status_changed_at: sql<Date>`now() - make_interval(secs => ${ageDays * 86_400})`,
       })
       .where('id', '=', id)
@@ -187,6 +193,8 @@ describe('provider data retention', () => {
       lapsed: await account('needs_reauth', 31, RETAINED),
       marginLapse: await account('needs_reauth', 28.5, RETAINED),
       recentLapse: await account('needs_reauth', 27, RETAINED),
+      grantRevoked: await account('needs_reauth', 5.5, RETAINED, 'grant_revoked'),
+      authRevoked: await account('needs_reauth', 5.5, RETAINED, 'auth_revoked'),
       otherProvider: await account('disconnected', 8),
     };
     const destinations = new Map<string, string>();
@@ -201,7 +209,7 @@ describe('provider data retention', () => {
         .execute(),
     );
 
-    expect(await runRetention()).toMatchObject({ credentials: 0, purgedAccounts: 4 });
+    expect(await runRetention()).toMatchObject({ credentials: 0, purgedAccounts: 5 });
     expect(await runRetention()).toMatchObject({ purgedAccounts: 0 });
 
     const state = (id: string) => stateOf(id, destinations.get(id) ?? '');
@@ -211,6 +219,8 @@ describe('provider data retention', () => {
     expect(await state(cases.lapsed)).toEqual({ ...purged, audits: 1 });
     expect(await state(cases.marginDisconnect)).toEqual({ ...purged, audits: 1 });
     expect(await state(cases.marginLapse)).toEqual({ ...purged, audits: 1 });
+    expect(await state(cases.grantRevoked)).toEqual({ ...purged, audits: 1 });
+    expect(await state(cases.authRevoked)).toMatchObject(kept);
     expect(await state(cases.recentDisconnect)).toMatchObject(kept);
     expect(await state(cases.recentLapse)).toMatchObject(kept);
     expect(await state(cases.otherProvider)).toMatchObject(kept);

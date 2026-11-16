@@ -317,6 +317,7 @@ export interface ProviderRuntime<C = unknown, S = unknown> {
   ): Promise<readonly ConnectedAccount<C>[]>;
   refresh?(ctx: BaseContext, input: RefreshInput<C>): Promise<IssuedCredentials<C>>;
   revoke?(ctx: BaseContext, input: RevokeInput<C>): Promise<void>;
+  sharesGrant?(a: C, b: C): boolean;
   publish(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   poll?(ctx: PublishContext, input: PublishInput<C, S>): Promise<PublishOutcome>;
   verify?(ctx: PublishContext, input: PublishInput<C, S>): Promise<VerifyOutcome>;

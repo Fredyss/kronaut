@@ -32,6 +32,8 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 
 **Re-check every 30 days:** the daily follower read of an `active` channel (`channels.list part=snippet,statistics mine=true`) is the authorization re-check of III.E.4.b. It also returns the channel's title and custom URL, so `accountMetrics` returns a `profile` and the server overwrites `display_name`, `handle` and `profile_url` while the channel is still `active`; that is the refresh of III.E.4.c. A channel whose token fails goes `needs_reauth` through the refresh path or a failed follower read, and is purged after `lapsedDays`.
 
+**Siblings of a revoked grant:** one Google consent can connect several channels, and connect stores the same credentials on each. Revoking the token of one disconnected channel kills the grant for all of them. So after a successful revoke, the `revoke_credential` job flags every other `active` channel of the same provider in that workspace whose credentials share the grant (the runtime's `sharesGrant`; YouTube compares refresh tokens). Each goes `needs_reauth` with the `auth_revoked` incident and the status reason `grant_revoked`, fenced on its own credential version. The purge treats a `needs_reauth` channel with reason `grant_revoked` like a disconnected one and uses `disconnectedDays` (with the same margin). A refused revoke flags nobody.
+
 **Reconnect:** connect overwrites the name, handle and profile URL, so a purged channel comes back whole. Metrics from before the purge are gone.
 
 **Other providers:** unchanged. Without `dataRetention`, credentials are purged 30 days after disconnect and nothing else is deleted.
@@ -50,4 +52,5 @@ It runs in batches of 100 channels per transaction and only touches a channel th
 - A provider whose policies set deadlines declares them in its manifest; the purge needs no provider code.
 - Metrics of a YouTube channel disconnected for 7 days are gone, even if it is reconnected later.
 - A dead grant reaches `needs_reauth` two ways: the refresh path flags it, and so does the daily follower read of a provider with `dataRetention` when the read proves the grant or the channel gone: `auth_revoked`, or `permanent` with `channel_missing`. An expired access token (`auth_expired`) is left to the refresh path, and any other `permanent` failure (an unknown 4xx, schema drift, an egress block) only marks the read checked, because it can hit every channel at once. Either way `lapsedDays` then applies. Other providers keep only marking the read as checked.
+- Known gap: the same Google account connected in another workspace holds the same grant but gets no sibling flag, because nothing links credentials across tenants. Its token fails at the next refresh or follower read, and it then gets `lapsedDays` (30 days), not 7.
 - Revisit when: Google's compliance audit reads the policies more strictly (remote ids), or another network sets a deadline the two fields can't express.

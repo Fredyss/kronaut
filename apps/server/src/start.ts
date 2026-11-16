@@ -35,6 +35,7 @@ import { jobLogger } from './infrastructure/jobs/job-queue.ts';
 import { JOBS } from './infrastructure/jobs/jobs.ts';
 import { emailDeps } from './records/notifications/email.ts';
 import { SHORTENER_EGRESS } from './records/short-links/api.ts';
+import { flagAccount } from './steps/publish/incidents.ts';
 import { shortLinksTask } from './steps/publish/shorten/ensure.ts';
 import { publishDeps, publishTask } from './steps/publish/task.ts';
 import { verifyTask } from './steps/publish/verify/verify.ts';
@@ -185,7 +186,7 @@ async function startWorker(boot: Boot): Promise<void> {
       ...cronTaskList(db, logger, { ...publishing, staging, store }, email),
       [JOBS.publish]: publish,
       [JOBS.verify]: verify,
-      [JOBS.revokeCredential]: revokeTask(publishing),
+      [JOBS.revokeCredential]: revokeTask({ ...publishing, flagAccount }),
       [JOBS.mediaProcess]: mediaProcessTask({ db, store, staging, logger }),
       [JOBS.mediaImport]: mediaImportTask({ db, store, staging, http: importHttp, logger }),
       [JOBS.metaLifecycle]: metaLifecycleTask({ db, logger }),

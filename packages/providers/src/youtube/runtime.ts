@@ -23,6 +23,8 @@ export const youtubeRuntime: ProviderRuntime<YoutubeCredentials, YoutubeSettings
 
   revoke: revokeGrant,
 
+  sharesGrant: (a, b) => a.refreshToken === b.refreshToken,
+
   publish: publishVideo,
 
   verify: verifyUpload,
