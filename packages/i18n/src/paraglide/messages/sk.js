@@ -74,6 +74,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
+/** @typedef {{}} Channels_Disconnect_DiscordInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -211,6 +212,7 @@
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
+/** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
 /** @typedef {{}} Issue_Frame_Rate_Too_HighInputs */
 /** @typedef {{}} Issue_GenericInputs */
 /** @typedef {{}} Issue_Image_Too_NarrowInputs */
@@ -323,6 +325,7 @@
 /** @typedef {{}} Post_TitleInputs */
 /** @typedef {{}} Post_ViewInputs */
 /** @typedef {{}} Provider_BlueskyInputs */
+/** @typedef {{}} Provider_DiscordInputs */
 /** @typedef {{}} Provider_FacebookInputs */
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
@@ -721,6 +724,10 @@ export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_
 	if (countPlural === "few") return /** @type {LocalizedString} */ (`Kronaut vymaže názov a štatistiky tohto kanála do ${i?.count} dní od jeho odpojenia.`);
 	if (countPlural === "many") return /** @type {LocalizedString} */ (`Kronaut vymaže názov a štatistiky tohto kanála do ${i?.count} dňa od jeho odpojenia.`);
 	return /** @type {LocalizedString} */ (`Kronaut vymaže názov a štatistiky tohto kanála do ${i?.count} dní od jeho odpojenia.`)
+};
+
+export const channels_disconnect_discord = /** @type {(inputs: Channels_Disconnect_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Z kanála na Discorde sa tým odstráni aj webhook Kronautu.`)
 };
 
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {
@@ -1284,6 +1291,10 @@ export const issue_forbidden_characters = /** @type {(inputs: Issue_Forbidden_Ch
 	return /** @type {LocalizedString} */ (`Text obsahuje znaky, ktoré táto sieť nepovoľuje.`)
 };
 
+export const issue_forum_channel_unsupported = /** @type {(inputs: Issue_Forum_Channel_UnsupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kronaut nevie uverejňovať vo fórach ani v mediálnych kanáloch Discordu. Pripojte textový kanál.`)
+};
+
 export const issue_frame_rate_too_high = /** @type {(inputs: Issue_Frame_Rate_Too_HighInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Snímková frekvencia videa je pre túto sieť príliš vysoká.`)
 };
@@ -1762,6 +1773,10 @@ export const post_view = /** @type {(inputs: Post_ViewInputs) => LocalizedString
 
 export const provider_bluesky = /** @type {(inputs: Provider_BlueskyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Bluesky`)
+};
+
+export const provider_discord = /** @type {(inputs: Provider_DiscordInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Discord`)
 };
 
 export const provider_facebook = /** @type {(inputs: Provider_FacebookInputs) => LocalizedString} */ () => {

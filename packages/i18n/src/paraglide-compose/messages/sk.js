@@ -24,6 +24,8 @@
 /** @typedef {{}} Compose_Connect_ChannelInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_CustomizeInputs */
 /** @typedef {{}} Compose_CustomizedInputs */
+/** @typedef {{}} Compose_Discord_Ping_EveryoneInputs */
+/** @typedef {{}} Compose_Discord_SilentInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Edit_Canceled_NoteInputs */
 /** @typedef {{}} Compose_Edit_Queue_NoteInputs */
 /** @typedef {{}} Compose_Edit_Review_NoteInputs */
@@ -224,6 +226,14 @@ export const compose_customize = /** @type {(inputs: Compose_CustomizeInputs) =>
 
 export const compose_customized = /** @type {(inputs: Compose_CustomizedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Prispôsobené`)
+};
+
+export const compose_discord_ping_everyone = /** @type {(inputs: Compose_Discord_Ping_EveryoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Povoliť @everyone a @here`)
+};
+
+export const compose_discord_silent = /** @type {(inputs: Compose_Discord_SilentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odoslať bez upozornení`)
 };
 
 export const compose_edit_canceled_note = /** @type {(inputs: Compose_Edit_Canceled_NoteInputs) => LocalizedString} */ (i) => {

@@ -23,6 +23,7 @@ export interface ProviderUi {
   readonly followers?: boolean;
   readonly insights?: boolean;
   readonly googleGrant?: boolean;
+  readonly removesWebhook?: boolean;
   readonly maxImageBytes: number;
   readonly imageTypes: readonly string[];
   publishType(media: PublishMedia): PublishChoice;
@@ -46,6 +47,18 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     maxImageBytes: 2_000_000,
     imageTypes: ['image/jpeg', 'image/png', 'image/webp'],
     publishType: imagePost(null),
+  },
+  discord: {
+    name: () => m.provider_discord(),
+    badge: 'bg-indigo-600',
+    followers: false,
+    removesWebhook: true,
+    loginHint: false,
+    instance: false,
+    maxImageBytes: 20 * 1024 * 1024,
+    imageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    publishType: ({ images }) =>
+      images > 10 ? { kind: 'too_many_images', max: 10 } : { kind: 'ok', publishType: 'message' },
   },
   facebook: {
     name: () => m.provider_facebook(),

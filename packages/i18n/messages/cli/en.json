@@ -36,7 +36,7 @@
   "secret_stdin_lines": "the app secret on stdin must be one line",
   "expected_one_provider": "expected one provider",
   "bluesky_client_id": "bluesky takes no --client-id",
-  "provider_unsupported": "only bluesky, facebook, instagram, linkedin, threads or youtube can be registered",
+  "provider_unsupported": "only bluesky, discord, facebook, instagram, linkedin, threads or youtube can be registered",
   "provider_app_exists": [
     {
       "declarations": ["input provider"],

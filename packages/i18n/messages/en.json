@@ -80,6 +80,7 @@
   "queue_evergreen": "Free slots are filled from evergreen posts 24 h ahead.",
   "channels_disconnect_body": "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later.",
   "channels_disconnect_google": "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.",
+  "channels_disconnect_discord": "This also removes Kronaut's webhook from the Discord channel.",
   "channels_disconnect_data": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -128,6 +129,7 @@
   "channels_connect_unavailable": "The network can't be reached right now. Try again later.",
   "channels_connect_bad_url": "The network returned an unsafe sign-in address, so connecting stopped.",
   "provider_bluesky": "Bluesky",
+  "provider_discord": "Discord",
   "provider_facebook": "Facebook",
   "provider_instagram": "Instagram",
   "provider_linkedin": "LinkedIn",
@@ -558,6 +560,7 @@
   "issue_tag_unknown": "This tag no longer exists. Remove it and save again.",
   "issue_setting_required": "A required setting for this network is missing.",
   "issue_forbidden_characters": "The text contains characters this network doesn't allow.",
+  "issue_forum_channel_unsupported": "Kronaut can't post to Discord forum or media channels. Connect a text channel instead.",
   "channels_signature": "Signature",
   "channels_signature_none": "None",
   "channels_signature_named": "Signature: {name}",

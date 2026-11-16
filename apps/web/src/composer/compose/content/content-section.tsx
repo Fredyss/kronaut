@@ -7,6 +7,7 @@ import { loadEditor, loadTextLimits } from '../load.ts';
 import { ImagesSection } from '../media/images-section.tsx';
 import { channelHint } from './channel-picker.tsx';
 import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
+import { DiscordSettings } from './discord-settings.tsx';
 import type { PostEditorHandle } from './editor.tsx';
 import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
 import { SavedTextMenu } from './saved-text-menu.tsx';
@@ -174,6 +175,7 @@ export function ContentSection(props: ContentSectionProps) {
         className="flex flex-col gap-8"
       >
         <YoutubeSettings state={state} channel={channel} pending={pending} />
+        <DiscordSettings state={state} channel={channel} pending={pending} />
         <div className="flex flex-col gap-2">
           {editing ? (
             <TextHeader

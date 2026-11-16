@@ -153,6 +153,8 @@
   "compose_youtube_audience_default": "Podle nastavení kanálu",
   "compose_youtube_kids": "Určeno pro děti",
   "compose_youtube_not_kids": "Není určeno pro děti",
+  "compose_discord_silent": "Odeslat bez oznámení",
+  "compose_discord_ping_everyone": "Povolit @everyone a @here",
   "compose_brand_select_all": "Vybrat vše",
   "compose_brand_clear": "Zrušit výběr",
   "compose_brand_select_all_of": "Vybrat všechny kanály značky {name}",

@@ -26,6 +26,7 @@ function usage(m: CliMessages): string {
     '  kronaut backup run --dir <dir>',
     '  kronaut backup schedule --dir <dir>',
     '  kronaut provider-app register bluesky',
+    `  kronaut provider-app register discord --client-id <discord client id>    ${clientSecret}`,
     `  kronaut provider-app register facebook --client-id <meta app id>         ${appSecret}`,
     `  kronaut provider-app register instagram --client-id <instagram app id>   ${appSecret}`,
     `  kronaut provider-app register linkedin --client-id <linkedin client id>  ${clientSecret}`,
