@@ -69,16 +69,24 @@ async function storeFollowers(
 }
 
 async function storeProfile(trx: TenantDb, channel: ChannelRef, profile: AccountProfile) {
+  const next = {
+    display_name: profile.displayName.normalize('NFC'),
+    handle: profile.handle?.normalize('NFC') ?? null,
+    profile_url: profile.profileUrl ?? null,
+  };
   await trx
     .updateTable('social_accounts')
-    .set({
-      display_name: profile.displayName.normalize('NFC'),
-      handle: profile.handle?.normalize('NFC') ?? null,
-      profile_url: profile.profileUrl ?? null,
-    })
+    .set(next)
     .where('workspace_id', '=', channel.workspaceId)
     .where('id', '=', channel.accountId)
     .where('status', '=', 'active')
+    .where((eb) =>
+      eb.or([
+        eb('display_name', '<>', next.display_name),
+        eb('handle', 'is distinct from', next.handle),
+        eb('profile_url', 'is distinct from', next.profile_url),
+      ]),
+    )
     .execute();
 }
 
