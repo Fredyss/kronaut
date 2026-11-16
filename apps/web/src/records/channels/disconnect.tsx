@@ -40,6 +40,7 @@ interface ConfirmProps {
 
 export function DisconnectConfirm({ name, provider, pending, onConfirm, onClose }: ConfirmProps) {
   const confirm = useRef<HTMLButtonElement>(null);
+  const ui = providerUi(provider);
   useEffect(() => confirm.current?.focus(), []);
   return (
     <fieldset
@@ -50,9 +51,14 @@ export function DisconnectConfirm({ name, provider, pending, onConfirm, onClose 
     >
       <legend className="sr-only">{m.channels_disconnect()}</legend>
       <p>{m.channels_disconnect_body({ name })}</p>
-      {providerUi(provider).googleGrant === true ? (
+      {ui.googleGrant === true ? (
         <p className="text-muted-foreground">{m.channels_disconnect_google()}</p>
       ) : null}
+      {ui.dataRetentionDays === undefined ? null : (
+        <p className="text-muted-foreground">
+          {m.channels_disconnect_data({ count: ui.dataRetentionDays })}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button
           ref={confirm}

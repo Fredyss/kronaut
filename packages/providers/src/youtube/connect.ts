@@ -6,10 +6,9 @@ import type {
   ConnectStartInput,
 } from '@kronaut/core';
 import * as z from 'zod';
-import { readJson, send } from '../_kit/http.ts';
 import { permanent } from '../_kit/meta-graph.ts';
 import { pkcePair } from '../_kit/pkce.ts';
-import { isSuccess, youtubeFailure } from './errors.ts';
+import { channelProfile, listChannels } from './channel.ts';
 import {
   AUTHORIZE_URL,
   appSecret,
@@ -20,25 +19,7 @@ import {
   type YoutubeCredentials,
 } from './oauth.ts';
 
-const CHANNELS_URL = 'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true';
-const CHANNEL_URL = 'https://www.youtube.com/channel/';
-
 const pendingState = z.object({ verifier: z.string().min(43).max(128) });
-
-const channels = z.looseObject({
-  items: z
-    .array(
-      z.looseObject({
-        id: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/),
-        snippet: z.looseObject({
-          title: z.string().optional(),
-          customUrl: z.string().optional(),
-        }),
-      }),
-    )
-    .optional(),
-});
-type Channel = NonNullable<z.infer<typeof channels>['items']>[number];
 
 export async function connectStart(
   _ctx: BaseContext,
@@ -66,15 +47,6 @@ function callbackCode(params: Readonly<Record<string, string>>): string {
   return code;
 }
 
-async function listChannels(ctx: BaseContext, accessToken: string): Promise<readonly Channel[]> {
-  const response = await send(ctx, 'none', CHANNELS_URL, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!isSuccess(response.status)) throw await youtubeFailure(response, 'none', ctx.now());
-  const { items } = await readJson(response, channels, 'none');
-  return items ?? [];
-}
-
 export async function connectFinish(
   ctx: BaseContext,
   input: ConnectFinishInput,
@@ -95,19 +67,13 @@ export async function connectFinish(
   const accessExpiresAt = ctx.now().add({ seconds: token.expires_in });
   const refreshExpiresAt = refreshExpiry(ctx.now(), token);
   const credentials = { accessToken: token.access_token, refreshToken: token.refresh_token };
-  return (await listChannels(ctx, token.access_token)).map(({ id, snippet }) => {
-    const title = snippet.title?.trim() ?? '';
-    const handle = snippet.customUrl?.trim() ?? '';
-    return {
-      credentials,
-      grantedScopes,
-      accessExpiresAt,
-      ...refreshExpiresAt,
-      providerAccountId: id,
-      accountKind: 'channel',
-      displayName: title === '' ? id : title,
-      ...(handle === '' ? {} : { handle }),
-      profileUrl: `${CHANNEL_URL}${id}`,
-    };
-  });
+  return (await listChannels(ctx, token.access_token, 'snippet')).map((channel) => ({
+    credentials,
+    grantedScopes,
+    accessExpiresAt,
+    ...refreshExpiresAt,
+    providerAccountId: channel.id,
+    accountKind: 'channel',
+    ...channelProfile(channel),
+  }));
 }

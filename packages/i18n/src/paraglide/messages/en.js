@@ -73,6 +73,7 @@
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -708,6 +709,12 @@ export const channels_disconnect_body = /** @type {(inputs: Channels_Disconnect_
 
 export const channels_disconnect_confirm = /** @type {(inputs: Channels_Disconnect_ConfirmInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Disconnect channel`)
+};
+
+export const channels_disconnect_data = /** @type {(inputs: Channels_Disconnect_DataInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Kronaut deletes this channel's name and stats ${i?.count} day after you disconnect it.`);
+	return /** @type {LocalizedString} */ (`Kronaut deletes this channel's name and stats ${i?.count} days after you disconnect it.`)
 };
 
 export const channels_disconnect_google = /** @type {(inputs: Channels_Disconnect_GoogleInputs) => LocalizedString} */ () => {

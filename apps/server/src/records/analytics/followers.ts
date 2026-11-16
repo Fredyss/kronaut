@@ -1,5 +1,6 @@
 import {
   type AccountMetrics,
+  type AccountProfile,
   encodePublicId,
   isProviderFailure,
   type ProviderError,
@@ -65,6 +66,20 @@ async function storeFollowers(
     .onConflict((oc) => oc.doNothing())
     .execute();
   return true;
+}
+
+async function storeProfile(trx: TenantDb, channel: ChannelRef, profile: AccountProfile) {
+  await trx
+    .updateTable('social_accounts')
+    .set({
+      display_name: profile.displayName.normalize('NFC'),
+      handle: profile.handle?.normalize('NFC') ?? null,
+      profile_url: profile.profileUrl ?? null,
+    })
+    .where('workspace_id', '=', channel.workspaceId)
+    .where('id', '=', channel.accountId)
+    .where('status', '=', 'active')
+    .execute();
 }
 
 async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef, day: string) {
@@ -181,6 +196,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
     if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }
+    if (metrics?.profile !== undefined) await storeProfile(trx, channel, metrics.profile);
     await markChecked(trx, channel, readAt.day);
   });
 }

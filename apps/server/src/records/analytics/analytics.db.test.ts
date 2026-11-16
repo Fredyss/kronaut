@@ -1,5 +1,6 @@
 import type {
   AccountMetrics,
+  AccountProfile,
   AnalyticsResult,
   PostMetrics,
   ProviderError,
@@ -47,6 +48,8 @@ let thrown: ProviderError | null = null;
 let followers: number | null = 10;
 let followerError: ProviderError | null = null;
 const followerCalls = new Map<string, number>();
+const profiles = new Map<string, AccountProfile>();
+const lapseDuringRead = new Set<string>();
 const revoked = new Set<string>();
 const analyticsCalls = new Map<string, number>();
 const postTypesSeen = new Map<string, string>();
@@ -68,6 +71,16 @@ function analytics(account: string, remoteIds: readonly string[]): AnalyticsResu
   return { posts, failed, apiVersion: 'v-test' };
 }
 
+async function lapse(providerAccountId: string): Promise<void> {
+  await owner.withActor(SYSTEM, (trx) =>
+    trx
+      .updateTable('social_accounts')
+      .set({ status: 'needs_reauth' })
+      .where('provider_account_id', '=', providerAccountId)
+      .execute(),
+  );
+}
+
 function registry() {
   const runtime: ProviderRuntime = {
     ...fake.runtime,
@@ -79,7 +92,9 @@ function registry() {
       const id = input.account.providerAccountId;
       followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
       if (followerError !== null) throw new ProviderFailure(followerError);
-      return { followers, apiVersion: 'v-test' };
+      if (lapseDuringRead.has(id)) await lapse(id);
+      const profile = profiles.get(id);
+      return { followers, apiVersion: 'v-test', ...(profile === undefined ? {} : { profile }) };
     },
   };
   const manifest = {
@@ -385,6 +400,33 @@ describe('analytics pulls', () => {
     expect(calls()).toBe(7);
     await pullAt(day.add({ hours: 73, minutes: 15 }));
     expect(calls()).toBe(7);
+  });
+
+  it('refreshes the stored profile from the follower read while the channel is active', async () => {
+    const renamed = decodePublicId('socialAccount', await insertAccount('renamed')) ?? '';
+    const lapsed = decodePublicId('socialAccount', await insertAccount('lapsed')) ?? '';
+    const profile = { displayName: 'Renamed', handle: '@renamed', profileUrl: 'https://x.test/r' };
+    profiles.set('fake-renamed', profile).set('fake-lapsed', profile);
+    lapseDuringRead.add('fake-lapsed');
+    await pullAt(Temporal.Instant.from('2027-03-01T10:00:00Z'));
+    const names = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('social_accounts')
+        .select(['id', 'display_name', 'handle', 'profile_url'])
+        .where('id', 'in', [renamed, lapsed])
+        .execute(),
+    );
+    expect(names).toEqual(
+      expect.arrayContaining([
+        {
+          id: renamed,
+          display_name: 'Renamed',
+          handle: '@renamed',
+          profile_url: 'https://x.test/r',
+        },
+        { id: lapsed, display_name: 'lapsed', handle: null, profile_url: null },
+      ]),
+    );
   });
 
   it('a stopped channel is pushed back and does not starve a healthy one', async () => {

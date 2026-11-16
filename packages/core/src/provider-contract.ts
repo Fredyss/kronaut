@@ -107,6 +107,7 @@ export interface ProviderManifest<S = unknown> {
   readonly concurrency: number;
   readonly preview: PreviewArchetype;
   readonly capabilities: { readonly analytics: boolean; readonly delete: boolean };
+  readonly dataRetention?: { readonly disconnectedDays: number; readonly lapsedDays: number };
   readonly egressHosts: readonly string[];
   accountPostType?(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec;
 }

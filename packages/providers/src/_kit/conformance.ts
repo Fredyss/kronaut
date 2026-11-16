@@ -23,6 +23,15 @@ function settingsProblems(manifest: ProviderManifest): string[] {
   return [];
 }
 
+function retentionProblems(manifest: ProviderManifest): string[] {
+  const retention = manifest.dataRetention;
+  if (retention === undefined) return [];
+  const days = [retention.disconnectedDays, retention.lapsedDays];
+  return days.every((value) => Number.isInteger(value) && value >= 1)
+    ? []
+    : ['data retention days must be whole and at least 1'];
+}
+
 export function conformanceProblems(
   manifest: ProviderManifest,
   runtime: ProviderRuntime,
@@ -41,5 +50,6 @@ export function conformanceProblems(
   if (manifest.capabilities.analytics && runtime.analytics === undefined)
     problems.push('analytics without runtime.analytics');
   problems.push(...settingsProblems(manifest));
+  problems.push(...retentionProblems(manifest));
   return problems;
 }

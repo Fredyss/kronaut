@@ -43,6 +43,42 @@ export async function markDisconnected(trx: TenantDb, target: DisconnectTarget):
     .execute();
 }
 
+export async function wipeProfile(
+  trx: TenantDb,
+  target: Pick<DisconnectTarget, 'workspaceId' | 'accountId'>,
+): Promise<void> {
+  await trx
+    .updateTable('social_accounts')
+    .set({ handle: null, display_name: '', profile_url: null, provider_subject_id: null })
+    .where('workspace_id', '=', target.workspaceId)
+    .where('id', '=', target.accountId)
+    .execute();
+}
+
+export interface SystemAudit {
+  readonly workspaceId: string;
+  readonly accountId: string;
+  readonly action: string;
+  readonly correlationId: string;
+}
+
+export async function auditSystem(trx: TenantDb, event: SystemAudit): Promise<void> {
+  await trx
+    .insertInto('audit_events')
+    .values({
+      workspace_id: event.workspaceId,
+      actor_kind: 'system',
+      surface: 'worker',
+      action: event.action,
+      resource_kind: 'social_account',
+      resource_id: event.accountId,
+      social_account_ids: [event.accountId],
+      outcome: 'ok',
+      correlation_id: event.correlationId,
+    })
+    .execute();
+}
+
 export async function disconnect(
   trx: TenantDb,
   providers: ProviderRegistry,

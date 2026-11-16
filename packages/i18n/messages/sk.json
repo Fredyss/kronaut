@@ -82,6 +82,18 @@
   "queue_evergreen": "Voľné termíny sa 24 h vopred doplnia nadčasovými príspevkami.",
   "channels_disconnect_body": "Odpojiť {name}? Príspevky naplánované do tohto kanála sa nezverejnia. Neskôr ho môžete znova pripojiť.",
   "channels_disconnect_google": "Tým sa zruší aj prístup Kronautu v Google. Ostatné kanály YouTube pripojené cez rovnaký účet Google bude treba pripojiť znova.",
+  "channels_disconnect_data": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Kronaut vymaže názov a štatistiky tohto kanála {count} deň po jeho odpojení.",
+        "countPlural=few": "Kronaut vymaže názov a štatistiky tohto kanála {count} dni po jeho odpojení.",
+        "countPlural=many": "Kronaut vymaže názov a štatistiky tohto kanála {count} dňa po jeho odpojení.",
+        "countPlural=*": "Kronaut vymaže názov a štatistiky tohto kanála {count} dní po jeho odpojení."
+      }
+    }
+  ],
   "channels_disconnect_confirm": "Odpojiť kanál",
   "channels_disconnected": "Kanál {name} bol odpojený.",
   "channels_open_profile": "Otvoriť profil",

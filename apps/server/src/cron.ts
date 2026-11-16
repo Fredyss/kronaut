@@ -217,7 +217,7 @@ export function cronTaskList(
     [CRON_TASKS.credentialRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.credentialRetention, async () =>
         JSON.stringify({
-          ...JSON.parse(await purgeDisconnectedCredentials(db)),
+          ...JSON.parse(await purgeDisconnectedCredentials(db, sweeps.providers)),
           shortLinks: await purgeShortLinks(db),
         }),
       );

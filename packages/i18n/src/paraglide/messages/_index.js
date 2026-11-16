@@ -75,6 +75,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Channels_DisconnectInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_Disconnect_BodyInputs */
 /** @typedef {{}} Channels_Disconnect_ConfirmInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Channels_Disconnect_DataInputs */
 /** @typedef {{}} Channels_Disconnect_GoogleInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Channels_DisconnectedInputs */
 /** @typedef {{}} Channels_Empty_BodyInputs */
@@ -1523,6 +1524,22 @@ export const channels_disconnect_confirm = /** @type {((inputs?: Channels_Discon
 	if (locale === "sk") return __sk.channels_disconnect_confirm(inputs)
 	if (locale === "cs") return __cs.channels_disconnect_confirm(inputs)
 	return __en.channels_disconnect_confirm(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "Kronaut deletes this channel's name and stats {count} day after you disconnect it." |
+* | * | "Kronaut deletes this channel's name and stats {count} days after you disconnect it." |
+*
+* @param {Channels_Disconnect_DataInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const channels_disconnect_data = /** @type {((inputs: Channels_Disconnect_DataInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Channels_Disconnect_DataInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.channels_disconnect_data(inputs)
+	if (locale === "cs") return __cs.channels_disconnect_data(inputs)
+	return __en.channels_disconnect_data(inputs)
 });
 /**
 * | output |

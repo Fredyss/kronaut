@@ -1,4 +1,5 @@
 import type { ProviderRuntime } from '@kronaut/core';
+import { channelMetrics, videoAnalytics } from './analytics.ts';
 import { connectFinish, connectStart } from './connect.ts';
 import type { YoutubeSettings } from './manifest.ts';
 import {
@@ -25,4 +26,8 @@ export const youtubeRuntime: ProviderRuntime<YoutubeCredentials, YoutubeSettings
   publish: publishVideo,
 
   verify: verifyUpload,
+
+  analytics: videoAnalytics,
+
+  accountMetrics: channelMetrics,
 };

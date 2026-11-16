@@ -3,7 +3,7 @@ import type { Task } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import * as z from 'zod';
-import { markDisconnected } from '../../access/channels/disconnect.ts';
+import { auditSystem, markDisconnected, wipeProfile } from '../../access/channels/disconnect.ts';
 import { flagAccount } from '../../steps/publish/incidents.ts';
 
 export const DATA_DELETION_REASON = 'data_deletion_requested';
@@ -76,22 +76,9 @@ async function deleteCredentials({ trx, workspaceId, account }: Step): Promise<v
     .execute();
 }
 
-async function audit(step: Step, action: string): Promise<void> {
-  const { trx, workspaceId, account } = step;
-  await trx
-    .insertInto('audit_events')
-    .values({
-      workspace_id: workspaceId,
-      actor_kind: 'system',
-      surface: 'worker',
-      action,
-      resource_kind: 'social_account',
-      resource_id: account.id,
-      social_account_ids: [account.id],
-      outcome: 'ok',
-      correlation_id: step.requestId,
-    })
-    .execute();
+function audit(step: Step, action: string): Promise<void> {
+  const { trx, workspaceId, account, requestId } = step;
+  return auditSystem(trx, { workspaceId, accountId: account.id, action, correlationId: requestId });
 }
 
 async function deleteData(step: Step): Promise<boolean> {
@@ -101,12 +88,7 @@ async function deleteData(step: Step): Promise<boolean> {
     return false;
   }
   await markDisconnected(trx, { workspaceId, accountId: account.id, reason: DATA_DELETION_REASON });
-  await trx
-    .updateTable('social_accounts')
-    .set({ handle: null, display_name: '', profile_url: null, provider_subject_id: null })
-    .where('workspace_id', '=', workspaceId)
-    .where('id', '=', account.id)
-    .execute();
+  await wipeProfile(trx, { workspaceId, accountId: account.id });
   await audit(step, 'channel.data_deleted');
   return true;
 }
