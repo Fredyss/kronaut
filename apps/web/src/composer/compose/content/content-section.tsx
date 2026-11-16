@@ -13,6 +13,7 @@ import { SavedTextMenu } from './saved-text-menu.tsx';
 import { SignatureToggle } from './signature-toggle.tsx';
 import { limitTargets } from './targets.ts';
 import type { ContentsState } from './use-contents.ts';
+import { YoutubeSettings } from './youtube-settings.tsx';
 
 const PostEditor = lazy(loadEditor);
 const TextLimits = lazy(loadTextLimits);
@@ -172,6 +173,7 @@ export function ContentSection(props: ContentSectionProps) {
         {...(showTabs ? { role: 'tabpanel', 'aria-labelledby': tabId(idPrefix, active) } : {})}
         className="flex flex-col gap-8"
       >
+        <YoutubeSettings state={state} channel={channel} pending={pending} />
         <div className="flex flex-col gap-2">
           {editing ? (
             <TextHeader

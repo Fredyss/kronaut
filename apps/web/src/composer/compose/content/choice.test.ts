@@ -15,6 +15,7 @@ const threads: Channel = {
   connectedAt: '2026-10-01T08:00:00.000Z',
   lastErrorCode: null,
   postTypes: [],
+  requiredSettings: [],
   signature: null,
   shortenLinks: true,
   brandId: null,
@@ -102,6 +103,12 @@ describe('video publish choice', () => {
     expect(choiceFor(instagram, VIDEO)).toEqual({ kind: 'ok', publishType: 'reel' });
     expect(choiceFor(instagram, images(0))).toEqual({ kind: 'needs_image' });
     expect(choiceFor(threads, VIDEO)).toEqual({ kind: 'ok', publishType: 'video' });
+  });
+
+  it('publishes YouTube only with a video', () => {
+    const youtube: Channel = { ...threads, id: 'acct_yt', provider: 'youtube' };
+    expect(choiceFor(youtube, VIDEO)).toEqual({ kind: 'ok', publishType: 'video' });
+    expect(choiceFor(youtube, images(0))).toEqual({ kind: 'needs_video' });
   });
 
   it('marks video as unsupported on the other networks', () => {

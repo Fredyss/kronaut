@@ -43,6 +43,7 @@ const PROVIDERS = {
   linkedin: 'provider_linkedin',
   mastodon: 'provider_mastodon',
   threads: 'provider_threads',
+  youtube: 'provider_youtube',
 } as const satisfies Readonly<Record<string, keyof Catalog>>;
 
 export type ReasonMessages = Pick<

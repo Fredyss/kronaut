@@ -31,9 +31,11 @@ export interface TextLimitsProps {
   readonly onIssuesChange: (flagged: readonly string[]) => void;
 }
 
+type Rules = TextRules & { readonly forbidden?: string };
+
 interface Target {
   readonly channel: Channel;
-  readonly rules: TextRules;
+  readonly rules: Rules;
   readonly key: string;
   readonly text: string;
   readonly shown: boolean;
@@ -44,7 +46,7 @@ interface Target {
 interface Entry {
   readonly key: string;
   readonly label: string;
-  readonly rules: TextRules;
+  readonly rules: Rules;
   readonly text: string;
   readonly video: readonly ValidationIssue[];
   readonly item: LimitItem | null;
@@ -55,6 +57,10 @@ function mainRules(postType: PostTypeRules): TextRules {
     text: postType.text,
     ...(postType.maxLinks === null ? {} : { maxLinks: postType.maxLinks }),
   };
+}
+
+function forbiddenIn(rules: Rules, text: string): boolean {
+  return [...(rules.forbidden ?? '')].some((char) => text.includes(char));
 }
 
 function itemRules(postType: PostTypeRules, item: LimitItem): TextRules | null {
@@ -68,11 +74,12 @@ function targetFor(target: LimitTarget): Target[] {
   const postType = postTypeFor(channel, target.media);
   if (postType === undefined) return [];
   const text = toPlainText(doc);
-  const key = JSON.stringify([postType.text, postType.maxLinks, postType.video, text]);
+  const { forbiddenChars: forbidden } = postType;
+  const key = JSON.stringify([postType.text, postType.maxLinks, postType.video, forbidden, text]);
   const issues = video === null ? [] : checkVideo(postType.video, video);
   const main: Target = {
     channel,
-    rules: mainRules(postType),
+    rules: { ...mainRules(postType), ...(forbidden === undefined ? {} : { forbidden }) },
     key,
     text,
     shown,
@@ -90,7 +97,7 @@ function targetFor(target: LimitTarget): Target[] {
 
 interface Group {
   readonly provider: string;
-  readonly rules: TextRules;
+  readonly rules: Rules;
   readonly text: string;
   readonly video: readonly ValidationIssue[];
   readonly item: LimitItem | null;
@@ -153,6 +160,14 @@ function tooLongLine({ item, label: channel }: Entry, count: string, max: string
   return m.compose_reply_too_long({ position: item.position, channel, count, max });
 }
 
+function forbiddenLines({ rules, text, label: channel }: Entry, locale: string): string[] {
+  if (!forbiddenIn(rules, text)) return [];
+  const chars = new Intl.ListFormat(locale, { type: 'disjunction' }).format([
+    ...(rules.forbidden ?? ''),
+  ]);
+  return [m.compose_limit_forbidden({ channel, chars })];
+}
+
 function issueLines(entry: Entry, format: (n: number) => string, locale: string): string[] {
   const video = entry.video.map((issue) => videoIssueLine(issue, entry.label, locale));
   const text = checkText(entry.rules, [{ text: entry.text }]).map((issue) => {
@@ -160,7 +175,7 @@ function issueLines(entry: Entry, format: (n: number) => string, locale: string)
     if (issue.code === 'too_many_links') return linksLine(entry, max);
     return tooLongLine(entry, format(issue.actual ?? 0), format(max));
   });
-  return [...text, ...video];
+  return [...text, ...forbiddenLines(entry, locale), ...video];
 }
 
 function Usage({
@@ -220,7 +235,8 @@ export default function TextLimits({ targets, issuesId, note, onIssuesChange }: 
     ...new Set(
       all
         .filter(
-          ({ rules, text, video }) => video.length > 0 || checkText(rules, [{ text }]).length > 0,
+          ({ rules, text, video }) =>
+            video.length > 0 || checkText(rules, [{ text }]).length > 0 || forbiddenIn(rules, text),
         )
         .map(({ channel }) => channel.id),
     ),

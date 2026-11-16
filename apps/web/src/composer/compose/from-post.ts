@@ -1,7 +1,7 @@
 import type { Channel } from '../../records/channels/queries.ts';
 import { toDoc } from '../../records/posts/doc.ts';
 import type { MediaAsset } from '../../records/posts/post-media.ts';
-import type { Post } from '../../records/posts/queries.ts';
+import type { Destination, Post } from '../../records/posts/queries.ts';
 import { choiceFor } from './content/choice.ts';
 import { type Content, type Contents, effective, type PickedImage } from './content/contents.ts';
 import { isPlainDoc } from './content/plain-doc.ts';
@@ -26,6 +26,7 @@ export interface OpenedForm {
   readonly canceled: readonly string[];
   readonly stored: ReadonlySet<string>;
   readonly skipSignature: ReadonlySet<string>;
+  readonly settings: ReadonlyMap<string, Destination['settings']>;
   readonly videos: VideoRegistry;
   readonly when: WhenStart;
 }
@@ -182,6 +183,7 @@ export function fromPost(post: Post, assets: Assets, channels: readonly Channel[
     skipSignature: new Set(
       post.destinations.filter((d) => d.skipSignature).map((d) => d.accountId),
     ),
+    settings: new Map(post.destinations.map((d) => [d.accountId, d.settings])),
     videos: toVideos(assets, contents),
     when: startWhen(post),
   };

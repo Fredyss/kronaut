@@ -189,6 +189,11 @@ describe('provider app keys CLI', () => {
     ['instagram', '990011223344', 'an instagram app is already registered'],
     ['linkedin', '86abcdef123xyz', 'a linkedin app is already registered'],
     ['threads', '1122334455667788', 'a threads app is already registered'],
+    [
+      'youtube',
+      '123456789012-abcdef0123456789.apps.googleusercontent.com',
+      'a youtube app is already registered',
+    ],
   ])(
     'registers %s with its secret sealed from stdin, never echoed',
     async (provider, clientId, refusal) => {

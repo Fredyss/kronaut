@@ -47,7 +47,9 @@ export type IssueCode =
   | 'frame_rate_too_high'
   | 'resolution_too_high'
   | 'alt_text_required'
-  | 'alt_text_too_long';
+  | 'alt_text_too_long'
+  | 'forbidden_characters'
+  | 'setting_required';
 
 export interface ValidationIssue {
   readonly code: IssueCode;
@@ -56,6 +58,7 @@ export interface ValidationIssue {
   readonly counting?: TextCounting;
   readonly limit?: number;
   readonly actual?: number;
+  readonly field?: string;
 }
 
 export function accountPostType(
@@ -102,10 +105,20 @@ export function validate(
   for (const { item, itemIndex, rules } of sent) {
     for (const issue of checkText(rules.text, [item])) issues.push({ ...issue, itemIndex });
   }
+  for (const { item, itemIndex } of sent) {
+    if (item.role === 'main' && hasForbiddenChars(item.text, postType.forbiddenChars))
+      issues.push({ code: 'forbidden_characters', itemIndex });
+  }
   for (const { item, itemIndex, rules } of sent) {
     validateItemMedia(item, itemIndex, rules.media, issues);
   }
   return issues;
+}
+
+function hasForbiddenChars(text: string, forbidden: string | undefined): boolean {
+  if (forbidden === undefined) return false;
+  for (const char of forbidden) if (text.includes(char)) return true;
+  return false;
 }
 
 interface SentItem {

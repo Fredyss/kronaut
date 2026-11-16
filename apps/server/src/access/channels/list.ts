@@ -40,6 +40,7 @@ const PostTypeRulesSchema = z.object({
   id: z.string(),
   text: z.array(TextLimitSchema),
   maxLinks: z.number().int().nullable(),
+  forbiddenChars: z.string().optional(),
   imageAspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
   video: z
     .object({
@@ -69,6 +70,7 @@ const ChannelSchema = z.object({
   connectedAt: Instant,
   lastErrorCode: z.string().nullable(),
   postTypes: z.array(PostTypeRulesSchema),
+  requiredSettings: z.array(z.string()),
   preview: z.enum(PREVIEW_ARCHETYPES),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
@@ -142,6 +144,9 @@ function postTypes(
         id,
         text: [...postType.text],
         maxLinks: postType.maxLinks ?? null,
+        ...(postType.forbiddenChars === undefined
+          ? {}
+          : { forbiddenChars: postType.forbiddenChars }),
         imageAspect: imageAspect(postType.media.image),
         video: videoRules(postType.media.video),
         thread: postType.thread === undefined ? null : { maxItems: postType.thread.maxItems },
@@ -149,6 +154,14 @@ function postTypes(
       },
     ];
   });
+}
+
+function providerRules(entry: ProviderEntry | undefined, capabilities: unknown) {
+  return {
+    postTypes: postTypes(entry, capabilities),
+    requiredSettings: [...(entry?.manifest.requiredSettings ?? [])],
+    preview: entry?.manifest.preview ?? 'short-feed',
+  };
 }
 
 const insightsCapability = z.looseObject({ insights: z.literal(true) });
@@ -231,8 +244,7 @@ export async function listChannels(
       accessExpiresAt: shownExpiry(entry, expiries.get(row.id)),
       connectedAt: row.created_at.toISOString(),
       lastErrorCode: row.last_error_code,
-      postTypes: postTypes(entry, row.capabilities),
-      preview: entry?.manifest.preview ?? 'short-feed',
+      ...providerRules(entry, row.capabilities),
       insights: insightsGranted(row.capabilities),
       signature: signatures.get(row.saved_text_id ?? '') ?? null,
       shortenLinks: row.shorten_links,

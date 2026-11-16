@@ -19,3 +19,4 @@ test-results/
 .claude/worktrees/
 .claude/settings.local.json
 /THIRD_PARTY_NOTICES
+packages/i18n/*.inlang/cache/

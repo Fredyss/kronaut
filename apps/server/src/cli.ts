@@ -30,6 +30,7 @@ function usage(m: CliMessages): string {
     `  kronaut provider-app register instagram --client-id <instagram app id>   ${appSecret}`,
     `  kronaut provider-app register linkedin --client-id <linkedin client id>  ${clientSecret}`,
     `  kronaut provider-app register threads --client-id <threads app id>       ${appSecret}`,
+    `  kronaut provider-app register youtube --client-id <google client id>     ${clientSecret}`,
     '  kronaut provider-app key create <app-id>',
     '  kronaut provider-app key activate <app-id> <kid>',
     '  kronaut provider-app key delete <app-id> <kid>',

@@ -50,6 +50,24 @@ export const RULES: Record<string, unknown[]> = {
       video: null,
     },
   ],
+  youtube: [
+    {
+      id: 'video',
+      text: [{ counting: 'utf8-bytes', max: 5000 }],
+      forbiddenChars: '<>',
+      maxLinks: null,
+      imageAspect: null,
+      video: {
+        mimes: ['video/mp4'],
+        maxBytes: 256_000_000_000,
+        minDurationMs: 3000,
+        maxDurationMs: 900_000,
+        aspect: null,
+        maxFrameRate: null,
+        maxPixels: null,
+      },
+    },
+  ],
 };
 
 const PREVIEWS: Record<string, string> = {
@@ -59,6 +77,7 @@ const PREVIEWS: Record<string, string> = {
   linkedin: 'pro-feed',
   mastodon: 'short-feed',
   threads: 'short-feed',
+  youtube: 'pro-feed',
 };
 
 export function channel(id: string, provider: string, displayName: string) {
@@ -75,6 +94,7 @@ export function channel(id: string, provider: string, displayName: string) {
     connectedAt: '2026-10-01T08:00:00.000Z',
     lastErrorCode: null,
     postTypes: RULES[provider] ?? [],
+    requiredSettings: provider === 'youtube' ? ['title'] : [],
     preview: PREVIEWS[provider] ?? 'short-feed',
     signature: null,
   };

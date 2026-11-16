@@ -18,6 +18,7 @@ const ada: Channel = {
   connectedAt: '2026-10-01T08:00:00.000Z',
   lastErrorCode: null,
   postTypes: [],
+  requiredSettings: [],
   signature: null,
   shortenLinks: true,
   brandId: null,

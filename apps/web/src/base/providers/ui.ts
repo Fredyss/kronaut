@@ -3,6 +3,7 @@ import { m } from '../locale/i18n.ts';
 export type PublishChoice =
   | { readonly kind: 'ok'; readonly publishType: string }
   | { readonly kind: 'needs_image' }
+  | { readonly kind: 'needs_video' }
   | { readonly kind: 'image_too_large'; readonly maxBytes: number }
   | { readonly kind: 'image_type_unsupported' }
   | { readonly kind: 'too_many_images'; readonly max: number }
@@ -21,6 +22,7 @@ export interface ProviderUi {
   readonly instance: boolean;
   readonly followers?: boolean;
   readonly insights?: boolean;
+  readonly googleGrant?: boolean;
   readonly maxImageBytes: number;
   readonly imageTypes: readonly string[];
   publishType(media: PublishMedia): PublishChoice;
@@ -103,6 +105,17 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     imageTypes: ['image/jpeg', 'image/png'],
     publishType: (media) =>
       media.video ? { kind: 'ok', publishType: 'video' } : imagePost(20)(media),
+  },
+  youtube: {
+    name: () => m.provider_youtube(),
+    badge: 'bg-red-600',
+    googleGrant: true,
+    loginHint: false,
+    instance: false,
+    maxImageBytes: 0,
+    imageTypes: [],
+    publishType: ({ video }) =>
+      video ? { kind: 'ok', publishType: 'video' } : { kind: 'needs_video' },
   },
 };
 

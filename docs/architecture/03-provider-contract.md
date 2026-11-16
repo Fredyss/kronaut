@@ -1,6 +1,6 @@
 # Provider plugin contract
 
-One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime.ts` is server-only. A codegen step globs manifests into the registries, so adding a provider touches no other file. Contract: ADR-0032, ADR-0036.
+One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime.ts` is server-only. The registries are hand-listed, with no codegen: a new provider is added to `packages/providers/src/manifests.ts` and `runtime.ts` for the server, and to `apps/web/src/base/providers/ui.ts` for the web. Contract: ADR-0032, ADR-0036.
 
 **Manifest fields**
 
@@ -12,9 +12,10 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
   - `auth.instanceScoped`: the provider's apps are per server (Mastodon). The server registers one on demand through `registerApp` at connect start (ADR-0051); the conformance kit fails an instance-scoped provider without `registerApp`.
 - **Content limits**
   - Text limits and counting strategy: `x-weighted` (twitter-text), `mastodon` (graphemes, each link as the limit's `urlWeight`, a remote mention as its username part), `threads` (graphemes, an emoji or flag cluster as its UTF-8 bytes), `graphemes`, `utf16`, or `utf8-bytes`.
-    - **Composite limits** are allowed: Bluesky checks 300 graphemes *and* 3,000 bytes; YouTube checks chars *and* bytes.
+    - **Composite limits** are allowed: Bluesky checks 300 graphemes *and* 3,000 bytes.
     - `maxLinks`: the most **unique** links one item's text may hold (Threads: 5). `countLinks()` counts each distinct `http(s)://` URL and each bare host such as `www.example.com`, matched as written; it errs towards over-counting. Over the limit, `validate()` reports `too_many_links`.
     - Limits can be **per instance** (Mastodon reads `/api/v2/instance`). `accountPostType?(postType, capabilities)` returns the post type with an account's stored `capabilities` applied; `validate()` takes those capabilities and uses it at schedule and at claim.
+  - `forbiddenChars`: characters the text of `main` items must not contain (YouTube: `<` and `>`). `validate()` reports `forbidden_characters`.
   - Escaping rules: LinkedIn commentary uses little-text backslash escaping.
   - Link, hashtag and mention rules. Bluesky facets use UTF-8 byte offsets, and its link cards are built by the client.
   - Media limits: count, MIME, bytes, duration, aspect ranges, `altText`, `aiLabel` field name.
@@ -25,6 +26,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
     - async give-up limits
   - Thread and first-comment support: optional `thread {maxItems, media}` and `comment {text, steps}` ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)).
 - **Settings:** a Zod schema with defaults.
+  - `requiredSettings`: keys that must be present and non-blank at schedule and at claim, such as YouTube's `title`. A draft may omit them, so draft save only parses the schema. `validateSettings()` reports `setting_required` with the `field`, and the API puts it at `destinations.<n>.settings.<field>`.
 - **Cost:** `cost{model, perPost{usd, linkUsd, asOf, sourceUrl}}`.
 - **Verification:** `verify.mode`, one of `idempotency_key | deterministic_id | status_by_ref | list_recent_match | none`.
 - **Rate limits:** `rateLimits[{scope account|app|instance, headerParser}]` plus concurrency.

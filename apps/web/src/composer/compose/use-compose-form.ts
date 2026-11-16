@@ -10,15 +10,18 @@ import { type Channel, channelsQuery } from '../../records/channels/queries.ts';
 import { groupsKey } from '../../records/groups/queries.ts';
 import { type Post, postKey, postsKey } from '../../records/posts/queries.ts';
 import { type Sources, storedSources, withoutPicks } from './content/group-picks.ts';
-import { useContents } from './content/use-contents.ts';
+import { type ContentsState, useContents } from './content/use-contents.ts';
 import type { OpenedForm } from './from-post.ts';
 import { formFingerprint } from './submit/draft-body.ts';
 import {
   emptyProblem,
   goneProblem,
   isEmpty,
+  type MissingSetting,
   type Plan,
   planInput,
+  settingProblem,
+  settingsCheck,
   toPlan,
   videoProblem,
   withSources,
@@ -128,6 +131,23 @@ function usePlanQueue(workspaceId: string, list: readonly Channel[], plan: Plan)
   );
 }
 
+type Queue = ReturnType<typeof usePlanQueue>;
+
+function inputProblem(plan: Plan, content: ContentsState, locale: string): string | null {
+  return (
+    emptyProblem(plan, content.contents.base) ??
+    videoProblem(plan, content.contents.base, content.videos, locale)
+  );
+}
+
+function whenProblem(when: WhenState, queue: Queue, missing: MissingSetting | undefined) {
+  if (when.mode === 'queue' && queue.empty !== undefined) {
+    return m.compose_queue_empty({ channel: queue.empty.displayName });
+  }
+  if (when.mode !== 'draft' && missing !== undefined) return settingProblem(missing);
+  return null;
+}
+
 export interface OpenedCompose {
   readonly post: Post;
   readonly channels: readonly Channel[];
@@ -194,20 +214,17 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
   const [limitFlags, setLimitFlags] = useState<readonly string[]>([]);
   const pending = run.isPending;
   const { locale } = useLocale();
-  const flagged = [...limitFlags, ...content.unusable];
+  const settings = settingsCheck(plan, list);
+  const flagged = [...limitFlags, ...content.unusable, ...settings.invalid];
   const gone = goneProblem(start.opened?.post.destinations ?? [], list, selected, locale);
   const blocked = flagged.length > 0 || gone !== null;
   const queue = usePlanQueue(workspaceId, list, plan);
   const requesting = approval.request && when.mode !== 'draft';
   const send = (asRequest: boolean) => {
     if (pending || blocked || form.tags.creating) return;
-    const empty = emptyProblem(plan, content.contents.base);
-    if (empty !== null) return setFormError(empty);
-    const waiting = videoProblem(plan, content.contents.base, content.videos, locale);
-    if (waiting !== null) return setFormError(waiting);
-    if (when.mode === 'queue' && queue.empty !== undefined) {
-      return setFormError(m.compose_queue_empty({ channel: queue.empty.displayName }));
-    }
+    const problem =
+      inputProblem(plan, content, locale) ?? whenProblem(when, queue, settings.missing[0]);
+    if (problem !== null) return setFormError(problem);
     const resolved = resolveFull(when, repeat);
     if ('problem' in resolved) return setFormError(resolved.problem);
     setFormError(null);
@@ -239,7 +256,7 @@ export function useComposeForm(workspaceId: string, start: ComposeStart = {}) {
     repeat,
     formError: gone ?? formError,
     blocked,
-    flagged,
+    flagged: [...flagged, ...settings.missing.map(({ channel }) => channel.id)],
     setLimitFlags,
     failure,
     pending,

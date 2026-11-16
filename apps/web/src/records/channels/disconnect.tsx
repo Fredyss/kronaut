@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorCode, errorStatus } from '../../base/api/errors.ts';
 import { apiErrorMessage, m } from '../../base/locale/i18n.ts';
+import { providerUi } from '../../base/providers/ui.ts';
 import { type Channel, channelsQuery } from './queries.ts';
 
 export const DISCONNECT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
@@ -31,12 +32,13 @@ export function useDisconnect(workspaceId: string) {
 
 interface ConfirmProps {
   readonly name: string;
+  readonly provider: string;
   readonly pending: boolean;
   onConfirm(): void;
   onClose(): void;
 }
 
-export function DisconnectConfirm({ name, pending, onConfirm, onClose }: ConfirmProps) {
+export function DisconnectConfirm({ name, provider, pending, onConfirm, onClose }: ConfirmProps) {
   const confirm = useRef<HTMLButtonElement>(null);
   useEffect(() => confirm.current?.focus(), []);
   return (
@@ -48,6 +50,9 @@ export function DisconnectConfirm({ name, pending, onConfirm, onClose }: Confirm
     >
       <legend className="sr-only">{m.channels_disconnect()}</legend>
       <p>{m.channels_disconnect_body({ name })}</p>
+      {providerUi(provider).googleGrant === true ? (
+        <p className="text-muted-foreground">{m.channels_disconnect_google()}</p>
+      ) : null}
       <div className="flex flex-wrap gap-2">
         <Button
           ref={confirm}
