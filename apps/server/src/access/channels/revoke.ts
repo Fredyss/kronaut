@@ -45,6 +45,7 @@ const PayloadSchema = z.object({
 interface Revocable {
   readonly entry: ProviderEntry;
   readonly provider: string;
+  readonly providerAppId: string;
   readonly subject: string | null;
   readonly input: Parameters<NonNullable<ProviderEntry['runtime']['revoke']>>[1];
 }
@@ -72,6 +73,7 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
     return {
       entry,
       provider: row.provider,
+      providerAppId: row.providerAppId,
       subject: account.provider_subject_id,
       input: {
         app: app.app,
@@ -137,6 +139,7 @@ async function flagSiblings(deps: RevokeDeps, job: RevokeJob, target: Revocable)
       .where('c.id', '<>', job.id)
       .where('c.kind', '=', entry.manifest.auth.kind)
       .where('a.provider', '=', target.provider)
+      .where('a.provider_app_id', '=', target.providerAppId)
       .where('a.status', '=', 'active')
       .execute();
     let flagged = 0;

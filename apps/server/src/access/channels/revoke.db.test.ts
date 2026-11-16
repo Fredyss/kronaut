@@ -82,6 +82,7 @@ describe('credential revoke job', () => {
     const { fake } = fixture;
     const provider = 'shared';
     const app = await fixture.createApp('shared-client', provider);
+    const otherApp = await fixture.createApp('shared-client-2', provider);
     const providers = createProviderRegistry(
       [{ ...fake.manifest, id: provider, dataRetention: { disconnectedDays: 7, lapsedDays: 30 } }],
       [
@@ -93,8 +94,8 @@ describe('credential revoke job', () => {
       ],
       () => ({}) as HttpClient,
     );
-    const connect = async (token: string, subject: string | null = null) => {
-      const id = await fixture.connectAccount(app, { provider, value: { token } });
+    const connect = async (token: string, subject: string | null = null, appId = app) => {
+      const id = await fixture.connectAccount(appId, { provider, value: { token } });
       await fixture.owner.withActor(SYSTEM, (trx) =>
         trx
           .updateTable('social_accounts')
@@ -104,15 +105,17 @@ describe('credential revoke job', () => {
       );
       return id;
     };
-    const [revokedId, sibling, sameSubject, otherSubject, other, refusedId, spared] = [
-      await connect('grant-a', 'google-1'),
-      await connect('grant-a'),
-      await connect('grant-d', 'google-1'),
-      await connect('grant-e', 'google-2'),
-      await connect('grant-b'),
-      await connect('grant-c'),
-      await connect('grant-c'),
-    ];
+    const [revokedId, sibling, sameSubject, otherSubject, other, refusedId, spared, otherProject] =
+      [
+        await connect('grant-a', 'google-1'),
+        await connect('grant-a'),
+        await connect('grant-d', 'google-1'),
+        await connect('grant-e', 'google-2'),
+        await connect('grant-b'),
+        await connect('grant-c'),
+        await connect('grant-c'),
+        await connect('grant-f', 'google-1', otherApp),
+      ];
     expect(await runRevoke(deps(providers), await disconnected('disconnected', revokedId))).toBe(
       'revoked',
     );
@@ -124,7 +127,7 @@ describe('credential revoke job', () => {
       trx
         .selectFrom('social_accounts')
         .select(['id', 'status', 'status_reason'])
-        .where('id', 'in', [sibling, sameSubject, otherSubject, other, spared])
+        .where('id', 'in', [sibling, sameSubject, otherSubject, other, spared, otherProject])
         .execute(),
     );
     expect(rows).toEqual(
@@ -134,6 +137,7 @@ describe('credential revoke job', () => {
         { id: otherSubject, status: 'active', status_reason: null },
         { id: other, status: 'active', status_reason: null },
         { id: spared, status: 'active', status_reason: null },
+        { id: otherProject, status: 'active', status_reason: null },
       ]),
     );
   });
