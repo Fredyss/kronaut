@@ -33,13 +33,16 @@ export function useDisconnect(workspaceId: string) {
 interface ConfirmProps {
   readonly name: string;
   readonly provider: string;
+  readonly dataRetentionDays: number | null;
   readonly pending: boolean;
   onConfirm(): void;
   onClose(): void;
 }
 
-export function DisconnectConfirm({ name, provider, pending, onConfirm, onClose }: ConfirmProps) {
+export function DisconnectConfirm(props: ConfirmProps) {
+  const { name, dataRetentionDays, pending, onConfirm, onClose } = props;
   const confirm = useRef<HTMLButtonElement>(null);
+  const ui = providerUi(props.provider);
   useEffect(() => confirm.current?.focus(), []);
   return (
     <fieldset
@@ -50,9 +53,14 @@ export function DisconnectConfirm({ name, provider, pending, onConfirm, onClose 
     >
       <legend className="sr-only">{m.channels_disconnect()}</legend>
       <p>{m.channels_disconnect_body({ name })}</p>
-      {providerUi(provider).googleGrant === true ? (
+      {ui.googleGrant === true ? (
         <p className="text-muted-foreground">{m.channels_disconnect_google()}</p>
       ) : null}
+      {dataRetentionDays === null ? null : (
+        <p className="text-muted-foreground">
+          {m.channels_disconnect_data({ count: dataRetentionDays })}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <Button
           ref={confirm}

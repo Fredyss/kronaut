@@ -64,6 +64,7 @@ export const youtubeManifest: ProviderManifest<YoutubeSettings> = {
   ],
   concurrency: 1,
   preview: 'pro-feed',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
+  dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
   egressHosts: ['accounts.google.com', 'oauth2.googleapis.com', 'www.googleapis.com'],
 };

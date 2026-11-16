@@ -71,7 +71,7 @@ describe('youtube connect', () => {
       client_id: APP.clientId,
       redirect_uri: REDIRECT,
       state: 'state-1',
-      scope: `${UPLOAD} ${READONLY}`,
+      scope: `openid ${UPLOAD} ${READONLY}`,
       access_type: 'offline',
       prompt: 'consent',
       code_challenge: createHash('sha256').update(verifier).digest('base64url'),
@@ -129,6 +129,23 @@ describe('youtube connect', () => {
         profileUrl: 'https://www.youtube.com/channel/UCbbbbbbbbbbbbbbbbbbbbbb',
       },
     ]);
+  });
+
+  it.each([
+    ['a Google account id', `h.${Buffer.from('{"sub":"1170"}').toString('base64url')}.s`, '1170'],
+    ['no ID token', undefined, undefined],
+    ['a malformed ID token', 'not-a-jwt', undefined],
+    [
+      'an ID token without sub',
+      `h.${Buffer.from('{"sub":""}').toString('base64url')}.s`,
+      undefined,
+    ],
+  ])('stores %s as the subject', async (_name, idToken, subjectId) => {
+    const { accounts } = await finish([
+      token({ id_token: idToken }),
+      channels([{ id: 'UCaaaaaaaaaaaaaaaaaaaaaa', snippet: { title: 'Main' } }]),
+    ]);
+    expect(accounts?.[0]?.subjectId).toBe(subjectId);
   });
 
   it('records when a time-limited grant ends', async () => {

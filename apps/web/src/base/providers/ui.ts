@@ -109,6 +109,7 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
   youtube: {
     name: () => m.provider_youtube(),
     badge: 'bg-red-600',
+    followers: true,
     googleGrant: true,
     loginHint: false,
     instance: false,

@@ -74,6 +74,7 @@ describe('conformanceProblems', () => {
         },
       ],
       settings: z.object({ lang: z.string() }),
+      dataRetention: { disconnectedDays: 0, lapsedDays: 30 },
     };
     expect(conformanceProblems(manifest, { ...bare, id: 'other' })).toEqual([
       'runtime id other ≠ example',
@@ -87,6 +88,7 @@ describe('conformanceProblems', () => {
       'instanceScoped without runtime.registerApp',
       'verify deterministic_id without runtime.verify',
       'settings reject {}',
+      'data retention days must be whole and at least 1',
     ]);
   });
 });

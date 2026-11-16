@@ -21,6 +21,7 @@ const ada: Channel = {
   requiredSettings: [],
   signature: null,
   shortenLinks: true,
+  dataRetentionDays: null,
   brandId: null,
   groupIds: [],
   preview: 'short-feed',

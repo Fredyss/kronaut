@@ -21,6 +21,7 @@ import { pullAnalytics } from './records/analytics/pull.ts';
 import { type EmailDeps, emailNotifications } from './records/notifications/email.ts';
 import { purgeNotifications } from './records/notifications/retention.ts';
 import { purgeShortLinks } from './records/short-links/gc.ts';
+import { flagAccount } from './steps/publish/incidents.ts';
 import { type RefreshDeps, refreshExpiring } from './steps/publish/refresh/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './steps/publish/sweeps.ts';
 
@@ -199,7 +200,9 @@ export function cronTaskList(
       );
     },
     [CRON_TASKS.analyticsPull]: async () => {
-      await recordCronRun(db, CRON_TASKS.analyticsPull, () => pullAnalytics(sweeps));
+      await recordCronRun(db, CRON_TASKS.analyticsPull, () =>
+        pullAnalytics({ ...sweeps, flagAccount }),
+      );
     },
     [CRON_TASKS.apiVersionSunset]: async () => {
       await recordCronRun(db, CRON_TASKS.apiVersionSunset, async () =>
@@ -217,7 +220,7 @@ export function cronTaskList(
     [CRON_TASKS.credentialRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.credentialRetention, async () =>
         JSON.stringify({
-          ...JSON.parse(await purgeDisconnectedCredentials(db)),
+          ...JSON.parse(await purgeDisconnectedCredentials(db, sweeps.providers)),
           shortLinks: await purgeShortLinks(db),
         }),
       );

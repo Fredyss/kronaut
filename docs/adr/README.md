@@ -91,6 +91,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0054](0054-video-pipeline.md) | Video upload, conversion and publishing |
 | [0055](0055-reply-chains-and-first-comment.md) | Reply chains and first comment, published one item at a time |
 | [0057](0057-meta-data-deletion-and-deauthorize-callbacks.md) | Meta data deletion and deauthorize callbacks |
+| [0060](0060-provider-data-retention.md) | Provider data retention |
 
 ## Defaults
 

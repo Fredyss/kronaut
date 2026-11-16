@@ -29,7 +29,14 @@ export interface AnalyticsResult {
 
 export type AccountMetricsInput<C> = RefreshInput<C>;
 
+export interface AccountProfile {
+  readonly displayName: string;
+  readonly handle?: string;
+  readonly profileUrl?: string;
+}
+
 export interface AccountMetrics {
   readonly followers: number | null;
   readonly apiVersion: string;
+  readonly profile?: AccountProfile;
 }

@@ -1,5 +1,6 @@
 import type {
   AccountMetrics,
+  AccountProfile,
   AnalyticsResult,
   PostMetrics,
   ProviderError,
@@ -35,6 +36,7 @@ import {
   viewerAuth,
   workspaceId,
 } from '../../flow/posts/testing.ts';
+import { flagAccount } from '../../steps/publish/incidents.ts';
 import { publishDeps, runPublish } from '../../steps/publish/task.ts';
 import { pullAnalytics } from './pull.ts';
 
@@ -46,7 +48,10 @@ const replies = new Map<string, Reply>();
 let thrown: ProviderError | null = null;
 let followers: number | null = 10;
 let followerError: ProviderError | null = null;
+const followerFailures = new Map<string, ProviderError>();
 const followerCalls = new Map<string, number>();
+const profiles = new Map<string, AccountProfile>();
+const lapseDuringRead = new Set<string>();
 const revoked = new Set<string>();
 const analyticsCalls = new Map<string, number>();
 const postTypesSeen = new Map<string, string>();
@@ -68,7 +73,17 @@ function analytics(account: string, remoteIds: readonly string[]): AnalyticsResu
   return { posts, failed, apiVersion: 'v-test' };
 }
 
-function registry() {
+async function lapse(providerAccountId: string): Promise<void> {
+  await owner.withActor(SYSTEM, (trx) =>
+    trx
+      .updateTable('social_accounts')
+      .set({ status: 'needs_reauth' })
+      .where('provider_account_id', '=', providerAccountId)
+      .execute(),
+  );
+}
+
+function registry(retainData = false) {
   const runtime: ProviderRuntime = {
     ...fake.runtime,
     analytics: async (_ctx, input) => {
@@ -78,8 +93,11 @@ function registry() {
     accountMetrics: async (_ctx, input): Promise<AccountMetrics> => {
       const id = input.account.providerAccountId;
       followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
-      if (followerError !== null) throw new ProviderFailure(followerError);
-      return { followers, apiVersion: 'v-test' };
+      const failure = followerFailures.get(id) ?? followerError;
+      if (failure !== null) throw new ProviderFailure(failure);
+      if (lapseDuringRead.has(id)) await lapse(id);
+      const profile = profiles.get(id);
+      return { followers, apiVersion: 'v-test', ...(profile === undefined ? {} : { profile }) };
     },
   };
   const manifest = {
@@ -88,6 +106,7 @@ function registry() {
       windowHours === undefined ? type : { ...type, analytics: { windowHours } },
     ),
     capabilities: { analytics: true, delete: false },
+    ...(retainData ? { dataRetention: { disconnectedDays: 7, lapsedDays: 30 } } : {}),
   };
   return createProviderRegistry([manifest], [runtime], () => ({}) as HttpClient);
 }
@@ -170,14 +189,15 @@ async function pin(destinationId: string): Promise<void> {
   });
 }
 
-function pullAt(at: Temporal.Instant) {
+function pullAt(at: Temporal.Instant, retainData = false) {
   return pullAnalytics({
     db,
     keyring,
-    providers: registry(),
+    providers: registry(retainData),
     logger,
     publicBaseUrl: BASE,
     now: () => at,
+    flagAccount,
   });
 }
 
@@ -385,6 +405,54 @@ describe('analytics pulls', () => {
     expect(calls()).toBe(7);
     await pullAt(day.add({ hours: 73, minutes: 15 }));
     expect(calls()).toBe(7);
+  });
+
+  it('refreshes the stored profile from the follower read while the channel is active', async () => {
+    const renamed = decodePublicId('socialAccount', await insertAccount('renamed')) ?? '';
+    const lapsed = decodePublicId('socialAccount', await insertAccount('lapsed')) ?? '';
+    const profile = { displayName: 'Renamed', handle: '@renamed', profileUrl: 'https://x.test/r' };
+    profiles.set('fake-renamed', profile).set('fake-lapsed', profile);
+    lapseDuringRead.add('fake-lapsed');
+    await pullAt(Temporal.Instant.from('2027-03-01T10:00:00Z'));
+    const names = await owner.withActor(SYSTEM, (trx) =>
+      trx
+        .selectFrom('social_accounts')
+        .select(['id', 'display_name', 'handle', 'profile_url'])
+        .where('id', 'in', [renamed, lapsed])
+        .execute(),
+    );
+    const stored = { display_name: 'Renamed', handle: '@renamed', profile_url: 'https://x.test/r' };
+    expect(names).toEqual(
+      expect.arrayContaining([
+        { id: renamed, ...stored },
+        { id: lapsed, display_name: 'lapsed', handle: null, profile_url: null },
+      ]),
+    );
+  });
+
+  it('only a proven dead grant lapses the channel, and only with data retention', async () => {
+    const gone: ProviderError = { kind: 'permanent', code: 'channel_missing' };
+    const cases: [string, ProviderError | null, string][] = [
+      ['gone', gone, 'needs_reauth'],
+      ['revoked', { kind: 'auth_revoked' }, 'needs_reauth'],
+      ['odd', { kind: 'permanent', code: 'unexpected_status' }, 'active'],
+      ['expired', { kind: 'auth_expired' }, 'active'],
+      ['plain', null, 'active'],
+    ];
+    const ids: string[] = [];
+    for (const [name, failure] of cases) {
+      ids.push(decodePublicId('socialAccount', await insertAccount(`dead-${name}`)) ?? '');
+      if (failure !== null) followerFailures.set(`fake-dead-${name}`, failure);
+    }
+    await pullAt(Temporal.Instant.from('2027-04-01T10:00:00Z'), true);
+    followerFailures.set('fake-dead-plain', gone);
+    await pullAt(Temporal.Instant.from('2027-04-02T10:00:00Z'));
+    followerFailures.clear();
+    const rows = await owner.withActor(SYSTEM, (trx) =>
+      trx.selectFrom('social_accounts').select(['id', 'status']).where('id', 'in', ids).execute(),
+    );
+    const status = new Map(rows.map((row) => [row.id, row.status]));
+    expect(ids.map((id) => status.get(id))).toEqual(cases.map(([, , expected]) => expected));
   });
 
   it('a stopped channel is pushed back and does not starve a healthy one', async () => {

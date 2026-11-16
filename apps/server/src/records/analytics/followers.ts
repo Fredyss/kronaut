@@ -1,5 +1,6 @@
 import {
   type AccountMetrics,
+  type AccountProfile,
   encodePublicId,
   isProviderFailure,
   type ProviderError,
@@ -9,8 +10,10 @@ import { sql } from 'kysely';
 import type { ChannelRef } from '../../access/channels/channel-ref.ts';
 import { createBaseContext, type ProviderEntry } from '../../base/providers/providers.ts';
 import {
+  type DeadGrant,
   errorFields,
   metricValue,
+  type PullDeps,
   type Run,
   type Source,
   sourceOf,
@@ -67,6 +70,28 @@ async function storeFollowers(
   return true;
 }
 
+async function storeProfile(trx: TenantDb, channel: ChannelRef, profile: AccountProfile) {
+  const next = {
+    display_name: profile.displayName.normalize('NFC'),
+    handle: profile.handle?.normalize('NFC') ?? null,
+    profile_url: profile.profileUrl ?? null,
+  };
+  await trx
+    .updateTable('social_accounts')
+    .set(next)
+    .where('workspace_id', '=', channel.workspaceId)
+    .where('id', '=', channel.accountId)
+    .where('status', '=', 'active')
+    .where((eb) =>
+      eb.or([
+        eb('display_name', '<>', next.display_name),
+        eb('handle', 'is distinct from', next.handle),
+        eb('profile_url', 'is distinct from', next.profile_url),
+      ]),
+    )
+    .execute();
+}
+
 async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef, day: string) {
   await trx
     .insertInto('account_metric_pulls')
@@ -102,6 +127,28 @@ async function countAttempt(trx: TenantDb, channel: ChannelRef, day: string) {
     .returning('attempts')
     .executeTakeFirstOrThrow();
   if (row.attempts >= MAX_ATTEMPTS) await markChecked(trx, channel, day);
+}
+
+// Only failures that prove the grant or the channel gone; an expired access token is the refresh path's call, and an unknown 4xx or schema drift can hit every channel at once.
+function deadGrant(failure: ProviderError): DeadGrant['incident'] | null {
+  if (failure.kind === 'auth_revoked') return 'auth_revoked';
+  return failure.kind === 'permanent' && failure.code === 'channel_missing' ? 'auth_revoked' : null;
+}
+
+async function flagDeadGrant(
+  trx: TenantDb,
+  deps: PullDeps,
+  channel: FollowerChannel,
+  failure: ProviderError,
+) {
+  const incident = deadGrant(failure);
+  if (incident === null || channel.entry.manifest.dataRetention === undefined) return;
+  await deps.flagAccount(trx, {
+    workspaceId: channel.workspaceId,
+    socialAccountId: channel.accountId,
+    fence: channel.source.fence,
+    incident,
+  });
 }
 
 async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChannel[]> {
@@ -178,9 +225,11 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
       return await deferRead(trx, channel, resumeAt(now, failure));
     }
     if (failure?.kind === 'transient') return await countAttempt(trx, channel, readAt.day);
+    if (failure !== null) await flagDeadGrant(trx, deps, channel, failure);
     if (metrics !== null && (await storeFollowers(trx, channel, metrics, readAt))) {
       run.counts.followers++;
     }
+    if (metrics?.profile !== undefined) await storeProfile(trx, channel, metrics.profile);
     await markChecked(trx, channel, readAt.day);
   });
 }

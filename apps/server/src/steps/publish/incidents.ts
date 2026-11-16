@@ -68,6 +68,7 @@ export async function flagAccount(
     readonly socialAccountId: string;
     readonly fence: CredentialFence;
     readonly incident: AccountIncident;
+    readonly statusReason?: string;
   },
 ): Promise<boolean> {
   const { workspaceId, socialAccountId, fence, incident } = target;
@@ -75,7 +76,7 @@ export async function flagAccount(
     .updateTable('social_accounts')
     .set({
       status: 'needs_reauth',
-      status_reason: incident,
+      status_reason: target.statusReason ?? incident,
       status_changed_at: sql<Date>`now()`,
       last_error_at: sql<Date>`now()`,
       last_error_code: incident,

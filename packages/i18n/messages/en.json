@@ -80,6 +80,16 @@
   "queue_evergreen": "Free slots are filled from evergreen posts 24 h ahead.",
   "channels_disconnect_body": "Disconnect {name}? Scheduled posts to it won't be published. You can connect it again later.",
   "channels_disconnect_google": "This also revokes Kronaut's access at Google. Other YouTube channels connected with the same Google account will need to reconnect.",
+  "channels_disconnect_data": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Kronaut deletes this channel's name and stats within {count} day after you disconnect it.",
+        "countPlural=*": "Kronaut deletes this channel's name and stats within {count} days after you disconnect it."
+      }
+    }
+  ],
   "channels_disconnect_confirm": "Disconnect channel",
   "channels_disconnected": "{name} disconnected.",
   "channels_open_profile": "Open profile",

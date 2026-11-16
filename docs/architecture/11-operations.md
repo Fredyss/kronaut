@@ -95,6 +95,7 @@
   | webhook deliveries | 30 d |
   | notifications | 90 d |
   | credentials of disconnected channels | 30 d |
+  | channel data of a provider with `dataRetention` (YouTube: 7 d after disconnect, 30 d after `needs_reauth`; ADR-0060) | see the manifest |
   | idempotency keys | 24 h (7 d for MCP) |
   | soft-deleted posts | 30 d |
   | `ip_prefix` / `ua_hash` | nulled at 90 d |
@@ -109,7 +110,8 @@
   - Workspace export is an async zip.
   - User erasure nulls the PII on `users`; audit rows keep the bare uuid.
   - Hosted workspace deletion has a 7-day grace period, then a cascade, then a `deletion_receipts` row.
-  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon), and credentials are purged after 30 d.
+  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon, YouTube), and credentials are purged after 30 d.
+  - A provider whose manifest sets `dataRetention` (YouTube) goes further (ADR-0060): the daily `credential_retention` task purges a channel `disconnected` longer than `disconnectedDays` or `needs_reauth` longer than `lapsedDays` (`disconnectedDays` when the reason is `grant_revoked`: a sibling channel of a revoked shared grant), each minus a 2-day margin so a missed daily run still lands inside the policy deadline. The purge deletes its credentials, wipes its name, handle, profile URL and subject id, deletes its `account_daily_metrics` and the `post_metric_snapshots` and `destination_metric_pulls` of its destinations, and writes one `channel.data_purged` audit event. Posts and destinations, with their remote ids and permalinks, stay. The run summary counts `purgedAccounts`; reconnecting refills the name and handle.
 - **Migrations (ADR-0024)**
   - Changes follow expand → deploy → contract.
   - The migrator enforces `lock_timeout=3s`, `CREATE INDEX CONCURRENTLY` and `NOT VALID` + `VALIDATE`.

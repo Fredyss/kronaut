@@ -856,6 +856,7 @@ export type ChannelsListResponses = {
             accountKind: string;
             brandId: string | null;
             connectedAt: string;
+            dataRetentionDays: number | null;
             displayName: string;
             groupIds: Array<string>;
             handle: string | null;

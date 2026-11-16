@@ -1,4 +1,4 @@
-import type { Actor } from '@kronaut/db';
+import type { Actor, TenantDb } from '@kronaut/db';
 import { toProviderFailure } from '@kronaut/providers/failure';
 import type { Task } from 'graphile-worker';
 import * as z from 'zod';
@@ -14,10 +14,22 @@ import {
 import type { RevokeJob } from '../../infrastructure/jobs/jobs.ts';
 import type { PublishDeps } from '../../steps/publish/task.ts';
 
+export const GRANT_REVOKED = 'grant_revoked';
+
+export interface SiblingFlag {
+  readonly workspaceId: string;
+  readonly socialAccountId: string;
+  readonly fence: { readonly id: string; readonly version: number };
+  readonly incident: 'auth_revoked';
+  readonly statusReason: typeof GRANT_REVOKED;
+}
+
 export type RevokeDeps = Pick<
   PublishDeps,
   'db' | 'keyring' | 'providers' | 'logger' | 'publicBaseUrl' | 'now'
->;
+> & {
+  readonly flagAccount: (trx: TenantDb, target: SiblingFlag) => Promise<boolean>;
+};
 
 export type RevokeOutcome = 'revoked' | 'skipped' | 'refused';
 
@@ -33,6 +45,8 @@ const PayloadSchema = z.object({
 interface Revocable {
   readonly entry: ProviderEntry;
   readonly provider: string;
+  readonly providerAppId: string;
+  readonly subject: string | null;
   readonly input: Parameters<NonNullable<ProviderEntry['runtime']['revoke']>>[1];
 }
 
@@ -43,7 +57,7 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
     if (row === null || row.version !== job.version) return null;
     const account = await trx
       .selectFrom('social_accounts')
-      .select('status')
+      .select(['status', 'provider_subject_id'])
       .where('workspace_id', '=', workspaceId)
       .where('id', '=', row.socialAccountId)
       .executeTakeFirst();
@@ -59,6 +73,8 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
     return {
       entry,
       provider: row.provider,
+      providerAppId: row.providerAppId,
+      subject: account.provider_subject_id,
       input: {
         app: app.app,
         account: {
@@ -68,6 +84,77 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
         credentials: entry.runtime.parseCredentials(row.value),
       },
     };
+  });
+}
+
+function parsedOrNull(entry: ProviderEntry, value: unknown): unknown {
+  try {
+    return entry.runtime.parseCredentials(value);
+  } catch (err) {
+    if (!(err instanceof Error) || err.name !== 'ZodError') throw err;
+    return null;
+  }
+}
+
+interface Sibling {
+  readonly id: string;
+  readonly version: number;
+  readonly social_account_id: string;
+  readonly provider_subject_id: string | null;
+}
+
+type SharesGrant = (a: unknown, b: unknown) => boolean;
+
+async function sameGrant(
+  trx: TenantDb,
+  deps: RevokeDeps,
+  target: Revocable & { readonly workspaceId: string; readonly shares: SharesGrant },
+  sibling: Sibling,
+): Promise<boolean> {
+  if (target.subject !== null && sibling.provider_subject_id === target.subject) return true;
+  const other = await loadCredentialById(trx, deps.keyring, {
+    workspaceId: target.workspaceId,
+    credentialId: sibling.id,
+  });
+  const credentials = other === null ? null : parsedOrNull(target.entry, other.value);
+  return credentials !== null && target.shares(target.input.credentials, credentials);
+}
+
+async function flagSiblings(deps: RevokeDeps, job: RevokeJob, target: Revocable): Promise<number> {
+  const { entry } = target;
+  const shares = entry.runtime.sharesGrant;
+  if (shares === undefined || entry.manifest.dataRetention === undefined) return 0;
+  const { workspaceId } = job;
+  const revoked = { ...target, workspaceId, shares };
+  return await deps.db.withTenant(workspaceId, SYSTEM, async (trx) => {
+    const rows = await trx
+      .selectFrom('account_credentials as c')
+      .innerJoin('social_accounts as a', (join) =>
+        join
+          .onRef('a.workspace_id', '=', 'c.workspace_id')
+          .onRef('a.id', '=', 'c.social_account_id'),
+      )
+      .select(['c.id', 'c.version', 'c.social_account_id', 'a.provider_subject_id'])
+      .where('c.workspace_id', '=', workspaceId)
+      .where('c.id', '<>', job.id)
+      .where('c.kind', '=', entry.manifest.auth.kind)
+      .where('a.provider', '=', target.provider)
+      .where('a.provider_app_id', '=', target.providerAppId)
+      .where('a.status', '=', 'active')
+      .execute();
+    let flagged = 0;
+    for (const row of rows) {
+      if (!(await sameGrant(trx, deps, revoked, row))) continue;
+      const done = await deps.flagAccount(trx, {
+        workspaceId,
+        socialAccountId: row.social_account_id,
+        fence: { id: row.id, version: row.version },
+        incident: 'auth_revoked',
+        statusReason: GRANT_REVOKED,
+      });
+      if (done) flagged++;
+    }
+    return flagged;
   });
 }
 
@@ -88,7 +175,8 @@ export async function runRevoke(deps: RevokeDeps, job: RevokeJob): Promise<Revok
     );
     return 'refused';
   }
-  logger.info('revoked the token of a disconnected channel');
+  const siblings = await flagSiblings(deps, job, target);
+  logger.info({ siblings }, 'revoked the token of a disconnected channel');
   return 'revoked';
 }
 
