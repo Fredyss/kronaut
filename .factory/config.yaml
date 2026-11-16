@@ -33,11 +33,11 @@ reference_feature:
     - apps/server/src/steps/saved-texts/saved-texts.db.test.ts
 
 commands:
-  check: pnpm check && pnpm test:db && pnpm test:e2e
+  check: pnpm check
   install: pnpm install --frozen-lockfile
   typecheck: pnpm typecheck
   lint: pnpm lint
-  test: pnpm test && pnpm test:db
+  test: pnpm test
   test_report: pnpm exec vitest run --reporter=json
   mutation: null
   stubs: null
@@ -134,3 +134,7 @@ risk:
     - packages/egress/**
     - packages/db/migrations/**
   max_diff_lines: 400
+
+host_commands:
+  check: pnpm check && pnpm test:db && pnpm test:e2e
+  test: pnpm test && pnpm test:db
