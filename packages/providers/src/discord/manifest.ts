@@ -17,6 +17,6 @@ export const discordManifest: ProviderManifest<DiscordMessageSettings> = {
   rateLimits: [],
   concurrency: 1,
   preview: 'short-feed',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   egressHosts: ['discord.com'],
 };

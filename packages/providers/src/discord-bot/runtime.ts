@@ -1,5 +1,6 @@
 import type { ProviderRuntime } from '@kronaut/core';
 import type { DiscordMessageSettings } from '../_kit/discord/message-spec.ts';
+import { botAnalytics } from './analytics.ts';
 import { type DiscordBotCredentials, discordBotCredentials } from './bot.ts';
 import { connectFinish, connectStart } from './connect.ts';
 import { publishMessage } from './publish.ts';
@@ -15,6 +16,8 @@ export const discordBotRuntime: ProviderRuntime<DiscordBotCredentials, DiscordMe
   connectFinish,
 
   publish: publishMessage,
+
+  analytics: botAnalytics,
 
   verify: verifyMessage,
 };

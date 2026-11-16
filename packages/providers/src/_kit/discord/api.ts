@@ -6,12 +6,14 @@ import {
 } from '@kronaut/core';
 import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
+import { NOT_FOUND } from '../analytics.ts';
 import { retryAfter, tryJson } from '../http.ts';
 import { failureForStatus } from '../status-failure.ts';
 
 export const DISCORD_API = 'https://discord.com/api/v10';
 
 const UNKNOWN_CHANNEL = 10_003;
+const UNKNOWN_MESSAGE = 10_008;
 const UNKNOWN_WEBHOOK = 10_015;
 const MISSING_ACCESS = 50_001;
 const MISSING_PERMISSIONS = 50_013;
@@ -52,6 +54,7 @@ function botError(code: number | undefined, detail: string) {
 }
 
 function knownError(status: number, code: number | undefined, detail: string, auth: DiscordAuth) {
+  if (code === UNKNOWN_MESSAGE) return NOT_FOUND;
   const bot = auth === 'bot' ? botError(code, detail) : undefined;
   if (bot !== undefined) return bot;
   if (status === 404 || code === UNKNOWN_WEBHOOK) return { kind: 'auth_revoked' } as const;
