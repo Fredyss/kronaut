@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.local)",
+      "Read(.env.development)",
+      "Read(.env.development.local)",
+      "Read(.env.test)",
+      "Read(.env.test.local)",
+      "Read(.env.production)",
+      "Read(.env.production.local)",
+      "Read(/secrets/**)",
+      "Read(/apps/server/e2e/.auth/**)",
+      "Read(*.pem)",
+      "Read(*.key)",
+      "Read(*.p12)",
+      "Read(*.pfx)",
+      "Edit(/.claude/settings.json)",
+      "Edit(/.claude/settings.local.json)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "filesystem": {
+      "denyRead": [
+        "./.env",
+        "./.env.local",
+        "./.env.development",
+        "./.env.development.local",
+        "./.env.test",
+        "./.env.test.local",
+        "./.env.production",
+        "./.env.production.local",
+        "./infra/compose/.env",
+        "./secrets",
+        "./apps/server/e2e/.auth",
+        "~/.ssh",
+        "~/.aws",
+        "~/.config/gh",
+        "~/.netrc",
+        "~/.npmrc"
+      ]
+    },
+    "network": {
+      "allowLocalBinding": true,
+      "allowedDomains": ["registry.npmjs.org"]
+    }
+  }
+}
