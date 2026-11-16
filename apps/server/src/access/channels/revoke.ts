@@ -45,6 +45,7 @@ const PayloadSchema = z.object({
 interface Revocable {
   readonly entry: ProviderEntry;
   readonly provider: string;
+  readonly subject: string | null;
   readonly input: Parameters<NonNullable<ProviderEntry['runtime']['revoke']>>[1];
 }
 
@@ -55,7 +56,7 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
     if (row === null || row.version !== job.version) return null;
     const account = await trx
       .selectFrom('social_accounts')
-      .select('status')
+      .select(['status', 'provider_subject_id'])
       .where('workspace_id', '=', workspaceId)
       .where('id', '=', row.socialAccountId)
       .executeTakeFirst();
@@ -71,6 +72,7 @@ function load(deps: RevokeDeps, job: RevokeJob): Promise<Revocable | null> {
     return {
       entry,
       provider: row.provider,
+      subject: account.provider_subject_id,
       input: {
         app: app.app,
         account: {
@@ -92,11 +94,36 @@ function parsedOrNull(entry: ProviderEntry, value: unknown): unknown {
   }
 }
 
+interface Sibling {
+  readonly id: string;
+  readonly version: number;
+  readonly social_account_id: string;
+  readonly provider_subject_id: string | null;
+}
+
+type SharesGrant = (a: unknown, b: unknown) => boolean;
+
+async function sameGrant(
+  trx: TenantDb,
+  deps: RevokeDeps,
+  target: Revocable & { readonly workspaceId: string; readonly shares: SharesGrant },
+  sibling: Sibling,
+): Promise<boolean> {
+  if (target.subject !== null && sibling.provider_subject_id === target.subject) return true;
+  const other = await loadCredentialById(trx, deps.keyring, {
+    workspaceId: target.workspaceId,
+    credentialId: sibling.id,
+  });
+  const credentials = other === null ? null : parsedOrNull(target.entry, other.value);
+  return credentials !== null && target.shares(target.input.credentials, credentials);
+}
+
 async function flagSiblings(deps: RevokeDeps, job: RevokeJob, target: Revocable): Promise<number> {
   const { entry } = target;
   const shares = entry.runtime.sharesGrant;
   if (shares === undefined || entry.manifest.dataRetention === undefined) return 0;
   const { workspaceId } = job;
+  const revoked = { ...target, workspaceId, shares };
   return await deps.db.withTenant(workspaceId, SYSTEM, async (trx) => {
     const rows = await trx
       .selectFrom('account_credentials as c')
@@ -105,7 +132,7 @@ async function flagSiblings(deps: RevokeDeps, job: RevokeJob, target: Revocable)
           .onRef('a.workspace_id', '=', 'c.workspace_id')
           .onRef('a.id', '=', 'c.social_account_id'),
       )
-      .select('c.id')
+      .select(['c.id', 'c.version', 'c.social_account_id', 'a.provider_subject_id'])
       .where('c.workspace_id', '=', workspaceId)
       .where('c.id', '<>', job.id)
       .where('c.kind', '=', entry.manifest.auth.kind)
@@ -114,17 +141,11 @@ async function flagSiblings(deps: RevokeDeps, job: RevokeJob, target: Revocable)
       .execute();
     let flagged = 0;
     for (const row of rows) {
-      const other = await loadCredentialById(trx, deps.keyring, {
-        workspaceId,
-        credentialId: row.id,
-      });
-      const credentials = other === null ? null : parsedOrNull(entry, other.value);
-      if (other === null || credentials === null) continue;
-      if (!shares(target.input.credentials, credentials)) continue;
+      if (!(await sameGrant(trx, deps, revoked, row))) continue;
       const done = await deps.flagAccount(trx, {
         workspaceId,
-        socialAccountId: other.socialAccountId,
-        fence: { id: other.id, version: other.version },
+        socialAccountId: row.social_account_id,
+        fence: { id: row.id, version: row.version },
         incident: 'auth_revoked',
         statusReason: GRANT_REVOKED,
       });

@@ -13,9 +13,11 @@ import {
   AUTHORIZE_URL,
   appSecret,
   exchangeCode,
+  REQUIRED_SCOPES,
   refreshExpiry,
   SCOPES,
   scopesOf,
+  subjectOf,
   type YoutubeCredentials,
 } from './oauth.ts';
 
@@ -63,10 +65,13 @@ export async function connectFinish(
   });
   if (token.refresh_token === undefined) throw permanent('refresh_token_missing');
   const grantedScopes = scopesOf(token.scope);
-  if (!SCOPES.every((scope) => grantedScopes.includes(scope))) throw permanent('scope_missing');
+  if (!REQUIRED_SCOPES.every((scope) => grantedScopes.includes(scope))) {
+    throw permanent('scope_missing');
+  }
   const accessExpiresAt = ctx.now().add({ seconds: token.expires_in });
   const refreshExpiresAt = refreshExpiry(ctx.now(), token);
   const credentials = { accessToken: token.access_token, refreshToken: token.refresh_token };
+  const subject = subjectOf(token.id_token);
   return (await listChannels(ctx, token.access_token, 'snippet')).map((channel) => ({
     credentials,
     grantedScopes,
@@ -74,6 +79,7 @@ export async function connectFinish(
     ...refreshExpiresAt,
     providerAccountId: channel.id,
     accountKind: 'channel',
+    ...(subject === undefined ? {} : { subjectId: subject }),
     ...channelProfile(channel),
   }));
 }

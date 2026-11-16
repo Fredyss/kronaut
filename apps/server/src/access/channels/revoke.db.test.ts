@@ -78,7 +78,7 @@ describe('credential revoke job', () => {
     expect(await runRevoke(deps(), job)).toBe('refused');
   });
 
-  it('flags the active channels that share the revoked grant, after a revoke only', async () => {
+  it('flags the active channels of the revoked Google account or token, after a revoke only', async () => {
     const { fake } = fixture;
     const provider = 'shared';
     const app = await fixture.createApp('shared-client', provider);
@@ -93,10 +93,22 @@ describe('credential revoke job', () => {
       ],
       () => ({}) as HttpClient,
     );
-    const connect = (token: string) => fixture.connectAccount(app, { provider, value: { token } });
-    const [revokedId, sibling, other, refusedId, spared] = [
+    const connect = async (token: string, subject: string | null = null) => {
+      const id = await fixture.connectAccount(app, { provider, value: { token } });
+      await fixture.owner.withActor(SYSTEM, (trx) =>
+        trx
+          .updateTable('social_accounts')
+          .set({ provider_subject_id: subject })
+          .where('id', '=', id)
+          .execute(),
+      );
+      return id;
+    };
+    const [revokedId, sibling, sameSubject, otherSubject, other, refusedId, spared] = [
+      await connect('grant-a', 'google-1'),
       await connect('grant-a'),
-      await connect('grant-a'),
+      await connect('grant-d', 'google-1'),
+      await connect('grant-e', 'google-2'),
       await connect('grant-b'),
       await connect('grant-c'),
       await connect('grant-c'),
@@ -112,12 +124,14 @@ describe('credential revoke job', () => {
       trx
         .selectFrom('social_accounts')
         .select(['id', 'status', 'status_reason'])
-        .where('id', 'in', [sibling, other, spared])
+        .where('id', 'in', [sibling, sameSubject, otherSubject, other, spared])
         .execute(),
     );
     expect(rows).toEqual(
       expect.arrayContaining([
         { id: sibling, status: 'needs_reauth', status_reason: 'grant_revoked' },
+        { id: sameSubject, status: 'needs_reauth', status_reason: 'grant_revoked' },
+        { id: otherSubject, status: 'active', status_reason: null },
         { id: other, status: 'active', status_reason: null },
         { id: spared, status: 'active', status_reason: null },
       ]),

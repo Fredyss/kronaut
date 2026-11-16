@@ -15,10 +15,11 @@ import { isSuccess } from './errors.ts';
 export const AUTHORIZE_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
-export const SCOPES = [
+export const REQUIRED_SCOPES = [
   'https://www.googleapis.com/auth/youtube.upload',
   'https://www.googleapis.com/auth/youtube.readonly',
 ] as const;
+export const SCOPES = ['openid', ...REQUIRED_SCOPES] as const;
 
 export const youtubeCredentials = z.object({
   accessToken: z.string().min(1),
@@ -32,8 +33,28 @@ const tokenResponse = z.looseObject({
   scope: z.string().optional(),
   refresh_token: z.string().min(1).optional(),
   refresh_token_expires_in: z.number().int().positive().optional(),
+  id_token: z.unknown().optional(),
 });
 export type TokenResponse = z.infer<typeof tokenResponse>;
+
+const idClaims = z.looseObject({ sub: z.string().min(1).max(255) });
+
+function jsonOrNull(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+// No signature check: the ID token comes straight from Google's token endpoint over TLS, authenticated with the client secret (Google's OpenID Connect doc).
+export function subjectOf(idToken: unknown): string | undefined {
+  if (typeof idToken !== 'string') return undefined;
+  const payload = idToken.split('.')[1];
+  if (payload === undefined) return undefined;
+  return idClaims.safeParse(jsonOrNull(Buffer.from(payload, 'base64url').toString('utf8'))).data
+    ?.sub;
+}
 
 const oauthError = z.looseObject({ error: z.string() });
 
@@ -137,7 +158,7 @@ export async function refreshAccess(
       accessToken: token.access_token,
       refreshToken: token.refresh_token ?? credentials.refreshToken,
     },
-    grantedScopes: granted.length === 0 ? [...SCOPES] : granted,
+    grantedScopes: granted.length === 0 ? [...REQUIRED_SCOPES] : granted,
     accessExpiresAt: ctx.now().add({ seconds: token.expires_in }),
     ...refreshExpiry(ctx.now(), token),
   };

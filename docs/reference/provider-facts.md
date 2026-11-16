@@ -381,7 +381,7 @@ LinkedIn video facts checked 2026-10-27 and re-checked 2026-10-28 (L3, L6, L22).
 
 **YouTube** (Data API v3)
 
-YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15; Y8, Y13 and Y14 on 2026-11-16).
+YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15; Y8, Y13, Y14 and G4 on 2026-11-16).
 - **Quota** (Y1, Y3).
   - `videos.insert` costs 1 call from its **own bucket of 100 calls/day per Cloud project**, shared by the whole install, so the bucket key is `app:`. Its cost fell from about 1,600 to about 100 units on 2025-12-04, and it got its own bucket on 2026-06-01.
   - Every other method shares the 10,000-unit bucket: `videos.list` and `channels.list` 1, `videos.update` and `videos.delete` 50. Everything resets at midnight Pacific.
@@ -392,7 +392,7 @@ YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15; Y8, 
   - Chunks are `PUT` to the session URI. Each is a multiple of 256 KiB, except the last. A non-final chunk gets 308 with a `Range: bytes=0-N` header. Completion is 201 (or 200) with the video resource, whose `id` is the video id.
   - **Status query:** an empty `PUT` with `Content-Range: bytes */TOTAL`. It returns the completion response if the upload finished, or 308 with the received `Range`; no `Range` means nothing arrived. Resume from `N+1` and never assume the last chunk landed. The session lifetime is undocumented ("finite"); 404 means it expired.
   - Retry 500, 502, 503 and 504 with backoff. Other 4xx are permanent.
-- **Scopes** (Y2, Y6, Y10, G2). Insert takes `youtube.upload`, `youtube`, `youtube.force-ssl` or `youtubepartner`. `channels.list mine=true` needs a read scope, so Kronaut asks for `youtube.upload youtube.readonly`. `videos.update` and `videos.delete` need `youtube` or `youtube.force-ssl`. Sensitive-scope verification is needed only beyond the unverified-app user cap (number not documented).
+- **Scopes** (Y2, Y6, Y10, G2). Insert takes `youtube.upload`, `youtube`, `youtube.force-ssl` or `youtubepartner`. `channels.list mine=true` needs a read scope, so Kronaut asks for `openid youtube.upload youtube.readonly` (`openid` only for the Google account id, G4; connect requires only the two YouTube scopes). `videos.update` and `videos.delete` need `youtube` or `youtube.force-ssl`. Sensitive-scope verification is needed only beyond the unverified-app user cap (number not documented).
 - **Video resource** (Y4).
   - Title ≤100 **characters** and description ≤5,000 **bytes**; `<` and `>` are forbidden in both. Tags total ≤500 characters, commas included. `categoryId` is required on update; on insert it isn't documented as required.
   - `status`: `privacyStatus` `public | unlisted | private`; `publishAt` only while private and never published; `selfDeclaredMadeForKids`; `containsSyntheticMedia` (the realistic altered or synthetic content disclosure); `embeddable`, `license`, `publicStatsViewable`. `notifySubscribers` is a query parameter, default true.
@@ -416,6 +416,8 @@ YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15; Y8, 
   - Each client keeps at most 100 refresh tokens per account, and the oldest is silently invalidated. A token unused for 6 months dies.
   - An External consent screen in **Testing** status issues refresh tokens that **expire after 7 days**, so a self-hoster sets it to "In production".
   - Revoking a token also revokes its grant for every client in the project.
+  - **OpenID Connect** (G4, checked 2026-11-16): with the `openid` scope the token response carries an `id_token` whose `sub` is the Google account id: unique among all Google accounts, never reused or changed, at most 255 case-sensitive ASCII characters. The doc says the scope must begin with `openid` and add `profile`, `email` or both; Kronaut sends `openid` alone (it works in practice) and falls back to `openid profile` if Google ever rejects it. A token taken straight from the token endpoint over HTTPS with the client secret needs no signature check; Kronaut base64url-decodes the payload, and a missing or malformed `id_token` just means no subject.
+  - Kronaut stores `sub` as the channel's `provider_subject_id` on every channel of that consent. Every connect issues a new refresh token, but one revoke kills the whole user–project grant, so the revoke job matches sibling channels on `sub` (ADR-0060).
   - **Time-based access** (G3, checked 2026-11-15): the consent screen may let the user grant access for a limited time. The refresh token then expires after that duration, and `refresh_token_expires_in` gives the time remaining.
   - **Errors** (G3): `invalid_grant` means the code or refresh token is invalid, expired or revoked. `invalid_client` means the client secret is incorrect, and `deleted_client` that the client was deleted (restorable within 30 days). The guide lists the last two under the consent errors; Kronaut maps them to `app_config` wherever they appear.
 - **Developer Policies** (Y8).
@@ -642,6 +644,7 @@ YouTube section re-verified 2026-11-14 (Y1–Y13, G1, G2; G3 on 2026-11-15; Y8, 
 - G1 https://developers.google.com/identity/protocols/oauth2
 - G2 https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps
 - G3 https://developers.google.com/identity/protocols/oauth2/web-server
+- G4 https://developers.google.com/identity/openid-connect/openid-connect
 - K1 https://developers.tiktok.com/doc/content-sharing-guidelines
 - K2 https://developers.tiktok.com/doc/content-posting-api-reference-direct-post
 - K3 https://developers.tiktok.com/doc/oauth-user-access-token-management
