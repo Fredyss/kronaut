@@ -1,5 +1,5 @@
-import type { RefreshKind } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
+import { limitedByRefreshToken } from '../../base/providers/expiry.ts';
 import type { ProviderEntry } from '../../base/providers/providers.ts';
 
 interface CredentialExpiry {
@@ -7,14 +7,6 @@ interface CredentialExpiry {
   readonly access_expires_at: Date | null;
   readonly refresh_expires_at: Date | null;
 }
-
-const LIMITED_BY: Readonly<Record<RefreshKind, 'access_expires_at' | 'refresh_expires_at'>> = {
-  none: 'access_expires_at',
-  self_refresh: 'access_expires_at',
-  reusable: 'refresh_expires_at',
-  rotating: 'refresh_expires_at',
-  single_use: 'refresh_expires_at',
-};
 
 export async function loadCredentialExpiries(
   trx: TenantDb,
@@ -38,5 +30,9 @@ export function shownExpiry(
   if (entry === undefined) return null;
   const { kind, refresh } = entry.manifest.auth;
   const credential = credentials.find((candidate) => candidate.kind === kind);
-  return credential?.[LIMITED_BY[refresh]]?.toISOString() ?? null;
+  if (credential === undefined) return null;
+  const at = limitedByRefreshToken(refresh)
+    ? credential.refresh_expires_at
+    : credential.access_expires_at;
+  return at?.toISOString() ?? null;
 }

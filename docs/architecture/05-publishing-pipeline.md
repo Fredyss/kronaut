@@ -172,14 +172,15 @@ Phase 0 rules:
   | `ambiguous`, or a thrown error, under `rotating` / `single_use` | **kept until it expires**, so the next holder sees a takeover | `retry_wait/transient_error` | retried next run |
 
   A thrown error is mapped with `toProviderFailure` using effect `public` under `rotating` / `single_use` (sending the request may have used up the token) and `private` otherwise. Account side effects use the version fence at the version the refresh started from, so a credential another holder replaced is never flagged. The refresh HTTP call gets its own abort signal and is not aborted when the destination lease is lost.
-- **Expiring (`auth_expiring`):** the relevant expiry is the refresh token's under `rotating` / `single_use` and the access token's otherwise; a `reusable` credential is never expiring. A credential is expiring when that expiry falls within:
+- **Relevant expiry:** the refresh token's end under `rotating`, `single_use` and `reusable`, and the access token's under `self_refresh` and `none`. One table (`limitedByRefreshToken`) decides it for both the Expiring rule and the shown expiry, so a new refresh kind doesn't compile until it is added there.
+- **Expiring (`auth_expiring`):** uses the relevant expiry; a `reusable` credential is never expiring. A credential is expiring when that expiry falls within:
   - `warnLeadMs`, if it can't be refreshed (refresh kind `none`, or no `refresh()`), checked by the warning pass;
   - half of `warnLeadMs`, if the refresh pass's refresh didn't renew it (`transient`, `skipped` or `app`), so one failed run doesn't warn. A `rejected` refresh already flags the account `needs_reauth` and doesn't count.
 
   A `reusable` refresh token usually has no known end. A grant the user gave for a limited time does have one (`refresh_expires_at`), but it raises no warning either: the user chose that end at consent. Either way, a dead refresh token shows up as `auth_revoked` at the next refresh, and a broken OAuth client as an `app_config` incident.
 
   An expiring credential opens one `auth_expiring` incident per account (`ux_incident_open`). Only a newly opened incident writes `channel.expiring` and its notification and sets `notified_at`; the insert is `ON CONFLICT DO NOTHING`, so an open one is left untouched (`occurrences` stays 1). A persisted refresh resolves the open incident in the same transaction, and a reconnect resolves it with the other credential incidents. The next expiring spell opens a new incident and warns again.
-- **Shown expiry:** the channel list's `accessExpiresAt` is read from the current credential (the one of the manifest's `auth.kind`), so every persisted refresh moves it. It is the refresh token's end under `rotating`, `single_use` and `reusable`, and the access token's under `self_refresh` and `none`. The expiry columns on `social_accounts` are a connect-time copy and are not read.
+- **Shown expiry:** the channel list's `accessExpiresAt` is read from the current credential (the one of the manifest's `auth.kind`), so every persisted refresh moves it. It is the relevant expiry, shown under `reusable` too. It is null when the credential records no such end: Bluesky records no refresh-token end, so its channels show no expiry and never raise `auth_expiring`. The expiry columns on `social_accounts` are a connect-time copy and are not read.
 
 ## Channel signature
 

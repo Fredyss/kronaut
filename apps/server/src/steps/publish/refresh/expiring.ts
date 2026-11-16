@@ -2,12 +2,12 @@ import type { ProviderManifest } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
+import { limitedByRefreshToken } from '../../../base/providers/expiry.ts';
 import { channelExpiringEvent, writeWebhookEvent } from '../../../identity/webhooks/events.ts';
 import type { RefreshableCredential } from '../../../infrastructure/credentials/credential-store.ts';
 import { notifyFor } from '../../../records/notifications/write.ts';
 import { openChannelIncident } from '../incidents.ts';
 import type { RefreshOutcome } from './refresh.ts';
-import { consumesToken } from './refresh-lease.ts';
 
 export type Renewal = RefreshOutcome | 'unrefreshable';
 
@@ -31,7 +31,9 @@ export function expiringAt(
   renewal: Renewal,
 ): Date | null {
   if (auth.refresh === 'reusable') return null;
-  const at = consumesToken(auth.refresh) ? credential.refreshExpiresAt : credential.accessExpiresAt;
+  const at = limitedByRefreshToken(auth.refresh)
+    ? credential.refreshExpiresAt
+    : credential.accessExpiresAt;
   const leadMs = leadFor(auth, renewal);
   if (at === null || leadMs === null) return null;
   return at.getTime() <= now.epochMilliseconds + leadMs ? at : null;
