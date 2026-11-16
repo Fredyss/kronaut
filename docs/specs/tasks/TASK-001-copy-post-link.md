@@ -29,7 +29,9 @@ if_unsure:
   - Prefer showing nothing over copying a value that httpsUrl did not accept.
   - If the change would need a line in tools/lint/feature-imports.json, a higher bundle budget or any protected path, stop and report instead of working around it.
   - If Biome's file or function line limit fires on post-page.tsx or DestinationRow, stop and report; do not extract or refactor to get under it.
-  - Use the classes text-foreground underline underline-offset-4 exactly as given, although the string already appears elsewhere; no shared component.
+  - Use the classes text-foreground underline underline-offset-4 exactly as given, although the string already appears elsewhere; no shared component. PRD-001 decides this, and the "Don't copy primitive styling" rule in docs/architecture/13-code-structure.md is about packages/ui primitives such as selects and dialogs, not a text-link style.
+  - Treat anything that goes wrong while copying (clipboard missing, writeText missing, a synchronous throw, a rejection) as the one failure case with the destructive toast.
+  - In the test file, sharing the app and client setup through a helper inside post-page.test.tsx is allowed, as long as the existing assertions stay as they are.
   - If the session can build the web app, also run `pnpm --filter @kronaut/web size` after `pnpm check`; if a budget is exceeded, stop and report.
 out_of_scope:
   - Changing any file outside touches.
@@ -74,6 +76,8 @@ Delivers the whole of [PRD-001](../PRD-001-copy-post-link.md): on the post detai
 - `toast` comes from `@kronaut/ui`, which the `post-page` feature already imports in `published.tsx`. `m` comes from `apps/web/src/base/locale/i18n.ts`. Neither needs a declared feature import.
 - Tests go in the existing `post-page.test.tsx`, which renders the whole app, so the app's `Toaster` shows the toasts. No separate test file for the component.
 - In tests, stub the clipboard per test with `Object.defineProperty(navigator, 'clipboard', { configurable: true, value })` and restore the original descriptor in `afterEach`. Fire clicks with `fireEvent.click`, as the other web tests do; `user-event` is not installed.
-- The toast store in `@kronaut/ui` is module-global and a toast lives 6 seconds, so toasts leak from one test into the next. Clear them in `afterEach` with `dismissToast` (exported from `@kronaut/ui`) or the toast's dismiss button, before `cleanup`. No fake timers: the page test relies on real async queries.
-- `pnpm check` does not run the bundle budgets; CI runs `pnpm --filter @kronaut/web size` separately. The three messages land in the main catalogs, which have their own budgets.
+- The toast store in `@kronaut/ui` is module-global and a toast lives 6 seconds, so toasts leak from one test into the next. Clear them in `afterEach` by clicking every toast's "Dismiss" button before `cleanup`; `dismissToast` needs an id the test does not have. No fake timers: the page test relies on real async queries.
+- "No error or unhandled rejection is thrown" is proven by the failure toast appearing and by Vitest failing a run on an unhandled rejection; no process-level listener is needed.
+- Biome's count for `DestinationRow` against the 60-line function limit was not measured at spec time. The function passes today and gains three lines; the `if_unsure` rule says what to do if the limit fires.
+- `pnpm check` does not run the bundle budgets; CI runs `pnpm --filter @kronaut/web size` separately. The three messages land in the main catalogs, which have their own budgets; their current sizes were not measured at spec time.
 - The existing assertion that only the https destination gets a "View post" link must keep passing unchanged.
