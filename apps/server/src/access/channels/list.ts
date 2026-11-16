@@ -11,6 +11,7 @@ import {
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import type { ProviderEntry, ProviderRegistry } from '../../base/providers/providers.ts';
+import { loadCredentialExpiries, shownExpiry } from './expiry.ts';
 import { loadChannelGroups } from './groups.ts';
 import { loadSignatures, SignatureSchema } from './signature-read.ts';
 
@@ -106,10 +107,6 @@ export const channelProvidersRoute = defineRoute({
   tags: ['channels'],
 });
 
-function iso(value: Date | null): string | null {
-  return value === null ? null : value.toISOString();
-}
-
 function imageAspect(image: ImageLimits | undefined) {
   if (image?.minAspect === undefined || image.maxAspect === undefined) return null;
   return { min: { ...image.minAspect }, max: { ...image.maxAspect } };
@@ -173,14 +170,6 @@ function insightsGranted(capabilities: unknown): boolean {
   return insightsCapability.safeParse(capabilities).success;
 }
 
-function shownExpiry(
-  entry: ProviderEntry | undefined,
-  row: { readonly access_expires_at: Date | null; readonly refresh_expires_at: Date | null },
-): string | null {
-  const reusable = entry?.manifest.auth.refresh === 'reusable';
-  return iso(reusable ? row.refresh_expires_at : row.access_expires_at);
-}
-
 interface ChannelListOptions {
   readonly scope: AccessScope | null;
   readonly hideSignatures: boolean;
@@ -199,8 +188,6 @@ function channelRows(trx: TenantDb, workspaceId: string, scope: AccessScope | nu
       'profile_url',
       'status',
       'status_reason',
-      'access_expires_at',
-      'refresh_expires_at',
       'created_at',
       'last_error_code',
       'capabilities',
@@ -228,6 +215,11 @@ export async function listChannels(
   { scope, hideSignatures, hideGroups }: ChannelListOptions,
 ): Promise<z.output<typeof ChannelSchema>[]> {
   const rows = await channelRows(trx, workspaceId, scope);
+  const expiries = await loadCredentialExpiries(
+    trx,
+    workspaceId,
+    rows.map((row) => row.id),
+  );
   const groupsOf = await loadChannelGroups(
     trx,
     workspaceId,
@@ -249,7 +241,7 @@ export async function listChannels(
       profileUrl: row.profile_url,
       status: row.status,
       statusReason: row.status_reason,
-      accessExpiresAt: shownExpiry(entry, row),
+      accessExpiresAt: shownExpiry(entry, expiries.get(row.id)),
       connectedAt: row.created_at.toISOString(),
       lastErrorCode: row.last_error_code,
       ...providerRules(entry, row.capabilities),
