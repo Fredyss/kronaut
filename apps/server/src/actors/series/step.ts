@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
 import { destinationRows, lockCurrent } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
+import { HttpError } from '../../base/http/errors.ts';
 import { plainLocal } from '../../base/http/time.ts';
 import { isManualOnly } from '../../base/providers/providers.ts';
 import { clonePost } from '../../flow/posts/draft/clone.ts';
@@ -106,9 +107,17 @@ function intendedSchedule(latest: Occurrence): LocalAt | null {
   return scheduleLocal === null || scheduleTz === null ? null : { scheduleLocal, scheduleTz };
 }
 
-async function toManualOnly(trx: TenantDb, { env, locked }: Turn): Promise<boolean> {
+// Someone can add a manual-only channel to an occurrence after the series started; the 4xx pauses it.
+async function refuseManualOnly(trx: TenantDb, { env, locked }: Turn): Promise<void> {
   const rows = await destinationRows(trx, env.workspaceId, locked.id).execute();
-  return rows.some((row) => isManualOnly(env.providers, row.provider));
+  const details = rows.flatMap(({ provider }, index) =>
+    isManualOnly(env.providers, provider)
+      ? [{ path: `destinations.${index}`, code: 'repeat_manual_only' }]
+      : [],
+  );
+  if (details.length > 0) {
+    throw new HttpError('preflight_failed', 'The post did not pass preflight.', { details });
+  }
 }
 
 // A request someone rejected, withdrew or voided is theirs to follow up; the job asks only once.
@@ -116,7 +125,7 @@ async function settleDraft(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
   const { env, locked, latest } = turn;
   const at = intendedSchedule(latest);
   if (latest.publish_summary !== 'draft' || at === null) return 'idle';
-  if (await toManualOnly(trx, turn)) return 'idle';
+  await refuseManualOnly(trx, turn);
   const newest = await newestRequest(trx, env.workspaceId, locked.id);
   if (newest?.state === 'approved') return await scheduleOrRequest(trx, turn, at);
   if (!(await needsRequest(trx, turn, latest.agent_dirty))) {

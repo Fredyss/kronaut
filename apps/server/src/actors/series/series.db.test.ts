@@ -14,9 +14,11 @@ import {
   doc,
   draft,
   errorOf,
+  insertAccount,
   insertGrant,
   internal,
   login,
+  MANUAL_PROVIDER,
   owner,
   ownerAuth,
   ownerId,
@@ -367,6 +369,23 @@ describe('advancing a series', () => {
     expect(audit).toEqual([
       { action: 'series.paused', actor_kind: 'system', error_code: 'preflight_failed' },
     ]);
+  });
+
+  it('pauses when someone adds a manual-only channel to an occurrence', async () => {
+    at('2027-01-04T06:00:00Z');
+    const manual = await insertAccount('series-job-manual', undefined, MANUAL_PROVIDER);
+    const post = await repeating('2027-01-06T09:00', { freq: 'daily' });
+    at('2027-01-06T08:00:00Z');
+    await advance();
+    const [, second] = await occurrences(post);
+    const clone = await postOf(encodePublicId('post', second?.id ?? ''));
+    const edit = await call('PATCH', `posts/${clone.id}`, ownerAuth, {
+      expectedVersion: clone.version,
+      destinations: [{ accountId: manual, publishType: 'post' }],
+    });
+    expect(edit.status).toBe(200);
+    await advance();
+    expect(await seriesOf(post)).toMatchObject({ state: 'paused', stateReason: 'advance_failed' });
   });
 
   it('ends once its only occurrence is deleted', async () => {
