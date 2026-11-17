@@ -68,6 +68,7 @@ When a task conflicts with 1–3, stop and ask. Don't silently deviate.
 - Self-hosted stack: [Self-hosting guide](docs/guides/self-hosting.md). Local Postgres only: run `infra/compose/init-secrets.sh`, copy `infra/compose/.env.example` to `.env`, then `docker compose -f infra/compose/compose.yaml up -d postgres`; a host port needs the guide's `compose.override.yaml`. `pnpm test:db` doesn't need it (testcontainers).
 
 - `pnpm licenses:check`: the dependency-license gate, also run by `check`. Policy in `tools/licenses/policy.ts`, mirroring [Licensing](docs/architecture/12-licensing.md). `pnpm licenses:notices <file>` writes `THIRD_PARTY_NOTICES`; the Docker build generates it, and it's never committed.
+- `gh` and `git push`: run each as a single command, with no `cd`, `&&` or redirect; anything else stays in the sandbox and fails. Use `--head <branch>` and absolute paths, for example `gh pr create --base main --head <branch> --title "..." --body-file /abs/path.md`.
 
 Planned: size-limit in `check` (CI runs it separately today).
 

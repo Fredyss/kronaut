@@ -1,5 +1,18 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(gh pr create *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr edit *)",
+      "Bash(gh pr comment *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(git push -u origin *)",
+      "Bash(git push origin *)"
+    ],
     "deny": [
       "Read(.env)",
       "Read(.env.local)",
@@ -32,7 +45,20 @@
       "Read(*.pfx)",
       "Edit(/.claude/settings.json)",
       "Edit(/.claude/settings.local.json)",
-      "mcp__cmux-cua"
+      "mcp__cmux-cua",
+      "Bash(gh pr merge *)",
+      "Bash(gh pr close *)",
+      "Bash(gh repo *)",
+      "Bash(gh secret *)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)",
+      "Bash(gh release *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git push * --delete *)",
+      "Bash(git push *+*)"
     ]
   },
   "sandbox": {
@@ -40,11 +66,18 @@
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
     "excludedCommands": [
-      "git push",
-      "git push -u origin HEAD",
-      "git fetch",
-      "git fetch origin",
-      "git fetch origin main"
+      "gh pr create *",
+      "gh pr view *",
+      "gh pr list *",
+      "gh pr checks *",
+      "gh pr diff *",
+      "gh pr edit *",
+      "gh pr comment *",
+      "gh run list *",
+      "gh run view *",
+      "git push -u origin *",
+      "git push origin *",
+      "git fetch *"
     ],
     "filesystem": {
       "denyRead": [
