@@ -5,27 +5,27 @@ packages:
 minimumReleaseAge: 10080
 
 catalog:
-  '@biomejs/biome': 2.6.4
+  '@biomejs/biome': 2.6.6
   '@hey-api/openapi-ts': 0.99.0
   '@hono/node-server': 2.1.6
-  '@inlang/paraglide-js': 3.1.0
-  '@inlang/plugin-message-format': 4.5.7
+  '@inlang/paraglide-js': 3.2.1
+  '@inlang/plugin-message-format': 4.6.0
   '@node-rs/argon2': 2.2.2
-  '@playwright/test': 1.64.1
+  '@playwright/test': 1.65.0
   '@radix-ui/react-label': 2.1.17
   '@radix-ui/react-slot': 1.5.0
   '@size-limit/file': 14.3.0
-  '@tailwindcss/vite': 4.3.4
-  '@tanstack/react-query': 5.105.3
+  '@tailwindcss/vite': 4.3.5
+  '@tanstack/react-query': 5.107.1
   '@tanstack/react-router': 1.170.46
-  '@tiptap/core': 3.32.2
-  '@tiptap/extension-document': 3.32.2
-  '@tiptap/extension-hard-break': 3.32.2
-  '@tiptap/extension-paragraph': 3.32.2
-  '@tiptap/extension-text': 3.32.2
-  '@tiptap/extensions': 3.32.2
-  '@tiptap/pm': 3.32.2
-  '@tiptap/react': 3.32.2
+  '@tiptap/core': 3.33.1
+  '@tiptap/extension-document': 3.33.1
+  '@tiptap/extension-hard-break': 3.33.1
+  '@tiptap/extension-paragraph': 3.33.1
+  '@tiptap/extension-text': 3.33.1
+  '@tiptap/extensions': 3.33.1
+  '@tiptap/pm': 3.33.1
+  '@tiptap/react': 3.33.1
   '@testcontainers/postgresql': 12.2.1
   '@testing-library/dom': 10.4.2
   '@testing-library/react': 16.3.3
@@ -35,34 +35,34 @@ catalog:
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.7
   '@types/tar-stream': 3.1.5
-  '@vitejs/plugin-react': 6.2.1
+  '@vitejs/plugin-react': 6.3.0
   age-encryption: 0.3.1
   class-variance-authority: 0.7.1
   clsx: 2.1.1
-  fallow: 3.38.1
+  fallow: 3.42.0
   fast-xml-parser: 5.12.0
   graphile-worker: 0.18.0
   happy-dom: 21.0.4
-  hono: 4.13.16
-  jscpd: 5.4.2
-  jose: 6.2.15
+  hono: 4.13.17
+  jscpd: 5.4.3
+  jose: 6.2.17
   kysely-codegen: 0.20.0
   kysely: 0.29.8
-  nodemailer: 10.3.1
+  nodemailer: 10.5.0
   pg: 8.23.1
   pino: 10.4.0
-  prosemirror-model: 1.25.12
+  prosemirror-model: 1.25.13
   react-dom: 19.2.9
   react: 19.2.9
   sharp: 0.35.5
   size-limit: 14.3.0
   tailwind-merge: 3.7.0
-  tailwindcss: 4.3.4
+  tailwindcss: 4.3.5
   tar-stream: 3.2.2
-  temporal-polyfill: 1.0.6
+  temporal-polyfill: 1.0.8
   typescript: 7.0.2
-  undici: 8.12.3
-  vite: 8.3.5
+  undici: 8.12.4
+  vite: 8.3.7
   vitest: 5.1.0
   zod: 4.6.7
 
