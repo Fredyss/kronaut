@@ -74,6 +74,7 @@ const ChannelSchema = z.object({
   requiredSettings: z.array(z.string()),
   settingOptions: z.record(z.string(), z.array(z.object({ value: z.string(), label: z.string() }))),
   preview: z.enum(PREVIEW_ARCHETYPES),
+  manualOnly: z.boolean(),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
   shortenLinks: z.boolean(),
@@ -164,6 +165,7 @@ function providerRules(entry: ProviderEntry | undefined, capabilities: unknown) 
     requiredSettings: [...(entry?.manifest.requiredSettings ?? [])],
     settingOptions: entry?.manifest.accountSettingOptions?.(capabilities) ?? {},
     preview: entry?.manifest.preview ?? 'short-feed',
+    manualOnly: entry?.manifest.manualOnly === true,
   };
 }
 

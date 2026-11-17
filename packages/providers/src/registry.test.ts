@@ -19,4 +19,9 @@ describe('provider registry', () => {
     );
     for (const list of Object.values(problems)) expect(list).toEqual([]);
   });
+
+  it('marks only pinterest as manual-only', () => {
+    const manualOnly = manifests.filter((manifest) => manifest.manualOnly === true);
+    expect(manualOnly.map((manifest) => manifest.id)).toEqual(['pinterest']);
+  });
 });

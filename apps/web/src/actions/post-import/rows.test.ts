@@ -26,6 +26,7 @@ const ada: Channel = {
   brandId: null,
   groupIds: [],
   preview: 'short-feed',
+  manualOnly: false,
   insights: false,
 };
 const bob: Channel = { ...ada, id: 'acct_bob', handle: 'bob', displayName: 'Bob' };

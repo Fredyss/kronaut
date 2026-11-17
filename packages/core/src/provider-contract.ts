@@ -114,6 +114,7 @@ export interface ProviderManifest<S = unknown> {
   readonly capabilities: { readonly analytics: boolean; readonly delete: boolean };
   readonly dataRetention?: { readonly disconnectedDays: number; readonly lapsedDays: number };
   readonly egressHosts: readonly string[];
+  readonly manualOnly?: boolean;
   accountPostType?(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec;
   accountSettingOptions?(capabilities: unknown): SettingOptions;
 }
