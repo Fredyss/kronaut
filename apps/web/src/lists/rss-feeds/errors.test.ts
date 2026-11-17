@@ -31,7 +31,7 @@ describe('feedErrors', () => {
     });
   });
 
-  it('maps every url code and a missing channel', () => {
+  it('maps every url code, a missing channel and a manual-only one', () => {
     const codes = ['url_invalid', 'feed_invalid'].map((code) => ({ path: 'body.url', code }));
     expect(feedErrors(refused(422, 'unprocessable', codes.slice(0, 1)), nameOf).url).toBe(
       settingsText.settings_feed_url_invalid(),
@@ -41,6 +41,12 @@ describe('feedErrors', () => {
     );
     const gone = refused(422, 'unprocessable', [{ path: 'body.channelIds.0', code: 'not_found' }]);
     expect(feedErrors(gone, nameOf).channels).toEqual([settingsText.settings_feed_channel_gone()]);
+    const manual = refused(422, 'unprocessable', [
+      { path: 'body.channelIds.1', code: 'channel_manual_only' },
+    ]);
+    expect(feedErrors(manual, nameOf)).toEqual({
+      channels: [settingsText.settings_feed_channel_manual_only({ channel: 'Bob' })],
+    });
   });
 
   it('shows the feed limit and unknown failures for the whole dialog', () => {

@@ -101,6 +101,7 @@ export function FeedDialog({ workspaceId, feed, onClose }: FeedDialogProps) {
           <ChannelChoices
             channels={channels}
             selected={selected}
+            mode={mode}
             errors={errors.channels}
             onChange={setSelected}
           />

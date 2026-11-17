@@ -239,6 +239,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
+/** @typedef {{}} Issue_Repeat_Manual_OnlyInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Setting_RequiredInputs */
 /** @typedef {{}} Issue_Tag_UnknownInputs */
@@ -4006,6 +4007,21 @@ export const issue_queue_full = /** @type {((inputs?: Issue_Queue_FullInputs, op
 	if (locale === "sk") return __sk.issue_queue_full(inputs)
 	if (locale === "cs") return __cs.issue_queue_full(inputs)
 	return __en.issue_queue_full(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This channel needs each post chosen by a person, so it can't repeat." |
+*
+* @param {Issue_Repeat_Manual_OnlyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_repeat_manual_only = /** @type {((inputs?: Issue_Repeat_Manual_OnlyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Repeat_Manual_OnlyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_repeat_manual_only(inputs)
+	if (locale === "cs") return __cs.issue_repeat_manual_only(inputs)
+	return __en.issue_repeat_manual_only(inputs)
 });
 /**
 * | output |

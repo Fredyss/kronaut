@@ -237,6 +237,7 @@
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
+/** @typedef {{}} Issue_Repeat_Manual_OnlyInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Setting_RequiredInputs */
 /** @typedef {{}} Issue_Tag_UnknownInputs */
@@ -1409,6 +1410,10 @@ export const issue_queue_empty = /** @type {(inputs: Issue_Queue_EmptyInputs) =>
 
 export const issue_queue_full = /** @type {(inputs: Issue_Queue_FullInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`V najbližších 8 týždňoch nie je vo fronte voľný termín.`)
+};
+
+export const issue_repeat_manual_only = /** @type {(inputs: Issue_Repeat_Manual_OnlyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Na tomto kanáli musí každý príspevok vybrať človek, preto ho nemožno opakovať.`)
 };
 
 export const issue_resolution_too_high = /** @type {(inputs: Issue_Resolution_Too_HighInputs) => LocalizedString} */ () => {
