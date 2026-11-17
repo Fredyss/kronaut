@@ -10,6 +10,7 @@ import { type ContentTab, ContentTabs, tabId } from './content-tabs.tsx';
 import { DiscordSettings } from './discord-settings.tsx';
 import type { PostEditorHandle } from './editor.tsx';
 import { EditorFallback, ItemsSection, MainOnlyNotes } from './items-section.tsx';
+import { PinterestSettings } from './pinterest-settings.tsx';
 import { SavedTextMenu } from './saved-text-menu.tsx';
 import { SignatureToggle } from './signature-toggle.tsx';
 import { limitTargets } from './targets.ts';
@@ -176,6 +177,7 @@ export function ContentSection(props: ContentSectionProps) {
       >
         <YoutubeSettings state={state} channel={channel} pending={pending} />
         <DiscordSettings state={state} channel={channel} pending={pending} />
+        <PinterestSettings state={state} channel={channel} pending={pending} />
         <div className="flex flex-col gap-2">
           {editing ? (
             <TextHeader

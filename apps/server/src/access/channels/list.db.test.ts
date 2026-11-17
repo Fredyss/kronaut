@@ -167,6 +167,7 @@ beforeAll(async () => {
         { provider: 'bluesky', client_id: 'https://kronaut.example.test/client-metadata.json' },
         { provider: DISABLED, client_id: 'off-client', status: 'disabled' },
         { provider: 'instagram', client_id: 'ig-client', status: 'disabled' },
+        { provider: 'pinterest', client_id: '1234567', status: 'disabled' },
         { provider: 'threads', client_id: '1122334455667788' },
         { provider: 'mastodon', instance_host: 'social.example', client_id: 'masto-client' },
         { provider: 'youtube', client_id: '123456789012-abc.apps.googleusercontent.com' },
@@ -212,6 +213,10 @@ beforeAll(async () => {
     capabilities: { comments: true, insights: true },
   });
   await addAccount(previewId, ownerId, 'sky', { provider: 'bluesky' });
+  await addAccount(previewId, ownerId, 'pins', {
+    provider: 'pinterest',
+    capabilities: { boards: [{ id: '9001', name: 'Garden' }] },
+  });
   await root.withActor(CLI, async (trx) => {
     await trx
       .insertInto('memberships')
@@ -275,6 +280,7 @@ describe('channel listing', () => {
       'profileUrl',
       'provider',
       'requiredSettings',
+      'settingOptions',
       'shortenLinks',
       'signature',
       'status',
@@ -402,7 +408,7 @@ describe('channel listing', () => {
     expect(JSON.stringify(rules.slice(0, 2))).not.toContain('forbiddenChars');
   });
 
-  it('returns the preview archetype and the image aspect range from the manifest', async () => {
+  it('returns the preview archetype, image aspect range and setting options from the manifest', async () => {
     const response = await app.request(`${BASE}/v1/workspaces/${previewWorkspace}/channels`, {
       headers: { cookie: owner },
     });
@@ -413,15 +419,17 @@ describe('channel listing', () => {
         preview: string;
         insights: boolean;
         postTypes: { imageAspect: unknown }[];
+        settingOptions: unknown;
       }[];
     };
     const aspect = { min: { width: 4, height: 5 }, max: { width: 191, height: 100 } };
     expect(
-      items.map(({ provider, preview, insights, postTypes }) => ({
+      items.map(({ provider, preview, insights, postTypes, settingOptions }) => ({
         provider,
         preview,
         insights,
         aspects: postTypes.map((postType) => postType.imageAspect),
+        settingOptions,
       })),
     ).toEqual([
       {
@@ -429,8 +437,22 @@ describe('channel listing', () => {
         preview: 'media-grid',
         insights: true,
         aspects: [aspect, aspect, null],
+        settingOptions: {},
       },
-      { provider: 'bluesky', preview: 'short-feed', insights: false, aspects: [null] },
+      {
+        provider: 'bluesky',
+        preview: 'short-feed',
+        insights: false,
+        aspects: [null],
+        settingOptions: {},
+      },
+      {
+        provider: 'pinterest',
+        preview: 'media-grid',
+        insights: false,
+        aspects: [null],
+        settingOptions: { boardId: [{ value: '9001', label: 'Garden' }] },
+      },
     ]);
   });
 

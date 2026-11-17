@@ -3,6 +3,7 @@ import type { Channel } from '../../../records/channels/queries.ts';
 import type { Destination } from '../../../records/posts/queries.ts';
 import type { OpenedForm } from '../from-post.ts';
 import { DISCORD_DEFAULT } from './discord.ts';
+import { PINTEREST_DEFAULT } from './pinterest.ts';
 import { YOUTUBE_DEFAULT } from './youtube.ts';
 
 export type Settings = Destination['settings'];
@@ -10,6 +11,7 @@ export type Settings = Destination['settings'];
 const DEFAULTS: Readonly<Record<string, Settings>> = {
   discord: DISCORD_DEFAULT,
   discord_bot: DISCORD_DEFAULT,
+  pinterest: PINTEREST_DEFAULT,
   youtube: YOUTUBE_DEFAULT,
 };
 const NONE: ReadonlyMap<string, Settings> = new Map();

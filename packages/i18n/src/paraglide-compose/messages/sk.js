@@ -33,6 +33,7 @@
 /** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Board_MissingInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
@@ -65,6 +66,17 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Pinterest_BoardInputs */
+/** @typedef {{}} Compose_Pinterest_Board_PickInputs */
+/** @typedef {{}} Compose_Pinterest_LinkInputs */
+/** @typedef {{}} Compose_Pinterest_Link_InvalidInputs */
+/** @typedef {{}} Compose_Pinterest_Link_Too_LongInputs */
+/** @typedef {{}} Compose_Pinterest_No_BoardsInputs */
+/** @typedef {{}} Compose_Pinterest_OptionalInputs */
+/** @typedef {{}} Compose_Pinterest_RequiredInputs */
+/** @typedef {{}} Compose_Pinterest_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Pinterest_Title_CountInputs */
+/** @typedef {{}} Compose_Pinterest_Title_Too_LongInputs */
 /** @typedef {{}} Compose_Preview_EmptyInputs */
 /** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
 /** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
@@ -264,6 +276,10 @@ export const compose_error_approval_required = /** @type {(inputs: Compose_Error
 	return /** @type {LocalizedString} */ (`Príspevok treba pred naplánovaním schváliť.`)
 };
 
+export const compose_error_board_missing = /** @type {(inputs: Compose_Error_Board_MissingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vyberte nástenku na Pintereste pre ${i?.channel}.`)
+};
+
 export const compose_error_channel_gone = /** @type {(inputs: Compose_Error_Channel_GoneInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Príspevok sa nedá uložiť, pretože jeden z jeho kanálov už nie je dostupný: ${i?.channels}.`)
 };
@@ -398,6 +414,50 @@ export const compose_media_exclusive = /** @type {(inputs: Compose_Media_Exclusi
 
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zatiaľ nemáte pripojený žiadny kanál.`)
+};
+
+export const compose_pinterest_board = /** @type {(inputs: Compose_Pinterest_BoardInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nástenka`)
+};
+
+export const compose_pinterest_board_pick = /** @type {(inputs: Compose_Pinterest_Board_PickInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte nástenku`)
+};
+
+export const compose_pinterest_link = /** @type {(inputs: Compose_Pinterest_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odkaz`)
+};
+
+export const compose_pinterest_link_invalid = /** @type {(inputs: Compose_Pinterest_Link_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Použite úplný odkaz, ktorý začína na https://.`)
+};
+
+export const compose_pinterest_link_too_long = /** @type {(inputs: Compose_Pinterest_Link_Too_LongInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odkaz je príliš dlhý.`)
+};
+
+export const compose_pinterest_no_boards = /** @type {(inputs: Compose_Pinterest_No_BoardsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento účet nemá žiadne verejné nástenky. Vytvorte nástenku na Pintereste a potom kanál znova pripojte.`)
+};
+
+export const compose_pinterest_optional = /** @type {(inputs: Compose_Pinterest_OptionalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nepovinné`)
+};
+
+export const compose_pinterest_required = /** @type {(inputs: Compose_Pinterest_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Povinné`)
+};
+
+export const compose_pinterest_title = /** @type {(inputs: Compose_Pinterest_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Názov`)
+};
+
+export const compose_pinterest_title_count = /** @type {(inputs: Compose_Pinterest_Title_CountInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.count} / ${i?.max}`)
+};
+
+export const compose_pinterest_title_too_long = /** @type {(inputs: Compose_Pinterest_Title_Too_LongInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Názov je príliš dlhý.`)
 };
 
 export const compose_preview_empty = /** @type {(inputs: Compose_Preview_EmptyInputs) => LocalizedString} */ () => {

@@ -44,6 +44,7 @@ const PROVIDERS = {
   instagram: 'provider_instagram',
   linkedin: 'provider_linkedin',
   mastodon: 'provider_mastodon',
+  pinterest: 'provider_pinterest',
   threads: 'provider_threads',
   youtube: 'provider_youtube',
 } as const satisfies Readonly<Record<string, keyof Catalog>>;

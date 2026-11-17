@@ -871,7 +871,7 @@ export const provider_app_not_found = /** @type {((inputs?: Provider_App_Not_Fou
 /**
 * | output |
 * | --- |
-* | "only bluesky, discord, discord_bot, facebook, instagram, linkedin, threads or youtube can be registered" |
+* | "only bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads or youtube can be registered" |
 *
 * @param {Provider_UnsupportedInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options

@@ -33,6 +33,7 @@
 /** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Board_MissingInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
@@ -65,6 +66,17 @@
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Pinterest_BoardInputs */
+/** @typedef {{}} Compose_Pinterest_Board_PickInputs */
+/** @typedef {{}} Compose_Pinterest_LinkInputs */
+/** @typedef {{}} Compose_Pinterest_Link_InvalidInputs */
+/** @typedef {{}} Compose_Pinterest_Link_Too_LongInputs */
+/** @typedef {{}} Compose_Pinterest_No_BoardsInputs */
+/** @typedef {{}} Compose_Pinterest_OptionalInputs */
+/** @typedef {{}} Compose_Pinterest_RequiredInputs */
+/** @typedef {{}} Compose_Pinterest_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Pinterest_Title_CountInputs */
+/** @typedef {{}} Compose_Pinterest_Title_Too_LongInputs */
 /** @typedef {{}} Compose_Preview_EmptyInputs */
 /** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
 /** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
@@ -260,6 +272,10 @@ export const compose_error_approval_required = /** @type {(inputs: Compose_Error
 	return /** @type {LocalizedString} */ (`This post needs an approval before it can be scheduled.`)
 };
 
+export const compose_error_board_missing = /** @type {(inputs: Compose_Error_Board_MissingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Choose a Pinterest board for ${i?.channel}.`)
+};
+
 export const compose_error_channel_gone = /** @type {(inputs: Compose_Error_Channel_GoneInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`This post can't be saved because a channel it goes to is no longer available: ${i?.channels}.`)
 };
@@ -390,6 +406,50 @@ export const compose_media_exclusive = /** @type {(inputs: Compose_Media_Exclusi
 
 export const compose_no_channels = /** @type {(inputs: Compose_No_ChannelsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`No channels are connected yet.`)
+};
+
+export const compose_pinterest_board = /** @type {(inputs: Compose_Pinterest_BoardInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Board`)
+};
+
+export const compose_pinterest_board_pick = /** @type {(inputs: Compose_Pinterest_Board_PickInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Choose a board`)
+};
+
+export const compose_pinterest_link = /** @type {(inputs: Compose_Pinterest_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Link`)
+};
+
+export const compose_pinterest_link_invalid = /** @type {(inputs: Compose_Pinterest_Link_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Use a full link that starts with https://.`)
+};
+
+export const compose_pinterest_link_too_long = /** @type {(inputs: Compose_Pinterest_Link_Too_LongInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The link is too long.`)
+};
+
+export const compose_pinterest_no_boards = /** @type {(inputs: Compose_Pinterest_No_BoardsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This account has no public boards. Create one on Pinterest, then connect the channel again.`)
+};
+
+export const compose_pinterest_optional = /** @type {(inputs: Compose_Pinterest_OptionalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Optional`)
+};
+
+export const compose_pinterest_required = /** @type {(inputs: Compose_Pinterest_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Required`)
+};
+
+export const compose_pinterest_title = /** @type {(inputs: Compose_Pinterest_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Title`)
+};
+
+export const compose_pinterest_title_count = /** @type {(inputs: Compose_Pinterest_Title_CountInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.count} / ${i?.max}`)
+};
+
+export const compose_pinterest_title_too_long = /** @type {(inputs: Compose_Pinterest_Title_Too_LongInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The title is too long.`)
 };
 
 export const compose_preview_empty = /** @type {(inputs: Compose_Preview_EmptyInputs) => LocalizedString} */ () => {

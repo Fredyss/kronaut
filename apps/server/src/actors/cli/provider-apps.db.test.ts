@@ -189,6 +189,7 @@ describe('provider app keys CLI', () => {
     ['facebook', '1234567890123456', 'a facebook app is already registered'],
     ['instagram', '990011223344', 'an instagram app is already registered'],
     ['linkedin', '86abcdef123xyz', 'a linkedin app is already registered'],
+    ['pinterest', '1234567', 'a pinterest app is already registered'],
     ['threads', '1122334455667788', 'a threads app is already registered'],
     [
       'youtube',

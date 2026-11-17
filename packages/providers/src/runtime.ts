@@ -6,6 +6,7 @@ import { facebookRuntime } from './facebook/runtime.ts';
 import { instagramRuntime } from './instagram/runtime.ts';
 import { linkedinRuntime } from './linkedin/runtime.ts';
 import { mastodonRuntime } from './mastodon/runtime.ts';
+import { pinterestRuntime } from './pinterest/runtime.ts';
 import { threadsRuntime } from './threads/runtime.ts';
 import { youtubeRuntime } from './youtube/runtime.ts';
 
@@ -17,6 +18,7 @@ export const runtimes: readonly ProviderRuntime[] = [
   instagramRuntime,
   linkedinRuntime,
   mastodonRuntime,
+  pinterestRuntime,
   threadsRuntime,
   youtubeRuntime,
 ];
