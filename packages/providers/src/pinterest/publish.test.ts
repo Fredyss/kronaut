@@ -59,7 +59,7 @@ describe('pinterest publish', () => {
     ['no image', { media: [] }, 'image_required'],
     ['a video', { ref: { mime: 'video/mp4', durationMs: 3_000 } }, 'video_unsupported'],
     ['a WebP image', { ref: { mime: 'image/webp' } }, 'media_type_unsupported'],
-    ['an image over 20 MB', { ref: { bytes: 20_000_001 } }, 'image_too_large'],
+    ['an image over 8 MB', { ref: { bytes: 8_000_001 } }, 'image_too_large'],
     ['alt text over 500', { ref: { altText: 'a'.repeat(501) } }, 'alt_text_too_long'],
     ['a description over 800', { text: 'a'.repeat(801) }, 'text_too_long'],
   ])('refuses %s before sending', async (_name, options, code) => {
@@ -132,6 +132,7 @@ const pin = (id: string, extra: Record<string, unknown> = {}) => ({
   title: 'Autumn table',
   description: 'Oak, linen and late light.',
   link: 'https://shop.example.org/table',
+  alt_text: 'A wooden table',
   ...extra,
 });
 
@@ -156,9 +157,21 @@ describe('pinterest verify', () => {
   it.each([
     ['no match', []],
     ['two matches', [pin('1'), pin('2')]],
+    ['another alt text', [pin('1', { alt_text: 'A chair' })]],
+    ['a Pin from the second before the send', [pin('1', { created_at: '2026-10-21T11:59:59' })]],
   ])('cannot tell with %s', async (_name, items) => {
     const { result } = await run('verify', [{ url: BOARD_PINS, json: { items } }], sent);
     expect(result).toEqual({ kind: 'inconclusive' });
+  });
+
+  it('never claims a Pin for a post without title, text and link', async () => {
+    const { result, calls } = await run('verify', [], {
+      ...sent,
+      settings: { boardId: BOARD_ID },
+      text: '',
+    });
+    expect(result).toEqual({ kind: 'inconclusive' });
+    expect(calls).toEqual([]);
   });
 
   it('cannot tell without a send time or when the read fails', async () => {

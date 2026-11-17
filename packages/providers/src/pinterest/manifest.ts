@@ -44,7 +44,7 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
       media: {
         minCount: 1,
         maxCount: 1,
-        image: { mimes: ['image/jpeg', 'image/png'], maxBytes: 20_000_000 },
+        image: { mimes: ['image/jpeg', 'image/png'], maxBytes: 8_000_000 },
         mixed: false,
         altText: { supported: true, required: false, maxLength: 500 },
         aiLabel: false,

@@ -7,7 +7,6 @@ import { isSuccess, pinterestFailure } from './errors.ts';
 import { API_BASE } from './oauth.ts';
 import { type Input, pinFields, pinState, pinUrl } from './publish.ts';
 
-const CLOCK_SKEW = Temporal.Duration.from({ minutes: 2 });
 const PAGE_SIZE = '100';
 
 const boardPins = z.looseObject({
@@ -18,6 +17,7 @@ const boardPins = z.looseObject({
       title: z.string().nullish(),
       description: z.string().nullish(),
       link: z.string().nullish(),
+      alt_text: z.string().nullish(),
     }),
   ),
 });
@@ -27,6 +27,7 @@ interface Expected {
   readonly title: string;
   readonly description: string;
   readonly link: string;
+  readonly altText: string;
 }
 
 function comparable(text: string | null | undefined): string {
@@ -51,7 +52,8 @@ function matches(pin: BoardPin, expected: Expected, since: Temporal.Instant): bo
     Temporal.Instant.compare(at, since) >= 0 &&
     comparable(pin.title) === expected.title &&
     comparable(pin.description) === expected.description &&
-    comparable(pin.link) === expected.link
+    comparable(pin.link) === expected.link &&
+    (expected.altText === '' || comparable(pin.alt_text) === expected.altText)
   );
 }
 
@@ -75,10 +77,16 @@ export async function verifyPin(ctx: PublishContext, input: Input): Promise<Veri
     title: comparable(fields.title),
     description: comparable(fields.description),
     link: comparable(fields.link),
+    altText: comparable(fields.alt_text),
   };
+  if (expected.title === '' && expected.description === '' && expected.link === '')
+    return { kind: 'inconclusive' };
   try {
     const pins = await readBoardPins(ctx, input.credentials.accessToken, boardId);
-    const since = Temporal.Instant.from(sentAt).subtract(CLOCK_SKEW);
+    const since = Temporal.Instant.from(sentAt).round({
+      smallestUnit: 'second',
+      roundingMode: 'floor',
+    });
     const [match, ...others] = pins.filter((pin) => matches(pin, expected, since));
     if (match === undefined || others.length > 0) return { kind: 'inconclusive' };
     return { kind: 'found', remoteId: match.id, url: pinUrl(match.id) };

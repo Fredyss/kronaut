@@ -114,7 +114,7 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     badge: 'bg-red-700',
     loginHint: false,
     instance: false,
-    maxImageBytes: 20_000_000,
+    maxImageBytes: 8_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
     publishType: ({ images, video }) => {
       if (video) return { kind: 'video_unsupported' };

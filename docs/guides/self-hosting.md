@@ -159,7 +159,7 @@ Kronaut uploads videos to the YouTube channels of the Google account that connec
 
 ### Pinterest
 
-Kronaut publishes image Pins to the boards of the Pinterest account that connects. Each post is one JPEG or PNG image of up to 20 MB, and needs a board.
+Kronaut publishes image Pins to the boards of the Pinterest account that connects. Each post is one JPEG or PNG image of up to 8 MB, and needs a board.
 
 - **On developers.pinterest.com:**
   - Create an app and add the redirect URI `https://kronaut.example.com/v1/oauth/pinterest/callback`, using your own host.

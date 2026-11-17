@@ -42,7 +42,7 @@
     - no default privacy, and interaction toggles default off
     - consent text and commercial-content disclosure
     - live `creator_info` before posting
-  - **Pinterest:** per destination, a required board select from the channel's `settingOptions.boardId` (the public boards stored at connect, ADR-0063); with none, a hint to create a board on Pinterest and reconnect. Optional title (≤100, with a counter) and `https` link (≤2,048). One JPEG or PNG image up to 20 MB; no video yet (a video Pin will also need a cover). A missing board blocks scheduling, not draft save.
+  - **Pinterest:** per destination, a required board select from the channel's `settingOptions.boardId` (the public boards stored at connect, ADR-0063); with none, a hint to create a board on Pinterest and reconnect. Optional title (≤100, with a counter) and `https` link (≤2,048). One JPEG or PNG image up to 8 MB; no video yet (a video Pin will also need a cover). A missing board blocks scheduling, not draft save.
   - **YouTube** (Developer Policies, [provider facts](../reference/provider-facts.md)):
     - per destination, a required title (≤100, no `<` or `>`) with a "Use first line" button that only suggests and never cuts
     - visibility: public (default), unlisted or private; audience: channel default, made for kids or not

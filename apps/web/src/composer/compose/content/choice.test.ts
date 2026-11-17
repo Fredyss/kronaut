@@ -101,8 +101,8 @@ describe('linkedin publish choice', () => {
 describe('pinterest publish choice', () => {
   const pinterest: Channel = { ...threads, id: 'acct_pin', provider: 'pinterest' };
 
-  it('publishes exactly one JPEG or PNG image up to 20 MB as a Pin', () => {
-    const big = { size: 20_000_000, type: 'image/jpeg' };
+  it('publishes exactly one JPEG or PNG image up to 8 MB as a Pin', () => {
+    const big = { size: 8_000_000, type: 'image/jpeg' };
     expect(choiceFor(pinterest, images(1, big))).toEqual({ kind: 'ok', publishType: 'pin' });
     expect(choiceFor(pinterest, images(0))).toEqual({ kind: 'needs_image' });
     expect(choiceFor(pinterest, images(2))).toEqual({ kind: 'too_many_images', max: 1 });
@@ -110,9 +110,9 @@ describe('pinterest publish choice', () => {
     expect(choiceFor(pinterest, images(1, { size: 1_000, type: 'image/webp' }))).toEqual({
       kind: 'image_type_unsupported',
     });
-    expect(choiceFor(pinterest, images(1, { size: 20_000_001, type: 'image/png' }))).toEqual({
+    expect(choiceFor(pinterest, images(1, { size: 8_000_001, type: 'image/png' }))).toEqual({
       kind: 'image_too_large',
-      maxBytes: 20_000_000,
+      maxBytes: 8_000_000,
     });
   });
 });
