@@ -140,6 +140,16 @@ function occurrences(post: PostDto) {
   );
 }
 
+function auditOf(post: PostDto) {
+  return owner.withActor(SYSTEM, (trx) =>
+    trx
+      .selectFrom('audit_events')
+      .select(['action', 'actor_kind', 'error_code'])
+      .where('resource_id', '=', decodePublicId('series', post.seriesId ?? ''))
+      .execute(),
+  );
+}
+
 async function pausedSeries(): Promise<{ post: PostDto; id: string }> {
   at('2027-01-04T06:00:00Z');
   const post = await repeating('2027-01-08T09:00', { freq: 'daily' });
@@ -359,14 +369,7 @@ describe('advancing a series', () => {
     expect(edit.status).toBe(200);
     await advance();
     expect(await seriesOf(post)).toMatchObject({ state: 'paused', stateReason: 'advance_failed' });
-    const audit = await owner.withActor(SYSTEM, (trx) =>
-      trx
-        .selectFrom('audit_events')
-        .select(['action', 'actor_kind', 'error_code'])
-        .where('resource_id', '=', decodePublicId('series', post.seriesId ?? ''))
-        .execute(),
-    );
-    expect(audit).toEqual([
+    expect(await auditOf(post)).toEqual([
       { action: 'series.paused', actor_kind: 'system', error_code: 'preflight_failed' },
     ]);
   });
@@ -386,6 +389,9 @@ describe('advancing a series', () => {
     expect(edit.status).toBe(200);
     await advance();
     expect(await seriesOf(post)).toMatchObject({ state: 'paused', stateReason: 'advance_failed' });
+    expect(await auditOf(post)).toEqual([
+      { action: 'series.paused', actor_kind: 'system', error_code: 'preflight_failed' },
+    ]);
   });
 
   it('ends once its only occurrence is deleted', async () => {
