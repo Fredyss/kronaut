@@ -1,4 +1,4 @@
-FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS pg
+FROM debian:13.7-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS pg
 ARG PG_MAJOR=17
 ARG PGDG_FINGERPRINT=B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 # The libraries copied below carry no dpkg record, so the image scan can't flag them;
@@ -34,7 +34,7 @@ RUN set -eu; \
       "$tool" --version; \
     done
 
-FROM debian:13.7-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS ffmpeg
+FROM debian:13.7-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS ffmpeg
 ARG X264_COMMIT=b35605ace3ddf7c1a5d67a2eb553f034aef41d55
 ARG X264_URL=https://code.videolan.org/videolan/x264/-/archive/${X264_COMMIT}/x264-${X264_COMMIT}.tar.gz
 ARG X264_SHA256=cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9
@@ -91,7 +91,7 @@ RUN set -eu; \
     /opt/ffmpeg/bin/ffmpeg -hide_banner -muxers | awk '{ print $2 }' | grep -qxF mp4 || { echo "missing muxer mp4" >&2; exit 1; }; \
     /opt/ffmpeg/bin/ffprobe -version
 
-FROM node:24.22.1-trixie-slim@sha256:89c5244bc22a9bc3287d89ebc7e49b9cb5bb84cd40e6175ac3421d5a9f68b95a AS node-build
+FROM node:24.22.2-trixie-slim@sha256:0820eaa85e07d0490446dd01d14707e17e6108a36988cf374899cd057eb3812d AS node-build
 
 FROM node-build AS deps
 ARG PNPM_VERSION=12.14.0
@@ -162,7 +162,7 @@ RUN pnpm install --frozen-lockfile --prod --filter '@kronaut/server...' --filter
 COPY tools/licenses tools/licenses
 RUN node tools/licenses/notices.ts /app/THIRD_PARTY_NOTICES
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:088a01637f22908632ba09018be2e0b516f2fa6f7869c191d29491139db43c78
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:6abfcb367ebc291572c774c1592a986be2ab26a2486f73093401327495a5962a
 COPY --from=pg /opt/pg /opt/pg
 COPY --from=ffmpeg /opt/ffmpeg /opt/ffmpeg
 COPY --from=deps /app /app
