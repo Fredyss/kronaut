@@ -95,6 +95,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0061](0061-instance-bot-token.md) | The instance bot token is a second app secret |
 | [0062](0062-kronaut-picker-for-providers-without-one.md) | Kronaut picks the channels when the network's dialog can't (extends 0053) |
 | [0063](0063-per-account-setting-options.md) | A provider may offer per-account options for a post setting |
+| [0064](0064-manual-only-providers.md) | A provider may require that a person chooses each post |
 
 ## Defaults
 

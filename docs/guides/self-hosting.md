@@ -167,7 +167,7 @@ Kronaut publishes image Pins to the boards of the Pinterest account that connect
 - **Trial access:** a new app starts on Trial, where every Pin it creates is visible only to you. Apply for Standard access (Pinterest asks for a screen recording of the connect flow) before you publish for real.
 - **Business accounts:** for apps registered on or after 2026-09-14, Pinterest may refuse personal (non-business) accounts unless it has authorized the app; such a connect or post fails with "business account required".
 - **Boards:** the composer offers the account's public boards as they were at connect. After you create a board on Pinterest, reconnect the channel to see it.
-- **Pinterest's rules:** the developer guidelines require that a person choose each scheduled Pin. Don't point RSS autopost, evergreen posts or CSV imports at a Pinterest channel.
+- **Pinterest's rules:** the developer guidelines require that a person choose each scheduled Pin. Kronaut enforces it: an RSS feed that adds items to the queue, the evergreen refill and a repeating post can't use a Pinterest channel. An RSS feed that saves items as drafts and a CSV import still can, because you schedule each draft and confirm each import yourself.
 - **Unconfirmed posts:** if Pinterest's answer to a send gets lost, Kronaut looks for the Pin on the board; if it can't tell, the post is marked unconfirmed rather than sent twice.
 
 ### Discord
