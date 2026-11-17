@@ -18,7 +18,7 @@ Three Kronaut jobs schedule posts that no person chose one by one: RSS feeds in 
 
 - **RSS feeds:** a feed in queue mode can't have a manual-only channel; saving it fails with `channel_manual_only`. Draft mode stays allowed, because a person schedules each draft. At run time the job also skips such a channel in queue mode.
 - **Evergreen:** the fill job leaves manual-only channels out of the pool. Marking a post evergreen still works for its other channels.
-- **Recurring series:** scheduling with a repeat fails with `repeat_manual_only` when a destination is manual-only. The series job also refuses to schedule a clone to such a channel.
+- **Recurring series:** scheduling or requesting approval with a repeat fails with `repeat_manual_only` when a destination is manual-only. The series job also refuses to schedule a clone to such a channel.
 - **What stays allowed:** a person scheduling or queueing one post, CSV import (the person wrote each row and confirms the batch), and API grants, which act per post.
 - **Channels list:** each channel carries `manualOnly`, so the web can explain the limit before the server rejects it.
 - **First user:** `pinterest`.

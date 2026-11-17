@@ -153,6 +153,12 @@ describe('creating a series', () => {
     expect((await errorOf(refused)).details).toEqual([
       { path: 'destinations.1', code: 'repeat_manual_only' },
     ]);
+    const schedule = { scheduleLocal: once.scheduleLocal, scheduleTz: TZ };
+    const asked = await requestCall(repeated, { schedule, repeat: { freq: 'daily' } }, ownerAuth);
+    expect(asked.status).toBe(422);
+    expect((await errorOf(asked)).details).toEqual([
+      { path: 'destinations.1', code: 'repeat_manual_only' },
+    ]);
     const single = await create(ownerAuth, body);
     expect((await scheduleCall(single, once)).status).toBe(200);
   });
