@@ -19,6 +19,7 @@ const ada: Channel = {
   lastErrorCode: null,
   postTypes: [],
   requiredSettings: [],
+  settingOptions: {},
   signature: null,
   shortenLinks: true,
   dataRetentionDays: null,

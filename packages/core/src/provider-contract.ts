@@ -78,6 +78,10 @@ export interface RateLimitSpec {
   readonly costPerPost: number;
 }
 
+export type SettingOptions = Readonly<
+  Record<string, readonly { readonly value: string; readonly label: string }[]>
+>;
+
 export interface ProviderManifest<S = unknown> {
   readonly id: string;
   readonly apiVersion: { readonly version: string; readonly sunsetOn?: string };
@@ -111,6 +115,7 @@ export interface ProviderManifest<S = unknown> {
   readonly dataRetention?: { readonly disconnectedDays: number; readonly lapsedDays: number };
   readonly egressHosts: readonly string[];
   accountPostType?(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec;
+  accountSettingOptions?(capabilities: unknown): SettingOptions;
 }
 
 export interface ProviderHttpResponse {

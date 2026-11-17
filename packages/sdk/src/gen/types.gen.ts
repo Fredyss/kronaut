@@ -915,6 +915,12 @@ export type ChannelsListResponses = {
             profileUrl: string | null;
             provider: string;
             requiredSettings: Array<string>;
+            settingOptions: {
+                [key: string]: Array<{
+                    label: string;
+                    value: string;
+                }>;
+            };
             shortenLinks: boolean;
             signature: {
                 doc: {
