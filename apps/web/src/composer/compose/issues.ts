@@ -22,6 +22,7 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   queue_empty: () => m.issue_queue_empty(),
   queue_full: () => m.issue_queue_full(),
   invalid_repeat: () => m.issue_invalid_repeat(),
+  repeat_manual_only: () => m.issue_repeat_manual_only(),
   post_type_unavailable: () => m.issue_post_type_unavailable(),
   provider_unavailable: () => m.issue_provider_unavailable(),
   not_ready: () => m.issue_not_ready(),

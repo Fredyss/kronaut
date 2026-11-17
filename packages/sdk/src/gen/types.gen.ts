@@ -863,6 +863,7 @@ export type ChannelsListResponses = {
             id: string;
             insights: boolean;
             lastErrorCode: string | null;
+            manualOnly: boolean;
             postTypes: Array<{
                 comment: {
                     text: Array<{

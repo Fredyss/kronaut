@@ -275,6 +275,7 @@ describe('channel listing', () => {
       'id',
       'insights',
       'lastErrorCode',
+      'manualOnly',
       'postTypes',
       'preview',
       'profileUrl',
@@ -408,7 +409,7 @@ describe('channel listing', () => {
     expect(JSON.stringify(rules.slice(0, 2))).not.toContain('forbiddenChars');
   });
 
-  it('returns the preview archetype, image aspect range and setting options from the manifest', async () => {
+  it('returns the preview archetype, image aspect range, setting options and manual-only flag from the manifest', async () => {
     const response = await app.request(`${BASE}/v1/workspaces/${previewWorkspace}/channels`, {
       headers: { cookie: owner },
     });
@@ -418,16 +419,18 @@ describe('channel listing', () => {
         provider: string;
         preview: string;
         insights: boolean;
+        manualOnly: boolean;
         postTypes: { imageAspect: unknown }[];
         settingOptions: unknown;
       }[];
     };
     const aspect = { min: { width: 4, height: 5 }, max: { width: 191, height: 100 } };
     expect(
-      items.map(({ provider, preview, insights, postTypes, settingOptions }) => ({
+      items.map(({ provider, preview, insights, manualOnly, postTypes, settingOptions }) => ({
         provider,
         preview,
         insights,
+        manualOnly,
         aspects: postTypes.map((postType) => postType.imageAspect),
         settingOptions,
       })),
@@ -436,6 +439,7 @@ describe('channel listing', () => {
         provider: 'instagram',
         preview: 'media-grid',
         insights: true,
+        manualOnly: false,
         aspects: [aspect, aspect, null],
         settingOptions: {},
       },
@@ -443,6 +447,7 @@ describe('channel listing', () => {
         provider: 'bluesky',
         preview: 'short-feed',
         insights: false,
+        manualOnly: false,
         aspects: [null],
         settingOptions: {},
       },
@@ -450,6 +455,7 @@ describe('channel listing', () => {
         provider: 'pinterest',
         preview: 'media-grid',
         insights: false,
+        manualOnly: true,
         aspects: [null],
         settingOptions: { boardId: [{ value: '9001', label: 'Garden' }] },
       },

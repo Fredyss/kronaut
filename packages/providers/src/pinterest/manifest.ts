@@ -69,5 +69,6 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
   capabilities: { analytics: false, delete: false },
   dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
   egressHosts: ['api.pinterest.com'],
+  manualOnly: true,
   accountSettingOptions: boardOptions,
 };

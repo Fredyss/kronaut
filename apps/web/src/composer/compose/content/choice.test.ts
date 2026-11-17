@@ -23,6 +23,7 @@ const threads: Channel = {
   brandId: null,
   groupIds: [],
   preview: 'short-feed',
+  manualOnly: false,
   insights: true,
 };
 

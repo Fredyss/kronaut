@@ -46,6 +46,7 @@
 /** @typedef {{}} Settings_Feed_AddInputs */
 /** @typedef {{}} Settings_Feed_CancelInputs */
 /** @typedef {{}} Settings_Feed_Channel_GoneInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_Manual_OnlyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_UnsupportedInputs */
 /** @typedef {{}} Settings_Feed_ChannelsInputs */
@@ -442,6 +443,10 @@ export const settings_feed_cancel = /** @type {(inputs: Settings_Feed_CancelInpu
 
 export const settings_feed_channel_gone = /** @type {(inputs: Settings_Feed_Channel_GoneInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Jeden z kanálov už neexistuje.`)
+};
+
+export const settings_feed_channel_manual_only = /** @type {(inputs: Settings_Feed_Channel_Manual_OnlyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Na kanáli ${i?.channel} musí každý príspevok vybrať človek. Nové položky z tohto zdroja ukladajte ako koncepty, alebo kanál odoberte.`)
 };
 
 export const settings_feed_channel_queue = /** @type {(inputs: Settings_Feed_Channel_QueueInputs) => LocalizedString} */ (i) => {

@@ -527,7 +527,7 @@ Pinterest section verified 2026-11-17 (P1–P7). Kronaut's mapping is ADR-0063.
   - Kronaut's mapping: 401 → `auth_expired`, ambiguous on the `public` step; 403 containing `PINNER_DATA_ACCESS_DENIED` → permanent `business_account_required`; other 403 → permanent `forbidden`; 404 on create → permanent `board_gone` (reconnect to refresh the boards); 400 → permanent `invalid_request`; 429 → `rate_limited` (account) until the reset; 5xx and timeouts → ambiguous after the send, else transient.
 - **Developer guidelines** (P7, checked 2026-11-17).
   - "You may not store any information accessed through any Pinterest Materials including the API" (the exception is campaign analytics for your own account). Kronaut stores the board ids and names; the risk is accepted in ADR-0063.
-  - "If your app allows end users to schedule Pin publishing, the end user must choose each Pin to be published." RSS autopost, evergreen refills and CSV import can target a Pinterest channel today and aren't blocked for it; use them only where a person chose each Pin.
+  - "If your app allows end users to schedule Pin publishing, the end user must choose each Pin to be published." Kronaut's mapping: the manifest sets `manualOnly` (ADR-0064). An RSS feed in queue mode, the evergreen fill and a repeat can't schedule to a Pinterest channel; a draft-mode feed and CSV import stay allowed, because a person schedules each draft and confirms each import.
   - A bring-your-own-key app must keep the user's API credentials locally.
 - **Disconnect.** No revoke call yet; disconnecting deletes Kronaut's tokens only.
 

@@ -461,6 +461,7 @@
   "repeat_after": "Po počtu příspěvků",
   "repeat_warning": "Některé sítě odmítnou stejný text opakovaný do týdne. Text obměňujte.",
   "issue_invalid_repeat": "Toto nastavení opakování není podporováno.",
+  "issue_repeat_manual_only": "Na tomto kanálu musí každý příspěvek vybrat člověk, proto ho nelze opakovat.",
   "series_rule": [
     {
       "declarations": [

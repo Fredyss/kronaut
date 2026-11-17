@@ -31,6 +31,10 @@ export interface ProviderRegistry {
   list(): readonly ProviderEntry[];
 }
 
+export function isManualOnly(registry: ProviderRegistry, provider: string): boolean {
+  return registry.get(provider)?.manifest.manualOnly === true;
+}
+
 export type HttpFactory = (manifest: ProviderManifest) => HttpClient;
 
 function defaultHttp(manifest: ProviderManifest): HttpClient {

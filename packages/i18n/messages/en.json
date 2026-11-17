@@ -437,6 +437,7 @@
   "repeat_after": "After a number of posts",
   "repeat_warning": "Some networks reject the same text repeated within a week. Vary the text.",
   "issue_invalid_repeat": "These repeat settings aren't supported.",
+  "issue_repeat_manual_only": "This channel needs each post chosen by a person, so it can't repeat.",
   "series_rule": [
     {
       "declarations": [

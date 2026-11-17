@@ -2491,6 +2491,9 @@
                               "null"
                             ]
                           },
+                          "manualOnly": {
+                            "type": "boolean"
+                          },
                           "postTypes": {
                             "items": {
                               "additionalProperties": false,
@@ -2925,6 +2928,7 @@
                           "requiredSettings",
                           "settingOptions",
                           "preview",
+                          "manualOnly",
                           "insights",
                           "signature",
                           "shortenLinks",
