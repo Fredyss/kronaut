@@ -110,6 +110,7 @@ printf '%s' "$THREADS_APP_SECRET" | docker compose run --rm -T cli kronaut provi
 printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register facebook --client-id <meta app id>
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
 printf '%s' "$GOOGLE_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register youtube --client-id <google client id>
+printf '%s' "$PINTEREST_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register pinterest --client-id <pinterest app id>
 printf '%s' "$DISCORD_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register discord --client-id <discord client id>
 printf '%s\n%s\n' "$DISCORD_CLIENT_SECRET" "$DISCORD_BOT_TOKEN" | docker compose run --rm -T cli kronaut provider-app register discord_bot --client-id <discord client id>
 ```
@@ -155,6 +156,19 @@ Kronaut uploads videos to the YouTube channels of the Google account that connec
   - Create an OAuth client of type **Web application** with the redirect URI `https://kronaut.example.com/v1/oauth/youtube/callback`, using your own host.
   - Register it with its client ID and client secret, using the `register youtube` command above.
 - **Quota:** a Cloud project gets 100 uploads a day, shared by every channel of the install. It resets at midnight Pacific time.
+
+### Pinterest
+
+Kronaut publishes image Pins to the boards of the Pinterest account that connects. Each post is one JPEG or PNG image of up to 20 MB, and needs a board.
+
+- **On developers.pinterest.com:**
+  - Create an app and add the redirect URI `https://kronaut.example.com/v1/oauth/pinterest/callback`, using your own host.
+  - Register it with its app ID and app secret, using the `register pinterest` command above.
+- **Trial access:** a new app starts on Trial, where every Pin it creates is visible only to you. Apply for Standard access (Pinterest asks for a screen recording of the connect flow) before you publish for real.
+- **Business accounts:** for apps registered on or after 2026-09-14, Pinterest may refuse personal (non-business) accounts unless it has authorized the app; such a connect or post fails with "business account required".
+- **Boards:** the composer offers the account's public boards as they were at connect. After you create a board on Pinterest, reconnect the channel to see it.
+- **Pinterest's rules:** the developer guidelines require that a person choose each scheduled Pin. Don't point RSS autopost, evergreen posts or CSV imports at a Pinterest channel.
+- **Unconfirmed posts:** if Pinterest's answer to a send gets lost, Kronaut looks for the Pin on the board; if it can't tell, the post is marked unconfirmed rather than sent twice.
 
 ### Discord
 

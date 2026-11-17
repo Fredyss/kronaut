@@ -34,7 +34,7 @@
    - **YouTube:** `videos.insert` has its own bucket of 100/day **per Cloud project**, shared by the whole install. The private-only lock on unverified projects was lifted on 2026-11-02. A consent screen left in Testing issues refresh tokens that die after 7 days.
    - **TikTok:** the audit rejects "tools for accounts you/your team manage", so it is effectively **hosted-only**.
    - **LinkedIn Pages:** CMA needs a **registered legal organisation**.
-   - **Pinterest:** apps registered after 2026-09-14 get `PINNER_DATA_ACCESS_DENIED` for non-business accounts.
+   - **Pinterest:** apps registered after 2026-09-14 get `PINNER_DATA_ACCESS_DENIED` for non-business accounts. On the Trial tier, Pins are visible only to their creator until Pinterest grants Standard access. The developer guidelines forbid storing API data (Kronaut stores the board list, ADR-0063) and require that a person choose each scheduled Pin, so RSS autopost, evergreen and CSV import should not target Pinterest.
    - **X:** paid per post, at $0.015, or $0.20 with a URL. A negative credit balance blocks the app, which is an instance incident.
    - **Google Business Profile:** needs a profile verified for 60+ days.
    - **Meta:** App Review takes weeks.
