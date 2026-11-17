@@ -16,6 +16,7 @@ export type SecretAppProvider =
   | 'facebook'
   | 'instagram'
   | 'linkedin'
+  | 'pinterest'
   | 'threads'
   | 'youtube';
 

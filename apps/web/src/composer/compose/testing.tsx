@@ -52,6 +52,15 @@ const RULES: Record<string, unknown[]> = {
   bluesky: [{ id: 'post', text: BLUESKY_TEXT, maxLinks: null, imageAspect: null, video: null }],
   discord: DISCORD_RULES,
   discord_bot: DISCORD_RULES,
+  pinterest: [
+    {
+      id: 'pin',
+      text: [{ counting: 'utf16', max: 800 }],
+      maxLinks: null,
+      imageAspect: null,
+      video: null,
+    },
+  ],
   threads: [
     {
       id: 'post',
@@ -89,9 +98,16 @@ const PREVIEWS: Record<string, string> = {
   instagram: 'media-grid',
   linkedin: 'pro-feed',
   mastodon: 'short-feed',
+  pinterest: 'media-grid',
   threads: 'short-feed',
   youtube: 'pro-feed',
 };
+
+const REQUIRED: Record<string, string[]> = { pinterest: ['boardId'], youtube: ['title'] };
+const BOARDS = [
+  { value: '9001', label: 'Garden' },
+  { value: '9002', label: 'Recipes' },
+];
 
 export function channel(id: string, provider: string, displayName: string) {
   return {
@@ -107,7 +123,8 @@ export function channel(id: string, provider: string, displayName: string) {
     connectedAt: '2026-10-01T08:00:00.000Z',
     lastErrorCode: null,
     postTypes: RULES[provider] ?? [],
-    requiredSettings: provider === 'youtube' ? ['title'] : [],
+    requiredSettings: REQUIRED[provider] ?? [],
+    settingOptions: provider === 'pinterest' ? { boardId: BOARDS } : {},
     preview: PREVIEWS[provider] ?? 'short-feed',
     signature: null,
   };

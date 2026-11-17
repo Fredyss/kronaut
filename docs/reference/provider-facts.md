@@ -503,12 +503,33 @@ Verified 2026-11-16 (D1, D3–D11).
 - **Upload v2.** Dedicated paths (`/2/media/upload/initialize`, `/{id}/append`, `/{id}/finalize`); `command=INIT` style is gone.
 - **Duplicates and idempotency.** The docs have no idempotency key and no documented duplicate-content error code.
 
-**Pinterest**
-- **Tokens.** Access token 30d. Apps created after 2025-09-25 get a **continuous refresh token of 60d**, and each refresh returns a new one, so it is `rotating` with a 60-day inactivity death. The legacy 365-day hard token is no longer supported.
-- **Invalidation.** Tokens are invalidated by a username or password change, without notice.
-- **New-app restriction.** Apps registered on or after **2026-09-14** may get `403 PINNER_DATA_ACCESS_DENIED` for **non-business users'** boards and Pins. A Kronaut app registered now is affected.
-- **Composer.** `board_id` is required. Organic formats are image or video Pins only.
-- **Video.** Register with `/v5/media`, POST to S3 (204), poll `GET /v5/media/{id}` until it succeeds, then create the Pin with a **mandatory `cover_image_url`**.
+**Pinterest** (API v5, `api.pinterest.com`)
+
+Pinterest section verified 2026-11-17 (P1–P7). Kronaut's mapping is ADR-0063.
+- **Login** (P1). Authorize at `https://www.pinterest.com/oauth/` with `client_id`, `redirect_uri`, `response_type=code`, `scope` (commas or spaces) and `state`. PKCE isn't mentioned.
+  - Token: `POST https://api.pinterest.com/v5/oauth/token`, form-encoded, `Authorization: Basic base64(client_id:client_secret)`. `grant_type=authorization_code` with `code` and `redirect_uri`; refresh with `grant_type=refresh_token` and `refresh_token`.
+  - Access tokens (`pina…`) last 30 days (`expires_in` 2592000). Apps created on or after 2025-09-25 get a continuous refresh token (`pinr…`) with a 60-day window; `continuous_refresh=true` asks for one on older apps and is ignored on newer ones (P1, P6 `OauthAccessTokenCreate`). Each refresh returns a new `refresh_token` with `refresh_token_expires_in` (5184000) and `refresh_token_expires_at` (Unix seconds), so the grant is `rotating`. The response's `scope` is space-separated in the example.
+  - Tokens are invalidated by a username or password change, without notice (P1).
+  - Kronaut's mapping: scopes `boards:read,boards:write,pins:read,pins:write,user_accounts:read`, no `*_secret` scopes; a missing scope fails the connect. It sends `continuous_refresh=true` on the code exchange. 400 on refresh → `auth_revoked`, 401 → `app_config` `client_invalid` (an assumption: the token errors aren't documented).
+- **Account** (P6). `GET /v5/user_account` (`user_accounts:read`) returns `id`, `username` and, for business accounts, `business_name`.
+  - Kronaut's mapping: one Pinterest account is one channel: `providerAccountId` and `subjectId` are the user id, `handle` the username, `displayName` the business name or else the username, `profileUrl` `https://www.pinterest.com/<username>/`.
+- **Boards** (P6). `GET /v5/boards` (`boards:read`) lists the account's boards and the group boards it collaborates on; `privacy` is `ALL`, `PUBLIC`, `PROTECTED`, `SECRET` or `PUBLIC_AND_SECRET`; `page_size` 1–250 (default 25); paging by `bookmark`. A Board requires `id` and `name`.
+  - Kronaut's mapping (ADR-0063): connect stores the `PUBLIC` boards, id and name, at most 500, sorted by name, in the account's `capabilities`; the composer offers them as the required `boardId` setting. A reconnect replaces the list; an account with no public boards connects and the composer says to create one and reconnect.
+- **Pins** (P4, P6). `POST /v5/pins` (`boards:read`, `boards:write`, `pins:read`, `pins:write`) returns 200 or 201 with a Pin. Body: `board_id`, `title` ≤ 100, `description` ≤ 800, `link` ≤ 2,048, `alt_text` ≤ 500, `media_source`. `image_base64` needs `source_type`, `content_type` (`image/jpeg` or `image/png`) and `data`; `image_url` takes a URL. A Pin's `id` is digits; `created_at` is a date-time.
+  - Image Pins (P5): PNG or JPEG, up to 20 MB, 2:3 recommended.
+  - Kronaut's mapping: post type `pin`, one image, one `public` step `create`; the text is the description, the image goes as `image_base64` (a self-hosted install may have no public media URL). Kronaut's own limit is 8 MB, below Pinterest's 20 MB: the image travels inside the one `public` request, and a slow upload that hits the egress deadline would end `unconfirmed`. Title and link are optional settings. No video in this release (video needs `/v5/media`, an S3 upload, polling and a mandatory cover image).
+- **Read back** (P6). `GET /v5/boards/{board_id}/pins` (`boards:read`, `pins:read`) returns `items` and `bookmark`; the order isn't documented.
+  - Kronaut's mapping: `verify.mode` `list_recent_match`, window 1 h. It reads the board's first 100 Pins and claims one only if exactly one has `created_at` at or after the second of the send and the same title, description and link, and the same alt text when the post has one; anything else is inconclusive and ends `unconfirmed`. A post with no title, text and link is never claimed, because any other image-only Pin on the board would match. It never answers `absent`: that would need the list order, which isn't documented. Whether `created_at` carries an offset isn't documented; a bare time is read as UTC. **Live-test item:** the list order and whether the link comes back unchanged.
+- **Access tiers** (P2). On **Trial**, Pins and boards created are visible only to their creator ("Sandbox entities"); Standard access needs a screen recording of the OAuth flow. Apps registered on or after **2026-09-14** may get `403 PINNER_DATA_ACCESS_DENIED` when they read boards or Pins of **non-business** users without Pinterest's authorization; no response body is documented.
+- **Rate limits** (P3). Standard: 100 requests per second per user per app overall; `org_write` 100 per minute and `org_read` 1,000 per minute per user per app. Trial: 1,000 requests per day per app, `org_write` 300 per day. Headers `x-ratelimit-limit`, `x-ratelimit-remaining`, `x-ratelimit-reset`.
+  - Kronaut's mapping: an account bucket `org_write_minute` of 100 per minute, one per post. **Assumption:** `x-ratelimit-reset` is read as seconds until the reset (its unit isn't documented); without it, `Retry-After`, else 1 minute.
+- **Errors** (P6). The body is `{code, message}` (`code` an integer). No board-not-found code is documented.
+  - Kronaut's mapping: 401 → `auth_expired`, ambiguous on the `public` step; 403 containing `PINNER_DATA_ACCESS_DENIED` → permanent `business_account_required`; other 403 → permanent `forbidden`; 404 on create → permanent `board_gone` (reconnect to refresh the boards); 400 → permanent `invalid_request`; 429 → `rate_limited` (account) until the reset; 5xx and timeouts → ambiguous after the send, else transient.
+- **Developer guidelines** (P7, checked 2026-11-17).
+  - "You may not store any information accessed through any Pinterest Materials including the API" (the exception is campaign analytics for your own account). Kronaut stores the board ids and names; the risk is accepted in ADR-0063.
+  - "If your app allows end users to schedule Pin publishing, the end user must choose each Pin to be published." RSS autopost, evergreen refills and CSV import can target a Pinterest channel today and aren't blocked for it; use them only where a person chose each Pin.
+  - A bring-your-own-key app must keep the user's API credentials locally.
+- **Disconnect.** No revoke call yet; disconnecting deletes Kronaut's tokens only.
 
 **Google Business Profile**
 - **API access.** Requires an application with a GBP that has been **verified and active for 60+ days**, plus a website. Quota-increase forms are not the path.
@@ -712,10 +733,13 @@ Verified 2026-11-16 (D1, D3–D11).
 - X5 https://docs.x.com/x-api/media/quickstart/best-practices
 - X6 https://docs.x.com/resources/fundamentals/counting-characters
 - X7 https://docs.x.com/x-api/posts/create-post
-- P1 https://developers.pinterest.com/docs/getting-started/access-tiers/
-- P2 https://developers.pinterest.com/docs/getting-started/authentication-and-scopes/
+- P1 https://developers.pinterest.com/docs/getting-started/set-up-authentication-and-authorization/
+- P2 https://developers.pinterest.com/docs/key-concepts/access-tiers/
 - P3 https://developers.pinterest.com/docs/reference/rate-limits/
-- P4 https://developers.pinterest.com/docs/api-features/creating-boards-and-pins/
+- P4 https://developers.pinterest.com/docs/work-with-organic-content-and-users/create-boards-and-pins/
+- P5 https://help.pinterest.com/en/business/article/pinterest-product-specs
+- P6 https://raw.githubusercontent.com/pinterest/api-description/main/v5/openapi.yaml
+- P7 https://policy.pinterest.com/en/developer-guidelines
 - GB1 https://developers.google.com/my-business/content/prereqs
 - GB2 https://developers.google.com/my-business/content/limits
 - GB3 https://developers.google.com/my-business/reference/rest/v4/accounts.locations.localPosts

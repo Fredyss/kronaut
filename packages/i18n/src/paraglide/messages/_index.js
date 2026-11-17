@@ -218,6 +218,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Alt_Text_RequiredInputs */
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
+/** @typedef {{}} Issue_Board_GoneInputs */
+/** @typedef {{}} Issue_Business_Account_RequiredInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
@@ -341,6 +343,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
+/** @typedef {{}} Provider_PinterestInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
 /** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
@@ -3692,6 +3695,36 @@ export const issue_aspect_out_of_range = /** @type {((inputs?: Issue_Aspect_Out_
 /**
 * | output |
 * | --- |
+* | "This Pinterest board is gone, or Kronaut can no longer post to it. Connect the channel again to refresh its boards, then choose another board." |
+*
+* @param {Issue_Board_GoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_board_gone = /** @type {((inputs?: Issue_Board_GoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Board_GoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_board_gone(inputs)
+	if (locale === "cs") return __cs.issue_board_gone(inputs)
+	return __en.issue_board_gone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pinterest lets Kronaut publish only for business accounts. Switch this Pinterest account to a business account, then connect it again." |
+*
+* @param {Issue_Business_Account_RequiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_business_account_required = /** @type {((inputs?: Issue_Business_Account_RequiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Business_Account_RequiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_business_account_required(inputs)
+	if (locale === "cs") return __cs.issue_business_account_required(inputs)
+	return __en.issue_business_account_required(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "An image file is too large." |
 *
 * @param {Issue_File_Too_LargeInputs} inputs
@@ -5547,6 +5580,21 @@ export const provider_mastodon = /** @type {((inputs?: Provider_MastodonInputs, 
 	if (locale === "sk") return __sk.provider_mastodon(inputs)
 	if (locale === "cs") return __cs.provider_mastodon(inputs)
 	return __en.provider_mastodon(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Pinterest" |
+*
+* @param {Provider_PinterestInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_pinterest = /** @type {((inputs?: Provider_PinterestInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_PinterestInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_pinterest(inputs)
+	if (locale === "cs") return __cs.provider_pinterest(inputs)
+	return __en.provider_pinterest(inputs)
 });
 /**
 * | output |

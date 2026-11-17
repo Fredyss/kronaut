@@ -35,6 +35,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Edit_Series_SkipInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Error_Ai_MarkedInputs */
 /** @typedef {{}} Compose_Error_Approval_RequiredInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Board_MissingInputs */
 /** @typedef {{ channels: NonNullable<unknown> }} Compose_Error_Channel_GoneInputs */
 /** @typedef {{}} Compose_Error_EmptyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Error_Empty_ChannelInputs */
@@ -67,6 +68,17 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ channel: NonNullable<unknown> }} Compose_Main_OnlyInputs */
 /** @typedef {{}} Compose_Media_ExclusiveInputs */
 /** @typedef {{}} Compose_No_ChannelsInputs */
+/** @typedef {{}} Compose_Pinterest_BoardInputs */
+/** @typedef {{}} Compose_Pinterest_Board_PickInputs */
+/** @typedef {{}} Compose_Pinterest_LinkInputs */
+/** @typedef {{}} Compose_Pinterest_Link_InvalidInputs */
+/** @typedef {{}} Compose_Pinterest_Link_Too_LongInputs */
+/** @typedef {{}} Compose_Pinterest_No_BoardsInputs */
+/** @typedef {{}} Compose_Pinterest_OptionalInputs */
+/** @typedef {{}} Compose_Pinterest_RequiredInputs */
+/** @typedef {{}} Compose_Pinterest_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Pinterest_Title_CountInputs */
+/** @typedef {{}} Compose_Pinterest_Title_Too_LongInputs */
 /** @typedef {{}} Compose_Preview_EmptyInputs */
 /** @typedef {{}} Compose_Refused_Channel_TwiceInputs */
 /** @typedef {{}} Compose_Refused_Channel_UnavailableInputs */
@@ -637,6 +649,21 @@ export const compose_error_approval_required = /** @type {((inputs?: Compose_Err
 /**
 * | output |
 * | --- |
+* | "Choose a Pinterest board for {channel}." |
+*
+* @param {Compose_Error_Board_MissingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_error_board_missing = /** @type {((inputs: Compose_Error_Board_MissingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Error_Board_MissingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_error_board_missing(inputs)
+	if (locale === "cs") return __cs.compose_error_board_missing(inputs)
+	return __en.compose_error_board_missing(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "This post can't be saved because a channel it goes to is no longer available: {channels}." |
 *
 * @param {Compose_Error_Channel_GoneInputs} inputs
@@ -1115,6 +1142,171 @@ export const compose_no_channels = /** @type {((inputs?: Compose_No_ChannelsInpu
 	if (locale === "sk") return __sk.compose_no_channels(inputs)
 	if (locale === "cs") return __cs.compose_no_channels(inputs)
 	return __en.compose_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Board" |
+*
+* @param {Compose_Pinterest_BoardInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_board = /** @type {((inputs?: Compose_Pinterest_BoardInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_BoardInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_board(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_board(inputs)
+	return __en.compose_pinterest_board(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Choose a board" |
+*
+* @param {Compose_Pinterest_Board_PickInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_board_pick = /** @type {((inputs?: Compose_Pinterest_Board_PickInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_Board_PickInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_board_pick(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_board_pick(inputs)
+	return __en.compose_pinterest_board_pick(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Link" |
+*
+* @param {Compose_Pinterest_LinkInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_link = /** @type {((inputs?: Compose_Pinterest_LinkInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_LinkInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_link(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_link(inputs)
+	return __en.compose_pinterest_link(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Use a full link that starts with https://." |
+*
+* @param {Compose_Pinterest_Link_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_link_invalid = /** @type {((inputs?: Compose_Pinterest_Link_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_Link_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_link_invalid(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_link_invalid(inputs)
+	return __en.compose_pinterest_link_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The link is too long." |
+*
+* @param {Compose_Pinterest_Link_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_link_too_long = /** @type {((inputs?: Compose_Pinterest_Link_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_Link_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_link_too_long(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_link_too_long(inputs)
+	return __en.compose_pinterest_link_too_long(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This account has no public boards. Create one on Pinterest, then connect the channel again." |
+*
+* @param {Compose_Pinterest_No_BoardsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_no_boards = /** @type {((inputs?: Compose_Pinterest_No_BoardsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_No_BoardsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_no_boards(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_no_boards(inputs)
+	return __en.compose_pinterest_no_boards(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Optional" |
+*
+* @param {Compose_Pinterest_OptionalInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_optional = /** @type {((inputs?: Compose_Pinterest_OptionalInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_OptionalInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_optional(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_optional(inputs)
+	return __en.compose_pinterest_optional(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Required" |
+*
+* @param {Compose_Pinterest_RequiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_required = /** @type {((inputs?: Compose_Pinterest_RequiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_RequiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_required(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_required(inputs)
+	return __en.compose_pinterest_required(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Title" |
+*
+* @param {Compose_Pinterest_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_title = /** @type {((inputs?: Compose_Pinterest_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_title(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_title(inputs)
+	return __en.compose_pinterest_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{count} / {max}" |
+*
+* @param {Compose_Pinterest_Title_CountInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_title_count = /** @type {((inputs: Compose_Pinterest_Title_CountInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_Title_CountInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_title_count(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_title_count(inputs)
+	return __en.compose_pinterest_title_count(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The title is too long." |
+*
+* @param {Compose_Pinterest_Title_Too_LongInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_pinterest_title_too_long = /** @type {((inputs?: Compose_Pinterest_Title_Too_LongInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Pinterest_Title_Too_LongInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_pinterest_title_too_long(inputs)
+	if (locale === "cs") return __cs.compose_pinterest_title_too_long(inputs)
+	return __en.compose_pinterest_title_too_long(inputs)
 });
 /**
 * | output |

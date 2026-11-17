@@ -300,7 +300,7 @@ export const provider_app_not_found = /** @type {(inputs: Provider_App_Not_Found
 };
 
 export const provider_unsupported = /** @type {(inputs: Provider_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`zaregistrovať sa dá len bluesky, discord, discord_bot, facebook, instagram, linkedin, threads alebo youtube`)
+	return /** @type {LocalizedString} */ (`zaregistrovať sa dá len bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads alebo youtube`)
 };
 
 export const restored_no_state = /** @type {(inputs: Restored_No_StateInputs) => LocalizedString} */ () => {

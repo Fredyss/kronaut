@@ -28,6 +28,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
   - Thread and first-comment support: optional `thread {maxItems, media}` and `comment {text, steps}` ([ADR-0055](../adr/0055-reply-chains-and-first-comment.md)).
 - **Settings:** a Zod schema with defaults.
   - `requiredSettings`: keys that must be present and non-blank at schedule and at claim, such as YouTube's `title`. A draft may omit them, so draft save only parses the schema. `validateSettings()` reports `setting_required` with the `field`, and the API puts it at `destinations.<n>.settings.<field>`.
+  - `accountSettingOptions?(capabilities)`: per setting key, a list of `{value, label}` built only from the account's stored `capabilities`, with no network call ([ADR-0063](../adr/0063-per-account-setting-options.md)). The channels list returns it as `settingOptions`, and the composer renders such a setting as a select. The schema checks only the value's shape; a stale value fails at publish (Pinterest: `boardId` from the boards stored at connect, a gone board is `board_gone`).
 - **Cost:** `cost{model, perPost{usd, linkUsd, asOf, sourceUrl}}`.
 - **Verification:** `verify.mode`, one of `idempotency_key | deterministic_id | status_by_ref | list_recent_match | none`.
 - **Rate limits:** `rateLimits[{scope account|app|instance, headerParser}]` plus concurrency.

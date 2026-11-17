@@ -28,6 +28,7 @@ describe('notification messages', () => {
     expect(providerName(en, 'facebook')).toBe('Facebook');
     expect(providerName(en, 'linkedin')).toBe('LinkedIn');
     expect(providerName(en, 'youtube')).toBe('YouTube');
-    expect(providerName(en, 'pinterest')).toBe('pinterest');
+    expect(providerName(en, 'pinterest')).toBe('Pinterest');
+    expect(providerName(en, 'tiktok')).toBe('tiktok');
   });
 });

@@ -6,6 +6,7 @@ import { facebookManifest } from './facebook/manifest.ts';
 import { instagramManifest } from './instagram/manifest.ts';
 import { linkedinManifest } from './linkedin/manifest.ts';
 import { mastodonManifest } from './mastodon/manifest.ts';
+import { pinterestManifest } from './pinterest/manifest.ts';
 import { threadsManifest } from './threads/manifest.ts';
 import { youtubeManifest } from './youtube/manifest.ts';
 
@@ -17,6 +18,7 @@ export const manifests: readonly ProviderManifest[] = [
   instagramManifest,
   linkedinManifest,
   mastodonManifest,
+  pinterestManifest,
   threadsManifest,
   youtubeManifest,
 ];

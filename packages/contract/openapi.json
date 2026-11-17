@@ -2833,6 +2833,31 @@
                             },
                             "type": "array"
                           },
+                          "settingOptions": {
+                            "additionalProperties": {
+                              "items": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "label": {
+                                    "type": "string"
+                                  },
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "value",
+                                  "label"
+                                ],
+                                "type": "object"
+                              },
+                              "type": "array"
+                            },
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "type": "object"
+                          },
                           "shortenLinks": {
                             "type": "boolean"
                           },
@@ -2898,6 +2923,7 @@
                           "lastErrorCode",
                           "postTypes",
                           "requiredSettings",
+                          "settingOptions",
                           "preview",
                           "insights",
                           "signature",

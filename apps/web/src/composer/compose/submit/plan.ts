@@ -6,6 +6,7 @@ import { isBlank } from '../../../records/posts/doc.ts';
 import type { Destination } from '../../../records/posts/queries.ts';
 import { choiceFor } from '../content/choice.ts';
 import { type Content, effective } from '../content/contents.ts';
+import { invalidPin } from '../content/pinterest.ts';
 import type { ContentsState } from '../content/use-contents.ts';
 import { invalidTitle } from '../content/youtube.ts';
 import { blankItemProblem, issueMessage } from '../issues.ts';
@@ -132,6 +133,7 @@ export function settingsCheck(plan: Plan, list: readonly Channel[]) {
     const channel = list.find((candidate) => candidate.id === accountId);
     if (channel === undefined) continue;
     if (channel.provider === 'youtube' && invalidTitle(settings)) invalid.push(accountId);
+    if (channel.provider === 'pinterest' && invalidPin(settings)) invalid.push(accountId);
     const field = missingField(channel, settings);
     if (field !== undefined) missing.push({ channel, field });
   }
@@ -140,6 +142,7 @@ export function settingsCheck(plan: Plan, list: readonly Channel[]) {
 
 export function settingProblem({ channel, field }: MissingSetting): string {
   const name = channel.displayName;
+  if (field === 'boardId') return composeText.compose_error_board_missing({ channel: name });
   if (field !== 'title') {
     return m.compose_issue_on_channel({ channel: name, message: issueMessage('setting_required') });
   }

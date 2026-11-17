@@ -94,7 +94,7 @@
 | `permanent` | `failed` with a localised message ([Frontend](08-frontend.md)) |
 | `duplicate` | `published` if a remoteId is known, otherwise `verifying` |
 | `ambiguous` before `public_send_at` | `retry_wait/interrupted_safe` |
-| `ambiguous` after `public_send_at` | `verifying` → the manifest's `verify.mode` decides `published` or `unconfirmed`. Verifiers: Mastodon reads the account's recent statuses (`list_recent_match`, read-only; matched on the uploaded media ids, else the plain text), Bluesky deterministic rkey, IG/Threads container status (`status_by_ref`), YouTube the resumable upload session's status (`status_by_ref`: completed is found, incomplete is absent and the retry resumes the session, 404 is inconclusive). Every Mastodon send carries an `Idempotency-Key` derived from the destination and item position (kept 1 h by the server), so a re-send within the hour returns the original status instead of a duplicate |
+| `ambiguous` after `public_send_at` | `verifying` → the manifest's `verify.mode` decides `published` or `unconfirmed`. Verifiers: Mastodon reads the account's recent statuses (`list_recent_match`, read-only; matched on the uploaded media ids, else the plain text), Bluesky deterministic rkey, IG/Threads container status (`status_by_ref`), YouTube the resumable upload session's status (`status_by_ref`: completed is found, incomplete is absent and the retry resumes the session, 404 is inconclusive), Pinterest the board's Pins (`list_recent_match`: exactly one Pin created after the send with the same title, description and link is found, anything else is inconclusive). Every Mastodon send carries an `Idempotency-Key` derived from the destination and item position (kept 1 h by the server), so a re-send within the hour returns the original status instead of a duplicate |
 | A read fails after a successful send | Never reaches `plan()`: the provider wraps the read in `afterSend()`, so the destination still ends `published`, at worst without the permalink |
 
 ## Lease reaper
@@ -263,7 +263,7 @@ The approval events are written in the transaction that opens or decides the req
 
 - One `UPDATE rate_buckets … RETURNING` does the refill and the take.
 - Keys:
-  - provider account id
+  - provider account id (Pinterest: `org_write` 100 per minute per user and app)
   - `app:<provider>` (the YouTube `videos.insert` bucket of 100/day per Cloud project is shared by the whole install)
   - `instance:<host>` (Mastodon)
 - No token → set `run_at = now()+wait` and exit. A worker never sleeps holding a job.

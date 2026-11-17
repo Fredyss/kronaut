@@ -216,6 +216,8 @@
 /** @typedef {{}} Issue_Alt_Text_RequiredInputs */
 /** @typedef {{}} Issue_Alt_Text_Too_LongInputs */
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
+/** @typedef {{}} Issue_Board_GoneInputs */
+/** @typedef {{}} Issue_Business_Account_RequiredInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
@@ -339,6 +341,7 @@
 /** @typedef {{}} Provider_InstagramInputs */
 /** @typedef {{}} Provider_LinkedinInputs */
 /** @typedef {{}} Provider_MastodonInputs */
+/** @typedef {{}} Provider_PinterestInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
 /** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
@@ -1324,6 +1327,14 @@ export const issue_aspect_out_of_range = /** @type {(inputs: Issue_Aspect_Out_Of
 	return /** @type {LocalizedString} */ (`Poměr stran obrázku tato síť nepovoluje.`)
 };
 
+export const issue_board_gone = /** @type {(inputs: Issue_Board_GoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tato nástěnka na Pinterestu už neexistuje nebo na ni Kronaut nemůže zveřejňovat. Znovu připojte kanál, aby se obnovil seznam nástěnek, a vyberte jinou nástěnku.`)
+};
+
+export const issue_business_account_required = /** @type {(inputs: Issue_Business_Account_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pinterest dovoluje Kronautu zveřejňovat jen za firemní účty. Přepněte tento účet na Pinterestu na firemní a pak ho znovu připojte.`)
+};
+
 export const issue_file_too_large = /** @type {(inputs: Issue_File_Too_LargeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Soubor s obrázkem je příliš velký.`)
 };
@@ -1846,6 +1857,10 @@ export const provider_linkedin = /** @type {(inputs: Provider_LinkedinInputs) =>
 
 export const provider_mastodon = /** @type {(inputs: Provider_MastodonInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Mastodon`)
+};
+
+export const provider_pinterest = /** @type {(inputs: Provider_PinterestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pinterest`)
 };
 
 export const provider_threads = /** @type {(inputs: Provider_ThreadsInputs) => LocalizedString} */ () => {
