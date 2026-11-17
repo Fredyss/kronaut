@@ -293,6 +293,7 @@
 /** @typedef {{}} Post_Action_DuplicateInputs */
 /** @typedef {{}} Post_Action_EditInputs */
 /** @typedef {{}} Post_Action_StatsInputs */
+/** @typedef {{}} Post_Copy_LinkInputs */
 /** @typedef {{}} Post_CustomizedInputs */
 /** @typedef {{}} Post_Delete_BodyInputs */
 /** @typedef {{}} Post_Delete_ConfirmInputs */
@@ -310,6 +311,8 @@
 /** @typedef {{}} Post_Discard_TitleInputs */
 /** @typedef {{}} Post_Edit_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Post_ImagesInputs */
+/** @typedef {{}} Post_Link_CopiedInputs */
+/** @typedef {{}} Post_Link_Copy_FailedInputs */
 /** @typedef {{}} Post_New_TitleInputs */
 /** @typedef {{}} Post_Not_FoundInputs */
 /** @typedef {{}} Post_Preview_EmptyInputs */
@@ -1626,6 +1629,10 @@ export const post_action_stats = /** @type {(inputs: Post_Action_StatsInputs) =>
 	return /** @type {LocalizedString} */ (`Stats`)
 };
 
+export const post_copy_link = /** @type {(inputs: Post_Copy_LinkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Copy link`)
+};
+
 export const post_customized = /** @type {(inputs: Post_CustomizedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Text customized for this channel`)
 };
@@ -1698,6 +1705,14 @@ export const post_images = /** @type {(inputs: Post_ImagesInputs) => LocalizedSt
 	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
 	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} image`);
 	return /** @type {LocalizedString} */ (`${i?.count} images`)
+};
+
+export const post_link_copied = /** @type {(inputs: Post_Link_CopiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Link copied.`)
+};
+
+export const post_link_copy_failed = /** @type {(inputs: Post_Link_Copy_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Couldn't copy the link.`)
 };
 
 export const post_new_title = /** @type {(inputs: Post_New_TitleInputs) => LocalizedString} */ () => {

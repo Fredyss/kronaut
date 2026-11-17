@@ -273,6 +273,9 @@
   "post_published_at": "Published {when}",
   "post_scheduled_at": "Due {when}",
   "post_view": "View post",
+  "post_copy_link": "Copy link",
+  "post_link_copied": "Link copied.",
+  "post_link_copy_failed": "Couldn't copy the link.",
   "post_images": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
