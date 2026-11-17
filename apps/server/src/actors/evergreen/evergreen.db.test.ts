@@ -17,6 +17,7 @@ import {
   grantAuth,
   insertAccount,
   internal,
+  MANUAL_PROVIDER,
   owner,
   ownerAuth,
   ownerId,
@@ -62,8 +63,12 @@ afterEach(async () => {
 
 type Slot = readonly [weekday: number, time: string];
 
-async function channelWith(label: string, slots: readonly Slot[]): Promise<string> {
-  const channel = await insertAccount(label);
+async function channelWith(
+  label: string,
+  slots: readonly Slot[],
+  provider?: string,
+): Promise<string> {
+  const channel = await insertAccount(label, workspaceId, provider);
   const response = await call('PUT', `channels/${channel}/queue`, ownerAuth, {
     timezone: TZ,
     slots: slots.map(([weekday, time]) => ({ weekday, time })),
@@ -423,5 +428,21 @@ describe('filling free queue slots', () => {
     await fill();
     expect(await copiesOf(own)).toEqual([]);
     expect(await copiesOf(other)).toHaveLength(1);
+  });
+
+  it('leaves a manual-only channel out while filling another channel of the same post', async () => {
+    const manual = await channelWith('eg-manual', [[1, '17:00']], MANUAL_PROVIDER);
+    const channel = await channelWith('eg-beside', [[1, '17:00']]);
+    const post = await create(ownerAuth, {
+      items: [{ doc: doc('Evergreen') }],
+      destinations: [
+        { accountId: manual, publishType: 'post' },
+        { accountId: channel, publishType: 'post' },
+      ],
+    });
+    expect((await evergreen('PUT', post)).status).toBe(200);
+    await fill();
+    const copies = await copiesOf(post);
+    expect(copies.map((copy) => copy.social_account_id)).toEqual([accountId(channel)]);
   });
 });

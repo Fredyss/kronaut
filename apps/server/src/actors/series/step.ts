@@ -2,9 +2,10 @@ import { nextOccurrence, occurrenceAt, type RulePosition, resolveLocal } from '@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { lockCurrent } from '../../access/post-access/locks.ts';
+import { destinationRows, lockCurrent } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
 import { plainLocal } from '../../base/http/time.ts';
+import { isManualOnly } from '../../base/providers/providers.ts';
 import { clonePost } from '../../flow/posts/draft/clone.ts';
 import { actAs, ownerActing } from '../../flow/posts/owner/owner.ts';
 import {
@@ -105,11 +106,17 @@ function intendedSchedule(latest: Occurrence): LocalAt | null {
   return scheduleLocal === null || scheduleTz === null ? null : { scheduleLocal, scheduleTz };
 }
 
+async function toManualOnly(trx: TenantDb, { env, locked }: Turn): Promise<boolean> {
+  const rows = await destinationRows(trx, env.workspaceId, locked.id).execute();
+  return rows.some((row) => isManualOnly(env.providers, row.provider));
+}
+
 // A request someone rejected, withdrew or voided is theirs to follow up; the job asks only once.
 async function settleDraft(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
   const { env, locked, latest } = turn;
   const at = intendedSchedule(latest);
   if (latest.publish_summary !== 'draft' || at === null) return 'idle';
+  if (await toManualOnly(trx, turn)) return 'idle';
   const newest = await newestRequest(trx, env.workspaceId, locked.id);
   if (newest?.state === 'approved') return await scheduleOrRequest(trx, turn, at);
   if (!(await needsRequest(trx, turn, latest.agent_dirty))) {

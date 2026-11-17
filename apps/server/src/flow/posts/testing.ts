@@ -28,6 +28,7 @@ import {
   FAKE_PROVIDER,
   type FakeProvider,
   type FixtureUrls,
+  fakeManifest,
   fakeProvider,
 } from '../../steps/publish/testing.ts';
 import type { PostDto } from './read/dto.ts';
@@ -43,6 +44,7 @@ export const SYSTEM: Actor = { kind: 'system' };
 export const CLI: Actor = { kind: 'cli' };
 const GRANT_TOKEN = `kro_${'a'.repeat(16)}_${'b'.repeat(32)}`;
 export const TZ = 'Europe/Bratislava';
+export const MANUAL_PROVIDER = 'fake_manual';
 
 export let keyring: Keyring;
 export let fake: FakeProvider;
@@ -74,13 +76,17 @@ export function login(label: string): Promise<Auth> {
   return loginAs(app, label);
 }
 
-export async function insertAccount(label: string, ws: string = workspaceId): Promise<string> {
+export async function insertAccount(
+  label: string,
+  ws: string = workspaceId,
+  provider: string = FAKE_PROVIDER,
+): Promise<string> {
   return await db.withTenant(ws, { kind: 'user', id: ownerId }, async (trx) => {
     const { id } = await trx
       .insertInto('social_accounts')
       .values({
         workspace_id: ws,
-        provider: FAKE_PROVIDER,
+        provider,
         provider_app_id: appId,
         provider_account_id: `fake-${label}`,
         account_kind: 'profile',
@@ -165,7 +171,11 @@ export async function startPosts(
   await installJobQueue(test.ownerUrl, owner);
   keyring = createKeyring(new Map([[1, randomBytes(32)]]));
   fake = fakeProvider();
-  providers = createProviderRegistry([fake.manifest], [fake.runtime], () => ({}) as HttpClient);
+  providers = createProviderRegistry(
+    [fake.manifest, { ...fakeManifest, id: MANUAL_PROVIDER, manualOnly: true }],
+    [fake.runtime, { ...fake.runtime, id: MANUAL_PROVIDER }],
+    () => ({}) as HttpClient,
+  );
   const instance = createTestInstance({
     db,
     keyring,
