@@ -107,7 +107,7 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
   ],
   concurrency: 1,
   preview: 'media-grid',
-  capabilities: { analytics: false, delete: false },
+  capabilities: { analytics: true, delete: false },
   dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
   egressHosts: ['api.pinterest.com', 'pinterest-media-upload.s3-accelerate.amazonaws.com'],
   manualOnly: true,

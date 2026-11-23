@@ -15537,7 +15537,9 @@
                                 "reactions",
                                 "bookmarks",
                                 "views",
-                                "reach"
+                                "reach",
+                                "saves",
+                                "link_clicks"
                               ],
                               "type": "string"
                             },
@@ -15558,7 +15560,9 @@
                                     "reactions",
                                     "bookmarks",
                                     "views",
-                                    "reach"
+                                    "reach",
+                                    "saves",
+                                    "link_clicks"
                                   ],
                                   "type": "string"
                                 },

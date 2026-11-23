@@ -1,4 +1,5 @@
 import type { ProviderRuntime } from '@kronaut/core';
+import { accountMetrics, pinAnalytics } from './analytics.ts';
 import { connectFinish, connectStart } from './connect.ts';
 import type { PinterestSettings } from './manifest.ts';
 import { type PinterestCredentials, pinterestCredentials, refreshAccess } from './oauth.ts';
@@ -19,4 +20,8 @@ export const pinterestRuntime: ProviderRuntime<PinterestCredentials, PinterestSe
   publish: publishPin,
 
   verify: verifyPin,
+
+  analytics: pinAnalytics,
+
+  accountMetrics,
 };

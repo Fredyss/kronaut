@@ -443,6 +443,8 @@ export const analytics_metric = /** @type {(inputs: Analytics_MetricInputs) => L
 	if (i?.metric === "bookmarks") return /** @type {LocalizedString} */ (`Bookmarks`);
 	if (i?.metric === "views") return /** @type {LocalizedString} */ (`Views`);
 	if (i?.metric === "reach") return /** @type {LocalizedString} */ (`Reach`);
+	if (i?.metric === "saves") return /** @type {LocalizedString} */ (`Saves`);
+	if (i?.metric === "link_clicks") return /** @type {LocalizedString} */ (`Link clicks`);
 	return /** @type {LocalizedString} */ (`Metric`)
 };
 

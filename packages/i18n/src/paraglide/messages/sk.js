@@ -443,6 +443,8 @@ export const analytics_metric = /** @type {(inputs: Analytics_MetricInputs) => L
 	if (i?.metric === "bookmarks") return /** @type {LocalizedString} */ (`Záložky`);
 	if (i?.metric === "views") return /** @type {LocalizedString} */ (`Zobrazenia`);
 	if (i?.metric === "reach") return /** @type {LocalizedString} */ (`Dosah`);
+	if (i?.metric === "saves") return /** @type {LocalizedString} */ (`Uloženia`);
+	if (i?.metric === "link_clicks") return /** @type {LocalizedString} */ (`Kliknutia na odkaz`);
 	return /** @type {LocalizedString} */ (`Metrika`)
 };
 

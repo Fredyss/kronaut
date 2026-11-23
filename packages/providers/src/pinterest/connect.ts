@@ -6,7 +6,7 @@ import type {
   ConnectStartInput,
 } from '@kronaut/core';
 import { permanent } from '../_kit/meta-graph.ts';
-import { listPublicBoards, readUserAccount } from './boards.ts';
+import { accountProfile, listPublicBoards, readUserAccount } from './boards.ts';
 import {
   AUTHORIZE_URL,
   appSecret,
@@ -14,8 +14,6 @@ import {
   type PinterestCredentials,
   SCOPES,
 } from './oauth.ts';
-
-const PROFILE_URL = 'https://www.pinterest.com/';
 
 export async function connectStart(
   _ctx: BaseContext,
@@ -53,16 +51,13 @@ export async function connectFinish(
   const token = issued.credentials.accessToken;
   const user = await readUserAccount(ctx, token);
   const boards = await listPublicBoards(ctx, token);
-  const name = user.business_name?.trim() ?? '';
   return [
     {
       ...issued,
       providerAccountId: user.id,
       accountKind: 'account',
-      displayName: name === '' ? user.username : name,
-      handle: user.username,
+      ...accountProfile(user),
       subjectId: user.id,
-      profileUrl: `${PROFILE_URL}${encodeURIComponent(user.username)}/`,
       capabilities: { boards },
     },
   ];

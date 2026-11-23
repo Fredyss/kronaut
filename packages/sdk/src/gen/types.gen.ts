@@ -3941,7 +3941,7 @@ export type AnalyticsPostMetricsResponses = {
                 };
             };
             snapshots: Array<{
-                metric: 'likes' | 'reposts' | 'replies' | 'quotes' | 'comments' | 'shares' | 'reactions' | 'bookmarks' | 'views' | 'reach';
+                metric: 'likes' | 'reposts' | 'replies' | 'quotes' | 'comments' | 'shares' | 'reactions' | 'bookmarks' | 'views' | 'reach' | 'saves' | 'link_clicks';
                 observedAt: string;
                 value: number | null;
             }>;
