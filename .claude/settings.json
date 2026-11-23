@@ -67,6 +67,8 @@
       "Bash(git push * -nf*)",
       "Bash(git push -df*)",
       "Bash(git push * -df*)",
+      "Bash(git push * -*)",
+      "Bash(git push * :**)",
       "Bash(git push * --delete *)",
       "Bash(git push *+*)"
     ]
