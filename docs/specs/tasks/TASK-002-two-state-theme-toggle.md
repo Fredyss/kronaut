@@ -18,14 +18,14 @@ interface:
     change: modify
     signature: "export function ThemeToggle(): ReactNode (unchanged signature; two-state behaviour)"
 acceptance:
-  - With window.matchMedia('(prefers-color-scheme: dark)') not matching and nothing stored, the header button is named "Theme: light"; a click sets the <html> class to exactly ["dark"], stores "dark" under kronaut.theme and renames the button "Theme: dark"; a second click sets exactly ["light"], stores "light" and renames it "Theme: light".
-  - With the media query matching and nothing stored, the button is named "Theme: dark", and one click sets the class to exactly ["light"] and stores "light".
+  - 'With window.matchMedia(''(prefers-color-scheme: dark)'') not matching and nothing stored, the header button is named "Theme: light"; a click sets the <html> class to exactly ["dark"], stores "dark" under kronaut.theme and renames the button "Theme: dark"; a second click sets exactly ["light"], stores "light" and renames it "Theme: light".'
+  - 'With the media query matching and nothing stored, the button is named "Theme: dark", and one click sets the class to exactly ["light"] and stores "light".'
   - No click on the header button ever removes kronaut.theme or stores "system".
-  - While the stored choice is system, a "change" event from the media query to matching renames the button "Theme: dark" without a click; while the choice is light, the same event leaves it "Theme: light".
-  - When window.matchMedia is undefined and nothing is stored, the button is named "Theme: light".
+  - 'While the stored choice is system, a "change" event from the media query to matching renames the button "Theme: dark" without a click; while the choice is light, the same event leaves it "Theme: light".'
+  - 'When window.matchMedia is undefined and nothing is stored, the button is named "Theme: light".'
   - When localStorage throws, a click still flips the class and the button name.
   - In account.test.tsx, after the Settings select is set to Dark, a click on the header button leaves the select's value "light"; the select still offers system, light and dark.
-  - In apps/server/e2e/shell.e2e.ts, the cursor test finds the header button by en.theme_light; the theme test, with Playwright's default light color scheme, starts at "Theme: light", a click gives "Theme: dark" and the html class dark, and a second click gives "Theme: light" and the class light; a second test with page.emulateMedia({ colorScheme: 'dark' }) before the first navigation starts at "Theme: dark", and one click gives "Theme: light" and the class light; the no-title assertion stays.
+  - 'In apps/server/e2e/shell.e2e.ts, the cursor test finds the header button by en.theme_light; the theme test, with Playwright''s default light color scheme, starts at "Theme: light", a click gives "Theme: dark" and the html class dark, and a second click gives "Theme: light" and the class light; a second test with page.emulateMedia({ colorScheme: ''dark'' }) before the first navigation starts at "Theme: dark", and one click gives "Theme: light" and the class light; the no-title assertion stays.'
   - theme_system no longer exists in en, sk or cs, no code or test file references it, theme_light and theme_dark are unchanged, and `pnpm check` passes.
 if_unsure:
   - Keep every export of theme.tsx and its signature; useTheme still returns the stored choice, including 'system'.
