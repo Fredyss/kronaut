@@ -73,8 +73,8 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
         maxCount: 1,
         video: {
           mimes: ['video/mp4'],
-          // The whole file goes in one S3 POST under the 30 s provider egress deadline.
-          maxBytes: 100_000_000,
+          // The whole file goes in one S3 POST under the 30 s provider egress deadline (~13 Mbit/s).
+          maxBytes: 50_000_000,
           minDurationMs: 4_000,
           maxDurationMs: 900_000,
         },

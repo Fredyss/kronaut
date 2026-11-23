@@ -118,6 +118,15 @@ describe('pinterest publish choice', () => {
       maxBytes: 8_000_000,
     });
   });
+
+  it('refuses a carousel whose images together exceed 8 MB', () => {
+    const three = { size: 3_000_000, type: 'image/jpeg' };
+    expect(choiceFor(pinterest, images(3, three))).toEqual({
+      kind: 'images_too_large',
+      maxBytes: 8_000_000,
+    });
+    expect(choiceFor(pinterest, images(2, three))).toEqual({ kind: 'ok', publishType: 'carousel' });
+  });
 });
 
 describe('video publish choice', () => {

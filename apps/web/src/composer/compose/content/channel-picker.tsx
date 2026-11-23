@@ -14,6 +14,14 @@ import { choiceFor, type MediaFacts } from './choice.ts';
 import { GroupChips } from './group-chips.tsx';
 import { groupSources, manualSources, type Sources, toggled } from './group-picks.ts';
 
+function megabytes(bytes: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: 'megabyte',
+    maximumFractionDigits: 1,
+  }).format(bytes / 1_000_000);
+}
+
 export function channelHint(
   channel: Channel,
   choice: PublishChoice,
@@ -25,14 +33,12 @@ export function channelHint(
   if (choice.kind === 'image_type_unsupported') return composeText.compose_channel_image_type();
   if (choice.kind === 'too_many_images')
     return composeText.compose_channel_too_many_images({ count: choice.max });
-  if (choice.kind === 'image_too_large') {
-    const max = new Intl.NumberFormat(locale, {
-      style: 'unit',
-      unit: 'megabyte',
-      maximumFractionDigits: 1,
-    }).format(choice.maxBytes / 1_000_000);
-    return composeText.compose_channel_image_too_large({ max });
-  }
+  if (choice.kind === 'image_too_large')
+    return composeText.compose_channel_image_too_large({ max: megabytes(choice.maxBytes, locale) });
+  if (choice.kind === 'images_too_large')
+    return composeText.compose_channel_images_too_large({
+      max: megabytes(choice.maxBytes, locale),
+    });
   if (choice.kind === 'video_unsupported') return composeText.compose_channel_video_unsupported();
   if (choice.kind === 'unsupported') return composeText.compose_channel_unsupported();
   return null;

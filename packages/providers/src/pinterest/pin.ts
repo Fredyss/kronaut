@@ -22,6 +22,7 @@ export type Input = PublishInput<PinterestCredentials, PinterestSettings>;
 
 const PIN_URL = 'https://www.pinterest.com/pin/';
 const DESCRIPTION_MAX = 800;
+export const PIN_MAX_TOTAL_BYTES = 8_000_000;
 
 export const mediaId = z.string().regex(/^\d+$/);
 export const pinState = z.object({
@@ -66,11 +67,17 @@ function checkFile({ image, video }: MediaLimits, ref: MediaRef): void {
   else throw permanent('media_type_unsupported');
 }
 
+function totalBytes(refs: readonly MediaRef[]): number {
+  return refs.reduce((sum, ref) => sum + ref.bytes, 0);
+}
+
 export function checkPin(input: Input): Pin {
   const { spec, item } = planOf(pinterestManifest, input);
   const { media } = spec;
   checkCount(media, item.media);
   for (const ref of item.media) checkFile(media, ref);
+  if (media.video === undefined && totalBytes(item.media) > PIN_MAX_TOTAL_BYTES)
+    throw permanent('images_too_large');
   if (item.media.some((ref) => (ref.altText?.length ?? 0) > media.altText.maxLength))
     throw permanent('alt_text_too_long');
   if (item.text.normalize('NFC').length > DESCRIPTION_MAX) throw permanent('text_too_long');

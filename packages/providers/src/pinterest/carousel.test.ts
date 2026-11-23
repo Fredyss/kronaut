@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { assertPublicSendOrder } from '../_kit/testing.ts';
 import { pinterestManifest } from './manifest.ts';
+import { PIN_MAX_TOTAL_BYTES } from './pin.ts';
 import {
   BOARD_ID,
   BOARD_PINS,
@@ -73,6 +74,16 @@ describe('pinterest carousel publish', () => {
       'video_unsupported',
     ],
     ['an image over 8 MB', { media: [first, { ...second, bytes: 8_000_001 }] }, 'image_too_large'],
+    [
+      'images over 8 MB together',
+      {
+        media: [
+          { ...first, bytes: PIN_MAX_TOTAL_BYTES / 2 },
+          { ...second, bytes: PIN_MAX_TOTAL_BYTES / 2 + 1 },
+        ],
+      },
+      'images_too_large',
+    ],
     [
       'a long alt text',
       { media: [first, { ...second, altText: 'a'.repeat(501) }] },

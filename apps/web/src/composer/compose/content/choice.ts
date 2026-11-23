@@ -21,5 +21,9 @@ export function choiceFor(channel: Channel, { images, video }: MediaFacts): Publ
   if (images.some((file) => file.size > ui.maxImageBytes)) {
     return { kind: 'image_too_large', maxBytes: ui.maxImageBytes };
   }
+  const total = images.reduce((sum, file) => sum + file.size, 0);
+  if (ui.maxTotalImageBytes !== undefined && total > ui.maxTotalImageBytes) {
+    return { kind: 'images_too_large', maxBytes: ui.maxTotalImageBytes };
+  }
   return choice;
 }

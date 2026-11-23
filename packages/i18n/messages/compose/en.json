@@ -67,6 +67,7 @@
   "compose_channel_needs_image": "Needs an image or a video.",
   "compose_channel_needs_video": "Needs a video.",
   "compose_channel_image_too_large": "An image is larger than the {max} this network accepts.",
+  "compose_channel_images_too_large": "Together, the images are larger than the {max} this network accepts.",
   "compose_channel_image_type": "This network doesn't accept the format of an attached image.",
   "compose_channel_too_many_images": [
     {

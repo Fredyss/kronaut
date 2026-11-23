@@ -15,6 +15,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Select_All_OfInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Images_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{}} Compose_Channel_Needs_VideoInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
@@ -344,6 +345,21 @@ export const compose_channel_image_type = /** @type {((inputs?: Compose_Channel_
 	if (locale === "sk") return __sk.compose_channel_image_type(inputs)
 	if (locale === "cs") return __cs.compose_channel_image_type(inputs)
 	return __en.compose_channel_image_type(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Together, the images are larger than the {max} this network accepts." |
+*
+* @param {Compose_Channel_Images_Too_LargeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_channel_images_too_large = /** @type {((inputs: Compose_Channel_Images_Too_LargeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Channel_Images_Too_LargeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_channel_images_too_large(inputs)
+	if (locale === "cs") return __cs.compose_channel_images_too_large(inputs)
+	return __en.compose_channel_images_too_large(inputs)
 });
 /**
 * | output |

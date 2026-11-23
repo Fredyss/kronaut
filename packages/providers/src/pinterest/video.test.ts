@@ -1,6 +1,6 @@
 import type { MediaRef } from '@kronaut/core';
 import { describe, expect, it } from 'vitest';
-import { assertPublicSendOrder } from '../_kit/testing.ts';
+import { assertPublicSendOrder, egressError } from '../_kit/testing.ts';
 import { pinterestManifest } from './manifest.ts';
 import {
   BOARD_ID,
@@ -152,6 +152,19 @@ describe('pinterest video publish', () => {
     assertNoUploadSecrets(checkpoints);
   });
 
+  it('retries an upload that hit the egress deadline, before any public step', async () => {
+    const timedOut = { method: 'POST', url: UPLOAD_URL, error: egressError('timeout') };
+    const { error, calls, events, checkpoints } = await run(
+      'publish',
+      [registered(), timedOut],
+      video,
+    );
+    expect(error).toEqual({ kind: 'transient', detail: 'timeout' });
+    expect(events).not.toContain('step:create');
+    expect(calls.map((call) => call.url)).not.toContain(PINS_URL);
+    expect(checkpoints).toEqual([{ mediaId: MEDIA_ID }]);
+  });
+
   it.each([
     ['failed', { kind: 'permanent', code: 'video_processing_failed' }],
     ['archived', { kind: 'transient', detail: 'media_status_unknown' }],
@@ -175,7 +188,7 @@ describe('pinterest video publish', () => {
     ['an image', { media: [{ ...clip, mime: 'image/jpeg' }] }, 'video_required'],
     ['a clip under 4 s', { media: [{ ...clip, durationMs: 3_999 }] }, 'video_too_short'],
     ['a clip over 15 min', { media: [{ ...clip, durationMs: 900_001 }] }, 'video_too_long'],
-    ['a file over 100 MB', { media: [{ ...clip, bytes: 100_000_001 }] }, 'video_too_large'],
+    ['a file over 50 MB', { media: [{ ...clip, bytes: 50_000_001 }] }, 'video_too_large'],
     ['alt text over 500', { media: [{ ...clip, altText: 'a'.repeat(501) }] }, 'alt_text_too_long'],
     ['no board', { settings: {} }, 'board_missing'],
     ['a malformed media id', { state: { mediaId: 'x1' } }, 'state_invalid'],
