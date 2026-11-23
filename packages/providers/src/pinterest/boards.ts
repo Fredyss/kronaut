@@ -1,9 +1,10 @@
-import type { BaseContext, SettingOptions } from '@kronaut/core';
+import type { AccountProfile, BaseContext, SettingOptions } from '@kronaut/core';
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
 import { isSuccess, pinterestFailure } from './errors.ts';
 import { API_BASE } from './oauth.ts';
 
+const PROFILE_URL = 'https://www.pinterest.com/';
 const MAX_BOARDS = 500;
 const PAGE_SIZE = 250;
 const MAX_PAGES = 10;
@@ -57,11 +58,21 @@ const userAccount = z.looseObject({
   id: pinterestId,
   username: z.string().regex(/^[A-Za-z0-9_.-]{1,100}$/),
   business_name: z.string().nullish(),
+  follower_count: z.number().nullish().catch(null),
 });
 export type UserAccount = z.infer<typeof userAccount>;
 
 export function readUserAccount(ctx: BaseContext, token: string): Promise<UserAccount> {
   return getJson(ctx, token, new URL(`${API_BASE}/user_account`), userAccount);
+}
+
+export function accountProfile(user: UserAccount): AccountProfile {
+  const name = user.business_name?.trim() ?? '';
+  return {
+    displayName: name === '' ? user.username : name,
+    handle: user.username,
+    profileUrl: `${PROFILE_URL}${encodeURIComponent(user.username)}/`,
+  };
 }
 
 export function boardOptions(capabilities: unknown): SettingOptions {

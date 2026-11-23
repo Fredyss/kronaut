@@ -541,6 +541,8 @@
         "metric=bookmarks": "Záložky",
         "metric=views": "Zobrazenia",
         "metric=reach": "Dosah",
+        "metric=saves": "Uloženia",
+        "metric=link_clicks": "Kliknutia na odkaz",
         "metric=*": "Metrika"
       }
     }

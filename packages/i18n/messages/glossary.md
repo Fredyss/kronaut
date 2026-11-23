@@ -29,6 +29,8 @@ Use these terms in every catalog so the UI speaks one language. English is the s
 | follower | sledovateľ (sledovatelia) | sledující | An account that follows a channel. |
 | insights | podrobné štatistiky | podrobné statistiky | The extra counts a Meta network gives only with its insights permission. |
 | reach | dosah | dosah | Unique accounts that saw a post, as the network estimates it. |
+| saves | uloženia | uložení | Times people saved a Pin to one of their boards. Not "záložky", which are bookmarks. |
+| link clicks | kliknutia na odkaz | kliknutí na odkaz | Clicks from a post through to its link. |
 | tag | štítok (2–4 štítky, 5+ štítkov) | štítek (2–4 štítky, 5+ štítků) | An internal label for finding and grouping posts, never published. Not a hashtag. |
 | saved text | uložený text | uložený text | Reusable text kept for the workspace, inserted into a post while writing it. |
 | feed | zdroj (RSS) | zdroj (RSS) | An RSS or Atom feed whose new items become posts. Never "kanál"; that is a channel. |

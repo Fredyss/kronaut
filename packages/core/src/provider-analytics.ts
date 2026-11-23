@@ -12,6 +12,8 @@ export const POST_METRICS = [
   'bookmarks',
   'views',
   'reach',
+  'saves',
+  'link_clicks',
 ] as const;
 export type PostMetric = (typeof POST_METRICS)[number];
 export type PostMetrics = Readonly<Partial<Record<PostMetric, number | null>>>;

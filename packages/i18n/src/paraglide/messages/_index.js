@@ -477,6 +477,8 @@ export const analytics_as_of = /** @type {((inputs: Analytics_As_OfInputs, optio
 * | "bookmarks" | "Bookmarks" |
 * | "views" | "Views" |
 * | "reach" | "Reach" |
+* | "saves" | "Saves" |
+* | "link_clicks" | "Link clicks" |
 * | * | "Metric" |
 *
 * @param {Analytics_MetricInputs} inputs

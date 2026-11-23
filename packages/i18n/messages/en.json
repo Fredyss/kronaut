@@ -514,6 +514,8 @@
         "metric=bookmarks": "Bookmarks",
         "metric=views": "Views",
         "metric=reach": "Reach",
+        "metric=saves": "Saves",
+        "metric=link_clicks": "Link clicks",
         "metric=*": "Metric"
       }
     }
