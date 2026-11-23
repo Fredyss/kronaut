@@ -77,4 +77,5 @@ allowBuilds:
 
 overrides:
   js-yaml@>=4.0.0 <4.3.2: 4.3.2
+  seroval@>=1.5.5 <1.6.11: 1.6.11
   undici@>=8.0.0 <8.12.2: 8.12.3
