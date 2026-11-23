@@ -456,7 +456,7 @@ describe('channel listing', () => {
         preview: 'media-grid',
         insights: false,
         manualOnly: true,
-        aspects: [null],
+        aspects: [null, null, null],
         settingOptions: { boardId: [{ value: '9001', label: 'Garden' }] },
       },
     ]);
