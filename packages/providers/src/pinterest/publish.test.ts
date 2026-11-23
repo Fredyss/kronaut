@@ -68,6 +68,12 @@ describe('pinterest publish', () => {
     expect(calls).toHaveLength(0);
   });
 
+  it('refuses a post type it does not know', async () => {
+    const { error, calls } = await run('publish', [], { postType: 'story' });
+    expect(error).toEqual({ kind: 'permanent', code: 'post_type_unsupported' });
+    expect(calls).toHaveLength(0);
+  });
+
   it.each([
     [404, { code: 404 }, { kind: 'permanent', code: 'board_gone', detail: '404/404' }],
     [

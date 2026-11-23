@@ -13,6 +13,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Select_All_OfInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Images_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{}} Compose_Channel_Needs_VideoInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
@@ -188,6 +189,10 @@ export const compose_channel_image_too_large = /** @type {(inputs: Compose_Chann
 
 export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Image_TypeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`This network doesn't accept the format of an attached image.`)
+};
+
+export const compose_channel_images_too_large = /** @type {(inputs: Compose_Channel_Images_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Together, the images are larger than the ${i?.max} this network accepts.`)
 };
 
 export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {

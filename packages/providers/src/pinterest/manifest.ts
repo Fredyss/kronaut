@@ -1,4 +1,4 @@
-import type { ProviderManifest } from '@kronaut/core';
+import type { MediaLimits, ProviderManifest, TextLimit } from '@kronaut/core';
 import * as z from 'zod';
 import { boardOptions } from './boards.ts';
 
@@ -24,6 +24,22 @@ export type PinterestSettings = z.infer<typeof pinterestSettings>;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WRITES_PER_MINUTE = 100;
 
+const description: readonly TextLimit[] = [{ counting: 'utf16', max: 800 }];
+const altText = { supported: true, required: false, maxLength: 500 };
+
+function images(minCount: number, maxCount: number): MediaLimits {
+  return {
+    minCount,
+    maxCount,
+    image: { mimes: ['image/jpeg', 'image/png'], maxBytes: 8_000_000 },
+    mixed: false,
+    altText,
+    aiLabel: false,
+  };
+}
+
+export const videoPolling = { pollIntervalMs: 30_000, giveUpAfterMs: 30 * 60_000 };
+
 export const pinterestManifest: ProviderManifest<PinterestSettings> = {
   id: 'pinterest',
   apiVersion: { version: 'v5' },
@@ -40,15 +56,40 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
       id: 'pin',
       delivery: 'api',
       steps: [{ id: 'create', effect: 'public' }],
-      text: [{ counting: 'utf16', max: 800 }],
+      text: description,
+      media: images(1, 1),
+    },
+    {
+      id: 'video',
+      delivery: 'api',
+      steps: [
+        { id: 'register', effect: 'private' },
+        { id: 'upload', effect: 'private' },
+        { id: 'create', effect: 'public' },
+      ],
+      text: description,
       media: {
         minCount: 1,
         maxCount: 1,
-        image: { mimes: ['image/jpeg', 'image/png'], maxBytes: 8_000_000 },
+        video: {
+          mimes: ['video/mp4'],
+          // The whole file goes in one S3 POST under the 30 s provider egress deadline (~13 Mbit/s).
+          maxBytes: 50_000_000,
+          minDurationMs: 4_000,
+          maxDurationMs: 900_000,
+        },
         mixed: false,
-        altText: { supported: true, required: false, maxLength: 500 },
+        altText,
         aiLabel: false,
       },
+      async: videoPolling,
+    },
+    {
+      id: 'carousel',
+      delivery: 'api',
+      steps: [{ id: 'create', effect: 'public' }],
+      text: description,
+      media: images(2, 5),
     },
   ],
   settings: pinterestSettings,
@@ -68,7 +109,7 @@ export const pinterestManifest: ProviderManifest<PinterestSettings> = {
   preview: 'media-grid',
   capabilities: { analytics: false, delete: false },
   dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
-  egressHosts: ['api.pinterest.com'],
+  egressHosts: ['api.pinterest.com', 'pinterest-media-upload.s3-accelerate.amazonaws.com'],
   manualOnly: true,
   accountSettingOptions: boardOptions,
 };

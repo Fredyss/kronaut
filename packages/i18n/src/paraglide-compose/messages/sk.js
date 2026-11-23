@@ -13,6 +13,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Compose_Brand_Select_All_OfInputs */
 /** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Image_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Image_TypeInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Compose_Channel_Images_Too_LargeInputs */
 /** @typedef {{}} Compose_Channel_Needs_ImageInputs */
 /** @typedef {{}} Compose_Channel_Needs_VideoInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Compose_Channel_Too_Many_ImagesInputs */
@@ -190,6 +191,10 @@ export const compose_channel_image_too_large = /** @type {(inputs: Compose_Chann
 
 export const compose_channel_image_type = /** @type {(inputs: Compose_Channel_Image_TypeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Táto sieť neprijíma formát niektorého z priložených obrázkov.`)
+};
+
+export const compose_channel_images_too_large = /** @type {(inputs: Compose_Channel_Images_Too_LargeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Obrázky sú spolu väčšie ako ${i?.max}, ktoré táto sieť prijme.`)
 };
 
 export const compose_channel_needs_image = /** @type {(inputs: Compose_Channel_Needs_ImageInputs) => LocalizedString} */ () => {

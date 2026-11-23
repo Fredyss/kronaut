@@ -102,12 +102,14 @@ describe('linkedin publish choice', () => {
 describe('pinterest publish choice', () => {
   const pinterest: Channel = { ...threads, id: 'acct_pin', provider: 'pinterest' };
 
-  it('publishes exactly one JPEG or PNG image up to 8 MB as a Pin', () => {
+  it('publishes one image as a Pin, two to five as a carousel and a video as a video Pin', () => {
     const big = { size: 8_000_000, type: 'image/jpeg' };
     expect(choiceFor(pinterest, images(1, big))).toEqual({ kind: 'ok', publishType: 'pin' });
     expect(choiceFor(pinterest, images(0))).toEqual({ kind: 'needs_image' });
-    expect(choiceFor(pinterest, images(2))).toEqual({ kind: 'too_many_images', max: 1 });
-    expect(choiceFor(pinterest, VIDEO)).toEqual({ kind: 'video_unsupported' });
+    expect(choiceFor(pinterest, images(2))).toEqual({ kind: 'ok', publishType: 'carousel' });
+    expect(choiceFor(pinterest, images(5))).toEqual({ kind: 'ok', publishType: 'carousel' });
+    expect(choiceFor(pinterest, images(6))).toEqual({ kind: 'too_many_images', max: 5 });
+    expect(choiceFor(pinterest, VIDEO)).toEqual({ kind: 'ok', publishType: 'video' });
     expect(choiceFor(pinterest, images(1, { size: 1_000, type: 'image/webp' }))).toEqual({
       kind: 'image_type_unsupported',
     });
@@ -115,6 +117,15 @@ describe('pinterest publish choice', () => {
       kind: 'image_too_large',
       maxBytes: 8_000_000,
     });
+  });
+
+  it('refuses a carousel whose images together exceed 8 MB', () => {
+    const three = { size: 3_000_000, type: 'image/jpeg' };
+    expect(choiceFor(pinterest, images(3, three))).toEqual({
+      kind: 'images_too_large',
+      maxBytes: 8_000_000,
+    });
+    expect(choiceFor(pinterest, images(2, three))).toEqual({ kind: 'ok', publishType: 'carousel' });
   });
 });
 

@@ -73,6 +73,7 @@
   "compose_channel_needs_image": "Potrebuje obrázok alebo video.",
   "compose_channel_needs_video": "Potrebuje video.",
   "compose_channel_image_too_large": "Obrázok je väčší ako {max}, ktoré táto sieť prijme.",
+  "compose_channel_images_too_large": "Obrázky sú spolu väčšie ako {max}, ktoré táto sieť prijme.",
   "compose_channel_image_type": "Táto sieť neprijíma formát niektorého z priložených obrázkov.",
   "compose_channel_too_many_images": [
     {

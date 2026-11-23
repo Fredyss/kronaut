@@ -62,7 +62,7 @@
   - `echo -n "$SECRET" | kronaut provider-app register linkedin --client-id <linkedin client id>` works like the Instagram command, with the app's Client Secret on stdin. It refuses while an active LinkedIn app is registered.
   - Self-serve apps get no refresh tokens: an access token lasts 60 days, the channel gets the expiring notice 7 days ahead, and the member must reconnect.
   - LinkedIn gives a self-serve app no way to read posts back, so `verify.mode` is `none`: an ambiguous send (timeout, 5xx, a 201 without `x-restli-id`) goes to `unconfirmed` and is never sent again automatically.
-- **Pinterest app setup (ADR-0063)**: API v5 on `api.pinterest.com`. One account is one channel; each post is one JPEG or PNG Pin on a board picked in the composer; no video yet.
+- **Pinterest app setup (ADR-0063)**: API v5 on `api.pinterest.com`; video uploads go to `pinterest-media-upload.s3-accelerate.amazonaws.com`. One account is one channel; each post is one Pin on a board picked in the composer: one JPEG or PNG image, a carousel of 2–5 images, or one MP4 video.
   - Register the redirect URI `<KRONAUT_PUBLIC_URL>/v1/oauth/pinterest/callback` on the app. Kronaut requests `boards:read,boards:write,pins:read,pins:write,user_accounts:read`.
   - `echo -n "$SECRET" | kronaut provider-app register pinterest --client-id <pinterest app id>` works like the Instagram command, with the app secret on stdin. The app id is digits. It refuses while an active Pinterest app is registered.
   - Access tokens last 30 days; each refresh rotates the 60-day refresh token. The connect stores the account's public boards (at most 500); a board created later appears after a reconnect.

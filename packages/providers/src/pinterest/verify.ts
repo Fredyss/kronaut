@@ -5,7 +5,7 @@ import { readJson, send } from '../_kit/http.ts';
 import { pinterestId } from './boards.ts';
 import { isSuccess, pinterestFailure } from './errors.ts';
 import { API_BASE } from './oauth.ts';
-import { type Input, pinFields, pinState, pinUrl } from './publish.ts';
+import { type Input, pinFields, pinState, pinUrl } from './pin.ts';
 
 const PAGE_SIZE = '100';
 
