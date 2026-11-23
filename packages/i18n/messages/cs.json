@@ -285,6 +285,9 @@
   "post_published_at": "Zveřejněno {when}",
   "post_scheduled_at": "Termín: {when}",
   "post_view": "Zobrazit příspěvek",
+  "post_copy_link": "Kopírovat odkaz",
+  "post_link_copied": "Odkaz je zkopírovaný.",
+  "post_link_copy_failed": "Odkaz se nepodařilo zkopírovat.",
   "post_images": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],

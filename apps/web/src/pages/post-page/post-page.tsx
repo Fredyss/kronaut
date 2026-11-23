@@ -21,6 +21,7 @@ import { type Destination, type Post, postQuery } from '../../records/posts/quer
 import { summaryLabel } from '../../records/posts/summary.ts';
 import { ApprovalSection } from '../../views/approvals/panel.tsx';
 import { EVERGREEN_ROLES, EvergreenSection } from '../../views/evergreen/section.tsx';
+import { CopyLink } from './copy-link.tsx';
 import { PostCompose } from './post-compose.tsx';
 import { isSettled, PublishedView } from './published.tsx';
 
@@ -114,14 +115,17 @@ function DestinationRow({
             <span>{m.post_scheduled_at({ when: format(destination.scheduledAt) })}</span>
           )}
           {link === null ? null : (
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground underline underline-offset-4"
-            >
-              {m.post_view()}
-            </a>
+            <>
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground underline underline-offset-4"
+              >
+                {m.post_view()}
+              </a>
+              <CopyLink url={link} />
+            </>
           )}
         </div>
         {error === null ? null : (
