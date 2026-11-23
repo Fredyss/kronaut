@@ -34,6 +34,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 - **Rate limits:** `rateLimits[{scope account|app|instance, headerParser}]` plus concurrency.
 - **Preview:** the archetype.
 - **Capabilities:** `analytics`, `delete`.
+- **Manual only:** optional `manualOnly`, for a network whose rules require that a person chooses each scheduled post ([ADR-0064](../adr/0064-manual-only-providers.md)). Kronaut's jobs then never schedule to its channels: a queue-mode RSS feed refuses the channel (`channel_manual_only`), the evergreen fill skips it, and a repeat is refused (`repeat_manual_only`). The channels list returns it as `manualOnly`. Pinterest sets it.
 - **Data retention:** optional `dataRetention{disconnectedDays, lapsedDays}`, for a network whose policies bound how long Kronaut keeps its data (ADR-0060). The daily `credential_retention` task purges a channel's credentials, profile and metrics that many days after it was disconnected or went `needs_reauth`. Without it, only the 30-day credential purge applies. Conformance requires whole days of at least 1.
 
 **Runtime**

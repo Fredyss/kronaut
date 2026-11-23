@@ -26,6 +26,9 @@ function channelError(code: string, channel: string): string | null {
     return settingsText.settings_feed_channel_unsupported({ channel });
   }
   if (code === 'queue_empty') return settingsText.settings_feed_channel_queue({ channel });
+  if (code === 'channel_manual_only') {
+    return settingsText.settings_feed_channel_manual_only({ channel });
+  }
   return null;
 }
 

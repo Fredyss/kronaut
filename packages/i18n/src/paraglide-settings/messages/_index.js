@@ -48,6 +48,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Feed_AddInputs */
 /** @typedef {{}} Settings_Feed_CancelInputs */
 /** @typedef {{}} Settings_Feed_Channel_GoneInputs */
+/** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_Manual_OnlyInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown> }} Settings_Feed_Channel_UnsupportedInputs */
 /** @typedef {{}} Settings_Feed_ChannelsInputs */
@@ -956,6 +957,21 @@ export const settings_feed_channel_gone = /** @type {((inputs?: Settings_Feed_Ch
 	if (locale === "sk") return __sk.settings_feed_channel_gone(inputs)
 	if (locale === "cs") return __cs.settings_feed_channel_gone(inputs)
 	return __en.settings_feed_channel_gone(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channel} needs each post chosen by a person. Use draft mode for this feed or remove the channel." |
+*
+* @param {Settings_Feed_Channel_Manual_OnlyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_channel_manual_only = /** @type {((inputs: Settings_Feed_Channel_Manual_OnlyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Channel_Manual_OnlyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_channel_manual_only(inputs)
+	if (locale === "cs") return __cs.settings_feed_channel_manual_only(inputs)
+	return __en.settings_feed_channel_manual_only(inputs)
 });
 /**
 * | output |

@@ -282,6 +282,7 @@
   "settings_feed_channel_gone": "Jeden z kanálov už neexistuje.",
   "settings_feed_channel_unsupported": "Kanál {channel} nedokáže uverejniť samotný text ani text s jedným obrázkom.",
   "settings_feed_channel_queue": "Kanál {channel} nemá vo fronte žiadne časy. Pridajte ich na stránke Kanály alebo nové položky ukladajte ako koncepty.",
+  "settings_feed_channel_manual_only": "Na kanáli {channel} musí každý príspevok vybrať človek. Nové položky z tohto zdroja ukladajte ako koncepty, alebo kanál odoberte.",
   "settings_feed_limit": "Tento pracovný priestor už má najviac povolených zdrojov. Najprv niektorý odstráňte.",
   "settings_short_links_title": "Skrátené odkazy",
   "settings_short_links_intro": "Odkazy v naplánovaných príspevkoch sa skrátia cez Dub alebo Kutt, pre každý kanál zvlášť a so značkami UTM. Ak skracovač nie je dostupný, odkaz sa uverejní tak, ako je napísaný.",

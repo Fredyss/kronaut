@@ -12,7 +12,12 @@ export interface ChannelScope {
   readonly now: Temporal.Instant;
 }
 
-export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<string[]> {
+export interface PoolChannel {
+  readonly accountId: string;
+  readonly provider: string;
+}
+
+export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<PoolChannel[]> {
   const rows = await trx
     .selectFrom('evergreen_posts as e')
     .innerJoin('posts as p', (join) =>
@@ -21,12 +26,12 @@ export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<
     .innerJoin('post_destinations as d', (join) =>
       join.onRef('d.workspace_id', '=', 'e.workspace_id').onRef('d.post_id', '=', 'e.post_id'),
     )
-    .select('d.social_account_id')
-    .distinct()
-    .where('e.workspace_id', '=', workspaceId)
     .innerJoin('social_accounts as a', (join) =>
       join.onRef('a.workspace_id', '=', 'd.workspace_id').onRef('a.id', '=', 'd.social_account_id'),
     )
+    .select(['d.social_account_id', 'a.provider'])
+    .distinct()
+    .where('e.workspace_id', '=', workspaceId)
     .where('e.state', '=', 'active')
     .where('p.deleted_at', 'is', null)
     .where('d.state', '<>', 'canceled')
@@ -42,7 +47,7 @@ export async function poolChannels(trx: TenantDb, workspaceId: string): Promise<
     )
     .orderBy('d.social_account_id')
     .execute();
-  return rows.map((row) => row.social_account_id);
+  return rows.map((row) => ({ accountId: row.social_account_id, provider: row.provider }));
 }
 
 export async function claimedSlots(

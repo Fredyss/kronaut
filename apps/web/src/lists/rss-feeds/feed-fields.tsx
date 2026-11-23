@@ -35,14 +35,56 @@ function toggled(current: ReadonlySet<string>, id: string, on: boolean): Readonl
   return next;
 }
 
+function ChannelChoice({
+  channel,
+  inputId,
+  checked,
+  manualBlocked,
+  onToggle,
+}: {
+  readonly channel: Channel;
+  readonly inputId: string;
+  readonly checked: boolean;
+  readonly manualBlocked: boolean;
+  onToggle(on: boolean): void;
+}) {
+  const reasonId = `${inputId}-reason`;
+  return (
+    <li className="flex flex-col gap-0.5">
+      <div className="flex items-center gap-3">
+        <input
+          id={inputId}
+          type="checkbox"
+          className="size-4"
+          checked={checked}
+          disabled={manualBlocked && !checked}
+          aria-describedby={manualBlocked ? reasonId : undefined}
+          onChange={(event) => onToggle(event.currentTarget.checked)}
+        />
+        <label htmlFor={inputId}>
+          {channel.displayName}{' '}
+          <span className="text-muted-foreground">{providerUi(channel.provider).name()}</span>
+        </label>
+      </div>
+      {manualBlocked ? (
+        <p id={reasonId} className="ps-7 text-muted-foreground">
+          {settingsText.settings_feed_channel_manual_only({ channel: channel.displayName })}
+        </p>
+      ) : null}
+    </li>
+  );
+}
+
 export function ChannelChoices({
   channels,
   selected,
+  mode,
   errors,
   onChange,
 }: {
   readonly channels: readonly Channel[];
   readonly selected: ReadonlySet<string>;
+  readonly mode: FeedMode;
   readonly errors: readonly string[];
   onChange(next: ReadonlySet<string>): void;
 }) {
@@ -63,26 +105,16 @@ export function ChannelChoices({
           : settingsText.settings_feed_channels_hint()}
       </p>
       <ul className="flex flex-col gap-2">
-        {channels.map((channel) => {
-          const id = `${prefix}-${channel.id}`;
-          return (
-            <li key={channel.id} className="flex items-center gap-3">
-              <input
-                id={id}
-                type="checkbox"
-                className="size-4"
-                checked={selected.has(channel.id)}
-                onChange={(event) =>
-                  onChange(toggled(selected, channel.id, event.currentTarget.checked))
-                }
-              />
-              <label htmlFor={id}>
-                {channel.displayName}{' '}
-                <span className="text-muted-foreground">{providerUi(channel.provider).name()}</span>
-              </label>
-            </li>
-          );
-        })}
+        {channels.map((channel) => (
+          <ChannelChoice
+            key={channel.id}
+            channel={channel}
+            inputId={`${prefix}-${channel.id}`}
+            checked={selected.has(channel.id)}
+            manualBlocked={mode === 'queue' && channel.manualOnly}
+            onToggle={(on) => onChange(toggled(selected, channel.id, on))}
+          />
+        ))}
       </ul>
       {channels.length > 0 ? (
         <p id={imageHintId} className="text-muted-foreground">

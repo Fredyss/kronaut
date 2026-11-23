@@ -5,6 +5,7 @@ import { sql } from 'kysely';
 import { lockCurrent } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
 import { HttpError } from '../../base/http/errors.ts';
+import { isManualOnly } from '../../base/providers/providers.ts';
 import { authorOf, insertDraft } from '../../flow/posts/draft/create.ts';
 import { actAs, type OwnerActing, ownerActing } from '../../flow/posts/owner/owner.ts';
 import {
@@ -68,10 +69,11 @@ function target(env: OwnerEnv, channel: FeedChannel, media: readonly DraftMedia[
 }
 
 // A channel that can't take the image still gets the text, through a variant without it.
-function targetsOf(env: OwnerEnv, channels: readonly FeedChannel[], media: ItemMedia | null) {
+function targetsOf(env: OwnerEnv, feed: PostingFeed, media: ItemMedia | null) {
   const pictured: Destination[] = [];
   const plain: Destination[] = [];
-  for (const channel of channels) {
+  for (const channel of feed.channels) {
+    if (feed.mode === 'queue' && isManualOnly(env.providers, channel.provider)) continue;
     const withImage = media === null ? null : target(env, channel, [media.facts]);
     const textOnly = withImage === null ? target(env, channel, []) : null;
     if (withImage !== null) pictured.push(withImage);
@@ -149,7 +151,7 @@ export async function postItem(
   feed: PostingFeed,
   content: ItemContent,
 ): Promise<ItemPost> {
-  const targets = targetsOf(env, feed.channels, content.media);
+  const targets = targetsOf(env, feed, content.media);
   if (targets.pictured.length + targets.plain.length === 0) {
     return { outcome: 'skipped', errorCode: null, postId: null };
   }

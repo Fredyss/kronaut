@@ -2,9 +2,11 @@ import { nextOccurrence, occurrenceAt, type RulePosition, resolveLocal } from '@
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { lockCurrent } from '../../access/post-access/locks.ts';
+import { destinationRows, lockCurrent } from '../../access/post-access/locks.ts';
 import { postUnits } from '../../access/post-access/units.ts';
+import { HttpError } from '../../base/http/errors.ts';
 import { plainLocal } from '../../base/http/time.ts';
+import { isManualOnly } from '../../base/providers/providers.ts';
 import { clonePost } from '../../flow/posts/draft/clone.ts';
 import { actAs, ownerActing } from '../../flow/posts/owner/owner.ts';
 import {
@@ -105,11 +107,25 @@ function intendedSchedule(latest: Occurrence): LocalAt | null {
   return scheduleLocal === null || scheduleTz === null ? null : { scheduleLocal, scheduleTz };
 }
 
+// Someone can add a manual-only channel to an occurrence after the series started; the 4xx pauses it.
+async function refuseManualOnly(trx: TenantDb, { env, locked }: Turn): Promise<void> {
+  const rows = await destinationRows(trx, env.workspaceId, locked.id).execute();
+  const details = rows.flatMap(({ provider }, index) =>
+    isManualOnly(env.providers, provider)
+      ? [{ path: `destinations.${index}`, code: 'repeat_manual_only' }]
+      : [],
+  );
+  if (details.length > 0) {
+    throw new HttpError('preflight_failed', 'The post did not pass preflight.', { details });
+  }
+}
+
 // A request someone rejected, withdrew or voided is theirs to follow up; the job asks only once.
 async function settleDraft(trx: TenantDb, turn: Turn): Promise<StepOutcome> {
   const { env, locked, latest } = turn;
   const at = intendedSchedule(latest);
   if (latest.publish_summary !== 'draft' || at === null) return 'idle';
+  await refuseManualOnly(trx, turn);
   const newest = await newestRequest(trx, env.workspaceId, locked.id);
   if (newest?.state === 'approved') return await scheduleOrRequest(trx, turn, at);
   if (!(await needsRequest(trx, turn, latest.agent_dirty))) {

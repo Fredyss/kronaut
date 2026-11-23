@@ -1,7 +1,7 @@
 import { decodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError, type IssueDetail } from '../../base/http/errors.ts';
-import type { ProviderRegistry } from '../../base/providers/providers.ts';
+import { isManualOnly, type ProviderRegistry } from '../../base/providers/providers.ts';
 import { loadTimetable } from '../../steps/queue/slots.ts';
 import { canTakeItems } from './pick.ts';
 
@@ -73,6 +73,7 @@ async function channelIssue(
 ): Promise<string | null> {
   if (!canTakeItems(providers, account)) return 'channel_unsupported';
   if (check.mode !== 'queue') return null;
+  if (isManualOnly(providers, account.provider)) return 'channel_manual_only';
   const { timezone } = await loadTimetable(trx, check.workspaceId, account.id);
   return timezone === null ? 'queue_empty' : null;
 }

@@ -11,6 +11,7 @@ import {
   errorOf,
   grantAuth,
   insertAccount,
+  MANUAL_PROVIDER,
   owner,
   providers,
   SYSTEM,
@@ -257,5 +258,26 @@ describe('changing a feed', () => {
     expect((await errorOf(response)).details).toEqual([
       { path: 'body.channelIds.0', code: 'queue_empty' },
     ]);
+  });
+
+  it('keeps a manual-only channel out of queue mode on create, on update and when switching', async () => {
+    const manual = await insertAccount('rss-manual', workspaceId, MANUAL_PROVIDER);
+    const refusal = [{ path: 'body.channelIds.1', code: 'channel_manual_only' }];
+    const body = { url: FEED_URL, name: 'Blog', channelIds: [queued, manual], mode: 'queue' };
+    const created = await feedCall('POST', '', body);
+    expect(created.status).toBe(422);
+    expect((await errorOf(created)).details).toEqual(refusal);
+
+    feeds.reply({ body: rssOf([]) });
+    const queueFeed = await createdFeed({ channelIds: [queued], mode: 'queue' });
+    const added = await feedCall('PATCH', `/${queueFeed.id}`, { channelIds: [queued, manual] });
+    expect(added.status).toBe(422);
+    expect((await errorOf(added)).details).toEqual(refusal);
+
+    feeds.reply({ body: rssOf([]) });
+    const draftFeed = await createdFeed({ channelIds: [queued, manual], mode: 'draft' });
+    const switched = await feedCall('PATCH', `/${draftFeed.id}`, { mode: 'queue' });
+    expect(switched.status).toBe(422);
+    expect((await errorOf(switched)).details).toEqual(refusal);
   });
 });

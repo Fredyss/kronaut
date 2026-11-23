@@ -118,7 +118,9 @@ async function cronRun(task: string, ago: string, outcome: 'ok' | 'error', detai
 describe('system.status', () => {
   it('is for owners only, never an editor or an API key', async () => {
     const body = await status();
-    expect(body.apiVersions).toEqual([expect.objectContaining({ provider: FAKE_PROVIDER })]);
+    expect(body.apiVersions).toEqual(
+      expect.arrayContaining([expect.objectContaining({ provider: FAKE_PROVIDER })]),
+    );
     expect((await call('GET', 'system', editor.auth)).status).toBe(403);
     expect((await call('GET', 'system', grantAuth)).status).toBe(401);
   });

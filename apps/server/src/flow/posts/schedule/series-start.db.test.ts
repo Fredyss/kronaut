@@ -5,12 +5,16 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { addMember, setPolicy } from '../../../steps/approvals/testing.ts';
 import type { PostDto } from '../read/dto.ts';
 import {
+  accountA,
   CLI,
   call,
   create,
+  doc,
   draft,
   errorOf,
+  insertAccount,
   internal,
+  MANUAL_PROVIDER,
   owner,
   ownerAuth,
   requestCall,
@@ -131,5 +135,30 @@ describe('creating a series', () => {
       { path: 'body.repeat', code: 'repeat_needs_schedule' },
     ]);
     expect(await requestsOn(internal(post.id))).toEqual([]);
+  });
+
+  it('refuses repeat to a manual-only channel and still schedules the post once', async () => {
+    const manual = await insertAccount('series-manual', undefined, MANUAL_PROVIDER);
+    const body = {
+      items: [{ doc: doc('Ahoj') }],
+      destinations: [
+        { accountId: accountA, publishType: 'post' },
+        { accountId: manual, publishType: 'post' },
+      ],
+    };
+    const once = { mode: 'instant', scheduleLocal: '2027-01-05T09:00', scheduleTz: TZ };
+    // Both destinations are created in one statement, so their order isn't fixed.
+    const path = expect.stringMatching(/^destinations\.[01]$/);
+    const manualOnly = [{ path, code: 'repeat_manual_only' }];
+    const repeated = await create(ownerAuth, body);
+    const refused = await scheduleCall(repeated, { ...once, repeat: { freq: 'daily' } });
+    expect(refused.status).toBe(422);
+    expect((await errorOf(refused)).details).toEqual(manualOnly);
+    const schedule = { scheduleLocal: once.scheduleLocal, scheduleTz: TZ };
+    const asked = await requestCall(repeated, { schedule, repeat: { freq: 'daily' } }, ownerAuth);
+    expect(asked.status).toBe(422);
+    expect((await errorOf(asked)).details).toEqual(manualOnly);
+    const single = await create(ownerAuth, body);
+    expect((await scheduleCall(single, once)).status).toBe(200);
   });
 });
