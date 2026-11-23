@@ -23,6 +23,7 @@ const CLIENT_IDS: Readonly<Record<SecretAppProvider, RegExp>> = {
   linkedin: /^[A-Za-z0-9]{1,64}$/,
   pinterest: /^\d{1,32}$/,
   threads: META_APP_ID,
+  x_com: /^[A-Za-z0-9_-]{1,128}$/,
   youtube: /^[0-9]{1,32}-[a-z0-9]{1,64}\.apps\.googleusercontent\.com$/,
 };
 

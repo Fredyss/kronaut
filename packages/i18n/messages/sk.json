@@ -171,6 +171,7 @@
   "provider_mastodon": "Mastodon",
   "provider_pinterest": "Pinterest",
   "provider_threads": "Threads",
+  "provider_x_com": "X",
   "provider_youtube": "YouTube",
   "compose_image_preview": "Náhľad obrázka {position}",
   "compose_image_remove": "Odstrániť",
@@ -216,6 +217,19 @@
   "compose_reply_too_many_links": "Odpoveď {position} má viac odkazov, ako {channel} dovoľuje ({max})",
   "compose_limit_usage": "{network} {count}/{max}",
   "compose_limit_channel": "{channel} ({network})",
+  "compose_x_cost": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{channel}: 1 príspevok, približne {cost} v kreditoch X API",
+        "countPlural=few": "{channel}: {count} príspevky, približne {cost} v kreditoch X API",
+        "countPlural=many": "{channel}: {count} príspevku, približne {cost} v kreditoch X API",
+        "countPlural=*": "{channel}: {count} príspevkov, približne {cost} v kreditoch X API"
+      }
+    }
+  ],
+  "compose_x_cost_rates": "Ceny X API: {price} za príspevok, {linkPrice} za príspevok s odkazom.",
   "compose_preview_title": "Náhľad",
   "compose_limit_too_long": "Pre {channel} je text príliš dlhý ({count}/{max})",
   "compose_limit_forbidden": "Pre {channel} text nesmie obsahovať {chars}",
@@ -630,6 +644,7 @@
   "issue_missing_access": "Bot Kronautu tento kanál Discordu nevidí. Udeľte mu tam oprávnenie View Channel alebo kanál pripojte znova.",
   "issue_business_account_required": "Pinterest dovoľuje Kronautu uverejňovať len za firemné účty. Prepnite tento účet na Pintereste na firemný a potom ho znova pripojte.",
   "issue_board_gone": "Táto nástenka na Pintereste už neexistuje alebo na ňu Kronaut nemôže uverejňovať. Znova pripojte kanál, aby sa obnovil zoznam násteniek, a vyberte inú nástenku.",
+  "issue_credits_depleted": "Vašej aplikácii X došli kredity API, takže Kronaut nemôže uverejňovať na žiadny kanál X. Dokúpte kredity v konzole pre vývojárov X a potom príspevok odošlite znova.",
   "channels_signature": "Podpis",
   "channels_signature_none": "Žiadny",
   "channels_signature_named": "Podpis: {name}",

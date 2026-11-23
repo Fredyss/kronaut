@@ -3,6 +3,7 @@ import { countLinks, countText } from './count.ts';
 import type { DraftItem, ValidationIssue } from './validate.ts';
 
 export { countLinks, countText } from './count.ts';
+export { extractXUrls } from './count-x.ts';
 export { toPlainText } from './plain-text.ts';
 export { appendSignature } from './signature.ts';
 export type { IssueCode, ValidationIssue } from './validate.ts';

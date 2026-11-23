@@ -491,17 +491,31 @@ Verified 2026-11-16 (D1, D3–D11).
 - **Status.** `PUBLISH_COMPLETE` and `FAILED` carry a `fail_reason`. `publicaly_available_post_id` appears only for **public posts that passed moderation**, so SELF_ONLY posts never get a post id.
 - **Error codes.** `spam_risk_too_many_posts` maps to `rate_limited` (daily). `reached_active_user_cap` and `unaudited_client...` map to `app_config`. `privacy_level_option_mismatch` is permanent.
 
-**X**
-- **Pricing.** Cost depends on content: a URL makes a post 13× more expensive. The composer and cost forecast must detect URLs.
-- **Credit balance.** A zero or negative balance blocks all requests. This is an app-level, `app_config`-type incident, not a per-account one.
-- **Rate limits.** `POST /2/tweets`: 100/15 min per user, 10,000/24h per app.
-- **Character counting.** Limit 280, NFC-normalized; any emoji counts as 2 (including ZWJ sequences), URLs count as 23. Use `twitter-text`.
-- **Media.**
-  - Up to 4 images (≤5MB), or 1 GIF (≤15MB), or 1 video.
-  - Video: 20 min/8GB, or 125 min/16GB for Premium. Limits follow the **user's** Premium status.
-  - A successfully finalized media_id can still be rejected at `POST /2/tweets` (403 duration error).
-- **Upload v2.** Dedicated paths (`/2/media/upload/initialize`, `/{id}/append`, `/{id}/finalize`); `command=INIT` style is gone.
+**X** (API v2, `api.x.com`, provider id `x_com`)
+
+X section verified 2026-11-23 against docs.x.com (X1–X15).
+- **Pricing** (X1). Pay per use from the app's credit balance: "Post: Create" $0.015 per request, "Post: Create (with URL)" $0.200. "API requests will be blocked until you add credits to cover the negative balance"; no status code or body is documented.
+  - Kronaut's mapping: manifest `cost` `per_post`, 15,000 µUSD, 200,000 µUSD with a link, `asOf` 2026-11-23. The composer prices each chain item as one post, at the link price when `extractXUrls()` finds a URL. **Assumption:** credits at zero or below answer HTTP 402, or a 403 whose body mentions credits; both map to `app_config` `credits_depleted`, which marks the app misconfigured and blocks every X destination, never one account.
+- **Login** (X2, X8). OAuth 2.0 Authorization Code with PKCE. Authorize at `https://x.com/i/oauth2/authorize` (the guide's host); token `POST https://api.x.com/2/oauth2/token`, form-encoded. A confidential client authenticates with `Authorization: Basic base64(client_id:client_secret)` and needs no `client_id` in the body (X8). The access token lasts 2 h; a refresh token comes only with `offline.access`, and `grant_type=refresh_token` gets a new access token (X2). Refresh-token lifetime and rotation aren't documented.
+  - Kronaut's mapping: scopes `tweet.read tweet.write users.read media.write offline.access`, PKCE S256; a missing scope fails the connect (`scope_missing`). The refresh is treated as `rotating`: Kronaut stores whichever `refresh_token` comes back and keeps the old one when none does (an assumption). 401 on a token request → `app_config` `client_invalid`; 400 on refresh → `auth_revoked` (an assumption: the token errors aren't documented).
+- **Revoke** (X8). `POST https://api.x.com/2/oauth2/revoke`, form `token` (access or refresh token), Basic auth for a confidential client. Kronaut revokes the refresh token, then the access token, on disconnect.
+- **Account** (X9). `GET /2/users/me` (`users.read`, `tweet.read`) returns `data.id`, `name` and `username`; the schema gives no username pattern.
+  - Kronaut's mapping: one X account is one channel; `providerAccountId` and `subjectId` are the user id, `handle` the username, `displayName` the name or else the username, `profileUrl` `https://x.com/<username>`.
+- **Character counting** (X6, X15). Limit 280 (more only with X Premium, out of scope), NFC. X6 gives the categories (Latin, punctuation and common symbols 1; emoji, CJK and other Unicode 2; every URL 23 via `t.co`; ZWJ sequences and skin tones count once as an emoji) and defers the ranges to the twitter-text configuration (X15): `scale` 100, `defaultWeight` 200, weight 100 for U+0000–U+10FF, U+2000–U+200D, U+2010–U+201F and U+2032–U+2037, `transformedURLLength` 23, `maxWeightedTweetLength` 280.
+  - Kronaut's mapping: its own counter (`packages/compose/src/count-x.ts`, no twitter-text dependency) applies those numbers. An emoji is a grapheme cluster with a regional indicator, a keycap, an emoji presentation selector or ZWJ next to a pictograph, or a pictograph outside the weight-1 ranges; it counts 2 once. A URL is an `http(s)://` or `www.` token, or a bare `label.tld` whose TLD is in the bundled IANA list (`packages/compose/src/tlds.ts`, version 2026112201, regenerated with `curl -fsS https://data.iana.org/TLD/tlds-alpha-by-domain.txt | pnpm tlds:update`); trailing punctuation and unbalanced brackets stay outside it, an e-mail address isn't one. Auto-populated reply mentions don't apply: Kronaut sends replies without them.
+- **Media** (X5, X10, X11). Up to 4 photos, 1 animated GIF or 1 video per post; images ≤ 5 MB (GIF ≤ 15 MB); JPG, PNG, GIF, WEBP (X5). One-shot `POST /2/media/upload` (`media.write`) takes JSON (base64 `media`) or multipart (raw bytes) with `media` and `media_category` (`tweet_image`, …), optional `additional_owners`, nothing else; the response is `data.id` (no `media_id`), `media_key` and `expires_after_secs` (X10). Alt text: `POST /2/media/metadata` (`media.write`) `{id, metadata: {alt_text: {text}}}`, text ≤ 1,000 characters (X11).
+  - Kronaut's mapping: post type `post`, text and/or 0–4 JPEG, PNG or WebP images up to 5 MB, alt text up to 1,000; no GIF, video, poll or quote post (quote posts need an Enterprise plan, X7); no first comment. Steps `upload_media` (`private`: multipart upload, then the alt text when there is one, checkpointing each media id) and `create_post` (`public`). A media id whose `expires_after_secs` ends within 5 min is uploaded again.
+- **Create** (X7). `POST /2/tweets` (`tweet.read`, `tweet.write`, `users.read`): `text` (required unless media), `media.media_ids` (in order), `reply.in_reply_to_tweet_id`; `201` with `data.id` and `data.text`.
+  - Kronaut's mapping: the text goes NFC-normalized; a chain item (ADR-0055 `thread`) is a text-only reply to the previous item's id, up to 24 replies. The permalink is `https://x.com/<handle>/status/<id>`.
+- **Read back** (X12, X13, X14). `GET /2/users/{id}/tweets` (`tweet.read`, `users.read`): `max_results` 5–100, `exclude` `replies`/`retweets`, response `data[]` and `meta`; ids match `^[0-9]{1,19}$` (X12). The reference names the field parameter `post.fields` and the reply field `referenced_posts`, while the fields guide (X13) uses `tweet.fields` and `referenced_tweets`. `entities.urls[]` carries `url` (the `t.co` link), `expanded_url`, `display_url`, `media_key`, `start` and `end` (X12, X14); the index unit isn't documented.
+  - Kronaut's mapping: `verify.mode` `list_recent_match`, window 1 h. It reads the 10 newest posts with `tweet.fields=created_at,text,entities,referenced_tweets`, accepts either reference field name, and rebuilds each text by replacing every `entities.urls[].url` with its `expanded_url` and dropping the entries with a `media_key`. It claims a post only if exactly one has `created_at` at or after the second of the send, that text (NFC, trimmed) equal to the sent text, and, for a reply, a `replied_to` reference to the previous item; anything else is inconclusive and ends `unconfirmed`, never re-sent. It never answers `absent`. **Live-test items:** which field parameter name the API accepts; whether `text` comes back HTML-escaped (`&amp;`); whether `expanded_url` keeps a bare domain as typed (a scheme added would make the match inconclusive).
+- **Rate limits** (X3). `POST /2/tweets` 100 per 15 min per user, 10,000 per 24 h per app; `GET /2/users/:id/tweets` 900 per 15 min per user; `GET /2/users/me` 75 per 15 min per user; `POST /2/media/upload` and `/2/media/metadata` 500 per 15 min per user, 50,000 per 24 h per app. Headers `x-rate-limit-limit`, `x-rate-limit-remaining`, `x-rate-limit-reset` (a Unix timestamp). A 429 lasts until the window resets.
+  - Kronaut's mapping: buckets `posts_15min` (account, 100) and `posts_day` (app, 10,000), one per post. 429 → `rate_limited` (account) until `x-rate-limit-reset` (capped at 24 h), else `Retry-After`, else 15 min.
+- **Errors** (X14). Problem bodies `{type, title, detail}` with `type` `https://api.x.com/2/problems/<name>` (`usage-capped`, `rate-limit-exceeded`, `client-forbidden`, `invalid-request`, …); 429 means a rate limit or a usage cap.
+  - Kronaut's mapping: 402, or 403 mentioning credits → `app_config` `credits_depleted`; other 403 → permanent `forbidden`; 400 → `invalid_request`; 404 → `not_found`; 401 → `auth_expired`, ambiguous on the `public` step; 5xx and timeouts → ambiguous after the send, else transient. The detail is `http_<status>` or `<status>/<problem name>`, never the body.
 - **Duplicates and idempotency.** The docs have no idempotency key and no documented duplicate-content error code.
+- **Data retention.** Stored X content must follow deletions on X: the manifest sets `dataRetention` 7 days after disconnect and 30 days after `needs_reauth`, as for YouTube and Pinterest.
+- **Not in this provider yet:** GIF and video (chunked upload, X4), analytics, the evergreen/repeat guard and the same-text-on-several-X-channels warning.
 
 **Pinterest** (API v5, `api.pinterest.com`)
 
@@ -742,12 +756,20 @@ Pinterest section verified 2026-11-17 (P1–P7); video and carousel Pins verifie
 - K5 https://developers.tiktok.com/doc/content-posting-api-reference-get-video-status
 - K6 https://developers.tiktok.com/doc/content-posting-api-reference-photo-post
 - X1 https://docs.x.com/x-api/getting-started/pricing
-- X2 https://docs.x.com/resources/fundamentals/authentication/oauth-2-0/authorization-code
+- X2 https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code
 - X3 https://docs.x.com/x-api/fundamentals/rate-limits
 - X4 https://docs.x.com/x-api/media/quickstart/media-upload-chunked
 - X5 https://docs.x.com/x-api/media/quickstart/best-practices
-- X6 https://docs.x.com/resources/fundamentals/counting-characters
+- X6 https://docs.x.com/fundamentals/counting-characters
 - X7 https://docs.x.com/x-api/posts/create-post
+- X8 https://docs.x.com/fundamentals/authentication/oauth-2-0/user-access-token
+- X9 https://docs.x.com/x-api/users/get-my-user
+- X10 https://docs.x.com/x-api/media/upload-media
+- X11 https://docs.x.com/x-api/media/metadata-create
+- X12 https://docs.x.com/x-api/users/get-posts
+- X13 https://docs.x.com/x-api/fundamentals/fields
+- X14 https://docs.x.com/x-api/fundamentals/response-codes-and-errors and https://docs.x.com/x-api/fundamentals/data-dictionary
+- X15 https://github.com/twitter/twitter-text/blob/master/config/v3.json (the weight configuration X6 links to; read for its numbers only)
 - P1 https://developers.pinterest.com/docs/getting-started/set-up-authentication-and-authorization/
 - P2 https://developers.pinterest.com/docs/key-concepts/access-tiers/
 - P3 https://developers.pinterest.com/docs/reference/rate-limits/

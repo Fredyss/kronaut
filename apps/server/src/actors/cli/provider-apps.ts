@@ -18,6 +18,7 @@ export type SecretAppProvider =
   | 'linkedin'
   | 'pinterest'
   | 'threads'
+  | 'x_com'
   | 'youtube';
 
 export interface ProviderAppCommandDeps {

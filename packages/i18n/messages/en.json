@@ -161,6 +161,7 @@
   "provider_mastodon": "Mastodon",
   "provider_pinterest": "Pinterest",
   "provider_threads": "Threads",
+  "provider_x_com": "X",
   "provider_youtube": "YouTube",
   "compose_image_preview": "Preview of image {position}",
   "compose_image_remove": "Remove",
@@ -206,6 +207,17 @@
   "compose_reply_too_many_links": "Reply {position} has more links than {channel} allows ({max})",
   "compose_limit_usage": "{network} {count}/{max}",
   "compose_limit_channel": "{channel} ({network})",
+  "compose_x_cost": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{channel}: 1 post, about {cost} in X API credits",
+        "countPlural=*": "{channel}: {count} posts, about {cost} in X API credits"
+      }
+    }
+  ],
+  "compose_x_cost_rates": "X API pricing: {price} per post, {linkPrice} for a post with a link.",
   "compose_preview_title": "Preview",
   "compose_limit_too_long": "Too long for {channel} ({count}/{max})",
   "compose_limit_forbidden": "The text for {channel} can't contain {chars}",
@@ -597,6 +609,7 @@
   "issue_missing_access": "Kronaut's bot can't see this Discord channel. Give it View Channel there, or connect the channel again.",
   "issue_business_account_required": "Pinterest lets Kronaut publish only for business accounts. Switch this Pinterest account to a business account, then connect it again.",
   "issue_board_gone": "This Pinterest board is gone, or Kronaut can no longer post to it. Connect the channel again to refresh its boards, then choose another board.",
+  "issue_credits_depleted": "Your X app has run out of API credits, so Kronaut can't post to any X channel. Buy credits in the X developer console, then send the post again.",
   "channels_signature": "Signature",
   "channels_signature_none": "None",
   "channels_signature_named": "Signature: {name}",

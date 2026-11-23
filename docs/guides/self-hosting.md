@@ -111,6 +111,7 @@ printf '%s' "$META_APP_SECRET" | docker compose run --rm -T cli kronaut provider
 printf '%s' "$LINKEDIN_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register linkedin --client-id <linkedin client id>
 printf '%s' "$GOOGLE_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register youtube --client-id <google client id>
 printf '%s' "$PINTEREST_APP_SECRET" | docker compose run --rm -T cli kronaut provider-app register pinterest --client-id <pinterest app id>
+printf '%s' "$X_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register x_com --client-id <x oauth 2.0 client id>
 printf '%s' "$DISCORD_CLIENT_SECRET" | docker compose run --rm -T cli kronaut provider-app register discord --client-id <discord client id>
 printf '%s\n%s\n' "$DISCORD_CLIENT_SECRET" "$DISCORD_BOT_TOKEN" | docker compose run --rm -T cli kronaut provider-app register discord_bot --client-id <discord client id>
 ```
@@ -169,6 +170,18 @@ Kronaut publishes image Pins to the boards of the Pinterest account that connect
 - **Boards:** the composer offers the account's public boards as they were at connect. After you create a board on Pinterest, reconnect the channel to see it.
 - **Pinterest's rules:** the developer guidelines require that a person choose each scheduled Pin. Kronaut enforces it: an RSS feed that adds items to the queue, the evergreen refill and a repeating post can't use a Pinterest channel. An RSS feed that saves items as drafts and a CSV import still can, because you schedule each draft and confirm each import yourself.
 - **Unconfirmed posts:** if Pinterest's answer to a send gets lost, Kronaut looks for the Pin on the board; if it can't tell, the post is marked unconfirmed rather than sent twice.
+
+### X
+
+Kronaut posts to the X account that connects: text, up to 4 JPEG, PNG or WebP images (5 MB each, with alt text), and reply chains. GIFs and video aren't supported yet.
+
+- **In the X developer console:**
+  - Create an app and set up OAuth 2.0 user authentication with the type **Web App, Automated App or Bot** (a confidential client).
+  - Add the callback URL `https://kronaut.example.com/v1/oauth/x_com/callback`, using your own host, and give the app read and write permissions.
+  - Copy the **OAuth 2.0** Client ID and Client Secret (not the API key and secret), and register them with the `register x_com` command above.
+- **Scopes:** Kronaut asks for `tweet.read`, `tweet.write`, `users.read`, `media.write` and `offline.access`. If the person who connects removes one, the connect fails.
+- **Credits:** the X API is paid per use. Buy credits in the developer console before you publish: a post costs $0.015, or $0.20 when it contains a link (checked 2026-11-23). The composer shows the cost of each X destination before you schedule. When the balance reaches zero, X blocks every request: Kronaut stops posting to every X channel and says so, until you buy credits and send the posts again.
+- **Unconfirmed posts:** if X's answer to a send gets lost, Kronaut looks for the post among the account's newest posts; if it can't tell, the post is marked unconfirmed rather than sent twice.
 
 ### Discord
 

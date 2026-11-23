@@ -191,6 +191,7 @@ describe('provider app keys CLI', () => {
     ['linkedin', '86abcdef123xyz', 'a linkedin app is already registered'],
     ['pinterest', '1234567', 'a pinterest app is already registered'],
     ['threads', '1122334455667788', 'a threads app is already registered'],
+    ['x_com', 'M1M5R3BMVy13QmpScXkzTUt5OE46MTpjaQ', 'an x_com app is already registered'],
     [
       'youtube',
       '123456789012-abcdef0123456789.apps.googleusercontent.com',

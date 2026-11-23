@@ -1,0 +1,74 @@
+import type { ProviderManifest } from '@kronaut/core';
+import * as z from 'zod';
+import { REPLY_THREAD } from '../_kit/items.ts';
+
+const xSettings = z.object({});
+export type XSettings = z.infer<typeof xSettings>;
+
+const HOUR_MS = 60 * 60 * 1000;
+const POSTS_PER_15_MIN = 100;
+const POSTS_PER_DAY_PER_APP = 10_000;
+
+export const xManifest: ProviderManifest<XSettings> = {
+  id: 'x_com',
+  apiVersion: { version: '2' },
+  availability: { state: 'experimental' },
+  auth: {
+    kind: 'oauth',
+    refresh: 'rotating',
+    accessTtlMs: 2 * HOUR_MS,
+    warnLeadMs: 24 * HOUR_MS,
+  },
+  postTypes: [
+    {
+      id: 'post',
+      delivery: 'api',
+      steps: [
+        { id: 'upload_media', effect: 'private' },
+        { id: 'create_post', effect: 'public' },
+      ],
+      text: [{ counting: 'x-weighted', max: 280 }],
+      media: {
+        minCount: 0,
+        maxCount: 4,
+        image: { mimes: ['image/jpeg', 'image/png', 'image/webp'], maxBytes: 5_000_000 },
+        mixed: false,
+        altText: { supported: true, required: false, maxLength: 1_000 },
+        aiLabel: false,
+      },
+      thread: REPLY_THREAD,
+    },
+  ],
+  settings: xSettings,
+  cost: {
+    model: 'per_post',
+    perPost: {
+      usdMicros: 15_000,
+      linkUsdMicros: 200_000,
+      asOf: '2026-11-23',
+      sourceUrl: 'https://docs.x.com/x-api/getting-started/pricing',
+    },
+  },
+  verify: { mode: 'list_recent_match', windowMs: HOUR_MS },
+  rateLimits: [
+    {
+      scope: 'account',
+      bucket: 'posts_15min',
+      capacity: POSTS_PER_15_MIN,
+      refillPerHour: POSTS_PER_15_MIN * 4,
+      costPerPost: 1,
+    },
+    {
+      scope: 'app',
+      bucket: 'posts_day',
+      capacity: POSTS_PER_DAY_PER_APP,
+      refillPerHour: POSTS_PER_DAY_PER_APP / 24,
+      costPerPost: 1,
+    },
+  ],
+  concurrency: 1,
+  preview: 'short-feed',
+  capabilities: { analytics: false, delete: false },
+  dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
+  egressHosts: ['api.x.com'],
+};

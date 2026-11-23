@@ -177,6 +177,8 @@
 /** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
 /** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown>, channel: NonNullable<unknown>, cost: NonNullable<unknown> }} Compose_X_CostInputs */
+/** @typedef {{ price: NonNullable<unknown>, linkPrice: NonNullable<unknown> }} Compose_X_Cost_RatesInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
 /** @typedef {{}} Destination_State_BlockedInputs */
 /** @typedef {{}} Destination_State_CanceledInputs */
@@ -218,6 +220,7 @@
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_Board_GoneInputs */
 /** @typedef {{}} Issue_Business_Account_RequiredInputs */
+/** @typedef {{}} Issue_Credits_DepletedInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
@@ -347,6 +350,7 @@
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_PinterestInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Provider_X_ComInputs */
 /** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
 /** @typedef {{}} Queue_EvergreenInputs */
@@ -1158,6 +1162,16 @@ export const compose_when_title = /** @type {(inputs: Compose_When_TitleInputs) 
 	return /** @type {LocalizedString} */ (`When`)
 };
 
+export const compose_x_cost = /** @type {(inputs: Compose_X_CostInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.channel}: 1 post, about ${i?.cost} in X API credits`);
+	return /** @type {LocalizedString} */ (`${i?.channel}: ${i?.count} posts, about ${i?.cost} in X API credits`)
+};
+
+export const compose_x_cost_rates = /** @type {(inputs: Compose_X_Cost_RatesInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`X API pricing: ${i?.price} per post, ${i?.linkPrice} for a post with a link.`)
+};
+
 export const destination_state_awaiting_manual = /** @type {(inputs: Destination_State_Awaiting_ManualInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Waiting for you to post it`)
 };
@@ -1323,6 +1337,10 @@ export const issue_board_gone = /** @type {(inputs: Issue_Board_GoneInputs) => L
 
 export const issue_business_account_required = /** @type {(inputs: Issue_Business_Account_RequiredInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Pinterest lets Kronaut publish only for business accounts. Switch this Pinterest account to a business account, then connect it again.`)
+};
+
+export const issue_credits_depleted = /** @type {(inputs: Issue_Credits_DepletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your X app has run out of API credits, so Kronaut can't post to any X channel. Buy credits in the X developer console, then send the post again.`)
 };
 
 export const issue_file_too_large = /** @type {(inputs: Issue_File_Too_LargeInputs) => LocalizedString} */ () => {
@@ -1859,6 +1877,10 @@ export const provider_pinterest = /** @type {(inputs: Provider_PinterestInputs) 
 
 export const provider_threads = /** @type {(inputs: Provider_ThreadsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Threads`)
+};
+
+export const provider_x_com = /** @type {(inputs: Provider_X_ComInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`X`)
 };
 
 export const provider_youtube = /** @type {(inputs: Provider_YoutubeInputs) => LocalizedString} */ () => {

@@ -63,6 +63,7 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             { name: routeEnglish },
+            { name: 'tlds', test: /\/packages\/compose\/src\/tlds\.ts/ },
             // Split into their own files, these small modules each became a chunk with its own wrapper.
             {
               name: 'data',
