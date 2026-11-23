@@ -117,10 +117,10 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     maxImageBytes: 8_000_000,
     imageTypes: ['image/jpeg', 'image/png'],
     publishType: ({ images, video }) => {
-      if (video) return { kind: 'video_unsupported' };
+      if (video) return { kind: 'ok', publishType: 'video' };
       if (images === 0) return { kind: 'needs_image' };
-      if (images > 1) return { kind: 'too_many_images', max: 1 };
-      return { kind: 'ok', publishType: 'pin' };
+      if (images > 5) return { kind: 'too_many_images', max: 5 };
+      return { kind: 'ok', publishType: images === 1 ? 'pin' : 'carousel' };
     },
   },
   threads: {

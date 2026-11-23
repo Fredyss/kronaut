@@ -32,6 +32,7 @@ export const BOARD_PINS = `https://api.pinterest.com/v5/boards/${BOARD_ID}/pins?
 export const PIN_ID = '813744226420795884';
 export const SENT_AT = '2026-10-21T12:00:00.000Z';
 export const IMAGE = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
+export const VIDEO = Uint8Array.from([0, 0, 0, 0x18, 0x66, 0x74, 0x79, 0x70]);
 const SETTINGS: PinterestSettings = {
   boardId: BOARD_ID,
   title: 'Autumn table',
@@ -39,6 +40,7 @@ const SETTINGS: PinterestSettings = {
 };
 
 export interface RunOptions {
+  readonly postType?: string;
   readonly settings?: PinterestSettings;
   readonly state?: ProviderState;
   readonly ref?: Partial<MediaRef>;
@@ -46,7 +48,7 @@ export interface RunOptions {
   readonly text?: string;
 }
 
-function photo(extra: Partial<MediaRef> = {}): MediaRef {
+export function photo(extra: Partial<MediaRef> = {}): MediaRef {
   return {
     id: 'm1',
     sha256: 'a'.repeat(64),
@@ -64,7 +66,7 @@ function input(options: RunOptions = {}): PublishInput<PinterestCredentials, Pin
   return {
     destinationId: 'dest-1',
     attemptNo: 1,
-    postType: 'pin',
+    postType: options.postType ?? 'pin',
     account: { providerAccountId: '1100000000000001', handle: 'ada' },
     credentials: { accessToken: TOKEN, refreshToken: REFRESH },
     app: APP,
@@ -107,9 +109,14 @@ export async function run(
   options: RunOptions = {},
 ) {
   const http = scriptedHttp(exchanges);
-  const context = testPublishContext(http, {
-    m1: { url: 'https://m.example.org/m1', bytes: IMAGE },
-  });
+  const refs = options.media ?? [photo(options.ref)];
+  const media = Object.fromEntries(
+    refs.map((ref) => [
+      ref.id,
+      { url: `https://m.example.org/${ref.id}`, bytes: ref.mime === 'video/mp4' ? VIDEO : IMAGE },
+    ]),
+  );
+  const context = testPublishContext(http, media);
   const invoke = action === 'publish' ? pinterestRuntime.publish : pinterestRuntime.verify;
   if (invoke === undefined) throw new Error(`pinterest has no ${action}`);
   const outcome = await settled<PublishOutcome | VerifyOutcome>(
