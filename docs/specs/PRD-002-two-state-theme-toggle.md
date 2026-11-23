@@ -92,7 +92,9 @@ In `apps/web/src/records/theme/theme.test.tsx`, with `window.matchMedia` stubbed
 
 In `apps/web/src/pages/settings/account.test.tsx`, the existing shared-store test changes its last step: after the select is set to Dark, a header click leaves the select on Light.
 
-Cases 1 and 2 matter most. `pnpm check` must pass.
+In `apps/server/e2e/shell.e2e.ts`, which uses `theme_system` today, the cursor test finds the button by `theme_light`. The theme test covers both color schemes in a real browser: light starts at "Theme: light" and flips twice, and dark (via `page.emulateMedia`) starts at "Theme: dark" and flips to light in one click.
+
+Cases 1 and 2 matter most. `pnpm check` and `pnpm test:e2e` must pass.
 
 ## Technology
 
@@ -114,7 +116,7 @@ None. `matchMedia` is a browser API; no dependency is added.
 | A header click always stores an explicit value | A toggle that sometimes returns to "system" would bring the invisible state back |
 | The button follows OS changes live while the choice is `system` | Otherwise the icon could show "light" on a dark page after the OS switches |
 | `useTheme` keeps returning the stored choice | The Settings select needs to show System |
-| `theme_system` is removed | Nothing would use it anymore |
+| `theme_system` is removed | Nothing would use it anymore once `shell.e2e.ts` moves to `theme_light` |
 
 ## Open questions
 

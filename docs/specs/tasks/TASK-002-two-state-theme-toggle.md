@@ -8,6 +8,7 @@ touches:
   - apps/web/src/records/theme/theme.tsx
   - apps/web/src/records/theme/theme.test.tsx
   - apps/web/src/pages/settings/account.test.tsx
+  - apps/server/e2e/shell.e2e.ts
   - packages/i18n/messages/en.json
   - packages/i18n/messages/sk.json
   - packages/i18n/messages/cs.json
@@ -24,7 +25,8 @@ acceptance:
   - When window.matchMedia is undefined and nothing is stored, the button is named "Theme: light".
   - When localStorage throws, a click still flips the class and the button name.
   - In account.test.tsx, after the Settings select is set to Dark, a click on the header button leaves the select's value "light"; the select still offers system, light and dark.
-  - theme_system no longer exists in en, sk or cs, theme_light and theme_dark are unchanged, and `pnpm check` passes.
+  - In apps/server/e2e/shell.e2e.ts, the cursor test finds the header button by en.theme_light; the theme test, with Playwright's default light color scheme, starts at "Theme: light", a click gives "Theme: dark" and the html class dark, and a second click gives "Theme: light" and the class light; a second test with page.emulateMedia({ colorScheme: 'dark' }) before the first navigation starts at "Theme: dark", and one click gives "Theme: light" and the class light; the no-title assertion stays.
+  - theme_system no longer exists in en, sk or cs, no code or test file references it, theme_light and theme_dark are unchanged, and `pnpm check` passes.
 if_unsure:
   - Keep every export of theme.tsx and its signature; useTheme still returns the stored choice, including 'system'.
   - Do not export the resolved-theme logic; fallow fails on unused exports.
@@ -63,4 +65,5 @@ Delivers the whole of [PRD-002](../PRD-002-two-state-theme-toggle.md). The heade
 - Stub `window.matchMedia` per test with `Object.defineProperty(window, 'matchMedia', { configurable: true, value })`. The fake returns `{ matches, addEventListener, removeEventListener }` and keeps the listener, so the test can fire `change` inside `act`. Restore the original descriptor in `afterEach`.
 - The existing first test in `theme.test.tsx`, which asserts the three-step cycle, is replaced by the two-state cases. The storage-throws test keeps its intent, with the new names.
 - `account.test.tsx` lines 116–124 change only in the last assertion, from `'system'` to `'light'`.
+- `apps/server/e2e/shell.e2e.ts` imports `en.theme_system` in both tests. It is type-checked by `tsc -b`, so removing the message without changing it fails `pnpm check`. Its theme test asserts the old three-step cycle and gets rewritten for the two states. The suite runs with `pnpm test:e2e` (host gates: Docker and Chromium). Playwright's default color scheme is light, and the config sets none.
 - `theme.tsx` has 109 lines; the change keeps it well under 300.
