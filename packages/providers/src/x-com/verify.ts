@@ -8,6 +8,7 @@ import { API_BASE } from './oauth.ts';
 import { type Input, postUrl, publishState, sentText } from './publish.ts';
 
 const RECENT = '10';
+const CLOCK_SKEW_SECONDS = 30;
 
 const reference = z.looseObject({ type: z.string(), id: z.string() });
 const urlEntity = z.looseObject({
@@ -83,7 +84,9 @@ function expected(input: Input): Expected | undefined {
   if (at === undefined || !X_ID.test(input.account.providerAccountId)) return undefined;
   const parent = item.role === 'thread' ? input.chain?.at(-1)?.remoteId : undefined;
   if (item.role === 'thread' && parent === undefined) return undefined;
-  const since = at.round({ smallestUnit: 'second', roundingMode: 'floor' });
+  const since = at
+    .subtract({ seconds: CLOCK_SKEW_SECONDS })
+    .round({ smallestUnit: 'second', roundingMode: 'floor' });
   return { text: sentText(item).trim(), since, parent };
 }
 

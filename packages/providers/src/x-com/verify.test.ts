@@ -14,13 +14,13 @@ const timeline = (data: readonly object[]) => ({ url: TIMELINE, json: { data } }
 const state = { sentAt: SENT_AT };
 
 describe('x verify', () => {
-  it('claims the one post with the sent text created since the send second', async () => {
+  it('claims the one post with the sent text created since 30 s before the send', async () => {
     const { result } = await run(
       'verify',
       [
         timeline([
           post(POST_ID, 'Hello from Kronaut', '2026-10-21T12:00:00Z'),
-          post('1', 'Hello from Kronaut', '2026-10-21T11:59:59Z'),
+          post('1', 'Hello from Kronaut', '2026-10-21T11:59:29Z'),
           post('2', 'Something else'),
         ]),
       ],
@@ -31,6 +31,15 @@ describe('x verify', () => {
       remoteId: POST_ID,
       url: `https://x.com/ada_dev/status/${POST_ID}`,
     });
+  });
+
+  it('tolerates a server clock ahead of X', async () => {
+    const { result } = await run(
+      'verify',
+      [timeline([post(POST_ID, 'Hello from Kronaut', '2026-10-21T11:59:58Z')])],
+      { state },
+    );
+    expect(result).toMatchObject({ kind: 'found', remoteId: POST_ID });
   });
 
   it('is inconclusive on two matches, none, or a failed read', async () => {

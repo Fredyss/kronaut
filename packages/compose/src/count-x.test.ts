@@ -59,6 +59,14 @@ describe('x-weighted counting', () => {
     expect(count('fixed utils.py and main.rs')).toBe(26);
     expect(count('see example.de/a')).toBe(4 + 23);
     expect(count('see www.example.de')).toBe(4 + 23);
+    expect(count('see news.bbc.co.uk')).toBe(4 + 23);
+    expect(count('see example.co or example.tv')).toBe(4 + 23 + 4 + 23);
+  });
+
+  it('counts a scheme URL only with a known TLD', () => {
+    expect(count('http://localhost:3000')).toBe(21);
+    expect(count('https://intranet/x')).toBe(18);
+    expect(count('https://a.io/x')).toBe(23);
   });
 
   it('does not count an e-mail address as a URL', () => {

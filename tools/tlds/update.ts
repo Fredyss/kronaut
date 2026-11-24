@@ -14,7 +14,8 @@ function render(source: string): string {
   return [
     `export const TLD_VERSION = '${version.replace(/^# /, '')}';`,
     '',
-    `export const TLDS = '${labels.join(' ')}';`,
+    'export const TLDS =',
+    `  '${labels.join(' ')}';`,
     '',
   ].join('\n');
 }
