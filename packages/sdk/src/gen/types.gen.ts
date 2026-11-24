@@ -856,6 +856,12 @@ export type ChannelsListResponses = {
             accountKind: string;
             brandId: string | null;
             connectedAt: string;
+            cost: {
+                asOf: string;
+                linkUsdMicros: number | null;
+                sourceUrl: string;
+                usdMicros: number;
+            } | null;
             dataRetentionDays: number | null;
             displayName: string;
             groupIds: Array<string>;

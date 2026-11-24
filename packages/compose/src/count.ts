@@ -1,4 +1,5 @@
 import type { TextCounting } from '@kronaut/core';
+import { countXWeighted } from './count-x.ts';
 
 export const DEFAULT_URL_WEIGHT = 23;
 
@@ -78,6 +79,6 @@ export function countText(
     case 'utf8-bytes':
       return utf8Encoder.encode(normalized).length;
     case 'x-weighted':
-      throw new RangeError('x-weighted counting is not supported yet');
+      return countXWeighted(normalized);
   }
 }

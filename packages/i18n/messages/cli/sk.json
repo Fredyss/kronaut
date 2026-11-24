@@ -40,7 +40,7 @@
   "bot_token_stdin_lines": "na stdin pošlite tajný kľúč klienta a token bota, každý na samostatnom riadku",
   "expected_one_provider": "zadajte práve jednu sieť",
   "bluesky_client_id": "bluesky nepoužíva --client-id",
-  "provider_unsupported": "zaregistrovať sa dá len bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads alebo youtube",
+  "provider_unsupported": "zaregistrovať sa dá len bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads, x_com alebo youtube",
   "provider_app_exists": "aplikácia pre {provider} je už zaregistrovaná: {id}",
   "provider_app_not_found": "žiadna aplikácia siete nemá toto id",
   "key_not_found": "táto aplikácia nemá kľúč s týmto kid",

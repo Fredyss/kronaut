@@ -12,7 +12,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
   - `auth.instanceScoped`: the provider's apps are per server (Mastodon). The server registers one on demand through `registerApp` at connect start (ADR-0051); the conformance kit fails an instance-scoped provider without `registerApp`.
   - `auth.connectPicker: 'kronaut'`: the network's dialog can't pick the accounts (Discord's bot install picks only a server), so Kronaut shows a picker over the accounts `connectFinish` returns (ADR-0062). Only for a provider whose account credentials hold **no secret**, only ids; the secret lives in the provider app. Conformance fails it with an `auth.refresh` other than `none`.
 - **Content limits**
-  - Text limits and counting strategy: `x-weighted` (twitter-text), `mastodon` (graphemes, each link as the limit's `urlWeight`, a remote mention as its username part), `threads` (graphemes, an emoji or flag cluster as its UTF-8 bytes), `graphemes`, `utf16`, or `utf8-bytes`.
+  - Text limits and counting strategy: `x-weighted` (Kronaut's own counter in `@kronaut/compose` following X's documented rules: NFC, weight 1 for the ranges U+0000–U+10FF, U+2000–U+200D, U+2010–U+201F and U+2032–U+2037 and 2 for everything else, an emoji cluster as 2, every URL as 23; URLs are `www.` tokens, `http(s)://` tokens and bare hosts whose TLD is in the bundled IANA list (regenerated with `pnpm tlds:update`, which reads the IANA list on stdin), a bare `label.cc` with a country code other than `co` and `tv` only with a path, and CJK text never part of a URL or blocking one), `mastodon` (graphemes, each link as the limit's `urlWeight`, a remote mention as its username part), `threads` (graphemes, an emoji or flag cluster as its UTF-8 bytes), `graphemes`, `utf16`, or `utf8-bytes`.
     - **Composite limits** are allowed: Bluesky checks 300 graphemes *and* 3,000 bytes.
     - `maxLinks`: the most **unique** links one item's text may hold (Threads: 5). `countLinks()` counts each distinct `http(s)://` URL and each bare host such as `www.example.com`, matched as written; it errs towards over-counting. Over the limit, `validate()` reports `too_many_links`.
     - Limits can be **per instance** (Mastodon reads `/api/v2/instance`). `accountPostType?(postType, capabilities)` returns the post type with an account's stored `capabilities` applied; `validate()` takes those capabilities and uses it at schedule and at claim.
@@ -29,7 +29,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 - **Settings:** a Zod schema with defaults.
   - `requiredSettings`: keys that must be present and non-blank at schedule and at claim, such as YouTube's `title`. A draft may omit them, so draft save only parses the schema. `validateSettings()` reports `setting_required` with the `field`, and the API puts it at `destinations.<n>.settings.<field>`.
   - `accountSettingOptions?(capabilities)`: per setting key, a list of `{value, label}` built only from the account's stored `capabilities`, with no network call ([ADR-0063](../adr/0063-per-account-setting-options.md)). The channels list returns it as `settingOptions`, and the composer renders such a setting as a select. The schema checks only the value's shape; a stale value fails at publish (Pinterest: `boardId` from the boards stored at connect, a gone board is `board_gone`).
-- **Cost:** `cost{model, perPost{usd, linkUsd, asOf, sourceUrl}}`.
+- **Cost:** `cost{model, perPost{usdMicros, linkUsdMicros, asOf, sourceUrl}}`. The channels list returns `perPost` as `cost` (`linkUsdMicros` null when absent; `cost` null for a free provider). The composer prices each chain item as one post, at `linkUsdMicros` when `extractXUrls()` finds a URL in it.
 - **Verification:** `verify.mode`, one of `idempotency_key | deterministic_id | status_by_ref | list_recent_match | none`.
 - **Rate limits:** `rateLimits[{scope account|app|instance, headerParser}]` plus concurrency.
 - **Preview:** the archetype.
@@ -76,7 +76,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 
 - An `ambiguous` error on a step whose effect is `public` → `unconfirmed`, never a blind retry.
 - `auth_revoked` is definitive only after a confirming call with fresh credentials.
-- `app_config` (bad client secret, suspended app, X credits below zero) creates a `provider_app_incidents` row and never flags user accounts.
+- `app_config` (bad client secret, suspended app) creates a `provider_app_incidents` row and never flags user accounts.
 - Meta auth errors map by subcode:
   - 458 / 460 / 467 → revoked
   - 463 → expired
@@ -87,6 +87,6 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 **Also**
 
 - **`validate(manifest, draft)`** is one function. It runs in the editor (live), in the API (at schedule) and in the worker (preflight, re-run at claim, not covered by approval).
-- **SDKs:** raw fetch by default. An SDK is allowed only if it accepts an injected `fetch`/agent and passes dependency review: `@atproto/api` yes, `twitter-api-v2` unnecessary, `googleapis` no (YouTube resumable upload is written directly). Use `twitter-text` for X counting.
+- **SDKs:** raw fetch by default. An SDK is allowed only if it accepts an injected `fetch`/agent and passes dependency review: `@atproto/api` yes, `twitter-api-v2` unnecessary, `googleapis` no (YouTube resumable upload is written directly). X counting uses no SDK: Kronaut's own `x-weighted` counter follows X's documented counting rules.
 - **Conformance suite** runs on every provider: the manifest parses, settings round-trip, and errors map correctly against recorded fixtures. A provider cannot leave `experimental` without recorded real-response fixtures.
 - **Provider facts** (limits, quotas, review gates) are kept in [provider facts](../reference/provider-facts.md), each with its source URL and the date it was checked. Re-verify them before each provider is built.

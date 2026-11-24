@@ -24,6 +24,7 @@ const threads: Channel = {
   groupIds: [],
   preview: 'short-feed',
   manualOnly: false,
+  cost: null,
   insights: true,
 };
 

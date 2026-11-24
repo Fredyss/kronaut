@@ -841,6 +841,7 @@ export const partial_exists = /** @type {((inputs?: Partial_ExistsInputs, option
 * | provider | output |
 * | --- | --- |
 * | "instagram" | "an {provider} app is already registered: {id}" |
+* | "x_com" | "an {provider} app is already registered: {id}" |
 * | * | "a {provider} app is already registered: {id}" |
 *
 * @param {Provider_App_ExistsInputs} inputs
@@ -871,7 +872,7 @@ export const provider_app_not_found = /** @type {((inputs?: Provider_App_Not_Fou
 /**
 * | output |
 * | --- |
-* | "only bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads or youtube can be registered" |
+* | "only bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads, x_com or youtube can be registered" |
 *
 * @param {Provider_UnsupportedInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options

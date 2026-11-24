@@ -290,6 +290,7 @@ export const partial_exists = /** @type {(inputs: Partial_ExistsInputs) => Local
 
 export const provider_app_exists = /** @type {(inputs: Provider_App_ExistsInputs) => LocalizedString} */ (i) => {
 	if (i?.provider === "instagram") return /** @type {LocalizedString} */ (`an ${i?.provider} app is already registered: ${i?.id}`);
+	if (i?.provider === "x_com") return /** @type {LocalizedString} */ (`an ${i?.provider} app is already registered: ${i?.id}`);
 	return /** @type {LocalizedString} */ (`a ${i?.provider} app is already registered: ${i?.id}`)
 };
 
@@ -298,7 +299,7 @@ export const provider_app_not_found = /** @type {(inputs: Provider_App_Not_Found
 };
 
 export const provider_unsupported = /** @type {(inputs: Provider_UnsupportedInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`only bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads or youtube can be registered`)
+	return /** @type {LocalizedString} */ (`only bluesky, discord, discord_bot, facebook, instagram, linkedin, pinterest, threads, x_com or youtube can be registered`)
 };
 
 export const restored_no_state = /** @type {(inputs: Restored_No_StateInputs) => LocalizedString} */ () => {

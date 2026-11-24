@@ -39,6 +39,8 @@ let owner: string;
 let viewer: string;
 let ownAccountId: string;
 let rulesWorkspace: string;
+let costWorkspace: string;
+const X_PRICING = 'https://docs.x.com/x-api/getting-started/pricing';
 let previewWorkspace: string;
 
 function runtime(id: string): ProviderRuntime {
@@ -168,6 +170,7 @@ beforeAll(async () => {
         { provider: DISABLED, client_id: 'off-client', status: 'disabled' },
         { provider: 'instagram', client_id: 'ig-client', status: 'disabled' },
         { provider: 'pinterest', client_id: '1234567', status: 'disabled' },
+        { provider: 'x_com', client_id: 'x-client', status: 'disabled' },
         { provider: 'threads', client_id: '1122334455667788' },
         { provider: 'mastodon', instance_host: 'social.example', client_id: 'masto-client' },
         { provider: 'youtube', client_id: '123456789012-abc.apps.googleusercontent.com' },
@@ -206,6 +209,9 @@ beforeAll(async () => {
   });
   await addAccount(rulesId, ownerId, 'thr', { provider: 'threads' });
   await addAccount(rulesId, ownerId, 'tube', { provider: 'youtube' });
+  const costId = await provision(ownerId, 'ws-cost');
+  costWorkspace = encodePublicId('workspace', costId);
+  await addAccount(costId, ownerId, 'chirp', { provider: 'x_com' });
   const previewId = await provision(ownerId, 'ws-preview');
   previewWorkspace = encodePublicId('workspace', previewId);
   await addAccount(previewId, ownerId, 'gram', {
@@ -268,6 +274,7 @@ describe('channel listing', () => {
       'accountKind',
       'brandId',
       'connectedAt',
+      'cost',
       'dataRetentionDays',
       'displayName',
       'groupIds',
@@ -459,6 +466,19 @@ describe('channel listing', () => {
         aspects: [null, null, null],
         settingOptions: { boardId: [{ value: '9001', label: 'Garden' }] },
       },
+    ]);
+  });
+
+  it('returns the per-post cost from the manifest', async () => {
+    const response = await app.request(`${BASE}/v1/workspaces/${costWorkspace}/channels`, {
+      headers: { cookie: owner },
+    });
+    const { items } = (await response.json()) as { items: { provider: string; cost: unknown }[] };
+    expect(items.map(({ provider, cost }) => [provider, cost])).toEqual([
+      [
+        'x_com',
+        { usdMicros: 15_000, linkUsdMicros: 200_000, asOf: '2026-11-23', sourceUrl: X_PRICING },
+      ],
     ]);
   });
 

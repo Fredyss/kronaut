@@ -49,7 +49,7 @@
     - links to the YouTube Terms of Service and Google Privacy Policy at connect, and to Google's permissions page per channel
     - disconnect revokes the Google grant at once (policy III.D.2.c), so its confirmation warns that other channels on the same Google account need to reconnect
     - a missing title blocks scheduling, not draft save (`requiredSettings`)
-  - **X:** shows the cost per post (higher with a link) from the manifest `cost`.
+  - **X:** shows the cost per post (higher with a link) from the manifest `cost`: per X destination, the number of posts (the main post plus each reply in the chain) and their total, each post at the link price when its text holds a URL, plus a line with both prices. Up to 4 JPEG, PNG or WebP images of 5 MB each.
 - **Approval:**
   - Draft → In review → Approved → Scheduled.
   - An edit after approval resets it and shows a visible diff per destination.

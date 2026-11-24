@@ -8,6 +8,7 @@ import { linkedinManifest } from './linkedin/manifest.ts';
 import { mastodonManifest } from './mastodon/manifest.ts';
 import { pinterestManifest } from './pinterest/manifest.ts';
 import { threadsManifest } from './threads/manifest.ts';
+import { xManifest } from './x-com/manifest.ts';
 import { youtubeManifest } from './youtube/manifest.ts';
 
 export const manifests: readonly ProviderManifest[] = [
@@ -20,5 +21,6 @@ export const manifests: readonly ProviderManifest[] = [
   mastodonManifest,
   pinterestManifest,
   threadsManifest,
+  xManifest,
   youtubeManifest,
 ];

@@ -68,13 +68,6 @@ describe('countText', () => {
     expect(countText('é', 'utf16')).toBe(1);
   });
 
-  it('refuses x-weighted counting for now', () => {
-    expect(() => countText('hello', 'x-weighted')).toThrow(RangeError);
-    expect(() => countText('hello', 'x-weighted')).toThrow(
-      'x-weighted counting is not supported yet',
-    );
-  });
-
   it.each<[string, string, number]>([
     ['plain graphemes', `Ahoj ${FAMILY}${FLAG_SK}`, 7],
     ['a short link costs the full weight', 'see https://a.io', 4 + 23],

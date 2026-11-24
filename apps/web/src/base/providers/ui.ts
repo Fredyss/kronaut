@@ -138,6 +138,15 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     publishType: (media) =>
       media.video ? { kind: 'ok', publishType: 'video' } : imagePost(20)(media),
   },
+  x_com: {
+    name: () => m.provider_x_com(),
+    badge: 'bg-foreground',
+    loginHint: false,
+    instance: false,
+    maxImageBytes: 5_000_000,
+    imageTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    publishType: imagePost(4),
+  },
   youtube: {
     name: () => m.provider_youtube(),
     badge: 'bg-red-600',

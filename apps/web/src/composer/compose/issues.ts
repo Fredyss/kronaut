@@ -36,6 +36,7 @@ const ISSUES: Readonly<Record<string, () => string>> = {
   missing_access: () => m.issue_missing_access(),
   business_account_required: () => m.issue_business_account_required(),
   board_gone: () => m.issue_board_gone(),
+  credits_depleted: () => m.issue_credits_depleted(),
 };
 
 export function issueMessage(code: string): string {

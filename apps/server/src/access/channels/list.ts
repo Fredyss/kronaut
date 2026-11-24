@@ -1,15 +1,12 @@
-import { accountPostType } from '@kronaut/compose';
 import { defineRoute } from '@kronaut/contract';
-import {
-  type AccessScope,
-  encodePublicId,
-  type ImageLimits,
-  PREVIEW_ARCHETYPES,
-  type TextCounting,
-  type VideoLimits,
-} from '@kronaut/core';
+import { type AccessScope, encodePublicId, PREVIEW_ARCHETYPES } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import {
+  CostSchema,
+  PostTypeRulesSchema,
+  providerRules,
+} from '../../base/providers/channel-rules.ts';
 import type { ProviderEntry, ProviderRegistry } from '../../base/providers/providers.ts';
 import { loadCredentialExpiries, shownExpiry } from './expiry.ts';
 import { loadChannelGroups } from './groups.ts';
@@ -19,44 +16,6 @@ const Instant = z.iso.datetime();
 
 const CHANNEL_STATUSES = ['active', 'needs_reauth', 'disabled', 'disconnected'] as const;
 const AVAILABILITY = ['stable', 'experimental', 'limited'] as const;
-const TEXT_COUNTINGS = [
-  'x-weighted',
-  'mastodon',
-  'threads',
-  'graphemes',
-  'utf16',
-  'utf8-bytes',
-] as const satisfies readonly TextCounting[];
-
-const RatioSchema = z.object({ width: z.number().int(), height: z.number().int() });
-
-const TextLimitSchema = z.object({
-  counting: z.enum(TEXT_COUNTINGS),
-  max: z.number().int(),
-  urlWeight: z.number().int().optional(),
-});
-
-const PostTypeRulesSchema = z.object({
-  id: z.string(),
-  text: z.array(TextLimitSchema),
-  maxLinks: z.number().int().nullable(),
-  forbiddenChars: z.string().optional(),
-  imageAspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
-  video: z
-    .object({
-      mimes: z.array(z.string()),
-      maxBytes: z.number().int(),
-      minDurationMs: z.number().int(),
-      maxDurationMs: z.number().int(),
-      aspect: z.object({ min: RatioSchema, max: RatioSchema }).nullable(),
-      maxFrameRate: z.number().nullable(),
-      maxPixels: z.number().int().nullable(),
-    })
-    .nullable(),
-  thread: z.object({ maxItems: z.number().int() }).nullable(),
-  comment: z.object({ text: z.array(TextLimitSchema) }).nullable(),
-});
-
 const ChannelSchema = z.object({
   id: z.string(),
   provider: z.string(),
@@ -75,6 +34,7 @@ const ChannelSchema = z.object({
   settingOptions: z.record(z.string(), z.array(z.object({ value: z.string(), label: z.string() }))),
   preview: z.enum(PREVIEW_ARCHETYPES),
   manualOnly: z.boolean(),
+  cost: CostSchema.nullable(),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),
   shortenLinks: z.boolean(),
@@ -109,65 +69,6 @@ export const channelProvidersRoute = defineRoute({
   summary: 'List the providers this server can connect',
   tags: ['channels'],
 });
-
-function imageAspect(image: ImageLimits | undefined) {
-  if (image?.minAspect === undefined || image.maxAspect === undefined) return null;
-  return { min: { ...image.minAspect }, max: { ...image.maxAspect } };
-}
-
-function videoRules(video: VideoLimits | undefined) {
-  if (video === undefined) return null;
-  const aspect =
-    video.minAspect === undefined || video.maxAspect === undefined
-      ? null
-      : { min: { ...video.minAspect }, max: { ...video.maxAspect } };
-  const { mimes, maxBytes, minDurationMs, maxDurationMs } = video;
-  return {
-    mimes: [...mimes],
-    maxBytes,
-    minDurationMs,
-    maxDurationMs,
-    aspect,
-    maxFrameRate: video.maxFrameRate ?? null,
-    maxPixels: video.maxPixels ?? null,
-  };
-}
-
-function postTypes(
-  entry: ProviderEntry | undefined,
-  capabilities: unknown,
-): z.input<typeof PostTypeRulesSchema>[] {
-  if (entry === undefined) return [];
-  const { manifest } = entry;
-  return manifest.postTypes.flatMap(({ id }) => {
-    const postType = accountPostType(manifest, id, capabilities);
-    if (postType === undefined || postType.delivery === 'unsupported') return [];
-    return [
-      {
-        id,
-        text: [...postType.text],
-        maxLinks: postType.maxLinks ?? null,
-        ...(postType.forbiddenChars === undefined
-          ? {}
-          : { forbiddenChars: postType.forbiddenChars }),
-        imageAspect: imageAspect(postType.media.image),
-        video: videoRules(postType.media.video),
-        thread: postType.thread === undefined ? null : { maxItems: postType.thread.maxItems },
-        comment: postType.comment === undefined ? null : { text: [...postType.comment.text] },
-      },
-    ];
-  });
-}
-
-function providerRules(entry: ProviderEntry | undefined, capabilities: unknown) {
-  return {
-    postTypes: postTypes(entry, capabilities),
-    requiredSettings: [...(entry?.manifest.requiredSettings ?? [])],
-    settingOptions: entry?.manifest.accountSettingOptions?.(capabilities) ?? {},
-    preview: entry?.manifest.preview ?? 'short-feed',
-    manualOnly: entry?.manifest.manualOnly === true,
-  };
-}
 
 const insightsCapability = z.looseObject({ insights: z.literal(true) });
 

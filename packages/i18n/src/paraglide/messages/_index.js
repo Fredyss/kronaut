@@ -179,6 +179,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Video_Rejected_UnreadableInputs */
 /** @typedef {{}} Compose_Video_WaitInputs */
 /** @typedef {{}} Compose_When_TitleInputs */
+/** @typedef {{ count: NonNullable<unknown>, channel: NonNullable<unknown>, cost: NonNullable<unknown> }} Compose_X_CostInputs */
+/** @typedef {{ price: NonNullable<unknown>, linkPrice: NonNullable<unknown> }} Compose_X_Cost_RatesInputs */
 /** @typedef {{}} Destination_State_Awaiting_ManualInputs */
 /** @typedef {{}} Destination_State_BlockedInputs */
 /** @typedef {{}} Destination_State_CanceledInputs */
@@ -220,6 +222,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Aspect_Out_Of_RangeInputs */
 /** @typedef {{}} Issue_Board_GoneInputs */
 /** @typedef {{}} Issue_Business_Account_RequiredInputs */
+/** @typedef {{}} Issue_Credits_DepletedInputs */
 /** @typedef {{}} Issue_File_Too_LargeInputs */
 /** @typedef {{}} Issue_Forbidden_CharactersInputs */
 /** @typedef {{}} Issue_Forum_Channel_UnsupportedInputs */
@@ -349,6 +352,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Provider_MastodonInputs */
 /** @typedef {{}} Provider_PinterestInputs */
 /** @typedef {{}} Provider_ThreadsInputs */
+/** @typedef {{}} Provider_X_ComInputs */
 /** @typedef {{}} Provider_YoutubeInputs */
 /** @typedef {{}} Queue_AddInputs */
 /** @typedef {{}} Queue_EvergreenInputs */
@@ -3112,6 +3116,37 @@ export const compose_when_title = /** @type {((inputs?: Compose_When_TitleInputs
 	return __en.compose_when_title(inputs)
 });
 /**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{channel}: 1 post, about {cost} in X API credits" |
+* | * | "{channel}: {count} posts, about {cost} in X API credits" |
+*
+* @param {Compose_X_CostInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_x_cost = /** @type {((inputs: Compose_X_CostInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_X_CostInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_x_cost(inputs)
+	if (locale === "cs") return __cs.compose_x_cost(inputs)
+	return __en.compose_x_cost(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "X API pricing: {price} per post, {linkPrice} for a post with a link." |
+*
+* @param {Compose_X_Cost_RatesInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_x_cost_rates = /** @type {((inputs: Compose_X_Cost_RatesInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_X_Cost_RatesInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_x_cost_rates(inputs)
+	if (locale === "cs") return __cs.compose_x_cost_rates(inputs)
+	return __en.compose_x_cost_rates(inputs)
+});
+/**
 * | output |
 * | --- |
 * | "Waiting for you to post it" |
@@ -3727,6 +3762,21 @@ export const issue_business_account_required = /** @type {((inputs?: Issue_Busin
 	if (locale === "sk") return __sk.issue_business_account_required(inputs)
 	if (locale === "cs") return __cs.issue_business_account_required(inputs)
 	return __en.issue_business_account_required(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Your X app has run out of API credits, so Kronaut can't post to any X channel. Buy credits in the X developer console, then send the post again." |
+*
+* @param {Issue_Credits_DepletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_credits_depleted = /** @type {((inputs?: Issue_Credits_DepletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Credits_DepletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_credits_depleted(inputs)
+	if (locale === "cs") return __cs.issue_credits_depleted(inputs)
+	return __en.issue_credits_depleted(inputs)
 });
 /**
 * | output |
@@ -5676,6 +5726,21 @@ export const provider_threads = /** @type {((inputs?: Provider_ThreadsInputs, op
 	if (locale === "sk") return __sk.provider_threads(inputs)
 	if (locale === "cs") return __cs.provider_threads(inputs)
 	return __en.provider_threads(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "X" |
+*
+* @param {Provider_X_ComInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const provider_x_com = /** @type {((inputs?: Provider_X_ComInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Provider_X_ComInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.provider_x_com(inputs)
+	if (locale === "cs") return __cs.provider_x_com(inputs)
+	return __en.provider_x_com(inputs)
 });
 /**
 * | output |

@@ -67,6 +67,11 @@
   - `echo -n "$SECRET" | kronaut provider-app register pinterest --client-id <pinterest app id>` works like the Instagram command, with the app secret on stdin. The app id is digits. It refuses while an active Pinterest app is registered.
   - Access tokens last 30 days; each refresh rotates the 60-day refresh token. The connect stores the account's public boards (at most 500); a board created later appears after a reconnect.
   - On the Trial tier, Pins are visible only to their creator; apply for Standard access with a screen recording of the OAuth flow. Apps registered on or after 2026-09-14 may be refused for non-business accounts (403 `PINNER_DATA_ACCESS_DENIED` → `business_account_required`).
+- **X app setup**: provider id `x_com`, API v2 on `api.x.com`; consent on `x.com`. One X account is one channel; each post is text and up to 4 JPEG, PNG or WebP images (5 MB each, alt text up to 1,000 characters), and a chain item is a reply. No GIF, video, poll or quote post yet.
+  - In the X developer console, create an app with OAuth 2.0 user authentication as a **Web App** (confidential client) and add the callback `<KRONAUT_PUBLIC_URL>/v1/oauth/x_com/callback`. Kronaut requests `tweet.read tweet.write users.read media.write offline.access` with PKCE (S256); a grant without one of them fails the connect (`scope_missing`).
+  - `echo -n "$SECRET" | kronaut provider-app register x_com --client-id <x oauth 2.0 client id>` works like the Instagram command, with the OAuth 2.0 Client Secret on stdin. It refuses while an active X app is registered.
+  - Access tokens last 2 hours; Kronaut stores whichever refresh token each refresh returns. Disconnecting revokes the refresh token, then the access token.
+  - The API is paid per use from the app's credit balance: $0.015 per post, $0.20 for a post with a URL (2026-11-23). At zero credits X blocks every request of the app: Kronaut maps 402, or a 403 that mentions credits, to permanent `credits_depleted`: each X post fails with a message to buy credits and send it again. The app is never flagged, so posting resumes as soon as credits are bought.
 - **Discord bot setup (ADR-0061, ADR-0062)**: `discord_bot` posts as one bot for the whole instance.
   - In the same Discord application as `discord`, open the Bot page, copy (or reset) the bot token, and keep it out of shell history. On the OAuth2 page, add the redirect `<KRONAUT_PUBLIC_URL>/v1/oauth/discord_bot/callback`.
   - `printf '%s\n%s\n' "$CLIENT_SECRET" "$BOT_TOKEN" | kronaut provider-app register discord_bot --client-id <discord client id>` reads the client secret and then the bot token from stdin, one per line, seals each with its own DEK and prints the app id. It refuses while an active `discord_bot` app is registered.
@@ -104,7 +109,7 @@
   | webhook deliveries | 30 d |
   | notifications | 90 d |
   | credentials of disconnected channels | 30 d |
-  | channel data of a provider with `dataRetention` (YouTube and Pinterest: 7 d after disconnect, 30 d after `needs_reauth`; ADR-0060) | see the manifest |
+  | channel data of a provider with `dataRetention` (YouTube, Pinterest and X: 7 d after disconnect, 30 d after `needs_reauth`; ADR-0060) | see the manifest |
   | idempotency keys | 24 h (7 d for MCP) |
   | soft-deleted posts | 30 d |
   | `ip_prefix` / `ua_hash` | nulled at 90 d |
@@ -119,8 +124,8 @@
   - Workspace export is an async zip.
   - User erasure nulls the PII on `users`; audit rows keep the bare uuid.
   - Hosted workspace deletion has a 7-day grace period, then a cascade, then a `deletion_receipts` row.
-  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon, YouTube; Discord deletes its webhook; the Discord bot stays in the server until its admins remove it), and credentials are purged after 30 d.
-  - A provider whose manifest sets `dataRetention` (YouTube, Pinterest) goes further (ADR-0060): the daily `credential_retention` task purges a channel `disconnected` longer than `disconnectedDays` or `needs_reauth` longer than `lapsedDays` (`disconnectedDays` when the reason is `grant_revoked`: a sibling channel of a revoked shared grant), each minus a 2-day margin so a missed daily run still lands inside the policy deadline. The purge deletes its credentials, wipes its name, handle, profile URL and subject id, deletes its `account_daily_metrics` and the `post_metric_snapshots` and `destination_metric_pulls` of its destinations, and writes one `channel.data_purged` audit event. Posts and destinations, with their remote ids and permalinks, stay. The run summary counts `purgedAccounts`; reconnecting refills the name and handle.
+  - A disconnected account → its destinations go to `blocked/account_disconnected`, its token is revoked at networks that support it (Mastodon, YouTube, X; Discord deletes its webhook; the Discord bot stays in the server until its admins remove it), and credentials are purged after 30 d.
+  - A provider whose manifest sets `dataRetention` (YouTube, Pinterest, X) goes further (ADR-0060): the daily `credential_retention` task purges a channel `disconnected` longer than `disconnectedDays` or `needs_reauth` longer than `lapsedDays` (`disconnectedDays` when the reason is `grant_revoked`: a sibling channel of a revoked shared grant), each minus a 2-day margin so a missed daily run still lands inside the policy deadline. The purge deletes its credentials, wipes its name, handle, profile URL and subject id, deletes its `account_daily_metrics` and the `post_metric_snapshots` and `destination_metric_pulls` of its destinations, and writes one `channel.data_purged` audit event. Posts and destinations, with their remote ids and permalinks, stay. The run summary counts `purgedAccounts`; reconnecting refills the name and handle.
 - **Migrations (ADR-0024)**
   - Changes follow expand → deploy → contract.
   - The migrator enforces `lock_timeout=3s`, `CREATE INDEX CONCURRENTLY` and `NOT VALID` + `VALIDATE`.

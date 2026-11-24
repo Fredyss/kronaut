@@ -127,6 +127,7 @@ export function channel(id: string, provider: string, displayName: string) {
     settingOptions: provider === 'pinterest' ? { boardId: BOARDS } : {},
     preview: PREVIEWS[provider] ?? 'short-feed',
     signature: null,
+    cost: null,
   };
 }
 
