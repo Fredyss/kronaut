@@ -75,6 +75,16 @@ describe('x verify', () => {
     expect(result).toMatchObject({ kind: 'found', remoteId: POST_ID });
   });
 
+  it('matches a link typed without a scheme', async () => {
+    const entities = { urls: [{ url: 'https://t.co/abc', expanded_url: 'http://example.com' }] };
+    const { result } = await run(
+      'verify',
+      [timeline([post(POST_ID, 'Read https://t.co/abc', SENT_AT, { entities })])],
+      { state, items: [mainItem('Read example.com')] },
+    );
+    expect(result).toMatchObject({ kind: 'found', remoteId: POST_ID });
+  });
+
   it('matches the text whether or not X HTML-escapes it', async () => {
     const raw = 'use &amp; in HTML';
     const { result } = await run('verify', [timeline([post(POST_ID, raw)])], {

@@ -63,6 +63,12 @@ describe('x-weighted counting', () => {
     expect(count('see example.co or example.tv')).toBe(4 + 23 + 4 + 23);
   });
 
+  it('finds a URL right next to CJK text', () => {
+    expect(count('看看example.com')).toBe(4 + 23);
+    expect(count('日本https://a.io/x')).toBe(4 + 23);
+    expect(count('example.com日本')).toBe(23 + 4);
+  });
+
   it('counts a scheme URL only with a known TLD', () => {
     expect(count('http://localhost:3000')).toBe(21);
     expect(count('https://intranet/x')).toBe(18);

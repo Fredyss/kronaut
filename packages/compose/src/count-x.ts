@@ -11,14 +11,15 @@ const LIGHT_RANGES: readonly (readonly [number, number])[] = [
 ];
 
 const KNOWN_TLDS: ReadonlySet<string> = new Set(TLDS.split(' '));
-const GENERIC_LIKE: ReadonlySet<string> = new Set(['co', 'tv']);
 const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
-const LABEL = String.raw`[\p{L}\p{N}](?:[\p{L}\p{N}\p{M}-]{0,61}[\p{L}\p{N}\p{M}])?`;
+const CJK = String.raw`[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}]`;
+const WORD = String.raw`(?!${CJK})[\p{L}\p{N}\p{M}]`;
+const LABEL = String.raw`(?!${CJK})[\p{L}\p{N}](?:(?:${WORD}|-){0,61}${WORD})?`;
 const PATH = String.raw`[!#-;=?-~\p{Script=Latin}\p{Script=Cyrillic}\p{M}]`;
 const URL_CANDIDATE = new RegExp(
-  String.raw`(?:(?<![\p{L}\p{N}\p{M}_@#$])https?:\/\/(${LABEL}(?:\.${LABEL})*)` +
-    String.raw`|(?<![\p{L}\p{N}\p{M}_@#$.\/:-])(${LABEL}(?:\.${LABEL})+)(?![@_\p{L}\p{N}\p{M}-]|\.[\p{L}\p{N}]))` +
+  String.raw`(?:(?<!${WORD}|[_@#$])https?:\/\/(${LABEL}(?:\.${LABEL})*)` +
+    String.raw`|(?<!${WORD}|[_@#$.\/:-])(${LABEL}(?:\.${LABEL})+)(?!${WORD}|[@_-]|\.${WORD}))` +
     String.raw`(?::\d{1,5})?(?:[\/?#]${PATH}*)?`,
   'giu',
 );
@@ -59,23 +60,11 @@ function asciiTld(host: string): string | undefined {
   }
 }
 
-function knownTld(host: string): string | undefined {
-  const tld = asciiTld(host);
-  return tld !== undefined && KNOWN_TLDS.has(tld) ? tld : undefined;
-}
-
-function linkedBare(host: string, url: string): boolean {
-  if (/^www\./i.test(host)) return true;
-  const tld = knownTld(host);
-  if (tld === undefined) return false;
-  const countryOnly = tld.length === 2 && !GENERIC_LIKE.has(tld) && host.split('.').length === 2;
-  return !countryOnly || /^(?::\d{1,5})?\//.test(url.slice(host.length));
-}
-
-function linked(match: RegExpExecArray, url: string): boolean {
-  const [, schemeHost, bare] = match;
-  if (schemeHost !== undefined) return knownTld(schemeHost) !== undefined;
-  return bare === undefined || linkedBare(bare, url);
+function linked([, schemeHost, bare]: RegExpExecArray, url: string): boolean {
+  if (bare !== undefined && /^www\./i.test(bare)) return true;
+  if (!KNOWN_TLDS.has(asciiTld(schemeHost ?? bare ?? '') ?? '')) return false;
+  const countryOnly = bare !== undefined && /^[^.]+\.(?!co$|tv$)[a-z]{2}$/i.test(bare);
+  return !countryOnly || /^(?::\d{1,5})?\//.test(url.slice(bare.length));
 }
 
 export function extractXUrls(text: string): XUrl[] {

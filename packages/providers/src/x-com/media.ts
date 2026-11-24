@@ -10,6 +10,7 @@ import { xManifest } from './manifest.ts';
 import { API_BASE } from './oauth.ts';
 
 const EXPIRY_MARGIN = Temporal.Duration.from({ minutes: 5 });
+const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
 export const uploadedMedia = z.object({
   id: z.string().regex(X_ID),
@@ -32,6 +33,10 @@ const spec = (() => {
   return { image, media };
 })();
 
+function graphemeCount(text: string): number {
+  return [...graphemes.segment(text.normalize('NFC'))].length;
+}
+
 export function checkImages(media: readonly MediaRef[]): void {
   if (media.length > spec.media.maxCount) throw permanent('too_many_images');
   for (const ref of media) {
@@ -39,7 +44,7 @@ export function checkImages(media: readonly MediaRef[]): void {
       throw permanent('video_unsupported');
     if (!spec.image.mimes.includes(ref.mime)) throw permanent('media_type_unsupported');
     if (ref.bytes > spec.image.maxBytes) throw permanent('image_too_large');
-    if ((ref.altText?.normalize('NFC').length ?? 0) > spec.media.altText.maxLength)
+    if (graphemeCount(ref.altText ?? '') > spec.media.altText.maxLength)
       throw permanent('alt_text_too_long');
   }
 }

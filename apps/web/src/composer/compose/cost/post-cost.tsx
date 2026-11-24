@@ -49,18 +49,22 @@ export function postCosts(targets: readonly CostTarget[]): PostCost[] {
   });
 }
 
+export function distinctRates(costs: readonly PostCost[]): Cost[] {
+  const seen = new Map<string, Cost>();
+  for (const { rates } of costs) seen.set(`${rates.usdMicros}/${rates.linkUsdMicros}`, rates);
+  return [...seen.values()];
+}
+
 export function PostCostNote({ targets }: { readonly targets: readonly CostTarget[] }) {
   const { locale } = useLocale();
   const costs = postCosts(targets);
-  const [first] = costs;
-  if (first === undefined) return null;
+  if (costs.length === 0) return null;
   const usd = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 3,
   });
   const dollars = (micros: number) => usd.format(micros / 1_000_000);
-  const { usdMicros, linkUsdMicros } = first.rates;
   return (
     <div className="flex flex-col gap-0.5 text-muted-foreground text-xs">
       <ul>
@@ -74,12 +78,14 @@ export function PostCostNote({ targets }: { readonly targets: readonly CostTarge
           </li>
         ))}
       </ul>
-      <p>
-        {m.compose_x_cost_rates({
-          price: dollars(usdMicros),
-          linkPrice: dollars(linkUsdMicros ?? usdMicros),
-        })}
-      </p>
+      {distinctRates(costs).map(({ usdMicros, linkUsdMicros }) => (
+        <p key={`${usdMicros}/${linkUsdMicros}`}>
+          {m.compose_x_cost_rates({
+            price: dollars(usdMicros),
+            linkPrice: dollars(linkUsdMicros ?? usdMicros),
+          })}
+        </p>
+      ))}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Channel } from '../../../records/channels/queries.ts';
 import type { Doc } from '../../../records/posts/doc.ts';
-import { type CostTarget, postCosts } from './post-cost.tsx';
+import { type CostTarget, distinctRates, postCosts } from './post-cost.tsx';
 
 const RATES = {
   usdMicros: 15_000,
@@ -69,6 +69,16 @@ describe('post cost', () => {
   it('prices each chain item, higher when it carries a link', () => {
     const [cost] = postCosts([target(x, 'Hello', ['Read example.com', 'Bye'])]);
     expect(cost).toMatchObject({ channel: 'Ada on X', posts: 3, usdMicros: 230_000 });
+  });
+
+  it('lists each distinct rate set once', () => {
+    const later = { ...x, id: 'acct_y', cost: { ...RATES, usdMicros: 20_000 } };
+    const costs = postCosts([
+      target(x, 'a'),
+      target({ ...x, id: 'acct_z' }, 'b'),
+      target(later, 'c'),
+    ]);
+    expect(distinctRates(costs).map((rates) => rates.usdMicros)).toEqual([15_000, 20_000]);
   });
 
   it('shows nothing for a free provider or a hidden destination', () => {

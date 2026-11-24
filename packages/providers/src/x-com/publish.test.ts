@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { assertPublicSendOrder, egressError } from '../_kit/testing.ts';
 import { xManifest } from './manifest.ts';
+import { checkImages } from './media.ts';
 import {
   json,
   METADATA_URL,
@@ -109,6 +110,10 @@ describe('x publish', () => {
     const { error, calls } = await run('publish', [], { items: [mainItem('x', media)] });
     expect(error).toEqual({ kind: 'permanent', code });
     expect(calls).toEqual([]);
+  });
+
+  it('counts alt text in characters, not UTF-16 units', () => {
+    expect(() => checkImages([photo('m1', { altText: '🙂'.repeat(1000) })])).not.toThrow();
   });
 
   it('refuses a reply without a usable parent', async () => {

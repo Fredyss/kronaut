@@ -43,10 +43,15 @@ function instantOf(value: string): Temporal.Instant | undefined {
   }
 }
 
-function postedTexts(post: Post): readonly string[] {
+function asTyped(expanded: string, sent: string): string {
+  const bare = expanded.replace(/^https?:\/\//i, '');
+  return sent.includes(expanded) || !sent.includes(bare) ? expanded : bare;
+}
+
+function postedTexts(post: Post, sent: string): readonly string[] {
   let text = post.text;
   for (const entity of post.entities?.urls ?? []) {
-    const replacement = entity.media_key ? '' : (entity.expanded_url ?? entity.url);
+    const replacement = entity.media_key ? '' : asTyped(entity.expanded_url ?? entity.url, sent);
     text = text.split(entity.url).join(replacement);
   }
   // Whether X HTML-escapes &, < and > is a live-test item, so both forms may match; &amp; goes last so "&amp;lt;" stays "&lt;".
@@ -95,7 +100,7 @@ function matches(post: Post, { text, since, parent }: Expected): boolean {
   return (
     at !== undefined &&
     Temporal.Instant.compare(at, since) >= 0 &&
-    postedTexts(post).includes(text) &&
+    postedTexts(post, text).includes(text) &&
     repliesTo(post) === parent
   );
 }
