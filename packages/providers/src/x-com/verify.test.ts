@@ -66,6 +66,15 @@ describe('x verify', () => {
     expect(result).toMatchObject({ kind: 'found', remoteId: POST_ID });
   });
 
+  it('matches the text whether or not X HTML-escapes it', async () => {
+    const raw = 'use &amp; in HTML';
+    const { result } = await run('verify', [timeline([post(POST_ID, raw)])], {
+      state,
+      items: [mainItem(raw)],
+    });
+    expect(result).toMatchObject({ kind: 'found', remoteId: POST_ID });
+  });
+
   it('reads back the HTML-escaped text X returns', async () => {
     const { result } = await run(
       'verify',

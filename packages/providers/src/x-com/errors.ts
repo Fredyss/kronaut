@@ -12,7 +12,8 @@ import { failureForStatus } from '../_kit/status-failure.ts';
 const RESET_FALLBACK_MS = 15 * 60 * 1000;
 const MAX_RESET_MS = 24 * 60 * 60 * 1000;
 const PROBLEM_TYPE = /^https:\/\/api\.(?:x|twitter)\.com\/2\/problems\/([a-z-]{1,64})$/;
-const MENTIONS_CREDITS = /credit/i;
+const MENTIONS_CREDITS = /\bcredits?\b/i;
+const USAGE_CAPPED = 'usage-capped';
 
 const problem = z.looseObject({ type: z.string().optional() });
 
@@ -35,20 +36,19 @@ function resetAt(headers: Headers, now: Temporal.Instant): Temporal.Instant {
   if (/^\d{1,12}$/.test(value)) {
     const at = Temporal.Instant.fromEpochMilliseconds(Number(value) * 1000);
     const latest = now.add({ milliseconds: MAX_RESET_MS });
-    if (Temporal.Instant.compare(at, now) < 0) return now;
+    if (Temporal.Instant.compare(at, now) <= 0) return retryAfter(headers, now, RESET_FALLBACK_MS);
     return Temporal.Instant.compare(at, latest) > 0 ? latest : at;
   }
   return retryAfter(headers, now, RESET_FALLBACK_MS);
 }
 
-function creditsDepleted(status: number, text: string): boolean {
+export function creditsDepleted(status: number, text: string): boolean {
   return status === 402 || (status === 403 && MENTIONS_CREDITS.test(text));
 }
 
 function rejection(status: number, text: string): ProviderError | undefined {
   const detail = detailOf(status, text);
-  if (creditsDepleted(status, text))
-    return { kind: 'app_config', code: 'credits_depleted', detail };
+  if (creditsDepleted(status, text)) return { kind: 'permanent', code: 'credits_depleted', detail };
   if (status === 403) return { kind: 'permanent', code: 'forbidden', detail };
   if (status === 400) return { kind: 'permanent', code: 'invalid_request', detail };
   if (status === 404) return { kind: 'permanent', code: 'not_found', detail };
@@ -68,7 +68,7 @@ export function failureFromBody(
       known: () => rejection(status, text),
       rateLimited: () => ({
         kind: 'rate_limited',
-        scope: 'account',
+        scope: problemType(text) === USAGE_CAPPED ? 'app' : 'account',
         resetAt: resetAt(response.headers, now),
       }),
       unauthorized: () =>

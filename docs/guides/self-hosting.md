@@ -180,7 +180,7 @@ Kronaut posts to the X account that connects: text, up to 4 JPEG, PNG or WebP im
   - Add the callback URL `https://kronaut.example.com/v1/oauth/x_com/callback`, using your own host, and give the app read and write permissions.
   - Copy the **OAuth 2.0** Client ID and Client Secret (not the API key and secret), and register them with the `register x_com` command above.
 - **Scopes:** Kronaut asks for `tweet.read`, `tweet.write`, `users.read`, `media.write` and `offline.access`. If the person who connects removes one, the connect fails.
-- **Credits:** the X API is paid per use. Buy credits in the developer console before you publish: a post costs $0.015, or $0.20 when it contains a link (checked 2026-11-23). The composer shows the cost of each X destination before you schedule. When the balance reaches zero, X blocks every request: Kronaut stops posting to every X channel and says so, until you buy credits and send the posts again.
+- **Credits:** the X API is paid per use. Buy credits in the developer console before you publish: a post costs $0.015, or $0.20 when it contains a link (checked 2026-11-23). The composer shows the cost of each X destination before you schedule. When the balance reaches zero, X blocks every request: each X post fails and says so. Buy credits, then send the failed posts again.
 - **Unconfirmed posts:** if X's answer to a send gets lost, Kronaut looks for the post among the account's newest posts; if it can't tell, the post is marked unconfirmed rather than sent twice.
 
 ### Discord

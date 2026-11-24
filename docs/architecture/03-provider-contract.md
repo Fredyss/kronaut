@@ -76,7 +76,7 @@ One folder per provider. `manifest.ts` is declarative and browser-safe; `runtime
 
 - An `ambiguous` error on a step whose effect is `public` → `unconfirmed`, never a blind retry.
 - `auth_revoked` is definitive only after a confirming call with fresh credentials.
-- `app_config` (bad client secret, suspended app, X credits below zero) creates a `provider_app_incidents` row and never flags user accounts.
+- `app_config` (bad client secret, suspended app) creates a `provider_app_incidents` row and never flags user accounts.
 - Meta auth errors map by subcode:
   - 458 / 460 / 467 → revoked
   - 463 → expired

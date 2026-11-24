@@ -35,7 +35,7 @@
    - **TikTok:** the audit rejects "tools for accounts you/your team manage", so it is effectively **hosted-only**.
    - **LinkedIn Pages:** CMA needs a **registered legal organisation**.
    - **Pinterest:** apps registered after 2026-09-14 get `PINNER_DATA_ACCESS_DENIED` for non-business accounts. On the Trial tier, Pins are visible only to their creator until Pinterest grants Standard access. The developer guidelines forbid storing API data (Kronaut stores the board list, ADR-0063) and require that a person choose each scheduled Pin. Pinterest is manual-only (ADR-0064): queue-mode RSS feeds, the evergreen fill and repeats are blocked for it; draft-mode feeds and CSV import are allowed.
-   - **X:** paid per post, at $0.015, or $0.20 with a URL. A negative credit balance blocks the app, which is an instance incident.
+   - **X:** paid per post, at $0.015, or $0.20 with a URL. A negative credit balance blocks the app; each X post then fails with `credits_depleted` until credits are bought.
    - **Google Business Profile:** needs a profile verified for 60+ days.
    - **Meta:** App Review takes weeks.
    - **Google OAuth:** a cap of 100 refresh tokens per account per client, and 6-month idle death.

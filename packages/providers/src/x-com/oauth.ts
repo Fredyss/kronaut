@@ -2,6 +2,7 @@ import {
   type BaseContext,
   type IssuedCredentials,
   ProviderFailure,
+  type ProviderHttpResponse,
   type RefreshInput,
   type RevokeInput,
 } from '@kronaut/core';
@@ -9,7 +10,7 @@ import type { Temporal } from 'temporal-polyfill';
 import * as z from 'zod';
 import { readJson, send } from '../_kit/http.ts';
 import { permanent } from '../_kit/meta-graph.ts';
-import { isSuccess } from './errors.ts';
+import { creditsDepleted, isSuccess } from './errors.ts';
 
 export const AUTHORIZE_URL = 'https://x.com/i/oauth2/authorize';
 export const API_BASE = 'https://api.x.com/2';
@@ -28,6 +29,9 @@ export const xCredentials = z.object({
   refreshToken: z.string().min(1),
 });
 export type XCredentials = z.infer<typeof xCredentials>;
+
+const CLIENT_ERRORS: ReadonlySet<string> = new Set(['invalid_client', 'unauthorized_client']);
+const oauthError = z.looseObject({ error: z.string().optional() });
 
 const tokenResponse = z.looseObject({
   access_token: z.string().min(1),
@@ -77,10 +81,34 @@ function postForm(
   });
 }
 
-function statusFailure(status: number, rejected: () => ProviderFailure): ProviderFailure {
-  if (status === 429 || status >= 500)
-    return new ProviderFailure({ kind: 'transient', detail: `http_${status}` });
-  if (status === 401) return new ProviderFailure({ kind: 'app_config', code: 'client_invalid' });
+async function bodyText(response: ProviderHttpResponse): Promise<string> {
+  try {
+    return await response.text();
+  } catch {
+    return '';
+  }
+}
+
+function clientRejected(text: string): boolean {
+  try {
+    return CLIENT_ERRORS.has(oauthError.safeParse(JSON.parse(text)).data?.error ?? '');
+  } catch {
+    return false;
+  }
+}
+
+async function tokenFailure(
+  response: ProviderHttpResponse,
+  rejected: () => ProviderFailure,
+): Promise<ProviderFailure> {
+  const { status } = response;
+  const detail = `http_${status}`;
+  if (status === 429 || status >= 500) return new ProviderFailure({ kind: 'transient', detail });
+  const text = await bodyText(response);
+  if (creditsDepleted(status, text))
+    return new ProviderFailure({ kind: 'permanent', code: 'credits_depleted', detail });
+  if (clientRejected(text))
+    return new ProviderFailure({ kind: 'app_config', code: 'client_invalid' });
   return rejected();
 }
 
@@ -92,7 +120,7 @@ export async function exchangeCode(ctx: BaseContext, grant: CodeGrant): Promise<
     code_verifier: grant.verifier,
   });
   if (!isSuccess(response.status))
-    throw statusFailure(response.status, () =>
+    throw await tokenFailure(response, () =>
       permanent('code_exchange_failed', `http_${response.status}`),
     );
   const token = await readJson(response, tokenResponse, 'private');
@@ -119,7 +147,7 @@ export async function refreshAccess(
   );
   const { status } = response;
   if (!isSuccess(status))
-    throw statusFailure(status, () =>
+    throw await tokenFailure(response, () =>
       status === 400
         ? new ProviderFailure({ kind: 'auth_revoked' })
         : permanent('refresh_failed', `http_${status}`),
@@ -141,11 +169,13 @@ export async function revokeTokens(
   { app, credentials }: RevokeInput<XCredentials>,
 ): Promise<void> {
   const authorization = basicAuth(app.clientId, appSecret(app.clientSecret));
+  let failure: ProviderFailure | undefined;
   for (const token of [credentials.refreshToken, credentials.accessToken]) {
     const response = await postForm(ctx, REVOKE_URL, authorization, { token });
-    if (!isSuccess(response.status))
-      throw statusFailure(response.status, () =>
-        permanent('revoke_rejected', `http_${response.status}`),
-      );
+    if (isSuccess(response.status)) continue;
+    failure ??= await tokenFailure(response, () =>
+      permanent('revoke_rejected', `http_${response.status}`),
+    );
   }
+  if (failure !== undefined) throw failure;
 }

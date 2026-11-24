@@ -58,10 +58,11 @@ function asciiTld(host: string): string | undefined {
   }
 }
 
-function knownHost(host: string): boolean {
+function linkedBare(host: string, url: string): boolean {
   if (/^www\./i.test(host)) return true;
   const tld = asciiTld(host);
-  return tld !== undefined && KNOWN_TLDS.has(tld);
+  if (tld === undefined || !KNOWN_TLDS.has(tld)) return false;
+  return tld.length !== 2 || /^(?::\d{1,5})?\//.test(url.slice(host.length));
 }
 
 export function extractXUrls(text: string): XUrl[] {
@@ -69,8 +70,8 @@ export function extractXUrls(text: string): XUrl[] {
   const urls: XUrl[] = [];
   for (const match of normalized.matchAll(URL_CANDIDATE)) {
     const bare = match[1];
-    if (bare !== undefined && !knownHost(bare)) continue;
     const url = trimTail(match[0]);
+    if (bare !== undefined && !linkedBare(bare, url)) continue;
     urls.push({ url, start: match.index, end: match.index + url.length });
   }
   return urls;

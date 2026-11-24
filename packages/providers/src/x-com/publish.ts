@@ -90,7 +90,7 @@ function postBody({ item, text, inReplyTo }: CheckedItem, state: State): string 
     return id;
   });
   return JSON.stringify({
-    ...(text === '' ? {} : { text }),
+    ...(text.trim() === '' ? {} : { text }),
     ...(mediaIds.length === 0 ? {} : { media: { media_ids: mediaIds } }),
     ...(inReplyTo === undefined ? {} : { reply: { in_reply_to_tweet_id: inReplyTo } }),
   });

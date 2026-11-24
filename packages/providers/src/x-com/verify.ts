@@ -42,15 +42,15 @@ function instantOf(value: string): Temporal.Instant | undefined {
   }
 }
 
-function postedText(post: Post): string {
+function postedTexts(post: Post): readonly string[] {
   let text = post.text;
   for (const entity of post.entities?.urls ?? []) {
     const replacement = entity.media_key ? '' : (entity.expanded_url ?? entity.url);
     text = text.split(entity.url).join(replacement);
   }
-  // X returns post text with &, < and > HTML-escaped; &amp; goes last so "&amp;lt;" stays "&lt;".
+  // Whether X HTML-escapes &, < and > is a live-test item, so both forms may match; &amp; goes last so "&amp;lt;" stays "&lt;".
   const unescaped = text.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
-  return unescaped.normalize('NFC').trim();
+  return [text, unescaped].map((entry) => entry.normalize('NFC').trim());
 }
 
 function repliesTo(post: Post): string | undefined {
@@ -92,7 +92,7 @@ function matches(post: Post, { text, since, parent }: Expected): boolean {
   return (
     at !== undefined &&
     Temporal.Instant.compare(at, since) >= 0 &&
-    postedText(post) === text &&
+    postedTexts(post).includes(text) &&
     repliesTo(post) === parent
   );
 }

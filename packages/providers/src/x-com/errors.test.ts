@@ -12,17 +12,17 @@ function classify(status: number, body: unknown, headers: Record<string, string>
 }
 
 describe('x errors', () => {
-  it('blocks the whole app when the credits run out', async () => {
+  it('fails the post, not the app, when the credits run out', async () => {
     expect(classify(402, '')).toEqual({
-      kind: 'app_config',
+      kind: 'permanent',
       code: 'credits_depleted',
       detail: 'http_402',
     });
     expect(
       classify(403, { title: 'Forbidden', detail: 'Your enrolled account has no credits left.' }),
-    ).toEqual({ kind: 'app_config', code: 'credits_depleted', detail: 'http_403' });
+    ).toEqual({ kind: 'permanent', code: 'credits_depleted', detail: 'http_403' });
     const { error } = await run('publish', [{ method: 'POST', url: TWEETS_URL, status: 402 }]);
-    expect(error).toMatchObject({ kind: 'app_config', code: 'credits_depleted' });
+    expect(error).toMatchObject({ kind: 'permanent', code: 'credits_depleted' });
   });
 
   it('keeps any other 403 on the destination', () => {
@@ -39,6 +39,23 @@ describe('x errors', () => {
       classify(429, { type: `${PROBLEM}/rate-limit-exceeded` }, { 'x-rate-limit-reset': reset }),
     ).toEqual({ kind: 'rate_limited', scope: 'account', resetAt: TEST_NOW.add({ seconds: 600 }) });
     expect(classify(429, '')).toEqual({
+      kind: 'rate_limited',
+      scope: 'account',
+      resetAt: TEST_NOW.add({ minutes: 15 }),
+    });
+  });
+
+  it('waits on the app for a usage cap', () => {
+    expect(classify(429, { type: `${PROBLEM}/usage-capped` })).toEqual({
+      kind: 'rate_limited',
+      scope: 'app',
+      resetAt: TEST_NOW.add({ minutes: 15 }),
+    });
+  });
+
+  it('backs off when the reset time has already passed', () => {
+    const past = String(TEST_NOW.epochMilliseconds / 1000 - 60);
+    expect(classify(429, '', { 'x-rate-limit-reset': past })).toEqual({
       kind: 'rate_limited',
       scope: 'account',
       resetAt: TEST_NOW.add({ minutes: 15 }),

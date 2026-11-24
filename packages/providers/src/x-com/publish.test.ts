@@ -67,6 +67,12 @@ describe('x publish', () => {
     });
   });
 
+  it('leaves out a whitespace-only text next to images', async () => {
+    const items = [mainItem(' \n', [photo('m1', { altText: '' })])];
+    const { calls } = await run('publish', [uploaded('101'), created()], { items });
+    expect(json(calls[1]?.body)).toEqual({ media: { media_ids: ['101'] } });
+  });
+
   it('reuses uploads from an earlier attempt', async () => {
     const state = { media: { m1: { id: '101', alt: true } } };
     const { calls } = await run('publish', [created()], {

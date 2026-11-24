@@ -96,9 +96,16 @@ describe('x connect', () => {
     expect(error).toEqual({ kind: 'permanent', code: 'refresh_token_missing' });
   });
 
-  it('treats a rejected client as an app problem', async () => {
-    const { error } = await connect([{ method: 'POST', url: TOKEN_URL, status: 401 }]);
-    expect(error).toEqual({ kind: 'app_config', code: 'client_invalid' });
+  it('treats only a rejected client as an app problem', async () => {
+    const rejected = { method: 'POST', url: TOKEN_URL, status: 401 };
+    const client = await connect([{ ...rejected, json: { error: 'invalid_client' } }]);
+    expect(client.error).toEqual({ kind: 'app_config', code: 'client_invalid' });
+    const other = await connect([rejected]);
+    expect(other.error).toEqual({
+      kind: 'permanent',
+      code: 'code_exchange_failed',
+      detail: 'http_401',
+    });
   });
 });
 
@@ -121,11 +128,24 @@ describe('x tokens', () => {
     expect(revoked.error).toEqual({ kind: 'auth_revoked' });
   });
 
+  it('keeps a refresh without credits on the channel, not the app', async () => {
+    const { error } = await withToken('refresh', [{ method: 'POST', url: TOKEN_URL, status: 402 }]);
+    expect(error).toEqual({ kind: 'permanent', code: 'credits_depleted', detail: 'http_402' });
+  });
+
   it('revokes the refresh token, then the access token', async () => {
     const ok = { method: 'POST', url: REVOKE_URL, json: { revoked: true } };
     const { error, calls } = await withToken('revoke', [ok, ok]);
     expect(error).toBeUndefined();
     expect(calls.map((call) => form(call.body))).toEqual([{ token: REFRESH }, { token: TOKEN }]);
     expect(calls[0]?.headers.Authorization).toBe(BASIC);
+  });
+
+  it('still revokes the access token when the refresh token is rejected', async () => {
+    const rejected = { method: 'POST', url: REVOKE_URL, status: 400 };
+    const ok = { method: 'POST', url: REVOKE_URL, json: { revoked: true } };
+    const { error, calls } = await withToken('revoke', [rejected, ok]);
+    expect(calls.map((call) => form(call.body))).toEqual([{ token: REFRESH }, { token: TOKEN }]);
+    expect(error).toEqual({ kind: 'permanent', code: 'revoke_rejected', detail: 'http_400' });
   });
 });

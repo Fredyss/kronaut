@@ -55,6 +55,12 @@ describe('x-weighted counting', () => {
     expect(count('v1.2.3')).toBe(6);
   });
 
+  it('counts a bare two-letter TLD host only with a path', () => {
+    expect(count('fixed utils.py and main.rs')).toBe(26);
+    expect(count('see example.de/a')).toBe(4 + 23);
+    expect(count('see www.example.de')).toBe(4 + 23);
+  });
+
   it('does not count an e-mail address as a URL', () => {
     expect(count('ada@example.com')).toBe(15);
     expect(count('ada.lovelace@example.com')).toBe(24);
