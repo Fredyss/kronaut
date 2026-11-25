@@ -230,6 +230,7 @@
     }
   ],
   "compose_x_cost_rates": "Ceny X API: {price} za príspevok, {linkPrice} za príspevok s odkazom.",
+  "compose_duplicate_text": "Kanály {channels} by uverejnili rovnaký text. Sieť {network} zakazuje rovnaké príspevky na viacerých účtoch, preto text pre každý kanál obmeňte.",
   "compose_preview_title": "Náhľad",
   "compose_limit_too_long": "Pre {channel} je text príliš dlhý ({count}/{max})",
   "compose_limit_forbidden": "Pre {channel} text nesmie obsahovať {chars}",
@@ -479,6 +480,7 @@
   "repeat_warning": "Niektoré siete odmietnu rovnaký text zopakovaný do týždňa. Text obmieňajte.",
   "issue_invalid_repeat": "Toto nastavenie opakovania nie je podporované.",
   "issue_repeat_manual_only": "Na tomto kanáli musí každý príspevok vybrať človek, preto ho nemožno opakovať.",
+  "issue_repeat_blocked": "Sieť tohto kanála nepovoľuje uverejniť ten istý príspevok znova, preto ho nemožno opakovať.",
   "series_rule": [
     {
       "declarations": [

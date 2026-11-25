@@ -4,7 +4,7 @@ import type { Actor, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../base/http/errors.ts';
-import { isManualOnly } from '../../base/providers/providers.ts';
+import { blocksRepeats } from '../../base/providers/providers.ts';
 import { actAs, type Owned, OwnerLost } from '../../flow/posts/owner/owner.ts';
 import type { OwnerEnv } from '../../flow/posts/owner/owner-schedule.ts';
 import { type JobDeps, sweepCron } from '../../infrastructure/jobs/workspace-sweep.ts';
@@ -145,7 +145,7 @@ async function fillWorkspace(run: Run, workspaceId: string): Promise<void> {
   const pooled = await run.deps.db.withTenant(workspaceId, SYSTEM, (trx) =>
     poolChannels(trx, workspaceId),
   );
-  const channels = pooled.filter(({ provider }) => !isManualOnly(run.deps.providers, provider));
+  const channels = pooled.filter(({ provider }) => !blocksRepeats(run.deps.providers, provider));
   for (const { accountId } of channels) {
     run.counts.channels++;
     try {

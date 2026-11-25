@@ -130,6 +130,7 @@
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ channels: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Duplicate_TextInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_When_MissingInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PreviewInputs */
@@ -240,6 +241,7 @@
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
+/** @typedef {{}} Issue_Repeat_BlockedInputs */
 /** @typedef {{}} Issue_Repeat_Manual_OnlyInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Setting_RequiredInputs */
@@ -984,6 +986,10 @@ export const compose_date = /** @type {(inputs: Compose_DateInputs) => Localized
 	return /** @type {LocalizedString} */ (`Datum`)
 };
 
+export const compose_duplicate_text = /** @type {(inputs: Compose_Duplicate_TextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanály ${i?.channels} by zveřejnily stejný text. Síť ${i?.network} zakazuje stejné příspěvky na více účtech, proto text pro každý kanál obměňte.`)
+};
+
 export const compose_error_conflict = /** @type {(inputs: Compose_Error_ConflictInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Příspěvek se mezitím změnil. Zkuste to znovu.`)
 };
@@ -1435,6 +1441,10 @@ export const issue_queue_empty = /** @type {(inputs: Issue_Queue_EmptyInputs) =>
 
 export const issue_queue_full = /** @type {(inputs: Issue_Queue_FullInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Ve frontě není v příštích 8 týdnech volný termín.`)
+};
+
+export const issue_repeat_blocked = /** @type {(inputs: Issue_Repeat_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Síť tohoto kanálu nepovoluje zveřejnit tentýž příspěvek znovu, proto ho nelze opakovat.`)
 };
 
 export const issue_repeat_manual_only = /** @type {(inputs: Issue_Repeat_Manual_OnlyInputs) => LocalizedString} */ () => {

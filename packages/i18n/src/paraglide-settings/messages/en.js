@@ -58,6 +58,7 @@
 /** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
 /** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{ channels: NonNullable<unknown>, network: NonNullable<unknown> }} Settings_Feed_Duplicate_TextInputs */
 /** @typedef {{}} Settings_Feed_EditInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
 /** @typedef {{}} Settings_Feed_Edit_TitleInputs */
@@ -487,6 +488,10 @@ export const settings_feed_delete_title = /** @type {(inputs: Settings_Feed_Dele
 
 export const settings_feed_deleted = /** @type {(inputs: Settings_Feed_DeletedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Feed deleted`)
+};
+
+export const settings_feed_duplicate_text = /** @type {(inputs: Settings_Feed_Duplicate_TextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.channels} would each post every item with the same text. ${i?.network} forbids identical posts across several accounts, so consider keeping only one of them in this feed.`)
 };
 
 export const settings_feed_edit = /** @type {(inputs: Settings_Feed_EditInputs) => LocalizedString} */ () => {

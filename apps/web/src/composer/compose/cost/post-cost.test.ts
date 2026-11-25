@@ -42,6 +42,8 @@ const x: Channel = {
   groupIds: [],
   preview: 'short-feed',
   manualOnly: false,
+  noRepeats: true,
+  warnDuplicateText: true,
   insights: false,
   cost: RATES,
 };

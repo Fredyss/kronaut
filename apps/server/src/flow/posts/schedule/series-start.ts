@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../../base/http/errors.ts';
 import { unprocessable } from '../../../base/http/issues.ts';
 import type { RequestContext } from '../../../base/http/request.ts';
-import { isManualOnly, type ProviderRegistry } from '../../../base/providers/providers.ts';
+import { type ProviderRegistry, repeatIssues } from '../../../base/providers/providers.ts';
 import { ownerColumns } from '../owner/owner.ts';
 import { type RepeatBody, ruleOf } from './repeat.ts';
 
@@ -17,15 +17,11 @@ export interface SeriesStart {
 const INVALID = [{ path: 'body.repeat', code: 'invalid_repeat' }];
 const NEEDS_SCHEDULE = [{ path: 'body.repeat', code: 'repeat_needs_schedule' }];
 
-export function refuseManualRepeat(
+export function refuseRepeat(
   providers: ProviderRegistry,
   destinations: readonly { readonly provider: string }[],
 ): void {
-  const details = destinations.flatMap(({ provider }, index) =>
-    isManualOnly(providers, provider)
-      ? [{ path: `destinations.${index}`, code: 'repeat_manual_only' }]
-      : [],
-  );
+  const details = repeatIssues(providers, destinations);
   if (details.length > 0) {
     throw new HttpError('preflight_failed', 'The post did not pass preflight.', { details });
   }

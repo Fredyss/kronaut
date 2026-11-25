@@ -6,7 +6,7 @@ import { type BoundRoute, bindRoute } from '../../../base/http/request.ts';
 import type { PostRouteDeps } from '../deps.ts';
 import { PostSchema, readPost } from '../read/dto.ts';
 import { authorizeSchedule, ScheduleInput, type ScheduleRun, scheduleLocked } from './schedule.ts';
-import { refuseManualRepeat, startSeries } from './series-start.ts';
+import { refuseRepeat, startSeries } from './series-start.ts';
 
 const postScheduleRoute = defineRoute({
   id: 'posts.schedule',
@@ -36,7 +36,7 @@ export function scheduleRoutes(deps: PostRouteDeps): BoundRoute[] {
         checkVersion(locked, body.expectedVersion);
         const rows = await lockDestinations(trx, workspaceId, postId);
         if (body.mode === 'instant' && body.repeat !== undefined) {
-          refuseManualRepeat(deps.providers, rows);
+          refuseRepeat(deps.providers, rows);
         }
         const run: ScheduleRun = {
           providers: deps.providers,

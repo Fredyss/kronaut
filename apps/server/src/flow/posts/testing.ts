@@ -45,6 +45,7 @@ export const CLI: Actor = { kind: 'cli' };
 const GRANT_TOKEN = `kro_${'a'.repeat(16)}_${'b'.repeat(32)}`;
 export const TZ = 'Europe/Bratislava';
 export const MANUAL_PROVIDER = 'fake_manual';
+export const NO_REPEAT_PROVIDER = 'fake_no_repeat';
 
 export let keyring: Keyring;
 export let fake: FakeProvider;
@@ -172,8 +173,16 @@ export async function startPosts(
   keyring = createKeyring(new Map([[1, randomBytes(32)]]));
   fake = fakeProvider();
   providers = createProviderRegistry(
-    [fake.manifest, { ...fakeManifest, id: MANUAL_PROVIDER, manualOnly: true }],
-    [fake.runtime, { ...fake.runtime, id: MANUAL_PROVIDER }],
+    [
+      fake.manifest,
+      { ...fakeManifest, id: MANUAL_PROVIDER, manualOnly: true },
+      { ...fakeManifest, id: NO_REPEAT_PROVIDER, noRepeats: true, warnDuplicateText: true },
+    ],
+    [
+      fake.runtime,
+      { ...fake.runtime, id: MANUAL_PROVIDER },
+      { ...fake.runtime, id: NO_REPEAT_PROVIDER },
+    ],
     () => ({}) as HttpClient,
   );
   const instance = createTestInstance({

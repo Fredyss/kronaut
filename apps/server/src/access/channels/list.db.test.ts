@@ -283,6 +283,7 @@ describe('channel listing', () => {
       'insights',
       'lastErrorCode',
       'manualOnly',
+      'noRepeats',
       'postTypes',
       'preview',
       'profileUrl',
@@ -293,6 +294,7 @@ describe('channel listing', () => {
       'signature',
       'status',
       'statusReason',
+      'warnDuplicateText',
     ]);
     expect(items[0]).toMatchObject({
       id: encodePublicId('socialAccount', ownAccountId),
@@ -469,16 +471,23 @@ describe('channel listing', () => {
     ]);
   });
 
-  it('returns the per-post cost from the manifest', async () => {
+  it('returns the per-post cost and the repeat flags from the manifest', async () => {
     const response = await app.request(`${BASE}/v1/workspaces/${costWorkspace}/channels`, {
       headers: { cookie: owner },
     });
-    const { items } = (await response.json()) as { items: { provider: string; cost: unknown }[] };
-    expect(items.map(({ provider, cost }) => [provider, cost])).toEqual([
-      [
-        'x_com',
-        { usdMicros: 15_000, linkUsdMicros: 200_000, asOf: '2026-11-23', sourceUrl: X_PRICING },
-      ],
+    const { items } = (await response.json()) as { items: Record<string, unknown>[] };
+    expect(items).toEqual([
+      expect.objectContaining({
+        provider: 'x_com',
+        cost: {
+          usdMicros: 15_000,
+          linkUsdMicros: 200_000,
+          asOf: '2026-11-23',
+          sourceUrl: X_PRICING,
+        },
+        noRepeats: true,
+        warnDuplicateText: true,
+      }),
     ]);
   });
 

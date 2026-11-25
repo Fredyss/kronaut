@@ -60,6 +60,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
 /** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{ channels: NonNullable<unknown>, network: NonNullable<unknown> }} Settings_Feed_Duplicate_TextInputs */
 /** @typedef {{}} Settings_Feed_EditInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
 /** @typedef {{}} Settings_Feed_Edit_TitleInputs */
@@ -1137,6 +1138,21 @@ export const settings_feed_deleted = /** @type {((inputs?: Settings_Feed_Deleted
 	if (locale === "sk") return __sk.settings_feed_deleted(inputs)
 	if (locale === "cs") return __cs.settings_feed_deleted(inputs)
 	return __en.settings_feed_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{channels} would each post every item with the same text. {network} forbids identical posts across several accounts, so consider keeping only one of them in ..." |
+*
+* @param {Settings_Feed_Duplicate_TextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_feed_duplicate_text = /** @type {((inputs: Settings_Feed_Duplicate_TextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Feed_Duplicate_TextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_feed_duplicate_text(inputs)
+	if (locale === "cs") return __cs.settings_feed_duplicate_text(inputs)
+	return __en.settings_feed_duplicate_text(inputs)
 });
 /**
 * | output |

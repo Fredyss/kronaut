@@ -269,6 +269,7 @@
   "settings_feed_channel_unsupported": "{channel} can post neither text alone nor text with one image.",
   "settings_feed_channel_queue": "{channel} has no queue times. Add some on the Channels page, or save new items as drafts.",
   "settings_feed_channel_manual_only": "{channel} needs each post chosen by a person. Use draft mode for this feed or remove the channel.",
+  "settings_feed_duplicate_text": "{channels} would each post every item with the same text. {network} forbids identical posts across several accounts, so consider keeping only one of them in this feed.",
   "settings_feed_limit": "This workspace has reached its limit of feeds. Delete one first.",
   "settings_short_links_title": "Short links",
   "settings_short_links_intro": "Shorten the links in scheduled posts through Dub or Kutt, with one short link per channel and UTM tags added. If the shortener can't be reached, a link is published as written.",

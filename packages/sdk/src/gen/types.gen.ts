@@ -870,6 +870,7 @@ export type ChannelsListResponses = {
             insights: boolean;
             lastErrorCode: string | null;
             manualOnly: boolean;
+            noRepeats: boolean;
             postTypes: Array<{
                 comment: {
                     text: Array<{
@@ -938,6 +939,7 @@ export type ChannelsListResponses = {
             } | null;
             status: 'active' | 'needs_reauth' | 'disabled' | 'disconnected';
             statusReason: string | null;
+            warnDuplicateText: boolean;
         }>;
     };
 };
