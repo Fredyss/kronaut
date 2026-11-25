@@ -8,8 +8,10 @@ import type {
   AnalyticsResult,
 } from './provider-analytics.ts';
 import type { RateLimitScope } from './provider-error.ts';
+import type { ProviderHttp } from './provider-http.ts';
 
 export type { ImageLimits, MediaLimits, Ratio, VideoLimits } from './media-limits.ts';
+export type { ProviderHttp, ProviderHttpRequest, ProviderHttpResponse } from './provider-http.ts';
 
 export type StepEffect = 'none' | 'private' | 'public';
 export type VerifyMode =
@@ -119,27 +121,6 @@ export interface ProviderManifest<S = unknown> {
   readonly warnDuplicateText?: boolean;
   accountPostType?(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec;
   accountSettingOptions?(capabilities: unknown): SettingOptions;
-}
-
-export interface ProviderHttpResponse {
-  readonly status: number;
-  readonly headers: Headers;
-  readonly url: string;
-  bytes(): Promise<Uint8Array>;
-  text(): Promise<string>;
-  json(): Promise<unknown>;
-}
-
-export interface ProviderHttpRequest {
-  readonly method?: string;
-  readonly headers?: Record<string, string>;
-  readonly body?: string | Uint8Array;
-  readonly signal?: AbortSignal;
-}
-
-export interface ProviderHttp {
-  request(url: string | URL, init?: ProviderHttpRequest): Promise<ProviderHttpResponse>;
-  readonly fetch: (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 }
 
 export interface ProviderLogger {
