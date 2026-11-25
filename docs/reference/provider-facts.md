@@ -515,7 +515,8 @@ X section verified 2026-11-23 against docs.x.com (X1–X15).
   - Kronaut's mapping: 402, or 403 mentioning credits → permanent `credits_depleted`; other 403 → permanent `forbidden`; 400 → `invalid_request`; 404 → `not_found`; 401 → `auth_expired`, ambiguous on the `public` step; 5xx and timeouts → ambiguous after the send, else transient. The detail is `http_<status>` or `<status>/<problem name>`, never the body.
 - **Duplicates and idempotency.** The docs have no idempotency key and no documented duplicate-content error code.
 - **Data retention.** Stored X content must follow deletions on X: the manifest sets `dataRetention` 7 days after disconnect and 30 days after `needs_reauth`, as for YouTube and Pinterest.
-- **Not in this provider yet:** GIF and video (chunked upload, X4), analytics, the evergreen/repeat guard and the same-text-on-several-X-channels warning.
+- **Not in this provider yet:** GIF and video (chunked upload, X4) and analytics.
+- **Repeats and duplicates** (ADR-0066): the manifest sets `noRepeats` (no evergreen fill, no repeat; RSS stays allowed) and `warnDuplicateText` (the composer and the RSS feed form warn when 2+ X channels would get the same text), from the Developer Policy: "Never post identical or substantially similar content across multiple accounts" (https://docs.x.com/developer-terms/policy, checked 2026-11-23).
 
 **Pinterest** (API v5, `api.pinterest.com`)
 
