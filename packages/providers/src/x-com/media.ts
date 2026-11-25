@@ -124,16 +124,27 @@ export async function prepareMedia(
   return settle(media, upload.processing);
 }
 
+function refused(status: number): boolean {
+  return status >= 400 && status <= 499 && status !== 429;
+}
+
 export async function setAltText(
   ctx: PublishContext,
   token: string,
   mediaId: string,
-  text: string,
+  ref: MediaRef,
 ): Promise<void> {
+  const text = ref.altText?.normalize('NFC').trim() ?? '';
+  if (text === '') return;
   const response = await send(ctx, 'private', `${API_BASE}/media/metadata`, {
     method: 'POST',
     headers: { ...authorization(token), 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: mediaId, metadata: { alt_text: { text } } }),
   });
-  if (!isSuccess(response.status)) throw await xFailure(response, 'private', ctx.now());
+  if (isSuccess(response.status)) return;
+  if (isVideo(ref) && refused(response.status)) {
+    ctx.logger.warn({ status: response.status }, 'x refused alt text on a video; posting without');
+    return;
+  }
+  throw await xFailure(response, 'private', ctx.now());
 }

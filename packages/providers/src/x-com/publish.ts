@@ -80,8 +80,7 @@ async function uploadAll(
       state = await save(ctx, { ...state, media: { ...state.media, [ref.id]: media } });
     if (pollAfterMs !== undefined) return { state, pollAfterMs };
     if (media.alt) continue;
-    const alt = ref.altText?.normalize('NFC').trim() ?? '';
-    if (alt !== '') await setAltText(ctx, token, media.id, alt);
+    await setAltText(ctx, token, media.id, ref);
     const done = { ...media, alt: true };
     state = await save(ctx, { ...state, media: { ...state.media, [ref.id]: done } });
   }

@@ -67,17 +67,25 @@ export function checkVideo(ref: MediaRef): void {
     throw permanent('video_duration_unsupported');
 }
 
-function processing(info: z.infer<typeof processingInfo>): Processing {
-  if (info === undefined || info.state === 'succeeded') return { kind: 'ready' };
-  if (info.state === 'failed') throw permanent('video_processing_failed');
-  if (info.state !== 'pending' && info.state !== 'in_progress')
-    throw new ProviderFailure({ kind: 'transient', detail: 'media_state_unknown' });
-  const secs = info.check_after_secs;
+function waitFor(secs: number | undefined): Processing {
   const pollAfterMs =
     secs === undefined
       ? limits.polling.pollIntervalMs
       : Math.min(MAX_POLL_MS, Math.max(MIN_POLL_MS, secs * 1000));
   return { kind: 'wait', pollAfterMs };
+}
+
+function processing(info: z.infer<typeof processingInfo>, missing: Processing): Processing {
+  if (info === undefined) return missing;
+  const state = info.state
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, '_');
+  if (state === 'succeeded') return { kind: 'ready' };
+  if (state === 'failed') throw permanent('video_processing_failed');
+  if (state !== 'pending' && state !== 'in_progress')
+    throw new ProviderFailure({ kind: 'transient', detail: 'media_state_unknown' });
+  return waitFor(info.check_after_secs);
 }
 
 function authorization(token: string): Record<string, string> {
@@ -138,7 +146,7 @@ export async function uploadVideo(
   return {
     id: started.id,
     ...(expiresAfterSecs === undefined ? {} : { expiresAfterSecs }),
-    processing: processing(data.processing_info),
+    processing: processing(data.processing_info, { kind: 'ready' }),
   };
 }
 
@@ -150,5 +158,6 @@ export async function videoStatus(
   const url = `${API_BASE}/media/upload?command=STATUS&media_id=${id}`;
   const response = await send(ctx, 'private', url, { headers: authorization(token) });
   if (!isSuccess(response.status)) throw await xFailure(response, 'private', ctx.now());
-  return processing((await readJson(response, status, 'private')).data.processing_info);
+  const { data } = await readJson(response, status, 'private');
+  return processing(data.processing_info, waitFor(undefined));
 }

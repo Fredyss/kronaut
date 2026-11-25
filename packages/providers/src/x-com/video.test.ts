@@ -139,6 +139,32 @@ describe('x video publish', () => {
     expect(result).toEqual({ kind: 'pending', pollAfterMs: 10_000 });
   });
 
+  it('matches a processing state written as text', async () => {
+    const { result } = await run('publish', [status(' In Progress ', 20)], {
+      items: items(),
+      state: waiting,
+    });
+    expect(result).toEqual({ kind: 'pending', pollAfterMs: 20_000 });
+  });
+
+  it('keeps waiting when a status response has no processing info', async () => {
+    const bare = { url: STATUS_URL, json: { data: { id: MEDIA_ID } } };
+    const { result, calls } = await run('publish', [bare], { items: items(), state: waiting });
+    expect(result).toEqual({ kind: 'pending', pollAfterMs: 10_000 });
+    expect(calls).toHaveLength(1);
+  });
+
+  it('posts the video without alt text when X refuses it', async () => {
+    const ready = { media: { v1: { id: MEDIA_ID, alt: false } } };
+    const refusedAlt = { method: 'POST', url: METADATA_URL, status: 400, json: {} };
+    const { result, checkpoints } = await run('publish', [refusedAlt, created], {
+      items: items(clip({ altText: 'A slow pan' })),
+      state: ready,
+    });
+    expect(result).toMatchObject({ kind: 'published', remoteId: POST_ID });
+    expect(checkpoints[0]).toEqual({ media: { v1: { id: MEDIA_ID, alt: true } } });
+  });
+
   it('caps a long wait at a minute', async () => {
     const { result } = await run('publish', [status('in_progress', 600)], {
       items: items(),
