@@ -125,7 +125,7 @@ export async function prepareMedia(
 }
 
 function refused(status: number): boolean {
-  return status >= 400 && status <= 499 && status !== 429;
+  return status === 400 || status === 422;
 }
 
 export async function setAltText(

@@ -165,6 +165,17 @@ describe('x video publish', () => {
     expect(checkpoints[0]).toEqual({ media: { v1: { id: MEDIA_ID, alt: true } } });
   });
 
+  it('still fails a video alt text call on a dead token', async () => {
+    const ready = { media: { v1: { id: MEDIA_ID, alt: false } } };
+    const unauthorized = { method: 'POST', url: METADATA_URL, status: 401, json: {} };
+    const { result, error } = await run('publish', [unauthorized], {
+      items: items(clip({ altText: 'A slow pan' })),
+      state: ready,
+    });
+    expect(result).toBeUndefined();
+    expect(error).toMatchObject({ kind: 'auth_expired' });
+  });
+
   it('caps a long wait at a minute', async () => {
     const { result } = await run('publish', [status('in_progress', 600)], {
       items: items(),
