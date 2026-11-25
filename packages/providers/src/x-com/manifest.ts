@@ -71,4 +71,6 @@ export const xManifest: ProviderManifest<XSettings> = {
   capabilities: { analytics: false, delete: false },
   dataRetention: { disconnectedDays: 7, lapsedDays: 30 },
   egressHosts: ['api.x.com'],
+  noRepeats: true,
+  warnDuplicateText: true,
 };
