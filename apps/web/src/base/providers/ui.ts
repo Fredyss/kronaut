@@ -145,7 +145,8 @@ const PROVIDERS: Readonly<Record<string, ProviderUi>> = {
     instance: false,
     maxImageBytes: 5_000_000,
     imageTypes: ['image/jpeg', 'image/png', 'image/webp'],
-    publishType: imagePost(4),
+    publishType: (media) =>
+      media.video ? { kind: 'ok', publishType: 'post' } : imagePost(4)(media),
   },
   youtube: {
     name: () => m.provider_youtube(),

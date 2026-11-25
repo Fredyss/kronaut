@@ -9,6 +9,8 @@ const HOUR_MS = 60 * 60 * 1000;
 const POSTS_PER_15_MIN = 100;
 const POSTS_PER_DAY_PER_APP = 10_000;
 
+const videoPolling = { pollIntervalMs: 10_000, giveUpAfterMs: 30 * 60_000 };
+
 export const xManifest: ProviderManifest<XSettings> = {
   id: 'x_com',
   apiVersion: { version: '2' },
@@ -32,10 +34,20 @@ export const xManifest: ProviderManifest<XSettings> = {
         minCount: 0,
         maxCount: 4,
         image: { mimes: ['image/jpeg', 'image/png', 'image/webp'], maxBytes: 5_000_000 },
+        video: {
+          mimes: ['video/mp4'],
+          maxBytes: 8_000_000_000,
+          minDurationMs: 500,
+          maxDurationMs: 20 * 60_000,
+          minAspect: { width: 1, height: 3 },
+          maxAspect: { width: 3, height: 1 },
+          maxFrameRate: 60,
+        },
         mixed: false,
         altText: { supported: true, required: false, maxLength: 1_000 },
         aiLabel: false,
       },
+      async: videoPolling,
       thread: REPLY_THREAD,
     },
   ],
