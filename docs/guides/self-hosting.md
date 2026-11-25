@@ -173,7 +173,7 @@ Kronaut publishes image Pins to the boards of the Pinterest account that connect
 
 ### X
 
-Kronaut posts to the X account that connects: text, up to 4 JPEG, PNG or WebP images (5 MB each, with alt text), and reply chains. GIFs and video aren't supported yet.
+Kronaut posts to the X account that connects: text, up to 4 JPEG, PNG or WebP images (5 MB each, with alt text) or one video of up to 20 minutes, and reply chains. GIFs aren't supported yet.
 
 - **In the X developer console:**
   - Create an app and set up OAuth 2.0 user authentication with the type **Web App, Automated App or Bot** (a confidential client).

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { assertPublicSendOrder, egressError } from '../_kit/testing.ts';
 import { xManifest } from './manifest.ts';
-import { checkImages } from './media.ts';
+import { checkMedia } from './media.ts';
 import {
   json,
   METADATA_URL,
@@ -68,6 +68,14 @@ describe('x publish', () => {
     });
   });
 
+  it('fails an image post when X refuses its alt text', async () => {
+    const refusedAlt = { method: 'POST', url: METADATA_URL, status: 400, json: {} };
+    const { error } = await run('publish', [uploaded('101'), refusedAlt], {
+      items: [mainItem('One photo', [photo('m1')])],
+    });
+    expect(error).toEqual({ kind: 'permanent', code: 'invalid_request', detail: 'http_400' });
+  });
+
   it('leaves out a whitespace-only text next to images', async () => {
     const items = [mainItem(' \n', [photo('m1', { altText: '' })])];
     const { calls } = await run('publish', [uploaded('101'), created()], { items });
@@ -113,7 +121,7 @@ describe('x publish', () => {
   });
 
   it('counts alt text in characters, not UTF-16 units', () => {
-    expect(() => checkImages([photo('m1', { altText: '🙂'.repeat(1000) })])).not.toThrow();
+    expect(() => checkMedia([photo('m1', { altText: '🙂'.repeat(1000) })])).not.toThrow();
   });
 
   it('refuses a reply without a usable parent', async () => {

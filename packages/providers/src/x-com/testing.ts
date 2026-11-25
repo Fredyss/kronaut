@@ -42,6 +42,7 @@ export interface RunOptions {
   readonly chain?: readonly ChainLink[];
   readonly state?: ProviderState;
   readonly handle?: string;
+  readonly bytes?: Uint8Array;
 }
 
 export function photo(id: string, extra: Partial<MediaRef> = {}): MediaRef {
@@ -104,7 +105,10 @@ export async function run(
   const http = scriptedHttp(exchanges);
   const refs = (options.items ?? []).flatMap((item) => item.media);
   const media = Object.fromEntries(
-    refs.map((ref) => [ref.id, { url: `https://m.example.org/${ref.id}`, bytes: IMAGE }]),
+    refs.map((ref) => [
+      ref.id,
+      { url: `https://m.example.org/${ref.id}`, bytes: options.bytes ?? IMAGE },
+    ]),
   );
   const context = testPublishContext(http, media);
   const invoke = action === 'publish' ? xRuntime.publish : xRuntime.verify;

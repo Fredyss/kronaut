@@ -7,7 +7,7 @@ import { beginPublicSend } from '../_kit/public-send.ts';
 import { X_ID } from './connect.ts';
 import { isSuccess, xFailure } from './errors.ts';
 import type { XSettings } from './manifest.ts';
-import { checkImages, setAltText, uploadedMedia, uploadImage, usable } from './media.ts';
+import { checkMedia, prepareMedia, setAltText, uploadedMedia } from './media.ts';
 import { API_BASE, type XCredentials } from './oauth.ts';
 
 export type Input = PublishInput<XCredentials, XSettings>;
@@ -48,7 +48,7 @@ function checkItem(input: Input): CheckedItem {
   const { item } = path;
   const text = sentText(item);
   if (text.trim() === '' && item.media.length === 0) throw permanent('text_empty');
-  checkImages(item.media);
+  checkMedia(item.media);
   if (path.kind === 'main') return { item, text };
   if (text.trim() === '') throw permanent('text_empty');
   if (!X_ID.test(path.parent.remoteId)) throw permanent('reply_parent_missing');
@@ -60,27 +60,31 @@ async function save(ctx: PublishContext, state: State): Promise<State> {
   return state;
 }
 
+interface Uploaded {
+  readonly state: State;
+  readonly pollAfterMs?: number;
+}
+
 async function uploadAll(
   ctx: PublishContext,
   input: Input,
   { item }: CheckedItem,
   start: State,
-): Promise<State> {
+): Promise<Uploaded> {
   let state = start;
   const token = input.credentials.accessToken;
   for (const ref of item.media) {
-    let media = state.media?.[ref.id];
-    if (!usable(media, ctx.now())) {
-      media = await uploadImage(ctx, token, ref);
+    const current = state.media?.[ref.id];
+    const { media, pollAfterMs } = await prepareMedia(ctx, token, ref, current);
+    if (media !== current)
       state = await save(ctx, { ...state, media: { ...state.media, [ref.id]: media } });
-    }
-    if (media === undefined || media.alt) continue;
-    const alt = ref.altText?.normalize('NFC').trim() ?? '';
-    if (alt !== '') await setAltText(ctx, token, media.id, alt);
+    if (pollAfterMs !== undefined) return { state, pollAfterMs };
+    if (media.alt) continue;
+    await setAltText(ctx, token, media.id, ref);
     const done = { ...media, alt: true };
     state = await save(ctx, { ...state, media: { ...state.media, [ref.id]: done } });
   }
-  return state;
+  return { state };
 }
 
 function postBody({ item, text, inReplyTo }: CheckedItem, state: State): string {
@@ -106,7 +110,8 @@ export async function publishPost(ctx: PublishContext, input: Input): Promise<Pu
   const state = parseState(input.state);
   if (state.post !== undefined) return published(input, state.post.id);
   await ctx.step('upload_media');
-  const uploaded = await uploadAll(ctx, input, checked, state);
+  const { state: uploaded, pollAfterMs } = await uploadAll(ctx, input, checked, state);
+  if (pollAfterMs !== undefined) return { kind: 'pending', pollAfterMs };
   const body = postBody(checked, uploaded);
   const sent = await beginPublicSend(ctx, 'create_post', uploaded);
   const response = await send(ctx, 'public', `${API_BASE}/tweets`, {
