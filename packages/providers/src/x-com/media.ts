@@ -5,7 +5,7 @@ import { readJson, send } from '../_kit/http.ts';
 import { permanent } from '../_kit/meta-graph.ts';
 import { multipart } from '../_kit/multipart.ts';
 import { X_ID } from './connect.ts';
-import { isSuccess, xFailure } from './errors.ts';
+import { creditsDepleted, failureFromBody, isSuccess, xFailure } from './errors.ts';
 import { xManifest } from './manifest.ts';
 import { API_BASE } from './oauth.ts';
 import { checkVideo, isVideo, type Processing, uploadVideo, videoStatus } from './video.ts';
@@ -124,8 +124,17 @@ export async function prepareMedia(
   return settle(media, upload.processing);
 }
 
-function refused(status: number): boolean {
-  return status === 400 || status === 422;
+function refused(status: number, text: string): boolean {
+  if (status < 400 || status > 499 || status === 401 || status === 429) return false;
+  return !creditsDepleted(status, text);
+}
+
+async function bodyText(response: { text(): Promise<string> }): Promise<string> {
+  try {
+    return await response.text();
+  } catch {
+    return '';
+  }
 }
 
 export async function setAltText(
@@ -142,9 +151,10 @@ export async function setAltText(
     body: JSON.stringify({ id: mediaId, metadata: { alt_text: { text } } }),
   });
   if (isSuccess(response.status)) return;
-  if (isVideo(ref) && refused(response.status)) {
+  const body = await bodyText(response);
+  if (isVideo(ref) && refused(response.status, body)) {
     ctx.logger.warn({ status: response.status }, 'x refused alt text on a video; posting without');
     return;
   }
-  throw await xFailure(response, 'private', ctx.now());
+  throw failureFromBody(response, body, 'private', ctx.now());
 }

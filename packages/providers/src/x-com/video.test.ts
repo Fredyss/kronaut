@@ -176,6 +176,28 @@ describe('x video publish', () => {
     expect(error).toMatchObject({ kind: 'auth_expired' });
   });
 
+  it('posts the video without alt text on a plain 403 or 404', async () => {
+    const ready = { media: { v1: { id: MEDIA_ID, alt: false } } };
+    for (const status of [403, 404]) {
+      const refusedAlt = { method: 'POST', url: METADATA_URL, status, json: {} };
+      const { result } = await run('publish', [refusedAlt, created], {
+        items: items(clip({ altText: 'A slow pan' })),
+        state: ready,
+      });
+      expect(result).toMatchObject({ kind: 'published', remoteId: POST_ID });
+    }
+  });
+
+  it('still fails video alt text when credits are gone', async () => {
+    const ready = { media: { v1: { id: MEDIA_ID, alt: false } } };
+    const noCredits = { method: 'POST', url: METADATA_URL, status: 402, json: {} };
+    const { error } = await run('publish', [noCredits], {
+      items: items(clip({ altText: 'A slow pan' })),
+      state: ready,
+    });
+    expect(error).toMatchObject({ kind: 'permanent', code: 'credits_depleted' });
+  });
+
   it('caps a long wait at a minute', async () => {
     const { result } = await run('publish', [status('in_progress', 600)], {
       items: items(),
