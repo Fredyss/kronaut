@@ -155,4 +155,4 @@ jobs:
             sleep $((attempt * 20))
           done
           exit 1
-      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/trivy aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222 image --skip-db-update --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 kronaut:ci
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache/trivy -v "$PWD/infra/docker/.trivyignore:/trivyignore:ro" aquasec/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222 image --skip-db-update --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --ignorefile /trivyignore --exit-code 1 kronaut:ci

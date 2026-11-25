@@ -1,0 +1,2 @@
+# libzstd1 in the distroless base: Debian fixed it in 1.5.7+dfsg-1+deb13u1, distroless had not shipped it on 2026-11-25
+CVE-2026-124851 exp:2026-12-09
