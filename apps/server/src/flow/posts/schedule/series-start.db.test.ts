@@ -15,6 +15,7 @@ import {
   insertAccount,
   internal,
   MANUAL_PROVIDER,
+  NO_REPEAT_PROVIDER,
   owner,
   ownerAuth,
   requestCall,
@@ -137,27 +138,36 @@ describe('creating a series', () => {
     expect(await requestsOn(internal(post.id))).toEqual([]);
   });
 
-  it('refuses repeat to a manual-only channel and still schedules the post once', async () => {
+  it('refuses repeat to manual-only and no-repeat channels and still schedules the post once', async () => {
     const manual = await insertAccount('series-manual', undefined, MANUAL_PROVIDER);
+    const noRepeat = await insertAccount('series-no-repeat', undefined, NO_REPEAT_PROVIDER);
     const body = {
       items: [{ doc: doc('Ahoj') }],
       destinations: [
         { accountId: accountA, publishType: 'post' },
         { accountId: manual, publishType: 'post' },
+        { accountId: noRepeat, publishType: 'post' },
       ],
     };
     const once = { mode: 'instant', scheduleLocal: '2027-01-05T09:00', scheduleTz: TZ };
-    // Both destinations are created in one statement, so their order isn't fixed.
-    const path = expect.stringMatching(/^destinations\.[01]$/);
-    const manualOnly = [{ path, code: 'repeat_manual_only' }];
+    // The destinations are created in one statement, so their order isn't fixed.
+    const path = expect.stringMatching(/^destinations\.[012]$/);
+    const blocked = expect.arrayContaining([
+      { path, code: 'repeat_manual_only' },
+      { path, code: 'repeat_blocked' },
+    ]);
     const repeated = await create(ownerAuth, body);
     const refused = await scheduleCall(repeated, { ...once, repeat: { freq: 'daily' } });
     expect(refused.status).toBe(422);
-    expect((await errorOf(refused)).details).toEqual(manualOnly);
+    const refusedDetails = (await errorOf(refused)).details;
+    expect(refusedDetails).toHaveLength(2);
+    expect(refusedDetails).toEqual(blocked);
     const schedule = { scheduleLocal: once.scheduleLocal, scheduleTz: TZ };
     const asked = await requestCall(repeated, { schedule, repeat: { freq: 'daily' } }, ownerAuth);
     expect(asked.status).toBe(422);
-    expect((await errorOf(asked)).details).toEqual(manualOnly);
+    const askedDetails = (await errorOf(asked)).details;
+    expect(askedDetails).toHaveLength(2);
+    expect(askedDetails).toEqual(blocked);
     const single = await create(ownerAuth, body);
     expect((await scheduleCall(single, once)).status).toBe(200);
   });

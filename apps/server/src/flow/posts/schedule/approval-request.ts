@@ -27,7 +27,7 @@ import { PostSchema, readPost } from '../read/dto.ts';
 import type { Frozen } from './freeze.ts';
 import { RepeatInput } from './repeat.ts';
 import { ScheduleCommon } from './schedule.ts';
-import { refuseManualRepeat, startSeries } from './series-start.ts';
+import { refuseRepeat, startSeries } from './series-start.ts';
 import {
   draftTargets,
   freezeTargets,
@@ -178,7 +178,7 @@ export function approvalRequestRoutes(deps: PostRouteDeps): BoundRoute[] {
           throw unprocessable([{ path: 'body.repeat', code: 'invalid_repeat' }]);
         }
         if (body.repeat !== undefined) {
-          refuseManualRepeat(deps.providers, await lockDestinations(trx, workspaceId, postId));
+          refuseRepeat(deps.providers, await lockDestinations(trx, workspaceId, postId));
         }
         await openApprovalRequest(trx, ctx, {
           providers: deps.providers,

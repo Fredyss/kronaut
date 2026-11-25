@@ -58,6 +58,7 @@
 /** @typedef {{}} Settings_Feed_Delete_ConfirmInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Delete_TitleInputs */
 /** @typedef {{}} Settings_Feed_DeletedInputs */
+/** @typedef {{ channels: NonNullable<unknown>, network: NonNullable<unknown> }} Settings_Feed_Duplicate_TextInputs */
 /** @typedef {{}} Settings_Feed_EditInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Settings_Feed_Edit_NamedInputs */
 /** @typedef {{}} Settings_Feed_Edit_TitleInputs */
@@ -491,6 +492,10 @@ export const settings_feed_delete_title = /** @type {(inputs: Settings_Feed_Dele
 
 export const settings_feed_deleted = /** @type {(inputs: Settings_Feed_DeletedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Zdroj je odstránený`)
+};
+
+export const settings_feed_duplicate_text = /** @type {(inputs: Settings_Feed_Duplicate_TextInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanály ${i?.channels} by uverejnili každú položku s rovnakým textom. Sieť ${i?.network} zakazuje rovnaké príspevky na viacerých účtoch, preto zvážte, či v tomto zdroji ponecháte iba jeden z nich.`)
 };
 
 export const settings_feed_edit = /** @type {(inputs: Settings_Feed_EditInputs) => LocalizedString} */ () => {

@@ -132,6 +132,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Compose_Add_To_QueueInputs */
 /** @typedef {{ channel: NonNullable<unknown>, count: NonNullable<unknown>, max: NonNullable<unknown> }} Compose_Comment_Too_LongInputs */
 /** @typedef {{}} Compose_DateInputs */
+/** @typedef {{ channels: NonNullable<unknown>, network: NonNullable<unknown> }} Compose_Duplicate_TextInputs */
 /** @typedef {{}} Compose_Error_ConflictInputs */
 /** @typedef {{}} Compose_Error_When_MissingInputs */
 /** @typedef {{ position: NonNullable<unknown> }} Compose_Image_PreviewInputs */
@@ -242,6 +243,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Issue_Provider_UnavailableInputs */
 /** @typedef {{}} Issue_Queue_EmptyInputs */
 /** @typedef {{}} Issue_Queue_FullInputs */
+/** @typedef {{}} Issue_Repeat_BlockedInputs */
 /** @typedef {{}} Issue_Repeat_Manual_OnlyInputs */
 /** @typedef {{}} Issue_Resolution_Too_HighInputs */
 /** @typedef {{}} Issue_Setting_RequiredInputs */
@@ -2412,6 +2414,21 @@ export const compose_date = /** @type {((inputs?: Compose_DateInputs, options?: 
 /**
 * | output |
 * | --- |
+* | "{channels} would post the same text. {network} forbids identical posts across several accounts, so vary the text for each." |
+*
+* @param {Compose_Duplicate_TextInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const compose_duplicate_text = /** @type {((inputs: Compose_Duplicate_TextInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Compose_Duplicate_TextInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.compose_duplicate_text(inputs)
+	if (locale === "cs") return __cs.compose_duplicate_text(inputs)
+	return __en.compose_duplicate_text(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "The post changed in the meantime. Try again." |
 *
 * @param {Compose_Error_ConflictInputs} inputs
@@ -4062,6 +4079,21 @@ export const issue_queue_full = /** @type {((inputs?: Issue_Queue_FullInputs, op
 	if (locale === "sk") return __sk.issue_queue_full(inputs)
 	if (locale === "cs") return __cs.issue_queue_full(inputs)
 	return __en.issue_queue_full(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This channel's network doesn't allow the same post again, so it can't repeat." |
+*
+* @param {Issue_Repeat_BlockedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const issue_repeat_blocked = /** @type {((inputs?: Issue_Repeat_BlockedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Issue_Repeat_BlockedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.issue_repeat_blocked(inputs)
+	if (locale === "cs") return __cs.issue_repeat_blocked(inputs)
+	return __en.issue_repeat_blocked(inputs)
 });
 /**
 * | output |

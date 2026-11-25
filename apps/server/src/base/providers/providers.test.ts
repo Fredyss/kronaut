@@ -2,7 +2,12 @@ import type { ProviderManifest, ProviderRuntime } from '@kronaut/core';
 import type { HttpClient } from '@kronaut/egress';
 import { Temporal } from 'temporal-polyfill';
 import { describe, expect, it, vi } from 'vitest';
-import { createBaseContext, createProviderRegistry } from './providers.ts';
+import {
+  blocksRepeats,
+  createBaseContext,
+  createProviderRegistry,
+  repeatIssues,
+} from './providers.ts';
 
 function manifest(id: string, egressHosts: string[] = [`api.${id}.test`]): ProviderManifest {
   return { id, egressHosts } as unknown as ProviderManifest;
@@ -56,5 +61,33 @@ describe('createBaseContext', () => {
     const ctx = createBaseContext(entry, logger, AbortSignal.timeout(1000), () => now);
     expect(ctx.http).toBe(http);
     expect(ctx.now()).toBe(now);
+  });
+});
+
+describe('repeatIssues', () => {
+  it('names the repeat rule of each destination, manual-only first', () => {
+    const flagged = (id: string, flags: object) => ({ ...manifest(id), ...flags });
+    const registry = createProviderRegistry(
+      [
+        manifest('free'),
+        flagged('manual', { manualOnly: true }),
+        flagged('blocked', { noRepeats: true }),
+        flagged('both', { manualOnly: true, noRepeats: true }),
+      ],
+      ['free', 'manual', 'blocked', 'both'].map(runtime),
+      () => http,
+    );
+    const destinations = ['free', 'manual', 'blocked', 'both'].map((provider) => ({ provider }));
+    expect(repeatIssues(registry, destinations)).toEqual([
+      { path: 'destinations.1', code: 'repeat_manual_only' },
+      { path: 'destinations.2', code: 'repeat_blocked' },
+      { path: 'destinations.3', code: 'repeat_manual_only' },
+    ]);
+    expect(destinations.map(({ provider }) => blocksRepeats(registry, provider))).toEqual([
+      false,
+      true,
+      true,
+      true,
+    ]);
   });
 });

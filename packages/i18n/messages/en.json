@@ -218,6 +218,7 @@
     }
   ],
   "compose_x_cost_rates": "X API pricing: {price} per post, {linkPrice} for a post with a link.",
+  "compose_duplicate_text": "{channels} would post the same text. {network} forbids identical posts across several accounts, so vary the text for each.",
   "compose_preview_title": "Preview",
   "compose_limit_too_long": "Too long for {channel} ({count}/{max})",
   "compose_limit_forbidden": "The text for {channel} can't contain {chars}",
@@ -453,6 +454,7 @@
   "repeat_warning": "Some networks reject the same text repeated within a week. Vary the text.",
   "issue_invalid_repeat": "These repeat settings aren't supported.",
   "issue_repeat_manual_only": "This channel needs each post chosen by a person, so it can't repeat.",
+  "issue_repeat_blocked": "This channel's network doesn't allow the same post again, so it can't repeat.",
   "series_rule": [
     {
       "declarations": [

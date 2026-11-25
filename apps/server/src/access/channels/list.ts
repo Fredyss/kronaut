@@ -34,6 +34,8 @@ const ChannelSchema = z.object({
   settingOptions: z.record(z.string(), z.array(z.object({ value: z.string(), label: z.string() }))),
   preview: z.enum(PREVIEW_ARCHETYPES),
   manualOnly: z.boolean(),
+  noRepeats: z.boolean(),
+  warnDuplicateText: z.boolean(),
   cost: CostSchema.nullable(),
   insights: z.boolean(),
   signature: SignatureSchema.nullable(),

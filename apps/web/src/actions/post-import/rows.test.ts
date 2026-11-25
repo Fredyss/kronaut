@@ -27,6 +27,8 @@ const ada: Channel = {
   groupIds: [],
   preview: 'short-feed',
   manualOnly: false,
+  noRepeats: false,
+  warnDuplicateText: false,
   cost: null,
   insights: false,
 };

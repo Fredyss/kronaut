@@ -12,6 +12,7 @@ import { providerUi } from '../../../base/providers/ui.ts';
 import type { Channel } from '../../../records/channels/queries.ts';
 import type { Doc } from '../../../records/posts/doc.ts';
 import { PostCostNote } from '../cost/post-cost.tsx';
+import { DuplicateTextNote } from '../duplicate/duplicate-text.tsx';
 import { checkVideo, type VideoMeta, videoIssueLine } from '../media/video-rules.ts';
 import type { MediaFacts } from './choice.ts';
 import { type ItemDoc, type LimitItem, type PostTypeRules, postTypeFor } from './items.ts';
@@ -264,6 +265,7 @@ export default function TextLimits({ targets, issuesId, note, onIssuesChange }: 
     <div className="flex flex-col gap-1">
       <Usage entries={entries.filter((entry) => entry.item === null)} format={format} />
       <PostCostNote targets={targets} />
+      <DuplicateTextNote targets={targets} />
       <div id={issuesId} role="status">
         <ul className="flex flex-col gap-0.5 text-destructive text-xs">
           {issues.map(({ key, line }) => (

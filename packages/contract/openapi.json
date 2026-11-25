@@ -2536,6 +2536,9 @@
                           "manualOnly": {
                             "type": "boolean"
                           },
+                          "noRepeats": {
+                            "type": "boolean"
+                          },
                           "postTypes": {
                             "items": {
                               "additionalProperties": false,
@@ -2951,6 +2954,9 @@
                               "string",
                               "null"
                             ]
+                          },
+                          "warnDuplicateText": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -2971,6 +2977,8 @@
                           "settingOptions",
                           "preview",
                           "manualOnly",
+                          "noRepeats",
+                          "warnDuplicateText",
                           "cost",
                           "insights",
                           "signature",

@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { useLocale } from '../../base/locale/context.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import type { Channel } from '../../records/channels/queries.ts';
@@ -75,6 +76,39 @@ function ChannelChoice({
   );
 }
 
+function DuplicateTextNote({
+  channels,
+  selected,
+}: {
+  readonly channels: readonly Channel[];
+  readonly selected: ReadonlySet<string>;
+}) {
+  const { locale } = useLocale();
+  const byProvider = new Map<string, string[]>();
+  for (const channel of channels) {
+    if (!channel.warnDuplicateText || !selected.has(channel.id)) continue;
+    byProvider.set(channel.provider, [
+      ...(byProvider.get(channel.provider) ?? []),
+      channel.displayName,
+    ]);
+  }
+  const shared = [...byProvider].filter(([, names]) => names.length > 1);
+  if (shared.length === 0) return null;
+  const list = new Intl.ListFormat(locale);
+  return (
+    <ul className="flex flex-col gap-1">
+      {shared.map(([provider, names]) => (
+        <li key={provider}>
+          {settingsText.settings_feed_duplicate_text({
+            channels: list.format(names),
+            network: providerUi(provider).name(),
+          })}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ChannelChoices({
   channels,
   selected,
@@ -121,6 +155,7 @@ export function ChannelChoices({
           {settingsText.settings_feed_channels_image_hint()}
         </p>
       ) : null}
+      <DuplicateTextNote channels={channels} selected={selected} />
       {errors.length > 0 ? (
         <ul id={errorId} className="flex flex-col gap-1 text-destructive">
           {errors.map((message) => (

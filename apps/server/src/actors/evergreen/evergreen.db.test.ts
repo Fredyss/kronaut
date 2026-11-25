@@ -18,6 +18,7 @@ import {
   insertAccount,
   internal,
   MANUAL_PROVIDER,
+  NO_REPEAT_PROVIDER,
   owner,
   ownerAuth,
   ownerId,
@@ -430,19 +431,25 @@ describe('filling free queue slots', () => {
     expect(await copiesOf(other)).toHaveLength(1);
   });
 
-  it('leaves a manual-only channel out while filling another channel of the same post', async () => {
-    const manual = await channelWith('eg-manual', [[1, '17:00']], MANUAL_PROVIDER);
-    const channel = await channelWith('eg-beside', [[1, '17:00']]);
-    const post = await create(ownerAuth, {
-      items: [{ doc: doc('Evergreen') }],
-      destinations: [
-        { accountId: manual, publishType: 'post' },
-        { accountId: channel, publishType: 'post' },
-      ],
-    });
-    expect((await evergreen('PUT', post)).status).toBe(200);
-    await fill();
-    const copies = await copiesOf(post);
-    expect(copies.map((copy) => copy.social_account_id)).toEqual([accountId(channel)]);
-  });
+  it.each([
+    ['manual-only', MANUAL_PROVIDER],
+    ['no-repeat', NO_REPEAT_PROVIDER],
+  ])(
+    'leaves a %s channel out while filling another channel of the same post',
+    async (kind, provider) => {
+      const manual = await channelWith(`eg-${kind}`, [[1, '17:00']], provider);
+      const channel = await channelWith(`eg-beside-${kind}`, [[1, '17:00']]);
+      const post = await create(ownerAuth, {
+        items: [{ doc: doc('Evergreen') }],
+        destinations: [
+          { accountId: manual, publishType: 'post' },
+          { accountId: channel, publishType: 'post' },
+        ],
+      });
+      expect((await evergreen('PUT', post)).status).toBe(200);
+      await fill();
+      const copies = await copiesOf(post);
+      expect(copies.map((copy) => copy.social_account_id)).toEqual([accountId(channel)]);
+    },
+  );
 });

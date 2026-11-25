@@ -111,6 +111,8 @@ export function providerRules(entry: ProviderEntry | undefined, capabilities: un
     settingOptions: entry?.manifest.accountSettingOptions?.(capabilities) ?? {},
     preview: entry?.manifest.preview ?? 'short-feed',
     manualOnly: entry?.manifest.manualOnly === true,
+    noRepeats: entry?.manifest.noRepeats === true,
+    warnDuplicateText: entry?.manifest.warnDuplicateText === true,
     cost: costPerPost(entry),
   };
 }

@@ -35,6 +35,27 @@ export function isManualOnly(registry: ProviderRegistry, provider: string): bool
   return registry.get(provider)?.manifest.manualOnly === true;
 }
 
+function repeatIssue(registry: ProviderRegistry, provider: string): string | null {
+  const manifest = registry.get(provider)?.manifest;
+  if (manifest?.manualOnly === true) return 'repeat_manual_only';
+  if (manifest?.noRepeats === true) return 'repeat_blocked';
+  return null;
+}
+
+export function blocksRepeats(registry: ProviderRegistry, provider: string): boolean {
+  return repeatIssue(registry, provider) !== null;
+}
+
+export function repeatIssues(
+  registry: ProviderRegistry,
+  destinations: readonly { readonly provider: string }[],
+): { path: string; code: string }[] {
+  return destinations.flatMap(({ provider }, index) => {
+    const code = repeatIssue(registry, provider);
+    return code === null ? [] : [{ path: `destinations.${index}`, code }];
+  });
+}
+
 export type HttpFactory = (manifest: ProviderManifest) => HttpClient;
 
 function defaultHttp(manifest: ProviderManifest): HttpClient {

@@ -19,6 +19,7 @@ import {
   internal,
   login,
   MANUAL_PROVIDER,
+  NO_REPEAT_PROVIDER,
   owner,
   ownerAuth,
   ownerId,
@@ -374,9 +375,12 @@ describe('advancing a series', () => {
     ]);
   });
 
-  it('pauses when someone adds a manual-only channel to an occurrence', async () => {
+  it.each([
+    ['manual-only', MANUAL_PROVIDER],
+    ['no-repeat', NO_REPEAT_PROVIDER],
+  ])('pauses when someone adds a %s channel to an occurrence', async (kind, provider) => {
     at('2027-01-04T06:00:00Z');
-    const manual = await insertAccount('series-job-manual', undefined, MANUAL_PROVIDER);
+    const manual = await insertAccount(`series-job-${kind}`, undefined, provider);
     const post = await repeating('2027-01-06T09:00', { freq: 'daily' });
     at('2027-01-06T08:00:00Z');
     await advance();
