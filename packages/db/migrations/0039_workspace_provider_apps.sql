@@ -32,8 +32,11 @@ ALTER POLICY app_health ON provider_apps
   USING (workspace_id IS NULL AND status <> 'disabled')
   WITH CHECK (workspace_id IS NULL AND status <> 'disabled');
 
--- Not app_workspace_id(): it raises without a tenant, and health updates on instance rows run under withActor,
--- where every permissive UPDATE policy is evaluated.
+-- Not app_workspace_id(): it raises without a tenant, and instance apps are read and health-updated under
+-- withActor, where every permissive policy for the command is evaluated.
+ALTER POLICY app_read ON provider_apps
+  USING (workspace_id IS NULL OR workspace_id = nullif(current_setting('app.workspace_id', true), '')::uuid);
+
 CREATE POLICY workspace_app_register ON provider_apps FOR INSERT TO kronaut_app
   WITH CHECK (workspace_id = nullif(current_setting('app.workspace_id', true), '')::uuid);
 

@@ -252,7 +252,7 @@ describe('tenancy', () => {
       await flagApp(trx, workspaceId, id, 'invalid_client');
       return id;
     });
-    const state = await db.withActor(SYSTEM, async (trx) => ({
+    const state = await db.withTenant(workspaceId, SYSTEM, async (trx) => ({
       status: (
         await trx
           .selectFrom('provider_apps')

@@ -1,4 +1,4 @@
--- Workspace provider apps (ADR-0067): the app role writes only the current workspace's rows, never moves a row
+-- Workspace provider apps (ADR-0067): the app role reads and writes only the current workspace's rows, never moves a row
 -- between workspaces, and still changes only the health of instance rows. Runs as a superuser in one
 -- transaction that is rolled back; any failure raises.
 \set ON_ERROR_STOP 1
@@ -65,6 +65,11 @@ SELECT pg_temp.must_fail('a client id another workspace holds is refused',
   $$INSERT INTO provider_apps (provider, client_id, workspace_id)
     VALUES ('x_com', 'client-b', '00000000-0000-7000-8000-0000000000b1')$$, '23505');
 
+SELECT pg_temp.must('A sees its own and instance apps, never B''s',
+  NOT EXISTS (SELECT 1 FROM provider_apps WHERE id = '00000000-0000-7000-8000-0000000001b1')
+  AND NOT EXISTS (SELECT 1 FROM provider_apps WHERE workspace_id = '00000000-0000-7000-8000-0000000000b2')
+  AND EXISTS (SELECT 1 FROM provider_apps WHERE id = '00000000-0000-7000-8000-0000000001a1')
+  AND EXISTS (SELECT 1 FROM provider_apps WHERE id = '00000000-0000-7000-8000-0000000001c1'));
 SELECT pg_temp.must('A cannot update B''s app',
   pg_temp.touched($$UPDATE provider_apps SET kek_version = 9
     WHERE id = '00000000-0000-7000-8000-0000000001b1'$$) = 0);
@@ -103,6 +108,9 @@ SELECT pg_temp.must('the app reports an instance app''s health under a tenant',
     WHERE id = '00000000-0000-7000-8000-0000000001c1'$$) = 1);
 
 SELECT set_config('app.workspace_id', '', false);
+SELECT pg_temp.must('without a tenant only instance apps are visible',
+  NOT EXISTS (SELECT 1 FROM provider_apps WHERE workspace_id IS NOT NULL)
+  AND EXISTS (SELECT 1 FROM provider_apps WHERE id = '00000000-0000-7000-8000-0000000001c1'));
 SELECT pg_temp.must('without a tenant, instance health still updates and no workspace row is writable',
   pg_temp.touched($$UPDATE provider_apps SET status = 'active'
     WHERE id = '00000000-0000-7000-8000-0000000001c1'$$) = 1
