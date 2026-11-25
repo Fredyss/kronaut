@@ -1426,7 +1426,7 @@ export const providerAppsList = <ThrowOnError extends boolean = true>(options: O
 /**
  * Register the workspace's own provider app
  *
- * New connects for the provider use this app instead of the instance app, so its owner pays the provider. Register `/v1/oauth/<provider>/callback` on this server as the app's redirect URI. One live app per provider (409 workspace_app_exists); a client id registered anywhere on this server is refused (409 client_id_taken). The client id must match the provider's format (422 invalid on body.clientId). The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
+ * New connects for the provider use this app instead of the instance app, so its owner pays the provider. Register `/v1/oauth/<provider>/callback` on this server as the app's redirect URI. One live app per provider (409 workspace_app_exists). Registering a client id this workspace disabled earlier reactivates that app with the new secret; a client id registered anywhere else on this server is refused (409 client_id_taken). The client id must match the provider's format (422 invalid on body.clientId). The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
  */
 export const providerAppsRegister = <ThrowOnError extends boolean = true>(options: Options<ProviderAppsRegisterData, ThrowOnError>): RequestResult<ProviderAppsRegisterResponses, ProviderAppsRegisterErrors, ThrowOnError> => (options.client ?? client).post<ProviderAppsRegisterResponses, ProviderAppsRegisterErrors, ThrowOnError>({
     security: [{
@@ -1460,7 +1460,7 @@ export const providerAppsDisable = <ThrowOnError extends boolean = true>(options
 /**
  * Replace the client secret of the workspace's provider app
  *
- * Also marks a misconfigured app active again. 404 when the workspace has no live app for the provider. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
+ * Also marks a misconfigured app active again; until then, connects for the provider fail with app_config rather than use the instance app. 404 when the workspace has no live app for the provider. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
  */
 export const providerAppsReplaceSecret = <ThrowOnError extends boolean = true>(options: Options<ProviderAppsReplaceSecretData, ThrowOnError>): RequestResult<ProviderAppsReplaceSecretResponses, ProviderAppsReplaceSecretErrors, ThrowOnError> => (options.client ?? client).put<ProviderAppsReplaceSecretResponses, ProviderAppsReplaceSecretErrors, ThrowOnError>({
     security: [{

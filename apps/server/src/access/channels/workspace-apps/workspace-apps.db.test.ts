@@ -27,6 +27,7 @@ import {
   GRANT_TOKEN,
   keyDeps,
   keyring,
+  lines,
   owner,
   registerApp,
   SYSTEM,
@@ -40,6 +41,7 @@ import {
 const X = 'x_com';
 const SECRET = 'CANARY_workspace_client_secret';
 const NEW_SECRET = 'CANARY_workspace_rotated_secret';
+const REVIVED_SECRET = 'CANARY_workspace_revived_secret';
 const PUBLIC = 'https://kronaut.example.test';
 
 let test: TestDatabase;
@@ -188,10 +190,45 @@ describe('connect start', () => {
     expect((await call(owner, { method: 'POST', path: `/${X}/disable` })).status).toBe(204);
     expect(await connectingAs()).toBe(`${X}-client`);
     expect((await call(owner, { method: 'POST', path: `/${X}/disable` })).status).toBe(404);
+  });
+
+  it('fails a connect while the live workspace app is misconfigured, never using the instance app', async () => {
+    const created = await register({ clientId: 'own-client-3' });
+    expect(created.status).toBe(201);
+    await db.withTenant(workspaceId, SYSTEM, (trx) =>
+      trx
+        .updateTable('provider_apps')
+        .set({ status: 'misconfigured' })
+        .where('workspace_id', '=', workspaceId)
+        .where('client_id', '=', 'own-client-3')
+        .execute(),
+    );
+    starts.length = 0;
+    const refused = await start({ cookie: owner }, undefined, X);
+    expect(refused.status).toBe(422);
+    expect(((await refused.json()) as { error: { details: unknown } }).error.details).toEqual([
+      { path: 'body.provider', code: 'app_config' },
+    ]);
+    expect(starts).toEqual([]);
+    expect((await call(owner, { method: 'POST', path: `/${X}/disable` })).status).toBe(204);
+  });
+
+  it('reactivates a disabled app when the workspace registers its client id again', async () => {
+    const revived = await register({ clientId: 'own-client', clientSecret: REVIVED_SECRET });
+    expect(revived.status).toBe(201);
+    expect(revived.json).toMatchObject({ clientId: 'own-client', status: 'active' });
+    expect(await connectingAs()).toBe(REVIVED_SECRET);
+    expect((await register({ clientId: 'own-client-3' })).status).toBe(409);
 
     const listed = await call(owner, { method: 'GET' });
-    expect(listed.json.items).toEqual([
-      expect.objectContaining({ provider: X, clientId: 'own-client', status: 'disabled' }),
+    expect(
+      listed.json.items.map((item: { clientId: string; status: string }) => [
+        item.clientId,
+        item.status,
+      ]),
+    ).toEqual([
+      ['own-client-3', 'disabled'],
+      ['own-client', 'active'],
     ]);
   });
 
@@ -204,13 +241,16 @@ describe('connect start', () => {
         .orderBy('occurred_at')
         .execute(),
     );
-    expect(rows.map((row) => row.action)).toEqual([
-      'provider_app.registered',
-      'provider_app.secret_replaced',
-      'provider_app.disabled',
+    expect(
+      rows.map((row) => [row.action, (row.args_summary as { client_id: string }).client_id]),
+    ).toEqual([
+      ['provider_app.registered', 'own-client'],
+      ['provider_app.secret_replaced', 'own-client'],
+      ['provider_app.disabled', 'own-client'],
+      ['provider_app.registered', 'own-client-3'],
+      ['provider_app.disabled', 'own-client-3'],
+      ['provider_app.registered', 'own-client'],
     ]);
-    for (const row of rows)
-      expect(row.args_summary).toEqual({ provider: X, client_id: 'own-client' });
     expect(JSON.stringify(rows)).not.toContain('CANARY');
   });
 });
@@ -267,6 +307,16 @@ describe('tenancy', () => {
         .execute(),
     }));
     expect(state).toEqual({ status: 'misconfigured', incidents: [] });
+    const event = await root.withActor({ kind: 'cli' }, (trx) =>
+      trx
+        .selectFrom('webhook_events')
+        .select('dedupe_key')
+        .where('subject_id', '=', created)
+        .executeTakeFirstOrThrow(),
+    );
+    expect(event.dedupe_key).toMatch(
+      new RegExp(`^provider_app\\.misconfigured\\.${created}\\.\\d{4}-\\d{2}-\\d{2}T`),
+    );
   });
 });
 
@@ -283,5 +333,16 @@ describe('CLI register', () => {
     await expect(
       registerSecretApp(keyDeps(), 'linkedin', 'liinstance2', 'CANARY_cli_secret'),
     ).rejects.toThrow();
+  });
+});
+
+describe('SEC-01', () => {
+  it('keeps every client secret out of logs and webhook events', async () => {
+    const events = await root.withActor({ kind: 'cli' }, (trx) =>
+      sql<{ row: unknown }>`select to_jsonb(e) as row from webhook_events e`.execute(trx),
+    );
+    expect(lines.length).toBeGreaterThan(0);
+    expect(lines.join('\n')).not.toContain('CANARY');
+    expect(JSON.stringify(events.rows)).not.toContain('CANARY');
   });
 });

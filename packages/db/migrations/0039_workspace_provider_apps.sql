@@ -14,7 +14,7 @@ ALTER TABLE provider_apps VALIDATE CONSTRAINT ck_provider_apps_workspace_host;
 -- rows the app still changes only the health columns (ADR-0067).
 CREATE FUNCTION trg_provider_app_instance_guard() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-  IF OLD.workspace_id IS NULL AND pg_has_role('kronaut_app', 'MEMBER')
+  IF OLD.workspace_id IS NULL AND pg_has_role('kronaut_app', 'USAGE')
      AND NOT pg_has_role('kronaut_operator', 'USAGE')
      AND (to_jsonb(NEW) - '{status,last_verified_at,updated_at}'::text[])
          IS DISTINCT FROM (to_jsonb(OLD) - '{status,last_verified_at,updated_at}'::text[]) THEN

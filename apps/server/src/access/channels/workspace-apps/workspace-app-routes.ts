@@ -58,7 +58,7 @@ const registerRoute = defineRoute({
   status: 201,
   idempotency: true,
   summary: "Register the workspace's own provider app",
-  description: `New connects for the provider use this app instead of the instance app, so its owner pays the provider. Register \`/v1/oauth/<provider>/callback\` on this server as the app's redirect URI. One live app per provider (409 workspace_app_exists); a client id registered anywhere on this server is refused (409 client_id_taken). The client id must match the provider's format (422 invalid on body.clientId). ${RULES}`,
+  description: `New connects for the provider use this app instead of the instance app, so its owner pays the provider. Register \`/v1/oauth/<provider>/callback\` on this server as the app's redirect URI. One live app per provider (409 workspace_app_exists). Registering a client id this workspace disabled earlier reactivates that app with the new secret; a client id registered anywhere else on this server is refused (409 client_id_taken). The client id must match the provider's format (422 invalid on body.clientId). ${RULES}`,
   tags: ['provider-apps'],
 });
 
@@ -73,7 +73,7 @@ const replaceSecretRoute = defineRoute({
   response: WorkspaceAppSchema,
   idempotency: true,
   summary: "Replace the client secret of the workspace's provider app",
-  description: `Also marks a misconfigured app active again. 404 when the workspace has no live app for the provider. ${RULES}`,
+  description: `Also marks a misconfigured app active again; until then, connects for the provider fail with app_config rather than use the instance app. 404 when the workspace has no live app for the provider. ${RULES}`,
   tags: ['provider-apps'],
 });
 

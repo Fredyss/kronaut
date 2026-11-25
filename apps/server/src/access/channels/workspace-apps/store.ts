@@ -13,29 +13,22 @@ export interface WorkspaceAppRow {
 
 const COLUMNS = ['id', 'provider', 'client_id', 'status', 'created_at', 'updated_at'] as const;
 
-async function selectWorkspaceAppId(
-  trx: TenantDb,
-  workspaceId: string,
-  provider: string,
-): Promise<string | null> {
-  const row = await trx
-    .selectFrom('provider_apps')
-    .select('id')
-    .where('workspace_id', '=', workspaceId)
-    .where('provider', '=', provider)
-    .where('status', '=', 'active')
-    .executeTakeFirst();
-  return row?.id ?? null;
-}
-
+// A live workspace app decides who pays: a misconfigured one fails the connect rather than binding the channel to
+// the instance app.
 export async function connectAppId(
   trx: TenantDb,
   manifest: ProviderManifest,
   workspaceId: string,
 ): Promise<string | null> {
   if (manifest.workspaceApps === true) {
-    const own = await selectWorkspaceAppId(trx, workspaceId, manifest.id);
-    if (own !== null) return own;
+    const own = await trx
+      .selectFrom('provider_apps')
+      .select(['id', 'status'])
+      .where('workspace_id', '=', workspaceId)
+      .where('provider', '=', manifest.id)
+      .where('status', '<>', 'disabled')
+      .executeTakeFirst();
+    if (own !== undefined) return own.status === 'active' ? own.id : null;
   }
   return await selectAppId(trx, manifest.id);
 }

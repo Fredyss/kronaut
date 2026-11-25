@@ -65,26 +65,60 @@ async function audit(
     .execute();
 }
 
+// The client id is unique across the instance, so registering it again after a disable revives that row.
+async function storeApp(
+  trx: TenantDb,
+  actor: WorkspaceAppActor,
+  input: NewWorkspaceApp,
+): Promise<string> {
+  const { workspaceId, keyring } = actor;
+  const disabled = await trx
+    .selectFrom('provider_apps')
+    .select('id')
+    .where('workspace_id', '=', workspaceId)
+    .where('provider', '=', input.provider)
+    .where('instance_host', '=', '')
+    .where('client_id', '=', input.clientId)
+    .where('status', '=', 'disabled')
+    .forUpdate()
+    .executeTakeFirst();
+  const id = disabled?.id ?? randomUUID();
+  const sealed = sealWorkspaceAppSecret(
+    keyring,
+    { id, provider: input.provider, workspaceId },
+    input.clientSecret,
+  );
+  if (disabled !== undefined) {
+    await trx
+      .updateTable('provider_apps')
+      .set({ ...sealed, status: 'active' })
+      .where('workspace_id', '=', workspaceId)
+      .where('id', '=', id)
+      .execute();
+    return id;
+  }
+  await trx
+    .insertInto('provider_apps')
+    .values({
+      id,
+      provider: input.provider,
+      client_id: input.clientId,
+      workspace_id: workspaceId,
+      ...sealed,
+    })
+    .execute();
+  return id;
+}
+
 export async function registerWorkspaceApp(
   actor: WorkspaceAppActor,
   input: NewWorkspaceApp,
 ): Promise<WorkspaceAppRow> {
-  const { workspaceId, keyring } = actor;
+  const { workspaceId } = actor;
   try {
     return await actor.ctx.tenant(async (trx) => {
       if ((await liveWorkspaceApp(trx, workspaceId, input.provider)) !== null) throw appExists();
-      const id = randomUUID();
-      const ref = { id, provider: input.provider, workspaceId };
-      await trx
-        .insertInto('provider_apps')
-        .values({
-          id,
-          provider: input.provider,
-          client_id: input.clientId,
-          workspace_id: workspaceId,
-          ...sealWorkspaceAppSecret(keyring, ref, input.clientSecret),
-        })
-        .execute();
+      const id = await storeApp(trx, actor, input);
       const app = await workspaceAppById(trx, workspaceId, id);
       await audit(trx, actor, { action: 'provider_app.registered', app });
       return app;

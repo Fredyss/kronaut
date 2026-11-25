@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
@@ -149,16 +148,18 @@ export async function flagApp(
     .set({ status: 'misconfigured' })
     .where('id', '=', providerAppId)
     .where('status', '=', 'active')
-    .returning('provider')
+    .returning(['provider', 'updated_at'])
     .executeTakeFirst();
   const incident =
-    owner.workspace_id === null
-      ? await openAppIncident(trx, providerAppId, code)
-      : { id: randomUUID() };
+    owner.workspace_id === null ? await openAppIncident(trx, providerAppId, code) : null;
   if (flipped === undefined) return;
+  const flip =
+    incident === null
+      ? { flippedAt: Temporal.Instant.fromEpochMilliseconds(flipped.updated_at.getTime()) }
+      : { incidentId: incident.id };
   await writeWebhookEvent(
     trx,
-    providerAppMisconfiguredEvent(workspaceId, incident.id, {
+    providerAppMisconfiguredEvent(workspaceId, flip, {
       provider_app_id: providerAppId,
       provider: flipped.provider,
       code,

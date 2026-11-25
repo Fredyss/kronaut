@@ -209,15 +209,18 @@ export function channelReconnectedEvent(
   };
 }
 
+export type AppFlip = { readonly incidentId: string } | { readonly flippedAt: Temporal.Instant };
+
 export function providerAppMisconfiguredEvent(
   workspaceId: string,
-  incidentId: string,
+  flip: AppFlip,
   data: ProviderAppMisconfiguredData,
 ): WebhookEventInput {
+  const occurrence = 'incidentId' in flip ? flip.incidentId : flip.flippedAt.toString();
   return {
     workspaceId,
     type: 'provider_app.misconfigured',
-    dedupeKey: `provider_app.misconfigured.${data.provider_app_id}.${incidentId}`,
+    dedupeKey: `provider_app.misconfigured.${data.provider_app_id}.${occurrence}`,
     subjectId: data.provider_app_id,
     data: { ...data, code: bounded(data.code, CODE_MAX) },
   };
