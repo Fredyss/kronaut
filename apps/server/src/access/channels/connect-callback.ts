@@ -57,6 +57,7 @@ interface Claimed {
 interface ProviderFinish {
   readonly entry: ProviderEntry;
   readonly appId: string;
+  readonly workspaceId: string;
   readonly app: ProviderApp;
   readonly provider: string;
   readonly pending: ProviderState;
@@ -153,7 +154,7 @@ async function connectFinish(
   ctx: RequestContext,
   input: ProviderFinish,
 ): Promise<readonly ConnectedAccount<unknown>[]> {
-  const { entry, appId, app, provider, pending, params } = input;
+  const { entry, appId, workspaceId, app, provider, pending, params } = input;
   try {
     return await entry.runtime.connectFinish(providerContext(deps, entry, ctx), {
       app,
@@ -168,7 +169,7 @@ async function connectFinish(
     }
     if (tooManyAccounts(err)) throw new ConnectFailure('too_many_accounts');
     const appSide = isProviderFailure(err) && err.error.kind === 'app_config';
-    if (appSide && app.instanceHost !== undefined) await markAppMisconfigured(deps.db, appId);
+    if (appSide) await markAppMisconfigured(deps.db, { appId, workspaceId });
     throw new ConnectFailure(appSide ? 'app_config' : 'provider_error', providerReason(err));
   }
 }
@@ -219,15 +220,17 @@ async function finish(
   }
   const entry = oauthEntry(deps.providers, provider);
   if (entry === undefined) throw new ConnectFailure('provider_error');
-  const app = await loadApp(deps, record.provider_app_id, {
-    use: 'bound',
-    keyId: record.client_key_id,
-  });
+  const app = await loadApp(
+    deps,
+    { appId: record.provider_app_id, workspaceId: record.workspace_id },
+    { use: 'bound', keyId: record.client_key_id },
+  );
   if (app === null) throw new ConnectFailure('app_config');
 
   const accounts = await connectFinish(deps, ctx, {
     entry,
     appId: record.provider_app_id,
+    workspaceId: record.workspace_id,
     app,
     provider,
     pending,

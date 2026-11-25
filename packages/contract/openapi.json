@@ -17702,6 +17702,409 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/provider-apps": {
+      "get": {
+        "description": "Newest first, disabled apps included. Instance-wide apps are not listed. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
+        "operationId": "provider_apps.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "clientId": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "enum": [
+                              "active",
+                              "misconfigured",
+                              "disabled"
+                            ],
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "clientId",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "List the workspace's own provider apps",
+        "tags": [
+          "provider-apps"
+        ],
+        "x-kronaut-action": "provider_apps:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "post": {
+        "description": "New connects for the provider use this app instead of the instance app, so its owner pays the provider. Register `/v1/oauth/<provider>/callback` on this server as the app's redirect URI. One live app per provider (409 workspace_app_exists); a client id registered anywhere on this server is refused (409 client_id_taken). The client id must match the provider's format (422 invalid on body.clientId). The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
+        "operationId": "provider_apps.register",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "clientId": {
+                    "type": "string"
+                  },
+                  "clientSecret": {
+                    "pattern": "^[\\x21-\\x7e]{1,512}$",
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "clientId",
+                  "clientSecret"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "clientId": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "misconfigured",
+                        "disabled"
+                      ],
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "clientId",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Register the workspace's own provider app",
+        "tags": [
+          "provider-apps"
+        ],
+        "x-kronaut-action": "provider_apps:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/provider-apps/{provider}/disable": {
+      "post": {
+        "description": "New connects use the instance app again, if there is one. Channels connected through the disabled app stop publishing and refreshing until they are reconnected. 404 when the workspace has no live app for the provider. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
+        "operationId": "provider_apps.disable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Disable the workspace's provider app",
+        "tags": [
+          "provider-apps"
+        ],
+        "x-kronaut-action": "provider_apps:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/provider-apps/{provider}/secret": {
+      "put": {
+        "description": "Also marks a misconfigured app active again. 404 when the workspace has no live app for the provider. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
+        "operationId": "provider_apps.replace_secret",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "clientSecret": {
+                    "pattern": "^[\\x21-\\x7e]{1,512}$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "clientSecret"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "clientId": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "misconfigured",
+                        "disabled"
+                      ],
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "clientId",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Replace the client secret of the workspace's provider app",
+        "tags": [
+          "provider-apps"
+        ],
+        "x-kronaut-action": "provider_apps:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/rss-feeds": {
       "get": {
         "description": "The workspace's feeds by name, with their URL. Owners and admins only.",

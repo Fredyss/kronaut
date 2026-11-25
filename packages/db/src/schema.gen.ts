@@ -772,6 +772,7 @@ export interface ProviderApps {
   review_state: Generated<string>;
   status: Generated<string>;
   updated_at: Generated<Timestamp>;
+  workspace_id: string | null;
 }
 
 export interface PublishAttempts {

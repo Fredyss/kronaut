@@ -104,13 +104,16 @@ export async function instanceAppId(
   return id;
 }
 
-export async function markAppMisconfigured(db: Database, appId: string): Promise<void> {
-  await db.withActor(SYSTEM, (trx) =>
+export async function markAppMisconfigured(
+  db: Database,
+  { appId, workspaceId }: { readonly appId: string; readonly workspaceId: string },
+): Promise<void> {
+  await db.withTenant(workspaceId, SYSTEM, (trx) =>
     trx
       .updateTable('provider_apps')
       .set({ status: 'misconfigured' })
       .where('id', '=', appId)
-      .where('instance_host', '<>', '')
+      .where((eb) => eb.or([eb('instance_host', '<>', ''), eb('workspace_id', '=', workspaceId)]))
       .where('status', '=', 'active')
       .execute(),
   );

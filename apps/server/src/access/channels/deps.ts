@@ -1,6 +1,6 @@
 import type { CredentialKind, ProviderApp, ProviderManifest } from '@kronaut/core';
 import type { Keyring } from '@kronaut/credentials';
-import type { Actor, Database } from '@kronaut/db';
+import type { Actor, Database, TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
 import type { HttpKeys } from '../../base/http/pipeline/kernel.ts';
 import type { RequestContext } from '../../base/http/request.ts';
@@ -55,14 +55,22 @@ export function providerContext(deps: ChannelRouteDeps, entry: ProviderEntry, ct
   );
 }
 
+export interface AppTarget {
+  readonly appId: string;
+  readonly workspaceId: string | null;
+}
+
 export async function loadApp(
   deps: ChannelRouteDeps,
-  appId: string,
+  { appId, workspaceId }: AppTarget,
   keys: SigningKeyRequest,
 ): Promise<ProviderApp | null> {
-  const stored = await deps.db.withActor(SYSTEM, (trx) =>
-    loadProviderApp(trx, deps.keyring, { id: appId }, { publicBaseUrl: deps.publicBaseUrl, keys }),
-  );
+  const load = (trx: TenantDb) =>
+    loadProviderApp(trx, deps.keyring, { id: appId }, { publicBaseUrl: deps.publicBaseUrl, keys });
+  const stored =
+    workspaceId === null
+      ? await deps.db.withActor(SYSTEM, load)
+      : await deps.db.withTenant(workspaceId, SYSTEM, load);
   return stored === null || stored.status !== 'active' || stored.signingKeyMissing
     ? null
     : stored.app;

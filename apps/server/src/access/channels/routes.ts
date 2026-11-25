@@ -12,6 +12,7 @@ import { bindPublicDocument } from './public-document.ts';
 import { selectionRoutes } from './selection/selection-routes.ts';
 import { bindShortenLinks } from './shorten-links.ts';
 import { bindSignature } from './signature.ts';
+import { workspaceAppRoutes } from './workspace-apps/workspace-app-routes.ts';
 
 export type { ChannelRouteDeps } from './deps.ts';
 
@@ -38,7 +39,9 @@ function bindConnectable(deps: ChannelRouteDeps) {
     const workspaceId = decodePublicId('workspace', params.workspaceId);
     if (workspaceId === null) throw new HttpError('not_found', 'Not found.');
     ctx.authorize('channels:connect', { workspaceId });
-    const ready = await deps.db.withActor(SYSTEM, (trx) => readyProviders(trx, deps.providers));
+    const ready = await deps.db.withTenant(workspaceId, SYSTEM, (trx) =>
+      readyProviders(trx, deps.providers, workspaceId),
+    );
     const items: { id: string; availability: 'stable' | 'experimental' | 'limited' }[] = [];
     for (const { manifest } of deps.providers.list()) {
       const { state } = manifest.availability;
@@ -62,5 +65,6 @@ export function channelRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindShortenLinks(),
     bindBrand(),
     ...selectionRoutes(deps),
+    ...workspaceAppRoutes(deps),
   ];
 }

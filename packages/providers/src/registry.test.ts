@@ -25,10 +25,11 @@ describe('provider registry', () => {
     expect(manualOnly.map((manifest) => manifest.id)).toEqual(['pinterest']);
   });
 
-  it('marks only x_com as no-repeats and duplicate-text warning', () => {
-    const ids = (flag: 'noRepeats' | 'warnDuplicateText') =>
+  it('marks only x_com as no-repeats, duplicate-text warning and workspace apps', () => {
+    const ids = (flag: 'noRepeats' | 'warnDuplicateText' | 'workspaceApps') =>
       manifests.filter((manifest) => manifest[flag] === true).map((manifest) => manifest.id);
     expect(ids('noRepeats')).toEqual(['x_com']);
     expect(ids('warnDuplicateText')).toEqual(['x_com']);
+    expect(ids('workspaceApps')).toEqual(['x_com']);
   });
 });

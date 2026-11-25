@@ -27,7 +27,10 @@ export function bindPublicDocument(deps: ChannelRouteDeps) {
       : undefined;
     if (entry?.runtime.publicDocuments === undefined) throw notFound;
     const appId = await deps.db.withActor(SYSTEM, (trx) => selectAppId(trx, params.provider));
-    const app = appId === null ? null : await loadApp(deps, appId, { use: 'documents' });
+    const app =
+      appId === null
+        ? null
+        : await loadApp(deps, { appId, workspaceId: null }, { use: 'documents' });
     if (app === null) throw notFound;
     const all = entry.runtime.publicDocuments(app);
     const document = Object.hasOwn(all, params.name) ? all[params.name] : undefined;

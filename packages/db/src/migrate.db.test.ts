@@ -47,6 +47,8 @@ const ALL = [
   '0036_provider_data_retention',
   '0037_provider_app_bot_token',
   '0038_analytics_saves_clicks',
+  '0039_workspace_provider_apps',
+  '0040_workspace_provider_app_active_index',
 ];
 
 let container: StartedPostgreSqlContainer;
@@ -304,10 +306,11 @@ describe('migrate', () => {
     expect(rows[0]).toEqual({ publish_summary: 'completed_all', settle_seq: 1 });
   });
 
-  it('produces a schema that passes the privilege, agent-dirty, approval, scheduler and summary test scripts', async () => {
+  it('produces a schema that passes the privilege, workspace app, agent-dirty, approval, scheduler and summary test scripts', async () => {
     const url = await freshDatabase('scripts');
     await migrate({ connectionString: url });
     await runScript(url, 'privileges.sql');
+    await runScript(url, 'workspace-apps.sql');
     await runScript(url, 'agent-dirty-guard.sql');
     await runScript(url, 'approval-guard.sql');
     await runScript(url, 'approval-requester.sql');
@@ -467,5 +470,6 @@ describe('migrate', () => {
     expect(result.applied).toEqual(ALL.slice(1));
     await expectNotificationEmailSchema(url);
     await runScript(url, 'privileges.sql');
+    await runScript(url, 'workspace-apps.sql');
   });
 });

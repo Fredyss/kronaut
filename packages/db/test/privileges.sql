@@ -20,6 +20,7 @@ BEGIN
   RAISE EXCEPTION 'FAIL %: expected %, no error', label, code;
 END $$;
 
+-- provider_apps carries workspace_id for workspace apps (ADR-0067) but stays a global table.
 CREATE FUNCTION pg_temp.grants(r regrole) RETURNS TABLE (relname name, privs text) LANGUAGE sql AS $$
   SELECT c.relname, concat_ws(',',
            (SELECT string_agg(a.privilege_type, ',' ORDER BY a.privilege_type)
@@ -28,8 +29,9 @@ CREATE FUNCTION pg_temp.grants(r regrole) RETURNS TABLE (relname name, privs tex
               FROM pg_attribute att, aclexplode(att.attacl) x WHERE att.attrelid = c.oid AND x.grantee = r))
     FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
    WHERE n.nspname = 'public' AND c.relkind IN ('r','p') AND NOT c.relispartition
-     AND NOT EXISTS (SELECT 1 FROM pg_attribute a
-                      WHERE a.attrelid = c.oid AND a.attname = 'workspace_id' AND NOT a.attisdropped)
+     AND (c.relname = 'provider_apps'
+          OR NOT EXISTS (SELECT 1 FROM pg_attribute a
+                          WHERE a.attrelid = c.oid AND a.attname = 'workspace_id' AND NOT a.attisdropped))
 $$;
 
 -- TEN-04: every global table is default-deny; only the grants ADR-0056 lists exist.
@@ -47,7 +49,8 @@ INSERT INTO expected_app VALUES
   ('organizations', 'SELECT,UPDATE(name)'),
   ('provider_app_incidents', 'INSERT,SELECT,UPDATE'),
   ('provider_app_keys', 'SELECT'),
-  ('provider_apps', 'INSERT,SELECT,UPDATE(last_verified_at),UPDATE(status)'),
+  ('provider_apps', 'INSERT,SELECT,UPDATE(client_secret_ciphertext),UPDATE(client_secret_nonce),'
+                    'UPDATE(client_secret_wrapped_dek),UPDATE(kek_version),UPDATE(last_verified_at),UPDATE(status)'),
   ('rate_buckets', 'INSERT,SELECT,UPDATE'),
   ('security_events', 'INSERT,SELECT'),
   ('sessions', 'DELETE,INSERT,SELECT,UPDATE(idle_expires_at),UPDATE(reauthenticated_at)'),
@@ -81,6 +84,7 @@ SELECT pg_temp.must('TEN-04 operator grant on ' || coalesce(g.relname, e.relname
 SELECT pg_temp.must('TEN-04 operator has no tenant-table privilege on ' || c.relname, false)
   FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
  WHERE n.nspname = 'public' AND c.relkind IN ('r','p')
+   AND c.relname <> 'provider_apps'
    AND EXISTS (SELECT 1 FROM pg_attribute a WHERE a.attrelid = c.oid AND a.attname = 'workspace_id')
    AND has_table_privilege('kronaut_operator', c.oid, 'SELECT,INSERT,UPDATE,DELETE');
 SELECT pg_temp.must('TEN-04 no privilege for PUBLIC on ' || c.relname, false)

@@ -3,6 +3,7 @@ import type { Actor, Database } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { STATE_TTL_SECONDS } from '../../access/channels/connect.ts';
+import type { SecretAppProvider } from '../../base/providers/client-ids.ts';
 import { sealAppSecret, sealBotToken } from '../../infrastructure/credentials/credential-store.ts';
 import { createSigningKey } from '../../infrastructure/credentials/signing-keys.ts';
 import { CommandError } from './errors.ts';
@@ -10,17 +11,6 @@ import { CommandError } from './errors.ts';
 const CLI: Actor = { kind: 'cli' };
 const BLUESKY = 'bluesky';
 const BLUESKY_METADATA_PATH = '/oauth/bluesky/oauth-client-metadata.json';
-export type SecretAppProvider =
-  | 'discord'
-  | 'discord_bot'
-  | 'facebook'
-  | 'instagram'
-  | 'linkedin'
-  | 'pinterest'
-  | 'threads'
-  | 'x_com'
-  | 'youtube';
-
 export interface ProviderAppCommandDeps {
   readonly db: Database;
   readonly logger: Logger;
@@ -51,6 +41,7 @@ export async function registerBluesky(
       .select('id')
       .where('provider', '=', BLUESKY)
       .where('instance_host', '=', '')
+      .where('workspace_id', 'is', null)
       .executeTakeFirst();
     if (existing !== undefined) {
       const id = existing.id;
@@ -89,6 +80,7 @@ export async function registerSecretApp(
       .select('id')
       .where('provider', '=', provider)
       .where('instance_host', '=', '')
+      .where('workspace_id', 'is', null)
       .where('status', '=', 'active')
       .executeTakeFirst();
     if (existing !== undefined) {

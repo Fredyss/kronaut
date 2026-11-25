@@ -119,6 +119,7 @@ export interface ProviderManifest<S = unknown> {
   readonly manualOnly?: boolean;
   readonly noRepeats?: boolean;
   readonly warnDuplicateText?: boolean;
+  readonly workspaceApps?: boolean;
   accountPostType?(postType: PostTypeSpec, capabilities: unknown): PostTypeSpec;
   accountSettingOptions?(capabilities: unknown): SettingOptions;
 }

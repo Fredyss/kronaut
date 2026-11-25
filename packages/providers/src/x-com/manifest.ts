@@ -85,4 +85,5 @@ export const xManifest: ProviderManifest<XSettings> = {
   egressHosts: ['api.x.com'],
   noRepeats: true,
   warnDuplicateText: true,
+  workspaceApps: true,
 };

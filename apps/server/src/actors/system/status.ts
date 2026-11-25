@@ -125,6 +125,7 @@ export async function incidentStatus(trx: TenantDb, now: Temporal.Instant): Prom
       'i.resolved_at',
       'i.detail_code',
     ])
+    .where('a.workspace_id', 'is', null)
     .where((eb) => eb.or([eb('i.resolved_at', 'is', null), eb('i.resolved_at', '>=', since)]))
     .orderBy('i.opened_at', 'desc')
     .orderBy('i.id', 'desc')
