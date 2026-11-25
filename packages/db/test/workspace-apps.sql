@@ -32,15 +32,15 @@ END $$;
 \set ORG '''00000000-0000-7000-8000-0000000000a1'''
 \set WA '''00000000-0000-7000-8000-0000000000b1'''
 \set WB '''00000000-0000-7000-8000-0000000000b2'''
-\set APP_A '''00000000-0000-7000-8000-0000000001a1'''
-\set APP_B '''00000000-0000-7000-8000-0000000001b1'''
-\set APP_I '''00000000-0000-7000-8000-0000000001c1'''
+\set APPA '''00000000-0000-7000-8000-0000000001a1'''
+\set APPB '''00000000-0000-7000-8000-0000000001b1'''
+\set APPI '''00000000-0000-7000-8000-0000000001c1'''
 
 INSERT INTO organizations (id, name) VALUES (:ORG, 'Org');
 INSERT INTO workspaces (id, organization_id, name, slug, timezone) VALUES
   (:WA, :ORG, 'A', 'wa', 'Europe/Bratislava'), (:WB, :ORG, 'B', 'wb', 'Europe/Prague');
-INSERT INTO provider_apps (id, provider, client_id, workspace_id) VALUES (:APP_B, 'x_com', 'client-b', :WB);
-INSERT INTO provider_apps (id, provider, client_id) VALUES (:APP_I, 'x_com', 'client-instance');
+INSERT INTO provider_apps (id, provider, client_id, workspace_id) VALUES (:APPB, 'x_com', 'client-b', :WB);
+INSERT INTO provider_apps (id, provider, client_id) VALUES (:APPI, 'x_com', 'client-instance');
 
 SELECT pg_temp.must_fail('a workspace row has no instance host',
   $$INSERT INTO provider_apps (provider, instance_host, client_id, workspace_id)
@@ -61,9 +61,6 @@ SELECT pg_temp.must_fail('A cannot register an instance-wide app',
 SELECT pg_temp.must_fail('A cannot register a second live app for a provider',
   $$INSERT INTO provider_apps (provider, client_id, workspace_id)
     VALUES ('x_com', 'client-a4', '00000000-0000-7000-8000-0000000000b1')$$, '23505');
-SELECT pg_temp.must_fail('a client id another workspace holds is refused',
-  $$INSERT INTO provider_apps (provider, client_id, workspace_id)
-    VALUES ('x_com', 'client-b', '00000000-0000-7000-8000-0000000000b1')$$, '23505');
 
 SELECT pg_temp.must('A sees its own and instance apps, never B''s',
   NOT EXISTS (SELECT 1 FROM provider_apps WHERE id = '00000000-0000-7000-8000-0000000001b1')
@@ -95,6 +92,9 @@ SELECT pg_temp.must('A replaces its secret',
 SELECT pg_temp.must('A disables its app',
   pg_temp.touched($$UPDATE provider_apps SET status = 'disabled'
     WHERE id = '00000000-0000-7000-8000-0000000001a1'$$) = 1);
+SELECT pg_temp.must_fail('a client id another workspace holds is refused',
+  $$INSERT INTO provider_apps (provider, client_id, workspace_id)
+    VALUES ('x_com', 'client-b', '00000000-0000-7000-8000-0000000000b1')$$, '23505');
 SELECT pg_temp.must('after disabling, A registers a new app',
   pg_temp.touched($$INSERT INTO provider_apps (provider, client_id, workspace_id)
     VALUES ('x_com', 'client-a5', '00000000-0000-7000-8000-0000000000b1')$$) = 1);

@@ -341,7 +341,9 @@ describe('SEC-01', () => {
     const events = await root.withActor({ kind: 'cli' }, (trx) =>
       sql<{ row: unknown }>`select to_jsonb(e) as row from webhook_events e`.execute(trx),
     );
-    expect(lines.length).toBeGreaterThan(0);
+    const changes = lines.filter((line) => line.includes('workspace provider app changed'));
+    expect(changes.length).toBeGreaterThanOrEqual(6);
+    expect(events.rows.length).toBeGreaterThan(0);
     expect(lines.join('\n')).not.toContain('CANARY');
     expect(JSON.stringify(events.rows)).not.toContain('CANARY');
   });

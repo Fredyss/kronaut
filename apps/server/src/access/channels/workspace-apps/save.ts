@@ -9,7 +9,7 @@ import { liveWorkspaceApp, type WorkspaceAppRow, workspaceAppById } from './stor
 const UNIQUE_VIOLATION = '23505';
 const ACTIVE_INDEX = 'ux_provider_apps_workspace_active';
 
-type Ctx = Pick<RequestContext, 'tenant' | 'requestId'>;
+type Ctx = Pick<RequestContext, 'tenant' | 'requestId' | 'logger'>;
 
 export interface WorkspaceAppActor {
   readonly ctx: Ctx;
@@ -63,6 +63,10 @@ async function audit(
       request_id: actor.ctx.requestId,
     })
     .execute();
+  actor.ctx.logger.info(
+    { providerAppId: row.app.id, provider: row.app.provider, action: row.action },
+    'workspace provider app changed',
+  );
 }
 
 // The client id is unique across the instance, so registering it again after a disable revives that row.
