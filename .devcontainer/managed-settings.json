@@ -1,0 +1,32 @@
+{
+  "attribution": {
+    "commit": ""
+  },
+  "sandbox": {
+    "enabled": false
+  },
+  "permissions": {
+    "deny": [
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh secret:*)",
+      "Bash(gh release:*)",
+      "Bash(gh auth:*)",
+      "Bash(git push -*)",
+      "Bash(git push * -*)",
+      "Bash(git push *:*)",
+      "Bash(git push *+*)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git -C *)",
+      "Bash(git -c *)",
+      "Bash(gh api *)",
+      "Read(./**/.env)",
+      "Read(./**/.env.local)",
+      "Read(./**/secrets/**)",
+      "Read(./**/data/**)",
+      "Read(./**/.auth/**)"
+    ]
+  }
+}

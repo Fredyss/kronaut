@@ -329,7 +329,10 @@ INSERT INTO webhook_deliveries (workspace_id, id, endpoint_id, event_id, state, 
   (:B1, '00000000-0000-7000-8000-000000000401', gen_random_uuid(), gen_random_uuid(), 'pending', now() - interval '1 minute'),
   (:B2, '00000000-0000-7000-8000-000000000402', gen_random_uuid(), gen_random_uuid(), 'retry_wait', now() - interval '2 minutes'),
   (:B2, '00000000-0000-7000-8000-000000000403', gen_random_uuid(), gen_random_uuid(), 'delivered', now() - interval '3 minutes'),
-  (:B2, '00000000-0000-7000-8000-000000000404', gen_random_uuid(), gen_random_uuid(), 'pending', now() + interval '1 minute');
+  (:B2, '00000000-0000-7000-8000-000000000404', gen_random_uuid(), gen_random_uuid(), 'pending', now() + interval '1 minute'),
+  (:B1, '00000000-0000-7000-8000-000000000405', gen_random_uuid(), gen_random_uuid(), 'delivering', now() - interval '4 minutes'),
+  (:B1, '00000000-0000-7000-8000-000000000406', gen_random_uuid(), gen_random_uuid(), 'delivering', now() + interval '1 minute'),
+  (:B1, '00000000-0000-7000-8000-000000000407', gen_random_uuid(), gen_random_uuid(), 'dead', now() - interval '5 minutes');
 
 INSERT INTO media_assets (workspace_id, id, kind, state, storage_key, deleted_at, created_at) VALUES
   (:B1, '00000000-0000-7000-8000-000000000601', 'image', 'quarantined', repeat('1', 64), now() - interval '31 days', now() - interval '40 days'),
@@ -358,9 +361,10 @@ SELECT pg_temp.must('TEN-06 verifying across workspaces',
 SELECT pg_temp.must('TEN-06 credentials: window capped at 7 days, lease and account status honored',
   (SELECT array_agg(credential_id) FROM sweep_expiring_credentials(interval '60 days', 10)) = ARRAY[
     '00000000-0000-7000-8000-000000000301', '00000000-0000-7000-8000-000000000302']::uuid[]);
-SELECT pg_temp.must('TEN-06 due webhook deliveries',
+SELECT pg_temp.must('TEN-06 due webhook deliveries, an expired delivering lease included',
   (SELECT array_agg(delivery_id) FROM sweep_due_webhook_deliveries(10)) = ARRAY[
-    '00000000-0000-7000-8000-000000000402', '00000000-0000-7000-8000-000000000401']::uuid[]);
+    '00000000-0000-7000-8000-000000000405', '00000000-0000-7000-8000-000000000402',
+    '00000000-0000-7000-8000-000000000401']::uuid[]);
 SELECT pg_temp.must('TEN-06 media GC candidates, each once, expired uploads first',
   (SELECT array_agg(media_asset_id) FROM sweep_media_gc(10)) = ARRAY[
     '00000000-0000-7000-8000-000000000602', '00000000-0000-7000-8000-000000000601',

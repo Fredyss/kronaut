@@ -234,7 +234,7 @@ The worker writes one `audit_events` row for each transition it makes into `publ
 
 ## Webhook events (ADR-0031)
 
-Events are written in the transaction that makes the change. Each event writes one `webhook_events` row, plus one `webhook_deliveries` row for each enabled endpoint of the workspace whose `events` include its type. Phase 0 writes events and deliveries only: the HTTP sender, the endpoint API and `webhook.test` come with the delivery worker.
+Events are written in the transaction that makes the change. Each event writes one `webhook_events` row, plus one `webhook_deliveries` row for each enabled endpoint of the workspace whose `events` include its type. The delivery worker, the endpoint API and `webhook.test` follow ADR-0069 (see [Webhook delivery](#webhook-delivery-adr-0068)).
 
 - **`payload`** is the whole envelope, `{id, type, created_at, api_version, workspace_id, data}`, so a resend is byte-identical and reuses the id:
   - `id` is the row id; `created_at` is `occurred_at`;
@@ -258,6 +258,20 @@ Events are written in the transaction that makes the change. Each event writes o
 **Notification email** (only when SMTP is configured): every minute, unless publishing is paused, the job pages through `sweep_workspaces` and, inside each workspace's tenant, selects notifications from the last day with `emailed_at IS NULL`, oldest first, at most 100 per run across all workspaces and 25 per workspace. A dedicated cross-tenant sweep would need an ADR-0056 update. Each row is claimed by setting `emailed_at` and committing before the send, so delivery is **at most once**: a crash between the claim and the send loses that email and never duplicates it. A transient SMTP failure clears `emailed_at` and sets `email_retry_at` with exponential backoff (1, 2, 4 … minutes, capped at 60), so a later run retries until the row is a day old; after 8 attempts the row stays claimed. A permanent rejection keeps it set. A recipient who left the workspace or was erased is skipped and the row stays claimed. So is a row whose kind belongs to an email group the recipient muted in that workspace (`memberships.email_muted`: `failures`, `approvals` or `channels`); it still shows in-app, and kinds outside the three groups are always emailed.
 
 The approval events are written in the transaction that opens or decides the request. A withdrawn or voided request writes no event: `post.approval_voided` is allowed by `ck_webhook_endpoints_events` but missing from ADR-0031's frozen list, so it stays unwritten until that is settled.
+
+## Webhook delivery (ADR-0069)
+
+- **Endpoints:** `GET|POST /v1/workspaces/:workspaceId/webhooks`, `PATCH|DELETE …/webhooks/:webhookId`, `POST …/:webhookId/rotate-secret` and `POST …/:webhookId/test`. Session only, `webhooks:manage` (owner, admin), never an API key. At most 20 per workspace. An endpoint subscribes to one or more of the 13 events above; `webhook.test` and `post.approval_voided` aren't subscribable.
+  - The URL is `https` on port 443 with a host name and no credentials, at most 2048 characters; anything else is 422 `url_invalid`.
+  - Create and rotate return the signing secret (`whsec_` + 32 random bytes, base64) once and run without an idempotency key, so the secret never sits in `idempotency_keys`. It is sealed with AAD `endpoint id | workspace id | webhook_endpoint`.
+  - Rotation keeps the replaced secret as `previous_secret` for 24 h; deliveries in that window carry two signatures.
+  - `webhook.test` writes one event with empty `data` and one delivery for that endpoint only, at most 10 per endpoint per hour; 409 `endpoint_disabled` on a disabled endpoint.
+- **Sender:** the `webhook_delivery` cron task runs every minute, takes up to 200 rows from `sweep_due_webhook_deliveries` and sends 8 at a time. It sends nothing while publishing is paused.
+  - **Claim:** in the workspace, `FOR UPDATE SKIP LOCKED`; `delivering`, `attempt_count + 1`, `next_attempt_at = now() + 2 min` (the lease), committed before the send. A `delivering` row past its lease is due again, so a crash mid-send retries once the lease ends; a row that already used its 8 attempts ends `dead/interrupted`. A disabled endpoint's delivery ends `dead/endpoint_disabled`.
+  - **Request:** `POST` of the stored payload text with `content-type: application/json`, `webhook-id` (event id), `webhook-timestamp` (Unix seconds) and `webhook-signature` (`v1,` + base64 HMAC-SHA256 of `id.timestamp.body` keyed with the decoded secret). Through egress: no redirects, 15 s, 1 MiB cap, every resolved address public.
+  - **Finish,** fenced by `state = 'delivering'` and the claimed attempt count: a 2xx is `delivered`; otherwise `last_http_status` and `last_error` (`http_status` or the egress code, never a message or the body) and `retry_wait` after 1 min, 5 min, 30 min, 2 h, 5 h, 10 h, 10 h, then `dead` after the 8th attempt.
+  - **Endpoint health:** a success resets `consecutive_failures` and `failing_since`; a failure counts up and sets `failing_since` once. A failure while `failing_since` is over 5 days old disables the endpoint (`disabled_reason = 'failing'`, audit `webhook_endpoint.auto_disabled`). Enabling it again clears both.
+- **Retention:** `webhook_retention` deletes events older than 30 days each day, per workspace through `sweep_workspaces`, and their deliveries with them.
 
 ## Rate limits (ADR-0022)
 

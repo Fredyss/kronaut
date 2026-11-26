@@ -39,6 +39,7 @@ docs/
   reference/              provider facts and test catalogues
   reviews/                dated review notes
 .github/workflows/        CI
+.devcontainer/            Claude Code dev container (docs/guides/claude-devcontainer.md)
 ```
 
 Dependency direction: `apps → packages`, never the reverse. Apps never import each other: the web app reaches the server only through `@kronaut/sdk`. `core` depends on nothing in the workspace. `compose` and `providers/manifests` stay browser-safe: no `node:` imports, no `credentials`, no `egress`. Biome restricted-import rules enforce the boundaries.

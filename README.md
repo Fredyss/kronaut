@@ -24,6 +24,7 @@ pnpm check
 ## Documentation
 
 - [Self-hosting guide](docs/guides/self-hosting.md)
+- [Claude Code dev container](docs/guides/claude-devcontainer.md)
 - [Architecture](docs/architecture/README.md)
 - [Architecture decision records](docs/adr/README.md)
 - [Reference](docs/reference/)
