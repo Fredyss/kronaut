@@ -49,7 +49,7 @@
 | Approval | `approval_policies` (`stages` always 1 in v1), `approval_requests`, `approval_request_destinations`, `approval_decisions`, `review_links`, `review_link_posts`, `comments` |
 | Publishing (ADR-0007/08) | `post_destinations`, `destination_items` (thread parts + first comment, each with its own state and `remote_id`), `publish_attempts` (write-ahead `public_send_at`), `destination_transitions`, `destination_state_reasons`, `link_shorteners` (one per workspace: provider, base URL, domain, sealed key; ADR-0058), `short_links` (per destination and long link: target, short URL, link id, state, attempts) |
 | Rate + inbound | `rate_buckets` (logged), `inbound_events` (provider webhooks, deduped) |
-| Outbound | `webhook_endpoints` (secret + `previous_secret`), `webhook_events`, `webhook_deliveries`, `notifications` |
+| Outbound | `webhook_endpoints` (secret + `previous_secret`, sealed together under one KEK; failure counters; ADR-0068), `webhook_events`, `webhook_deliveries` (claim lease in `next_attempt_at` while `delivering`, from migration 42), `notifications` |
 | Audit (ADR-0015) | `audit_events` (monthly partitions, insert-only; `maintain_audit_partitions`, ADR-0045), `audit_seals` |
 | Analytics (Phase 2) | `post_metric_snapshots` (per destination and metric: `value` bigint or NULL, `observed_at`, provider + API version), `account_daily_metrics` (per channel, UTC day and metric), `destination_metric_pulls` (`next_pull_at`, step, attempts), `account_metric_pulls` (`checked_on`, attempts, `retry_after`). Written only when a value changes; NULL means missing, never 0 (ADR-0037). A provider's `dataRetention` purge deletes a lapsed channel's rows (ADR-0060) |
 

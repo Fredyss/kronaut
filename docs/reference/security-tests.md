@@ -37,12 +37,14 @@
   - `SEC-01 secret_canary` (REST, MCP, errors, logs, exports, audit, webhooks, AI prompt logs)
   - `SEC-02 rss_feed_url_secret` (a feed URL with a token never reaches a log, a job payload, an audit event or an error message; only the feed itself returns it)
   - `SEC-03 shortener_key_secret` (the link shortener's API key never reaches a response, a log, a job payload, an audit event or an error message; it is sealed through the keyring and the API shows only `hasKey`)
+  - `SEC-04 webhook_secret_and_url` (a webhook signing secret is returned only by create and rotate, is sealed with the workspace in the AAD, and never reaches a listing, a log, an audit event or `idempotency_keys`; the endpoint URL and egress messages never reach a delivery row, an audit event or a log)
 - **Prompt injection:**
   - `INJ-01 injection_corpus` (draft only; planted links flagged)
   - `INJ-02 mcp_untrusted_envelope`
 - **Network and files:**
   - `NET-01 ssrf_suite`
   - `NET-02 media_import_url_private` (a link to a private or loopback address fails as `url_blocked` with nothing fetched)
+  - `NET-03 webhook_url_guard` (an endpoint URL that resolves to a loopback, private, CGNAT, link-local, metadata, unique-local, mapped or NAT64 address fails as `blocked_address` with nothing sent, also when only one answer is private; every delivery resolves again; http, IP literals, other ports and credentials are refused at save time and by egress; no redirects)
   - `FILE-01 upload_polyglot_and_traversal`
   - `HOOK-01 inbound_webhook_forge_replay`
 - **CI:** `CI-01 fork_pr_no_secrets`
