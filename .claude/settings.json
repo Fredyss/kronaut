@@ -11,7 +11,9 @@
       "Bash(gh run list *)",
       "Bash(gh run view *)",
       "Bash(git push -u origin *)",
-      "Bash(git push origin *)"
+      "Bash(git push origin *)",
+      "Bash(gh api repos/Fredyss/kronaut/pulls/*/comments)",
+      "Bash(gh api repos/Fredyss/kronaut/pulls/*/comments *)"
     ],
     "deny": [
       "Read(.env)",
@@ -51,7 +53,14 @@
       "Bash(gh repo *)",
       "Bash(gh secret *)",
       "Bash(gh auth *)",
-      "Bash(gh api *)",
+      "Bash(gh api graphql*)",
+      "Bash(gh api *-X*)",
+      "Bash(gh api *--method*)",
+      "Bash(gh api *-f *)",
+      "Bash(gh api *-F *)",
+      "Bash(gh api *--field*)",
+      "Bash(gh api *--raw-field*)",
+      "Bash(gh api *--input*)",
       "Bash(gh release *)",
       "Bash(git push --force*)",
       "Bash(git push -f*)",
@@ -89,7 +98,8 @@
       "gh run view *",
       "git push -u origin *",
       "git push origin *",
-      "git fetch *"
+      "git fetch *",
+      "gh api repos/Fredyss/kronaut/pulls/*"
     ],
     "filesystem": {
       "denyRead": [
