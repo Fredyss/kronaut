@@ -1,4 +1,4 @@
-# ADR-0068: Outgoing webhook delivery
+# ADR-0069: Outgoing webhook delivery
 
 - **Status:** Accepted
 - **Date:** 2026-11-26

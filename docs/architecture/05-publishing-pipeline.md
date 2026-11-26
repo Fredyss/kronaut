@@ -234,7 +234,7 @@ The worker writes one `audit_events` row for each transition it makes into `publ
 
 ## Webhook events (ADR-0031)
 
-Events are written in the transaction that makes the change. Each event writes one `webhook_events` row, plus one `webhook_deliveries` row for each enabled endpoint of the workspace whose `events` include its type. The delivery worker, the endpoint API and `webhook.test` follow ADR-0068 (see [Webhook delivery](#webhook-delivery-adr-0068)).
+Events are written in the transaction that makes the change. Each event writes one `webhook_events` row, plus one `webhook_deliveries` row for each enabled endpoint of the workspace whose `events` include its type. The delivery worker, the endpoint API and `webhook.test` follow ADR-0069 (see [Webhook delivery](#webhook-delivery-adr-0068)).
 
 - **`payload`** is the whole envelope, `{id, type, created_at, api_version, workspace_id, data}`, so a resend is byte-identical and reuses the id:
   - `id` is the row id; `created_at` is `occurred_at`;
@@ -259,7 +259,7 @@ Events are written in the transaction that makes the change. Each event writes o
 
 The approval events are written in the transaction that opens or decides the request. A withdrawn or voided request writes no event: `post.approval_voided` is allowed by `ck_webhook_endpoints_events` but missing from ADR-0031's frozen list, so it stays unwritten until that is settled.
 
-## Webhook delivery (ADR-0068)
+## Webhook delivery (ADR-0069)
 
 - **Endpoints:** `GET|POST /v1/workspaces/:workspaceId/webhooks`, `PATCH|DELETE …/webhooks/:webhookId`, `POST …/:webhookId/rotate-secret` and `POST …/:webhookId/test`. Session only, `webhooks:manage` (owner, admin), never an API key. At most 20 per workspace. An endpoint subscribes to one or more of the 13 events above; `webhook.test` and `post.approval_voided` aren't subscribable.
   - The URL is `https` on port 443 with a host name and no credentials, at most 2048 characters; anything else is 422 `url_invalid`.

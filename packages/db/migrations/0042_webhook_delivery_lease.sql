@@ -1,5 +1,5 @@
 -- A claim moves next_attempt_at to the end of its lease, so a delivering row past it was interrupted mid-send and
--- is due again (ADR-0068).
+-- is due again (ADR-0069).
 CREATE OR REPLACE FUNCTION sweep_due_webhook_deliveries(p_limit integer)
 RETURNS TABLE (workspace_id uuid, delivery_id uuid)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_temp AS $$
