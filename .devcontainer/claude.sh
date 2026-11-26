@@ -20,16 +20,36 @@ export KRONAUT_GIT_EMAIL="${KRONAUT_GIT_EMAIL:-$(git -C "$main" config user.emai
 memory="$HOME/.claude/projects/$(printf '%s' "$main" | sed 's/[^a-zA-Z0-9]/-/g')/memory"
 mkdir -p "$memory"
 
-"${cli[@]}" up --workspace-folder "$here" \
-  --mount "type=bind,source=$memory,target=/home/node/.claude/projects/-workspaces-kronaut/memory" >&2
-
-if [ -d "$HOME/.claude" ]; then
-  COPYFILE_DISABLE=1 tar -C "$HOME/.claude" --exclude 'skills/cache' --exclude 'skills/data' --exclude 'skills/blocklist.json' \
-    -cf - $(cd "$HOME/.claude" && ls -d CLAUDE.md agents skills 2>/dev/null) \
-    | "${cli[@]}" exec --workspace-folder "$here" tar -C /home/node/.claude -xf -
+up_flags=()
+if [ "${1:-}" = "rebuild" ]; then
+  up_flags+=(--remove-existing-container)
+  shift
 fi
+
+up="$("${cli[@]}" up --workspace-folder "$here" ${up_flags[@]+"${up_flags[@]}"} \
+  --mount "type=bind,source=$memory,target=/home/node/.claude/projects/-workspaces-kronaut/memory")"
+container="$(printf '%s' "$up" | sed -n 's/.*"containerId":"\([^"]*\)".*/\1/p')"
+if [ -z "$container" ]; then
+  printf '%s\n' "$up" >&2
+  exit 1
+fi
+
+# Piping tar into devcontainer exec fails with "tar: Write error", so stage and docker cp.
+stage="$(mktemp -d)"
+trap 'rm -rf "$stage"' EXIT
+for item in CLAUDE.md agents skills; do
+  if [ -e "$HOME/.claude/$item" ]; then
+    cp -R "$HOME/.claude/$item" "$stage/"
+  fi
+done
+rm -rf "$stage/skills/cache" "$stage/skills/data" "$stage/skills/blocklist.json"
+find "$stage" -name .DS_Store -delete
+docker cp "$stage/." "$container:/home/node/.claude/"
+docker exec -u root "$container" sh -c \
+  'cd /home/node/.claude && chown -R node:node CLAUDE.md agents skills 2>/dev/null; chown node:node projects projects/-workspaces-kronaut'
 
 if [ "${1:-}" = "shell" ]; then
-  exec "${cli[@]}" exec --workspace-folder "$here" bash
+  "${cli[@]}" exec --workspace-folder "$here" bash
+else
+  "${cli[@]}" exec --workspace-folder "$here" claude --dangerously-skip-permissions "$@"
 fi
-exec "${cli[@]}" exec --workspace-folder "$here" claude --dangerously-skip-permissions "$@"

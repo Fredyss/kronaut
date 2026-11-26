@@ -4,6 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
+  "containerUser": "root",
   "remoteUser": "node",
   "workspaceMount": "source=kronaut-workspace-${localWorkspaceFolderBasename},target=/workspaces/kronaut,type=volume",
   "workspaceFolder": "/workspaces/kronaut",

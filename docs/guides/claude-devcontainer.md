@@ -29,7 +29,10 @@ It follows the [Claude Code dev container reference](https://code.claude.com/doc
 .devcontainer/claude.sh            # build or start the container, then Claude Code
 .devcontainer/claude.sh -p "..."   # a one-shot prompt
 .devcontainer/claude.sh shell      # a shell inside
+.devcontainer/claude.sh rebuild    # recreate the container after a change in .devcontainer/, then Claude Code
 ```
+
+The volumes (repository, Claude login, Docker images) survive `rebuild`.
 
 The first run builds the image, clones the repository, installs dependencies and asks you to sign in to Claude.
 
@@ -38,5 +41,6 @@ Each run copies `~/.claude/CLAUDE.md`, `~/.claude/agents` and `~/.claude/skills`
 ## Limits
 
 - Anything inside the container can read the GitHub token and the Claude login. Keep the token scoped to this repository.
+- The firewall guards against mistakes, not against a determined agent: the `docker` group is root inside the container, so a process there could start a privileged container and change the rules. The token scope and the `main` ruleset are the hard limits.
 - Docker Hub serves layers from a CDN whose addresses change. If a pull fails, run the firewall script again.
 - Plugins installed on the host are not copied; install them inside if needed.
