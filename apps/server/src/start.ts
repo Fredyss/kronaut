@@ -219,6 +219,7 @@ async function startApi(boot: Boot): Promise<void> {
   const { config, db, clock, providers, keyring, state } = boot;
   const { logger } = boot.options;
   if (config.access !== null) state.access = await bootAccess(config.access, logger, clock);
+  else logger.warn('per-IP rate limits are off behind a proxy until ACCESS_AUD is set');
   const access = state.access;
   const deps: HttpDeps = {
     db,
@@ -230,6 +231,7 @@ async function startApi(boot: Boot): Promise<void> {
     readiness: async () => !state.stopping && (await workerAlive(db)),
     ...API_SIGN_IN,
     routeBodyLimits: API_BODY_LIMITS,
+    trustCloudflareIp: access !== null,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };

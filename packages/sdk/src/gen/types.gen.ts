@@ -1378,6 +1378,145 @@ export type ChannelsSetShortenLinksResponses = {
 
 export type ChannelsSetShortenLinksResponse = ChannelsSetShortenLinksResponses[keyof ChannelsSetShortenLinksResponses];
 
+export type GrantsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: string;
+    };
+    url: '/v1/workspaces/{workspaceId}/grants';
+};
+
+export type GrantsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GrantsListError = GrantsListErrors[keyof GrantsListErrors];
+
+export type GrantsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            access: {
+                accountIds: Array<string>;
+                brandIds: Array<string>;
+                locationIds: Array<string>;
+            } | null;
+            createdAt: string;
+            expiresAt: string | null;
+            id: string;
+            kind: 'api_key';
+            name: string;
+            rateLimitPerMinute: number | null;
+            resourceScope: 'workspace' | 'restricted';
+            revokedAt: string | null;
+            scopes: Array<string>;
+            sponsorId: string;
+            status: 'active' | 'expired' | 'revoked';
+            tokenPrefix: string | null;
+        }>;
+        nextCursor: string | null;
+    };
+};
+
+export type GrantsListResponse = GrantsListResponses[keyof GrantsListResponses];
+
+export type GrantsCreateData = {
+    body: {
+        access?: {
+            accountIds?: Array<string>;
+            brandIds?: Array<string>;
+            locationIds?: Array<string>;
+        };
+        expiresAt?: string | null;
+        name: string;
+        rateLimitPerMinute?: number | null;
+        resourceScope?: 'workspace' | 'restricted';
+        scopes: Array<string>;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/grants';
+};
+
+export type GrantsCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GrantsCreateError = GrantsCreateErrors[keyof GrantsCreateErrors];
+
+export type GrantsCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        access: {
+            accountIds: Array<string>;
+            brandIds: Array<string>;
+            locationIds: Array<string>;
+        } | null;
+        createdAt: string;
+        expiresAt: string | null;
+        id: string;
+        kind: 'api_key';
+        name: string;
+        rateLimitPerMinute: number | null;
+        resourceScope: 'workspace' | 'restricted';
+        revokedAt: string | null;
+        scopes: Array<string>;
+        sponsorId: string;
+        status: 'active' | 'expired' | 'revoked';
+        token: string;
+        tokenPrefix: string | null;
+    };
+};
+
+export type GrantsCreateResponse = GrantsCreateResponses[keyof GrantsCreateResponses];
+
+export type GrantsRevokeData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        grantId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/grants/{grantId}/revoke';
+};
+
+export type GrantsRevokeErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type GrantsRevokeError = GrantsRevokeErrors[keyof GrantsRevokeErrors];
+
+export type GrantsRevokeResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type GrantsRevokeResponse = GrantsRevokeResponses[keyof GrantsRevokeResponses];
+
 export type GroupsListData = {
     body?: never;
     path: {

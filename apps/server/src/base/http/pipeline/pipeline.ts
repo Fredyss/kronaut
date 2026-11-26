@@ -3,6 +3,7 @@ import type { Temporal } from 'temporal-polyfill';
 import { checkAccess } from '../caller/access-check.ts';
 import { errorBody, HttpError } from '../errors.ts';
 import { readLimited } from '../input.ts';
+import { clientIp } from '../rate-limit/client-ip.ts';
 import type { HttpDeps } from './kernel.ts';
 import { headersFor, respond } from './respond.ts';
 import type { RouteMatch } from './router.ts';
@@ -16,12 +17,20 @@ export interface Kernel {
   readonly maxBody: number;
 }
 
+export interface Arrival {
+  readonly request: Request;
+  readonly requestId: string;
+  readonly logger: Logger;
+  readonly socket: string | null;
+}
+
 export interface Inbound {
   readonly request: Request;
   readonly url: URL;
   readonly requestId: string;
   readonly logger: Logger;
   readonly now: Temporal.Instant;
+  readonly clientIp: string | null;
 }
 
 const NOT_FOUND = 'Not found.';
@@ -41,13 +50,9 @@ function methodNotAllowed(kernel: Kernel, allow: readonly string[], requestId: s
   return respond(405, errorBody(error, requestId), headers);
 }
 
-export async function pipeline(
-  kernel: Kernel,
-  request: Request,
-  requestId: string,
-  logger: Logger,
-): Promise<Response> {
+export async function pipeline(kernel: Kernel, arrival: Arrival): Promise<Response> {
   const { deps } = kernel;
+  const { request, requestId, logger } = arrival;
   const url = new URL(request.url);
   await checkAccess(deps.access, request, url, logger);
   const now = deps.clock();
@@ -64,6 +69,7 @@ export async function pipeline(
   if (matched.kind === 'method_not_allowed') {
     return methodNotAllowed(kernel, matched.allow, requestId);
   }
-  const inbound: Inbound = { request, url, requestId, logger, now };
+  const ip = clientIp(request, arrival.socket, deps.trustCloudflareIp === true);
+  const inbound: Inbound = { request, url, requestId, logger, now, clientIp: ip };
   return await serveRoute(kernel, { ...inbound, matched, raw, raised });
 }

@@ -9,12 +9,14 @@ export interface IssueDetail {
 export interface HttpErrorOptions {
   readonly status?: number;
   readonly details?: readonly IssueDetail[];
+  readonly retryAfterSeconds?: number;
 }
 
 export class HttpError extends Error {
   readonly code: ApiErrorCode;
   readonly status: number;
   readonly details: readonly IssueDetail[] | undefined;
+  readonly retryAfterSeconds: number | undefined;
 
   constructor(code: ApiErrorCode, message: string, options: HttpErrorOptions = {}) {
     super(message);
@@ -22,6 +24,7 @@ export class HttpError extends Error {
     this.code = code;
     this.status = options.status ?? API_ERROR_STATUS[code];
     this.details = options.details;
+    this.retryAfterSeconds = options.retryAfterSeconds;
   }
 }
 

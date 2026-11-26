@@ -21,6 +21,7 @@ import { systemRoutes } from './base/http/system-routes.ts';
 import type { ProviderRegistry } from './base/providers/providers.ts';
 import { postRoutes } from './flow/posts/routes.ts';
 import { authenticate } from './identity/auth/authenticate.ts';
+import { grantRoutes } from './identity/auth/grants/grant-routes.ts';
 import { passwordChangeRoutes } from './identity/auth/password-change.ts';
 import { profileRoutes } from './identity/auth/profile-routes.ts';
 import { reauthRoutes } from './identity/auth/reauth.ts';
@@ -98,6 +99,7 @@ export function apiRoutes({
     ...analyticsRoutes(),
     ...shortLinkRoutes({ keyring, http: shortenerHttp }),
     ...notificationRoutes(),
+    ...grantRoutes({ grantKey: http.keys.grant }),
     ...webhookRoutes({ keyring }),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({

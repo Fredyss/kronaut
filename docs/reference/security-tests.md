@@ -15,9 +15,9 @@
   - `AUTH-04 token_purpose_and_origin`
 - **Authorization:**
   - `AUTHZ-01 scope_matrix_snapshot`
-  - `AUTHZ-02 non_grantable_scopes` (API and DB CHECK)
+  - `AUTHZ-02 non_grantable_scopes` (API and DB CHECK; no API key manages API keys)
   - `AUTHZ-03 resource_scope` (Vienna grant vs Brno, unassigned accounts and groups)
-  - `AUTHZ-04 grant_lifecycle` (revocation immediate and actionable, channels untouched, sponsor demotion)
+  - `AUTHZ-04 grant_lifecycle` (revocation immediate and actionable, expiry, channels untouched, sponsor demotion)
   - `AUTHZ-05 agent_approval_boundary` (agent content needs approval even under mode `none`)
 - **Approvals:**
   - `APR-01 binding_matrix` ([Security](../architecture/06-security.md))
@@ -38,6 +38,7 @@
   - `SEC-02 rss_feed_url_secret` (a feed URL with a token never reaches a log, a job payload, an audit event or an error message; only the feed itself returns it)
   - `SEC-03 shortener_key_secret` (the link shortener's API key never reaches a response, a log, a job payload, an audit event or an error message; it is sealed through the keyring and the API shows only `hasKey`)
   - `SEC-04 webhook_secret_and_url` (a webhook signing secret is returned only by create and rotate, is sealed with the workspace in the AAD, and never reaches a listing, a log, an audit event or `idempotency_keys`; the endpoint URL and egress messages never reach a delivery row, an audit event or a log)
+  - `SEC-05 grant_token_once` (an API key's token appears only in the create response; only its HMAC is stored, nothing reaches a listing, an audit event or `idempotency_keys`, and the audit event holds no name)
 - **Prompt injection:**
   - `INJ-01 injection_corpus` (draft only; planted links flagged)
   - `INJ-02 mcp_untrusted_envelope`
@@ -51,4 +52,6 @@
 - **Audit:**
   - `AUD-01 audit_coverage`
   - `AUD-02 audit_immutability_and_seal`
-- **Rate limits:** `RL-01 per_principal_limits` (XFF ignored)
+- **Rate limits:**
+  - `RL-01 per_principal_limits` (XFF ignored; a bucket per API key with its own `rate_limit_per_min`, 429 with `Retry-After`, refill over time, sessions unlimited)
+  - `RL-02 public_ip_limits` (one bucket per client address and route family, so login can't starve OAuth or the Meta callbacks; probes excluded; `CF-Connecting-IP` only behind the Access gate; no per-IP bucket on a non-public socket address; IPv6 by /64; no raw address stored)

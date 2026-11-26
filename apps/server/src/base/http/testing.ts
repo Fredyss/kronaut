@@ -18,12 +18,14 @@ import type { CronTask } from '../../infrastructure/jobs/cron-tasks.ts';
 import { createProviderRegistry, type ProviderRegistry } from '../providers/providers.ts';
 import type { AccessGate } from './caller/access.ts';
 import { createHttpApp, deriveHttpKeys, type HttpDeps, type HttpKeys } from './pipeline/kernel.ts';
+import type { RateLimits } from './rate-limit/limit.ts';
 import type { BoundRoute } from './request.ts';
 
 export const BASE = 'https://kronaut.example.test';
 export const PASSWORD = 'correct horse battery';
 
 const NOWHERE = '/nonexistent';
+const UNLIMITED: RateLimits = { grantPerMinute: 1_000_000, publicPerMinute: 1_000_000 };
 
 export type Auth = { readonly cookie: string } | { readonly bearer: string };
 
@@ -50,6 +52,8 @@ export interface TestInstanceOptions {
   readonly access?: AccessGate;
   readonly feedHttp?: HttpClient;
   readonly shortenerHttp?: HttpClient;
+  readonly rateLimits?: RateLimits;
+  readonly trustCloudflareIp?: boolean;
 }
 
 export interface TestInstance {
@@ -77,6 +81,8 @@ export function createTestInstance({
   access,
   feedHttp,
   shortenerHttp,
+  rateLimits = UNLIMITED,
+  trustCloudflareIp = false,
 }: TestInstanceOptions): TestInstance {
   const deps: HttpDeps = {
     db,
@@ -88,6 +94,8 @@ export function createTestInstance({
     readiness: async () => true,
     ...API_SIGN_IN,
     routeBodyLimits: API_BODY_LIMITS,
+    rateLimits,
+    trustCloudflareIp,
     ...(access === undefined ? {} : { access }),
   };
   const routes = apiRoutes({
@@ -200,4 +208,17 @@ export async function insertTestGrant(
     })
     .execute();
   return id;
+}
+
+export async function provisionTestWorkspace(
+  db: Database,
+  userId: string,
+  slug: string,
+): Promise<string> {
+  return await db.withActor({ kind: 'user', id: userId }, async (trx) => {
+    const result = await sql<{ workspace_id: string }>`
+      select workspace_id from provision_organization(${slug}, ${slug}, ${slug}, 'Europe/Bratislava')
+    `.execute(trx);
+    return result.rows[0]?.workspace_id ?? '';
+  });
 }
