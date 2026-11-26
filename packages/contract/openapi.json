@@ -4285,6 +4285,554 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/grants": {
+      "get": {
+        "description": "Newest first, revoked and expired keys included. The token is never listed; `tokenPrefix` names the key. Owners and admins with access to the whole workspace only, signed in; never an API key.",
+        "operationId": "grants.list",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "access": {
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "accountIds": {
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "brandIds": {
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "locationIds": {
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "required": [
+                                  "brandIds",
+                                  "locationIds",
+                                  "accountIds"
+                                ],
+                                "type": "object"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                            "type": "string"
+                          },
+                          "expiresAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "enum": [
+                              "api_key",
+                              "oauth",
+                              "internal_ai"
+                            ],
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "rateLimitPerMinute": {
+                            "anyOf": [
+                              {
+                                "maximum": 9007199254740991,
+                                "minimum": -9007199254740991,
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "resourceScope": {
+                            "enum": [
+                              "workspace",
+                              "restricted"
+                            ],
+                            "type": "string"
+                          },
+                          "revokedAt": {
+                            "anyOf": [
+                              {
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "scopes": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "sponsorId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "enum": [
+                              "active",
+                              "expired",
+                              "revoked"
+                            ],
+                            "type": "string"
+                          },
+                          "tokenPrefix": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "name",
+                          "status",
+                          "scopes",
+                          "resourceScope",
+                          "access",
+                          "tokenPrefix",
+                          "rateLimitPerMinute",
+                          "sponsorId",
+                          "expiresAt",
+                          "revokedAt",
+                          "createdAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "List the workspace's API keys",
+        "tags": [
+          "grants"
+        ],
+        "x-kronaut-action": "grants:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      },
+      "post": {
+        "description": "The response is the only place the token `kro_<key id>_<secret>` ever appears; the server keeps only its HMAC, so the request is never replayed and a retry creates a second key. Send it as `Authorization: Bearer <token>`. Its rights are its scopes, cut to the sponsor's current role, evaluated on every request. Only the 15 grantable scopes are accepted: a scope that can never be granted is 422 never_grantable, an unknown one 422 unknown_scope. A restricted key reaches only the brands, locations and channels in `access` (at most 100 each), and nothing when they are empty; `access` on a workspace-wide key is 422 not_restricted. `expiresAt` must lie ahead (422 in_past). Each key gets its own rate limit: `rateLimitPerMinute` requests a minute (1 to 6000), or 300 when unset; beyond it the API answers 429 with Retry-After. Owners and admins with access to the whole workspace only, signed in; never an API key.",
+        "operationId": "grants.create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "access": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "accountIds": {
+                        "default": [],
+                        "items": {
+                          "type": "string"
+                        },
+                        "maxItems": 100,
+                        "type": "array"
+                      },
+                      "brandIds": {
+                        "default": [],
+                        "items": {
+                          "type": "string"
+                        },
+                        "maxItems": 100,
+                        "type": "array"
+                      },
+                      "locationIds": {
+                        "default": [],
+                        "items": {
+                          "type": "string"
+                        },
+                        "maxItems": 100,
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "expiresAt": {
+                    "anyOf": [
+                      {
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "name": {
+                    "maxLength": 480,
+                    "type": "string"
+                  },
+                  "rateLimitPerMinute": {
+                    "anyOf": [
+                      {
+                        "maximum": 6000,
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "resourceScope": {
+                    "default": "workspace",
+                    "enum": [
+                      "workspace",
+                      "restricted"
+                    ],
+                    "type": "string"
+                  },
+                  "scopes": {
+                    "items": {
+                      "maxLength": 64,
+                      "type": "string"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "name",
+                  "scopes"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "access": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "accountIds": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "brandIds": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            },
+                            "locationIds": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "required": [
+                            "brandIds",
+                            "locationIds",
+                            "accountIds"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "api_key",
+                        "oauth",
+                        "internal_ai"
+                      ],
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "rateLimitPerMinute": {
+                      "anyOf": [
+                        {
+                          "maximum": 9007199254740991,
+                          "minimum": -9007199254740991,
+                          "type": "integer"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "resourceScope": {
+                      "enum": [
+                        "workspace",
+                        "restricted"
+                      ],
+                      "type": "string"
+                    },
+                    "revokedAt": {
+                      "anyOf": [
+                        {
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "scopes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "sponsorId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "expired",
+                        "revoked"
+                      ],
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "tokenPrefix": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "name",
+                    "status",
+                    "scopes",
+                    "resourceScope",
+                    "access",
+                    "tokenPrefix",
+                    "rateLimitPerMinute",
+                    "sponsorId",
+                    "expiresAt",
+                    "revokedAt",
+                    "createdAt",
+                    "token"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Create an API key",
+        "tags": [
+          "grants"
+        ],
+        "x-kronaut-action": "grants:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/grants/{grantId}/revoke": {
+      "post": {
+        "description": "The key stops working with the next request. Revoking a revoked key changes nothing. Series and evergreen posts it owns pause on their next step. Owners and admins with access to the whole workspace only, signed in; never an API key.",
+        "operationId": "grants.revoke",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "grantId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Revoke an API key",
+        "tags": [
+          "grants"
+        ],
+        "x-kronaut-action": "grants:manage",
+        "x-kronaut-auth": [
+          "session"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/groups": {
       "get": {
         "description": "The workspace's account groups by name, each with its channels in connection order. A restricted principal gets only the groups with a channel in its scope, and only those channels. Groups never grant access.",

@@ -1,9 +1,13 @@
+import { randomBytes } from 'node:crypto';
 import type { Database } from '@kronaut/db';
 import { sql } from 'kysely';
-import { hmacToken } from '../../base/crypto/crypto.ts';
+import { hmacToken, randomToken } from '../../base/crypto/crypto.ts';
 
 const GRANT_TOKEN = /^kro_[0-9a-z]{16,32}_[A-Za-z0-9_-]{16,256}$/;
 const BEARER = /^Bearer ([^\s]+)$/i;
+const KEY_ID_BYTES = 8;
+
+export const GRANT_HASH_KEY_VERSION = 1;
 
 export interface GrantTokenRecord {
   readonly workspaceId: string;
@@ -26,6 +30,16 @@ export function bearerToken(header: string): string | null {
 
 export function isGrantToken(value: string): boolean {
   return GRANT_TOKEN.test(value);
+}
+
+export interface MintedGrantToken {
+  readonly token: string;
+  readonly keyId: string;
+}
+
+export function mintGrantToken(): MintedGrantToken {
+  const keyId = randomBytes(KEY_ID_BYTES).toString('hex');
+  return { token: randomToken(`kro_${keyId}_`), keyId };
 }
 
 export function hashGrantToken(key: Uint8Array, token: string): Buffer {
