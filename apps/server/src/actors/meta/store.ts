@@ -22,6 +22,7 @@ export async function usableAppId(trx: TenantDb, provider: string): Promise<stri
     .where('provider', '=', provider)
     .where('status', '<>', 'disabled')
     .where('instance_host', '=', '')
+    .where('workspace_id', 'is', null)
     .limit(2)
     .execute();
   const [only] = rows;

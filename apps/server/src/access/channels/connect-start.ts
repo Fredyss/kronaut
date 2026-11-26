@@ -4,14 +4,7 @@ import * as z from 'zod';
 import { HttpError } from '../../base/http/errors.ts';
 import { bindRoute, type RequestContext } from '../../base/http/request.ts';
 import type { ProviderEntry } from '../../base/providers/providers.ts';
-import {
-  newState,
-  sealPending,
-  selectAppId,
-  sha256Hex,
-  stateKey,
-  storePending,
-} from './connect.ts';
+import { newState, sealPending, sha256Hex, stateKey, storePending } from './connect.ts';
 import {
   type ChannelRouteDeps,
   loadApp,
@@ -22,6 +15,7 @@ import {
 } from './deps.ts';
 import { instanceAppId } from './instance-apps.ts';
 import { normalizeInstanceHost } from './instance-host.ts';
+import { connectAppId } from './workspace-apps/store.ts';
 
 const LOGIN_HINT_MAX = 253;
 const INSTANCE_INPUT_MAX = 512;
@@ -95,13 +89,13 @@ async function startApp(
   try {
     appId =
       host === null
-        ? await ctx.tenant((trx) => selectAppId(trx, entry.manifest.id))
+        ? await ctx.tenant((trx) => connectAppId(trx, entry.manifest, workspaceId))
         : await instanceAppId(deps, ctx, { entry, workspaceId, host });
   } catch (err) {
     startFailure(err, appConfig, ctx, 'body.instance');
   }
   if (appId === null) throw appConfig;
-  const app = await loadApp(deps, appId, { use: 'connect' });
+  const app = await loadApp(deps, { appId, workspaceId }, { use: 'connect' });
   if (app === null) throw appConfig;
   return { appId, app };
 }

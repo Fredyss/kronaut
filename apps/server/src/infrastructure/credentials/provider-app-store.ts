@@ -7,6 +7,7 @@ import {
   sealCredential,
 } from '@kronaut/credentials';
 import type { TenantDb } from '@kronaut/db';
+import { sql } from 'kysely';
 import { loadPublishedKeys, loadSigningKeys, type SigningKeys } from './signing-keys.ts';
 
 const NIL_WORKSPACE_ID = '00000000-0000-0000-0000-000000000000';
@@ -47,9 +48,16 @@ export interface ProviderAppOptions {
   readonly keys?: SigningKeyRequest | undefined;
 }
 
+export interface WorkspaceAppRef {
+  readonly id: string;
+  readonly provider: string;
+  readonly workspaceId: string;
+}
+
 interface AppRow {
   readonly id: string;
   readonly provider: string;
+  readonly workspace_id: string | null;
   readonly client_secret_ciphertext: Buffer | null;
   readonly client_secret_nonce: Buffer | null;
   readonly client_secret_wrapped_dek: Buffer | null;
@@ -70,12 +78,16 @@ interface MutableApp {
   instanceHost?: string;
 }
 
-function secretAad(appId: string, provider: string): CredentialAad {
-  return { credentialId: appId, workspaceId: NIL_WORKSPACE_ID, provider };
+function secretAad(appId: string, provider: string, workspaceId: string | null): CredentialAad {
+  return { credentialId: appId, workspaceId: workspaceId ?? NIL_WORKSPACE_ID, provider };
 }
 
 function botTokenAad(appId: string, provider: string): CredentialAad {
   return { credentialId: appId, workspaceId: NIL_WORKSPACE_ID, provider: `bot_${provider}` };
+}
+
+function currentTenant() {
+  return sql<string | null>`nullif(current_setting('app.workspace_id', true), '')::uuid`;
 }
 
 function sealText(keyring: Keyring, aad: CredentialAad, text: string): SealedCredential {
@@ -96,19 +108,31 @@ function openText(keyring: Keyring, aad: CredentialAad, sealed: SealedCredential
   }
 }
 
-export function sealAppSecret(
-  keyring: Keyring,
-  appId: string,
-  provider: string,
-  secret: string,
-): SealedAppSecret {
-  const sealed = sealText(keyring, secretAad(appId, provider), secret);
+function sealedSecret(keyring: Keyring, aad: CredentialAad, secret: string): SealedAppSecret {
+  const sealed = sealText(keyring, aad, secret);
   return {
     client_secret_ciphertext: sealed.ciphertext,
     client_secret_nonce: sealed.nonce,
     client_secret_wrapped_dek: sealed.wrappedDek,
     kek_version: sealed.kekVersion,
   };
+}
+
+export function sealAppSecret(
+  keyring: Keyring,
+  appId: string,
+  provider: string,
+  secret: string,
+): SealedAppSecret {
+  return sealedSecret(keyring, secretAad(appId, provider, null), secret);
+}
+
+export function sealWorkspaceAppSecret(
+  keyring: Keyring,
+  app: WorkspaceAppRef,
+  secret: string,
+): SealedAppSecret {
+  return sealedSecret(keyring, secretAad(app.id, app.provider, app.workspaceId), secret);
 }
 
 export function sealBotToken(
@@ -141,7 +165,7 @@ function openAppSecrets(keyring: Keyring, row: AppRow, app: MutableApp): void {
     row.client_secret_wrapped_dek !== null &&
     row.kek_version !== null
   ) {
-    app.clientSecret = openText(keyring, secretAad(row.id, row.provider), {
+    app.clientSecret = openText(keyring, secretAad(row.id, row.provider, row.workspace_id), {
       ciphertext: row.client_secret_ciphertext,
       nonce: row.client_secret_nonce,
       wrappedDek: row.client_secret_wrapped_dek,
@@ -196,6 +220,7 @@ export async function loadProviderApp(
     .select([
       'id',
       'provider',
+      'workspace_id',
       'instance_host',
       'status',
       'client_id',
@@ -207,11 +232,15 @@ export async function loadProviderApp(
       'bot_token_nonce',
       'bot_token_wrapped_dek',
       'bot_token_kek_version',
-    ]);
+    ])
+    .where((eb) =>
+      eb.or([eb('workspace_id', 'is', null), eb('workspace_id', '=', currentTenant())]),
+    );
   query =
     'id' in where
       ? query.where('id', '=', where.id)
       : query
+          .where('workspace_id', 'is', null)
           .where('provider', '=', where.provider)
           .where('instance_host', '=', where.instanceHost)
           .where('status', '<>', 'disabled')
@@ -227,5 +256,11 @@ export async function loadProviderApp(
   };
   openAppSecrets(keyring, row, app);
   const signingKeyMissing = await attachKeys(db, keyring, row.id, { keys: options.keys, app });
-  return { id: row.id, provider: row.provider, status: row.status, app, signingKeyMissing };
+  return {
+    id: row.id,
+    provider: row.provider,
+    status: row.status,
+    app,
+    signingKeyMissing,
+  };
 }

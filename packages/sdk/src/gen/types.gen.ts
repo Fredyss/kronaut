@@ -4361,6 +4361,151 @@ export type PostsUnscheduleResponses = {
 
 export type PostsUnscheduleResponse = PostsUnscheduleResponses[keyof PostsUnscheduleResponses];
 
+export type ProviderAppsListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/provider-apps';
+};
+
+export type ProviderAppsListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ProviderAppsListError = ProviderAppsListErrors[keyof ProviderAppsListErrors];
+
+export type ProviderAppsListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            clientId: string;
+            createdAt: string;
+            provider: string;
+            status: 'active' | 'misconfigured' | 'disabled';
+            updatedAt: string;
+        }>;
+    };
+};
+
+export type ProviderAppsListResponse = ProviderAppsListResponses[keyof ProviderAppsListResponses];
+
+export type ProviderAppsRegisterData = {
+    body: {
+        clientId: string;
+        clientSecret: string;
+        provider: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/provider-apps';
+};
+
+export type ProviderAppsRegisterErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ProviderAppsRegisterError = ProviderAppsRegisterErrors[keyof ProviderAppsRegisterErrors];
+
+export type ProviderAppsRegisterResponses = {
+    /**
+     * OK
+     */
+    201: {
+        clientId: string;
+        createdAt: string;
+        provider: string;
+        status: 'active' | 'misconfigured' | 'disabled';
+        updatedAt: string;
+    };
+};
+
+export type ProviderAppsRegisterResponse = ProviderAppsRegisterResponses[keyof ProviderAppsRegisterResponses];
+
+export type ProviderAppsDisableData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        provider: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/provider-apps/{provider}/disable';
+};
+
+export type ProviderAppsDisableErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ProviderAppsDisableError = ProviderAppsDisableErrors[keyof ProviderAppsDisableErrors];
+
+export type ProviderAppsDisableResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type ProviderAppsDisableResponse = ProviderAppsDisableResponses[keyof ProviderAppsDisableResponses];
+
+export type ProviderAppsReplaceSecretData = {
+    body: {
+        clientSecret: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        provider: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/provider-apps/{provider}/secret';
+};
+
+export type ProviderAppsReplaceSecretErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type ProviderAppsReplaceSecretError = ProviderAppsReplaceSecretErrors[keyof ProviderAppsReplaceSecretErrors];
+
+export type ProviderAppsReplaceSecretResponses = {
+    /**
+     * OK
+     */
+    200: {
+        clientId: string;
+        createdAt: string;
+        provider: string;
+        status: 'active' | 'misconfigured' | 'disabled';
+        updatedAt: string;
+    };
+};
+
+export type ProviderAppsReplaceSecretResponse = ProviderAppsReplaceSecretResponses[keyof ProviderAppsReplaceSecretResponses];
+
 export type RssFeedsListData = {
     body?: never;
     path: {

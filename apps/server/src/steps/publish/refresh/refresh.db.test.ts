@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { setTimeout as sleep } from 'node:timers/promises';
 import type { Actor } from '@kronaut/db';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
@@ -6,9 +7,17 @@ import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { activateKey, createKey } from '../../../actors/cli/provider-apps.ts';
-import { loadCredential } from '../../../infrastructure/credentials/credential-store.ts';
+import {
+  loadCredential,
+  sealWorkspaceAppSecret,
+} from '../../../infrastructure/credentials/credential-store.ts';
 import { runPublish } from '../task.ts';
-import { type PublishFixture, type Seeded, startPublishFixture } from '../testing.ts';
+import {
+  FAKE_PROVIDER,
+  type PublishFixture,
+  type Seeded,
+  startPublishFixture,
+} from '../testing.ts';
 import { refreshCredential, refreshExpiring } from './refresh.ts';
 
 const SYSTEM: Actor = { kind: 'system' };
@@ -154,6 +163,37 @@ describe('credential refresh', () => {
         credentials: { token: 'old' },
       },
     ]);
+  });
+
+  it("refreshes from the cron through a workspace's own app, opened in that workspace", async () => {
+    const { fake, workspaceId } = fixture;
+    fake.configureAuth({ refresh: 'reusable', warnLeadMs: 0 });
+    const id = randomUUID();
+    const ref = { id, provider: FAKE_PROVIDER, workspaceId };
+    await fixture.db.withTenant(workspaceId, SYSTEM, (trx) =>
+      trx
+        .insertInto('provider_apps')
+        .values({
+          id,
+          provider: FAKE_PROVIDER,
+          client_id: 'fake-workspace-app',
+          workspace_id: workspaceId,
+          ...sealWorkspaceAppSecret(fixture.keyring, ref, 'CANARY_workspace_app_secret'),
+        })
+        .execute(),
+    );
+    const accountId = await fixture.connectAccount(id, {
+      value: { token: 'old' },
+      accessExpiresAt: inMinutes(5),
+    });
+    fake.scriptRefresh({
+      kind: 'issue',
+      issued: { credentials: { token: 'new' }, grantedScopes: [], accessExpiresAt: inMinutes(120) },
+    });
+
+    await refreshExpiring(fixture.deps);
+
+    expect(await credential(accountId)).toMatchObject({ version: 2, value: { token: 'new' } });
   });
 
   it('makes one provider call for two concurrent waiting refreshes', async () => {

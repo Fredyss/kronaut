@@ -89,7 +89,7 @@
 | `pending` after `public_send_at` | `verifying/provider_processing` |
 | `auth_expired` | refresh, then one retry |
 | `auth_revoked` (confirmed) | `blocked/account_needs_reauth` + `channel.needs_reauth`. The same transaction sets `social_accounts.status = 'needs_reauth'` and opens (or bumps) a `channel_incidents` `auth_revoked` row, both only if the account is unchanged since it was read |
-| `app_config` | `blocked/app_credentials_invalid`; sets `provider_apps.status = 'misconfigured'` and opens a `provider_app_incidents` row (instance-level). Never flags the account |
+| `app_config` | `blocked/app_credentials_invalid`; sets `provider_apps.status = 'misconfigured'` and, for an instance app, opens a `provider_app_incidents` row (instance-level); a workspace's own app (ADR-0067) gets no incident. Never flags the account |
 | `auth_*` / `app_config` after `public_send_at` | `unconfirmed/ambiguous_response` with the same side effects: the write-ahead marker means the post may be live, and `unconfirmed` makes "send again" ask for the duplicate acknowledgement, which `blocked → scheduled` would not |
 | `permanent` | `failed` with a localised message ([Frontend](08-frontend.md)) |
 | `duplicate` | `published` if a remoteId is known, otherwise `verifying` |
@@ -249,7 +249,7 @@ Events are written in the transaction that makes the change. Each event writes o
 | `channel.needs_reauth` | `flagAccount` flips the account to `needs_reauth` | `social_account_id`, `provider`, `reason` | — | `channel.needs_reauth.<accountId>.<status_changed_at>` |
 | `channel.expiring` | the credential refresh cron opens an `auth_expiring` incident (see Token refresh) | `social_account_id`, `provider`, `expires_at` (RFC 3339 UTC) | — | `channel.expiring.<accountId>.<incident id>` |
 | `channel.reconnected` | the OAuth connect callback (ADR-0053) sets a `needs_reauth` account back to `active` | `social_account_id`, `provider` | — | `channel.reconnected.<accountId>.<status_changed_at>` |
-| `provider_app.misconfigured` | `flagApp` flips the app to `misconfigured`; written in the workspace whose job flipped it (apps are instance-wide) | `provider_app_id`, `provider`, `code` | — | `provider_app.misconfigured.<appId>.<incident id>` |
+| `provider_app.misconfigured` | `flagApp` flips the app to `misconfigured`; written in the workspace whose job flipped it (an instance app is shared, so each workspace that hits it sees the event). A workspace's own app (ADR-0067) is flagged the same way but opens no `provider_app_incidents` row, so it shows in that workspace's settings and not on the instance status page; its dedupe key ends with the flip time instead | `provider_app_id`, `provider`, `code` | — | `provider_app.misconfigured.<appId>.<incident id>`, or `.<updated_at>` for a workspace app |
 | `post.approval_requested` | `posts.request_approval` opens a request | `post_id`, `approval_request_id` (public ids) | — | `post.approval_requested.<requestId>` |
 | `post.approved` / `post.rejected` | `approvals.decide` closes the request as `approved` (enough qualifying approvals) or `rejected` (`reject` or `request_changes`) | `post_id`, `approval_request_id` (public ids) | — | `post.approved.<requestId>` / `post.rejected.<requestId>` |
 

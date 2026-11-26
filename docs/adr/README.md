@@ -98,6 +98,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0064](0064-manual-only-providers.md) | A provider may require that a person chooses each post |
 | [0065](0065-pinterest-analytics-storage.md) | Kronaut stores Pinterest analytics despite the no-storage guideline |
 | [0066](0066-no-repeat-providers.md) | A provider may forbid repeats and warn on the same text across channels |
+| [0067](0067-workspace-provider-apps.md) | A workspace may bring its own provider app |
 
 ## Defaults
 

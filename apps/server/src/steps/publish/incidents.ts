@@ -112,20 +112,8 @@ export async function flagAccount(
   return true;
 }
 
-export async function flagApp(
-  trx: TenantDb,
-  workspaceId: string,
-  providerAppId: string,
-  code: string,
-): Promise<void> {
-  const flipped = await trx
-    .updateTable('provider_apps')
-    .set({ status: 'misconfigured' })
-    .where('id', '=', providerAppId)
-    .where('status', '=', 'active')
-    .returning('provider')
-    .executeTakeFirst();
-  const incident = await trx
+function openAppIncident(trx: TenantDb, providerAppId: string, code: string) {
+  return trx
     .insertInto('provider_app_incidents')
     .values({
       provider_app_id: providerAppId,
@@ -141,10 +129,37 @@ export async function flagApp(
     )
     .returning('id')
     .executeTakeFirstOrThrow();
+}
+
+// A workspace's own app shows in that workspace's settings, never as an instance incident (ADR-0067).
+export async function flagApp(
+  trx: TenantDb,
+  workspaceId: string,
+  providerAppId: string,
+  code: string,
+): Promise<void> {
+  const owner = await trx
+    .selectFrom('provider_apps')
+    .select('workspace_id')
+    .where('id', '=', providerAppId)
+    .executeTakeFirstOrThrow();
+  const flipped = await trx
+    .updateTable('provider_apps')
+    .set({ status: 'misconfigured' })
+    .where('id', '=', providerAppId)
+    .where('status', '=', 'active')
+    .returning(['provider', 'updated_at'])
+    .executeTakeFirst();
+  const incident =
+    owner.workspace_id === null ? await openAppIncident(trx, providerAppId, code) : null;
   if (flipped === undefined) return;
+  const flip =
+    incident === null
+      ? { flippedAt: Temporal.Instant.fromEpochMilliseconds(flipped.updated_at.getTime()) }
+      : { incidentId: incident.id };
   await writeWebhookEvent(
     trx,
-    providerAppMisconfiguredEvent(workspaceId, incident.id, {
+    providerAppMisconfiguredEvent(workspaceId, flip, {
       provider_app_id: providerAppId,
       provider: flipped.provider,
       code,

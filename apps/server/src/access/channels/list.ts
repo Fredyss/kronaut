@@ -167,9 +167,14 @@ function registersOnDemand({ manifest, runtime }: ProviderEntry): boolean {
   return manifest.auth.instanceScoped === true && runtime.registerApp !== undefined;
 }
 
+function takesWorkspaceApp(providers: ProviderRegistry, provider: string): boolean {
+  return providers.get(provider)?.manifest.workspaceApps === true;
+}
+
 export async function readyProviders(
   trx: TenantDb,
   providers: ProviderRegistry,
+  workspaceId: string,
 ): Promise<ReadonlySet<string>> {
   const rows = await trx
     .selectFrom('provider_apps as p')
@@ -181,6 +186,7 @@ export async function readyProviders(
           .whereRef('k.provider_app_id', '=', 'p.id');
       return [
         'p.provider',
+        'p.workspace_id',
         eb
           .or([eb.not(eb.exists(keys())), eb.exists(keys().where('k.status', '=', 'active'))])
           .as('ready'),
@@ -188,11 +194,20 @@ export async function readyProviders(
     })
     .where('p.status', '=', 'active')
     .where('p.instance_host', '=', '')
+    .where((eb) =>
+      eb.or([eb('p.workspace_id', 'is', null), eb('p.workspace_id', '=', workspaceId)]),
+    )
     .execute();
+  const instance = rows.filter((row) => row.workspace_id === null);
   const apps = new Map<string, number>();
-  for (const row of rows) apps.set(row.provider, (apps.get(row.provider) ?? 0) + 1);
+  for (const row of instance) apps.set(row.provider, (apps.get(row.provider) ?? 0) + 1);
   return new Set([
-    ...rows.filter((row) => row.ready && apps.get(row.provider) === 1).map((row) => row.provider),
+    ...instance
+      .filter((row) => row.ready && apps.get(row.provider) === 1)
+      .map((row) => row.provider),
+    ...rows
+      .filter((row) => row.workspace_id !== null && takesWorkspaceApp(providers, row.provider))
+      .map((row) => row.provider),
     ...providers
       .list()
       .filter(registersOnDemand)

@@ -12,6 +12,7 @@ export {
   type SigningKeyRequest,
   sealAppSecret,
   sealBotToken,
+  sealWorkspaceAppSecret,
 } from './provider-app-store.ts';
 
 export interface CredentialWrite {

@@ -85,9 +85,10 @@ describe('vocabulary', () => {
     }
   });
 
-  it('keeps audit:read and instance:read to owner and admin', () => {
+  it('keeps audit:read, instance:read and provider_apps:manage to owner and admin', () => {
     expect(ROLES.filter((r) => roleAllows(r, 'audit:read'))).toEqual(['owner', 'admin']);
     expect(ROLES.filter((r) => roleAllows(r, 'instance:read'))).toEqual(['owner', 'admin']);
+    expect(ROLES.filter((r) => roleAllows(r, 'provider_apps:manage'))).toEqual(['owner', 'admin']);
   });
 });
 
