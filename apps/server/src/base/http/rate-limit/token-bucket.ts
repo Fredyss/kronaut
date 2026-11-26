@@ -13,7 +13,8 @@ export type Take =
 const SECONDS_PER_MINUTE = 60;
 
 // now() is the transaction start, and the upsert's row lock can order an older transaction after a newer
-// one, so the elapsed time is floored at zero and updated_at never moves back.
+// one, so the elapsed time is floored at zero. trg_set_updated_at still stamps that older now(), so such
+// a race over-refills by the gap between the two transactions' starts, a few milliseconds at most.
 export async function takeToken(trx: TenantDb, { key, perMinute }: Bucket): Promise<Take> {
   const refilled = await sql<{ tokens: string }>`
     insert into rate_buckets as b (key, kind, capacity, tokens, refill_per_sec)
