@@ -86,6 +86,8 @@
   "server/flow/posts -> steps/queue/slots.ts",
   "server/flow/posts -> steps/tags/read.ts",
   "server/identity/webhooks -> infrastructure/credentials/webhook-secret.ts",
+  "server/identity/webhooks -> infrastructure/jobs/cron-tasks.ts",
+  "server/identity/webhooks -> infrastructure/jobs/workspace-sweep.ts",
   "server/identity/webhooks -> infrastructure/quota/window-quota.ts",
   "server/policy/approval-policy -> access/audit/write.ts",
   "server/records/analytics -> access/channels/channel-ref.ts",

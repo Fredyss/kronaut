@@ -1,5 +1,5 @@
 import type { Actor, Database } from '@kronaut/db';
-import { createHttpClient } from '@kronaut/egress';
+import { createHttpClient, type HttpClient } from '@kronaut/egress';
 import { type CronItem, type ParsedCronItem, parseCronItems, type TaskList } from 'graphile-worker';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
@@ -14,6 +14,9 @@ import { advanceSeries } from './actors/series/advance.ts';
 import { purgeInstanceRetention } from './actors/system/instance-retention.ts';
 import { checkApiVersionSunsets } from './actors/system/sunset.ts';
 import { recomputeTimes } from './flow/posts/schedule/tz-recompute.ts';
+import { type DeliveryDeps, deliverWebhooks } from './identity/webhooks/delivery/deliver.ts';
+import { WEBHOOK_EGRESS } from './identity/webhooks/delivery/egress.ts';
+import { purgeWebhookEvents } from './identity/webhooks/retention.ts';
 import { recordCronRun } from './infrastructure/jobs/cron-run.ts';
 import { CRON_TASKS, type CronTask, DAY_MS } from './infrastructure/jobs/cron-tasks.ts';
 import { JOBS } from './infrastructure/jobs/jobs.ts';
@@ -132,6 +135,18 @@ const CRON_ITEMS: readonly CronItem[] = [
     match: '7 * * * *',
     options: { backfillPeriod: 0, maxAttempts: 1 },
   },
+  {
+    task: CRON_TASKS.webhookDelivery,
+    identifier: CRON_TASKS.webhookDelivery,
+    match: '* * * * *',
+    options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
+    task: CRON_TASKS.webhookRetention,
+    identifier: CRON_TASKS.webhookRetention,
+    match: '47 3 * * *',
+    options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
+  },
 ];
 
 function registeredItems(email: boolean): CronItem[] {
@@ -180,12 +195,22 @@ async function maintainAuditPartitions(db: Database, logger: Logger): Promise<st
   return JSON.stringify(totals);
 }
 
+export type CronDeps = SweepDeps &
+  RefreshDeps &
+  MediaGcDeps & { readonly webhookHttp?: HttpClient };
+
+function webhookDeps(db: Database, logger: Logger, sweeps: CronDeps): DeliveryDeps {
+  const http = sweeps.webhookHttp ?? createHttpClient(WEBHOOK_EGRESS);
+  return { db, logger, keyring: sweeps.keyring, now: sweeps.now, http };
+}
+
 export function cronTaskList(
   db: Database,
   logger: Logger,
-  sweeps: SweepDeps & RefreshDeps & MediaGcDeps,
+  sweeps: CronDeps,
   email: EmailDeps | null = null,
 ): TaskList {
+  const webhooks = webhookDeps(db, logger, sweeps);
   return {
     ...(email === null
       ? {}
@@ -255,6 +280,12 @@ export function cronTaskList(
     },
     [CRON_TASKS.tzRecompute]: async () => {
       await recordCronRun(db, CRON_TASKS.tzRecompute, () => recomputeTimes(db, logger));
+    },
+    [CRON_TASKS.webhookDelivery]: async () => {
+      await recordCronRun(db, CRON_TASKS.webhookDelivery, () => deliverWebhooks(webhooks));
+    },
+    [CRON_TASKS.webhookRetention]: async () => {
+      await recordCronRun(db, CRON_TASKS.webhookRetention, () => purgeWebhookEvents(webhooks));
     },
   };
 }
