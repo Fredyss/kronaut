@@ -11,6 +11,7 @@ const listings = [
   ['verifyingDestinations', (limit: number) => sweeps.verifyingDestinations(limit)],
   ['quarantineDestinations', (limit: number) => sweeps.quarantineDestinations(limit)],
   ['expiringCredentials', (limit: number) => sweeps.expiringCredentials(60, limit)],
+  ['dueWebhookDeliveries', (limit: number) => sweeps.dueWebhookDeliveries(limit)],
   ['mediaGc', (limit: number) => sweeps.mediaGc(limit)],
   ['mediaImports', (limit: number) => sweeps.mediaImports(limit)],
   ['workspaces', (limit: number) => sweeps.workspaces(null, limit)],
