@@ -215,6 +215,7 @@
 /** @typedef {{}} Settings_Workspace_Apps_Client_Id_InvalidInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Client_Id_TakenInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Client_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Secret_InvalidInputs */
 /** @typedef {{}} Settings_Workspace_Apps_DisableInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Disable_BodyInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Disable_TitleInputs */
@@ -1185,6 +1186,10 @@ export const settings_workspace_apps_client_id_taken = /** @type {(inputs: Setti
 
 export const settings_workspace_apps_client_secret = /** @type {(inputs: Settings_Workspace_Apps_Client_SecretInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tajný klíč klienta`)
+};
+
+export const settings_workspace_apps_client_secret_invalid = /** @type {(inputs: Settings_Workspace_Apps_Client_Secret_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vložte tajný klíč přesně tak, jak ho zobrazuje vývojářský portál, bez mezer a speciálních znaků.`)
 };
 
 export const settings_workspace_apps_disable = /** @type {(inputs: Settings_Workspace_Apps_DisableInputs) => LocalizedString} */ () => {

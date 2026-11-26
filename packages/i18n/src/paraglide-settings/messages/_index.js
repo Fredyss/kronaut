@@ -217,6 +217,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Workspace_Apps_Client_Id_InvalidInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Client_Id_TakenInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Client_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Secret_InvalidInputs */
 /** @typedef {{}} Settings_Workspace_Apps_DisableInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Disable_BodyInputs */
 /** @typedef {{}} Settings_Workspace_Apps_Disable_TitleInputs */
@@ -3546,6 +3547,21 @@ export const settings_workspace_apps_client_secret = /** @type {((inputs?: Setti
 	if (locale === "sk") return __sk.settings_workspace_apps_client_secret(inputs)
 	if (locale === "cs") return __cs.settings_workspace_apps_client_secret(inputs)
 	return __en.settings_workspace_apps_client_secret(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Paste the secret exactly as the developer portal shows it, without spaces or special characters." |
+*
+* @param {Settings_Workspace_Apps_Client_Secret_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_secret_invalid = /** @type {((inputs?: Settings_Workspace_Apps_Client_Secret_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_Secret_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_secret_invalid(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_secret_invalid(inputs)
+	return __en.settings_workspace_apps_client_secret_invalid(inputs)
 });
 /**
 * | output |

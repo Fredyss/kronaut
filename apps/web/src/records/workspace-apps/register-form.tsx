@@ -58,6 +58,7 @@ export function RegisterForm({ workspaceId, provider, name }: RegisterFormProps)
           autoComplete="off"
           value={draft.clientSecret}
           maxLength={SECRET_MAX}
+          error={errors.clientSecret}
           onValueChange={(clientSecret) => setDraft((current) => ({ ...current, clientSecret }))}
         />
       </fieldset>

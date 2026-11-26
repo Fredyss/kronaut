@@ -19,6 +19,12 @@ describe('workspaceAppErrors', () => {
     ).toEqual({ clientId: settingsText.settings_workspace_apps_client_id_taken() });
   });
 
+  it('shows a rejected secret at the secret field', () => {
+    expect(
+      workspaceAppErrors(failed(422, 'unprocessable', ['body.clientSecret', 'invalid'])),
+    ).toEqual({ clientSecret: settingsText.settings_workspace_apps_client_secret_invalid() });
+  });
+
   it('shows an existing app and an unsupported provider for the whole form', () => {
     expect(
       workspaceAppErrors(failed(409, 'conflict', ['body.provider', 'workspace_app_exists'])),
@@ -30,9 +36,6 @@ describe('workspaceAppErrors', () => {
 
   it('falls back to the generic message for anything else', () => {
     expect(workspaceAppErrors(failed(404, 'not_found'))).toEqual({ form: m.error_generic() });
-    expect(
-      workspaceAppErrors(failed(422, 'unprocessable', ['body.clientSecret', 'invalid'])),
-    ).toEqual({ form: m.error_generic() });
     expect(workspaceAppErrors(new Error('offline'))).toEqual({ form: m.error_generic() });
   });
 });

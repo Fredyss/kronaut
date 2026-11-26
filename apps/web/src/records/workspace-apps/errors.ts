@@ -2,7 +2,7 @@ import { errorCode, errorDetails } from '../../base/api/errors.ts';
 import { apiErrorMessage } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 
-type Slot = 'clientId' | 'form';
+type Slot = 'clientId' | 'clientSecret' | 'form';
 
 export type WorkspaceAppErrors = Readonly<Partial<Record<Slot, string>>>;
 
@@ -14,6 +14,10 @@ const KNOWN: Readonly<Record<string, readonly [Slot, () => string]>> = {
   'body.clientId:client_id_taken': [
     'clientId',
     () => settingsText.settings_workspace_apps_client_id_taken(),
+  ],
+  'body.clientSecret:invalid': [
+    'clientSecret',
+    () => settingsText.settings_workspace_apps_client_secret_invalid(),
   ],
   'body.provider:workspace_app_exists': [
     'form',

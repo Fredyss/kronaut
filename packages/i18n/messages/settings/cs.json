@@ -425,6 +425,7 @@
   "settings_workspace_apps_keep": "Ponechat aplikaci",
   "settings_workspace_apps_disabled": "Aplikace je vypnutá",
   "settings_workspace_apps_client_id_invalid": "Toto ID klienta nemá formát, jaký síť používá. Zkopírujte ho z vývojářského portálu ještě jednou.",
+  "settings_workspace_apps_client_secret_invalid": "Vložte tajný klíč přesně tak, jak ho zobrazuje vývojářský portál, bez mezer a speciálních znaků.",
   "settings_workspace_apps_client_id_taken": "Toto ID klienta je na tomto serveru už zaregistrované.",
   "settings_workspace_apps_exists": "Váš pracovní prostor už pro tuto síť aplikaci má. Obnovte stránku a uvidíte ji.",
   "settings_workspace_apps_not_supported": "Tato síť na tomto serveru vlastní aplikaci pracovního prostoru nepřijímá."

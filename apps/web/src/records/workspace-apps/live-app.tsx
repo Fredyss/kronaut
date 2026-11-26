@@ -17,7 +17,8 @@ interface AppTarget {
 function SecretForm({ target, onClose }: { readonly target: AppTarget; onClose(): void }) {
   const [secret, setSecret] = useState('');
   const replace = useReplaceSecret(target.workspaceId, target.provider, onClose);
-  const error = replace.error === null ? undefined : workspaceAppErrors(replace.error).form;
+  const errors = replace.error === null ? {} : workspaceAppErrors(replace.error);
+  const error = errors.clientSecret ?? errors.form;
   const save = (event: FormEvent) => {
     event.preventDefault();
     if (secret.trim() !== '' && !replace.isPending) replace.mutate(secret);
