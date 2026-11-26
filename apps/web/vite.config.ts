@@ -39,8 +39,14 @@ function routeCatalog(id: string | null): string | null {
   return `messages-${group}-${file === 'registry' ? 'en' : file}`;
 }
 
+const ROUTE_LOADER = /\/apps\/web\/src\/i18n\/(\w+)\.ts$/;
+const ROUTE_RUNTIME = /paraglide-(\w+)\/runtime\.js$/;
+
 // sk and cs stay dynamic entries; capturing them in a group leaves a re-export facade behind.
+// A group's loader and runtime join its English catalog; on its own the loader was a chunk its routes shared.
 function routeEnglish(id: string): string | null {
+  const [, group = ''] = ROUTE_LOADER.exec(id) ?? ROUTE_RUNTIME.exec(id) ?? [];
+  if (Object.hasOwn(PARAGLIDE_GROUPS, group)) return `messages-${group}-en`;
   const name = routeCatalog(id);
   return name?.endsWith('-en') === true ? name : null;
 }
@@ -62,7 +68,8 @@ export default defineConfig({
       output: {
         codeSplitting: {
           groups: [
-            { name: routeEnglish },
+            // Pulling in the loader's dependencies moved the shell's locale code into a route catalog.
+            { name: routeEnglish, includeDependenciesRecursively: false },
             { name: 'x-count', test: /\/packages\/compose\/src\/(?:count-x|tlds)\.ts/ },
             // Split into their own files, these small modules each became a chunk with its own wrapper.
             {
