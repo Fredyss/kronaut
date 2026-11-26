@@ -77,8 +77,9 @@ function revokeAs(label: string, grantId: string, ws = workspaceId) {
   );
 }
 
-async function listAs(label: string, ws = workspaceId) {
-  return await requestAs(app, { cookie: cookies[label] ?? '' }, { method: 'GET', url: url(ws) });
+async function listAs(label: string, ws = workspaceId, query = '') {
+  const listUrl = `${url(ws)}${query}`;
+  return await requestAs(app, { cookie: cookies[label] ?? '' }, { method: 'GET', url: listUrl });
 }
 
 function brandsWith(token: string, ws = workspaceId) {
@@ -341,5 +342,53 @@ describe('workspace isolation (TEN-01)', () => {
     expect((await brandsWith(grant.token, otherWorkspace)).status).toBe(404);
     const theirs = (await (await listAs('other', otherWorkspace)).json()) as { items: Grant[] };
     expect(theirs.items).toEqual([]);
+  });
+});
+
+describe('listing', () => {
+  it('pages newest first by cursor and rejects a bad cursor or limit', async () => {
+    const ws = await provisionTestWorkspace(db, ownerId, `ws-grants-${randomUUID().slice(0, 8)}`);
+    const ids: string[] = [];
+    for (let n = 0; n < 3; n++) {
+      const response = await createAs('owner', {}, ws);
+      ids.unshift(((await response.json()) as Grant).id);
+    }
+    const first = (await (await listAs('owner', ws, '?limit=2')).json()) as {
+      items: Grant[];
+      nextCursor: string | null;
+    };
+    expect(first.items.map((item) => item.id)).toEqual(ids.slice(0, 2));
+    const rest = (await (
+      await listAs('owner', ws, `?limit=2&cursor=${first.nextCursor}`)
+    ).json()) as { items: Grant[]; nextCursor: string | null };
+    expect(rest.items.map((item) => item.id)).toEqual(ids.slice(2));
+    expect(rest.nextCursor).toBeNull();
+    expect((await listAs('owner', ws, '?cursor=nope')).status).toBe(400);
+    for (const limit of ['0', '101', 'x']) {
+      expect((await listAs('owner', ws, `?limit=${limit}`)).status).toBe(400);
+    }
+  });
+
+  it('neither lists nor revokes grants that are not API keys', async () => {
+    const oauth = await root.withActor(CLI, (trx) =>
+      trx
+        .insertInto('access_grants')
+        .values({
+          workspace_id: workspaceId,
+          kind: 'oauth',
+          name: 'Client',
+          sponsor_user_id: ownerId,
+          scopes: ['posts:read'],
+          resource_scope: 'workspace',
+        })
+        .returning('id')
+        .executeTakeFirstOrThrow(),
+    );
+    const id = encodePublicId('grant', oauth.id);
+    const listed = (await (await listAs('owner', workspaceId, '?limit=100')).json()) as {
+      items: Grant[];
+    };
+    expect(listed.items.some((item) => item.id === id)).toBe(false);
+    expect((await revokeAs('owner', id)).status).toBe(404);
   });
 });

@@ -4287,13 +4287,29 @@
     },
     "/v1/workspaces/{workspaceId}/grants": {
       "get": {
-        "description": "Newest first, revoked and expired keys included. The token is never listed; `tokenPrefix` names the key. Owners and admins with access to the whole workspace only, signed in; never an API key.",
+        "description": "Newest first, revoked and expired keys included; other grant kinds such as OAuth clients are never listed. limit 1–100, default 50; pass nextCursor as cursor for the next page. The token is never listed; `tokenPrefix` names the key. Owners and admins with access to the whole workspace only, signed in; never an API key.",
         "operationId": "grants.list",
         "parameters": [
           {
             "in": "path",
             "name": "workspaceId",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -4367,11 +4383,7 @@
                             "type": "string"
                           },
                           "kind": {
-                            "enum": [
-                              "api_key",
-                              "oauth",
-                              "internal_ai"
-                            ],
+                            "const": "api_key",
                             "type": "string"
                           },
                           "name": {
@@ -4450,10 +4462,17 @@
                         "type": "object"
                       },
                       "type": "array"
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   },
                   "required": [
-                    "items"
+                    "items",
+                    "nextCursor"
                   ],
                   "type": "object"
                 }
@@ -4655,11 +4674,7 @@
                       "type": "string"
                     },
                     "kind": {
-                      "enum": [
-                        "api_key",
-                        "oauth",
-                        "internal_ai"
-                      ],
+                      "const": "api_key",
                       "type": "string"
                     },
                     "name": {
@@ -4773,7 +4788,7 @@
     },
     "/v1/workspaces/{workspaceId}/grants/{grantId}/revoke": {
       "post": {
-        "description": "The key stops working with the next request. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (`owner_lost`). Owners and admins with access to the whole workspace only, signed in; never an API key.",
+        "description": "The key stops working with the next request. Only API keys can be revoked here; any other grant is 404. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (`owner_lost`). Owners and admins with access to the whole workspace only, signed in; never an API key.",
         "operationId": "grants.revoke",
         "parameters": [
           {

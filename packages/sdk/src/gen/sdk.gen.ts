@@ -553,7 +553,7 @@ export const channelsSetShortenLinks = <ThrowOnError extends boolean = true>(opt
 /**
  * List the workspace's API keys
  *
- * Newest first, revoked and expired keys included. The token is never listed; `tokenPrefix` names the key. Owners and admins with access to the whole workspace only, signed in; never an API key.
+ * Newest first, revoked and expired keys included; other grant kinds such as OAuth clients are never listed. limit 1–100, default 50; pass nextCursor as cursor for the next page. The token is never listed; `tokenPrefix` names the key. Owners and admins with access to the whole workspace only, signed in; never an API key.
  */
 export const grantsList = <ThrowOnError extends boolean = true>(options: Options<GrantsListData, ThrowOnError>): RequestResult<GrantsListResponses, GrantsListErrors, ThrowOnError> => (options.client ?? client).get<GrantsListResponses, GrantsListErrors, ThrowOnError>({
     security: [{
@@ -587,7 +587,7 @@ export const grantsCreate = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * Revoke an API key
  *
- * The key stops working with the next request. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (`owner_lost`). Owners and admins with access to the whole workspace only, signed in; never an API key.
+ * The key stops working with the next request. Only API keys can be revoked here; any other grant is 404. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (`owner_lost`). Owners and admins with access to the whole workspace only, signed in; never an API key.
  */
 export const grantsRevoke = <ThrowOnError extends boolean = true>(options: Options<GrantsRevokeData, ThrowOnError>): RequestResult<GrantsRevokeResponses, GrantsRevokeErrors, ThrowOnError> => (options.client ?? client).post<GrantsRevokeResponses, GrantsRevokeErrors, ThrowOnError>({
     security: [{

@@ -7,7 +7,7 @@ import { HttpError } from '../../../base/http/errors.ts';
 import type { RequestContext } from '../../../base/http/request.ts';
 import { GRANT_HASH_KEY_VERSION, hashGrantToken, mintGrantToken } from '../grant.ts';
 import { type AccessIds, refused } from './input.ts';
-import { GRANT_COLUMNS, type ListedGrant } from './store.ts';
+import { API_KEY, GRANT_COLUMNS, type ListedGrant } from './store.ts';
 
 type Ctx = Pick<RequestContext, 'tenant' | 'requestId' | 'logger'>;
 
@@ -163,6 +163,7 @@ export async function revokeGrant(actor: GrantActor, grantId: string): Promise<v
       .select(['kind', 'revoked_at'])
       .where('workspace_id', '=', workspaceId)
       .where('id', '=', grantId)
+      .where('kind', '=', API_KEY)
       .forUpdate()
       .executeTakeFirst();
     if (grant === undefined) throw new HttpError('not_found', 'Not found.');

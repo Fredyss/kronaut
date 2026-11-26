@@ -1,7 +1,7 @@
 import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import type { Temporal } from 'temporal-polyfill';
-import { type AccessIds, NO_ACCESS } from './input.ts';
+import { type AccessIds, type GrantPage, NO_ACCESS } from './input.ts';
 
 export interface GrantRow {
   readonly id: string;
@@ -55,34 +55,63 @@ function accessOf(rows: readonly ScopeRow[]): AccessIds {
   };
 }
 
-export async function listGrants(trx: TenantDb, workspaceId: string): Promise<ListedGrant[]> {
-  const rows = await trx
+export const API_KEY = 'api_key';
+export interface ListedPage {
+  readonly grants: ListedGrant[];
+  readonly nextAfter: string | null;
+}
+
+function byGrant<T extends { readonly grant_id: string | null }>(
+  rows: readonly T[],
+): Map<string, T[]> {
+  const grouped = new Map<string, T[]>();
+  for (const row of rows) {
+    if (row.grant_id === null) continue;
+    grouped.set(row.grant_id, [...(grouped.get(row.grant_id) ?? []), row]);
+  }
+  return grouped;
+}
+
+export async function listGrants(
+  trx: TenantDb,
+  workspaceId: string,
+  page: GrantPage,
+): Promise<ListedPage> {
+  let query = trx
     .selectFrom('access_grants')
     .select(GRANT_COLUMNS)
     .where('workspace_id', '=', workspaceId)
-    .orderBy('created_at', 'desc')
+    .where('kind', '=', API_KEY);
+  if (page.after !== null) query = query.where('id', '<', page.after);
+  const fetched = await query
     .orderBy('id', 'desc')
+    .limit(page.limit + 1)
     .execute();
+  const rows = fetched.slice(0, page.limit);
+  const ids = rows.map((row) => row.id);
+  if (ids.length === 0) return { grants: [], nextAfter: null };
   const keys = await trx
     .selectFrom('grant_tokens')
     .select(['grant_id', 'key_id'])
     .where('workspace_id', '=', workspaceId)
     .where('kind', '=', 'key')
+    .where('grant_id', 'in', ids)
     .execute();
   const scopes = await trx
     .selectFrom('access_scopes')
     .select(['grant_id', 'brand_id', 'location_id', 'social_account_id'])
     .where('workspace_id', '=', workspaceId)
-    .where('grant_id', 'is not', null)
+    .where('grant_id', 'in', ids)
     .execute();
-  return rows.map((row) => ({
+  const keyOf = byGrant(keys);
+  const scopesOf = byGrant(scopes);
+  const grants = rows.map((row) => ({
     row,
-    keyId: keys.find((key) => key.grant_id === row.id)?.key_id ?? null,
-    access:
-      row.resource_scope === 'restricted'
-        ? accessOf(scopes.filter((scope) => scope.grant_id === row.id))
-        : NO_ACCESS,
+    keyId: keyOf.get(row.id)?.[0]?.key_id ?? null,
+    access: row.resource_scope === 'restricted' ? accessOf(scopesOf.get(row.id) ?? []) : NO_ACCESS,
   }));
+  const last = rows.at(-1);
+  return { grants, nextAfter: fetched.length > page.limit && last !== undefined ? last.id : null };
 }
 
 function statusOf(row: GrantRow, now: Temporal.Instant): 'active' | 'expired' | 'revoked' {

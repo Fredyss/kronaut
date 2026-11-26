@@ -1,5 +1,5 @@
 import { defineRoute } from '@kronaut/contract';
-import { GRANTABLE_SCOPES } from '@kronaut/core';
+import { encodePublicId, GRANTABLE_SCOPES } from '@kronaut/core';
 import * as z from 'zod';
 import { HttpError } from '../../../base/http/errors.ts';
 import { pathId } from '../../../base/http/params.ts';
@@ -10,7 +10,10 @@ import {
   grantAccess,
   grantExpiry,
   grantName,
+  grantPage,
   grantScopes,
+  LIST_DEFAULT_LIMIT,
+  LIST_MAX_LIMIT,
   NAME_MAX,
   RATE_LIMIT_MAX,
 } from './input.ts';
@@ -31,7 +34,7 @@ const AccessSchema = z.object({
 
 const GrantSchema = z.object({
   id: z.string(),
-  kind: z.enum(['api_key', 'oauth', 'internal_ai']),
+  kind: z.literal('api_key'),
   name: z.string(),
   status: z.enum(['active', 'expired', 'revoked']),
   scopes: z.array(z.string()),
@@ -57,9 +60,10 @@ const listRoute = defineRoute({
   auth: 'session',
   action: 'grants:manage',
   params: WorkspaceParams,
-  response: z.object({ items: z.array(GrantSchema) }),
+  query: z.object({ cursor: z.string().optional(), limit: z.string().optional() }),
+  response: z.object({ items: z.array(GrantSchema), nextCursor: z.string().nullable() }),
   summary: "List the workspace's API keys",
-  description: `Newest first, revoked and expired keys included. The token is never listed; \`tokenPrefix\` names the key. ${RULES}`,
+  description: `Newest first, revoked and expired keys included; other grant kinds such as OAuth clients are never listed. limit 1–${LIST_MAX_LIMIT}, default ${LIST_DEFAULT_LIMIT}; pass nextCursor as cursor for the next page. The token is never listed; \`tokenPrefix\` names the key. ${RULES}`,
   tags: ['grants'],
 });
 
@@ -97,7 +101,7 @@ const revokeRoute = defineRoute({
   status: 204,
   idempotency: true,
   summary: 'Revoke an API key',
-  description: `The key stops working with the next request. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (\`owner_lost\`). ${RULES}`,
+  description: `The key stops working with the next request. Only API keys can be revoked here; any other grant is 404. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (\`owner_lost\`). ${RULES}`,
   tags: ['grants'],
 });
 
@@ -114,10 +118,13 @@ function bodyOf(ctx: RequestContext, grant: ListedGrant) {
 
 export function grantRoutes({ grantKey }: { readonly grantKey: Uint8Array }): BoundRoute[] {
   return [
-    bindRoute(listRoute, async ({ params }, ctx) => {
+    bindRoute(listRoute, async ({ params, query }, ctx) => {
       const { workspaceId } = actorOf(grantKey, ctx, params.workspaceId);
-      const grants = await ctx.tenant((trx) => listGrants(trx, workspaceId));
-      return { body: { items: grants.map((grant) => bodyOf(ctx, grant)) } };
+      const page = grantPage(query.cursor, query.limit);
+      const listed = await ctx.tenant((trx) => listGrants(trx, workspaceId, page));
+      const nextCursor =
+        listed.nextAfter === null ? null : encodePublicId('grant', listed.nextAfter);
+      return { body: { items: listed.grants.map((grant) => bodyOf(ctx, grant)), nextCursor } };
     }),
     bindRoute(createRoute, async ({ params, body }, ctx) => {
       const actor = actorOf(grantKey, ctx, params.workspaceId);

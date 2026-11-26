@@ -1383,7 +1383,10 @@ export type GrantsListData = {
     path: {
         workspaceId: string;
     };
-    query?: never;
+    query?: {
+        cursor?: string;
+        limit?: string;
+    };
     url: '/v1/workspaces/{workspaceId}/grants';
 };
 
@@ -1410,7 +1413,7 @@ export type GrantsListResponses = {
             createdAt: string;
             expiresAt: string | null;
             id: string;
-            kind: 'api_key' | 'oauth' | 'internal_ai';
+            kind: 'api_key';
             name: string;
             rateLimitPerMinute: number | null;
             resourceScope: 'workspace' | 'restricted';
@@ -1420,6 +1423,7 @@ export type GrantsListResponses = {
             status: 'active' | 'expired' | 'revoked';
             tokenPrefix: string | null;
         }>;
+        nextCursor: string | null;
     };
 };
 
@@ -1467,7 +1471,7 @@ export type GrantsCreateResponses = {
         createdAt: string;
         expiresAt: string | null;
         id: string;
-        kind: 'api_key' | 'oauth' | 'internal_ai';
+        kind: 'api_key';
         name: string;
         rateLimitPerMinute: number | null;
         resourceScope: 'workspace' | 'restricted';

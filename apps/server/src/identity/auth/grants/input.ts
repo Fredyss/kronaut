@@ -8,10 +8,18 @@ import {
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
 import { HttpError } from '../../../base/http/errors.ts';
+import { invalid } from '../../../base/http/issues.ts';
 
 export const NAME_MAX = 120;
 export const ACCESS_MAX = 100;
 export const RATE_LIMIT_MAX = 6000;
+export const LIST_DEFAULT_LIMIT = 50;
+export const LIST_MAX_LIMIT = 100;
+
+export interface GrantPage {
+  readonly after: string | null;
+  readonly limit: number;
+}
 
 const NEVER_GRANTABLE: ReadonlySet<string> = new Set(NEVER_GRANTABLE_ACTIONS);
 
@@ -78,4 +86,16 @@ export function grantAccess(restricted: boolean, access: AccessIds | undefined):
     locationIds: decodeAll('location', access.locationIds, 'body.access.locationIds'),
     accountIds: decodeAll('socialAccount', access.accountIds, 'body.access.accountIds'),
   };
+}
+
+export function grantPage(cursor: string | undefined, limit: string | undefined): GrantPage {
+  const after = cursor === undefined ? null : decodePublicId('grant', cursor);
+  if (cursor !== undefined && after === null) {
+    throw invalid([{ path: 'query.cursor', code: 'invalid_cursor' }]);
+  }
+  const size = limit === undefined ? LIST_DEFAULT_LIMIT : Number(limit);
+  if (!/^[0-9]{1,3}$/.test(limit ?? '1') || size < 1 || size > LIST_MAX_LIMIT) {
+    throw invalid([{ path: 'query.limit', code: 'invalid_limit' }]);
+  }
+  return { after, limit: size };
 }
