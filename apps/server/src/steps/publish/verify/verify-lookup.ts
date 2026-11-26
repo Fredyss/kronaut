@@ -6,7 +6,7 @@ import type { Temporal } from 'temporal-polyfill';
 import { lockPost } from '../../../access/post-access/lock.ts';
 import { PROVIDER_EGRESS } from '../../../base/providers/providers.ts';
 import type { DestinationJob } from '../../../infrastructure/jobs/jobs.ts';
-import { seedsPulls } from '../../../records/analytics/seed.ts';
+import { firstPullHours } from '../../../records/analytics/seed.ts';
 import { applyPlan, type PlanContext } from '../apply.ts';
 import { currentItem, selectItems } from '../chain.ts';
 import { unconfirmedIfBlocked } from '../plan.ts';
@@ -164,7 +164,7 @@ async function loadScope(
     socialAccountId: account.id,
     providerAppId: account.provider_app_id,
     credential: { unchangedSince: attempt.started_at },
-    analytics: manifest !== undefined && seedsPulls(manifest, dest.publish_type),
+    firstPullHours: manifest === undefined ? null : firstPullHours(manifest, dest.publish_type),
   };
   const now = deps.now();
   return { ...verifying, deps, trx, job, ref, attempt, account, context, now };

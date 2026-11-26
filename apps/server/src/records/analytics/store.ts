@@ -1,12 +1,12 @@
-import type { PostMetric, ProviderError } from '@kronaut/core';
-import { toDate } from '@kronaut/core';
+import { isCreditsDepleted, type PostMetric, type ProviderError, toDate } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import { Temporal } from 'temporal-polyfill';
-import { pullSteps } from './seed.ts';
+import { type PullPlan, pullSteps } from './seed.ts';
 
 export const MAX_ATTEMPTS = 3;
 const MAX_DEFER_HOURS = 3;
+const CREDITS_DEFER_HOURS = 24;
 
 export interface DueRow {
   readonly destinationId: string;
@@ -178,12 +178,15 @@ export type PullOutcome = 'advance' | 'transient' | 'done';
 export interface PullScope {
   readonly workspaceId: string;
   readonly now: Temporal.Instant;
-  readonly windowHours?: number | undefined;
 }
 
-function nextPullAt(row: DueRow, outcome: PullOutcome, scope: PullScope) {
+export interface SettleScope extends PullScope {
+  readonly plan: PullPlan;
+}
+
+function nextPullAt(row: DueRow, outcome: PullOutcome, scope: SettleScope) {
   if (outcome !== 'done') {
-    for (const [step, hours] of pullSteps(scope.windowHours)) {
+    for (const [step, hours] of pullSteps(scope.plan)) {
       const at = row.publishedAt.add({ hours });
       if (step > row.step && Temporal.Instant.compare(at, scope.now) > 0) {
         return { step, at: toDate(at) };
@@ -195,7 +198,7 @@ function nextPullAt(row: DueRow, outcome: PullOutcome, scope: PullScope) {
 
 export async function settlePull(
   trx: TenantDb,
-  scope: PullScope,
+  scope: SettleScope,
   row: DueRow,
   outcome: PullOutcome,
 ): Promise<PullOutcome> {
@@ -237,6 +240,7 @@ export async function endPulls(
 }
 
 export function resumeAt(now: Temporal.Instant, error: ProviderError | null): Date {
+  if (isCreditsDepleted(error)) return toDate(now.add({ hours: CREDITS_DEFER_HOURS }));
   if (error?.kind !== 'rate_limited') return toDate(now.add({ hours: 1 }));
   const floor = now.add({ minutes: 15 });
   const ceiling = now.add({ hours: MAX_DEFER_HOURS });
@@ -262,5 +266,17 @@ export async function deferPulls(
       rows.map((row) => row.destinationId),
     )
     .where('next_pull_at', 'is not', null)
+    .execute();
+}
+
+export async function purgeSnapshots(
+  trx: TenantDb,
+  workspaceId: string,
+  destinationId: string,
+): Promise<void> {
+  await trx
+    .deleteFrom('post_metric_snapshots')
+    .where('workspace_id', '=', workspaceId)
+    .where('destination_id', '=', destinationId)
     .execute();
 }

@@ -25,6 +25,7 @@ it('re-exports the public runtime names of every module', () => {
     'STATE_REASONS',
     'TOO_MANY_ACCOUNTS',
     'WEEKDAYS',
+    'analyticsScheduleOf',
     'authorize',
     'canTransition',
     'checkRule',
@@ -32,6 +33,7 @@ it('re-exports the public runtime names of every module', () => {
     'encodePublicId',
     'formatRule',
     'isAction',
+    'isCreditsDepleted',
     'isGrantableScope',
     'isProviderFailure',
     'isReasonFor',
@@ -41,6 +43,7 @@ it('re-exports the public runtime names of every module', () => {
     'resolveLocal',
     'roleAllows',
     'scheduleAt',
+    'stopsAnalytics',
     'toDate',
     'toDateOrNull',
   ]);

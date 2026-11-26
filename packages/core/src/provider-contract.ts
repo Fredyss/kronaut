@@ -80,6 +80,12 @@ export interface RateLimitSpec {
   readonly costPerPost: number;
 }
 
+export interface ProviderAnalytics {
+  readonly pullHours?: readonly number[];
+  readonly followersEveryDays?: number;
+  readonly purgeOnMissing?: boolean;
+}
+
 export type SettingOptions = Readonly<
   Record<string, readonly { readonly value: string; readonly label: string }[]>
 >;
@@ -114,6 +120,7 @@ export interface ProviderManifest<S = unknown> {
   readonly concurrency: number;
   readonly preview: PreviewArchetype;
   readonly capabilities: { readonly analytics: boolean; readonly delete: boolean };
+  readonly analytics?: ProviderAnalytics;
   readonly dataRetention?: { readonly disconnectedDays: number; readonly lapsedDays: number };
   readonly egressHosts: readonly string[];
   readonly manualOnly?: boolean;

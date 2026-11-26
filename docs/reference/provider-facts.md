@@ -493,7 +493,7 @@ Verified 2026-11-16 (D1, D3–D11).
 
 **X** (API v2, `api.x.com`, provider id `x_com`)
 
-X section verified 2026-11-23 against docs.x.com (X1–X15); video re-checked 2026-11-25 (X3–X5, X7, X11, X16–X20).
+X section verified 2026-11-23 against docs.x.com (X1–X15); video re-checked 2026-11-25 (X3–X5, X7, X11, X16–X20); analytics checked 2026-11-26 (X1, X3, X9, X13, X14, X21–X23).
 - **Pricing** (X1). Pay per use from the app's credit balance: "Post: Create" $0.015 per request, "Post: Create (with URL)" $0.200. "API requests will be blocked until you add credits to cover the negative balance"; no status code or body is documented.
   - Kronaut's mapping: manifest `cost` `per_post`, 15,000 µUSD, 200,000 µUSD with a link, `asOf` 2026-11-23. The composer prices each chain item as one post, at the link price when `extractXUrls()` finds a URL. **Assumption:** credits at zero or below answer HTTP 402, or a 403 whose body mentions credits; both map to permanent `credits_depleted`, which fails that post with a message to buy credits and send it again. It never flags the app: nothing reactivates a misconfigured app, so an app incident would outlast the top-up.
 - **Login** (X2, X8). OAuth 2.0 Authorization Code with PKCE. Authorize at `https://x.com/i/oauth2/authorize` (the guide's host); token `POST https://api.x.com/2/oauth2/token`, form-encoded. A confidential client authenticates with `Authorization: Basic base64(client_id:client_secret)` and needs no `client_id` in the body (X8). The access token lasts 2 h; a refresh token comes only with `offline.access`, and `grant_type=refresh_token` gets a new access token (X2). Refresh-token lifetime and rotation aren't documented.
@@ -521,7 +521,15 @@ X section verified 2026-11-23 against docs.x.com (X1–X15); video re-checked 20
   - Kronaut's mapping: 402, or 403 mentioning credits → permanent `credits_depleted`; other 403 → permanent `forbidden`; 400 → `invalid_request`; 404 → `not_found`; 401 → `auth_expired`, ambiguous on the `public` step; 5xx and timeouts → ambiguous after the send, else transient. The detail is `http_<status>` or `<status>/<problem name>`, never the body.
 - **Duplicates and idempotency.** The docs have no idempotency key and no documented duplicate-content error code.
 - **Data retention.** Stored X content must follow deletions on X: the manifest sets `dataRetention` 7 days after disconnect and 30 days after `needs_reauth`, as for YouTube and Pinterest.
-- **Not in this provider yet:** GIF and video (chunked upload, X4) and analytics.
+- **Analytics** (X1, X3, X9, X13, X14, X21–X23; checked 2026-11-26). Kronaut's mapping is ADR-0068.
+  - Post lookup (X21): `GET /2/tweets`, `ids` 1–100 Post ids (`^[0-9]{1,19}$`, comma-separated), scopes `tweet.read` and `users.read`. The reference names the field parameter `post.fields` and the repost count `repost_count`; the fields guide (X13) and the metrics page (X22) use `tweet.fields` and `retweet_count`. `public_metrics` holds `like_count`, `reply_count`, `quote_count`, `bookmark_count` and `impression_count` ("Number of times this Post has been viewed") as integers. A 200 "may include both `data` and `errors`": a missing Post is an `errors[]` entry with `resource_id`, `resource_type` and `type` `https://api.x.com/2/problems/resource-not-found`, and `not-authorized-for-resource` covers "private/protected content" (X14).
+  - Metrics (X22): public metrics come "with any authentication"; non-public and organic metrics need user context, only for posts the user owns, and are "only available for posts created within the last 30 days".
+  - Followers (X9, X13): `GET /2/users/me` takes `user.fields=public_metrics`; `public_metrics` has `followers_count`, `following_count` and `listed_count` (all required) plus a post count, named `post_count` in the reference and `tweet_count` in the fields guide.
+  - Rate limits (X3): `GET /2/tweets` 5,000 per 15 min per user and 3,500 per app; `GET /2/users/me` 75 per 15 min per user, no app limit listed; no 24 h limit for either.
+  - Pricing (X1): "Post read" $0.005 and "User read" $0.010 per resource returned; a resource already charged in the same UTC day isn't charged again (a "soft guarantee"); pay-per-use is capped at 3 million Post reads per billing cycle. The page says requests are blocked at a negative balance or a spending limit, with no status code.
+  - Deletion (X23): "you must delete or modify any content you have if it is deleted or modified on X", which includes content "made private or gained protected status", "as soon as reasonably possible, or within 24 hours after receiving a request".
+  - Kronaut's mapping: `capabilities.analytics`; pulls 24 h, 7 days and 29 days after publishing and follower counts every 7 days (manifest `analytics`), about $0.015 per post and $0.04 per channel a month. Batches of 100 ids with `tweet.fields=public_metrics` (the field name the verify read already uses; which one the API takes is a live-test item), `retweet_count` or else `repost_count` → `reposts`, the other counts as in the pipeline doc; no non-public or organic metrics. `resource-not-found` and `not-authorized-for-resource` → permanent `not_found`, which ends the pulls and deletes the post's snapshots (`purgeOnMissing`); another problem or an id missing from both lists → `transient`; any other permanent failure of the whole request (400, 403 without credits, 404) → `transient`, so it retries and moves to the next step instead of ending or purging every post in the batch. `credits_depleted` (402, or 403 mentioning credits, as for posting) moves the channel's reads 24 h ahead. Followers from `followers_count`; the same read refreshes the name, username and profile URL. **Live-test items:** `tweet.fields` vs `post.fields` and `retweet_count` vs `repost_count`; the status of an out-of-credits read.
+- **Not in this provider yet:** GIF.
 - **Repeats and duplicates** (ADR-0066): the manifest sets `noRepeats` (no evergreen fill, no repeat; RSS stays allowed) and `warnDuplicateText` (the composer and the RSS feed form warn when 2+ X channels would get the same text), from the Developer Policy: "Never post identical or substantially similar content across multiple accounts" (https://docs.x.com/developer-terms/policy, checked 2026-11-23).
 
 **Pinterest** (API v5, `api.pinterest.com`)
@@ -782,6 +790,9 @@ Pinterest section verified 2026-11-17 (P1–P7); video and carousel Pins verifie
 - X18 https://docs.x.com/x-api/media/finalize-media-upload (checked 2026-11-25)
 - X19 https://docs.x.com/x-api/media/get-media-upload-status (checked 2026-11-25)
 - X20 https://docs.x.com/x-api/media/introduction (checked 2026-11-25)
+- X21 https://docs.x.com/x-api/posts/get-posts-by-ids (checked 2026-11-26)
+- X22 https://docs.x.com/x-api/fundamentals/metrics (checked 2026-11-26)
+- X23 https://docs.x.com/developer-terms/policy (checked 2026-11-26)
 - P1 https://developers.pinterest.com/docs/getting-started/set-up-authentication-and-authorization/
 - P2 https://developers.pinterest.com/docs/key-concepts/access-tiers/
 - P3 https://developers.pinterest.com/docs/reference/rate-limits/

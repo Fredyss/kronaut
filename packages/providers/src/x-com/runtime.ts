@@ -1,4 +1,5 @@
 import type { ProviderRuntime } from '@kronaut/core';
+import { accountMetrics, postAnalytics } from './analytics.ts';
 import { connectFinish, connectStart } from './connect.ts';
 import type { XSettings } from './manifest.ts';
 import { refreshAccess, revokeTokens, type XCredentials, xCredentials } from './oauth.ts';
@@ -21,4 +22,8 @@ export const xRuntime: ProviderRuntime<XCredentials, XSettings> = {
   publish: publishPost,
 
   verify: verifyPost,
+
+  analytics: postAnalytics,
+
+  accountMetrics,
 };

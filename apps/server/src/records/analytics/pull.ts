@@ -1,10 +1,13 @@
 import {
   type AnalyticsResult,
+  analyticsScheduleOf,
   encodePublicId,
+  isCreditsDepleted,
   POST_METRICS,
   type PostMetrics,
   type ProviderError,
   type ProviderRuntime,
+  stopsAnalytics,
   toDate,
 } from '@kronaut/core';
 import type { Actor, TenantDb } from '@kronaut/db';
@@ -12,8 +15,8 @@ import { toProviderFailure } from '@kronaut/providers/failure';
 import { Temporal } from 'temporal-polyfill';
 import { createBaseContext, type ProviderEntry } from '../../base/providers/providers.ts';
 import { sweepCron } from '../../infrastructure/jobs/workspace-sweep.ts';
-import { pullFollowers } from './followers.ts';
-import { stepInside, windowHoursOf } from './seed.ts';
+import { deferFollowerRead, pullFollowers } from './followers.ts';
+import { pullPlanOf, stepInside } from './seed.ts';
 import {
   errorFields,
   metricValue,
@@ -30,6 +33,8 @@ import {
   insertSnapshots,
   latestSnapshots,
   type PullOutcome,
+  purgeSnapshots,
+  resumeAt,
   type Snapshot,
   settlePull,
   snapshotKey,
@@ -40,12 +45,6 @@ export type { PullDeps } from './source.ts';
 const TASK = 'analytics_pull';
 const LIMITS = { total: 100, perChannel: 25 };
 const SYSTEM: Actor = { kind: 'system' };
-const STOP_KINDS: ReadonlySet<ProviderError['kind']> = new Set([
-  'rate_limited',
-  'auth_expired',
-  'auth_revoked',
-  'app_config',
-]);
 
 type ReadAnalytics = NonNullable<ProviderRuntime['analytics']>;
 
@@ -61,6 +60,7 @@ interface Channel {
 type RowResult =
   | { readonly kind: 'metrics'; readonly metrics: PostMetrics }
   | { readonly kind: 'error'; readonly error: ProviderError }
+  | { readonly kind: 'request_error'; readonly error: ProviderError }
   | { readonly kind: 'unread' };
 
 interface Fetched {
@@ -111,14 +111,18 @@ async function changedSnapshots(
   );
 }
 
-function windowOf(channel: Pick<Channel, 'entry'>, row: DueRow): number | undefined {
-  return windowHoursOf(channel.entry.manifest, row.postType);
+// Only a post the network itself reported missing; a failed request must never wipe a whole channel's history.
+function purges(channel: Channel, result: RowResult): boolean {
+  if (result.kind !== 'error') return false;
+  const { error } = result;
+  const missing = error.kind === 'permanent' && error.code === 'not_found';
+  return missing && analyticsScheduleOf(channel.entry.manifest).purgeOnMissing;
 }
 
 async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetched) {
   const scope = { workspaceId: channel.workspaceId, now: run.deps.now() };
   for (const [row, result] of fetched.results) {
-    if (result.kind === 'error' && STOP_KINDS.has(result.error.kind)) {
+    if (result.kind === 'error' && stopsAnalytics(result.error)) {
       await deferPulls(trx, scope, [row], result.error);
       continue;
     }
@@ -127,10 +131,11 @@ async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetche
     run.counts.pulled++;
     const settled = await settlePull(
       trx,
-      { ...scope, windowHours: windowOf(channel, row) },
+      { ...scope, plan: pullPlanOf(channel.entry.manifest, row.postType) },
       row,
       outcome,
     );
+    if (purges(channel, result)) await purgeSnapshots(trx, channel.workspaceId, row.destinationId);
     if (settled === 'done') run.counts.done++;
     if (settled === 'transient') run.counts.retried++;
   }
@@ -160,9 +165,10 @@ async function stop(run: Run, channel: Channel, error: ProviderError): Promise<v
     'analytics pulls for a channel stopped for this run',
   );
   const scope = { workspaceId: channel.workspaceId, now: run.deps.now() };
-  await run.deps.db.withTenant(channel.workspaceId, SYSTEM, (trx) =>
-    deferPulls(trx, scope, channel.rows, error),
-  );
+  await run.deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
+    await deferPulls(trx, scope, channel.rows, error);
+    if (isCreditsDepleted(error)) await deferFollowerRead(trx, channel, resumeAt(scope.now, error));
+  });
 }
 
 async function fetchResults(run: Run, channel: Channel): Promise<Fetched | ProviderError> {
@@ -177,9 +183,9 @@ async function fetchResults(run: Run, channel: Channel): Promise<Fetched | Provi
     return { results, apiVersion: result.apiVersion, observedAt };
   } catch (err) {
     const error = toProviderFailure(err, 'none').error;
-    if (STOP_KINDS.has(error.kind)) return error;
+    if (stopsAnalytics(error)) return error;
     const results = new Map(
-      channel.rows.map((row): [DueRow, RowResult] => [row, { kind: 'error', error }]),
+      channel.rows.map((row): [DueRow, RowResult] => [row, { kind: 'request_error', error }]),
     );
     return { results, apiVersion: '', observedAt: toDate(deps.now()) };
   }
@@ -216,7 +222,7 @@ async function channelOf(
     : { ...ref, entry, read, rows, source };
 }
 
-// A row can sit on a step its post type's window no longer covers (a manifest change); the network has nothing left to read for it.
+// A row can sit on a step its post type's window or its provider's schedule no longer covers (a manifest change); the network has nothing left to read for it.
 async function endExpired(
   trx: TenantDb,
   run: Run,
@@ -227,8 +233,9 @@ async function endExpired(
   if (entry === undefined) return [...rows];
   const now = run.deps.now();
   const expired = rows.filter((row) => {
-    const windowHours = windowOf({ entry }, row);
-    if (!stepInside(row.step, windowHours)) return true;
+    const plan = pullPlanOf(entry.manifest, row.postType);
+    if (!stepInside(row.step, plan)) return true;
+    const { windowHours } = plan;
     if (windowHours === undefined) return false;
     return Temporal.Instant.compare(row.publishedAt.add({ hours: windowHours }), now) <= 0;
   });
