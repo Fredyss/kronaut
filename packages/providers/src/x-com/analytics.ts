@@ -8,6 +8,7 @@ import {
   type PostMetrics,
   type ProviderError,
   ProviderFailure,
+  stopsAnalytics,
 } from '@kronaut/core';
 import * as z from 'zod';
 import { countOf, NOT_FOUND, PostResults } from '../_kit/analytics.ts';
@@ -70,12 +71,12 @@ function problemError(entry: Problem): ProviderError {
   return { kind: 'transient', detail: name ?? 'unknown_problem' };
 }
 
-// A 404 for the whole request says nothing about any one post, and a missing post loses its stored metrics.
+// A failed request says nothing about any one post: a permanent error here would end every post's pulls, and a 404 would wipe their metrics.
 function requestFailure(error: unknown): unknown {
   if (!isProviderFailure(error)) return error;
   const failure = error.error;
-  if (failure.kind !== 'permanent' || failure.code !== 'not_found') return error;
-  return new ProviderFailure({ kind: 'transient', detail: failure.detail ?? 'http_404' });
+  if (failure.kind !== 'permanent' || stopsAnalytics(failure)) return error;
+  return new ProviderFailure({ kind: 'transient', detail: failure.detail ?? failure.code });
 }
 
 async function readChunk(

@@ -116,12 +116,12 @@ describe('x analytics', () => {
     });
   });
 
-  it('never reads a 404 for the whole request as a deleted post', async () => {
-    const { result } = await analytics(
-      [{ url: `${LOOKUP}${post(1)}${FIELDS}`, status: 404, json: {} }],
-      [post(1)],
-    );
-    expect(result.failed).toEqual({ [post(1)]: { kind: 'transient', detail: 'http_404' } });
+  it('never ends or purges a post because the whole request failed', async () => {
+    const url = `${LOOKUP}${post(1)}${FIELDS}`;
+    for (const status of [400, 403, 404]) {
+      const { result } = await analytics([{ url, status, json: {} }], [post(1)]);
+      expect(result.failed?.[post(1)]?.kind).toBe('transient');
+    }
   });
 
   it('stops the channel on spent credits, a rate limit or a dead token', async () => {
