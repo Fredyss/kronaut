@@ -23,7 +23,7 @@ export interface PlanContext {
   readonly socialAccountId: string;
   readonly providerAppId: string;
   readonly credential: CredentialFence;
-  readonly analytics: boolean;
+  readonly firstPullHours: number | null;
 }
 
 async function applySideEffect(
@@ -89,7 +89,8 @@ export async function applyPlan(
   await settleChainItems(trx, context.job, step);
   if (step.hold) return;
   await auditTransition(trx, ref, next, context.attemptId);
-  if (next.state === 'published' && context.analytics) await seedPulls(trx, ref);
+  if (next.state === 'published' && context.firstPullHours !== null)
+    await seedPulls(trx, ref, context.firstPullHours);
   if (next.sideEffect !== undefined) await applySideEffect(trx, context, next.sideEffect);
   await enqueueNext(trx, context.job, next);
 }

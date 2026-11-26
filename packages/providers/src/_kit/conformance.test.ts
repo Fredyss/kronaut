@@ -51,6 +51,16 @@ const RUNTIME: ProviderRuntime = {
 describe('conformanceProblems', () => {
   it('accepts a consistent provider', () => {
     expect(conformanceProblems(MANIFEST, RUNTIME)).toEqual([]);
+    const weekly = { ...MANIFEST, analytics: { pullHours: [24, 168, 696], followersEveryDays: 7 } };
+    expect(conformanceProblems(weekly, RUNTIME)).toEqual([]);
+  });
+
+  it('refuses a pull schedule that is empty, too long or not above 0', () => {
+    for (const pullHours of [[], [1, 2, 3, 4, 5, 6, 7], [0, 6], [1.5]]) {
+      expect(conformanceProblems({ ...MANIFEST, analytics: { pullHours } }, RUNTIME)).toEqual([
+        'analytics pull hours must be 1–6 whole hours, rising from above 0',
+      ]);
+    }
   });
 
   it('reports every inconsistency', () => {
@@ -75,6 +85,7 @@ describe('conformanceProblems', () => {
       ],
       settings: z.object({ lang: z.string() }),
       dataRetention: { disconnectedDays: 0, lapsedDays: 30 },
+      analytics: { pullHours: [24, 24], followersEveryDays: 0.5 },
     };
     expect(conformanceProblems(manifest, { ...bare, id: 'other' })).toEqual([
       'runtime id other ≠ example',
@@ -83,11 +94,13 @@ describe('conformanceProblems', () => {
       'post: no public step',
       'post: no text limit',
       'post: media min > max',
-      'post: analytics window must cover the first pull at 1 h',
+      'post: analytics window must cover the first pull at 24 h',
       'refresh rotating without runtime.refresh',
       'instanceScoped without runtime.registerApp',
       'a Kronaut picker needs accounts without refreshable secrets',
       'verify deterministic_id without runtime.verify',
+      'analytics pull hours must be 1–6 whole hours, rising from above 0',
+      'analytics follower cadence must be whole days, at least 1',
       'settings reject {}',
       'data retention days must be whole and at least 1',
     ]);

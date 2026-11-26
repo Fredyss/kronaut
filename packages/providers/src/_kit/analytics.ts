@@ -1,13 +1,11 @@
-import type { AnalyticsResult, PostMetrics, ProviderError } from '@kronaut/core';
+import {
+  type AnalyticsResult,
+  type PostMetrics,
+  type ProviderError,
+  stopsAnalytics,
+} from '@kronaut/core';
 import * as z from 'zod';
 import { toProviderFailure } from './failure.ts';
-
-const STOP_KINDS: ReadonlySet<ProviderError['kind']> = new Set([
-  'rate_limited',
-  'auth_expired',
-  'auth_revoked',
-  'app_config',
-]);
 
 const count = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
 
@@ -29,10 +27,10 @@ export class PostResults {
     this.#failed.set(remoteId, error);
   }
 
-  // A rate limit or a dead token stops the whole channel, so it must not hide behind one post.
+  // A rate limit, a dead token or spent credits stops the whole channel, so it must not hide behind one post.
   catch(remoteIds: readonly string[], error: unknown): void {
     const failure = toProviderFailure(error, 'none');
-    if (STOP_KINDS.has(failure.error.kind)) throw failure;
+    if (stopsAnalytics(failure.error)) throw failure;
     for (const remoteId of remoteIds) this.fail(remoteId, failure.error);
   }
 

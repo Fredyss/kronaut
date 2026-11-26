@@ -1,4 +1,5 @@
 import type {
+  AccountProfile,
   BaseContext,
   ConnectedAccount,
   ConnectFinishInput,
@@ -28,8 +29,13 @@ const me = z.looseObject({
     id: z.string().regex(X_ID),
     username: z.string().regex(USERNAME),
     name: z.string().optional(),
+    public_metrics: z
+      .looseObject({ followers_count: z.unknown().optional() })
+      .optional()
+      .catch(undefined),
   }),
 });
+type Me = z.infer<typeof me>['data'];
 
 export async function connectStart(
   _ctx: BaseContext,
@@ -55,12 +61,21 @@ function callbackCode(params: Readonly<Record<string, string>>): string {
   return code;
 }
 
-async function readMe(ctx: BaseContext, token: string) {
-  const response = await send(ctx, 'none', `${API_BASE}/users/me`, {
+export async function readMe(ctx: BaseContext, token: string, query = ''): Promise<Me> {
+  const response = await send(ctx, 'none', `${API_BASE}/users/me${query}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!isSuccess(response.status)) throw await xFailure(response, 'none', ctx.now());
   return (await readJson(response, me, 'none')).data;
+}
+
+export function profileOf(user: Me): Required<AccountProfile> {
+  const name = user.name?.normalize('NFC').trim() ?? '';
+  return {
+    displayName: name === '' ? user.username : name,
+    handle: user.username,
+    profileUrl: `https://x.com/${user.username}`,
+  };
 }
 
 export async function connectFinish(
@@ -79,15 +94,12 @@ export async function connectFinish(
   if (!SCOPES.every((scope) => issued.grantedScopes.includes(scope)))
     throw permanent('scope_missing');
   const user = await readMe(ctx, issued.credentials.accessToken);
-  const name = user.name?.normalize('NFC').trim() ?? '';
   return [
     {
       ...issued,
       providerAccountId: user.id,
       accountKind: 'account',
-      handle: user.username,
-      displayName: name === '' ? user.username : name,
-      profileUrl: `https://x.com/${user.username}`,
+      ...profileOf(user),
       subjectId: user.id,
     },
   ];
