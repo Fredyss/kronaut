@@ -207,6 +207,38 @@
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CancelInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_IdInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_TakenInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Secret_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisableInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Disable_BodyInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Disable_TitleInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisabledInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ExistsInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_InstanceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_IntroInputs */
+/** @typedef {{}} Settings_Workspace_Apps_KeepInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NavInputs */
+/** @typedef {{}} Settings_Workspace_Apps_New_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NoneInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Not_SupportedInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Own_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisterInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisteredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ReplaceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Save_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Secret_ReplacedInputs */
+/** @typedef {{}} Settings_Workspace_Apps_StatusInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_ActiveInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_TitleInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
 /** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
 /** @typedef {{}} System_Api_EndedInputs */
@@ -1122,6 +1154,134 @@ export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Povolený posun po schválení (v minutách)`)
+};
+
+export const settings_workspace_apps_active_note = /** @type {(inputs: Settings_Workspace_Apps_Active_NoteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Nové kanály sítě ${i?.provider} se připojují přes tuto aplikaci a síť ${i?.provider} účtuje vašemu vývojářskému účtu.`)
+};
+
+export const settings_workspace_apps_callback = /** @type {(inputs: Settings_Workspace_Apps_CallbackInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Adresa zpětného volání`)
+};
+
+export const settings_workspace_apps_callback_hint = /** @type {(inputs: Settings_Workspace_Apps_Callback_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Přidejte tuto adresu ke své aplikaci ve vývojářském portálu sítě ${i?.provider}.`)
+};
+
+export const settings_workspace_apps_cancel = /** @type {(inputs: Settings_Workspace_Apps_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit`)
+};
+
+export const settings_workspace_apps_client_id = /** @type {(inputs: Settings_Workspace_Apps_Client_IdInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`ID klienta`)
+};
+
+export const settings_workspace_apps_client_id_invalid = /** @type {(inputs: Settings_Workspace_Apps_Client_Id_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Toto ID klienta nemá formát, jaký síť používá. Zkopírujte ho z vývojářského portálu ještě jednou.`)
+};
+
+export const settings_workspace_apps_client_id_taken = /** @type {(inputs: Settings_Workspace_Apps_Client_Id_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Toto ID klienta je na tomto serveru už zaregistrované.`)
+};
+
+export const settings_workspace_apps_client_secret = /** @type {(inputs: Settings_Workspace_Apps_Client_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tajný klíč klienta`)
+};
+
+export const settings_workspace_apps_client_secret_invalid = /** @type {(inputs: Settings_Workspace_Apps_Client_Secret_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vložte tajný klíč přesně tak, jak ho zobrazuje vývojářský portál, bez mezer a speciálních znaků.`)
+};
+
+export const settings_workspace_apps_disable = /** @type {(inputs: Settings_Workspace_Apps_DisableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vypnout aplikaci`)
+};
+
+export const settings_workspace_apps_disable_body = /** @type {(inputs: Settings_Workspace_Apps_Disable_BodyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Kanály připojené přes tuto aplikaci přestanou publikovat, dokud je znovu nepřipojíte. Nová připojení sítě ${i?.provider} pak použijí aplikaci tohoto serveru, pokud ji má.`)
+};
+
+export const settings_workspace_apps_disable_title = /** @type {(inputs: Settings_Workspace_Apps_Disable_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vypnout tuto aplikaci?`)
+};
+
+export const settings_workspace_apps_disabled = /** @type {(inputs: Settings_Workspace_Apps_DisabledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aplikace je vypnutá`)
+};
+
+export const settings_workspace_apps_exists = /** @type {(inputs: Settings_Workspace_Apps_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Váš pracovní prostor už pro tuto síť aplikaci má. Obnovte stránku a uvidíte ji.`)
+};
+
+export const settings_workspace_apps_instance = /** @type {(inputs: Settings_Workspace_Apps_InstanceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Nové kanály sítě ${i?.provider} se teď připojují přes aplikaci tohoto serveru, pokud ji má. Platí za ně provozovatel serveru, váš pracovní prostor síti ${i?.provider} neplatí nic.`)
+};
+
+export const settings_workspace_apps_intro = /** @type {(inputs: Settings_Workspace_Apps_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Některé sítě účtují každý příspěvek i každé čtení vlastníkovi vývojářské aplikace. Když si zaregistrujete vlastní aplikaci pracovního prostoru, síť bude účtovat vašemu vývojářskému účtu, a ne provozovateli tohoto serveru.`)
+};
+
+export const settings_workspace_apps_keep = /** @type {(inputs: Settings_Workspace_Apps_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat aplikaci`)
+};
+
+export const settings_workspace_apps_misconfigured = /** @type {(inputs: Settings_Workspace_Apps_MisconfiguredInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Síť ${i?.provider} odmítla přihlašovací údaje této aplikace. Dokud tu nenahradíte tajný klíč klienta nebo neopravíte nastavení aplikace ve vývojářském portálu sítě ${i?.provider}, kanály této sítě nepůjde připojit.`)
+};
+
+export const settings_workspace_apps_nav = /** @type {(inputs: Settings_Workspace_Apps_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vlastní aplikace`)
+};
+
+export const settings_workspace_apps_new_secret = /** @type {(inputs: Settings_Workspace_Apps_New_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nový tajný klíč klienta`)
+};
+
+export const settings_workspace_apps_none = /** @type {(inputs: Settings_Workspace_Apps_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Na tomto serveru žádná síť vlastní aplikaci pracovního prostoru nepřijímá.`)
+};
+
+export const settings_workspace_apps_not_supported = /** @type {(inputs: Settings_Workspace_Apps_Not_SupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tato síť na tomto serveru vlastní aplikaci pracovního prostoru nepřijímá.`)
+};
+
+export const settings_workspace_apps_own_hint = /** @type {(inputs: Settings_Workspace_Apps_Own_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`S vlastní aplikací platí váš pracovní prostor síti ${i?.provider} přímo za to, co využije.`)
+};
+
+export const settings_workspace_apps_register = /** @type {(inputs: Settings_Workspace_Apps_RegisterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zaregistrovat aplikaci`)
+};
+
+export const settings_workspace_apps_registered = /** @type {(inputs: Settings_Workspace_Apps_RegisteredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aplikace je zaregistrovaná`)
+};
+
+export const settings_workspace_apps_replace = /** @type {(inputs: Settings_Workspace_Apps_ReplaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nahradit tajný klíč`)
+};
+
+export const settings_workspace_apps_save_secret = /** @type {(inputs: Settings_Workspace_Apps_Save_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uložit klíč`)
+};
+
+export const settings_workspace_apps_secret_replaced = /** @type {(inputs: Settings_Workspace_Apps_Secret_ReplacedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tajný klíč je nahrazený`)
+};
+
+export const settings_workspace_apps_status = /** @type {(inputs: Settings_Workspace_Apps_StatusInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stav`)
+};
+
+export const settings_workspace_apps_status_active = /** @type {(inputs: Settings_Workspace_Apps_Status_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aktivní`)
+};
+
+export const settings_workspace_apps_status_misconfigured = /** @type {(inputs: Settings_Workspace_Apps_Status_MisconfiguredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyžaduje pozornost`)
+};
+
+export const settings_workspace_apps_title = /** @type {(inputs: Settings_Workspace_Apps_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vlastní aplikace sítí`)
 };
 
 export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs) => LocalizedString} */ () => {

@@ -40,9 +40,9 @@ const listRoute = defineRoute({
   auth: 'session',
   action: 'provider_apps:manage',
   params: WorkspaceParams,
-  response: z.object({ items: z.array(WorkspaceAppSchema) }),
+  response: z.object({ items: z.array(WorkspaceAppSchema), supported: z.array(z.string()) }),
   summary: "List the workspace's own provider apps",
-  description: `Newest first, disabled apps included. Instance-wide apps are not listed. ${RULES}`,
+  description: `Newest first, disabled apps included. Instance-wide apps are not listed. \`supported\` lists the providers that take a workspace app on this server. ${RULES}`,
   tags: ['provider-apps'],
 });
 
@@ -123,6 +123,13 @@ function supportedProvider(providers: ProviderRegistry, provider: string, path: 
   return provider;
 }
 
+function supportedProviders(providers: ProviderRegistry): string[] {
+  return providers
+    .list()
+    .filter(({ manifest }) => manifest.workspaceApps === true)
+    .map(({ manifest }) => manifest.id);
+}
+
 function validClientId(provider: string, clientId: string): string {
   const trimmed = clientId.trim();
   if (!isSecretAppProvider(provider) || !clientIdValid(provider, trimmed)) {
@@ -138,7 +145,7 @@ export function workspaceAppRoutes(deps: ChannelRouteDeps): BoundRoute[] {
     bindRoute(listRoute, async ({ params }, ctx) => {
       const { workspaceId } = actorOf(deps, ctx, params.workspaceId);
       const rows = await ctx.tenant((trx) => listWorkspaceApps(trx, workspaceId));
-      return { body: { items: rows.map(itemOf) } };
+      return { body: { items: rows.map(itemOf), supported: supportedProviders(deps.providers) } };
     }),
     bindRoute(registerRoute, async ({ params, body }, ctx) => {
       const actor = actorOf(deps, ctx, params.workspaceId);

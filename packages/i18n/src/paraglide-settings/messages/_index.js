@@ -209,6 +209,38 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CancelInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_IdInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_TakenInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Secret_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisableInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Disable_BodyInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Disable_TitleInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisabledInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ExistsInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_InstanceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_IntroInputs */
+/** @typedef {{}} Settings_Workspace_Apps_KeepInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NavInputs */
+/** @typedef {{}} Settings_Workspace_Apps_New_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NoneInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Not_SupportedInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Own_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisterInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisteredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ReplaceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Save_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Secret_ReplacedInputs */
+/** @typedef {{}} Settings_Workspace_Apps_StatusInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_ActiveInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_TitleInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
 /** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
 /** @typedef {{}} System_Api_EndedInputs */
@@ -3395,6 +3427,486 @@ export const settings_tolerance = /** @type {((inputs?: Settings_ToleranceInputs
 	if (locale === "sk") return __sk.settings_tolerance(inputs)
 	if (locale === "cs") return __cs.settings_tolerance(inputs)
 	return __en.settings_tolerance(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "New {provider} channels connect through this app, and {provider} bills your developer account." |
+*
+* @param {Settings_Workspace_Apps_Active_NoteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_active_note = /** @type {((inputs: Settings_Workspace_Apps_Active_NoteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Active_NoteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_active_note(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_active_note(inputs)
+	return __en.settings_workspace_apps_active_note(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Callback URL" |
+*
+* @param {Settings_Workspace_Apps_CallbackInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_callback = /** @type {((inputs?: Settings_Workspace_Apps_CallbackInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_CallbackInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_callback(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_callback(inputs)
+	return __en.settings_workspace_apps_callback(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add this callback URL to your app in the {provider} developer portal." |
+*
+* @param {Settings_Workspace_Apps_Callback_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_callback_hint = /** @type {((inputs: Settings_Workspace_Apps_Callback_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Callback_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_callback_hint(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_callback_hint(inputs)
+	return __en.settings_workspace_apps_callback_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Workspace_Apps_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_cancel = /** @type {((inputs?: Settings_Workspace_Apps_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_cancel(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_cancel(inputs)
+	return __en.settings_workspace_apps_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Client ID" |
+*
+* @param {Settings_Workspace_Apps_Client_IdInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_id = /** @type {((inputs?: Settings_Workspace_Apps_Client_IdInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_IdInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_id(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_id(inputs)
+	return __en.settings_workspace_apps_client_id(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This client ID doesn't match the network's format. Copy it from the developer portal again." |
+*
+* @param {Settings_Workspace_Apps_Client_Id_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_id_invalid = /** @type {((inputs?: Settings_Workspace_Apps_Client_Id_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_Id_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_id_invalid(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_id_invalid(inputs)
+	return __en.settings_workspace_apps_client_id_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This client ID is already registered on this server." |
+*
+* @param {Settings_Workspace_Apps_Client_Id_TakenInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_id_taken = /** @type {((inputs?: Settings_Workspace_Apps_Client_Id_TakenInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_Id_TakenInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_id_taken(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_id_taken(inputs)
+	return __en.settings_workspace_apps_client_id_taken(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Client secret" |
+*
+* @param {Settings_Workspace_Apps_Client_SecretInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_secret = /** @type {((inputs?: Settings_Workspace_Apps_Client_SecretInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_SecretInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_secret(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_secret(inputs)
+	return __en.settings_workspace_apps_client_secret(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Paste the secret exactly as the developer portal shows it, without spaces or special characters." |
+*
+* @param {Settings_Workspace_Apps_Client_Secret_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_client_secret_invalid = /** @type {((inputs?: Settings_Workspace_Apps_Client_Secret_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Client_Secret_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_client_secret_invalid(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_client_secret_invalid(inputs)
+	return __en.settings_workspace_apps_client_secret_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Disable app" |
+*
+* @param {Settings_Workspace_Apps_DisableInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_disable = /** @type {((inputs?: Settings_Workspace_Apps_DisableInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_DisableInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_disable(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_disable(inputs)
+	return __en.settings_workspace_apps_disable(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channels connected through this app stop publishing until you reconnect them. New {provider} connects then use this server's app, if it has one." |
+*
+* @param {Settings_Workspace_Apps_Disable_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_disable_body = /** @type {((inputs: Settings_Workspace_Apps_Disable_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Disable_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_disable_body(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_disable_body(inputs)
+	return __en.settings_workspace_apps_disable_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Disable this app?" |
+*
+* @param {Settings_Workspace_Apps_Disable_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_disable_title = /** @type {((inputs?: Settings_Workspace_Apps_Disable_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Disable_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_disable_title(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_disable_title(inputs)
+	return __en.settings_workspace_apps_disable_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "App disabled" |
+*
+* @param {Settings_Workspace_Apps_DisabledInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_disabled = /** @type {((inputs?: Settings_Workspace_Apps_DisabledInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_DisabledInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_disabled(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_disabled(inputs)
+	return __en.settings_workspace_apps_disabled(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Your workspace already has an app for this network. Reload the page to see it." |
+*
+* @param {Settings_Workspace_Apps_ExistsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_exists = /** @type {((inputs?: Settings_Workspace_Apps_ExistsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_ExistsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_exists(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_exists(inputs)
+	return __en.settings_workspace_apps_exists(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Right now, new {provider} channels connect through this server's app, if it has one. The server's operator pays {provider} for them, and your workspace pays ..." |
+*
+* @param {Settings_Workspace_Apps_InstanceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_instance = /** @type {((inputs: Settings_Workspace_Apps_InstanceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_InstanceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_instance(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_instance(inputs)
+	return __en.settings_workspace_apps_instance(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Some networks bill the owner of the developer app for every post and read. Register your workspace's own app, and the network bills your developer account in..." |
+*
+* @param {Settings_Workspace_Apps_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_intro = /** @type {((inputs?: Settings_Workspace_Apps_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_intro(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_intro(inputs)
+	return __en.settings_workspace_apps_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep app" |
+*
+* @param {Settings_Workspace_Apps_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_keep = /** @type {((inputs?: Settings_Workspace_Apps_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_keep(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_keep(inputs)
+	return __en.settings_workspace_apps_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "{provider} refused this app's credentials. Connecting {provider} channels fails until you replace the client secret here or fix the app's settings in the {pr..." |
+*
+* @param {Settings_Workspace_Apps_MisconfiguredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_misconfigured = /** @type {((inputs: Settings_Workspace_Apps_MisconfiguredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_MisconfiguredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_misconfigured(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_misconfigured(inputs)
+	return __en.settings_workspace_apps_misconfigured(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Own apps" |
+*
+* @param {Settings_Workspace_Apps_NavInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_nav = /** @type {((inputs?: Settings_Workspace_Apps_NavInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_NavInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_nav(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_nav(inputs)
+	return __en.settings_workspace_apps_nav(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "New client secret" |
+*
+* @param {Settings_Workspace_Apps_New_SecretInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_new_secret = /** @type {((inputs?: Settings_Workspace_Apps_New_SecretInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_New_SecretInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_new_secret(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_new_secret(inputs)
+	return __en.settings_workspace_apps_new_secret(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No network on this server takes a workspace's own app." |
+*
+* @param {Settings_Workspace_Apps_NoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_none = /** @type {((inputs?: Settings_Workspace_Apps_NoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_NoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_none(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_none(inputs)
+	return __en.settings_workspace_apps_none(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This network doesn't take a workspace's own app on this server." |
+*
+* @param {Settings_Workspace_Apps_Not_SupportedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_not_supported = /** @type {((inputs?: Settings_Workspace_Apps_Not_SupportedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Not_SupportedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_not_supported(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_not_supported(inputs)
+	return __en.settings_workspace_apps_not_supported(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "With your own app, your workspace pays {provider} directly for what it uses." |
+*
+* @param {Settings_Workspace_Apps_Own_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_own_hint = /** @type {((inputs: Settings_Workspace_Apps_Own_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Own_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_own_hint(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_own_hint(inputs)
+	return __en.settings_workspace_apps_own_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Register app" |
+*
+* @param {Settings_Workspace_Apps_RegisterInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_register = /** @type {((inputs?: Settings_Workspace_Apps_RegisterInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_RegisterInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_register(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_register(inputs)
+	return __en.settings_workspace_apps_register(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "App registered" |
+*
+* @param {Settings_Workspace_Apps_RegisteredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_registered = /** @type {((inputs?: Settings_Workspace_Apps_RegisteredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_RegisteredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_registered(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_registered(inputs)
+	return __en.settings_workspace_apps_registered(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Replace secret" |
+*
+* @param {Settings_Workspace_Apps_ReplaceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_replace = /** @type {((inputs?: Settings_Workspace_Apps_ReplaceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_ReplaceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_replace(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_replace(inputs)
+	return __en.settings_workspace_apps_replace(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Save secret" |
+*
+* @param {Settings_Workspace_Apps_Save_SecretInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_save_secret = /** @type {((inputs?: Settings_Workspace_Apps_Save_SecretInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Save_SecretInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_save_secret(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_save_secret(inputs)
+	return __en.settings_workspace_apps_save_secret(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Client secret replaced" |
+*
+* @param {Settings_Workspace_Apps_Secret_ReplacedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_secret_replaced = /** @type {((inputs?: Settings_Workspace_Apps_Secret_ReplacedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Secret_ReplacedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_secret_replaced(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_secret_replaced(inputs)
+	return __en.settings_workspace_apps_secret_replaced(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Status" |
+*
+* @param {Settings_Workspace_Apps_StatusInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_status = /** @type {((inputs?: Settings_Workspace_Apps_StatusInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_StatusInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_status(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_status(inputs)
+	return __en.settings_workspace_apps_status(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Active" |
+*
+* @param {Settings_Workspace_Apps_Status_ActiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_status_active = /** @type {((inputs?: Settings_Workspace_Apps_Status_ActiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Status_ActiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_status_active(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_status_active(inputs)
+	return __en.settings_workspace_apps_status_active(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Needs attention" |
+*
+* @param {Settings_Workspace_Apps_Status_MisconfiguredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_status_misconfigured = /** @type {((inputs?: Settings_Workspace_Apps_Status_MisconfiguredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_Status_MisconfiguredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_status_misconfigured(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_status_misconfigured(inputs)
+	return __en.settings_workspace_apps_status_misconfigured(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Your own network apps" |
+*
+* @param {Settings_Workspace_Apps_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_workspace_apps_title = /** @type {((inputs?: Settings_Workspace_Apps_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Workspace_Apps_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_workspace_apps_title(inputs)
+	if (locale === "cs") return __cs.settings_workspace_apps_title(inputs)
+	return __en.settings_workspace_apps_title(inputs)
 });
 /**
 * | output |

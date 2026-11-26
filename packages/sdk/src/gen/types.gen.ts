@@ -4391,6 +4391,7 @@ export type ProviderAppsListResponses = {
             status: 'active' | 'misconfigured' | 'disabled';
             updatedAt: string;
         }>;
+        supported: Array<string>;
     };
 };
 

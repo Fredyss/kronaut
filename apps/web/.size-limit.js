@@ -38,6 +38,7 @@ const LAZY = {
   'saved text settings route JS': ['settings-saved-texts', '40 KB'],
   'feed settings route JS': ['settings-feeds', '40 KB'],
   'short link settings route JS': ['settings-short-links', '40 KB'],
+  'workspace app settings route JS': ['settings-workspace-apps', '40 KB'],
   'system settings route JS': ['settings-system', '40 KB'],
   'notifications panel JS': ['panel', '10 KB'],
   'editor JS': ['editor', '130 KB'],

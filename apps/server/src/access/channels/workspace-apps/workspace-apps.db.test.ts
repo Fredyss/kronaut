@@ -230,6 +230,7 @@ describe('connect start', () => {
       ['own-client-3', 'disabled'],
       ['own-client', 'active'],
     ]);
+    expect(listed.json.supported).toEqual([X]);
   });
 
   it('audits register, replace and disable with the client id and never the secret', async () => {

@@ -207,6 +207,38 @@
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_CancelInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_IdInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Id_TakenInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Client_Secret_InvalidInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisableInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Disable_BodyInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Disable_TitleInputs */
+/** @typedef {{}} Settings_Workspace_Apps_DisabledInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ExistsInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_InstanceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_IntroInputs */
+/** @typedef {{}} Settings_Workspace_Apps_KeepInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NavInputs */
+/** @typedef {{}} Settings_Workspace_Apps_New_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_NoneInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Not_SupportedInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Own_HintInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisterInputs */
+/** @typedef {{}} Settings_Workspace_Apps_RegisteredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_ReplaceInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Save_SecretInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Secret_ReplacedInputs */
+/** @typedef {{}} Settings_Workspace_Apps_StatusInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_ActiveInputs */
+/** @typedef {{}} Settings_Workspace_Apps_Status_MisconfiguredInputs */
+/** @typedef {{}} Settings_Workspace_Apps_TitleInputs */
 /** @typedef {{}} System_Api_CriticalInputs */
 /** @typedef {{ count: NonNullable<unknown> }} System_Api_Days_LeftInputs */
 /** @typedef {{}} System_Api_EndedInputs */
@@ -1110,6 +1142,134 @@ export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Allowed shift after approval (minutes)`)
+};
+
+export const settings_workspace_apps_active_note = /** @type {(inputs: Settings_Workspace_Apps_Active_NoteInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`New ${i?.provider} channels connect through this app, and ${i?.provider} bills your developer account.`)
+};
+
+export const settings_workspace_apps_callback = /** @type {(inputs: Settings_Workspace_Apps_CallbackInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Callback URL`)
+};
+
+export const settings_workspace_apps_callback_hint = /** @type {(inputs: Settings_Workspace_Apps_Callback_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Add this callback URL to your app in the ${i?.provider} developer portal.`)
+};
+
+export const settings_workspace_apps_cancel = /** @type {(inputs: Settings_Workspace_Apps_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_workspace_apps_client_id = /** @type {(inputs: Settings_Workspace_Apps_Client_IdInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Client ID`)
+};
+
+export const settings_workspace_apps_client_id_invalid = /** @type {(inputs: Settings_Workspace_Apps_Client_Id_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This client ID doesn't match the network's format. Copy it from the developer portal again.`)
+};
+
+export const settings_workspace_apps_client_id_taken = /** @type {(inputs: Settings_Workspace_Apps_Client_Id_TakenInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This client ID is already registered on this server.`)
+};
+
+export const settings_workspace_apps_client_secret = /** @type {(inputs: Settings_Workspace_Apps_Client_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Client secret`)
+};
+
+export const settings_workspace_apps_client_secret_invalid = /** @type {(inputs: Settings_Workspace_Apps_Client_Secret_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Paste the secret exactly as the developer portal shows it, without spaces or special characters.`)
+};
+
+export const settings_workspace_apps_disable = /** @type {(inputs: Settings_Workspace_Apps_DisableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Disable app`)
+};
+
+export const settings_workspace_apps_disable_body = /** @type {(inputs: Settings_Workspace_Apps_Disable_BodyInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Channels connected through this app stop publishing until you reconnect them. New ${i?.provider} connects then use this server's app, if it has one.`)
+};
+
+export const settings_workspace_apps_disable_title = /** @type {(inputs: Settings_Workspace_Apps_Disable_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Disable this app?`)
+};
+
+export const settings_workspace_apps_disabled = /** @type {(inputs: Settings_Workspace_Apps_DisabledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`App disabled`)
+};
+
+export const settings_workspace_apps_exists = /** @type {(inputs: Settings_Workspace_Apps_ExistsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your workspace already has an app for this network. Reload the page to see it.`)
+};
+
+export const settings_workspace_apps_instance = /** @type {(inputs: Settings_Workspace_Apps_InstanceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Right now, new ${i?.provider} channels connect through this server's app, if it has one. The server's operator pays ${i?.provider} for them, and your workspace pays nothing.`)
+};
+
+export const settings_workspace_apps_intro = /** @type {(inputs: Settings_Workspace_Apps_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Some networks bill the owner of the developer app for every post and read. Register your workspace's own app, and the network bills your developer account instead of the operator of this server.`)
+};
+
+export const settings_workspace_apps_keep = /** @type {(inputs: Settings_Workspace_Apps_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep app`)
+};
+
+export const settings_workspace_apps_misconfigured = /** @type {(inputs: Settings_Workspace_Apps_MisconfiguredInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.provider} refused this app's credentials. Connecting ${i?.provider} channels fails until you replace the client secret here or fix the app's settings in the ${i?.provider} developer portal.`)
+};
+
+export const settings_workspace_apps_nav = /** @type {(inputs: Settings_Workspace_Apps_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Own apps`)
+};
+
+export const settings_workspace_apps_new_secret = /** @type {(inputs: Settings_Workspace_Apps_New_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New client secret`)
+};
+
+export const settings_workspace_apps_none = /** @type {(inputs: Settings_Workspace_Apps_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No network on this server takes a workspace's own app.`)
+};
+
+export const settings_workspace_apps_not_supported = /** @type {(inputs: Settings_Workspace_Apps_Not_SupportedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This network doesn't take a workspace's own app on this server.`)
+};
+
+export const settings_workspace_apps_own_hint = /** @type {(inputs: Settings_Workspace_Apps_Own_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`With your own app, your workspace pays ${i?.provider} directly for what it uses.`)
+};
+
+export const settings_workspace_apps_register = /** @type {(inputs: Settings_Workspace_Apps_RegisterInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Register app`)
+};
+
+export const settings_workspace_apps_registered = /** @type {(inputs: Settings_Workspace_Apps_RegisteredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`App registered`)
+};
+
+export const settings_workspace_apps_replace = /** @type {(inputs: Settings_Workspace_Apps_ReplaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Replace secret`)
+};
+
+export const settings_workspace_apps_save_secret = /** @type {(inputs: Settings_Workspace_Apps_Save_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Save secret`)
+};
+
+export const settings_workspace_apps_secret_replaced = /** @type {(inputs: Settings_Workspace_Apps_Secret_ReplacedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Client secret replaced`)
+};
+
+export const settings_workspace_apps_status = /** @type {(inputs: Settings_Workspace_Apps_StatusInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Status`)
+};
+
+export const settings_workspace_apps_status_active = /** @type {(inputs: Settings_Workspace_Apps_Status_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Active`)
+};
+
+export const settings_workspace_apps_status_misconfigured = /** @type {(inputs: Settings_Workspace_Apps_Status_MisconfiguredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Needs attention`)
+};
+
+export const settings_workspace_apps_title = /** @type {(inputs: Settings_Workspace_Apps_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your own network apps`)
 };
 
 export const system_api_critical = /** @type {(inputs: System_Api_CriticalInputs) => LocalizedString} */ () => {

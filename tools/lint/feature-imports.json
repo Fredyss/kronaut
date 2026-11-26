@@ -236,6 +236,7 @@
   "web/pages/shell -> records/theme/theme.tsx",
   "web/records/brands -> i18n/settings.ts",
   "web/records/groups -> i18n/settings.ts",
+  "web/records/workspace-apps -> i18n/settings.ts",
   "web/views/approvals -> actions/notifications/queries.ts",
   "web/views/approvals -> composer/compose/issues.ts",
   "web/views/approvals -> composer/compose/submit/approval-body.ts",
