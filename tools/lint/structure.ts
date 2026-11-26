@@ -37,6 +37,7 @@ const CREDENTIAL_READERS = new Set([
   'server/access/channels',
   'server/records/analytics',
   'server/records/short-links',
+  'server/identity/webhooks',
   'server/actors/meta',
   'server/actors/cli',
 ]);

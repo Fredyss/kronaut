@@ -101,13 +101,14 @@
   - **Clean stop:** a stopping worker clears its session after its runner has stopped, so a normal deploy releases nothing and logs no warning.
   - **Lost video:** a worker killed on a conversion's last attempt leaves the video `processing`. Media GC rejects it as `video_unreadable` an hour after it was queued, once no job for it is left, and removes its staged parts.
   - **Left to graphile's 4 h:** a kill in the moment between a worker starting and registering its pool id, a previous process whose connection is still open when the same id restarts, and every case while workers can't see their own session.
+- **Webhooks (`webhook_delivery`, every minute; ADR-0069)**: sends up to 200 due deliveries per run, 8 at a time, each with a 15 s timeout, and nothing while publishing is paused. Receivers must answer 2xx; failures retry over about 28 hours, and an endpoint that fails for 5 days is disabled. Endpoint URLs must be `https` on port 443 and resolve to public addresses: a receiver on a private network can't be reached. `webhook_retention` (daily at 03:47) deletes webhook events and their deliveries after 30 days.
 - **Retention (daily purge job)**: tenant tables are purged per workspace via `sweep_workspaces`; global tables by the `instance_retention` cron task (daily at 03:29), which calls `purge_instance_retention` with at most 10,000 rows per table per call until nothing is left, up to 100 calls a run; hitting that cap fails the run. `maintain_audit_partitions` keeps audit partitions two months ahead, drops partitions past 400 d and nulls audit PII at 90 d; a non-zero default-partition count is an alert (ADR-0045).
 
   | Data | Kept for |
   |---|---|
   | `audit_events` + `security_events` | 400 d |
   | `publish_attempts` | 180 d |
-  | webhook deliveries | 30 d |
+  | webhook events + deliveries | 30 d |
   | notifications | 90 d |
   | credentials of disconnected channels | 30 d |
   | channel data of a provider with `dataRetention` (YouTube, Pinterest and X: 7 d after disconnect, 30 d after `needs_reauth`; ADR-0060) | see the manifest |

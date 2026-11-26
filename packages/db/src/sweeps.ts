@@ -12,6 +12,7 @@ export interface Sweeps {
   verifyingDestinations(limit?: number): Promise<SweepRow[]>;
   quarantineDestinations(limit?: number): Promise<SweepRow[]>;
   expiringCredentials(withinSeconds: number, limit?: number): Promise<SweepRow[]>;
+  dueWebhookDeliveries(limit?: number): Promise<SweepRow[]>;
   mediaGc(limit?: number): Promise<SweepRow[]>;
   mediaImports(limit?: number): Promise<SweepRow[]>;
   workspaces(after: string | null, limit?: number): Promise<string[]>;
@@ -78,6 +79,13 @@ export function createSweeps(db: Kysely<DB>): Sweeps {
       const result = await sql<RawSweepRow>`
         select workspace_id, credential_id as id
           from sweep_expiring_credentials(make_interval(secs => ${within}::double precision), ${n})
+      `.execute(db);
+      return toRows(result.rows);
+    },
+    async dueWebhookDeliveries(limit = MAX_LIMIT) {
+      const n = checkLimit(limit);
+      const result = await sql<RawSweepRow>`
+        select workspace_id, delivery_id as id from sweep_due_webhook_deliveries(${n})
       `.execute(db);
       return toRows(result.rows);
     },

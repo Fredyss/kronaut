@@ -88,7 +88,7 @@
   - a per-row DEK with AES-256-GCM, wrapped by `KRONAUT_KEK_<v>`
   - AAD = `aad_v|credential_id|workspace_id|provider`
   - KEK rotation re-wraps DEKs only
-  - webhook secrets rotate with a `previous_secret` overlap
+  - webhook secrets rotate with a `previous_secret` overlap of 24 h; both are sealed with AAD `endpoint id|workspace id|webhook_endpoint` (ADR-0069)
 - **Entitlements (ADR-0019):** a single `entitlements.check()` in the service layer at 5 points, with conditional counter UPDATEs. Self-host is unlimited. Checking `MODE==='saas'` is banned outside the entitlements module.
 - **CF Access fail-closed:** the app verifies `Cf-Access-Jwt-Assertion` (aud + JWKS) when `ACCESS_AUD` is set.
   - **Checks:** RS256 against the team JWKS (`https://<ACCESS_TEAM_DOMAIN>/cdn-cgi/access/certs`), `aud` contains `ACCESS_AUD`, `iss` is the team domain, and `exp`/`nbf` hold with 60 s leeway. `jose` verifies; the JWKS is fetched through `packages/egress` and handed to `jose` as a local key set.

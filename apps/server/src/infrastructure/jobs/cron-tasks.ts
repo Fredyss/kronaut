@@ -16,6 +16,8 @@ export const CRON_TASKS = {
   rssPoll: 'rss_poll',
   seriesAdvance: 'series_advance',
   tzRecompute: 'tz_recompute',
+  webhookDelivery: 'webhook_delivery',
+  webhookRetention: 'webhook_retention',
 } as const;
 
 export type CronTask = (typeof CRON_TASKS)[keyof typeof CRON_TASKS];
@@ -41,4 +43,6 @@ export const CRON_INTERVAL_MS: Readonly<Record<CronTask, number>> = {
   [CRON_TASKS.rssPoll]: 15 * MINUTE_MS,
   [CRON_TASKS.seriesAdvance]: 5 * MINUTE_MS,
   [CRON_TASKS.tzRecompute]: 60 * MINUTE_MS,
+  [CRON_TASKS.webhookDelivery]: MINUTE_MS,
+  [CRON_TASKS.webhookRetention]: DAY_MS,
 };
