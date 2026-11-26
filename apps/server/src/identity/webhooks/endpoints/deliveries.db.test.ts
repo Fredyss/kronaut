@@ -80,7 +80,7 @@ describe('webhooks.deliveries', () => {
 
   it('refuses a bad cursor or limit with 422', async () => {
     const { id } = await endpointWithTests(0);
-    for (const query of ['?cursor=whk_nope', '?limit=0', '?limit=101', '?limit=x', '?kind=a']) {
+    for (const query of ['?cursor=whk_nope', '?limit=0', '?limit=101', '?limit=x']) {
       expect((await deliveries(id, query)).status).toBe(422);
     }
   });

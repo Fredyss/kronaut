@@ -16,7 +16,7 @@ const ME = {
 };
 
 const STAMP = '2026-11-26T10:00:00.000Z';
-const SECRET = 'whsec_c2VjcmV0LXNob3duLW9uY2U=';
+const SECRET = 'whsec_CANARY_shown_once';
 const BASE = '/v1/workspaces/ws_1/webhooks';
 
 function endpoint(id: string, url: string, extra: Record<string, unknown> = {}) {
