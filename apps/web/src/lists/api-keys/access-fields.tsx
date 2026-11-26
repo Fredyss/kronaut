@@ -48,7 +48,7 @@ function Picker({
   );
 }
 
-export interface Reach {
+interface Reach {
   readonly brandIds: ReadonlySet<string>;
   readonly accountIds: ReadonlySet<string>;
 }

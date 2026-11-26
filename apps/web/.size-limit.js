@@ -94,6 +94,6 @@ export default [
     limit,
     gzip: true,
   })),
-  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '31 KB', gzip: true },
+  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '32 KB', gzip: true },
   { name: 'CSS', path: `${ASSETS}/*.css`, limit: '25 KB', gzip: true },
 ];

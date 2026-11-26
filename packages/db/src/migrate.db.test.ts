@@ -52,6 +52,7 @@ const ALL = [
   '0041_webhook_delivery_lease_index',
   '0042_webhook_delivery_lease',
   '0043_webhook_delivery_old_index',
+  '0044_webhook_delivery_endpoint_index',
 ];
 
 let container: StartedPostgreSqlContainer;
