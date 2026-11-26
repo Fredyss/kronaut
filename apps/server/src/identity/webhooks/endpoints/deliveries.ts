@@ -1,3 +1,4 @@
+import { decodePublicId, encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
 import { HttpError } from '../../../base/http/errors.ts';
@@ -14,7 +15,7 @@ const WAITING: readonly string[] = ['pending', 'delivering', 'retry_wait'];
 export const DeliveryPageSchema = z.object({
   items: z.array(
     z.object({
-      id: z.uuid(),
+      id: z.string(),
       eventId: z.uuid(),
       eventType: z.string(),
       state: z.enum(DELIVERY_STATES),
@@ -26,7 +27,7 @@ export const DeliveryPageSchema = z.object({
       updatedAt: z.iso.datetime(),
     }),
   ),
-  nextCursor: z.uuid().nullable(),
+  nextCursor: z.string().nullable(),
 });
 
 type DeliveryPage = z.output<typeof DeliveryPageSchema>;
@@ -53,10 +54,11 @@ export function deliveryFilter(
   const parsed = DeliveryQuery.safeParse(present);
   if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const { cursor, limit } = parsed.data;
-  if (cursor !== undefined && !z.uuid().safeParse(cursor).success) {
+  const after = cursor === undefined ? null : decodePublicId('webhookDelivery', cursor);
+  if (cursor !== undefined && after === null) {
     throw invalid([{ path: 'query.cursor', code: 'invalid_cursor' }]);
   }
-  return { after: cursor ?? null, limit: limit ?? DELIVERIES_DEFAULT_LIMIT };
+  return { after, limit: limit ?? DELIVERIES_DEFAULT_LIMIT };
 }
 
 async function assertEndpoint(trx: TenantDb, ref: EndpointRef): Promise<void> {
@@ -103,7 +105,7 @@ export async function listDeliveries(
   const last = page.at(-1);
   return DeliveryPageSchema.parse({
     items: page.map((row) => ({
-      id: row.id,
+      id: encodePublicId('webhookDelivery', row.id),
       eventId: row.event_id,
       eventType: row.type,
       state: row.state,
@@ -114,6 +116,9 @@ export async function listDeliveries(
       createdAt: row.created_at.toISOString(),
       updatedAt: row.updated_at.toISOString(),
     })),
-    nextCursor: rows.length > filter.limit && last !== undefined ? last.id : null,
+    nextCursor:
+      rows.length > filter.limit && last !== undefined
+        ? encodePublicId('webhookDelivery', last.id)
+        : null,
   });
 }
