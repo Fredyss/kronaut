@@ -346,7 +346,7 @@ describe('workspace isolation (TEN-01)', () => {
 });
 
 describe('listing', () => {
-  it('pages newest first by cursor and rejects a bad cursor or limit', async () => {
+  it('pages newest first by cursor and rejects a bad cursor or limit (422)', async () => {
     const ws = await provisionTestWorkspace(db, ownerId, `ws-grants-${randomUUID().slice(0, 8)}`);
     const ids: string[] = [];
     for (let n = 0; n < 3; n++) {
@@ -363,20 +363,20 @@ describe('listing', () => {
     ).json()) as { items: Grant[]; nextCursor: string | null };
     expect(rest.items.map((item) => item.id)).toEqual(ids.slice(2));
     expect(rest.nextCursor).toBeNull();
-    expect((await listAs('owner', ws, '?cursor=nope')).status).toBe(400);
+    expect((await listAs('owner', ws, '?cursor=nope')).status).toBe(422);
     for (const limit of ['0', '101', 'x']) {
-      expect((await listAs('owner', ws, `?limit=${limit}`)).status).toBe(400);
+      expect((await listAs('owner', ws, `?limit=${limit}`)).status).toBe(422);
     }
   });
 
   it('neither lists nor revokes grants that are not API keys', async () => {
-    const oauth = await root.withActor(CLI, (trx) =>
+    const other = await root.withActor(CLI, (trx) =>
       trx
         .insertInto('access_grants')
         .values({
           workspace_id: workspaceId,
-          kind: 'oauth',
-          name: 'Client',
+          kind: 'internal_ai',
+          name: 'Assistant',
           sponsor_user_id: ownerId,
           scopes: ['posts:read'],
           resource_scope: 'workspace',
@@ -384,7 +384,7 @@ describe('listing', () => {
         .returning('id')
         .executeTakeFirstOrThrow(),
     );
-    const id = encodePublicId('grant', oauth.id);
+    const id = encodePublicId('grant', other.id);
     const listed = (await (await listAs('owner', workspaceId, '?limit=100')).json()) as {
       items: Grant[];
     };
