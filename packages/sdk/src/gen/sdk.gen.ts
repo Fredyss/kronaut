@@ -1411,7 +1411,7 @@ export const postsUnschedule = <ThrowOnError extends boolean = true>(options: Op
 /**
  * List the workspace's own provider apps
  *
- * Newest first, disabled apps included. Instance-wide apps are not listed. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
+ * Newest first, disabled apps included. Instance-wide apps are not listed. `supported` lists the providers that take a workspace app on this server. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.
  */
 export const providerAppsList = <ThrowOnError extends boolean = true>(options: Options<ProviderAppsListData, ThrowOnError>): RequestResult<ProviderAppsListResponses, ProviderAppsListErrors, ThrowOnError> => (options.client ?? client).get<ProviderAppsListResponses, ProviderAppsListErrors, ThrowOnError>({
     security: [{

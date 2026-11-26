@@ -17704,7 +17704,7 @@
     },
     "/v1/workspaces/{workspaceId}/provider-apps": {
       "get": {
-        "description": "Newest first, disabled apps included. Instance-wide apps are not listed. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
+        "description": "Newest first, disabled apps included. Instance-wide apps are not listed. `supported` lists the providers that take a workspace app on this server. The client secret is write-only and never returned. Only providers that allow a workspace's own app accept one (422 not_supported on body.provider); today that is x_com. Owners and admins only, never an API key.",
         "operationId": "provider_apps.list",
         "parameters": [
           {
@@ -17762,10 +17762,17 @@
                         "type": "object"
                       },
                       "type": "array"
+                    },
+                    "supported": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
                     }
                   },
                   "required": [
-                    "items"
+                    "items",
+                    "supported"
                   ],
                   "type": "object"
                 }
