@@ -14,6 +14,7 @@ import {
   type EndpointRef,
   type EndpointRow,
   endpointById,
+  endWaitingDeliveries,
   lockEndpoint,
 } from './store.ts';
 
@@ -137,6 +138,7 @@ export async function updateEndpoint(
       .where('workspace_id', '=', ref.workspaceId)
       .where('id', '=', ref.endpointId)
       .execute();
+    if (row.enabled && patch.enabled === false) await endWaitingDeliveries(trx, ref);
     const fields = Object.keys(patch).filter(
       (key) => patch[key as keyof EndpointPatch] !== undefined,
     );

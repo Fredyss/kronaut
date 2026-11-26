@@ -107,3 +107,13 @@ export async function assertRoomForEndpoint(trx: TenantDb, workspaceId: string):
     });
   }
 }
+
+export async function endWaitingDeliveries(trx: TenantDb, ref: EndpointRef): Promise<void> {
+  await trx
+    .updateTable('webhook_deliveries')
+    .set({ state: 'dead', last_error: 'endpoint_disabled', updated_at: sql<Date>`now()` })
+    .where('workspace_id', '=', ref.workspaceId)
+    .where('endpoint_id', '=', ref.endpointId)
+    .where('state', 'in', ['pending', 'retry_wait'])
+    .execute();
+}

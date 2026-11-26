@@ -19,6 +19,7 @@ export interface DeliveryDeps {
 
 const BATCH = 200;
 const PARALLEL = 8;
+const CLAIM_BUDGET_MS = 40_000;
 
 type Counted = Finished | 'skipped' | 'failed';
 
@@ -58,14 +59,35 @@ async function deliverOne(deps: DeliveryDeps, row: SweepRow): Promise<Counted> {
   return await finishDelivery(deps, claimed, outcome);
 }
 
+// One busy workspace must not fill every lane before the others get a turn.
+function byWorkspaceTurns(rows: readonly SweepRow[]): SweepRow[] {
+  const queues = new Map<string, SweepRow[]>();
+  for (const row of rows)
+    queues.set(row.workspaceId, [...(queues.get(row.workspaceId) ?? []), row]);
+  const turns: SweepRow[] = [];
+  for (let round = 0; turns.length < rows.length; round++) {
+    for (const queue of queues.values()) {
+      const row = queue[round];
+      if (row !== undefined) turns.push(row);
+    }
+  }
+  return turns;
+}
+
+// Runs share the job worker with publishing, so a run stops claiming before the next cron tick and never holds more than one slot.
 async function inParallel<T>(
   items: readonly T[],
   width: number,
+  open: () => boolean,
   run: (item: T) => Promise<void>,
 ): Promise<void> {
   let next = 0;
   const lane = async (): Promise<void> => {
-    for (let item = items[next++]; item !== undefined; item = items[next++]) await run(item);
+    while (open()) {
+      const item = items[next++];
+      if (item === undefined) return;
+      await run(item);
+    }
   };
   await Promise.all(Array.from({ length: Math.min(width, items.length) }, lane));
 }
@@ -80,7 +102,9 @@ export async function deliverWebhooks(deps: DeliveryDeps): Promise<string> {
     skipped: 0,
     failed: 0,
   };
-  await inParallel(rows, PARALLEL, async (row) => {
+  const deadline = deps.now().epochMilliseconds + CLAIM_BUDGET_MS;
+  const open = () => deps.now().epochMilliseconds < deadline;
+  await inParallel(byWorkspaceTurns(rows), PARALLEL, open, async (row) => {
     try {
       counts[await deliverOne(deps, row)]++;
     } catch (err) {

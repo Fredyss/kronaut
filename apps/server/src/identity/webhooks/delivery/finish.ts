@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Actor, Database, TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 import type { Logger } from 'pino';
+import { endWaitingDeliveries } from '../endpoints/store.ts';
 import type { Claimed } from './claim.ts';
 import type { SendOutcome } from './egress.ts';
 import { DISABLE_AFTER_DAYS, retryDelaySeconds } from './schedule.ts';
@@ -36,6 +37,7 @@ async function recordSuccess(trx: TenantDb, claimed: Claimed): Promise<void> {
     .set({ consecutive_failures: 0, failing_since: null })
     .where('workspace_id', '=', claimed.workspaceId)
     .where('id', '=', claimed.endpointId)
+    .where('url', '=', claimed.url)
     .where((eb) => eb.or([eb('consecutive_failures', '>', 0), eb('failing_since', 'is not', null)]))
     .execute();
 }
@@ -63,6 +65,7 @@ async function recordFailure(trx: TenantDb, claimed: Claimed): Promise<boolean> 
     .selectFrom('webhook_endpoints')
     .select([
       'enabled',
+      'url',
       sql<boolean>`coalesce(failing_since <= now() - make_interval(days => ${DISABLE_AFTER_DAYS}), false)`.as(
         'overdue',
       ),
@@ -71,7 +74,8 @@ async function recordFailure(trx: TenantDb, claimed: Claimed): Promise<boolean> 
     .where('id', '=', claimed.endpointId)
     .forUpdate()
     .executeTakeFirst();
-  if (endpoint === undefined) return false;
+  // A send claimed before a URL change says nothing about the new URL's health.
+  if (endpoint === undefined || endpoint.url !== claimed.url) return false;
   const disable = endpoint.enabled && endpoint.overdue;
   await trx
     .updateTable('webhook_endpoints')
@@ -85,7 +89,13 @@ async function recordFailure(trx: TenantDb, claimed: Claimed): Promise<boolean> 
     .where('workspace_id', '=', claimed.workspaceId)
     .where('id', '=', claimed.endpointId)
     .execute();
-  if (disable) await auditDisabled(trx, claimed);
+  if (disable) {
+    await endWaitingDeliveries(trx, {
+      workspaceId: claimed.workspaceId,
+      endpointId: claimed.endpointId,
+    });
+    await auditDisabled(trx, claimed);
+  }
   return disable;
 }
 

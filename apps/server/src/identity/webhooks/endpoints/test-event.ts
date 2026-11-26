@@ -18,7 +18,7 @@ export async function sendTestEvent(actor: EndpointActor, ref: EndpointRef): Pro
       });
     }
     const quota = {
-      key: `webhook_test:${endpointId}`,
+      key: `endpoint:webhook_test:${endpointId}`,
       capacity: TESTS_PER_HOUR,
       windowSeconds: 3600,
     };

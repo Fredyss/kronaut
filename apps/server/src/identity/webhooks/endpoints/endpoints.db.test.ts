@@ -231,6 +231,24 @@ describe('webhook.test', () => {
     expect(deliveries).toEqual([{ endpoint_id: internalId(id), state: 'pending' }]);
   });
 
+  it('ends waiting deliveries when disabled, so re-enabling sends none of them', async () => {
+    const id = String((await create()).json?.id);
+    const owner = { cookie: fixture.cookies.owner };
+    const sent = await callHooks(fixture, owner, { method: 'POST', path: `/${id}/test` });
+    const eventId = String(sent.json?.eventId);
+    for (const enabled of [false, true]) {
+      await callHooks(fixture, owner, { method: 'PATCH', path: `/${id}`, body: { enabled } });
+    }
+    const states = await fixture.root.withActor(SYSTEM, async (trx) =>
+      trx
+        .selectFrom('webhook_deliveries')
+        .select(['state', 'last_error'])
+        .where('event_id', '=', eventId)
+        .execute(),
+    );
+    expect(states).toEqual([{ state: 'dead', last_error: 'endpoint_disabled' }]);
+  });
+
   it('allows ten tests per endpoint per hour', async () => {
     const id = String((await create()).json?.id);
     const owner = { cookie: fixture.cookies.owner };
