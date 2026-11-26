@@ -5,7 +5,7 @@ import {
   createRootRouteWithContext,
   createRoute,
   createRouter,
-  lazyRouteComponent as lazy,
+  lazyRouteComponent,
   Outlet,
   type RouterHistory,
   redirect,
@@ -16,13 +16,13 @@ import { ME_KEY, meQuery } from './base/api/me.ts';
 import { browserLanguages, loadLocale, m, pickLocale } from './base/locale/i18n.ts';
 import { composeSearch, postSearch } from './composer/compose/search.ts';
 import { inboxSearch } from './lists/inbox/search.ts';
-import { canReadSystem } from './lists/system/status.ts';
 import { ChannelsPage, type ChannelsSearch } from './routes/channels.tsx';
 import { LocaleRoot } from './routes/locale-root.tsx';
 import { LoginPage, type LoginSearch } from './routes/login.tsx';
 import { NotFoundPage } from './routes/not-found.tsx';
 import { ResetPasswordPage } from './routes/reset-password.tsx';
 import { AppShell } from './routes/shell.tsx';
+import { settingsRoutes } from './settings-routes.tsx';
 import { calendarSearch } from './views/calendar/search.ts';
 
 type RouterContext = {
@@ -79,11 +79,13 @@ const appRoute = createRoute({
   component: AppShell,
 });
 
+export type AppRoute = typeof appRoute;
+
 const homeRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/',
   validateSearch: calendarSearch,
-  component: lazy(() => import('./routes/calendar.tsx'), 'CalendarPage'),
+  component: lazyRouteComponent(() => import('./routes/calendar.tsx'), 'CalendarPage'),
 });
 
 const SEARCH_VALUE_MAX = 64;
@@ -113,125 +115,27 @@ const composeRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/compose',
   validateSearch: composeSearch,
-  component: lazy(() => import('./routes/compose.tsx'), 'ComposePage'),
+  component: lazyRouteComponent(() => import('./routes/compose.tsx'), 'ComposePage'),
 });
 
 const inboxRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/inbox',
   validateSearch: inboxSearch,
-  component: lazy(() => import('./routes/inbox.tsx'), 'InboxPage'),
+  component: lazyRouteComponent(() => import('./routes/inbox.tsx'), 'InboxPage'),
 });
 
 const mediaRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/media',
-  component: lazy(() => import('./routes/media.tsx'), 'MediaPage'),
-});
-
-const settingsRoute = createRoute({
-  getParentRoute: () => appRoute,
-  path: '/settings',
-  component: lazy(() => import('./routes/settings-layout.tsx'), 'SettingsLayout'),
-});
-
-const settingsIndexRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: '/',
-  beforeLoad: () => {
-    throw redirect({ to: '/settings/account', replace: true });
-  },
-});
-
-const accountSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'account',
-  component: lazy(() => import('./routes/settings-account.tsx'), 'AccountSettingsPage'),
-});
-
-const approvalSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'approvals',
-  component: lazy(() => import('./routes/settings-approvals.tsx'), 'ApprovalSettingsPage'),
-});
-
-const notificationSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'notifications',
-  component: lazy(() => import('./routes/settings-notifications.tsx'), 'NotificationSettingsPage'),
-});
-
-const tagSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'tags',
-  component: lazy(() => import('./routes/settings-tags.tsx'), 'TagSettingsPage'),
-});
-
-const brandSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'brands',
-  component: lazy(() => import('./routes/settings-brands.tsx'), 'BrandSettingsPage'),
-});
-
-const groupSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'groups',
-  component: lazy(() => import('./routes/settings-groups.tsx'), 'GroupSettingsPage'),
-});
-
-const savedTextSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'saved-texts',
-  component: lazy(() => import('./routes/settings-saved-texts.tsx'), 'SavedTextSettingsPage'),
-});
-
-const feedSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'feeds',
-  component: lazy(() => import('./routes/settings-feeds.tsx'), 'FeedSettingsPage'),
-});
-
-const shortLinkSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'short-links',
-  component: lazy(() => import('./routes/settings-short-links.tsx'), 'ShortLinkSettingsPage'),
-});
-
-const workspaceAppSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'workspace-apps',
-  component: lazy(() => import('./routes/settings-workspace-apps.tsx'), 'WorkspaceAppSettingsPage'),
-});
-
-const webhookSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'webhooks',
-  component: lazy(() => import('./routes/integrations-webhooks.tsx'), 'WebhookSettingsPage'),
-});
-
-const apiKeySettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'api-keys',
-  component: lazy(() => import('./routes/integrations-api-keys.tsx'), 'ApiKeySettingsPage'),
-});
-
-const systemSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
-  path: 'system',
-  beforeLoad: async ({ context }) => {
-    const me = await context.queryClient.ensureQueryData(meQuery(context.client));
-    if (!canReadSystem(me)) {
-      throw redirect({ to: '/settings/account', replace: true });
-    }
-  },
-  component: lazy(() => import('./routes/settings-system.tsx'), 'SystemSettingsPage'),
+  component: lazyRouteComponent(() => import('./routes/media.tsx'), 'MediaPage'),
 });
 
 const postRoute = createRoute({
   getParentRoute: () => appRoute,
   path: '/posts/$postId',
   validateSearch: postSearch,
-  component: lazy(() => import('./routes/post.tsx'), 'PostPage'),
+  component: lazyRouteComponent(() => import('./routes/post.tsx'), 'PostPage'),
 });
 
 const routeTree = rootRoute.addChildren([
@@ -244,22 +148,7 @@ const routeTree = rootRoute.addChildren([
     inboxRoute,
     mediaRoute,
     postRoute,
-    settingsRoute.addChildren([
-      settingsIndexRoute,
-      accountSettingsRoute,
-      approvalSettingsRoute,
-      notificationSettingsRoute,
-      tagSettingsRoute,
-      brandSettingsRoute,
-      groupSettingsRoute,
-      savedTextSettingsRoute,
-      feedSettingsRoute,
-      shortLinkSettingsRoute,
-      workspaceAppSettingsRoute,
-      webhookSettingsRoute,
-      apiKeySettingsRoute,
-      systemSettingsRoute,
-    ]),
+    settingsRoutes(appRoute),
   ]),
 ]);
 

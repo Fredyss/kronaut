@@ -26,6 +26,7 @@ const ROOT_ENTRYPOINTS = new Set([
   'apps/server/src/start.ts',
   'apps/web/src/app.tsx',
   'apps/web/src/main.tsx',
+  'apps/web/src/settings-routes.tsx',
 ]);
 const CREDENTIAL_PACKAGE = /^(?:packages\/credentials\/|@kronaut\/credentials(?:\/|$))/;
 const CREDENTIAL_STORES = /^apps\/server\/src\/infrastructure\/credentials\//;

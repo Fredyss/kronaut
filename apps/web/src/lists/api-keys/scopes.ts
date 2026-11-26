@@ -38,7 +38,7 @@ const SCOPE_LABELS: Readonly<Record<GrantableScope, () => string>> = {
   'ai:generate': () => integrationsText.integrations_api_keys_scope_ai_generate(),
 };
 
-export function isGrantableScope(scope: string): scope is GrantableScope {
+function isGrantableScope(scope: string): scope is GrantableScope {
   return Object.hasOwn(SCOPE_LABELS, scope);
 }
 

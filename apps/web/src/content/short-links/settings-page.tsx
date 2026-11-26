@@ -2,10 +2,9 @@ import { Button, ConfirmDelete, SettingsCard, SettingsPage, SettingsRow } from '
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
-import { QUEUE_ROLES } from '../../records/channels/queue.ts';
 import { type Shortener, shortenerQuery } from './queries.ts';
 import { ShortenerForm } from './shortener-form.tsx';
 import { useRemoveShortener } from './writes.ts';
@@ -109,7 +108,7 @@ export function ShortLinkSettingsPage() {
       intro={settingsText.settings_short_links_intro()}
     >
       <div tabIndex={-1} className="flex flex-col gap-6 outline-none">
-        {workspace === undefined ? null : QUEUE_ROLES.has(workspace.role) ? (
+        {workspace === undefined ? null : isManager(workspace.role) ? (
           <ShortenerSettings workspaceId={workspace.id} />
         ) : (
           <p className="text-muted-foreground text-sm">{settingsText.settings_read_only()}</p>

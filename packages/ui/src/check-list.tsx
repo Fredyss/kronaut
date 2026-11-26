@@ -1,19 +1,24 @@
 import { useId } from 'react';
 
-interface CheckItem {
-  readonly id: string;
+export interface CheckItem<T extends string = string> {
+  readonly id: T;
   readonly name: string;
   readonly hint?: string;
 }
 
-interface CheckListProps {
+interface CheckListProps<T extends string> {
   readonly label: string;
-  readonly items: readonly CheckItem[];
-  readonly checked: ReadonlySet<string>;
-  onToggle(id: string, on: boolean): void;
+  readonly items: readonly CheckItem<T>[];
+  readonly checked: ReadonlySet<T>;
+  onToggle(id: T, on: boolean): void;
 }
 
-export function CheckList({ label, items, checked, onToggle }: CheckListProps) {
+export function CheckList<T extends string>({
+  label,
+  items,
+  checked,
+  onToggle,
+}: CheckListProps<T>) {
   const prefix = useId();
   return (
     <ul aria-label={label} className="flex flex-col gap-2">

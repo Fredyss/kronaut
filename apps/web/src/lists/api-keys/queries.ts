@@ -1,5 +1,5 @@
 import { type Client, type GrantsListResponse, grantsList } from '@kronaut/sdk';
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { cursorPagesQuery } from '../../base/api/cursor-pages.ts';
 
 export type ApiKey = GrantsListResponse['items'][number];
 
@@ -12,17 +12,8 @@ export function apiKeysKey(workspaceId: string) {
 }
 
 export function apiKeysQuery(client: Client, workspaceId: string) {
-  return infiniteQueryOptions({
-    queryKey: apiKeysKey(workspaceId),
-    queryFn: async ({ pageParam }) =>
-      (
-        await grantsList({
-          client,
-          path: { workspaceId },
-          query: pageParam === null ? {} : { cursor: pageParam },
-        })
-      ).data,
-    initialPageParam: null as string | null,
-    getNextPageParam: (page) => page.nextCursor,
-  });
+  return cursorPagesQuery(
+    apiKeysKey(workspaceId),
+    async (query) => (await grantsList({ client, path: { workspaceId }, query })).data,
+  );
 }

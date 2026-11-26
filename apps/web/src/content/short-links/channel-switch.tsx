@@ -5,10 +5,9 @@ import { useId } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorCode, errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { apiErrorMessage, m } from '../../base/locale/i18n.ts';
 import { type Channel, channelsKey } from '../../records/channels/queries.ts';
-import { QUEUE_ROLES } from '../../records/channels/queue.ts';
 import { shortenerQuery } from './queries.ts';
 
 function useSetShortenLinks(workspaceId: string, channelId: string) {
@@ -53,6 +52,6 @@ function ShortenSwitch({ workspaceId, channel }: { workspaceId: string; channel:
 export function ChannelShortenLinks({ channel }: { readonly channel: Channel }) {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
-  if (workspace === undefined || !QUEUE_ROLES.has(workspace.role)) return null;
+  if (workspace === undefined || !isManager(workspace.role)) return null;
   return <ShortenSwitch workspaceId={workspace.id} channel={channel} />;
 }

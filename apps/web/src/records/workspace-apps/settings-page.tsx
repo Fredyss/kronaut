@@ -1,15 +1,13 @@
 import { SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { LiveApp } from './live-app.tsx';
 import { liveApp, workspaceAppsQuery } from './queries.ts';
 import { RegisterForm } from './register-form.tsx';
-
-const MANAGERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 function ProviderApps({ workspaceId }: { readonly workspaceId: string }) {
   const client = useApiClient();
@@ -52,7 +50,7 @@ export function WorkspaceAppSettingsPage() {
     >
       {workspace === undefined ? null : (
         <div className="flex flex-col gap-6">
-          {MANAGERS.has(workspace.role) ? (
+          {isManager(workspace.role) ? (
             <ProviderApps workspaceId={workspace.id} />
           ) : (
             <p className="text-muted-foreground text-sm">{settingsText.settings_read_only()}</p>

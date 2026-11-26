@@ -32,6 +32,10 @@ function reachText(key: ApiKey, list: Intl.ListFormat): string {
     : integrationsText.integrations_api_keys_restricted({ reach: list.format(parts) });
 }
 
+function joined(parts: readonly string[]): string {
+  return parts.reduce((list, part) => integrationsText.integrations_detail_join({ list, part }));
+}
+
 function rateText(key: ApiKey): string {
   return key.rateLimitPerMinute === null
     ? integrationsText.integrations_api_keys_rate_default({ count: DEFAULT_RATE_LIMIT })
@@ -68,17 +72,17 @@ function Details({ apiKey }: { readonly apiKey: ApiKey }) {
       </span>
       <span className="text-muted-foreground">{list.format(apiKey.scopes.map(scopeLabel))}</span>
       <span className="text-muted-foreground">
-        {[
-          reachText(apiKey, list),
-          rateText(apiKey),
-          apiKey.tokenPrefix === null
-            ? null
-            : integrationsText.integrations_api_keys_prefix({ prefix: apiKey.tokenPrefix }),
-        ]
-          .filter((part) => part !== null)
-          .join(' · ')}
+        {joined(
+          [
+            reachText(apiKey, list),
+            rateText(apiKey),
+            apiKey.tokenPrefix === null
+              ? null
+              : integrationsText.integrations_api_keys_prefix({ prefix: apiKey.tokenPrefix }),
+          ].filter((part) => part !== null),
+        )}
       </span>
-      <span className="text-muted-foreground">{times.join(' · ')}</span>
+      <span className="text-muted-foreground">{joined(times)}</span>
     </div>
   );
 }

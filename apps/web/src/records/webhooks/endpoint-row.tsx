@@ -1,4 +1,4 @@
-import { Button, ConfirmDelete, focusNeighbour, Switch } from '@kronaut/ui';
+import { Button, ConfirmDelete, ConfirmDialog, focusNeighbour, Switch } from '@kronaut/ui';
 import { useRef, useState } from 'react';
 import { useLocale } from '../../base/locale/context.ts';
 import { useFormat } from '../../base/locale/format.ts';
@@ -48,7 +48,8 @@ function Confirm({
 }) {
   const done = { onSettled: onClose };
   return asking === 'rotate' ? (
-    <ConfirmDelete
+    <ConfirmDialog
+      tone="destructive"
       title={integrationsText.integrations_webhooks_rotate_title()}
       body={integrationsText.integrations_webhooks_rotate_body({ count: PREVIOUS_SECRET_HOURS })}
       keepLabel={integrationsText.integrations_webhooks_keep_secret()}

@@ -62,7 +62,6 @@ const LAZY = {
   'tags JS': ['picker', '10 KB'],
   'brand and group filter JS': [['brand-filter', 'group-filter'], '5 KB'],
   'name field JS': ['name-field', '5 KB'],
-  'secret dialog JS': ['secret-dialog', '1 KB'],
   'repeat control JS': ['repeat-fieldset', '5 KB'],
   'CSV import JS': ['import-dialog', '10 KB'],
   ...Object.fromEntries(ROUTE_CATALOGS),

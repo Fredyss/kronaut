@@ -12,3 +12,9 @@ export function meQuery(client: Client) {
     staleTime: 60_000,
   });
 }
+
+const MANAGER_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
+
+export function isManager(role: string): boolean {
+  return MANAGER_ROLES.has(role);
+}

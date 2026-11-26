@@ -2,7 +2,7 @@ import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { useLocale } from '../../base/locale/context.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
@@ -10,8 +10,6 @@ import { channelsQuery } from '../../records/channels/queries.ts';
 import { FeedDialog } from './feed-dialog.tsx';
 import { FeedRow } from './feed-row.tsx';
 import { type RssFeed, rssFeedsQuery } from './feeds.ts';
-
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 function useChannelNames(workspaceId: string) {
   const client = useApiClient();
@@ -83,7 +81,7 @@ export function FeedSettingsPage() {
       intro={settingsText.settings_feeds_intro()}
     >
       <div tabIndex={-1} className="flex flex-col gap-6 outline-none">
-        {workspace === undefined ? null : EDITORS.has(workspace.role) ? (
+        {workspace === undefined ? null : isManager(workspace.role) ? (
           <FeedList workspaceId={workspace.id} />
         ) : (
           <p className="text-muted-foreground text-sm">{settingsText.settings_read_only()}</p>

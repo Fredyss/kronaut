@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, Outlet } from '@tanstack/react-router';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { canReadSystem } from '../../lists/system/status.ts';
@@ -57,8 +57,6 @@ const API_KEYS_SECTION = {
   label: () => settingsText.settings_api_keys_nav(),
 } as const;
 
-const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
-
 const SYSTEM_SECTION = {
   to: '/settings/system',
   label: () => settingsText.settings_system_title(),
@@ -71,7 +69,7 @@ const ACTIVE = { className: 'border-primary font-medium text-foreground md:bg-ac
 export function SettingsLayout() {
   const client = useApiClient();
   const me = useQuery(meQuery(client)).data;
-  const writer = SETTINGS_WRITERS.has(me?.workspaces[0]?.role ?? '');
+  const writer = isManager(me?.workspaces[0]?.role ?? '');
   const sections = [
     ...SECTIONS,
     ...(writer ? [TAGS_SECTION, BRANDS_SECTION, GROUPS_SECTION] : []),

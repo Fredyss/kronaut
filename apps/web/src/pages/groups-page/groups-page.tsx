@@ -2,14 +2,12 @@ import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
+import { LoadState } from '../../base/ui/load-state.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { groupsQuery } from '../../records/groups/queries.ts';
 import { CreateGroupDialog } from './create-dialog.tsx';
 import { EditableRow, ReadOnlyRow } from './group-row.tsx';
-import { LoadState } from './load-state.tsx';
-
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 interface ListProps {
   readonly workspaceId: string;
@@ -55,7 +53,7 @@ function Toolbar({ workspaceId, editable }: ListProps) {
 
 export function GroupSettingsPage() {
   const workspace = useQuery(meQuery(useApiClient())).data?.workspaces[0];
-  const editable = workspace !== undefined && EDITORS.has(workspace.role);
+  const editable = workspace !== undefined && isManager(workspace.role);
   return (
     <SettingsPage
       title={settingsText.settings_groups_title()}

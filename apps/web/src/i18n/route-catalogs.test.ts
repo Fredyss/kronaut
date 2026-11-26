@@ -8,7 +8,7 @@ const MESSAGES = resolve(SRC, '../../../packages/i18n/messages');
 const STATIC = /^(?:import|export)(?!\s+type\b)[\s\w{},*]*?['"](\.{1,2}\/[^'"]+)['"]/gm;
 const DYNAMIC = /import\(\s*['"](\.{1,2}\/[^'"]+)['"]\s*\)/g;
 const SHELL = 'main.tsx';
-const ROUTER = 'app.tsx';
+const ROUTERS: ReadonlySet<string> = new Set(['app.tsx', 'settings-routes.tsx']);
 
 interface Source {
   readonly text: string;
@@ -84,10 +84,10 @@ function inherit(
   owners: ReadonlyMap<string, Set<string>>,
 ): boolean {
   let changed = false;
-  const lazy = graph.get(ROUTER)?.dynamic ?? [];
+  const lazy = [...ROUTERS].flatMap((router) => graph.get(router)?.dynamic ?? []);
   const routes = new Set([...lazy, ...lazy.flatMap((route) => graph.get(route)?.static ?? [])]);
   for (const [file, source] of graph) {
-    if (file === ROUTER) continue;
+    if (ROUTERS.has(file)) continue;
     // A route module, or the page it re-exports, loads its own group's catalog, whichever route opens it.
     for (const target of source.dynamic.filter((path) => !routes.has(path))) {
       const labels = roots.get(target) ?? new Set<string>();
@@ -100,8 +100,11 @@ function inherit(
 
 function owners(graph: ReadonlyMap<string, Source>): Map<string, Set<string>> {
   const roots = new Map<string, Set<string>>([[SHELL, new Set(['shell'])]]);
-  for (const route of graph.get(ROUTER)?.dynamic ?? [])
-    roots.set(route, new Set([routeGroup(route)]));
+  for (const router of ROUTERS) {
+    for (const route of graph.get(router)?.dynamic ?? []) {
+      roots.set(route, new Set([routeGroup(route)]));
+    }
+  }
   const result = new Map<string, Set<string>>();
   let changed = true;
   while (changed) changed = spread(graph, roots, result) || inherit(graph, roots, result);

@@ -1,27 +1,23 @@
-import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
+import { Button, SecretDialog, SettingsCard, SettingsPage } from '@kronaut/ui';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
-import { m } from '../../base/locale/i18n.ts';
-import { SecretDialog, type SecretText } from '../../base/ui/secret-dialog.tsx';
+import { isManager, meQuery } from '../../base/api/me.ts';
+import { LoadState } from '../../base/ui/load-state.tsx';
 import { m as integrationsText } from '../../i18n/integrations.ts';
 import { CreateDialog } from './create-dialog.tsx';
 import { KeyRow } from './key-row.tsx';
 import { apiKeysQuery } from './queries.ts';
 
-const MANAGERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 const BEARER = 'Authorization: Bearer <token>';
 
 type Open = { readonly kind: 'create' } | { readonly kind: 'token'; readonly token: string } | null;
 
-const tokenText = (): SecretText => ({
-  title: integrationsText.integrations_api_keys_token_title(),
-  once: integrationsText.integrations_api_keys_token_once(),
+const tokenLabels = () => ({
   copy: integrationsText.integrations_api_keys_copy(),
   copied: integrationsText.integrations_api_keys_copied(),
   copyFailed: integrationsText.integrations_api_keys_copy_failed(),
-  done: integrationsText.integrations_api_keys_done(),
+  done: integrationsText.integrations_secret_done(),
 });
 
 function OpenDialog({
@@ -42,28 +38,23 @@ function OpenDialog({
     );
   }
   return (
-    <SecretDialog secret={open.token} text={tokenText()} onClose={() => onOpen(null)}>
+    <SecretDialog
+      secret={open.token}
+      title={integrationsText.integrations_api_keys_token_title()}
+      once={integrationsText.integrations_api_keys_token_once()}
+      labels={tokenLabels()}
+      onClose={() => onOpen(null)}
+    >
       <p>{integrationsText.integrations_api_keys_token_use()}</p>
       <code className="font-mono">{BEARER}</code>
     </SecretDialog>
   );
 }
 
-function Pending({ failed }: { readonly failed: boolean }) {
-  return (
-    <p
-      role={failed ? 'alert' : undefined}
-      className={`text-sm ${failed ? 'text-destructive' : 'text-muted-foreground'}`}
-    >
-      {failed ? m.error_generic() : m.loading()}
-    </p>
-  );
-}
-
 function KeyList({ workspaceId }: { readonly workspaceId: string }) {
   const client = useApiClient();
   const keys = useInfiniteQuery(apiKeysQuery(client, workspaceId));
-  if (keys.data === undefined) return <Pending failed={keys.isError} />;
+  if (keys.data === undefined) return <LoadState failed={keys.isError} />;
   const items = keys.data.pages.flatMap((page) => page.items);
   if (items.length === 0) {
     return (
@@ -122,7 +113,7 @@ export function ApiKeySettingsPage() {
     >
       {workspace === undefined ? null : (
         <div className="flex flex-col gap-6">
-          {MANAGERS.has(workspace.role) ? (
+          {isManager(workspace.role) ? (
             <ApiKeys workspaceId={workspace.id} />
           ) : (
             <p className="text-muted-foreground text-sm">

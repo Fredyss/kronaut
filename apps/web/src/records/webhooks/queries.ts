@@ -6,7 +6,8 @@ import {
   webhooksDeliveries,
   webhooksList,
 } from '@kronaut/sdk';
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
+import { cursorPagesQuery } from '../../base/api/cursor-pages.ts';
 
 export type Endpoint = WebhooksListResponse['items'][number];
 export type Delivery = WebhooksDeliveriesResponse['items'][number];
@@ -26,19 +27,11 @@ export function webhooksQuery(client: Client, workspaceId: string) {
 }
 
 export function deliveriesQuery(client: Client, workspaceId: string, webhookId: string) {
-  return infiniteQueryOptions({
-    queryKey: [...webhooksKey(workspaceId), 'deliveries', webhookId],
-    queryFn: async ({ pageParam }) =>
-      (
-        await webhooksDeliveries({
-          client,
-          path: { workspaceId, webhookId },
-          query: pageParam === null ? {} : { cursor: pageParam },
-        })
-      ).data,
-    initialPageParam: null as string | null,
-    getNextPageParam: (page) => page.nextCursor,
-  });
+  return cursorPagesQuery(
+    [...webhooksKey(workspaceId), 'deliveries', webhookId],
+    async (query) =>
+      (await webhooksDeliveries({ client, path: { workspaceId, webhookId }, query })).data,
+  );
 }
 
 export function endpointHost(url: string): string {

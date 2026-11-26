@@ -1,52 +1,12 @@
+import { CheckField } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useId } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { providerUi } from '../../base/providers/ui.ts';
-import { CheckList } from '../../base/ui/check-list.tsx';
 import { m as integrationsText } from '../../i18n/integrations.ts';
 import { activeBrands, brandsQuery } from '../../records/brands/queries.ts';
 import { channelsQuery } from '../../records/channels/queries.ts';
 import type { Access } from './draft.ts';
-
-interface Item {
-  readonly id: string;
-  readonly name: string;
-  readonly hint?: string;
-}
-
-function toggled(current: ReadonlySet<string>, id: string, on: boolean): ReadonlySet<string> {
-  return new Set(on ? [...current, id] : [...current].filter((other) => other !== id));
-}
-
-function Picker({
-  label,
-  empty,
-  items,
-  checked,
-  onChange,
-}: {
-  readonly label: string;
-  readonly empty: string;
-  readonly items: readonly Item[];
-  readonly checked: ReadonlySet<string>;
-  onChange(next: ReadonlySet<string>): void;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="font-medium text-sm">{label}</span>
-      {items.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{empty}</p>
-      ) : (
-        <CheckList
-          label={label}
-          items={items}
-          checked={checked}
-          onToggle={(id, on) => onChange(toggled(checked, id, on))}
-        />
-      )}
-    </div>
-  );
-}
 
 interface Reach {
   readonly brandIds: ReadonlySet<string>;
@@ -67,14 +27,14 @@ function ReachPickers({ workspaceId, reach, error, onChange }: ReachPickersProps
   const nothing = reach.brandIds.size === 0 && reach.accountIds.size === 0;
   return (
     <div className="flex flex-col gap-4 ps-7">
-      <Picker
+      <CheckField
         label={integrationsText.integrations_api_keys_access_brands()}
         empty={integrationsText.integrations_api_keys_access_no_brands()}
         items={brands.map((brand) => ({ id: brand.id, name: brand.name }))}
         checked={reach.brandIds}
         onChange={(brandIds) => onChange({ ...reach, brandIds })}
       />
-      <Picker
+      <CheckField
         label={integrationsText.integrations_api_keys_access_channels()}
         empty={integrationsText.integrations_api_keys_access_no_channels()}
         items={channels.map((channel) => ({

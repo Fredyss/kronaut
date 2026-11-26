@@ -1,4 +1,4 @@
-import { CheckList } from '../../base/ui/check-list.tsx';
+import { CheckList } from '@kronaut/ui';
 import { type Channel, channelsKey } from '../../records/channels/queries.ts';
 import { useGroupMember } from '../../records/groups/members.ts';
 import type { Group } from '../../records/groups/queries.ts';

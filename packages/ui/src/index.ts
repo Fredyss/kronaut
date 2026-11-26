@@ -1,11 +1,15 @@
 export { Button, type ButtonProps, buttonVariants } from './button.tsx';
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card.tsx';
+export { CheckField } from './check-field.tsx';
+export { type CheckItem, CheckList } from './check-list.tsx';
 export { cn } from './cn.ts';
 export { ConfirmDelete } from './confirm-delete.tsx';
+export { ConfirmDialog } from './confirm-dialog.tsx';
 export { focusNeighbour } from './focus-neighbour.ts';
 export { Input } from './input.tsx';
 export { Label } from './label.tsx';
 export { Modal } from './modal.tsx';
+export { SecretDialog, type SecretLabels } from './secret-dialog.tsx';
 export { Select } from './select.tsx';
 export { SettingsCard } from './settings-card.tsx';
 export { SettingsPage } from './settings-page.tsx';

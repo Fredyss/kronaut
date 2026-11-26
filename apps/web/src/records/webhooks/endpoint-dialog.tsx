@@ -1,14 +1,15 @@
-import { Button, Modal, TextField } from '@kronaut/ui';
+import { Button, CheckField, Modal, TextField } from '@kronaut/ui';
 import { type FormEvent, useId, useState } from 'react';
 import { m } from '../../base/locale/i18n.ts';
-import { CheckList } from '../../base/ui/check-list.tsx';
 import { m as integrationsText } from '../../i18n/integrations.ts';
 import { endpointErrors } from './errors.ts';
 import { eventLabel, isWebhookEvent, WEBHOOK_EVENTS } from './events.ts';
 import { ENDPOINT_URL_MAX, type Endpoint, type WebhookEvent } from './queries.ts';
 import { type Revealed, useSaveEndpoint } from './writes.ts';
 
-const EVENT_ITEMS = () => WEBHOOK_EVENTS.map((id) => ({ id, name: eventLabel(id), hint: id }));
+function eventItems() {
+  return WEBHOOK_EVENTS.map((id) => ({ id, name: eventLabel(id), hint: id }));
+}
 
 interface EndpointDialogProps {
   readonly workspaceId: string;
@@ -27,15 +28,6 @@ export function EndpointDialog({ workspaceId, endpoint, onClose }: EndpointDialo
   const ready = url.trim() !== '' && events.size > 0;
   const close = () => {
     if (!save.isPending) onClose(null);
-  };
-  const toggle = (id: string, on: boolean) => {
-    if (!isWebhookEvent(id)) return;
-    setEvents((current) => {
-      const next = new Set(current);
-      if (on) next.add(id);
-      else next.delete(id);
-      return next;
-    });
   };
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -62,17 +54,12 @@ export function EndpointDialog({ workspaceId, endpoint, onClose }: EndpointDialo
             error={errors.url}
             onValueChange={setUrl}
           />
-          <div className="flex flex-col gap-2">
-            <span className="font-medium text-sm">
-              {integrationsText.integrations_webhooks_events()}
-            </span>
-            <CheckList
-              label={integrationsText.integrations_webhooks_events()}
-              items={EVENT_ITEMS()}
-              checked={events}
-              onToggle={toggle}
-            />
-          </div>
+          <CheckField
+            label={integrationsText.integrations_webhooks_events()}
+            items={eventItems()}
+            checked={events}
+            onChange={setEvents}
+          />
         </fieldset>
         {errors.form === undefined ? null : (
           <p role="alert" className="text-destructive text-sm">

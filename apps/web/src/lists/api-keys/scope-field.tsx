@@ -1,6 +1,6 @@
-import { CheckList } from '../../base/ui/check-list.tsx';
+import { CheckField } from '@kronaut/ui';
 import { m as integrationsText } from '../../i18n/integrations.ts';
-import { GRANTABLE_SCOPES, type GrantableScope, isGrantableScope, scopeLabel } from './scopes.ts';
+import { GRANTABLE_SCOPES, type GrantableScope, scopeLabel } from './scopes.ts';
 
 interface ScopeFieldProps {
   readonly scopes: ReadonlySet<GrantableScope>;
@@ -9,27 +9,14 @@ interface ScopeFieldProps {
 }
 
 export function ScopeField({ scopes, error, onChange }: ScopeFieldProps) {
-  const items = GRANTABLE_SCOPES.map((id) => ({ id, name: scopeLabel(id), hint: id }));
-  const toggle = (id: string, on: boolean) => {
-    if (!isGrantableScope(id)) return;
-    const next = new Set(scopes);
-    if (on) next.add(id);
-    else next.delete(id);
-    onChange(next);
-  };
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-medium text-sm">{integrationsText.integrations_api_keys_scopes()}</span>
-      <p className="text-muted-foreground text-sm">
-        {integrationsText.integrations_api_keys_scopes_hint()}
-      </p>
-      <CheckList
-        label={integrationsText.integrations_api_keys_scopes()}
-        items={items}
-        checked={scopes}
-        onToggle={toggle}
-      />
-      {error === undefined ? null : <p className="text-destructive text-sm">{error}</p>}
-    </div>
+    <CheckField
+      label={integrationsText.integrations_api_keys_scopes()}
+      hint={integrationsText.integrations_api_keys_scopes_hint()}
+      items={GRANTABLE_SCOPES.map((id) => ({ id, name: scopeLabel(id), hint: id }))}
+      checked={scopes}
+      error={error}
+      onChange={onChange}
+    />
   );
 }

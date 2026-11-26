@@ -5,16 +5,15 @@ import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { ANALYTICS_ROLES } from '../../records/analytics/roles.ts';
 import { AddChannelDialog } from '../../records/channels/add-channel.tsx';
 import { type ConnectRequest, connectError } from '../../records/channels/connect-option.tsx';
-import { DISCONNECT_ROLES, useDisconnect } from '../../records/channels/disconnect.tsx';
+import { useDisconnect } from '../../records/channels/disconnect.tsx';
 import { PickChannels } from '../../records/channels/pick-channels.tsx';
 import { type Channel, channelsQuery, connectableQuery } from '../../records/channels/queries.ts';
-import { QUEUE_ROLES } from '../../records/channels/queue.ts';
 import { SearchToasts } from '../../records/channels/search-toasts.tsx';
 import { httpsUrl } from '../../records/posts/destinations.ts';
 import { ChannelList } from './channel-card.tsx';
@@ -84,7 +83,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
   const connectable = useQuery(connectableQuery(client, workspaceId));
   const connect = useConnect(workspaceId);
   const disconnect = useDisconnect(workspaceId);
-  const canDisconnect = DISCONNECT_ROLES.has(role);
+  const canDisconnect = isManager(role);
   const search = route.useSearch();
   const [adding, setAdding] = useState<{ readonly initial: string | null } | null>(null);
 
@@ -141,7 +140,7 @@ function Channels({ workspaceId, role }: { readonly workspaceId: string; readonl
             onDisconnect: canDisconnect ? () => disconnect.mutate(channel) : null,
             pending: connect.isPending,
             disconnecting: disconnect.isPending,
-            queueWorkspace: QUEUE_ROLES.has(role) ? workspaceId : null,
+            queueWorkspace: isManager(role) ? workspaceId : null,
             metricsWorkspace: ANALYTICS_ROLES.has(role) ? workspaceId : null,
           })}
         />

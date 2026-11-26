@@ -3,8 +3,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useId } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { useFormat } from '../../base/locale/format.ts';
-import { m } from '../../base/locale/i18n.ts';
+import { LoadState } from '../../base/ui/load-state.tsx';
 import { m as integrationsText } from '../../i18n/integrations.ts';
+import { deliveryError } from './delivery-errors.ts';
 import { eventLabel, stateLabel } from './events.ts';
 import { type Delivery, deliveriesQuery } from './queries.ts';
 
@@ -13,7 +14,7 @@ function outcome(delivery: Delivery): string | null {
     return integrationsText.integrations_webhooks_http_status({ status: delivery.lastHttpStatus });
   }
   if (delivery.lastError !== null) {
-    return integrationsText.integrations_webhooks_error_code({ code: delivery.lastError });
+    return deliveryError(delivery.lastError);
   }
   return null;
 }
@@ -42,7 +43,7 @@ function DeliveryRow({ delivery }: { readonly delivery: Delivery }) {
               }),
         ]
           .filter((part) => part !== null)
-          .join(' · ')}
+          .reduce((list, part) => integrationsText.integrations_detail_join({ list, part }))}
       </span>
     </li>
   );
@@ -51,15 +52,7 @@ function DeliveryRow({ delivery }: { readonly delivery: Delivery }) {
 function DeliveryList({ workspaceId, webhookId }: { workspaceId: string; webhookId: string }) {
   const client = useApiClient();
   const deliveries = useInfiniteQuery(deliveriesQuery(client, workspaceId, webhookId));
-  if (deliveries.data === undefined) {
-    return deliveries.isError ? (
-      <p role="alert" className="text-destructive text-sm">
-        {m.error_generic()}
-      </p>
-    ) : (
-      <p className="text-muted-foreground text-sm">{m.loading()}</p>
-    );
-  }
+  if (deliveries.data === undefined) return <LoadState failed={deliveries.isError} />;
   const items = deliveries.data.pages.flatMap((page) => page.items);
   if (items.length === 0) {
     return (

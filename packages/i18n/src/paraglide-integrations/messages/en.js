@@ -19,7 +19,6 @@
 /** @typedef {{}} Integrations_Api_Keys_CreateInputs */
 /** @typedef {{}} Integrations_Api_Keys_CreatedInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_Created_AtInputs */
-/** @typedef {{}} Integrations_Api_Keys_DoneInputs */
 /** @typedef {{}} Integrations_Api_Keys_EmptyInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_Expired_AtInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_ExpiresInputs */
@@ -73,7 +72,9 @@
 /** @typedef {{}} Integrations_Api_Keys_Token_TitleInputs */
 /** @typedef {{}} Integrations_Api_Keys_Token_UseInputs */
 /** @typedef {{}} Integrations_Api_Keys_Whole_WorkspaceInputs */
+/** @typedef {{ list: NonNullable<unknown>, part: NonNullable<unknown> }} Integrations_Detail_JoinInputs */
 /** @typedef {{}} Integrations_Read_OnlyInputs */
+/** @typedef {{}} Integrations_Secret_DoneInputs */
 /** @typedef {{}} Integrations_Webhooks_AddInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Integrations_Webhooks_AttemptsInputs */
 /** @typedef {{}} Integrations_Webhooks_CancelInputs */
@@ -90,13 +91,22 @@
 /** @typedef {{}} Integrations_Webhooks_Deliveries_EmptyInputs */
 /** @typedef {{}} Integrations_Webhooks_Deliveries_MoreInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Deliveries_NamedInputs */
-/** @typedef {{}} Integrations_Webhooks_DoneInputs */
 /** @typedef {{}} Integrations_Webhooks_EditInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Edit_NamedInputs */
 /** @typedef {{}} Integrations_Webhooks_Edit_TitleInputs */
 /** @typedef {{}} Integrations_Webhooks_EmptyInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Enabled_NamedInputs */
-/** @typedef {{ code: NonNullable<unknown> }} Integrations_Webhooks_Error_CodeInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_BlockedInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_DisabledInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_DnsInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_GenericInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_InternalInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_InterruptedInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_NetworkInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_PrivateInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_RedirectInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_TimeoutInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_Too_LargeInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_ExpiringInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_Needs_ReauthInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_ReconnectedInputs */
@@ -233,10 +243,6 @@ export const integrations_api_keys_created = /** @type {(inputs: Integrations_Ap
 
 export const integrations_api_keys_created_at = /** @type {(inputs: Integrations_Api_Keys_Created_AtInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`Created ${i?.time}`)
-};
-
-export const integrations_api_keys_done = /** @type {(inputs: Integrations_Api_Keys_DoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Done`)
 };
 
 export const integrations_api_keys_empty = /** @type {(inputs: Integrations_Api_Keys_EmptyInputs) => LocalizedString} */ () => {
@@ -455,8 +461,16 @@ export const integrations_api_keys_whole_workspace = /** @type {(inputs: Integra
 	return /** @type {LocalizedString} */ (`Whole workspace`)
 };
 
+export const integrations_detail_join = /** @type {(inputs: Integrations_Detail_JoinInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.list} · ${i?.part}`)
+};
+
 export const integrations_read_only = /** @type {(inputs: Integrations_Read_OnlyInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Only owners and admins can change these settings.`)
+};
+
+export const integrations_secret_done = /** @type {(inputs: Integrations_Secret_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Done`)
 };
 
 export const integrations_webhooks_add = /** @type {(inputs: Integrations_Webhooks_AddInputs) => LocalizedString} */ () => {
@@ -525,10 +539,6 @@ export const integrations_webhooks_deliveries_named = /** @type {(inputs: Integr
 	return /** @type {LocalizedString} */ (`Deliveries to ${i?.host}`)
 };
 
-export const integrations_webhooks_done = /** @type {(inputs: Integrations_Webhooks_DoneInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Done`)
-};
-
 export const integrations_webhooks_edit = /** @type {(inputs: Integrations_Webhooks_EditInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Edit`)
 };
@@ -549,8 +559,48 @@ export const integrations_webhooks_enabled_named = /** @type {(inputs: Integrati
 	return /** @type {LocalizedString} */ (`Send deliveries to ${i?.host}`)
 };
 
-export const integrations_webhooks_error_code = /** @type {(inputs: Integrations_Webhooks_Error_CodeInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`Error: ${i?.code}`)
+export const integrations_webhooks_error_blocked = /** @type {(inputs: Integrations_Webhooks_Error_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This address isn't allowed`)
+};
+
+export const integrations_webhooks_error_disabled = /** @type {(inputs: Integrations_Webhooks_Error_DisabledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Not sent because the endpoint was turned off`)
+};
+
+export const integrations_webhooks_error_dns = /** @type {(inputs: Integrations_Webhooks_Error_DnsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The endpoint's host name wasn't found`)
+};
+
+export const integrations_webhooks_error_generic = /** @type {(inputs: Integrations_Webhooks_Error_GenericInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delivery failed`)
+};
+
+export const integrations_webhooks_error_internal = /** @type {(inputs: Integrations_Webhooks_Error_InternalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Sending failed on this server`)
+};
+
+export const integrations_webhooks_error_interrupted = /** @type {(inputs: Integrations_Webhooks_Error_InterruptedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Stopped after interrupted attempts`)
+};
+
+export const integrations_webhooks_error_network = /** @type {(inputs: Integrations_Webhooks_Error_NetworkInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Couldn't connect to the endpoint`)
+};
+
+export const integrations_webhooks_error_private = /** @type {(inputs: Integrations_Webhooks_Error_PrivateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The address points to a private network`)
+};
+
+export const integrations_webhooks_error_redirect = /** @type {(inputs: Integrations_Webhooks_Error_RedirectInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The endpoint answered with a redirect`)
+};
+
+export const integrations_webhooks_error_timeout = /** @type {(inputs: Integrations_Webhooks_Error_TimeoutInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The endpoint didn't answer in time`)
+};
+
+export const integrations_webhooks_error_too_large = /** @type {(inputs: Integrations_Webhooks_Error_Too_LargeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`The endpoint's response was too large`)
 };
 
 export const integrations_webhooks_event_channel_expiring = /** @type {(inputs: Integrations_Webhooks_Event_Channel_ExpiringInputs) => LocalizedString} */ () => {

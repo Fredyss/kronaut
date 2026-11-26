@@ -21,7 +21,6 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Integrations_Api_Keys_CreateInputs */
 /** @typedef {{}} Integrations_Api_Keys_CreatedInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_Created_AtInputs */
-/** @typedef {{}} Integrations_Api_Keys_DoneInputs */
 /** @typedef {{}} Integrations_Api_Keys_EmptyInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_Expired_AtInputs */
 /** @typedef {{ time: NonNullable<unknown> }} Integrations_Api_Keys_ExpiresInputs */
@@ -75,7 +74,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Integrations_Api_Keys_Token_TitleInputs */
 /** @typedef {{}} Integrations_Api_Keys_Token_UseInputs */
 /** @typedef {{}} Integrations_Api_Keys_Whole_WorkspaceInputs */
+/** @typedef {{ list: NonNullable<unknown>, part: NonNullable<unknown> }} Integrations_Detail_JoinInputs */
 /** @typedef {{}} Integrations_Read_OnlyInputs */
+/** @typedef {{}} Integrations_Secret_DoneInputs */
 /** @typedef {{}} Integrations_Webhooks_AddInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Integrations_Webhooks_AttemptsInputs */
 /** @typedef {{}} Integrations_Webhooks_CancelInputs */
@@ -92,13 +93,22 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Integrations_Webhooks_Deliveries_EmptyInputs */
 /** @typedef {{}} Integrations_Webhooks_Deliveries_MoreInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Deliveries_NamedInputs */
-/** @typedef {{}} Integrations_Webhooks_DoneInputs */
 /** @typedef {{}} Integrations_Webhooks_EditInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Edit_NamedInputs */
 /** @typedef {{}} Integrations_Webhooks_Edit_TitleInputs */
 /** @typedef {{}} Integrations_Webhooks_EmptyInputs */
 /** @typedef {{ host: NonNullable<unknown> }} Integrations_Webhooks_Enabled_NamedInputs */
-/** @typedef {{ code: NonNullable<unknown> }} Integrations_Webhooks_Error_CodeInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_BlockedInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_DisabledInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_DnsInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_GenericInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_InternalInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_InterruptedInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_NetworkInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_PrivateInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_RedirectInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_TimeoutInputs */
+/** @typedef {{}} Integrations_Webhooks_Error_Too_LargeInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_ExpiringInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_Needs_ReauthInputs */
 /** @typedef {{}} Integrations_Webhooks_Event_Channel_ReconnectedInputs */
@@ -454,21 +464,6 @@ export const integrations_api_keys_created_at = /** @type {((inputs: Integration
 	if (locale === "sk") return __sk.integrations_api_keys_created_at(inputs)
 	if (locale === "cs") return __cs.integrations_api_keys_created_at(inputs)
 	return __en.integrations_api_keys_created_at(inputs)
-});
-/**
-* | output |
-* | --- |
-* | "Done" |
-*
-* @param {Integrations_Api_Keys_DoneInputs} inputs
-* @param {{ locale?: "en" | "sk" | "cs" }} options
-* @returns {LocalizedString}
-*/
-export const integrations_api_keys_done = /** @type {((inputs?: Integrations_Api_Keys_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Api_Keys_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "sk") return __sk.integrations_api_keys_done(inputs)
-	if (locale === "cs") return __cs.integrations_api_keys_done(inputs)
-	return __en.integrations_api_keys_done(inputs)
 });
 /**
 * | output |
@@ -1270,6 +1265,21 @@ export const integrations_api_keys_whole_workspace = /** @type {((inputs?: Integ
 /**
 * | output |
 * | --- |
+* | "{list} · {part}" |
+*
+* @param {Integrations_Detail_JoinInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_detail_join = /** @type {((inputs: Integrations_Detail_JoinInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Detail_JoinInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_detail_join(inputs)
+	if (locale === "cs") return __cs.integrations_detail_join(inputs)
+	return __en.integrations_detail_join(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Only owners and admins can change these settings." |
 *
 * @param {Integrations_Read_OnlyInputs} inputs
@@ -1281,6 +1291,21 @@ export const integrations_read_only = /** @type {((inputs?: Integrations_Read_On
 	if (locale === "sk") return __sk.integrations_read_only(inputs)
 	if (locale === "cs") return __cs.integrations_read_only(inputs)
 	return __en.integrations_read_only(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Done" |
+*
+* @param {Integrations_Secret_DoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_secret_done = /** @type {((inputs?: Integrations_Secret_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Secret_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_secret_done(inputs)
+	if (locale === "cs") return __cs.integrations_secret_done(inputs)
+	return __en.integrations_secret_done(inputs)
 });
 /**
 * | output |
@@ -1526,21 +1551,6 @@ export const integrations_webhooks_deliveries_named = /** @type {((inputs: Integ
 /**
 * | output |
 * | --- |
-* | "Done" |
-*
-* @param {Integrations_Webhooks_DoneInputs} inputs
-* @param {{ locale?: "en" | "sk" | "cs" }} options
-* @returns {LocalizedString}
-*/
-export const integrations_webhooks_done = /** @type {((inputs?: Integrations_Webhooks_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "sk") return __sk.integrations_webhooks_done(inputs)
-	if (locale === "cs") return __cs.integrations_webhooks_done(inputs)
-	return __en.integrations_webhooks_done(inputs)
-});
-/**
-* | output |
-* | --- |
 * | "Edit" |
 *
 * @param {Integrations_Webhooks_EditInputs} inputs
@@ -1616,17 +1626,167 @@ export const integrations_webhooks_enabled_named = /** @type {((inputs: Integrat
 /**
 * | output |
 * | --- |
-* | "Error: {code}" |
+* | "This address isn't allowed" |
 *
-* @param {Integrations_Webhooks_Error_CodeInputs} inputs
+* @param {Integrations_Webhooks_Error_BlockedInputs} inputs
 * @param {{ locale?: "en" | "sk" | "cs" }} options
 * @returns {LocalizedString}
 */
-export const integrations_webhooks_error_code = /** @type {((inputs: Integrations_Webhooks_Error_CodeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_CodeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+export const integrations_webhooks_error_blocked = /** @type {((inputs?: Integrations_Webhooks_Error_BlockedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_BlockedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "sk") return __sk.integrations_webhooks_error_code(inputs)
-	if (locale === "cs") return __cs.integrations_webhooks_error_code(inputs)
-	return __en.integrations_webhooks_error_code(inputs)
+	if (locale === "sk") return __sk.integrations_webhooks_error_blocked(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_blocked(inputs)
+	return __en.integrations_webhooks_error_blocked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Not sent because the endpoint was turned off" |
+*
+* @param {Integrations_Webhooks_Error_DisabledInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_disabled = /** @type {((inputs?: Integrations_Webhooks_Error_DisabledInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_DisabledInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_disabled(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_disabled(inputs)
+	return __en.integrations_webhooks_error_disabled(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The endpoint's host name wasn't found" |
+*
+* @param {Integrations_Webhooks_Error_DnsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_dns = /** @type {((inputs?: Integrations_Webhooks_Error_DnsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_DnsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_dns(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_dns(inputs)
+	return __en.integrations_webhooks_error_dns(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delivery failed" |
+*
+* @param {Integrations_Webhooks_Error_GenericInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_generic = /** @type {((inputs?: Integrations_Webhooks_Error_GenericInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_GenericInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_generic(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_generic(inputs)
+	return __en.integrations_webhooks_error_generic(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Sending failed on this server" |
+*
+* @param {Integrations_Webhooks_Error_InternalInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_internal = /** @type {((inputs?: Integrations_Webhooks_Error_InternalInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_InternalInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_internal(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_internal(inputs)
+	return __en.integrations_webhooks_error_internal(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Stopped after interrupted attempts" |
+*
+* @param {Integrations_Webhooks_Error_InterruptedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_interrupted = /** @type {((inputs?: Integrations_Webhooks_Error_InterruptedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_InterruptedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_interrupted(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_interrupted(inputs)
+	return __en.integrations_webhooks_error_interrupted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Couldn't connect to the endpoint" |
+*
+* @param {Integrations_Webhooks_Error_NetworkInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_network = /** @type {((inputs?: Integrations_Webhooks_Error_NetworkInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_NetworkInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_network(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_network(inputs)
+	return __en.integrations_webhooks_error_network(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The address points to a private network" |
+*
+* @param {Integrations_Webhooks_Error_PrivateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_private = /** @type {((inputs?: Integrations_Webhooks_Error_PrivateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_PrivateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_private(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_private(inputs)
+	return __en.integrations_webhooks_error_private(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The endpoint answered with a redirect" |
+*
+* @param {Integrations_Webhooks_Error_RedirectInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_redirect = /** @type {((inputs?: Integrations_Webhooks_Error_RedirectInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_RedirectInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_redirect(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_redirect(inputs)
+	return __en.integrations_webhooks_error_redirect(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The endpoint didn't answer in time" |
+*
+* @param {Integrations_Webhooks_Error_TimeoutInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_timeout = /** @type {((inputs?: Integrations_Webhooks_Error_TimeoutInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_TimeoutInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_timeout(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_timeout(inputs)
+	return __en.integrations_webhooks_error_timeout(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The endpoint's response was too large" |
+*
+* @param {Integrations_Webhooks_Error_Too_LargeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const integrations_webhooks_error_too_large = /** @type {((inputs?: Integrations_Webhooks_Error_Too_LargeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Integrations_Webhooks_Error_Too_LargeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.integrations_webhooks_error_too_large(inputs)
+	if (locale === "cs") return __cs.integrations_webhooks_error_too_large(inputs)
+	return __en.integrations_webhooks_error_too_large(inputs)
 });
 /**
 * | output |
