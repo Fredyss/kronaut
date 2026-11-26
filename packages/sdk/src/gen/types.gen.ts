@@ -5180,3 +5180,241 @@ export type TagsUpdateResponses = {
 };
 
 export type TagsUpdateResponse = TagsUpdateResponses[keyof TagsUpdateResponses];
+
+export type WebhooksListData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks';
+};
+
+export type WebhooksListErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksListError = WebhooksListErrors[keyof WebhooksListErrors];
+
+export type WebhooksListResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            consecutiveFailures: number;
+            createdAt: string;
+            description: string | null;
+            disabledReason: 'manual' | 'failing' | null;
+            enabled: boolean;
+            events: Array<string>;
+            failingSince: string | null;
+            id: string;
+            previousSecretExpiresAt: string | null;
+            updatedAt: string;
+            url: string;
+        }>;
+    };
+};
+
+export type WebhooksListResponse = WebhooksListResponses[keyof WebhooksListResponses];
+
+export type WebhooksCreateData = {
+    body: {
+        description?: string | null;
+        events: Array<'destination.published' | 'destination.failed' | 'destination.unconfirmed' | 'destination.blocked' | 'destination.awaiting_manual' | 'post.completed' | 'post.approval_requested' | 'post.approved' | 'post.rejected' | 'channel.needs_reauth' | 'channel.expiring' | 'channel.reconnected' | 'provider_app.misconfigured'>;
+        url: string;
+    };
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks';
+};
+
+export type WebhooksCreateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksCreateError = WebhooksCreateErrors[keyof WebhooksCreateErrors];
+
+export type WebhooksCreateResponses = {
+    /**
+     * OK
+     */
+    201: {
+        consecutiveFailures: number;
+        createdAt: string;
+        description: string | null;
+        disabledReason: 'manual' | 'failing' | null;
+        enabled: boolean;
+        events: Array<string>;
+        failingSince: string | null;
+        id: string;
+        previousSecretExpiresAt: string | null;
+        secret: string;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type WebhooksCreateResponse = WebhooksCreateResponses[keyof WebhooksCreateResponses];
+
+export type WebhooksDeleteData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        webhookId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks/{webhookId}';
+};
+
+export type WebhooksDeleteErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksDeleteError = WebhooksDeleteErrors[keyof WebhooksDeleteErrors];
+
+export type WebhooksDeleteResponses = {
+    /**
+     * OK
+     */
+    204: void;
+};
+
+export type WebhooksDeleteResponse = WebhooksDeleteResponses[keyof WebhooksDeleteResponses];
+
+export type WebhooksUpdateData = {
+    body: {
+        description?: string | null;
+        enabled?: boolean;
+        events?: Array<'destination.published' | 'destination.failed' | 'destination.unconfirmed' | 'destination.blocked' | 'destination.awaiting_manual' | 'post.completed' | 'post.approval_requested' | 'post.approved' | 'post.rejected' | 'channel.needs_reauth' | 'channel.expiring' | 'channel.reconnected' | 'provider_app.misconfigured'>;
+        url?: string;
+    };
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        webhookId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks/{webhookId}';
+};
+
+export type WebhooksUpdateErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksUpdateError = WebhooksUpdateErrors[keyof WebhooksUpdateErrors];
+
+export type WebhooksUpdateResponses = {
+    /**
+     * OK
+     */
+    200: {
+        consecutiveFailures: number;
+        createdAt: string;
+        description: string | null;
+        disabledReason: 'manual' | 'failing' | null;
+        enabled: boolean;
+        events: Array<string>;
+        failingSince: string | null;
+        id: string;
+        previousSecretExpiresAt: string | null;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type WebhooksUpdateResponse = WebhooksUpdateResponses[keyof WebhooksUpdateResponses];
+
+export type WebhooksRotateSecretData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        webhookId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks/{webhookId}/rotate-secret';
+};
+
+export type WebhooksRotateSecretErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksRotateSecretError = WebhooksRotateSecretErrors[keyof WebhooksRotateSecretErrors];
+
+export type WebhooksRotateSecretResponses = {
+    /**
+     * OK
+     */
+    200: {
+        consecutiveFailures: number;
+        createdAt: string;
+        description: string | null;
+        disabledReason: 'manual' | 'failing' | null;
+        enabled: boolean;
+        events: Array<string>;
+        failingSince: string | null;
+        id: string;
+        previousSecretExpiresAt: string | null;
+        secret: string;
+        updatedAt: string;
+        url: string;
+    };
+};
+
+export type WebhooksRotateSecretResponse = WebhooksRotateSecretResponses[keyof WebhooksRotateSecretResponses];
+
+export type WebhooksTestData = {
+    body?: never;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        workspaceId: string;
+        webhookId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/webhooks/{webhookId}/test';
+};
+
+export type WebhooksTestErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksTestError = WebhooksTestErrors[keyof WebhooksTestErrors];
+
+export type WebhooksTestResponses = {
+    /**
+     * OK
+     */
+    202: {
+        eventId: string;
+    };
+};
+
+export type WebhooksTestResponse = WebhooksTestResponses[keyof WebhooksTestResponses];

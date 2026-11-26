@@ -18,6 +18,7 @@ export const ID_PREFIXES = {
   savedText: 'stx',
   mediaImport: 'mimp',
   rssFeed: 'rss',
+  webhookEndpoint: 'whk',
 } as const;
 
 export type IdKind = keyof typeof ID_PREFIXES;

@@ -26,6 +26,7 @@ import { profileRoutes } from './identity/auth/profile-routes.ts';
 import { reauthRoutes } from './identity/auth/reauth.ts';
 import { authRoutes } from './identity/auth/routes.ts';
 import { guardSession } from './identity/auth/session-guard.ts';
+import { webhookRoutes } from './identity/webhooks/endpoints/endpoint-routes.ts';
 import type { CronTask } from './infrastructure/jobs/cron-tasks.ts';
 import { policyRoutes } from './policy/approval-policy/policy-routes.ts';
 import { analyticsRoutes } from './records/analytics/routes.ts';
@@ -97,6 +98,7 @@ export function apiRoutes({
     ...analyticsRoutes(),
     ...shortLinkRoutes({ keyring, http: shortenerHttp }),
     ...notificationRoutes(),
+    ...webhookRoutes({ keyring }),
     ...systemStatusRoutes({ providers, cronTasks, instanceAdmins: http.instanceAdmins ?? [] }),
     ...channelRoutes({
       db: http.db,
