@@ -207,6 +207,81 @@
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} Settings_Webhooks_AddInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_AttemptsInputs */
+/** @typedef {{}} Settings_Webhooks_CancelInputs */
+/** @typedef {{}} Settings_Webhooks_CloseInputs */
+/** @typedef {{}} Settings_Webhooks_CopiedInputs */
+/** @typedef {{}} Settings_Webhooks_CopyInputs */
+/** @typedef {{}} Settings_Webhooks_Copy_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_DeleteInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_BodyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Delete_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_DeletedInputs */
+/** @typedef {{}} Settings_Webhooks_DeliveriesInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_EmptyInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_MoreInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Deliveries_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_DoneInputs */
+/** @typedef {{}} Settings_Webhooks_EditInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Edit_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Edit_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_EmptyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Enabled_NamedInputs */
+/** @typedef {{ code: NonNullable<unknown> }} Settings_Webhooks_Error_CodeInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ExpiringInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_Needs_ReauthInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ReconnectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_Awaiting_ManualInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_BlockedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_PublishedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_UnconfirmedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_Approval_RequestedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_ApprovedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_CompletedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_RejectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Provider_App_MisconfiguredInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Webhook_TestInputs */
+/** @typedef {{}} Settings_Webhooks_EventsInputs */
+/** @typedef {{}} Settings_Webhooks_FailingInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Failing_SinceInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Settings_Webhooks_Http_StatusInputs */
+/** @typedef {{}} Settings_Webhooks_IntroInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_EndpointInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_SecretInputs */
+/** @typedef {{}} Settings_Webhooks_LimitInputs */
+/** @typedef {{}} Settings_Webhooks_NavInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Next_AttemptInputs */
+/** @typedef {{}} Settings_Webhooks_OffInputs */
+/** @typedef {{}} Settings_Webhooks_OnInputs */
+/** @typedef {{}} Settings_Webhooks_RotateInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_Rotate_BodyInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_ConfirmInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Rotate_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_SavedInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_OnceInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Secret_PreviousInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_UseInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeadInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveredInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveringInputs */
+/** @typedef {{}} Settings_Webhooks_State_PendingInputs */
+/** @typedef {{}} Settings_Webhooks_State_Retry_WaitInputs */
+/** @typedef {{}} Settings_Webhooks_TestInputs */
+/** @typedef {{}} Settings_Webhooks_Test_DisabledInputs */
+/** @typedef {{}} Settings_Webhooks_Test_LimitInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Test_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Test_SentInputs */
+/** @typedef {{}} Settings_Webhooks_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OffInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OnInputs */
+/** @typedef {{}} Settings_Webhooks_UrlInputs */
+/** @typedef {{}} Settings_Webhooks_Url_HintInputs */
+/** @typedef {{}} Settings_Webhooks_Url_InvalidInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
 /** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
@@ -1142,6 +1217,310 @@ export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Allowed shift after approval (minutes)`)
+};
+
+export const settings_webhooks_add = /** @type {(inputs: Settings_Webhooks_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Add endpoint`)
+};
+
+export const settings_webhooks_attempts = /** @type {(inputs: Settings_Webhooks_AttemptsInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} attempt`);
+	return /** @type {LocalizedString} */ (`${i?.count} attempts`)
+};
+
+export const settings_webhooks_cancel = /** @type {(inputs: Settings_Webhooks_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const settings_webhooks_close = /** @type {(inputs: Settings_Webhooks_CloseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Close`)
+};
+
+export const settings_webhooks_copied = /** @type {(inputs: Settings_Webhooks_CopiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Secret copied`)
+};
+
+export const settings_webhooks_copy = /** @type {(inputs: Settings_Webhooks_CopyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Copy secret`)
+};
+
+export const settings_webhooks_copy_failed = /** @type {(inputs: Settings_Webhooks_Copy_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Couldn't copy. Select the secret and copy it yourself.`)
+};
+
+export const settings_webhooks_delete = /** @type {(inputs: Settings_Webhooks_DeleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete`)
+};
+
+export const settings_webhooks_delete_body = /** @type {(inputs: Settings_Webhooks_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Deliveries still waiting for it are dropped. This can't be undone.`)
+};
+
+export const settings_webhooks_delete_named = /** @type {(inputs: Settings_Webhooks_Delete_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Delete ${i?.host}`)
+};
+
+export const settings_webhooks_delete_title = /** @type {(inputs: Settings_Webhooks_Delete_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delete this endpoint?`)
+};
+
+export const settings_webhooks_deleted = /** @type {(inputs: Settings_Webhooks_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Endpoint deleted`)
+};
+
+export const settings_webhooks_deliveries = /** @type {(inputs: Settings_Webhooks_DeliveriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Deliveries`)
+};
+
+export const settings_webhooks_deliveries_empty = /** @type {(inputs: Settings_Webhooks_Deliveries_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No deliveries yet.`)
+};
+
+export const settings_webhooks_deliveries_more = /** @type {(inputs: Settings_Webhooks_Deliveries_MoreInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Load more`)
+};
+
+export const settings_webhooks_deliveries_named = /** @type {(inputs: Settings_Webhooks_Deliveries_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Deliveries to ${i?.host}`)
+};
+
+export const settings_webhooks_done = /** @type {(inputs: Settings_Webhooks_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Done`)
+};
+
+export const settings_webhooks_edit = /** @type {(inputs: Settings_Webhooks_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit`)
+};
+
+export const settings_webhooks_edit_named = /** @type {(inputs: Settings_Webhooks_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Edit ${i?.host}`)
+};
+
+export const settings_webhooks_edit_title = /** @type {(inputs: Settings_Webhooks_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Edit endpoint`)
+};
+
+export const settings_webhooks_empty = /** @type {(inputs: Settings_Webhooks_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No webhook endpoints yet.`)
+};
+
+export const settings_webhooks_enabled_named = /** @type {(inputs: Settings_Webhooks_Enabled_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Send deliveries to ${i?.host}`)
+};
+
+export const settings_webhooks_error_code = /** @type {(inputs: Settings_Webhooks_Error_CodeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Error: ${i?.code}`)
+};
+
+export const settings_webhooks_event_channel_expiring = /** @type {(inputs: Settings_Webhooks_Event_Channel_ExpiringInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channel access expiring soon`)
+};
+
+export const settings_webhooks_event_channel_needs_reauth = /** @type {(inputs: Settings_Webhooks_Event_Channel_Needs_ReauthInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channel needs reconnecting`)
+};
+
+export const settings_webhooks_event_channel_reconnected = /** @type {(inputs: Settings_Webhooks_Event_Channel_ReconnectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Channel reconnected`)
+};
+
+export const settings_webhooks_event_destination_awaiting_manual = /** @type {(inputs: Settings_Webhooks_Event_Destination_Awaiting_ManualInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Waiting to be posted by hand`)
+};
+
+export const settings_webhooks_event_destination_blocked = /** @type {(inputs: Settings_Webhooks_Event_Destination_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Blocked before publishing`)
+};
+
+export const settings_webhooks_event_destination_failed = /** @type {(inputs: Settings_Webhooks_Event_Destination_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Failed on a channel`)
+};
+
+export const settings_webhooks_event_destination_published = /** @type {(inputs: Settings_Webhooks_Event_Destination_PublishedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Published on a channel`)
+};
+
+export const settings_webhooks_event_destination_unconfirmed = /** @type {(inputs: Settings_Webhooks_Event_Destination_UnconfirmedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Publishing unconfirmed`)
+};
+
+export const settings_webhooks_event_post_approval_requested = /** @type {(inputs: Settings_Webhooks_Event_Post_Approval_RequestedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Approval requested`)
+};
+
+export const settings_webhooks_event_post_approved = /** @type {(inputs: Settings_Webhooks_Event_Post_ApprovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post approved`)
+};
+
+export const settings_webhooks_event_post_completed = /** @type {(inputs: Settings_Webhooks_Event_Post_CompletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post finished on all its channels`)
+};
+
+export const settings_webhooks_event_post_rejected = /** @type {(inputs: Settings_Webhooks_Event_Post_RejectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Post rejected`)
+};
+
+export const settings_webhooks_event_provider_app_misconfigured = /** @type {(inputs: Settings_Webhooks_Event_Provider_App_MisconfiguredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Network app needs attention`)
+};
+
+export const settings_webhooks_event_webhook_test = /** @type {(inputs: Settings_Webhooks_Event_Webhook_TestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Test event`)
+};
+
+export const settings_webhooks_events = /** @type {(inputs: Settings_Webhooks_EventsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Events`)
+};
+
+export const settings_webhooks_failing = /** @type {(inputs: Settings_Webhooks_FailingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This endpoint was turned off because its deliveries kept failing. Fix the receiving server, then turn it back on.`)
+};
+
+export const settings_webhooks_failing_since = /** @type {(inputs: Settings_Webhooks_Failing_SinceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Deliveries have been failing since ${i?.time}.`)
+};
+
+export const settings_webhooks_http_status = /** @type {(inputs: Settings_Webhooks_Http_StatusInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`HTTP ${i?.status}`)
+};
+
+export const settings_webhooks_intro = /** @type {(inputs: Settings_Webhooks_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooks send an HTTPS request to your server whenever something happens in this workspace, such as a post going out or a channel needing to reconnect.`)
+};
+
+export const settings_webhooks_keep_endpoint = /** @type {(inputs: Settings_Webhooks_Keep_EndpointInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep endpoint`)
+};
+
+export const settings_webhooks_keep_secret = /** @type {(inputs: Settings_Webhooks_Keep_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Keep secret`)
+};
+
+export const settings_webhooks_limit = /** @type {(inputs: Settings_Webhooks_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`This workspace has as many endpoints as it can have. Delete one before you add another.`)
+};
+
+export const settings_webhooks_nav = /** @type {(inputs: Settings_Webhooks_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooks`)
+};
+
+export const settings_webhooks_next_attempt = /** @type {(inputs: Settings_Webhooks_Next_AttemptInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Next try ${i?.time}`)
+};
+
+export const settings_webhooks_off = /** @type {(inputs: Settings_Webhooks_OffInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Off`)
+};
+
+export const settings_webhooks_on = /** @type {(inputs: Settings_Webhooks_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`On`)
+};
+
+export const settings_webhooks_rotate = /** @type {(inputs: Settings_Webhooks_RotateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Rotate secret`)
+};
+
+export const settings_webhooks_rotate_body = /** @type {(inputs: Settings_Webhooks_Rotate_BodyInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("en", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`You get a new secret. For the next ${i?.count} hour, deliveries carry signatures from both secrets, so your server keeps accepting them while you switch over.`);
+	return /** @type {LocalizedString} */ (`You get a new secret. For the next ${i?.count} hours, deliveries carry signatures from both secrets, so your server keeps accepting them while you switch over.`)
+};
+
+export const settings_webhooks_rotate_confirm = /** @type {(inputs: Settings_Webhooks_Rotate_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Rotate`)
+};
+
+export const settings_webhooks_rotate_named = /** @type {(inputs: Settings_Webhooks_Rotate_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Rotate the signing secret of ${i?.host}`)
+};
+
+export const settings_webhooks_rotate_title = /** @type {(inputs: Settings_Webhooks_Rotate_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Rotate the signing secret?`)
+};
+
+export const settings_webhooks_saved = /** @type {(inputs: Settings_Webhooks_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Endpoint saved`)
+};
+
+export const settings_webhooks_secret_once = /** @type {(inputs: Settings_Webhooks_Secret_OnceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Copy this secret now. You won't see it again.`)
+};
+
+export const settings_webhooks_secret_previous = /** @type {(inputs: Settings_Webhooks_Secret_PreviousInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`The previous secret keeps working until ${i?.time}.`)
+};
+
+export const settings_webhooks_secret_title = /** @type {(inputs: Settings_Webhooks_Secret_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Signing secret`)
+};
+
+export const settings_webhooks_secret_use = /** @type {(inputs: Settings_Webhooks_Secret_UseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Your server uses it to check the webhook-signature header of every delivery.`)
+};
+
+export const settings_webhooks_state_dead = /** @type {(inputs: Settings_Webhooks_State_DeadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Failed`)
+};
+
+export const settings_webhooks_state_delivered = /** @type {(inputs: Settings_Webhooks_State_DeliveredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Delivered`)
+};
+
+export const settings_webhooks_state_delivering = /** @type {(inputs: Settings_Webhooks_State_DeliveringInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Sending`)
+};
+
+export const settings_webhooks_state_pending = /** @type {(inputs: Settings_Webhooks_State_PendingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Waiting`)
+};
+
+export const settings_webhooks_state_retry_wait = /** @type {(inputs: Settings_Webhooks_State_Retry_WaitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Retry scheduled`)
+};
+
+export const settings_webhooks_test = /** @type {(inputs: Settings_Webhooks_TestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Send test`)
+};
+
+export const settings_webhooks_test_disabled = /** @type {(inputs: Settings_Webhooks_Test_DisabledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Turn the endpoint on before you send a test.`)
+};
+
+export const settings_webhooks_test_limit = /** @type {(inputs: Settings_Webhooks_Test_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`You've sent too many test events to this endpoint. Try again in an hour.`)
+};
+
+export const settings_webhooks_test_named = /** @type {(inputs: Settings_Webhooks_Test_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Send a test event to ${i?.host}`)
+};
+
+export const settings_webhooks_test_sent = /** @type {(inputs: Settings_Webhooks_Test_SentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Test event queued. It goes out within a minute.`)
+};
+
+export const settings_webhooks_title = /** @type {(inputs: Settings_Webhooks_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooks`)
+};
+
+export const settings_webhooks_turned_off = /** @type {(inputs: Settings_Webhooks_Turned_OffInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Endpoint turned off`)
+};
+
+export const settings_webhooks_turned_on = /** @type {(inputs: Settings_Webhooks_Turned_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Endpoint turned on`)
+};
+
+export const settings_webhooks_url = /** @type {(inputs: Settings_Webhooks_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Endpoint URL`)
+};
+
+export const settings_webhooks_url_hint = /** @type {(inputs: Settings_Webhooks_Url_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`An https address on the standard port, for example https://example.com/hooks.`)
+};
+
+export const settings_webhooks_url_invalid = /** @type {(inputs: Settings_Webhooks_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Use an https address on the standard port, with a host name and no user name or password.`)
 };
 
 export const settings_workspace_apps_active_note = /** @type {(inputs: Settings_Workspace_Apps_Active_NoteInputs) => LocalizedString} */ (i) => {

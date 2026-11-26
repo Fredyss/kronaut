@@ -221,6 +221,15 @@ const workspaceAppSettingsRoute = createRoute({
   ),
 });
 
+const webhookSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'webhooks',
+  component: lazyRouteComponent(
+    () => import('./routes/settings-webhooks.tsx'),
+    'WebhookSettingsPage',
+  ),
+});
+
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -262,6 +271,7 @@ const routeTree = rootRoute.addChildren([
       feedSettingsRoute,
       shortLinkSettingsRoute,
       workspaceAppSettingsRoute,
+      webhookSettingsRoute,
       systemSettingsRoute,
     ]),
   ]),

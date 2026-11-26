@@ -209,6 +209,81 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} Settings_Webhooks_AddInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_AttemptsInputs */
+/** @typedef {{}} Settings_Webhooks_CancelInputs */
+/** @typedef {{}} Settings_Webhooks_CloseInputs */
+/** @typedef {{}} Settings_Webhooks_CopiedInputs */
+/** @typedef {{}} Settings_Webhooks_CopyInputs */
+/** @typedef {{}} Settings_Webhooks_Copy_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_DeleteInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_BodyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Delete_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_DeletedInputs */
+/** @typedef {{}} Settings_Webhooks_DeliveriesInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_EmptyInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_MoreInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Deliveries_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_DoneInputs */
+/** @typedef {{}} Settings_Webhooks_EditInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Edit_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Edit_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_EmptyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Enabled_NamedInputs */
+/** @typedef {{ code: NonNullable<unknown> }} Settings_Webhooks_Error_CodeInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ExpiringInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_Needs_ReauthInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ReconnectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_Awaiting_ManualInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_BlockedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_PublishedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_UnconfirmedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_Approval_RequestedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_ApprovedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_CompletedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_RejectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Provider_App_MisconfiguredInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Webhook_TestInputs */
+/** @typedef {{}} Settings_Webhooks_EventsInputs */
+/** @typedef {{}} Settings_Webhooks_FailingInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Failing_SinceInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Settings_Webhooks_Http_StatusInputs */
+/** @typedef {{}} Settings_Webhooks_IntroInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_EndpointInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_SecretInputs */
+/** @typedef {{}} Settings_Webhooks_LimitInputs */
+/** @typedef {{}} Settings_Webhooks_NavInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Next_AttemptInputs */
+/** @typedef {{}} Settings_Webhooks_OffInputs */
+/** @typedef {{}} Settings_Webhooks_OnInputs */
+/** @typedef {{}} Settings_Webhooks_RotateInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_Rotate_BodyInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_ConfirmInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Rotate_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_SavedInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_OnceInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Secret_PreviousInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_UseInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeadInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveredInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveringInputs */
+/** @typedef {{}} Settings_Webhooks_State_PendingInputs */
+/** @typedef {{}} Settings_Webhooks_State_Retry_WaitInputs */
+/** @typedef {{}} Settings_Webhooks_TestInputs */
+/** @typedef {{}} Settings_Webhooks_Test_DisabledInputs */
+/** @typedef {{}} Settings_Webhooks_Test_LimitInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Test_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Test_SentInputs */
+/** @typedef {{}} Settings_Webhooks_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OffInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OnInputs */
+/** @typedef {{}} Settings_Webhooks_UrlInputs */
+/** @typedef {{}} Settings_Webhooks_Url_HintInputs */
+/** @typedef {{}} Settings_Webhooks_Url_InvalidInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
 /** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
@@ -3427,6 +3502,1133 @@ export const settings_tolerance = /** @type {((inputs?: Settings_ToleranceInputs
 	if (locale === "sk") return __sk.settings_tolerance(inputs)
 	if (locale === "cs") return __cs.settings_tolerance(inputs)
 	return __en.settings_tolerance(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Add endpoint" |
+*
+* @param {Settings_Webhooks_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_add = /** @type {((inputs?: Settings_Webhooks_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_add(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_add(inputs)
+	return __en.settings_webhooks_add(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} attempt" |
+* | * | "{count} attempts" |
+*
+* @param {Settings_Webhooks_AttemptsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_attempts = /** @type {((inputs: Settings_Webhooks_AttemptsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_AttemptsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_attempts(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_attempts(inputs)
+	return __en.settings_webhooks_attempts(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Webhooks_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_cancel = /** @type {((inputs?: Settings_Webhooks_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_cancel(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_cancel(inputs)
+	return __en.settings_webhooks_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Close" |
+*
+* @param {Settings_Webhooks_CloseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_close = /** @type {((inputs?: Settings_Webhooks_CloseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_CloseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_close(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_close(inputs)
+	return __en.settings_webhooks_close(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Secret copied" |
+*
+* @param {Settings_Webhooks_CopiedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_copied = /** @type {((inputs?: Settings_Webhooks_CopiedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_CopiedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_copied(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_copied(inputs)
+	return __en.settings_webhooks_copied(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Copy secret" |
+*
+* @param {Settings_Webhooks_CopyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_copy = /** @type {((inputs?: Settings_Webhooks_CopyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_CopyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_copy(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_copy(inputs)
+	return __en.settings_webhooks_copy(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Couldn't copy. Select the secret and copy it yourself." |
+*
+* @param {Settings_Webhooks_Copy_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_copy_failed = /** @type {((inputs?: Settings_Webhooks_Copy_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Copy_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_copy_failed(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_copy_failed(inputs)
+	return __en.settings_webhooks_copy_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete" |
+*
+* @param {Settings_Webhooks_DeleteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_delete = /** @type {((inputs?: Settings_Webhooks_DeleteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_DeleteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_delete(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_delete(inputs)
+	return __en.settings_webhooks_delete(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Deliveries still waiting for it are dropped. This can't be undone." |
+*
+* @param {Settings_Webhooks_Delete_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_delete_body = /** @type {((inputs?: Settings_Webhooks_Delete_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Delete_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_delete_body(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_delete_body(inputs)
+	return __en.settings_webhooks_delete_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete {host}" |
+*
+* @param {Settings_Webhooks_Delete_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_delete_named = /** @type {((inputs: Settings_Webhooks_Delete_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Delete_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_delete_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_delete_named(inputs)
+	return __en.settings_webhooks_delete_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delete this endpoint?" |
+*
+* @param {Settings_Webhooks_Delete_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_delete_title = /** @type {((inputs?: Settings_Webhooks_Delete_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Delete_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_delete_title(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_delete_title(inputs)
+	return __en.settings_webhooks_delete_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Endpoint deleted" |
+*
+* @param {Settings_Webhooks_DeletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_deleted = /** @type {((inputs?: Settings_Webhooks_DeletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_DeletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_deleted(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_deleted(inputs)
+	return __en.settings_webhooks_deleted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Deliveries" |
+*
+* @param {Settings_Webhooks_DeliveriesInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_deliveries = /** @type {((inputs?: Settings_Webhooks_DeliveriesInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_DeliveriesInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_deliveries(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_deliveries(inputs)
+	return __en.settings_webhooks_deliveries(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No deliveries yet." |
+*
+* @param {Settings_Webhooks_Deliveries_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_deliveries_empty = /** @type {((inputs?: Settings_Webhooks_Deliveries_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Deliveries_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_deliveries_empty(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_deliveries_empty(inputs)
+	return __en.settings_webhooks_deliveries_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Load more" |
+*
+* @param {Settings_Webhooks_Deliveries_MoreInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_deliveries_more = /** @type {((inputs?: Settings_Webhooks_Deliveries_MoreInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Deliveries_MoreInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_deliveries_more(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_deliveries_more(inputs)
+	return __en.settings_webhooks_deliveries_more(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Deliveries to {host}" |
+*
+* @param {Settings_Webhooks_Deliveries_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_deliveries_named = /** @type {((inputs: Settings_Webhooks_Deliveries_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Deliveries_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_deliveries_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_deliveries_named(inputs)
+	return __en.settings_webhooks_deliveries_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Done" |
+*
+* @param {Settings_Webhooks_DoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_done = /** @type {((inputs?: Settings_Webhooks_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_done(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_done(inputs)
+	return __en.settings_webhooks_done(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit" |
+*
+* @param {Settings_Webhooks_EditInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_edit = /** @type {((inputs?: Settings_Webhooks_EditInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_EditInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_edit(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_edit(inputs)
+	return __en.settings_webhooks_edit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit {host}" |
+*
+* @param {Settings_Webhooks_Edit_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_edit_named = /** @type {((inputs: Settings_Webhooks_Edit_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Edit_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_edit_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_edit_named(inputs)
+	return __en.settings_webhooks_edit_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Edit endpoint" |
+*
+* @param {Settings_Webhooks_Edit_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_edit_title = /** @type {((inputs?: Settings_Webhooks_Edit_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Edit_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_edit_title(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_edit_title(inputs)
+	return __en.settings_webhooks_edit_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No webhook endpoints yet." |
+*
+* @param {Settings_Webhooks_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_empty = /** @type {((inputs?: Settings_Webhooks_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_empty(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_empty(inputs)
+	return __en.settings_webhooks_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Send deliveries to {host}" |
+*
+* @param {Settings_Webhooks_Enabled_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_enabled_named = /** @type {((inputs: Settings_Webhooks_Enabled_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Enabled_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_enabled_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_enabled_named(inputs)
+	return __en.settings_webhooks_enabled_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Error: {code}" |
+*
+* @param {Settings_Webhooks_Error_CodeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_error_code = /** @type {((inputs: Settings_Webhooks_Error_CodeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Error_CodeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_error_code(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_error_code(inputs)
+	return __en.settings_webhooks_error_code(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channel access expiring soon" |
+*
+* @param {Settings_Webhooks_Event_Channel_ExpiringInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_channel_expiring = /** @type {((inputs?: Settings_Webhooks_Event_Channel_ExpiringInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Channel_ExpiringInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_channel_expiring(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_channel_expiring(inputs)
+	return __en.settings_webhooks_event_channel_expiring(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channel needs reconnecting" |
+*
+* @param {Settings_Webhooks_Event_Channel_Needs_ReauthInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_channel_needs_reauth = /** @type {((inputs?: Settings_Webhooks_Event_Channel_Needs_ReauthInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Channel_Needs_ReauthInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_channel_needs_reauth(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_channel_needs_reauth(inputs)
+	return __en.settings_webhooks_event_channel_needs_reauth(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channel reconnected" |
+*
+* @param {Settings_Webhooks_Event_Channel_ReconnectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_channel_reconnected = /** @type {((inputs?: Settings_Webhooks_Event_Channel_ReconnectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Channel_ReconnectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_channel_reconnected(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_channel_reconnected(inputs)
+	return __en.settings_webhooks_event_channel_reconnected(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Waiting to be posted by hand" |
+*
+* @param {Settings_Webhooks_Event_Destination_Awaiting_ManualInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_destination_awaiting_manual = /** @type {((inputs?: Settings_Webhooks_Event_Destination_Awaiting_ManualInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Destination_Awaiting_ManualInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_destination_awaiting_manual(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_destination_awaiting_manual(inputs)
+	return __en.settings_webhooks_event_destination_awaiting_manual(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Blocked before publishing" |
+*
+* @param {Settings_Webhooks_Event_Destination_BlockedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_destination_blocked = /** @type {((inputs?: Settings_Webhooks_Event_Destination_BlockedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Destination_BlockedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_destination_blocked(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_destination_blocked(inputs)
+	return __en.settings_webhooks_event_destination_blocked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Failed on a channel" |
+*
+* @param {Settings_Webhooks_Event_Destination_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_destination_failed = /** @type {((inputs?: Settings_Webhooks_Event_Destination_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Destination_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_destination_failed(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_destination_failed(inputs)
+	return __en.settings_webhooks_event_destination_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Published on a channel" |
+*
+* @param {Settings_Webhooks_Event_Destination_PublishedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_destination_published = /** @type {((inputs?: Settings_Webhooks_Event_Destination_PublishedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Destination_PublishedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_destination_published(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_destination_published(inputs)
+	return __en.settings_webhooks_event_destination_published(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Publishing unconfirmed" |
+*
+* @param {Settings_Webhooks_Event_Destination_UnconfirmedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_destination_unconfirmed = /** @type {((inputs?: Settings_Webhooks_Event_Destination_UnconfirmedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Destination_UnconfirmedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_destination_unconfirmed(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_destination_unconfirmed(inputs)
+	return __en.settings_webhooks_event_destination_unconfirmed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Approval requested" |
+*
+* @param {Settings_Webhooks_Event_Post_Approval_RequestedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_post_approval_requested = /** @type {((inputs?: Settings_Webhooks_Event_Post_Approval_RequestedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Post_Approval_RequestedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_post_approval_requested(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_post_approval_requested(inputs)
+	return __en.settings_webhooks_event_post_approval_requested(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post approved" |
+*
+* @param {Settings_Webhooks_Event_Post_ApprovedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_post_approved = /** @type {((inputs?: Settings_Webhooks_Event_Post_ApprovedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Post_ApprovedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_post_approved(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_post_approved(inputs)
+	return __en.settings_webhooks_event_post_approved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post finished on all its channels" |
+*
+* @param {Settings_Webhooks_Event_Post_CompletedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_post_completed = /** @type {((inputs?: Settings_Webhooks_Event_Post_CompletedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Post_CompletedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_post_completed(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_post_completed(inputs)
+	return __en.settings_webhooks_event_post_completed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Post rejected" |
+*
+* @param {Settings_Webhooks_Event_Post_RejectedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_post_rejected = /** @type {((inputs?: Settings_Webhooks_Event_Post_RejectedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Post_RejectedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_post_rejected(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_post_rejected(inputs)
+	return __en.settings_webhooks_event_post_rejected(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Network app needs attention" |
+*
+* @param {Settings_Webhooks_Event_Provider_App_MisconfiguredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_provider_app_misconfigured = /** @type {((inputs?: Settings_Webhooks_Event_Provider_App_MisconfiguredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Provider_App_MisconfiguredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_provider_app_misconfigured(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_provider_app_misconfigured(inputs)
+	return __en.settings_webhooks_event_provider_app_misconfigured(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Test event" |
+*
+* @param {Settings_Webhooks_Event_Webhook_TestInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_event_webhook_test = /** @type {((inputs?: Settings_Webhooks_Event_Webhook_TestInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Event_Webhook_TestInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_event_webhook_test(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_event_webhook_test(inputs)
+	return __en.settings_webhooks_event_webhook_test(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Events" |
+*
+* @param {Settings_Webhooks_EventsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_events = /** @type {((inputs?: Settings_Webhooks_EventsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_EventsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_events(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_events(inputs)
+	return __en.settings_webhooks_events(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This endpoint was turned off because its deliveries kept failing. Fix the receiving server, then turn it back on." |
+*
+* @param {Settings_Webhooks_FailingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_failing = /** @type {((inputs?: Settings_Webhooks_FailingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_FailingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_failing(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_failing(inputs)
+	return __en.settings_webhooks_failing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Deliveries have been failing since {time}." |
+*
+* @param {Settings_Webhooks_Failing_SinceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_failing_since = /** @type {((inputs: Settings_Webhooks_Failing_SinceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Failing_SinceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_failing_since(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_failing_since(inputs)
+	return __en.settings_webhooks_failing_since(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "HTTP {status}" |
+*
+* @param {Settings_Webhooks_Http_StatusInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_http_status = /** @type {((inputs: Settings_Webhooks_Http_StatusInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Http_StatusInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_http_status(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_http_status(inputs)
+	return __en.settings_webhooks_http_status(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Webhooks send an HTTPS request to your server whenever something happens in this workspace, such as a post going out or a channel needing to reconnect." |
+*
+* @param {Settings_Webhooks_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_intro = /** @type {((inputs?: Settings_Webhooks_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_intro(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_intro(inputs)
+	return __en.settings_webhooks_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep endpoint" |
+*
+* @param {Settings_Webhooks_Keep_EndpointInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_keep_endpoint = /** @type {((inputs?: Settings_Webhooks_Keep_EndpointInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Keep_EndpointInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_keep_endpoint(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_keep_endpoint(inputs)
+	return __en.settings_webhooks_keep_endpoint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep secret" |
+*
+* @param {Settings_Webhooks_Keep_SecretInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_keep_secret = /** @type {((inputs?: Settings_Webhooks_Keep_SecretInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Keep_SecretInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_keep_secret(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_keep_secret(inputs)
+	return __en.settings_webhooks_keep_secret(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has as many endpoints as it can have. Delete one before you add another." |
+*
+* @param {Settings_Webhooks_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_limit = /** @type {((inputs?: Settings_Webhooks_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_limit(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_limit(inputs)
+	return __en.settings_webhooks_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Webhooks" |
+*
+* @param {Settings_Webhooks_NavInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_nav = /** @type {((inputs?: Settings_Webhooks_NavInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_NavInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_nav(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_nav(inputs)
+	return __en.settings_webhooks_nav(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Next try {time}" |
+*
+* @param {Settings_Webhooks_Next_AttemptInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_next_attempt = /** @type {((inputs: Settings_Webhooks_Next_AttemptInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Next_AttemptInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_next_attempt(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_next_attempt(inputs)
+	return __en.settings_webhooks_next_attempt(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Off" |
+*
+* @param {Settings_Webhooks_OffInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_off = /** @type {((inputs?: Settings_Webhooks_OffInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_OffInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_off(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_off(inputs)
+	return __en.settings_webhooks_off(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "On" |
+*
+* @param {Settings_Webhooks_OnInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_on = /** @type {((inputs?: Settings_Webhooks_OnInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_OnInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_on(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_on(inputs)
+	return __en.settings_webhooks_on(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Rotate secret" |
+*
+* @param {Settings_Webhooks_RotateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_rotate = /** @type {((inputs?: Settings_Webhooks_RotateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_RotateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_rotate(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_rotate(inputs)
+	return __en.settings_webhooks_rotate(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "You get a new secret. For the next {count} hour, deliveries carry signatures from both secrets, so your server keeps accepting them while you switch over." |
+* | * | "You get a new secret. For the next {count} hours, deliveries carry signatures from both secrets, so your server keeps accepting them while you switch over." |
+*
+* @param {Settings_Webhooks_Rotate_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_rotate_body = /** @type {((inputs: Settings_Webhooks_Rotate_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Rotate_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_rotate_body(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_rotate_body(inputs)
+	return __en.settings_webhooks_rotate_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Rotate" |
+*
+* @param {Settings_Webhooks_Rotate_ConfirmInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_rotate_confirm = /** @type {((inputs?: Settings_Webhooks_Rotate_ConfirmInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Rotate_ConfirmInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_rotate_confirm(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_rotate_confirm(inputs)
+	return __en.settings_webhooks_rotate_confirm(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Rotate the signing secret of {host}" |
+*
+* @param {Settings_Webhooks_Rotate_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_rotate_named = /** @type {((inputs: Settings_Webhooks_Rotate_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Rotate_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_rotate_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_rotate_named(inputs)
+	return __en.settings_webhooks_rotate_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Rotate the signing secret?" |
+*
+* @param {Settings_Webhooks_Rotate_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_rotate_title = /** @type {((inputs?: Settings_Webhooks_Rotate_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Rotate_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_rotate_title(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_rotate_title(inputs)
+	return __en.settings_webhooks_rotate_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Endpoint saved" |
+*
+* @param {Settings_Webhooks_SavedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_saved = /** @type {((inputs?: Settings_Webhooks_SavedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_SavedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_saved(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_saved(inputs)
+	return __en.settings_webhooks_saved(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Copy this secret now. You won't see it again." |
+*
+* @param {Settings_Webhooks_Secret_OnceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_secret_once = /** @type {((inputs?: Settings_Webhooks_Secret_OnceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Secret_OnceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_secret_once(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_secret_once(inputs)
+	return __en.settings_webhooks_secret_once(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The previous secret keeps working until {time}." |
+*
+* @param {Settings_Webhooks_Secret_PreviousInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_secret_previous = /** @type {((inputs: Settings_Webhooks_Secret_PreviousInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Secret_PreviousInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_secret_previous(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_secret_previous(inputs)
+	return __en.settings_webhooks_secret_previous(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Signing secret" |
+*
+* @param {Settings_Webhooks_Secret_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_secret_title = /** @type {((inputs?: Settings_Webhooks_Secret_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Secret_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_secret_title(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_secret_title(inputs)
+	return __en.settings_webhooks_secret_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Your server uses it to check the webhook-signature header of every delivery." |
+*
+* @param {Settings_Webhooks_Secret_UseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_secret_use = /** @type {((inputs?: Settings_Webhooks_Secret_UseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Secret_UseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_secret_use(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_secret_use(inputs)
+	return __en.settings_webhooks_secret_use(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Failed" |
+*
+* @param {Settings_Webhooks_State_DeadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_state_dead = /** @type {((inputs?: Settings_Webhooks_State_DeadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_State_DeadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_state_dead(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_state_dead(inputs)
+	return __en.settings_webhooks_state_dead(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Delivered" |
+*
+* @param {Settings_Webhooks_State_DeliveredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_state_delivered = /** @type {((inputs?: Settings_Webhooks_State_DeliveredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_State_DeliveredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_state_delivered(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_state_delivered(inputs)
+	return __en.settings_webhooks_state_delivered(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Sending" |
+*
+* @param {Settings_Webhooks_State_DeliveringInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_state_delivering = /** @type {((inputs?: Settings_Webhooks_State_DeliveringInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_State_DeliveringInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_state_delivering(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_state_delivering(inputs)
+	return __en.settings_webhooks_state_delivering(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Waiting" |
+*
+* @param {Settings_Webhooks_State_PendingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_state_pending = /** @type {((inputs?: Settings_Webhooks_State_PendingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_State_PendingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_state_pending(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_state_pending(inputs)
+	return __en.settings_webhooks_state_pending(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Retry scheduled" |
+*
+* @param {Settings_Webhooks_State_Retry_WaitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_state_retry_wait = /** @type {((inputs?: Settings_Webhooks_State_Retry_WaitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_State_Retry_WaitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_state_retry_wait(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_state_retry_wait(inputs)
+	return __en.settings_webhooks_state_retry_wait(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Send test" |
+*
+* @param {Settings_Webhooks_TestInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_test = /** @type {((inputs?: Settings_Webhooks_TestInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_TestInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_test(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_test(inputs)
+	return __en.settings_webhooks_test(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Turn the endpoint on before you send a test." |
+*
+* @param {Settings_Webhooks_Test_DisabledInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_test_disabled = /** @type {((inputs?: Settings_Webhooks_Test_DisabledInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Test_DisabledInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_test_disabled(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_test_disabled(inputs)
+	return __en.settings_webhooks_test_disabled(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "You've sent too many test events to this endpoint. Try again in an hour." |
+*
+* @param {Settings_Webhooks_Test_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_test_limit = /** @type {((inputs?: Settings_Webhooks_Test_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Test_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_test_limit(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_test_limit(inputs)
+	return __en.settings_webhooks_test_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Send a test event to {host}" |
+*
+* @param {Settings_Webhooks_Test_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_test_named = /** @type {((inputs: Settings_Webhooks_Test_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Test_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_test_named(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_test_named(inputs)
+	return __en.settings_webhooks_test_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Test event queued. It goes out within a minute." |
+*
+* @param {Settings_Webhooks_Test_SentInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_test_sent = /** @type {((inputs?: Settings_Webhooks_Test_SentInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Test_SentInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_test_sent(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_test_sent(inputs)
+	return __en.settings_webhooks_test_sent(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Webhooks" |
+*
+* @param {Settings_Webhooks_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_title = /** @type {((inputs?: Settings_Webhooks_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_title(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_title(inputs)
+	return __en.settings_webhooks_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Endpoint turned off" |
+*
+* @param {Settings_Webhooks_Turned_OffInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_turned_off = /** @type {((inputs?: Settings_Webhooks_Turned_OffInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Turned_OffInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_turned_off(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_turned_off(inputs)
+	return __en.settings_webhooks_turned_off(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Endpoint turned on" |
+*
+* @param {Settings_Webhooks_Turned_OnInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_turned_on = /** @type {((inputs?: Settings_Webhooks_Turned_OnInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Turned_OnInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_turned_on(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_turned_on(inputs)
+	return __en.settings_webhooks_turned_on(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Endpoint URL" |
+*
+* @param {Settings_Webhooks_UrlInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_url = /** @type {((inputs?: Settings_Webhooks_UrlInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_UrlInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_url(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_url(inputs)
+	return __en.settings_webhooks_url(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "An https address on the standard port, for example https://example.com/hooks." |
+*
+* @param {Settings_Webhooks_Url_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_url_hint = /** @type {((inputs?: Settings_Webhooks_Url_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Url_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_url_hint(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_url_hint(inputs)
+	return __en.settings_webhooks_url_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Use an https address on the standard port, with a host name and no user name or password." |
+*
+* @param {Settings_Webhooks_Url_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_url_invalid = /** @type {((inputs?: Settings_Webhooks_Url_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_Url_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_url_invalid(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_url_invalid(inputs)
+	return __en.settings_webhooks_url_invalid(inputs)
 });
 /**
 * | output |

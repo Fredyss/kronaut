@@ -6,6 +6,13 @@ import { pathId } from '../../../base/http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../../../base/http/request.ts';
 import { DISABLE_AFTER_DAYS } from '../delivery/schedule.ts';
 import {
+  DELIVERIES_DEFAULT_LIMIT,
+  DELIVERIES_MAX_LIMIT,
+  DeliveryPageSchema,
+  deliveryFilter,
+  listDeliveries,
+} from './deliveries.ts';
+import {
   DESCRIPTION_MAX,
   endpointDescription,
   endpointEvents,
@@ -155,6 +162,20 @@ const testRoute = defineRoute({
   tags: ['webhooks'],
 });
 
+const deliveriesRoute = defineRoute({
+  id: 'webhooks.deliveries',
+  method: 'GET',
+  path: `${ENDPOINT_PATH}/deliveries`,
+  auth: 'session',
+  action: 'webhooks:manage',
+  params: EndpointParams,
+  query: z.object({ cursor: z.string().optional(), limit: z.string().optional() }),
+  response: DeliveryPageSchema,
+  summary: "List a webhook endpoint's deliveries",
+  description: `Newest first; limit 1–${DELIVERIES_MAX_LIMIT}, default ${DELIVERIES_DEFAULT_LIMIT}; pass nextCursor as cursor for the next page. \`eventId\` is the \`webhook-id\` the receiver sees. \`lastError\` is \`http_status\` or an egress code, never a message; \`nextAttemptAt\` is set only while the delivery waits or is being sent. Never the payload, the URL or a secret. ${RULES}`,
+  tags: ['webhooks'],
+});
+
 function actorOf(keyring: Keyring, ctx: RequestContext, workspace: string): EndpointActor {
   const workspaceId = pathId('workspace', workspace);
   ctx.authorize('webhooks:manage', { workspaceId });
@@ -217,6 +238,12 @@ export function webhookRoutes({ keyring }: { readonly keyring: Keyring }): Bound
       const actor = actorOf(keyring, ctx, params.workspaceId);
       const eventId = await sendTestEvent(actor, refOf(actor, params.webhookId));
       return { status: 202, body: { eventId } };
+    }),
+    bindRoute(deliveriesRoute, async ({ params, query }, ctx) => {
+      const actor = actorOf(keyring, ctx, params.workspaceId);
+      const filter = deliveryFilter(query);
+      const ref = refOf(actor, params.webhookId);
+      return { body: await ctx.tenant((trx) => listDeliveries(trx, ref, filter)) };
     }),
   ];
 }

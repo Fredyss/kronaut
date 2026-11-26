@@ -207,6 +207,81 @@
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} Settings_Webhooks_AddInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_AttemptsInputs */
+/** @typedef {{}} Settings_Webhooks_CancelInputs */
+/** @typedef {{}} Settings_Webhooks_CloseInputs */
+/** @typedef {{}} Settings_Webhooks_CopiedInputs */
+/** @typedef {{}} Settings_Webhooks_CopyInputs */
+/** @typedef {{}} Settings_Webhooks_Copy_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_DeleteInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_BodyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Delete_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Delete_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_DeletedInputs */
+/** @typedef {{}} Settings_Webhooks_DeliveriesInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_EmptyInputs */
+/** @typedef {{}} Settings_Webhooks_Deliveries_MoreInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Deliveries_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_DoneInputs */
+/** @typedef {{}} Settings_Webhooks_EditInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Edit_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Edit_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_EmptyInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Enabled_NamedInputs */
+/** @typedef {{ code: NonNullable<unknown> }} Settings_Webhooks_Error_CodeInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ExpiringInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_Needs_ReauthInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Channel_ReconnectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_Awaiting_ManualInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_BlockedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_FailedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_PublishedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Destination_UnconfirmedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_Approval_RequestedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_ApprovedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_CompletedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Post_RejectedInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Provider_App_MisconfiguredInputs */
+/** @typedef {{}} Settings_Webhooks_Event_Webhook_TestInputs */
+/** @typedef {{}} Settings_Webhooks_EventsInputs */
+/** @typedef {{}} Settings_Webhooks_FailingInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Failing_SinceInputs */
+/** @typedef {{ status: NonNullable<unknown> }} Settings_Webhooks_Http_StatusInputs */
+/** @typedef {{}} Settings_Webhooks_IntroInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_EndpointInputs */
+/** @typedef {{}} Settings_Webhooks_Keep_SecretInputs */
+/** @typedef {{}} Settings_Webhooks_LimitInputs */
+/** @typedef {{}} Settings_Webhooks_NavInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Next_AttemptInputs */
+/** @typedef {{}} Settings_Webhooks_OffInputs */
+/** @typedef {{}} Settings_Webhooks_OnInputs */
+/** @typedef {{}} Settings_Webhooks_RotateInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Webhooks_Rotate_BodyInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_ConfirmInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Rotate_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Rotate_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_SavedInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_OnceInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Webhooks_Secret_PreviousInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Secret_UseInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeadInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveredInputs */
+/** @typedef {{}} Settings_Webhooks_State_DeliveringInputs */
+/** @typedef {{}} Settings_Webhooks_State_PendingInputs */
+/** @typedef {{}} Settings_Webhooks_State_Retry_WaitInputs */
+/** @typedef {{}} Settings_Webhooks_TestInputs */
+/** @typedef {{}} Settings_Webhooks_Test_DisabledInputs */
+/** @typedef {{}} Settings_Webhooks_Test_LimitInputs */
+/** @typedef {{ host: NonNullable<unknown> }} Settings_Webhooks_Test_NamedInputs */
+/** @typedef {{}} Settings_Webhooks_Test_SentInputs */
+/** @typedef {{}} Settings_Webhooks_TitleInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OffInputs */
+/** @typedef {{}} Settings_Webhooks_Turned_OnInputs */
+/** @typedef {{}} Settings_Webhooks_UrlInputs */
+/** @typedef {{}} Settings_Webhooks_Url_HintInputs */
+/** @typedef {{}} Settings_Webhooks_Url_InvalidInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
 /** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
@@ -1154,6 +1229,314 @@ export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Povolený posun po schválení (v minútach)`)
+};
+
+export const settings_webhooks_add = /** @type {(inputs: Settings_Webhooks_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pridať koncový bod`)
+};
+
+export const settings_webhooks_attempts = /** @type {(inputs: Settings_Webhooks_AttemptsInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} pokus`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} pokusy`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} pokusu`);
+	return /** @type {LocalizedString} */ (`${i?.count} pokusov`)
+};
+
+export const settings_webhooks_cancel = /** @type {(inputs: Settings_Webhooks_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušiť`)
+};
+
+export const settings_webhooks_close = /** @type {(inputs: Settings_Webhooks_CloseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zavrieť`)
+};
+
+export const settings_webhooks_copied = /** @type {(inputs: Settings_Webhooks_CopiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kľúč je skopírovaný`)
+};
+
+export const settings_webhooks_copy = /** @type {(inputs: Settings_Webhooks_CopyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kopírovať kľúč`)
+};
+
+export const settings_webhooks_copy_failed = /** @type {(inputs: Settings_Webhooks_Copy_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kopírovanie nevyšlo. Označte kľúč a skopírujte ho ručne.`)
+};
+
+export const settings_webhooks_delete = /** @type {(inputs: Settings_Webhooks_DeleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť`)
+};
+
+export const settings_webhooks_delete_body = /** @type {(inputs: Settings_Webhooks_Delete_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Doručenia, ktoré naň ešte čakajú, sa zahodia. Vrátiť sa to nedá.`)
+};
+
+export const settings_webhooks_delete_named = /** @type {(inputs: Settings_Webhooks_Delete_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Odstrániť ${i?.host}`)
+};
+
+export const settings_webhooks_delete_title = /** @type {(inputs: Settings_Webhooks_Delete_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odstrániť tento koncový bod?`)
+};
+
+export const settings_webhooks_deleted = /** @type {(inputs: Settings_Webhooks_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Koncový bod je odstránený`)
+};
+
+export const settings_webhooks_deliveries = /** @type {(inputs: Settings_Webhooks_DeliveriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Doručenia`)
+};
+
+export const settings_webhooks_deliveries_empty = /** @type {(inputs: Settings_Webhooks_Deliveries_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ žiadne doručenia.`)
+};
+
+export const settings_webhooks_deliveries_more = /** @type {(inputs: Settings_Webhooks_Deliveries_MoreInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Načítať ďalšie`)
+};
+
+export const settings_webhooks_deliveries_named = /** @type {(inputs: Settings_Webhooks_Deliveries_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Doručenia na ${i?.host}`)
+};
+
+export const settings_webhooks_done = /** @type {(inputs: Settings_Webhooks_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Hotovo`)
+};
+
+export const settings_webhooks_edit = /** @type {(inputs: Settings_Webhooks_EditInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upraviť`)
+};
+
+export const settings_webhooks_edit_named = /** @type {(inputs: Settings_Webhooks_Edit_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Upraviť ${i?.host}`)
+};
+
+export const settings_webhooks_edit_title = /** @type {(inputs: Settings_Webhooks_Edit_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Upraviť koncový bod`)
+};
+
+export const settings_webhooks_empty = /** @type {(inputs: Settings_Webhooks_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatiaľ tu nie sú žiadne koncové body webhookov.`)
+};
+
+export const settings_webhooks_enabled_named = /** @type {(inputs: Settings_Webhooks_Enabled_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Posielať doručenia na ${i?.host}`)
+};
+
+export const settings_webhooks_error_code = /** @type {(inputs: Settings_Webhooks_Error_CodeInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Chyba: ${i?.code}`)
+};
+
+export const settings_webhooks_event_channel_expiring = /** @type {(inputs: Settings_Webhooks_Event_Channel_ExpiringInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Prístup ku kanálu čoskoro vyprší`)
+};
+
+export const settings_webhooks_event_channel_needs_reauth = /** @type {(inputs: Settings_Webhooks_Event_Channel_Needs_ReauthInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanál treba znova pripojiť`)
+};
+
+export const settings_webhooks_event_channel_reconnected = /** @type {(inputs: Settings_Webhooks_Event_Channel_ReconnectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanál je znova pripojený`)
+};
+
+export const settings_webhooks_event_destination_awaiting_manual = /** @type {(inputs: Settings_Webhooks_Event_Destination_Awaiting_ManualInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Čaká na ručné uverejnenie`)
+};
+
+export const settings_webhooks_event_destination_blocked = /** @type {(inputs: Settings_Webhooks_Event_Destination_BlockedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zablokované pred uverejnením`)
+};
+
+export const settings_webhooks_event_destination_failed = /** @type {(inputs: Settings_Webhooks_Event_Destination_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Na kanáli zlyhalo`)
+};
+
+export const settings_webhooks_event_destination_published = /** @type {(inputs: Settings_Webhooks_Event_Destination_PublishedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uverejnené na kanáli`)
+};
+
+export const settings_webhooks_event_destination_unconfirmed = /** @type {(inputs: Settings_Webhooks_Event_Destination_UnconfirmedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Uverejnenie sa nepotvrdilo`)
+};
+
+export const settings_webhooks_event_post_approval_requested = /** @type {(inputs: Settings_Webhooks_Event_Post_Approval_RequestedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Žiadosť o schválenie`)
+};
+
+export const settings_webhooks_event_post_approved = /** @type {(inputs: Settings_Webhooks_Event_Post_ApprovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevok je schválený`)
+};
+
+export const settings_webhooks_event_post_completed = /** @type {(inputs: Settings_Webhooks_Event_Post_CompletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevok je hotový na všetkých kanáloch`)
+};
+
+export const settings_webhooks_event_post_rejected = /** @type {(inputs: Settings_Webhooks_Event_Post_RejectedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Príspevok je zamietnutý`)
+};
+
+export const settings_webhooks_event_provider_app_misconfigured = /** @type {(inputs: Settings_Webhooks_Event_Provider_App_MisconfiguredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aplikácia siete potrebuje pozornosť`)
+};
+
+export const settings_webhooks_event_webhook_test = /** @type {(inputs: Settings_Webhooks_Event_Webhook_TestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Testovacia udalosť`)
+};
+
+export const settings_webhooks_events = /** @type {(inputs: Settings_Webhooks_EventsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Udalosti`)
+};
+
+export const settings_webhooks_failing = /** @type {(inputs: Settings_Webhooks_FailingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento koncový bod sa vypol, pretože doručenia naň stále zlyhávali. Opravte prijímajúci server a potom ho znova zapnite.`)
+};
+
+export const settings_webhooks_failing_since = /** @type {(inputs: Settings_Webhooks_Failing_SinceInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Doručenia zlyhávajú od ${i?.time}.`)
+};
+
+export const settings_webhooks_http_status = /** @type {(inputs: Settings_Webhooks_Http_StatusInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`HTTP ${i?.status}`)
+};
+
+export const settings_webhooks_intro = /** @type {(inputs: Settings_Webhooks_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooky pošlú na váš server požiadavku HTTPS vždy, keď sa v tomto pracovnom priestore niečo udeje, napríklad keď sa uverejní príspevok alebo keď treba znova pripojiť kanál.`)
+};
+
+export const settings_webhooks_keep_endpoint = /** @type {(inputs: Settings_Webhooks_Keep_EndpointInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechať koncový bod`)
+};
+
+export const settings_webhooks_keep_secret = /** @type {(inputs: Settings_Webhooks_Keep_SecretInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechať kľúč`)
+};
+
+export const settings_webhooks_limit = /** @type {(inputs: Settings_Webhooks_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovný priestor má už toľko koncových bodov, koľko môže mať. Skôr než pridáte ďalší, niektorý odstráňte.`)
+};
+
+export const settings_webhooks_nav = /** @type {(inputs: Settings_Webhooks_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooky`)
+};
+
+export const settings_webhooks_next_attempt = /** @type {(inputs: Settings_Webhooks_Next_AttemptInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Ďalší pokus ${i?.time}`)
+};
+
+export const settings_webhooks_off = /** @type {(inputs: Settings_Webhooks_OffInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vypnutý`)
+};
+
+export const settings_webhooks_on = /** @type {(inputs: Settings_Webhooks_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zapnutý`)
+};
+
+export const settings_webhooks_rotate = /** @type {(inputs: Settings_Webhooks_RotateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vymeniť kľúč`)
+};
+
+export const settings_webhooks_rotate_body = /** @type {(inputs: Settings_Webhooks_Rotate_BodyInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("sk", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`Dostanete nový kľúč. Ešte ${i?.count} hodinu ponesú doručenia podpisy oboch kľúčov, takže ich váš server bude prijímať aj počas prechodu.`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`Dostanete nový kľúč. Ešte ${i?.count} hodiny ponesú doručenia podpisy oboch kľúčov, takže ich váš server bude prijímať aj počas prechodu.`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`Dostanete nový kľúč. Ešte ${i?.count} hodiny ponesú doručenia podpisy oboch kľúčov, takže ich váš server bude prijímať aj počas prechodu.`);
+	return /** @type {LocalizedString} */ (`Dostanete nový kľúč. Ešte ${i?.count} hodín ponesú doručenia podpisy oboch kľúčov, takže ich váš server bude prijímať aj počas prechodu.`)
+};
+
+export const settings_webhooks_rotate_confirm = /** @type {(inputs: Settings_Webhooks_Rotate_ConfirmInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vymeniť`)
+};
+
+export const settings_webhooks_rotate_named = /** @type {(inputs: Settings_Webhooks_Rotate_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vymeniť podpisový kľúč pre ${i?.host}`)
+};
+
+export const settings_webhooks_rotate_title = /** @type {(inputs: Settings_Webhooks_Rotate_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vymeniť podpisový kľúč?`)
+};
+
+export const settings_webhooks_saved = /** @type {(inputs: Settings_Webhooks_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Koncový bod je uložený`)
+};
+
+export const settings_webhooks_secret_once = /** @type {(inputs: Settings_Webhooks_Secret_OnceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skopírujte si kľúč hneď teraz. Znova ho už neuvidíte.`)
+};
+
+export const settings_webhooks_secret_previous = /** @type {(inputs: Settings_Webhooks_Secret_PreviousInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Predchádzajúci kľúč platí do ${i?.time}.`)
+};
+
+export const settings_webhooks_secret_title = /** @type {(inputs: Settings_Webhooks_Secret_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Podpisový kľúč`)
+};
+
+export const settings_webhooks_secret_use = /** @type {(inputs: Settings_Webhooks_Secret_UseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Váš server ním overuje hlavičku webhook-signature pri každom doručení.`)
+};
+
+export const settings_webhooks_state_dead = /** @type {(inputs: Settings_Webhooks_State_DeadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zlyhalo`)
+};
+
+export const settings_webhooks_state_delivered = /** @type {(inputs: Settings_Webhooks_State_DeliveredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Doručené`)
+};
+
+export const settings_webhooks_state_delivering = /** @type {(inputs: Settings_Webhooks_State_DeliveringInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Odosiela sa`)
+};
+
+export const settings_webhooks_state_pending = /** @type {(inputs: Settings_Webhooks_State_PendingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Čaká`)
+};
+
+export const settings_webhooks_state_retry_wait = /** @type {(inputs: Settings_Webhooks_State_Retry_WaitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skúsi sa znova`)
+};
+
+export const settings_webhooks_test = /** @type {(inputs: Settings_Webhooks_TestInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Poslať test`)
+};
+
+export const settings_webhooks_test_disabled = /** @type {(inputs: Settings_Webhooks_Test_DisabledInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Skôr než pošlete test, koncový bod zapnite.`)
+};
+
+export const settings_webhooks_test_limit = /** @type {(inputs: Settings_Webhooks_Test_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Na tento koncový bod ste poslali priveľa testov. Skúste to znova o hodinu.`)
+};
+
+export const settings_webhooks_test_named = /** @type {(inputs: Settings_Webhooks_Test_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Poslať testovaciu udalosť na ${i?.host}`)
+};
+
+export const settings_webhooks_test_sent = /** @type {(inputs: Settings_Webhooks_Test_SentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Testovacia udalosť čaká vo fronte. Odíde do minúty.`)
+};
+
+export const settings_webhooks_title = /** @type {(inputs: Settings_Webhooks_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooky`)
+};
+
+export const settings_webhooks_turned_off = /** @type {(inputs: Settings_Webhooks_Turned_OffInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Koncový bod je vypnutý`)
+};
+
+export const settings_webhooks_turned_on = /** @type {(inputs: Settings_Webhooks_Turned_OnInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Koncový bod je zapnutý`)
+};
+
+export const settings_webhooks_url = /** @type {(inputs: Settings_Webhooks_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`URL koncového bodu`)
+};
+
+export const settings_webhooks_url_hint = /** @type {(inputs: Settings_Webhooks_Url_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Adresa https na štandardnom porte, napríklad https://example.com/hooks.`)
+};
+
+export const settings_webhooks_url_invalid = /** @type {(inputs: Settings_Webhooks_Url_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zadajte adresu https na štandardnom porte s názvom hostiteľa, bez používateľského mena a hesla.`)
 };
 
 export const settings_workspace_apps_active_note = /** @type {(inputs: Settings_Workspace_Apps_Active_NoteInputs) => LocalizedString} */ (i) => {
