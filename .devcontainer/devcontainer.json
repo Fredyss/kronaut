@@ -1,0 +1,22 @@
+{
+  "name": "kronaut-claude",
+  "build": { "dockerfile": "Dockerfile" },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "containerUser": "root",
+  "remoteUser": "node",
+  "workspaceMount": "source=kronaut-workspace-${localWorkspaceFolderBasename},target=/workspaces/kronaut,type=volume",
+  "workspaceFolder": "/workspaces/kronaut",
+  "mounts": [
+    "source=kronaut-claude-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=kronaut-docker-${devcontainerId},target=/var/lib/docker,type=volume"
+  ],
+  "remoteEnv": {
+    "GH_TOKEN": "${localEnv:KRONAUT_GH_TOKEN}",
+    "KRONAUT_GIT_NAME": "${localEnv:KRONAUT_GIT_NAME}",
+    "KRONAUT_GIT_EMAIL": "${localEnv:KRONAUT_GIT_EMAIL}"
+  },
+  "postCreateCommand": "/usr/local/share/kronaut/post-create.sh",
+  "postStartCommand": "sudo /usr/local/share/kronaut/firewall.sh"
+}
