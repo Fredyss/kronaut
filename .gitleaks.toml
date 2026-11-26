@@ -12,6 +12,7 @@ regexes = [
   '''fedcba9876543210''',
   '''86abcdef123xyz''',
   '''3m4ab2cdefgh2''',
+  '''MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw''',
 ]
 
 [[allowlists]]

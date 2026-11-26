@@ -80,7 +80,7 @@ export async function startHooks(test: HookUrls): Promise<HookFixture> {
     insertTestGrant(trx, instance.deps.keys.grant, grantToken, {
       workspaceId,
       sponsorUserId: ids.owner ?? '',
-      scopes: ['posts'],
+      scopes: ['posts:read'],
     }),
   );
   const cookies = {
