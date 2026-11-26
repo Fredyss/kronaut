@@ -8,8 +8,25 @@ export const WEBHOOK_RETENTION_DAYS = 30;
 const DELETE_BATCH = 10_000;
 const SYSTEM: Actor = { kind: 'system' };
 
+async function dropExpiredSecrets(db: Database, workspaceId: string): Promise<void> {
+  await db.withTenant(workspaceId, SYSTEM, async (trx) => {
+    await trx
+      .updateTable('webhook_endpoints')
+      .set({
+        previous_secret_ciphertext: null,
+        previous_secret_nonce: null,
+        previous_secret_wrapped_dek: null,
+        previous_secret_expires_at: null,
+      })
+      .where('workspace_id', '=', workspaceId)
+      .where('previous_secret_expires_at', '<=', sql<Date>`now()`)
+      .execute();
+  });
+}
+
 // Deliveries go with their event (ON DELETE CASCADE); a delivery's retries end within two days of it.
 async function purgeWorkspace(db: Database, workspaceId: string, batch: number): Promise<number> {
+  await dropExpiredSecrets(db, workspaceId);
   let total = 0;
   for (;;) {
     const deleted = await db.withTenant(workspaceId, SYSTEM, async (trx) => {

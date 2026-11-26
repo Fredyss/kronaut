@@ -126,7 +126,9 @@ export async function updateEndpoint(
     await trx
       .updateTable('webhook_endpoints')
       .set({
-        ...(patch.url === undefined ? {} : { url: patch.url }),
+        ...(patch.url === undefined || patch.url === row.url
+          ? {}
+          : { url: patch.url, consecutive_failures: 0, failing_since: null }),
         ...(patch.events === undefined ? {} : { events: [...patch.events] }),
         ...(patch.description === undefined ? {} : { description: patch.description }),
         ...enabledChange(row, patch.enabled),

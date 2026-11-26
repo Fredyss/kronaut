@@ -112,7 +112,7 @@ export async function finishDelivery(
       await recordSuccess(trx, claimed);
       return { finished: 'delivered' as const, disabled: false };
     }
-    const disabled = await recordFailure(trx, claimed);
+    const disabled = outcome.error === 'internal' ? false : await recordFailure(trx, claimed);
     return { finished: update.state === 'dead' ? ('dead' as const) : ('retry' as const), disabled };
   });
   if (result.disabled) {
