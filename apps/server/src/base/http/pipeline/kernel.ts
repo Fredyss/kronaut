@@ -8,6 +8,8 @@ import type { guardSession } from '../../../identity/auth/session-guard.ts';
 import { purposeKey } from '../../crypto/crypto.ts';
 import { DEFAULT_MAX_BODY_BYTES } from '../body.ts';
 import type { AccessGate } from '../caller/access.ts';
+import { socketAddress } from '../rate-limit/client-ip.ts';
+import type { RateLimits } from '../rate-limit/limit.ts';
 import type { BoundRoute } from '../request.ts';
 import type { WebApp } from '../web.ts';
 import { type Kernel, pipeline } from './pipeline.ts';
@@ -24,6 +26,7 @@ export interface HttpKeys {
   readonly reset: Uint8Array;
   readonly oauthPending: Uint8Array;
   readonly metaSubject: Uint8Array;
+  readonly rateIp: Uint8Array;
 }
 
 export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
@@ -33,6 +36,7 @@ export function deriveHttpKeys(secret: Uint8Array): HttpKeys {
     reset: purposeKey(secret, 'reset-token/v1'),
     oauthPending: purposeKey(secret, 'oauth-pending/v1'),
     metaSubject: purposeKey(secret, 'meta-subject/v1'),
+    rateIp: purposeKey(secret, 'rate-ip/v1'),
   };
 }
 
@@ -48,6 +52,8 @@ export interface HttpDeps {
   readonly access?: AccessGate;
   readonly web?: WebApp;
   readonly instanceAdmins?: readonly string[];
+  readonly rateLimits?: RateLimits;
+  readonly trustCloudflareIp?: boolean;
   readonly authenticate: typeof authenticate;
   readonly guardSession: typeof guardSession;
 }
@@ -65,19 +71,19 @@ export function createHttpApp(deps: HttpDeps, routes: readonly BoundRoute[]): Ho
     maxBody: deps.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES,
   };
 
-  const handle = async (request: Request): Promise<Response> => {
+  const handle = async (request: Request, socket: string | null): Promise<Response> => {
     const inbound = request.headers.get('x-request-id');
     const requestId = inbound !== null && REQUEST_ID.test(inbound) ? inbound : randomUUID();
     const logger = deps.logger.child({ requestId });
     try {
-      return await pipeline(kernel, request, requestId, logger);
+      return await pipeline(kernel, { request, requestId, logger, socket });
     } catch (err) {
       return failure(err, requestId, logger, kernel.hsts);
     }
   };
 
   const app = new Hono();
-  app.all('*', (c) => handle(c.req.raw));
+  app.all('*', (c) => handle(c.req.raw, socketAddress(c.env)));
   app.onError((err) => {
     const requestId = randomUUID();
     return failure(err, requestId, deps.logger.child({ requestId }), kernel.hsts);

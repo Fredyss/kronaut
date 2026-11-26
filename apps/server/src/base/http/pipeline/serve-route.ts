@@ -2,6 +2,7 @@ import type { Route } from '@kronaut/contract';
 import type { AccessScope, Principal } from '@kronaut/core';
 import { bind, type TenantTarget, tenantOf } from '../caller/bind.ts';
 import { parseInput, readLimited } from '../input.ts';
+import { DEFAULT_RATE_LIMITS, limitRate } from '../rate-limit/limit.ts';
 import type { SessionInfo } from '../request.ts';
 import { createContext, preauthorize, type RequestState } from './context.ts';
 import { parseCookies } from './cookies.ts';
@@ -48,6 +49,15 @@ export async function serveRoute(kernel: Kernel, req: FoundRequest): Promise<Res
     bound,
     matched.params,
     candidates,
+  );
+  await limitRate(
+    { db: deps.db, ipKey: deps.keys.rateIp, limits: deps.rateLimits ?? DEFAULT_RATE_LIMITS },
+    {
+      routeId: bound.id,
+      principal,
+      unauthenticated: authn.kind === 'public',
+      clientIp: req.clientIp,
+    },
   );
   if (authn.kind === 'session') await deps.guardSession(deps.db, kernel.origin, authn.record, req);
   const scopeInput = accessScope === undefined ? {} : { accessScope };

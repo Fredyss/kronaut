@@ -230,6 +230,7 @@ async function startApi(boot: Boot): Promise<void> {
     readiness: async () => !state.stopping && (await workerAlive(db)),
     ...API_SIGN_IN,
     routeBodyLimits: API_BODY_LIMITS,
+    trustCloudflareIp: access !== null,
     ...(access === null ? {} : { access }),
     ...(config.webDir === null ? {} : { web: loadWebApp(config.webDir, config.mediaUrl) }),
   };

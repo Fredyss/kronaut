@@ -33,7 +33,11 @@ export function respond(
 
 export function failure(err: unknown, requestId: string, logger: Logger, hsts: boolean): Response {
   if (err instanceof HttpError && err.code !== 'internal') {
-    return respond(err.status, errorBody(err, requestId), headersFor(requestId, hsts));
+    const headers = headersFor(requestId, hsts);
+    if (err.retryAfterSeconds !== undefined) {
+      headers.set('Retry-After', String(err.retryAfterSeconds));
+    }
+    return respond(err.status, errorBody(err, requestId), headers);
   }
   logger.error({ err, requestId }, 'request failed');
   const internal = new HttpError('internal', GENERIC_FAILURE);
