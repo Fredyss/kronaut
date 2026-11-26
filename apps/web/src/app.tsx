@@ -212,6 +212,15 @@ const shortLinkSettingsRoute = createRoute({
   ),
 });
 
+const workspaceAppSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: 'workspace-apps',
+  component: lazyRouteComponent(
+    () => import('./routes/settings-workspace-apps.tsx'),
+    'WorkspaceAppSettingsPage',
+  ),
+});
+
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -252,6 +261,7 @@ const routeTree = rootRoute.addChildren([
       savedTextSettingsRoute,
       feedSettingsRoute,
       shortLinkSettingsRoute,
+      workspaceAppSettingsRoute,
       systemSettingsRoute,
     ]),
   ]),
