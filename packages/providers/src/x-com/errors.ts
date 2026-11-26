@@ -17,10 +17,13 @@ const USAGE_CAPPED = 'usage-capped';
 
 const problem = z.looseObject({ type: z.string().optional() });
 
+export function problemName(type: string | undefined): string | undefined {
+  return PROBLEM_TYPE.exec(type ?? '')?.[1];
+}
+
 function problemType(text: string): string | undefined {
   try {
-    const type = problem.safeParse(JSON.parse(text)).data?.type ?? '';
-    return PROBLEM_TYPE.exec(type)?.[1];
+    return problemName(problem.safeParse(JSON.parse(text)).data?.type);
   } catch {
     return undefined;
   }
