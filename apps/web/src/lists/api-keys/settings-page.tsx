@@ -5,7 +5,7 @@ import { useApiClient } from '../../base/api/client.ts';
 import { meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { SecretDialog, type SecretText } from '../../base/ui/secret-dialog.tsx';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { CreateDialog } from './create-dialog.tsx';
 import { KeyRow } from './key-row.tsx';
 import { apiKeysQuery } from './queries.ts';
@@ -16,12 +16,12 @@ const BEARER = 'Authorization: Bearer <token>';
 type Open = { readonly kind: 'create' } | { readonly kind: 'token'; readonly token: string } | null;
 
 const tokenText = (): SecretText => ({
-  title: settingsText.settings_api_keys_token_title(),
-  once: settingsText.settings_api_keys_token_once(),
-  copy: settingsText.settings_api_keys_copy(),
-  copied: settingsText.settings_api_keys_copied(),
-  copyFailed: settingsText.settings_api_keys_copy_failed(),
-  done: settingsText.settings_api_keys_done(),
+  title: integrationsText.integrations_api_keys_token_title(),
+  once: integrationsText.integrations_api_keys_token_once(),
+  copy: integrationsText.integrations_api_keys_copy(),
+  copied: integrationsText.integrations_api_keys_copied(),
+  copyFailed: integrationsText.integrations_api_keys_copy_failed(),
+  done: integrationsText.integrations_api_keys_done(),
 });
 
 function OpenDialog({
@@ -43,7 +43,7 @@ function OpenDialog({
   }
   return (
     <SecretDialog secret={open.token} text={tokenText()} onClose={() => onOpen(null)}>
-      <p>{settingsText.settings_api_keys_token_use()}</p>
+      <p>{integrationsText.integrations_api_keys_token_use()}</p>
       <code className="font-mono">{BEARER}</code>
     </SecretDialog>
   );
@@ -67,11 +67,13 @@ function KeyList({ workspaceId }: { readonly workspaceId: string }) {
   const items = keys.data.pages.flatMap((page) => page.items);
   if (items.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">{settingsText.settings_api_keys_empty()}</p>
+      <p className="text-muted-foreground text-sm">
+        {integrationsText.integrations_api_keys_empty()}
+      </p>
     );
   }
   return (
-    <SettingsCard title={settingsText.settings_api_keys_title()}>
+    <SettingsCard title={integrationsText.integrations_api_keys_title()}>
       <ul className="flex flex-col divide-y">
         {items.map((apiKey) => (
           <KeyRow key={apiKey.id} workspaceId={workspaceId} apiKey={apiKey} />
@@ -85,7 +87,7 @@ function KeyList({ workspaceId }: { readonly workspaceId: string }) {
           disabled={keys.isFetchingNextPage}
           onClick={() => void keys.fetchNextPage()}
         >
-          {settingsText.settings_api_keys_more()}
+          {integrationsText.integrations_api_keys_more()}
         </Button>
       ) : null}
     </SettingsCard>
@@ -102,7 +104,7 @@ function ApiKeys({ workspaceId }: { readonly workspaceId: string }) {
         className="self-start"
         onClick={() => setOpen({ kind: 'create' })}
       >
-        {settingsText.settings_api_keys_add()}
+        {integrationsText.integrations_api_keys_add()}
       </Button>
       <KeyList workspaceId={workspaceId} />
       {open === null ? null : <OpenDialog workspaceId={workspaceId} open={open} onOpen={setOpen} />}
@@ -115,15 +117,17 @@ export function ApiKeySettingsPage() {
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
   return (
     <SettingsPage
-      title={settingsText.settings_api_keys_title()}
-      intro={settingsText.settings_api_keys_intro()}
+      title={integrationsText.integrations_api_keys_title()}
+      intro={integrationsText.integrations_api_keys_intro()}
     >
       {workspace === undefined ? null : (
         <div className="flex flex-col gap-6">
           {MANAGERS.has(workspace.role) ? (
             <ApiKeys workspaceId={workspace.id} />
           ) : (
-            <p className="text-muted-foreground text-sm">{settingsText.settings_read_only()}</p>
+            <p className="text-muted-foreground text-sm">
+              {integrationsText.integrations_read_only()}
+            </p>
           )}
         </div>
       )}

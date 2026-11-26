@@ -11,7 +11,8 @@
     "#paraglide-calendar/*": "./src/paraglide-calendar/*",
     "#paraglide-media/*": "./src/paraglide-media/*",
     "#paraglide-inbox/*": "./src/paraglide-inbox/*",
-    "#paraglide-settings/*": "./src/paraglide-settings/*"
+    "#paraglide-settings/*": "./src/paraglide-settings/*",
+    "#paraglide-integrations/*": "./src/paraglide-integrations/*"
   },
   "exports": {
     "./runtime": "./src/paraglide/runtime.js",
@@ -33,6 +34,9 @@
     "./settings/messages/en": "./src/paraglide-settings/messages/en.js",
     "./settings/messages/sk": "./src/paraglide-settings/messages/sk.js",
     "./settings/messages/cs": "./src/paraglide-settings/messages/cs.js",
+    "./integrations/messages/en": "./src/paraglide-integrations/messages/en.js",
+    "./integrations/messages/sk": "./src/paraglide-integrations/messages/sk.js",
+    "./integrations/messages/cs": "./src/paraglide-integrations/messages/cs.js",
     "./notifications": "./src/notifications.ts",
     "./cli": "./src/cli.ts",
     "./config": "./i18n.config.ts"

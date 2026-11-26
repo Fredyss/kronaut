@@ -1,5 +1,5 @@
 import { CheckList } from '../../base/ui/check-list.tsx';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { GRANTABLE_SCOPES, type GrantableScope, isGrantableScope, scopeLabel } from './scopes.ts';
 
 interface ScopeFieldProps {
@@ -19,12 +19,12 @@ export function ScopeField({ scopes, error, onChange }: ScopeFieldProps) {
   };
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-medium text-sm">{settingsText.settings_api_keys_scopes()}</span>
+      <span className="font-medium text-sm">{integrationsText.integrations_api_keys_scopes()}</span>
       <p className="text-muted-foreground text-sm">
-        {settingsText.settings_api_keys_scopes_hint()}
+        {integrationsText.integrations_api_keys_scopes_hint()}
       </p>
       <CheckList
-        label={settingsText.settings_api_keys_scopes()}
+        label={integrationsText.integrations_api_keys_scopes()}
         items={items}
         checked={scopes}
         onToggle={toggle}

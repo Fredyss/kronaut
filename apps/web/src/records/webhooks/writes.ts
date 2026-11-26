@@ -11,7 +11,7 @@ import { useApiClient } from '../../base/api/client.ts';
 import { errorCode, errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
 import { apiErrorMessage } from '../../base/locale/i18n.ts';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { testError } from './errors.ts';
 import { type WebhookEvent, webhooksKey } from './queries.ts';
 
@@ -57,7 +57,7 @@ export function useSaveEndpoint(
       return null;
     },
     onSuccess: (revealed) => {
-      toast(settingsText.settings_webhooks_saved());
+      toast(integrationsText.integrations_webhooks_saved());
       onSaved(revealed);
     },
     onSettled: settled,
@@ -85,8 +85,8 @@ export function useEndpointWrites(
     onSuccess: (_data, enabled) =>
       toast(
         enabled
-          ? settingsText.settings_webhooks_turned_on()
-          : settingsText.settings_webhooks_turned_off(),
+          ? integrationsText.integrations_webhooks_turned_on()
+          : integrationsText.integrations_webhooks_turned_off(),
       ),
     onError: reportFailure,
     onSettled: settled,
@@ -95,7 +95,7 @@ export function useEndpointWrites(
     mutationFn: async () => {
       await webhooksTest({ client, path, headers: headers() });
     },
-    onSuccess: () => toast(settingsText.settings_webhooks_test_sent()),
+    onSuccess: () => toast(integrationsText.integrations_webhooks_test_sent()),
     onError: report(testError),
     onSettled: settled,
   });
@@ -111,7 +111,7 @@ export function useEndpointWrites(
       await webhooksDelete({ client, path, headers: headers() });
     },
     onSuccess: () => {
-      toast(settingsText.settings_webhooks_deleted());
+      toast(integrationsText.integrations_webhooks_deleted());
       onDeleted();
     },
     onError: reportFailure,

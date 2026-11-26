@@ -206,13 +206,13 @@ const workspaceAppSettingsRoute = createRoute({
 const webhookSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'webhooks',
-  component: lazy(() => import('./routes/settings-webhooks.tsx'), 'WebhookSettingsPage'),
+  component: lazy(() => import('./routes/integrations-webhooks.tsx'), 'WebhookSettingsPage'),
 });
 
 const apiKeySettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'api-keys',
-  component: lazy(() => import('./routes/settings-api-keys.tsx'), 'ApiKeySettingsPage'),
+  component: lazy(() => import('./routes/integrations-api-keys.tsx'), 'ApiKeySettingsPage'),
 });
 
 const systemSettingsRoute = createRoute({

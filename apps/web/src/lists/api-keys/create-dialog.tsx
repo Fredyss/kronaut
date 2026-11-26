@@ -1,6 +1,6 @@
 import { Button, Modal, TextField } from '@kronaut/ui';
 import { type FormEvent, useId, useState } from 'react';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { AccessFields } from './access-fields.tsx';
 import { bodyOf, draftReady, EMPTY_DRAFT, type KeyDraft, rateLimitOf, today } from './draft.ts';
 import { type KeyErrors, keyErrors } from './errors.ts';
@@ -20,8 +20,8 @@ function LimitFields({ draft, errors, onChange }: Omit<FieldsProps, 'workspaceId
   return (
     <>
       <TextField
-        label={settingsText.settings_api_keys_expiry()}
-        hint={settingsText.settings_api_keys_expiry_hint()}
+        label={integrationsText.integrations_api_keys_expiry()}
+        hint={integrationsText.integrations_api_keys_expiry_hint()}
         type="date"
         min={today()}
         value={draft.expiresOn}
@@ -29,8 +29,8 @@ function LimitFields({ draft, errors, onChange }: Omit<FieldsProps, 'workspaceId
         onValueChange={(expiresOn) => onChange({ expiresOn })}
       />
       <TextField
-        label={settingsText.settings_api_keys_rate_limit()}
-        hint={settingsText.settings_api_keys_rate_limit_hint({
+        label={integrationsText.integrations_api_keys_rate_limit()}
+        hint={integrationsText.integrations_api_keys_rate_limit_hint({
           max: RATE_LIMIT_MAX,
           count: DEFAULT_RATE_LIMIT,
         })}
@@ -40,7 +40,7 @@ function LimitFields({ draft, errors, onChange }: Omit<FieldsProps, 'workspaceId
         error={
           errors.rateLimit ??
           (rateInvalid
-            ? settingsText.settings_api_keys_rate_limit_invalid({ max: RATE_LIMIT_MAX })
+            ? integrationsText.integrations_api_keys_rate_limit_invalid({ max: RATE_LIMIT_MAX })
             : undefined)
         }
         onValueChange={(rateLimit) => onChange({ rateLimit })}
@@ -53,8 +53,8 @@ function KeyFields({ workspaceId, draft, errors, onChange }: FieldsProps) {
   return (
     <>
       <TextField
-        label={settingsText.settings_api_keys_name()}
-        hint={settingsText.settings_api_keys_name_hint()}
+        label={integrationsText.integrations_api_keys_name()}
+        hint={integrationsText.integrations_api_keys_name_hint()}
         autoComplete="off"
         value={draft.name}
         maxLength={API_KEY_NAME_MAX}
@@ -101,7 +101,7 @@ export function CreateDialog({ workspaceId, onClose }: CreateDialogProps) {
     <Modal labelledBy={titleId} wide onCancel={close}>
       <form onSubmit={submit} className="flex flex-col gap-4">
         <h2 id={titleId} className="font-medium text-lg">
-          {settingsText.settings_api_keys_add()}
+          {integrationsText.integrations_api_keys_add()}
         </h2>
         <fieldset disabled={create.isPending} className="contents">
           <KeyFields
@@ -116,10 +116,10 @@ export function CreateDialog({ workspaceId, onClose }: CreateDialogProps) {
         </p>
         <div className="flex flex-wrap justify-end gap-2">
           <Button type="button" variant="ghost" onClick={close}>
-            {settingsText.settings_api_keys_cancel()}
+            {integrationsText.integrations_api_keys_cancel()}
           </Button>
           <Button type="submit" disabled={blocked}>
-            {settingsText.settings_api_keys_create()}
+            {integrationsText.integrations_api_keys_create()}
           </Button>
         </div>
       </form>

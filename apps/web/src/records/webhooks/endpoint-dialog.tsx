@@ -2,7 +2,7 @@ import { Button, Modal, TextField } from '@kronaut/ui';
 import { type FormEvent, useId, useState } from 'react';
 import { m } from '../../base/locale/i18n.ts';
 import { CheckList } from '../../base/ui/check-list.tsx';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { endpointErrors } from './errors.ts';
 import { eventLabel, isWebhookEvent, WEBHOOK_EVENTS } from './events.ts';
 import { ENDPOINT_URL_MAX, type Endpoint, type WebhookEvent } from './queries.ts';
@@ -47,13 +47,13 @@ export function EndpointDialog({ workspaceId, endpoint, onClose }: EndpointDialo
       <form onSubmit={submit} className="flex flex-col gap-4">
         <h2 id={titleId} className="font-medium text-lg">
           {endpoint === null
-            ? settingsText.settings_webhooks_add()
-            : settingsText.settings_webhooks_edit_title()}
+            ? integrationsText.integrations_webhooks_add()
+            : integrationsText.integrations_webhooks_edit_title()}
         </h2>
         <fieldset disabled={save.isPending} className="contents">
           <TextField
-            label={settingsText.settings_webhooks_url()}
-            hint={settingsText.settings_webhooks_url_hint()}
+            label={integrationsText.integrations_webhooks_url()}
+            hint={integrationsText.integrations_webhooks_url_hint()}
             inputMode="url"
             autoComplete="off"
             spellCheck={false}
@@ -63,9 +63,11 @@ export function EndpointDialog({ workspaceId, endpoint, onClose }: EndpointDialo
             onValueChange={setUrl}
           />
           <div className="flex flex-col gap-2">
-            <span className="font-medium text-sm">{settingsText.settings_webhooks_events()}</span>
+            <span className="font-medium text-sm">
+              {integrationsText.integrations_webhooks_events()}
+            </span>
             <CheckList
-              label={settingsText.settings_webhooks_events()}
+              label={integrationsText.integrations_webhooks_events()}
               items={EVENT_ITEMS()}
               checked={events}
               onToggle={toggle}
@@ -79,7 +81,7 @@ export function EndpointDialog({ workspaceId, endpoint, onClose }: EndpointDialo
         )}
         <div className="flex flex-wrap justify-end gap-2">
           <Button type="button" variant="ghost" onClick={close}>
-            {settingsText.settings_webhooks_cancel()}
+            {integrationsText.integrations_webhooks_cancel()}
           </Button>
           <Button type="submit" disabled={!ready || save.isPending}>
             {m.settings_save()}

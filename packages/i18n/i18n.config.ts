@@ -23,7 +23,14 @@ export const PARAGLIDE = project('project', 'paraglide');
 
 export const PARAGLIDE_CLI = project('cli', 'paraglide-cli');
 
-export const ROUTE_GROUPS = ['compose', 'calendar', 'media', 'inbox', 'settings'] as const;
+export const ROUTE_GROUPS = [
+  'compose',
+  'calendar',
+  'media',
+  'inbox',
+  'settings',
+  'integrations',
+] as const;
 
 export type RouteGroup = (typeof ROUTE_GROUPS)[number];
 
@@ -33,4 +40,5 @@ export const PARAGLIDE_GROUPS: Readonly<Record<RouteGroup, ReturnType<typeof pro
   media: project('media', 'paraglide-media'),
   inbox: project('inbox', 'paraglide-inbox'),
   settings: project('settings', 'paraglide-settings'),
+  integrations: project('integrations', 'paraglide-integrations'),
 };

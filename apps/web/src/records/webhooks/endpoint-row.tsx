@@ -2,7 +2,7 @@ import { Button, ConfirmDelete, focusNeighbour, Switch } from '@kronaut/ui';
 import { useRef, useState } from 'react';
 import { useLocale } from '../../base/locale/context.ts';
 import { useFormat } from '../../base/locale/format.ts';
-import { m as settingsText } from '../../i18n/settings.ts';
+import { m as integrationsText } from '../../i18n/integrations.ts';
 import { eventLabel } from './events.ts';
 import { type Endpoint, endpointHost } from './queries.ts';
 import { type Revealed, useEndpointWrites } from './writes.ts';
@@ -23,12 +23,14 @@ function Details({ endpoint, host }: { readonly endpoint: Endpoint; readonly hos
       <span className="text-muted-foreground">{events}</span>
       {endpoint.disabledReason === 'failing' ? (
         <p role="status" className="border-destructive border-l-4 bg-destructive/10 px-3 py-2">
-          {settingsText.settings_webhooks_failing()}
+          {integrationsText.integrations_webhooks_failing()}
         </p>
       ) : null}
       {endpoint.enabled && endpoint.failingSince !== null ? (
         <span className="text-destructive">
-          {settingsText.settings_webhooks_failing_since({ time: when(endpoint.failingSince) })}
+          {integrationsText.integrations_webhooks_failing_since({
+            time: when(endpoint.failingSince),
+          })}
         </span>
       ) : null}
     </div>
@@ -47,20 +49,20 @@ function Confirm({
   const done = { onSettled: onClose };
   return asking === 'rotate' ? (
     <ConfirmDelete
-      title={settingsText.settings_webhooks_rotate_title()}
-      body={settingsText.settings_webhooks_rotate_body({ count: PREVIOUS_SECRET_HOURS })}
-      keepLabel={settingsText.settings_webhooks_keep_secret()}
-      confirmLabel={settingsText.settings_webhooks_rotate_confirm()}
+      title={integrationsText.integrations_webhooks_rotate_title()}
+      body={integrationsText.integrations_webhooks_rotate_body({ count: PREVIOUS_SECRET_HOURS })}
+      keepLabel={integrationsText.integrations_webhooks_keep_secret()}
+      confirmLabel={integrationsText.integrations_webhooks_rotate_confirm()}
       pending={writes.rotate.isPending}
       onCancel={onClose}
       onConfirm={() => writes.rotate.mutate(undefined, done)}
     />
   ) : (
     <ConfirmDelete
-      title={settingsText.settings_webhooks_delete_title()}
-      body={settingsText.settings_webhooks_delete_body()}
-      keepLabel={settingsText.settings_webhooks_keep_endpoint()}
-      confirmLabel={settingsText.settings_webhooks_delete()}
+      title={integrationsText.integrations_webhooks_delete_title()}
+      body={integrationsText.integrations_webhooks_delete_body()}
+      keepLabel={integrationsText.integrations_webhooks_keep_endpoint()}
+      confirmLabel={integrationsText.integrations_webhooks_delete()}
       pending={writes.remove.isPending}
       onCancel={onClose}
       onConfirm={() => writes.remove.mutate(undefined, done)}
@@ -108,39 +110,39 @@ export function EndpointRow({
       <span className="flex items-center gap-2 text-sm">
         <Switch
           checked={endpoint.enabled}
-          aria-label={settingsText.settings_webhooks_enabled_named({ host })}
+          aria-label={integrationsText.integrations_webhooks_enabled_named({ host })}
           disabled={writes.toggle.isPending}
           onCheckedChange={(enabled) => writes.toggle.mutate(enabled)}
         />
         {endpoint.enabled
-          ? settingsText.settings_webhooks_on()
-          : settingsText.settings_webhooks_off()}
+          ? integrationsText.integrations_webhooks_on()
+          : integrationsText.integrations_webhooks_off()}
       </span>
       <div className="flex flex-wrap gap-2">
         {action(
-          settingsText.settings_webhooks_edit(),
-          settingsText.settings_webhooks_edit_named({ host }),
+          integrationsText.integrations_webhooks_edit(),
+          integrationsText.integrations_webhooks_edit_named({ host }),
           onEdit,
         )}
         {action(
-          settingsText.settings_webhooks_test(),
-          settingsText.settings_webhooks_test_named({ host }),
+          integrationsText.integrations_webhooks_test(),
+          integrationsText.integrations_webhooks_test_named({ host }),
           () => writes.test.mutate(),
           writes.test.isPending || !endpoint.enabled,
         )}
         {action(
-          settingsText.settings_webhooks_deliveries(),
-          settingsText.settings_webhooks_deliveries_named({ host }),
+          integrationsText.integrations_webhooks_deliveries(),
+          integrationsText.integrations_webhooks_deliveries_named({ host }),
           onDeliveries,
         )}
         {action(
-          settingsText.settings_webhooks_rotate(),
-          settingsText.settings_webhooks_rotate_named({ host }),
+          integrationsText.integrations_webhooks_rotate(),
+          integrationsText.integrations_webhooks_rotate_named({ host }),
           () => setAsking('rotate'),
         )}
         {action(
-          settingsText.settings_webhooks_delete(),
-          settingsText.settings_webhooks_delete_named({ host }),
+          integrationsText.integrations_webhooks_delete(),
+          integrationsText.integrations_webhooks_delete_named({ host }),
           () => setAsking('delete'),
         )}
       </div>
