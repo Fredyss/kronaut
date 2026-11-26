@@ -106,7 +106,11 @@ async function insertBrand(ws: string, userId: string): Promise<string> {
   const id = await db.withTenant(ws, { kind: 'user', id: userId }, async (trx) => {
     const row = await trx
       .insertInto('brands')
-      .values({ workspace_id: ws, name: 'Brand', slug: `brand-${randomUUID().slice(0, 8)}` })
+      .values({
+        workspace_id: ws,
+        name: `Brand ${randomUUID().slice(0, 8)}`,
+        slug: `brand-${randomUUID().slice(0, 8)}`,
+      })
       .returning('id')
       .executeTakeFirstOrThrow();
     return row.id;

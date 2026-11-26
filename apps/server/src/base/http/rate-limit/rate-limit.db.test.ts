@@ -119,13 +119,24 @@ describe('per-grant limit (RL-01)', () => {
   it("uses the key's own rate_limit_per_min and refills over time", async () => {
     const slow = await grant(1);
     expect(await statuses(2, () => withKey(slow.token))).toEqual([200, 429]);
-    await root.withActor(CLI, (trx) =>
-      trx
+    const bucket = await root.withActor(CLI, async (trx) => {
+      await trx
         .updateTable('rate_buckets')
         .set({ updated_at: sql`updated_at - interval '61 seconds'` })
         .where('key', '=', grantBucketKey(slow.id))
-        .execute(),
-    );
+        .execute();
+      return await sql<{ capacity: string; tokens: string; refill: string; age: string }>`
+        select capacity::text, tokens::text, refill_per_sec::text as refill,
+               extract(epoch from now() - updated_at)::text as age
+        from rate_buckets where key = ${grantBucketKey(slow.id)}
+      `.execute(trx);
+    });
+    expect(bucket.rows).toHaveLength(1);
+    const row = bucket.rows[0];
+    expect(Number(row?.capacity)).toBe(1);
+    expect(Number(row?.refill)).toBeCloseTo(1 / 60, 6);
+    expect(Number(row?.age)).toBeGreaterThanOrEqual(60);
+    expect(Number(row?.tokens)).toBeLessThan(1);
     expect((await withKey(slow.token)).status).toBe(200);
   });
 
