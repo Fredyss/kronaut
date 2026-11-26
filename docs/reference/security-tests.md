@@ -52,4 +52,4 @@
   - `AUD-02 audit_immutability_and_seal`
 - **Rate limits:**
   - `RL-01 per_principal_limits` (XFF ignored; a bucket per API key with its own `rate_limit_per_min`, 429 with `Retry-After`, refill over time, sessions unlimited)
-  - `RL-02 public_ip_limits` (one bucket per client address across public routes, Meta callbacks included and probes excluded; `CF-Connecting-IP` only behind the Access gate; IPv6 by /64; no raw address stored)
+  - `RL-02 public_ip_limits` (one bucket per client address and route family, so login can't starve OAuth or the Meta callbacks; probes excluded; `CF-Connecting-IP` only behind the Access gate; no per-IP bucket on a non-public socket address; IPv6 by /64; no raw address stored)
