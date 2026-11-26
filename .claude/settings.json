@@ -11,7 +11,6 @@
       "Bash(gh run list *)",
       "Bash(gh run view *)",
       "Bash(gh run rerun *)",
-      "Bash(gh api *)",
       "Bash(git push origin *)",
       "Bash(git fetch origin *)"
     ],
@@ -31,6 +30,8 @@
       "Bash(git push * main)",
       "Bash(git push * main *)",
       "Bash(git push * refs/heads/main*)",
+      "Bash(git push * HEAD)",
+      "Bash(git push * HEAD *)",
       "Bash(git fetch -*)",
       "Bash(git fetch * -*)",
       "Bash(git -C *)",
@@ -96,7 +97,9 @@
     },
     "network": {
       "allowLocalBinding": true,
-      "allowedDomains": ["registry.npmjs.org"]
+      "allowedDomains": [
+        "registry.npmjs.org"
+      ]
     }
   }
 }
