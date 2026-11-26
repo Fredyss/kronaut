@@ -66,6 +66,14 @@ async function login(ip: string, extra: Record<string, string> = {}): Promise<Re
   });
 }
 
+async function deletion(ip: string): Promise<Response> {
+  return await app.request(`${BASE}/v1/meta/facebook/deletion`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded', 'cf-connecting-ip': ip },
+    body: 'signed_request=CANARY_unsigned.payload',
+  });
+}
+
 async function statuses(count: number, send: () => Promise<Response>): Promise<number[]> {
   const seen: number[] = [];
   for (let i = 0; i < count; i++) seen.push((await send()).status);
@@ -139,20 +147,14 @@ describe('per-IP limit on public routes (RL-02)', () => {
     expect((await login('203.0.113.8')).status).not.toBe(429);
   });
 
-  it('puts the Meta callbacks in the same bucket and keeps probes out (ADR-0057)', async () => {
-    await statuses(PUBLIC_LIMIT, () => login('203.0.113.9'));
-    const meta = await app.request(`${BASE}/v1/meta/facebook/deletion`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'cf-connecting-ip': '203.0.113.9',
-      },
-      body: 'signed_request=CANARY_unsigned.payload',
-    });
-    expect(meta.status).toBe(429);
-    const health = await app.request(`${BASE}/healthz`, {
-      headers: { 'cf-connecting-ip': '203.0.113.9' },
-    });
+  it('keeps one bucket per route family and leaves probes out (ADR-0057)', async () => {
+    const ip = '203.0.113.9';
+    await statuses(PUBLIC_LIMIT, () => login(ip));
+    expect((await login(ip)).status).toBe(429);
+    const seen = await statuses(PUBLIC_LIMIT + 1, () => deletion(ip));
+    expect(seen.slice(0, PUBLIC_LIMIT)).not.toContain(429);
+    expect(seen[PUBLIC_LIMIT]).toBe(429);
+    const health = await app.request(`${BASE}/healthz`, { headers: { 'cf-connecting-ip': ip } });
     expect(health.status).toBe(200);
   });
 
@@ -164,6 +166,6 @@ describe('per-IP limit on public routes (RL-02)', () => {
       trx.selectFrom('rate_buckets').select('key').where('key', 'like', 'endpoint:ip:%').execute(),
     );
     expect(keys.length).toBeGreaterThan(0);
-    for (const { key } of keys) expect(key).toMatch(/^endpoint:ip:[0-9a-f]{32}$/);
+    for (const { key } of keys) expect(key).toMatch(/^endpoint:ip:(auth|meta):[0-9a-f]{32}$/);
   });
 });

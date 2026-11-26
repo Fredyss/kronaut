@@ -14,6 +14,18 @@ export const DEFAULT_RATE_LIMITS: RateLimits = { grantPerMinute: 300, publicPerM
 
 const PROBES: ReadonlySet<string> = new Set(['system.health', 'system.ready']);
 const IP_KEY_HEX = 32;
+const OTHER_FAMILY = 'public';
+
+// One bucket per family, so a burst on login can't starve a channel connect or a Meta deletion callback.
+const ROUTE_FAMILIES: Readonly<Record<string, string>> = {
+  'auth.login': 'auth',
+  'auth.password_reset': 'auth',
+  'channels.connect_callback': 'oauth',
+  'oauth.public_document': 'oauth',
+  'meta.deletion': 'meta',
+  'meta.deauthorize': 'meta',
+  'meta.deletion_status': 'meta',
+};
 
 export interface RateLimitDeps {
   readonly db: Database;
@@ -32,9 +44,10 @@ export function grantBucketKey(grantId: string): string {
   return `endpoint:grant:${grantId}`;
 }
 
-export function ipBucketKey(ipKey: Uint8Array, clientIp: string): string {
+function ipBucketKey(ipKey: Uint8Array, routeId: string, clientIp: string): string {
+  const family = ROUTE_FAMILIES[routeId] ?? OTHER_FAMILY;
   const digest = hmacToken(ipKey, ipSubject(clientIp)).toString('hex');
-  return `endpoint:ip:${digest.slice(0, IP_KEY_HEX)}`;
+  return `endpoint:ip:${family}:${digest.slice(0, IP_KEY_HEX)}`;
 }
 
 function takeForGrant(deps: RateLimitDeps, grant: GrantPrincipal): Promise<Take> {
@@ -51,16 +64,16 @@ function takeForGrant(deps: RateLimitDeps, grant: GrantPrincipal): Promise<Take>
   });
 }
 
-function takeForIp(deps: RateLimitDeps, clientIp: string): Promise<Take> {
-  const bucket = { key: ipBucketKey(deps.ipKey, clientIp), perMinute: deps.limits.publicPerMinute };
+function takeForIp(deps: RateLimitDeps, routeId: string, clientIp: string): Promise<Take> {
+  const key = ipBucketKey(deps.ipKey, routeId, clientIp);
+  const bucket = { key, perMinute: deps.limits.publicPerMinute };
   return deps.db.withActor({ kind: 'system' }, (trx) => takeToken(trx, bucket));
 }
 
-// Only an in-process call has no socket address, and there is nothing to key its bucket on.
 function take(deps: RateLimitDeps, req: RateLimited): Promise<Take> | null {
   if (req.principal?.kind === 'grant') return takeForGrant(deps, req.principal);
   if (!req.unauthenticated || req.clientIp === null || PROBES.has(req.routeId)) return null;
-  return takeForIp(deps, req.clientIp);
+  return takeForIp(deps, req.routeId, req.clientIp);
 }
 
 export async function limitRate(deps: RateLimitDeps, req: RateLimited): Promise<void> {

@@ -1,4 +1,5 @@
 import { isIP } from 'node:net';
+import { isPublicAddress } from '@kronaut/egress';
 
 const CLOUDFLARE_HEADER = 'cf-connecting-ip';
 const MAPPED_V4 = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i;
@@ -22,18 +23,22 @@ function withoutZone(address: string): string {
 function valid(address: string | null): string | null {
   if (address === null) return null;
   const bare = withoutZone(address.trim());
-  return isIP(bare) === 0 ? null : bare;
+  if (isIP(bare) === 0) return null;
+  return MAPPED_V4.exec(bare)?.[1] ?? bare;
 }
 
 // X-Forwarded-For is never read, since any client can send it. Cloudflare overwrites this header at its
-// edge, and with the Access gate configured the tunnel is the only way in.
+// edge, and with the Access gate configured the tunnel is the only way in. A socket address that isn't
+// public is a proxy in front of the app: keying on it would put every client into one bucket.
 export function clientIp(
   request: Request,
   socket: string | null,
   trustCloudflare: boolean,
 ): string | null {
   const edge = trustCloudflare ? valid(request.headers.get(CLOUDFLARE_HEADER)) : null;
-  return edge ?? valid(socket);
+  if (edge !== null) return edge;
+  const direct = valid(socket);
+  return direct !== null && isPublicAddress(direct) ? direct : null;
 }
 
 function groupsOf(part: string | undefined): string[] {

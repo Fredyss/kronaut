@@ -219,6 +219,7 @@ async function startApi(boot: Boot): Promise<void> {
   const { config, db, clock, providers, keyring, state } = boot;
   const { logger } = boot.options;
   if (config.access !== null) state.access = await bootAccess(config.access, logger, clock);
+  else logger.warn('per-IP rate limits are off behind a proxy until ACCESS_AUD is set');
   const access = state.access;
   const deps: HttpDeps = {
     db,

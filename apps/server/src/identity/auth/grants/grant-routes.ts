@@ -97,7 +97,7 @@ const revokeRoute = defineRoute({
   status: 204,
   idempotency: true,
   summary: 'Revoke an API key',
-  description: `The key stops working with the next request. Revoking a revoked key changes nothing. Series and evergreen posts it owns pause on their next step. ${RULES}`,
+  description: `The key stops working with the next request. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (\`owner_lost\`). ${RULES}`,
   tags: ['grants'],
 });
 

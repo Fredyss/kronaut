@@ -587,7 +587,7 @@ export const grantsCreate = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * Revoke an API key
  *
- * The key stops working with the next request. Revoking a revoked key changes nothing. Series and evergreen posts it owns pause on their next step. Owners and admins with access to the whole workspace only, signed in; never an API key.
+ * The key stops working with the next request. Revoking a revoked key changes nothing. A series it owns pauses and an evergreen post it owns leaves the pool on their next run (`owner_lost`). Owners and admins with access to the whole workspace only, signed in; never an API key.
  */
 export const grantsRevoke = <ThrowOnError extends boolean = true>(options: Options<GrantsRevokeData, ThrowOnError>): RequestResult<GrantsRevokeResponses, GrantsRevokeErrors, ThrowOnError> => (options.client ?? client).post<GrantsRevokeResponses, GrantsRevokeErrors, ThrowOnError>({
     security: [{
