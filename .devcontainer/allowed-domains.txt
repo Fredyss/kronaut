@@ -2,7 +2,6 @@ api.anthropic.com
 claude.ai
 console.anthropic.com
 platform.claude.com
-statsig.anthropic.com
 sentry.io
 registry.npmjs.org
 raw.githubusercontent.com

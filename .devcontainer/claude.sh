@@ -47,6 +47,8 @@ find "$stage" -name .DS_Store -delete
 docker cp "$stage/." "$container:/home/node/.claude/"
 docker exec -u root "$container" sh -c \
   'cd /home/node/.claude && chown -R node:node CLAUDE.md agents skills 2>/dev/null; chown node:node projects projects/-workspaces-kronaut'
+# postStartCommand runs once per container start, so a failed run would leave a running container without the firewall.
+docker exec -u root "$container" /usr/local/share/kronaut/firewall.sh
 
 if [ "${1:-}" = "shell" ]; then
   "${cli[@]}" exec --workspace-folder "$here" bash
