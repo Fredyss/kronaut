@@ -1,0 +1,132 @@
+import { Button, SettingsCard, SettingsPage } from '@kronaut/ui';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useApiClient } from '../../base/api/client.ts';
+import { meQuery } from '../../base/api/me.ts';
+import { m } from '../../base/locale/i18n.ts';
+import { SecretDialog, type SecretText } from '../../base/ui/secret-dialog.tsx';
+import { m as settingsText } from '../../i18n/settings.ts';
+import { CreateDialog } from './create-dialog.tsx';
+import { KeyRow } from './key-row.tsx';
+import { apiKeysQuery } from './queries.ts';
+
+const MANAGERS: ReadonlySet<string> = new Set(['owner', 'admin']);
+const BEARER = 'Authorization: Bearer <token>';
+
+type Open = { readonly kind: 'create' } | { readonly kind: 'token'; readonly token: string } | null;
+
+const tokenText = (): SecretText => ({
+  title: settingsText.settings_api_keys_token_title(),
+  once: settingsText.settings_api_keys_token_once(),
+  copy: settingsText.settings_api_keys_copy(),
+  copied: settingsText.settings_api_keys_copied(),
+  copyFailed: settingsText.settings_api_keys_copy_failed(),
+  done: settingsText.settings_api_keys_done(),
+});
+
+function OpenDialog({
+  workspaceId,
+  open,
+  onOpen,
+}: {
+  readonly workspaceId: string;
+  readonly open: Exclude<Open, null>;
+  onOpen(open: Open): void;
+}) {
+  if (open.kind === 'create') {
+    return (
+      <CreateDialog
+        workspaceId={workspaceId}
+        onClose={(token) => onOpen(token === null ? null : { kind: 'token', token })}
+      />
+    );
+  }
+  return (
+    <SecretDialog secret={open.token} text={tokenText()} onClose={() => onOpen(null)}>
+      <p>{settingsText.settings_api_keys_token_use()}</p>
+      <code className="font-mono">{BEARER}</code>
+    </SecretDialog>
+  );
+}
+
+function Pending({ failed }: { readonly failed: boolean }) {
+  return (
+    <p
+      role={failed ? 'alert' : undefined}
+      className={`text-sm ${failed ? 'text-destructive' : 'text-muted-foreground'}`}
+    >
+      {failed ? m.error_generic() : m.loading()}
+    </p>
+  );
+}
+
+function KeyList({ workspaceId }: { readonly workspaceId: string }) {
+  const client = useApiClient();
+  const keys = useInfiniteQuery(apiKeysQuery(client, workspaceId));
+  if (keys.data === undefined) return <Pending failed={keys.isError} />;
+  const items = keys.data.pages.flatMap((page) => page.items);
+  if (items.length === 0) {
+    return (
+      <p className="text-muted-foreground text-sm">{settingsText.settings_api_keys_empty()}</p>
+    );
+  }
+  return (
+    <SettingsCard title={settingsText.settings_api_keys_title()}>
+      <ul className="flex flex-col divide-y">
+        {items.map((apiKey) => (
+          <KeyRow key={apiKey.id} workspaceId={workspaceId} apiKey={apiKey} />
+        ))}
+      </ul>
+      {keys.hasNextPage ? (
+        <Button
+          type="button"
+          variant="outline"
+          className="m-4 self-center"
+          disabled={keys.isFetchingNextPage}
+          onClick={() => void keys.fetchNextPage()}
+        >
+          {settingsText.settings_api_keys_more()}
+        </Button>
+      ) : null}
+    </SettingsCard>
+  );
+}
+
+function ApiKeys({ workspaceId }: { readonly workspaceId: string }) {
+  const [open, setOpen] = useState<Open>(null);
+  return (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        className="self-start"
+        onClick={() => setOpen({ kind: 'create' })}
+      >
+        {settingsText.settings_api_keys_add()}
+      </Button>
+      <KeyList workspaceId={workspaceId} />
+      {open === null ? null : <OpenDialog workspaceId={workspaceId} open={open} onOpen={setOpen} />}
+    </>
+  );
+}
+
+export function ApiKeySettingsPage() {
+  const client = useApiClient();
+  const workspace = useQuery(meQuery(client)).data?.workspaces[0];
+  return (
+    <SettingsPage
+      title={settingsText.settings_api_keys_title()}
+      intro={settingsText.settings_api_keys_intro()}
+    >
+      {workspace === undefined ? null : (
+        <div className="flex flex-col gap-6">
+          {MANAGERS.has(workspace.role) ? (
+            <ApiKeys workspaceId={workspace.id} />
+          ) : (
+            <p className="text-muted-foreground text-sm">{settingsText.settings_read_only()}</p>
+          )}
+        </div>
+      )}
+    </SettingsPage>
+  );
+}

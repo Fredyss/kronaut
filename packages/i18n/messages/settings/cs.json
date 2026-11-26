@@ -525,5 +525,124 @@
   "settings_webhooks_event_channel_expiring": "Přístup ke kanálu brzy vyprší",
   "settings_webhooks_event_channel_reconnected": "Kanál je znovu připojený",
   "settings_webhooks_event_provider_app_misconfigured": "Aplikace sítě potřebuje pozornost",
-  "settings_webhooks_event_webhook_test": "Testovací událost"
+  "settings_webhooks_event_webhook_test": "Testovací událost",
+  "settings_api_keys_nav": "API klíče",
+  "settings_api_keys_title": "API klíče",
+  "settings_api_keys_intro": "Díky API klíčům můžou vaše vlastní skripty a nástroje pracovat s Kronaut API v tomto pracovním prostoru. Klíč nikdy nemůže schvalovat příspěvky, připojovat kanály ani měnit nastavení.",
+  "settings_api_keys_empty": "Zatím tu nejsou žádné API klíče.",
+  "settings_api_keys_add": "Vytvořit API klíč",
+  "settings_api_keys_name": "Název",
+  "settings_api_keys_name_hint": "Abyste klíče od sebe rozeznali, třeba podle nástroje, který ho používá.",
+  "settings_api_keys_name_invalid": "Název klíče musí mít 1 až {max} znaků.",
+  "settings_api_keys_scopes": "Co klíč smí dělat",
+  "settings_api_keys_scopes_hint": "Klíč nikdy nedostane víc, než dovoluje vaše vlastní role.",
+  "settings_api_keys_scopes_invalid": "Jedno z vybraných oprávnění nejde API klíči udělit. Načtěte stránku znovu a vyberte ještě jednou.",
+  "settings_api_keys_scope_brands_read": "Vidět značky",
+  "settings_api_keys_scope_channels_read": "Vidět kanály",
+  "settings_api_keys_scope_groups_read": "Vidět skupiny",
+  "settings_api_keys_scope_posts_read": "Vidět příspěvky",
+  "settings_api_keys_scope_media_read": "Vidět média",
+  "settings_api_keys_scope_analytics_read": "Vidět statistiky",
+  "settings_api_keys_scope_comments_read": "Vidět komentáře",
+  "settings_api_keys_scope_audit_read": "Vidět záznam auditu",
+  "settings_api_keys_scope_posts_draft": "Vytvářet a upravovat koncepty",
+  "settings_api_keys_scope_posts_submit": "Posílat příspěvky ke schválení",
+  "settings_api_keys_scope_posts_schedule": "Plánovat příspěvky",
+  "settings_api_keys_scope_posts_cancel": "Rušit naplánované příspěvky",
+  "settings_api_keys_scope_media_write": "Nahrávat média",
+  "settings_api_keys_scope_comments_write": "Psát komentáře",
+  "settings_api_keys_scope_ai_generate": "Psát text pomocí AI",
+  "settings_api_keys_access": "Přístup",
+  "settings_api_keys_access_workspace": "Celý pracovní prostor",
+  "settings_api_keys_access_restricted": "Jen značky a kanály, které vyberu",
+  "settings_api_keys_access_brands": "Značky",
+  "settings_api_keys_access_channels": "Kanály",
+  "settings_api_keys_access_no_brands": "Tento pracovní prostor nemá žádné značky.",
+  "settings_api_keys_access_no_channels": "Tento pracovní prostor nemá žádné kanály.",
+  "settings_api_keys_access_empty": "Zatím není nic vybráno, takže klíč by nedosáhl na žádnou značku ani kanál.",
+  "settings_api_keys_access_invalid": "Některá z vybraných značek nebo kanálů už neexistuje. Načtěte stránku znovu a vyberte ještě jednou.",
+  "settings_api_keys_access_not_restricted": "Značky a kanály platí jen pro klíč s omezeným přístupem.",
+  "settings_api_keys_expiry": "Platí do (nepovinné)",
+  "settings_api_keys_expiry_hint": "Klíč přestane fungovat na konci tohoto dne ve vašem časovém pásmu. Když pole necháte prázdné, klíč nevyprší.",
+  "settings_api_keys_expiry_in_past": "Vyberte den v budoucnosti.",
+  "settings_api_keys_rate_limit": "Počet požadavků za minutu (nepovinné)",
+  "settings_api_keys_rate_limit_hint": "Od 1 do {max}. Když pole necháte prázdné, platí výchozí hodnota {count}.",
+  "settings_api_keys_rate_limit_invalid": "Zadejte celé číslo od 1 do {max}.",
+  "settings_api_keys_cancel": "Zrušit",
+  "settings_api_keys_create": "Vytvořit klíč",
+  "settings_api_keys_created": "API klíč je vytvořený",
+  "settings_api_keys_token_title": "API klíč",
+  "settings_api_keys_token_once": "Zkopírujte si klíč hned teď. Znovu ho už neuvidíte.",
+  "settings_api_keys_token_use": "Posílejte ho s každým požadavkem v této hlavičce:",
+  "settings_api_keys_copy": "Kopírovat klíč",
+  "settings_api_keys_copied": "Klíč je zkopírovaný",
+  "settings_api_keys_copy_failed": "Kopírování se nepovedlo. Označte klíč a zkopírujte ho ručně.",
+  "settings_api_keys_done": "Hotovo",
+  "settings_api_keys_status_active": "Aktivní",
+  "settings_api_keys_status_expired": "Vypršel",
+  "settings_api_keys_status_revoked": "Zrušený",
+  "settings_api_keys_whole_workspace": "Celý pracovní prostor",
+  "settings_api_keys_restricted": "Omezený na {reach}",
+  "settings_api_keys_restricted_nothing": "Omezený, nedosáhne nikam",
+  "settings_api_keys_brand_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} značku",
+        "countPlural=few": "{count} značky",
+        "countPlural=many": "{count} značky",
+        "countPlural=*": "{count} značek"
+      }
+    }
+  ],
+  "settings_api_keys_channel_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} kanál",
+        "countPlural=few": "{count} kanály",
+        "countPlural=many": "{count} kanálu",
+        "countPlural=*": "{count} kanálů"
+      }
+    }
+  ],
+  "settings_api_keys_rate": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} požadavek za minutu",
+        "countPlural=few": "{count} požadavky za minutu",
+        "countPlural=many": "{count} požadavku za minutu",
+        "countPlural=*": "{count} požadavků za minutu"
+      }
+    }
+  ],
+  "settings_api_keys_rate_default": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} požadavek za minutu (výchozí)",
+        "countPlural=few": "{count} požadavky za minutu (výchozí)",
+        "countPlural=many": "{count} požadavku za minutu (výchozí)",
+        "countPlural=*": "{count} požadavků za minutu (výchozí)"
+      }
+    }
+  ],
+  "settings_api_keys_prefix": "Začíná na {prefix}",
+  "settings_api_keys_expires": "Vyprší {time}",
+  "settings_api_keys_expired_at": "Vypršel {time}",
+  "settings_api_keys_never_expires": "Nevyprší",
+  "settings_api_keys_revoked_at": "Zrušený {time}",
+  "settings_api_keys_created_at": "Vytvořený {time}",
+  "settings_api_keys_more": "Načíst další",
+  "settings_api_keys_revoke": "Zrušit klíč",
+  "settings_api_keys_revoke_named": "Zrušit klíč {name}",
+  "settings_api_keys_revoke_title": "Zrušit tento API klíč?",
+  "settings_api_keys_revoke_body": "Nástroje, které ho používají, přestanou fungovat při příštím požadavku. Vrátit to nejde.",
+  "settings_api_keys_keep": "Ponechat klíč",
+  "settings_api_keys_revoked": "API klíč je zrušený"
 }

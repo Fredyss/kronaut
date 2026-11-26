@@ -40,6 +40,7 @@ const LAZY = {
   'short link settings route JS': ['settings-short-links', '40 KB'],
   'workspace app settings route JS': ['settings-workspace-apps', '40 KB'],
   'webhook settings route JS': ['settings-webhooks', '40 KB'],
+  'API key settings route JS': ['settings-api-keys', '40 KB'],
   'system settings route JS': ['settings-system', '40 KB'],
   'notifications panel JS': ['panel', '10 KB'],
   'editor JS': ['editor', '130 KB'],

@@ -503,5 +503,116 @@
   "settings_webhooks_event_channel_expiring": "Channel access expiring soon",
   "settings_webhooks_event_channel_reconnected": "Channel reconnected",
   "settings_webhooks_event_provider_app_misconfigured": "Network app needs attention",
-  "settings_webhooks_event_webhook_test": "Test event"
+  "settings_webhooks_event_webhook_test": "Test event",
+  "settings_api_keys_nav": "API keys",
+  "settings_api_keys_title": "API keys",
+  "settings_api_keys_intro": "API keys let your own scripts and tools use the Kronaut API for this workspace. A key can never approve posts, connect channels or change settings.",
+  "settings_api_keys_empty": "No API keys yet.",
+  "settings_api_keys_add": "Create API key",
+  "settings_api_keys_name": "Name",
+  "settings_api_keys_name_hint": "So you can tell your keys apart, for example the name of the tool that uses it.",
+  "settings_api_keys_name_invalid": "Give the key a name of 1 to {max} characters.",
+  "settings_api_keys_scopes": "What the key may do",
+  "settings_api_keys_scopes_hint": "A key never gets more than your own role allows.",
+  "settings_api_keys_scopes_invalid": "One of the chosen permissions can't be given to an API key. Reload the page and choose again.",
+  "settings_api_keys_scope_brands_read": "See brands",
+  "settings_api_keys_scope_channels_read": "See channels",
+  "settings_api_keys_scope_groups_read": "See groups",
+  "settings_api_keys_scope_posts_read": "See posts",
+  "settings_api_keys_scope_media_read": "See media",
+  "settings_api_keys_scope_analytics_read": "See analytics",
+  "settings_api_keys_scope_comments_read": "See comments",
+  "settings_api_keys_scope_audit_read": "See the audit log",
+  "settings_api_keys_scope_posts_draft": "Create and edit drafts",
+  "settings_api_keys_scope_posts_submit": "Submit posts for approval",
+  "settings_api_keys_scope_posts_schedule": "Schedule posts",
+  "settings_api_keys_scope_posts_cancel": "Cancel scheduled posts",
+  "settings_api_keys_scope_media_write": "Upload media",
+  "settings_api_keys_scope_comments_write": "Write comments",
+  "settings_api_keys_scope_ai_generate": "Write text with AI",
+  "settings_api_keys_access": "Access",
+  "settings_api_keys_access_workspace": "The whole workspace",
+  "settings_api_keys_access_restricted": "Only the brands and channels I choose",
+  "settings_api_keys_access_brands": "Brands",
+  "settings_api_keys_access_channels": "Channels",
+  "settings_api_keys_access_no_brands": "This workspace has no brands.",
+  "settings_api_keys_access_no_channels": "This workspace has no channels.",
+  "settings_api_keys_access_empty": "Nothing is chosen yet, so this key would reach no brand and no channel.",
+  "settings_api_keys_access_invalid": "One of the chosen brands or channels no longer exists. Reload the page and choose again.",
+  "settings_api_keys_access_not_restricted": "Brands and channels apply only to a key with restricted access.",
+  "settings_api_keys_expiry": "Valid until (optional)",
+  "settings_api_keys_expiry_hint": "The key stops working at the end of this day in your time zone. Leave it empty for a key that doesn't expire.",
+  "settings_api_keys_expiry_in_past": "Choose a day in the future.",
+  "settings_api_keys_rate_limit": "Requests a minute (optional)",
+  "settings_api_keys_rate_limit_hint": "From 1 to {max}. Leave it empty for the default of {count}.",
+  "settings_api_keys_rate_limit_invalid": "Enter a whole number from 1 to {max}.",
+  "settings_api_keys_cancel": "Cancel",
+  "settings_api_keys_create": "Create key",
+  "settings_api_keys_created": "API key created",
+  "settings_api_keys_token_title": "API key",
+  "settings_api_keys_token_once": "Copy this key now. You won't see it again.",
+  "settings_api_keys_token_use": "Send it with every request in this header:",
+  "settings_api_keys_copy": "Copy key",
+  "settings_api_keys_copied": "Key copied",
+  "settings_api_keys_copy_failed": "Couldn't copy. Select the key and copy it yourself.",
+  "settings_api_keys_done": "Done",
+  "settings_api_keys_status_active": "Active",
+  "settings_api_keys_status_expired": "Expired",
+  "settings_api_keys_status_revoked": "Revoked",
+  "settings_api_keys_whole_workspace": "Whole workspace",
+  "settings_api_keys_restricted": "Restricted to {reach}",
+  "settings_api_keys_restricted_nothing": "Restricted, reaches nothing",
+  "settings_api_keys_brand_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} brand",
+        "countPlural=*": "{count} brands"
+      }
+    }
+  ],
+  "settings_api_keys_channel_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} channel",
+        "countPlural=*": "{count} channels"
+      }
+    }
+  ],
+  "settings_api_keys_rate": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} request a minute",
+        "countPlural=*": "{count} requests a minute"
+      }
+    }
+  ],
+  "settings_api_keys_rate_default": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} request a minute (default)",
+        "countPlural=*": "{count} requests a minute (default)"
+      }
+    }
+  ],
+  "settings_api_keys_prefix": "Starts with {prefix}",
+  "settings_api_keys_expires": "Expires {time}",
+  "settings_api_keys_expired_at": "Expired {time}",
+  "settings_api_keys_never_expires": "Doesn't expire",
+  "settings_api_keys_revoked_at": "Revoked {time}",
+  "settings_api_keys_created_at": "Created {time}",
+  "settings_api_keys_more": "Load more",
+  "settings_api_keys_revoke": "Revoke",
+  "settings_api_keys_revoke_named": "Revoke {name}",
+  "settings_api_keys_revoke_title": "Revoke this API key?",
+  "settings_api_keys_revoke_body": "Tools that use it stop working with their next request. This can't be undone.",
+  "settings_api_keys_keep": "Keep key",
+  "settings_api_keys_revoked": "API key revoked"
 }

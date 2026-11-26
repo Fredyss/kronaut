@@ -3,6 +3,81 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
+/** @typedef {{}} Settings_Api_Keys_AccessInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_BrandsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_ChannelsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_EmptyInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_No_BrandsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_No_ChannelsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_Not_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_WorkspaceInputs */
+/** @typedef {{}} Settings_Api_Keys_AddInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Brand_CountInputs */
+/** @typedef {{}} Settings_Api_Keys_CancelInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Channel_CountInputs */
+/** @typedef {{}} Settings_Api_Keys_CopiedInputs */
+/** @typedef {{}} Settings_Api_Keys_CopyInputs */
+/** @typedef {{}} Settings_Api_Keys_Copy_FailedInputs */
+/** @typedef {{}} Settings_Api_Keys_CreateInputs */
+/** @typedef {{}} Settings_Api_Keys_CreatedInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Created_AtInputs */
+/** @typedef {{}} Settings_Api_Keys_DoneInputs */
+/** @typedef {{}} Settings_Api_Keys_EmptyInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Expired_AtInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_ExpiresInputs */
+/** @typedef {{}} Settings_Api_Keys_ExpiryInputs */
+/** @typedef {{}} Settings_Api_Keys_Expiry_HintInputs */
+/** @typedef {{}} Settings_Api_Keys_Expiry_In_PastInputs */
+/** @typedef {{}} Settings_Api_Keys_IntroInputs */
+/** @typedef {{}} Settings_Api_Keys_KeepInputs */
+/** @typedef {{}} Settings_Api_Keys_MoreInputs */
+/** @typedef {{}} Settings_Api_Keys_NameInputs */
+/** @typedef {{}} Settings_Api_Keys_Name_HintInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Settings_Api_Keys_Name_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_NavInputs */
+/** @typedef {{}} Settings_Api_Keys_Never_ExpiresInputs */
+/** @typedef {{ prefix: NonNullable<unknown> }} Settings_Api_Keys_PrefixInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_RateInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Rate_DefaultInputs */
+/** @typedef {{}} Settings_Api_Keys_Rate_LimitInputs */
+/** @typedef {{ max: NonNullable<unknown>, count: NonNullable<unknown> }} Settings_Api_Keys_Rate_Limit_HintInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Settings_Api_Keys_Rate_Limit_InvalidInputs */
+/** @typedef {{ reach: NonNullable<unknown> }} Settings_Api_Keys_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Restricted_NothingInputs */
+/** @typedef {{}} Settings_Api_Keys_RevokeInputs */
+/** @typedef {{}} Settings_Api_Keys_Revoke_BodyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Api_Keys_Revoke_NamedInputs */
+/** @typedef {{}} Settings_Api_Keys_Revoke_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_RevokedInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Revoked_AtInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Ai_GenerateInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Analytics_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Audit_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Brands_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Channels_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Comments_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Comments_WriteInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Groups_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Media_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Media_WriteInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_CancelInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_DraftInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_ScheduleInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_SubmitInputs */
+/** @typedef {{}} Settings_Api_Keys_ScopesInputs */
+/** @typedef {{}} Settings_Api_Keys_Scopes_HintInputs */
+/** @typedef {{}} Settings_Api_Keys_Scopes_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_ActiveInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_ExpiredInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_RevokedInputs */
+/** @typedef {{}} Settings_Api_Keys_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_OnceInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_UseInputs */
+/** @typedef {{}} Settings_Api_Keys_Whole_WorkspaceInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
@@ -388,6 +463,1135 @@ export const settings_allow_self = /** @type {((inputs?: Settings_Allow_SelfInpu
 	if (locale === "sk") return __sk.settings_allow_self(inputs)
 	if (locale === "cs") return __cs.settings_allow_self(inputs)
 	return __en.settings_allow_self(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Access" |
+*
+* @param {Settings_Api_Keys_AccessInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access = /** @type {((inputs?: Settings_Api_Keys_AccessInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_AccessInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access(inputs)
+	return __en.settings_api_keys_access(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Brands" |
+*
+* @param {Settings_Api_Keys_Access_BrandsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_brands = /** @type {((inputs?: Settings_Api_Keys_Access_BrandsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_BrandsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_brands(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_brands(inputs)
+	return __en.settings_api_keys_access_brands(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Channels" |
+*
+* @param {Settings_Api_Keys_Access_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_channels = /** @type {((inputs?: Settings_Api_Keys_Access_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_channels(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_channels(inputs)
+	return __en.settings_api_keys_access_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Nothing is chosen yet, so this key would reach no brand and no channel." |
+*
+* @param {Settings_Api_Keys_Access_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_empty = /** @type {((inputs?: Settings_Api_Keys_Access_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_empty(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_empty(inputs)
+	return __en.settings_api_keys_access_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "One of the chosen brands or channels no longer exists. Reload the page and choose again." |
+*
+* @param {Settings_Api_Keys_Access_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_invalid = /** @type {((inputs?: Settings_Api_Keys_Access_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_invalid(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_invalid(inputs)
+	return __en.settings_api_keys_access_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has no brands." |
+*
+* @param {Settings_Api_Keys_Access_No_BrandsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_no_brands = /** @type {((inputs?: Settings_Api_Keys_Access_No_BrandsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_No_BrandsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_no_brands(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_no_brands(inputs)
+	return __en.settings_api_keys_access_no_brands(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "This workspace has no channels." |
+*
+* @param {Settings_Api_Keys_Access_No_ChannelsInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_no_channels = /** @type {((inputs?: Settings_Api_Keys_Access_No_ChannelsInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_No_ChannelsInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_no_channels(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_no_channels(inputs)
+	return __en.settings_api_keys_access_no_channels(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Brands and channels apply only to a key with restricted access." |
+*
+* @param {Settings_Api_Keys_Access_Not_RestrictedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_not_restricted = /** @type {((inputs?: Settings_Api_Keys_Access_Not_RestrictedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_Not_RestrictedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_not_restricted(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_not_restricted(inputs)
+	return __en.settings_api_keys_access_not_restricted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Only the brands and channels I choose" |
+*
+* @param {Settings_Api_Keys_Access_RestrictedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_restricted = /** @type {((inputs?: Settings_Api_Keys_Access_RestrictedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_RestrictedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_restricted(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_restricted(inputs)
+	return __en.settings_api_keys_access_restricted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The whole workspace" |
+*
+* @param {Settings_Api_Keys_Access_WorkspaceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_access_workspace = /** @type {((inputs?: Settings_Api_Keys_Access_WorkspaceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Access_WorkspaceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_access_workspace(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_access_workspace(inputs)
+	return __en.settings_api_keys_access_workspace(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Create API key" |
+*
+* @param {Settings_Api_Keys_AddInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_add = /** @type {((inputs?: Settings_Api_Keys_AddInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_AddInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_add(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_add(inputs)
+	return __en.settings_api_keys_add(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} brand" |
+* | * | "{count} brands" |
+*
+* @param {Settings_Api_Keys_Brand_CountInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_brand_count = /** @type {((inputs: Settings_Api_Keys_Brand_CountInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Brand_CountInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_brand_count(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_brand_count(inputs)
+	return __en.settings_api_keys_brand_count(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Settings_Api_Keys_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_cancel = /** @type {((inputs?: Settings_Api_Keys_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_cancel(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_cancel(inputs)
+	return __en.settings_api_keys_cancel(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} channel" |
+* | * | "{count} channels" |
+*
+* @param {Settings_Api_Keys_Channel_CountInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_channel_count = /** @type {((inputs: Settings_Api_Keys_Channel_CountInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Channel_CountInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_channel_count(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_channel_count(inputs)
+	return __en.settings_api_keys_channel_count(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Key copied" |
+*
+* @param {Settings_Api_Keys_CopiedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_copied = /** @type {((inputs?: Settings_Api_Keys_CopiedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_CopiedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_copied(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_copied(inputs)
+	return __en.settings_api_keys_copied(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Copy key" |
+*
+* @param {Settings_Api_Keys_CopyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_copy = /** @type {((inputs?: Settings_Api_Keys_CopyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_CopyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_copy(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_copy(inputs)
+	return __en.settings_api_keys_copy(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Couldn't copy. Select the key and copy it yourself." |
+*
+* @param {Settings_Api_Keys_Copy_FailedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_copy_failed = /** @type {((inputs?: Settings_Api_Keys_Copy_FailedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Copy_FailedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_copy_failed(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_copy_failed(inputs)
+	return __en.settings_api_keys_copy_failed(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Create key" |
+*
+* @param {Settings_Api_Keys_CreateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_create = /** @type {((inputs?: Settings_Api_Keys_CreateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_CreateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_create(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_create(inputs)
+	return __en.settings_api_keys_create(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API key created" |
+*
+* @param {Settings_Api_Keys_CreatedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_created = /** @type {((inputs?: Settings_Api_Keys_CreatedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_CreatedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_created(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_created(inputs)
+	return __en.settings_api_keys_created(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Created {time}" |
+*
+* @param {Settings_Api_Keys_Created_AtInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_created_at = /** @type {((inputs: Settings_Api_Keys_Created_AtInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Created_AtInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_created_at(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_created_at(inputs)
+	return __en.settings_api_keys_created_at(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Done" |
+*
+* @param {Settings_Api_Keys_DoneInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_done = /** @type {((inputs?: Settings_Api_Keys_DoneInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_DoneInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_done(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_done(inputs)
+	return __en.settings_api_keys_done(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "No API keys yet." |
+*
+* @param {Settings_Api_Keys_EmptyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_empty = /** @type {((inputs?: Settings_Api_Keys_EmptyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_EmptyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_empty(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_empty(inputs)
+	return __en.settings_api_keys_empty(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Expired {time}" |
+*
+* @param {Settings_Api_Keys_Expired_AtInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_expired_at = /** @type {((inputs: Settings_Api_Keys_Expired_AtInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Expired_AtInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_expired_at(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_expired_at(inputs)
+	return __en.settings_api_keys_expired_at(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Expires {time}" |
+*
+* @param {Settings_Api_Keys_ExpiresInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_expires = /** @type {((inputs: Settings_Api_Keys_ExpiresInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_ExpiresInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_expires(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_expires(inputs)
+	return __en.settings_api_keys_expires(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Valid until (optional)" |
+*
+* @param {Settings_Api_Keys_ExpiryInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_expiry = /** @type {((inputs?: Settings_Api_Keys_ExpiryInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_ExpiryInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_expiry(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_expiry(inputs)
+	return __en.settings_api_keys_expiry(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "The key stops working at the end of this day in your time zone. Leave it empty for a key that doesn't expire." |
+*
+* @param {Settings_Api_Keys_Expiry_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_expiry_hint = /** @type {((inputs?: Settings_Api_Keys_Expiry_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Expiry_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_expiry_hint(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_expiry_hint(inputs)
+	return __en.settings_api_keys_expiry_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Choose a day in the future." |
+*
+* @param {Settings_Api_Keys_Expiry_In_PastInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_expiry_in_past = /** @type {((inputs?: Settings_Api_Keys_Expiry_In_PastInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Expiry_In_PastInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_expiry_in_past(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_expiry_in_past(inputs)
+	return __en.settings_api_keys_expiry_in_past(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API keys let your own scripts and tools use the Kronaut API for this workspace. A key can never approve posts, connect channels or change settings." |
+*
+* @param {Settings_Api_Keys_IntroInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_intro = /** @type {((inputs?: Settings_Api_Keys_IntroInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_IntroInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_intro(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_intro(inputs)
+	return __en.settings_api_keys_intro(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Keep key" |
+*
+* @param {Settings_Api_Keys_KeepInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_keep = /** @type {((inputs?: Settings_Api_Keys_KeepInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_KeepInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_keep(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_keep(inputs)
+	return __en.settings_api_keys_keep(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Load more" |
+*
+* @param {Settings_Api_Keys_MoreInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_more = /** @type {((inputs?: Settings_Api_Keys_MoreInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_MoreInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_more(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_more(inputs)
+	return __en.settings_api_keys_more(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Name" |
+*
+* @param {Settings_Api_Keys_NameInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_name = /** @type {((inputs?: Settings_Api_Keys_NameInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_NameInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_name(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_name(inputs)
+	return __en.settings_api_keys_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "So you can tell your keys apart, for example the name of the tool that uses it." |
+*
+* @param {Settings_Api_Keys_Name_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_name_hint = /** @type {((inputs?: Settings_Api_Keys_Name_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Name_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_name_hint(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_name_hint(inputs)
+	return __en.settings_api_keys_name_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Give the key a name of 1 to {max} characters." |
+*
+* @param {Settings_Api_Keys_Name_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_name_invalid = /** @type {((inputs: Settings_Api_Keys_Name_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Name_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_name_invalid(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_name_invalid(inputs)
+	return __en.settings_api_keys_name_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API keys" |
+*
+* @param {Settings_Api_Keys_NavInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_nav = /** @type {((inputs?: Settings_Api_Keys_NavInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_NavInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_nav(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_nav(inputs)
+	return __en.settings_api_keys_nav(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Doesn't expire" |
+*
+* @param {Settings_Api_Keys_Never_ExpiresInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_never_expires = /** @type {((inputs?: Settings_Api_Keys_Never_ExpiresInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Never_ExpiresInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_never_expires(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_never_expires(inputs)
+	return __en.settings_api_keys_never_expires(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Starts with {prefix}" |
+*
+* @param {Settings_Api_Keys_PrefixInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_prefix = /** @type {((inputs: Settings_Api_Keys_PrefixInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_PrefixInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_prefix(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_prefix(inputs)
+	return __en.settings_api_keys_prefix(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} request a minute" |
+* | * | "{count} requests a minute" |
+*
+* @param {Settings_Api_Keys_RateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_rate = /** @type {((inputs: Settings_Api_Keys_RateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_RateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_rate(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_rate(inputs)
+	return __en.settings_api_keys_rate(inputs)
+});
+/**
+* | countPlural | output |
+* | --- | --- |
+* | "one" | "{count} request a minute (default)" |
+* | * | "{count} requests a minute (default)" |
+*
+* @param {Settings_Api_Keys_Rate_DefaultInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_rate_default = /** @type {((inputs: Settings_Api_Keys_Rate_DefaultInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Rate_DefaultInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_rate_default(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_rate_default(inputs)
+	return __en.settings_api_keys_rate_default(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Requests a minute (optional)" |
+*
+* @param {Settings_Api_Keys_Rate_LimitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_rate_limit = /** @type {((inputs?: Settings_Api_Keys_Rate_LimitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Rate_LimitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_rate_limit(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_rate_limit(inputs)
+	return __en.settings_api_keys_rate_limit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "From 1 to {max}. Leave it empty for the default of {count}." |
+*
+* @param {Settings_Api_Keys_Rate_Limit_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_rate_limit_hint = /** @type {((inputs: Settings_Api_Keys_Rate_Limit_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Rate_Limit_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_rate_limit_hint(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_rate_limit_hint(inputs)
+	return __en.settings_api_keys_rate_limit_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Enter a whole number from 1 to {max}." |
+*
+* @param {Settings_Api_Keys_Rate_Limit_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_rate_limit_invalid = /** @type {((inputs: Settings_Api_Keys_Rate_Limit_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Rate_Limit_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_rate_limit_invalid(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_rate_limit_invalid(inputs)
+	return __en.settings_api_keys_rate_limit_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Restricted to {reach}" |
+*
+* @param {Settings_Api_Keys_RestrictedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_restricted = /** @type {((inputs: Settings_Api_Keys_RestrictedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_RestrictedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_restricted(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_restricted(inputs)
+	return __en.settings_api_keys_restricted(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Restricted, reaches nothing" |
+*
+* @param {Settings_Api_Keys_Restricted_NothingInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_restricted_nothing = /** @type {((inputs?: Settings_Api_Keys_Restricted_NothingInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Restricted_NothingInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_restricted_nothing(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_restricted_nothing(inputs)
+	return __en.settings_api_keys_restricted_nothing(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Revoke" |
+*
+* @param {Settings_Api_Keys_RevokeInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoke = /** @type {((inputs?: Settings_Api_Keys_RevokeInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_RevokeInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoke(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoke(inputs)
+	return __en.settings_api_keys_revoke(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Tools that use it stop working with their next request. This can't be undone." |
+*
+* @param {Settings_Api_Keys_Revoke_BodyInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoke_body = /** @type {((inputs?: Settings_Api_Keys_Revoke_BodyInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Revoke_BodyInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoke_body(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoke_body(inputs)
+	return __en.settings_api_keys_revoke_body(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Revoke {name}" |
+*
+* @param {Settings_Api_Keys_Revoke_NamedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoke_named = /** @type {((inputs: Settings_Api_Keys_Revoke_NamedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Revoke_NamedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoke_named(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoke_named(inputs)
+	return __en.settings_api_keys_revoke_named(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Revoke this API key?" |
+*
+* @param {Settings_Api_Keys_Revoke_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoke_title = /** @type {((inputs?: Settings_Api_Keys_Revoke_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Revoke_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoke_title(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoke_title(inputs)
+	return __en.settings_api_keys_revoke_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API key revoked" |
+*
+* @param {Settings_Api_Keys_RevokedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoked = /** @type {((inputs?: Settings_Api_Keys_RevokedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_RevokedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoked(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoked(inputs)
+	return __en.settings_api_keys_revoked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Revoked {time}" |
+*
+* @param {Settings_Api_Keys_Revoked_AtInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_revoked_at = /** @type {((inputs: Settings_Api_Keys_Revoked_AtInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Revoked_AtInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_revoked_at(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_revoked_at(inputs)
+	return __en.settings_api_keys_revoked_at(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Write text with AI" |
+*
+* @param {Settings_Api_Keys_Scope_Ai_GenerateInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_ai_generate = /** @type {((inputs?: Settings_Api_Keys_Scope_Ai_GenerateInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Ai_GenerateInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_ai_generate(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_ai_generate(inputs)
+	return __en.settings_api_keys_scope_ai_generate(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See analytics" |
+*
+* @param {Settings_Api_Keys_Scope_Analytics_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_analytics_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Analytics_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Analytics_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_analytics_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_analytics_read(inputs)
+	return __en.settings_api_keys_scope_analytics_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See the audit log" |
+*
+* @param {Settings_Api_Keys_Scope_Audit_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_audit_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Audit_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Audit_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_audit_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_audit_read(inputs)
+	return __en.settings_api_keys_scope_audit_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See brands" |
+*
+* @param {Settings_Api_Keys_Scope_Brands_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_brands_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Brands_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Brands_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_brands_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_brands_read(inputs)
+	return __en.settings_api_keys_scope_brands_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See channels" |
+*
+* @param {Settings_Api_Keys_Scope_Channels_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_channels_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Channels_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Channels_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_channels_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_channels_read(inputs)
+	return __en.settings_api_keys_scope_channels_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See comments" |
+*
+* @param {Settings_Api_Keys_Scope_Comments_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_comments_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Comments_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Comments_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_comments_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_comments_read(inputs)
+	return __en.settings_api_keys_scope_comments_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Write comments" |
+*
+* @param {Settings_Api_Keys_Scope_Comments_WriteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_comments_write = /** @type {((inputs?: Settings_Api_Keys_Scope_Comments_WriteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Comments_WriteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_comments_write(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_comments_write(inputs)
+	return __en.settings_api_keys_scope_comments_write(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See groups" |
+*
+* @param {Settings_Api_Keys_Scope_Groups_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_groups_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Groups_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Groups_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_groups_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_groups_read(inputs)
+	return __en.settings_api_keys_scope_groups_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See media" |
+*
+* @param {Settings_Api_Keys_Scope_Media_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_media_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Media_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Media_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_media_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_media_read(inputs)
+	return __en.settings_api_keys_scope_media_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Upload media" |
+*
+* @param {Settings_Api_Keys_Scope_Media_WriteInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_media_write = /** @type {((inputs?: Settings_Api_Keys_Scope_Media_WriteInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Media_WriteInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_media_write(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_media_write(inputs)
+	return __en.settings_api_keys_scope_media_write(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Cancel scheduled posts" |
+*
+* @param {Settings_Api_Keys_Scope_Posts_CancelInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_posts_cancel = /** @type {((inputs?: Settings_Api_Keys_Scope_Posts_CancelInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Posts_CancelInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_posts_cancel(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_posts_cancel(inputs)
+	return __en.settings_api_keys_scope_posts_cancel(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Create and edit drafts" |
+*
+* @param {Settings_Api_Keys_Scope_Posts_DraftInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_posts_draft = /** @type {((inputs?: Settings_Api_Keys_Scope_Posts_DraftInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Posts_DraftInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_posts_draft(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_posts_draft(inputs)
+	return __en.settings_api_keys_scope_posts_draft(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "See posts" |
+*
+* @param {Settings_Api_Keys_Scope_Posts_ReadInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_posts_read = /** @type {((inputs?: Settings_Api_Keys_Scope_Posts_ReadInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Posts_ReadInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_posts_read(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_posts_read(inputs)
+	return __en.settings_api_keys_scope_posts_read(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Schedule posts" |
+*
+* @param {Settings_Api_Keys_Scope_Posts_ScheduleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_posts_schedule = /** @type {((inputs?: Settings_Api_Keys_Scope_Posts_ScheduleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Posts_ScheduleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_posts_schedule(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_posts_schedule(inputs)
+	return __en.settings_api_keys_scope_posts_schedule(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Submit posts for approval" |
+*
+* @param {Settings_Api_Keys_Scope_Posts_SubmitInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scope_posts_submit = /** @type {((inputs?: Settings_Api_Keys_Scope_Posts_SubmitInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scope_Posts_SubmitInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scope_posts_submit(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scope_posts_submit(inputs)
+	return __en.settings_api_keys_scope_posts_submit(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "What the key may do" |
+*
+* @param {Settings_Api_Keys_ScopesInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scopes = /** @type {((inputs?: Settings_Api_Keys_ScopesInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_ScopesInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scopes(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scopes(inputs)
+	return __en.settings_api_keys_scopes(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "A key never gets more than your own role allows." |
+*
+* @param {Settings_Api_Keys_Scopes_HintInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scopes_hint = /** @type {((inputs?: Settings_Api_Keys_Scopes_HintInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scopes_HintInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scopes_hint(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scopes_hint(inputs)
+	return __en.settings_api_keys_scopes_hint(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "One of the chosen permissions can't be given to an API key. Reload the page and choose again." |
+*
+* @param {Settings_Api_Keys_Scopes_InvalidInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_scopes_invalid = /** @type {((inputs?: Settings_Api_Keys_Scopes_InvalidInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Scopes_InvalidInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_scopes_invalid(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_scopes_invalid(inputs)
+	return __en.settings_api_keys_scopes_invalid(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Active" |
+*
+* @param {Settings_Api_Keys_Status_ActiveInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_status_active = /** @type {((inputs?: Settings_Api_Keys_Status_ActiveInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Status_ActiveInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_status_active(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_status_active(inputs)
+	return __en.settings_api_keys_status_active(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Expired" |
+*
+* @param {Settings_Api_Keys_Status_ExpiredInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_status_expired = /** @type {((inputs?: Settings_Api_Keys_Status_ExpiredInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Status_ExpiredInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_status_expired(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_status_expired(inputs)
+	return __en.settings_api_keys_status_expired(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Revoked" |
+*
+* @param {Settings_Api_Keys_Status_RevokedInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_status_revoked = /** @type {((inputs?: Settings_Api_Keys_Status_RevokedInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Status_RevokedInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_status_revoked(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_status_revoked(inputs)
+	return __en.settings_api_keys_status_revoked(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API keys" |
+*
+* @param {Settings_Api_Keys_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_title = /** @type {((inputs?: Settings_Api_Keys_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_title(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_title(inputs)
+	return __en.settings_api_keys_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Copy this key now. You won't see it again." |
+*
+* @param {Settings_Api_Keys_Token_OnceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_token_once = /** @type {((inputs?: Settings_Api_Keys_Token_OnceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Token_OnceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_token_once(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_token_once(inputs)
+	return __en.settings_api_keys_token_once(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API key" |
+*
+* @param {Settings_Api_Keys_Token_TitleInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_token_title = /** @type {((inputs?: Settings_Api_Keys_Token_TitleInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Token_TitleInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_token_title(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_token_title(inputs)
+	return __en.settings_api_keys_token_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Send it with every request in this header:" |
+*
+* @param {Settings_Api_Keys_Token_UseInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_token_use = /** @type {((inputs?: Settings_Api_Keys_Token_UseInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Token_UseInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_token_use(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_token_use(inputs)
+	return __en.settings_api_keys_token_use(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Whole workspace" |
+*
+* @param {Settings_Api_Keys_Whole_WorkspaceInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_whole_workspace = /** @type {((inputs?: Settings_Api_Keys_Whole_WorkspaceInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_Whole_WorkspaceInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_whole_workspace(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_whole_workspace(inputs)
+	return __en.settings_api_keys_whole_workspace(inputs)
 });
 /**
 * | output |

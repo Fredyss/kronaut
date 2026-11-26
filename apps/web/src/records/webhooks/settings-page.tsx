@@ -3,13 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { meQuery } from '../../base/api/me.ts';
+import { useFormat } from '../../base/locale/format.ts';
 import { m } from '../../base/locale/i18n.ts';
+import { SecretDialog, type SecretText } from '../../base/ui/secret-dialog.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { DeliveriesDialog } from './deliveries-dialog.tsx';
 import { EndpointDialog } from './endpoint-dialog.tsx';
 import { EndpointRow } from './endpoint-row.tsx';
 import { type Endpoint, endpointHost, webhooksQuery } from './queries.ts';
-import { SecretDialog } from './secret-dialog.tsx';
 import type { Revealed } from './writes.ts';
 
 const MANAGERS: ReadonlySet<string> = new Set(['owner', 'admin']);
@@ -19,6 +20,29 @@ type Open =
   | { readonly kind: 'deliveries'; readonly endpoint: Endpoint }
   | { readonly kind: 'secret'; readonly revealed: Revealed }
   | null;
+
+const secretText = (): SecretText => ({
+  title: settingsText.settings_webhooks_secret_title(),
+  once: settingsText.settings_webhooks_secret_once(),
+  copy: settingsText.settings_webhooks_copy(),
+  copied: settingsText.settings_webhooks_copied(),
+  copyFailed: settingsText.settings_webhooks_copy_failed(),
+  done: settingsText.settings_webhooks_done(),
+});
+
+function WebhookSecret({ revealed, onClose }: { readonly revealed: Revealed; onClose(): void }) {
+  const when = useFormat(null);
+  return (
+    <SecretDialog secret={revealed.secret} text={secretText()} onClose={onClose}>
+      <p>{settingsText.settings_webhooks_secret_use()}</p>
+      {revealed.previousUntil === null ? null : (
+        <p>
+          {settingsText.settings_webhooks_secret_previous({ time: when(revealed.previousUntil) })}
+        </p>
+      )}
+    </SecretDialog>
+  );
+}
 
 function OpenDialog({
   workspaceId,
@@ -30,7 +54,7 @@ function OpenDialog({
   onOpen(open: Open): void;
 }) {
   const close = () => onOpen(null);
-  if (open.kind === 'secret') return <SecretDialog revealed={open.revealed} onClose={close} />;
+  if (open.kind === 'secret') return <WebhookSecret revealed={open.revealed} onClose={close} />;
   if (open.kind === 'deliveries') {
     return (
       <DeliveriesDialog

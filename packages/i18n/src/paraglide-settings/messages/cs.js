@@ -1,6 +1,81 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
+/** @typedef {{}} Settings_Api_Keys_AccessInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_BrandsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_ChannelsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_EmptyInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_No_BrandsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_No_ChannelsInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_Not_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Access_WorkspaceInputs */
+/** @typedef {{}} Settings_Api_Keys_AddInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Brand_CountInputs */
+/** @typedef {{}} Settings_Api_Keys_CancelInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Channel_CountInputs */
+/** @typedef {{}} Settings_Api_Keys_CopiedInputs */
+/** @typedef {{}} Settings_Api_Keys_CopyInputs */
+/** @typedef {{}} Settings_Api_Keys_Copy_FailedInputs */
+/** @typedef {{}} Settings_Api_Keys_CreateInputs */
+/** @typedef {{}} Settings_Api_Keys_CreatedInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Created_AtInputs */
+/** @typedef {{}} Settings_Api_Keys_DoneInputs */
+/** @typedef {{}} Settings_Api_Keys_EmptyInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Expired_AtInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_ExpiresInputs */
+/** @typedef {{}} Settings_Api_Keys_ExpiryInputs */
+/** @typedef {{}} Settings_Api_Keys_Expiry_HintInputs */
+/** @typedef {{}} Settings_Api_Keys_Expiry_In_PastInputs */
+/** @typedef {{}} Settings_Api_Keys_IntroInputs */
+/** @typedef {{}} Settings_Api_Keys_KeepInputs */
+/** @typedef {{}} Settings_Api_Keys_MoreInputs */
+/** @typedef {{}} Settings_Api_Keys_NameInputs */
+/** @typedef {{}} Settings_Api_Keys_Name_HintInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Settings_Api_Keys_Name_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_NavInputs */
+/** @typedef {{}} Settings_Api_Keys_Never_ExpiresInputs */
+/** @typedef {{ prefix: NonNullable<unknown> }} Settings_Api_Keys_PrefixInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_RateInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Settings_Api_Keys_Rate_DefaultInputs */
+/** @typedef {{}} Settings_Api_Keys_Rate_LimitInputs */
+/** @typedef {{ max: NonNullable<unknown>, count: NonNullable<unknown> }} Settings_Api_Keys_Rate_Limit_HintInputs */
+/** @typedef {{ max: NonNullable<unknown> }} Settings_Api_Keys_Rate_Limit_InvalidInputs */
+/** @typedef {{ reach: NonNullable<unknown> }} Settings_Api_Keys_RestrictedInputs */
+/** @typedef {{}} Settings_Api_Keys_Restricted_NothingInputs */
+/** @typedef {{}} Settings_Api_Keys_RevokeInputs */
+/** @typedef {{}} Settings_Api_Keys_Revoke_BodyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Settings_Api_Keys_Revoke_NamedInputs */
+/** @typedef {{}} Settings_Api_Keys_Revoke_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_RevokedInputs */
+/** @typedef {{ time: NonNullable<unknown> }} Settings_Api_Keys_Revoked_AtInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Ai_GenerateInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Analytics_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Audit_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Brands_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Channels_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Comments_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Comments_WriteInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Groups_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Media_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Media_WriteInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_CancelInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_DraftInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_ReadInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_ScheduleInputs */
+/** @typedef {{}} Settings_Api_Keys_Scope_Posts_SubmitInputs */
+/** @typedef {{}} Settings_Api_Keys_ScopesInputs */
+/** @typedef {{}} Settings_Api_Keys_Scopes_HintInputs */
+/** @typedef {{}} Settings_Api_Keys_Scopes_InvalidInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_ActiveInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_ExpiredInputs */
+/** @typedef {{}} Settings_Api_Keys_Status_RevokedInputs */
+/** @typedef {{}} Settings_Api_Keys_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_OnceInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_TitleInputs */
+/** @typedef {{}} Settings_Api_Keys_Token_UseInputs */
+/** @typedef {{}} Settings_Api_Keys_Whole_WorkspaceInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
@@ -363,6 +438,322 @@ export const settings_account_title = /** @type {(inputs: Settings_Account_Title
 
 export const settings_allow_self = /** @type {(inputs: Settings_Allow_SelfInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Autor žádosti může schválit vlastní příspěvek`)
+};
+
+export const settings_api_keys_access = /** @type {(inputs: Settings_Api_Keys_AccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Přístup`)
+};
+
+export const settings_api_keys_access_brands = /** @type {(inputs: Settings_Api_Keys_Access_BrandsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značky`)
+};
+
+export const settings_api_keys_access_channels = /** @type {(inputs: Settings_Api_Keys_Access_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kanály`)
+};
+
+export const settings_api_keys_access_empty = /** @type {(inputs: Settings_Api_Keys_Access_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím není nic vybráno, takže klíč by nedosáhl na žádnou značku ani kanál.`)
+};
+
+export const settings_api_keys_access_invalid = /** @type {(inputs: Settings_Api_Keys_Access_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Některá z vybraných značek nebo kanálů už neexistuje. Načtěte stránku znovu a vyberte ještě jednou.`)
+};
+
+export const settings_api_keys_access_no_brands = /** @type {(inputs: Settings_Api_Keys_Access_No_BrandsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovní prostor nemá žádné značky.`)
+};
+
+export const settings_api_keys_access_no_channels = /** @type {(inputs: Settings_Api_Keys_Access_No_ChannelsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Tento pracovní prostor nemá žádné kanály.`)
+};
+
+export const settings_api_keys_access_not_restricted = /** @type {(inputs: Settings_Api_Keys_Access_Not_RestrictedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Značky a kanály platí jen pro klíč s omezeným přístupem.`)
+};
+
+export const settings_api_keys_access_restricted = /** @type {(inputs: Settings_Api_Keys_Access_RestrictedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Jen značky a kanály, které vyberu`)
+};
+
+export const settings_api_keys_access_workspace = /** @type {(inputs: Settings_Api_Keys_Access_WorkspaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Celý pracovní prostor`)
+};
+
+export const settings_api_keys_add = /** @type {(inputs: Settings_Api_Keys_AddInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vytvořit API klíč`)
+};
+
+export const settings_api_keys_brand_count = /** @type {(inputs: Settings_Api_Keys_Brand_CountInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} značku`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} značky`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} značky`);
+	return /** @type {LocalizedString} */ (`${i?.count} značek`)
+};
+
+export const settings_api_keys_cancel = /** @type {(inputs: Settings_Api_Keys_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit`)
+};
+
+export const settings_api_keys_channel_count = /** @type {(inputs: Settings_Api_Keys_Channel_CountInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} kanál`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} kanály`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} kanálu`);
+	return /** @type {LocalizedString} */ (`${i?.count} kanálů`)
+};
+
+export const settings_api_keys_copied = /** @type {(inputs: Settings_Api_Keys_CopiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Klíč je zkopírovaný`)
+};
+
+export const settings_api_keys_copy = /** @type {(inputs: Settings_Api_Keys_CopyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kopírovat klíč`)
+};
+
+export const settings_api_keys_copy_failed = /** @type {(inputs: Settings_Api_Keys_Copy_FailedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Kopírování se nepovedlo. Označte klíč a zkopírujte ho ručně.`)
+};
+
+export const settings_api_keys_create = /** @type {(inputs: Settings_Api_Keys_CreateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vytvořit klíč`)
+};
+
+export const settings_api_keys_created = /** @type {(inputs: Settings_Api_Keys_CreatedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíč je vytvořený`)
+};
+
+export const settings_api_keys_created_at = /** @type {(inputs: Settings_Api_Keys_Created_AtInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vytvořený ${i?.time}`)
+};
+
+export const settings_api_keys_done = /** @type {(inputs: Settings_Api_Keys_DoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Hotovo`)
+};
+
+export const settings_api_keys_empty = /** @type {(inputs: Settings_Api_Keys_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zatím tu nejsou žádné API klíče.`)
+};
+
+export const settings_api_keys_expired_at = /** @type {(inputs: Settings_Api_Keys_Expired_AtInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vypršel ${i?.time}`)
+};
+
+export const settings_api_keys_expires = /** @type {(inputs: Settings_Api_Keys_ExpiresInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Vyprší ${i?.time}`)
+};
+
+export const settings_api_keys_expiry = /** @type {(inputs: Settings_Api_Keys_ExpiryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Platí do (nepovinné)`)
+};
+
+export const settings_api_keys_expiry_hint = /** @type {(inputs: Settings_Api_Keys_Expiry_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Klíč přestane fungovat na konci tohoto dne ve vašem časovém pásmu. Když pole necháte prázdné, klíč nevyprší.`)
+};
+
+export const settings_api_keys_expiry_in_past = /** @type {(inputs: Settings_Api_Keys_Expiry_In_PastInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vyberte den v budoucnosti.`)
+};
+
+export const settings_api_keys_intro = /** @type {(inputs: Settings_Api_Keys_IntroInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Díky API klíčům můžou vaše vlastní skripty a nástroje pracovat s Kronaut API v tomto pracovním prostoru. Klíč nikdy nemůže schvalovat příspěvky, připojovat kanály ani měnit nastavení.`)
+};
+
+export const settings_api_keys_keep = /** @type {(inputs: Settings_Api_Keys_KeepInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Ponechat klíč`)
+};
+
+export const settings_api_keys_more = /** @type {(inputs: Settings_Api_Keys_MoreInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Načíst další`)
+};
+
+export const settings_api_keys_name = /** @type {(inputs: Settings_Api_Keys_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Název`)
+};
+
+export const settings_api_keys_name_hint = /** @type {(inputs: Settings_Api_Keys_Name_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Abyste klíče od sebe rozeznali, třeba podle nástroje, který ho používá.`)
+};
+
+export const settings_api_keys_name_invalid = /** @type {(inputs: Settings_Api_Keys_Name_InvalidInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Název klíče musí mít 1 až ${i?.max} znaků.`)
+};
+
+export const settings_api_keys_nav = /** @type {(inputs: Settings_Api_Keys_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíče`)
+};
+
+export const settings_api_keys_never_expires = /** @type {(inputs: Settings_Api_Keys_Never_ExpiresInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nevyprší`)
+};
+
+export const settings_api_keys_prefix = /** @type {(inputs: Settings_Api_Keys_PrefixInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Začíná na ${i?.prefix}`)
+};
+
+export const settings_api_keys_rate = /** @type {(inputs: Settings_Api_Keys_RateInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} požadavek za minutu`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} požadavky za minutu`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} požadavku za minutu`);
+	return /** @type {LocalizedString} */ (`${i?.count} požadavků za minutu`)
+};
+
+export const settings_api_keys_rate_default = /** @type {(inputs: Settings_Api_Keys_Rate_DefaultInputs) => LocalizedString} */ (i) => {
+	const countPlural = __paraglideRegistry.plural("cs", i?.count, {}, true);
+	if (countPlural === "one") return /** @type {LocalizedString} */ (`${i?.count} požadavek za minutu (výchozí)`);
+	if (countPlural === "few") return /** @type {LocalizedString} */ (`${i?.count} požadavky za minutu (výchozí)`);
+	if (countPlural === "many") return /** @type {LocalizedString} */ (`${i?.count} požadavku za minutu (výchozí)`);
+	return /** @type {LocalizedString} */ (`${i?.count} požadavků za minutu (výchozí)`)
+};
+
+export const settings_api_keys_rate_limit = /** @type {(inputs: Settings_Api_Keys_Rate_LimitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Počet požadavků za minutu (nepovinné)`)
+};
+
+export const settings_api_keys_rate_limit_hint = /** @type {(inputs: Settings_Api_Keys_Rate_Limit_HintInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Od 1 do ${i?.max}. Když pole necháte prázdné, platí výchozí hodnota ${i?.count}.`)
+};
+
+export const settings_api_keys_rate_limit_invalid = /** @type {(inputs: Settings_Api_Keys_Rate_Limit_InvalidInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Zadejte celé číslo od 1 do ${i?.max}.`)
+};
+
+export const settings_api_keys_restricted = /** @type {(inputs: Settings_Api_Keys_RestrictedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Omezený na ${i?.reach}`)
+};
+
+export const settings_api_keys_restricted_nothing = /** @type {(inputs: Settings_Api_Keys_Restricted_NothingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Omezený, nedosáhne nikam`)
+};
+
+export const settings_api_keys_revoke = /** @type {(inputs: Settings_Api_Keys_RevokeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit klíč`)
+};
+
+export const settings_api_keys_revoke_body = /** @type {(inputs: Settings_Api_Keys_Revoke_BodyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nástroje, které ho používají, přestanou fungovat při příštím požadavku. Vrátit to nejde.`)
+};
+
+export const settings_api_keys_revoke_named = /** @type {(inputs: Settings_Api_Keys_Revoke_NamedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Zrušit klíč ${i?.name}`)
+};
+
+export const settings_api_keys_revoke_title = /** @type {(inputs: Settings_Api_Keys_Revoke_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušit tento API klíč?`)
+};
+
+export const settings_api_keys_revoked = /** @type {(inputs: Settings_Api_Keys_RevokedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíč je zrušený`)
+};
+
+export const settings_api_keys_revoked_at = /** @type {(inputs: Settings_Api_Keys_Revoked_AtInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Zrušený ${i?.time}`)
+};
+
+export const settings_api_keys_scope_ai_generate = /** @type {(inputs: Settings_Api_Keys_Scope_Ai_GenerateInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Psát text pomocí AI`)
+};
+
+export const settings_api_keys_scope_analytics_read = /** @type {(inputs: Settings_Api_Keys_Scope_Analytics_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět statistiky`)
+};
+
+export const settings_api_keys_scope_audit_read = /** @type {(inputs: Settings_Api_Keys_Scope_Audit_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět záznam auditu`)
+};
+
+export const settings_api_keys_scope_brands_read = /** @type {(inputs: Settings_Api_Keys_Scope_Brands_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět značky`)
+};
+
+export const settings_api_keys_scope_channels_read = /** @type {(inputs: Settings_Api_Keys_Scope_Channels_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět kanály`)
+};
+
+export const settings_api_keys_scope_comments_read = /** @type {(inputs: Settings_Api_Keys_Scope_Comments_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět komentáře`)
+};
+
+export const settings_api_keys_scope_comments_write = /** @type {(inputs: Settings_Api_Keys_Scope_Comments_WriteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Psát komentáře`)
+};
+
+export const settings_api_keys_scope_groups_read = /** @type {(inputs: Settings_Api_Keys_Scope_Groups_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět skupiny`)
+};
+
+export const settings_api_keys_scope_media_read = /** @type {(inputs: Settings_Api_Keys_Scope_Media_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět média`)
+};
+
+export const settings_api_keys_scope_media_write = /** @type {(inputs: Settings_Api_Keys_Scope_Media_WriteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Nahrávat média`)
+};
+
+export const settings_api_keys_scope_posts_cancel = /** @type {(inputs: Settings_Api_Keys_Scope_Posts_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Rušit naplánované příspěvky`)
+};
+
+export const settings_api_keys_scope_posts_draft = /** @type {(inputs: Settings_Api_Keys_Scope_Posts_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vytvářet a upravovat koncepty`)
+};
+
+export const settings_api_keys_scope_posts_read = /** @type {(inputs: Settings_Api_Keys_Scope_Posts_ReadInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vidět příspěvky`)
+};
+
+export const settings_api_keys_scope_posts_schedule = /** @type {(inputs: Settings_Api_Keys_Scope_Posts_ScheduleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Plánovat příspěvky`)
+};
+
+export const settings_api_keys_scope_posts_submit = /** @type {(inputs: Settings_Api_Keys_Scope_Posts_SubmitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posílat příspěvky ke schválení`)
+};
+
+export const settings_api_keys_scopes = /** @type {(inputs: Settings_Api_Keys_ScopesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Co klíč smí dělat`)
+};
+
+export const settings_api_keys_scopes_hint = /** @type {(inputs: Settings_Api_Keys_Scopes_HintInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Klíč nikdy nedostane víc, než dovoluje vaše vlastní role.`)
+};
+
+export const settings_api_keys_scopes_invalid = /** @type {(inputs: Settings_Api_Keys_Scopes_InvalidInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Jedno z vybraných oprávnění nejde API klíči udělit. Načtěte stránku znovu a vyberte ještě jednou.`)
+};
+
+export const settings_api_keys_status_active = /** @type {(inputs: Settings_Api_Keys_Status_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Aktivní`)
+};
+
+export const settings_api_keys_status_expired = /** @type {(inputs: Settings_Api_Keys_Status_ExpiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Vypršel`)
+};
+
+export const settings_api_keys_status_revoked = /** @type {(inputs: Settings_Api_Keys_Status_RevokedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zrušený`)
+};
+
+export const settings_api_keys_title = /** @type {(inputs: Settings_Api_Keys_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíče`)
+};
+
+export const settings_api_keys_token_once = /** @type {(inputs: Settings_Api_Keys_Token_OnceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Zkopírujte si klíč hned teď. Znovu ho už neuvidíte.`)
+};
+
+export const settings_api_keys_token_title = /** @type {(inputs: Settings_Api_Keys_Token_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíč`)
+};
+
+export const settings_api_keys_token_use = /** @type {(inputs: Settings_Api_Keys_Token_UseInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Posílejte ho s každým požadavkem v této hlavičce:`)
+};
+
+export const settings_api_keys_whole_workspace = /** @type {(inputs: Settings_Api_Keys_Whole_WorkspaceInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Celý pracovní prostor`)
 };
 
 export const settings_approval_required = /** @type {(inputs: Settings_Approval_RequiredInputs) => LocalizedString} */ () => {

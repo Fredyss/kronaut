@@ -52,6 +52,11 @@ const WEBHOOKS_SECTION = {
   label: () => settingsText.settings_webhooks_nav(),
 } as const;
 
+const API_KEYS_SECTION = {
+  to: '/settings/api-keys',
+  label: () => settingsText.settings_api_keys_nav(),
+} as const;
+
 const SETTINGS_WRITERS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 const SYSTEM_SECTION = {
@@ -72,7 +77,13 @@ export function SettingsLayout() {
     ...(writer ? [TAGS_SECTION, BRANDS_SECTION, GROUPS_SECTION] : []),
     SAVED_TEXTS_SECTION,
     ...(writer
-      ? [FEEDS_SECTION, SHORT_LINKS_SECTION, WORKSPACE_APPS_SECTION, WEBHOOKS_SECTION]
+      ? [
+          FEEDS_SECTION,
+          SHORT_LINKS_SECTION,
+          WORKSPACE_APPS_SECTION,
+          WEBHOOKS_SECTION,
+          API_KEYS_SECTION,
+        ]
       : []),
     ...(canReadSystem(me) ? [SYSTEM_SECTION] : []),
   ];
