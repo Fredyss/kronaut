@@ -284,11 +284,14 @@ describe('delivery', () => {
     });
     await makeDue(second);
     await deliverWebhooks(deps);
-    expect(await delivery(first)).toMatchObject({ state: 'retry_wait' });
-    expect(await delivery(second)).toMatchObject({
-      state: 'dead',
-      last_error: 'endpoint_disabled',
-    });
+    for (const event of [first, second]) {
+      expect(await delivery(event)).toMatchObject({
+        state: 'dead',
+        last_error: 'endpoint_disabled',
+      });
+    }
+    await makeDue(second);
+    await deliverWebhooks(deps);
     expect(to(target)).toHaveLength(1);
     const audit = await fixture.root.withActor(SYSTEM, (trx) =>
       trx
@@ -328,8 +331,15 @@ describe('claim', () => {
     const eventId = await testEvent(target);
     const pause = (paused: boolean) =>
       fixture.root.withActor(SYSTEM, (trx) =>
-        sql`update instance_state set publishing_paused = ${paused},
-              paused_reason = ${paused ? 'operator' : null}`.execute(trx),
+        paused
+          ? sql`insert into instance_state (instance_id, publishing_paused, paused_reason)
+                values (gen_random_uuid(), true, 'operator')
+                on conflict (singleton) do update set publishing_paused = true, paused_reason = 'operator'`.execute(
+              trx,
+            )
+          : sql`update instance_state set publishing_paused = false, paused_reason = null`.execute(
+              trx,
+            ),
       );
     await pause(true);
     try {
