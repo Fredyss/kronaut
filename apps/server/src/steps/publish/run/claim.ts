@@ -12,7 +12,7 @@ import { Temporal } from 'temporal-polyfill';
 import { type LockedPost, lockPost, SYSTEM } from '../../../access/post-access/lock.ts';
 import type { ProviderEntry } from '../../../base/providers/providers.ts';
 import { type DestinationJob, enqueuePublish } from '../../../infrastructure/jobs/jobs.ts';
-import { seedsPulls } from '../../../records/analytics/seed.ts';
+import { firstPullHours } from '../../../records/analytics/seed.ts';
 import { currentInput, selectItems } from '../chain.ts';
 import { publishInput } from '../input.ts';
 import type { PublishDeps } from '../task.ts';
@@ -38,7 +38,7 @@ export interface Claimed {
   readonly deadlineAt: Temporal.Instant | null;
   readonly afterRefresh: boolean;
   readonly entry: ProviderEntry;
-  readonly analytics: boolean;
+  readonly firstPullHours: number | null;
   readonly postType: PostTypeSpec;
   readonly position: number;
   readonly role: ItemRole;
@@ -229,7 +229,7 @@ async function claimAttempt(
       deadlineAt: dest.main_confirmed ? null : instant(scope.deadlineAt),
       afterRefresh: dest.state === 'retry_wait' && dest.state_reason === 'auth_refreshed',
       entry,
-      analytics: seedsPulls(entry.manifest, dest.publish_type),
+      firstPullHours: firstPullHours(entry.manifest, dest.publish_type),
       postType,
       position: current.item.position,
       role: current.item.role,

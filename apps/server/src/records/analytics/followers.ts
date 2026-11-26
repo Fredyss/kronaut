@@ -1,12 +1,15 @@
 import {
   type AccountMetrics,
   type AccountProfile,
+  analyticsScheduleOf,
   encodePublicId,
+  isCreditsDepleted,
   isProviderFailure,
   type ProviderError,
 } from '@kronaut/core';
-import type { Actor, TenantDb } from '@kronaut/db';
-import { sql } from 'kysely';
+import type { Actor, DB, TenantDb } from '@kronaut/db';
+import { type ExpressionBuilder, sql } from 'kysely';
+import { Temporal } from 'temporal-polyfill';
 import type { ChannelRef } from '../../access/channels/channel-ref.ts';
 import { createBaseContext, type ProviderEntry } from '../../base/providers/providers.ts';
 import {
@@ -17,7 +20,6 @@ import {
   type Run,
   type Source,
   sourceOf,
-  utcDay,
   utcDayOf,
 } from './source.ts';
 import { MAX_ATTEMPTS, resumeAt, storedValue } from './store.ts';
@@ -151,12 +153,37 @@ async function flagDeadGrant(
   });
 }
 
+function providersByCadence(run: Run): Map<number, string[]> {
+  const groups = new Map<number, string[]>();
+  for (const entry of run.deps.providers.list()) {
+    if (entry.runtime.accountMetrics === undefined) continue;
+    const days = analyticsScheduleOf(entry.manifest).followersEveryDays;
+    groups.set(days, [...(groups.get(days) ?? []), entry.manifest.id]);
+  }
+  return groups;
+}
+
+type DueBuilder = ExpressionBuilder<
+  DB & { a: DB['social_accounts']; m: DB['account_metric_pulls'] },
+  'a' | 'm'
+>;
+
+function dueByCadence(eb: DueBuilder, groups: Map<number, string[]>, observedAt: Date) {
+  const today = Temporal.Instant.fromEpochMilliseconds(observedAt.getTime());
+  return eb.or(
+    [...groups].map(([days, providers]) => {
+      const since = utcDayOf(today.subtract({ hours: 24 * (days - 1) })).day;
+      return eb.and([
+        eb('a.provider', 'in', providers),
+        eb.or([eb('m.checked_on', 'is', null), eb('m.checked_on', '<', since)]),
+      ]);
+    }),
+  );
+}
+
 async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChannel[]> {
-  const providers = run.deps.providers
-    .list()
-    .filter((entry) => entry.runtime.accountMetrics !== undefined)
-    .map((entry) => entry.manifest.id);
-  if (providers.length === 0) return [];
+  const groups = providersByCadence(run);
+  if (groups.size === 0) return [];
   return await run.deps.db.withTenant(workspaceId, SYSTEM, async (trx) => {
     const rows = await trx
       .selectFrom('social_accounts as a')
@@ -168,10 +195,7 @@ async function dueChannels(run: Run, workspaceId: string): Promise<FollowerChann
       .select(['a.id', 'a.provider'])
       .where('a.workspace_id', '=', workspaceId)
       .where('a.status', '=', 'active')
-      .where('a.provider', 'in', providers)
-      .where((eb) =>
-        eb.or([eb('m.checked_on', 'is', null), eb('m.checked_on', '<', utcDay(run.observedAt))]),
-      )
+      .where((eb) => dueByCadence(eb, groups, run.observedAt))
       .where((eb) =>
         eb.or([eb('m.retry_after', 'is', null), eb('m.retry_after', '<=', run.observedAt)]),
       )
@@ -221,7 +245,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
   const now = deps.now();
   const readAt = utcDayOf(now);
   await deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
-    if (failure?.kind === 'rate_limited') {
+    if (failure?.kind === 'rate_limited' || isCreditsDepleted(failure)) {
       return await deferRead(trx, channel, resumeAt(now, failure));
     }
     if (failure?.kind === 'transient') return await countAttempt(trx, channel, readAt.day);

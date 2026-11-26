@@ -1,30 +1,40 @@
-import type { ProviderManifest } from '@kronaut/core';
+import { analyticsScheduleOf, type ProviderManifest } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { sql } from 'kysely';
 
-export const PULL_OFFSETS_HOURS = [1, 6, 24, 72, 168, 720] as const;
+export interface PullPlan {
+  readonly hours: readonly number[];
+  readonly windowHours?: number | undefined;
+}
 
-export function pullSteps(windowHours?: number): [step: number, hours: number][] {
-  return [...PULL_OFFSETS_HOURS.entries()].filter(
-    ([, hours]) => windowHours === undefined || hours < windowHours,
+export function pullPlanOf(manifest: ProviderManifest, postType: string): PullPlan {
+  const type = manifest.postTypes.find((entry) => entry.id === postType);
+  return {
+    hours: analyticsScheduleOf(manifest).pullHours,
+    windowHours: type?.analytics?.windowHours,
+  };
+}
+
+export function pullSteps(plan: PullPlan): [step: number, hours: number][] {
+  return [...plan.hours.entries()].filter(
+    ([, hours]) => plan.windowHours === undefined || hours < plan.windowHours,
   );
 }
 
-export function windowHoursOf(manifest: ProviderManifest, postType: string): number | undefined {
-  return manifest.postTypes.find((type) => type.id === postType)?.analytics?.windowHours;
+export function stepInside(step: number, plan: PullPlan): boolean {
+  return pullSteps(plan).some(([inside]) => inside === step);
 }
 
-export function stepInside(step: number, windowHours: number | undefined): boolean {
-  return pullSteps(windowHours).some(([inside]) => inside === step);
-}
-
-export function seedsPulls(manifest: ProviderManifest, postType: string): boolean {
-  return manifest.capabilities.analytics && stepInside(0, windowHoursOf(manifest, postType));
+export function firstPullHours(manifest: ProviderManifest, postType: string): number | null {
+  if (!manifest.capabilities.analytics) return null;
+  const [first] = pullSteps(pullPlanOf(manifest, postType));
+  return first === undefined || first[0] !== 0 ? null : first[1];
 }
 
 export async function seedPulls(
   trx: TenantDb,
   ref: { readonly workspaceId: string; readonly id: string },
+  firstHours: number,
 ): Promise<void> {
   await trx
     .insertInto('destination_metric_pulls')
@@ -36,9 +46,7 @@ export async function seedPulls(
           'workspace_id',
           'id',
           sql<number>`0`.as('step'),
-          sql<Date>`published_at + make_interval(hours => ${PULL_OFFSETS_HOURS[0]})`.as(
-            'next_pull_at',
-          ),
+          sql<Date>`published_at + make_interval(hours => ${firstHours})`.as('next_pull_at'),
         ])
         .where('workspace_id', '=', ref.workspaceId)
         .where('id', '=', ref.id)

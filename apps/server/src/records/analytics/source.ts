@@ -121,7 +121,7 @@ export function metricValue(value: number | null | undefined): number | null {
   return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : null;
 }
 
-export function utcDay(at: Date): string {
+function utcDay(at: Date): string {
   return at.toISOString().slice(0, 10);
 }
 

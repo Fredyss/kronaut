@@ -1,231 +1,47 @@
-import type {
-  AccountMetrics,
-  AccountProfile,
-  AnalyticsResult,
-  PostMetrics,
-  ProviderError,
-  ProviderRuntime,
-} from '@kronaut/core';
-import { decodePublicId, encodePublicId, ProviderFailure } from '@kronaut/core';
+import { decodePublicId, encodePublicId, type ProviderError } from '@kronaut/core';
 import { startTestDatabase, type TestDatabase } from '@kronaut/db/testing';
-import type { HttpClient } from '@kronaut/egress';
-import { sql } from 'kysely';
-import { pino } from 'pino';
 import { Temporal } from 'temporal-polyfill';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createProviderRegistry } from '../../base/providers/providers.ts';
-import type { PostDto } from '../../flow/posts/read/dto.ts';
 import {
-  BASE,
   call,
-  create,
-  db,
-  draft,
-  fake,
   grantAuth,
   insertAccount,
-  internal,
-  keyring,
-  media,
   owner,
   ownerAuth,
   SYSTEM,
-  scheduled,
-  startPosts,
-  stopPosts,
   viewerAuth,
-  workspaceId,
 } from '../../flow/posts/testing.ts';
-import { flagAccount } from '../../steps/publish/incidents.ts';
-import { publishDeps, runPublish } from '../../steps/publish/task.ts';
-import { pullAnalytics } from './pull.ts';
+import {
+  analyticsCalls,
+  followerCalls,
+  followerFailures,
+  hoursAfter,
+  lapseDuringRead,
+  lastPublished,
+  postTypesSeen,
+  profiles,
+  publishOne,
+  pullAt,
+  pullOf,
+  replies,
+  revoked,
+  scenario,
+  snapshotsOf,
+  startAnalytics,
+  stopPosts,
+} from './testing.ts';
 
-const logger = pino({ level: 'silent' });
 let test: TestDatabase;
-
-type Reply = PostMetrics | ProviderError;
-const replies = new Map<string, Reply>();
-let thrown: ProviderError | null = null;
-let followers: number | null = 10;
-let followerError: ProviderError | null = null;
-const followerFailures = new Map<string, ProviderError>();
-const followerCalls = new Map<string, number>();
-const profiles = new Map<string, AccountProfile>();
-const lapseDuringRead = new Set<string>();
-const revoked = new Set<string>();
-const analyticsCalls = new Map<string, number>();
-const postTypesSeen = new Map<string, string>();
-let windowHours: number | undefined;
-const PUBLISHED_AT = Temporal.Instant.from('2027-01-04T06:00:00Z');
-
-function analytics(account: string, remoteIds: readonly string[]): AnalyticsResult {
-  analyticsCalls.set(account, (analyticsCalls.get(account) ?? 0) + 1);
-  if (revoked.has(account)) throw new ProviderFailure({ kind: 'auth_revoked' });
-  if (thrown !== null) throw new ProviderFailure(thrown);
-  const posts: Record<string, PostMetrics> = {};
-  const failed: Record<string, ProviderError> = {};
-  for (const id of remoteIds) {
-    const reply = replies.get(id);
-    if (reply === undefined) continue;
-    if ('kind' in reply) failed[id] = reply as ProviderError;
-    else posts[id] = reply;
-  }
-  return { posts, failed, apiVersion: 'v-test' };
-}
-
-async function lapse(providerAccountId: string): Promise<void> {
-  await owner.withActor(SYSTEM, (trx) =>
-    trx
-      .updateTable('social_accounts')
-      .set({ status: 'needs_reauth' })
-      .where('provider_account_id', '=', providerAccountId)
-      .execute(),
-  );
-}
-
-function registry(retainData = false) {
-  const runtime: ProviderRuntime = {
-    ...fake.runtime,
-    analytics: async (_ctx, input) => {
-      for (const [id, type] of Object.entries(input.postTypes)) postTypesSeen.set(id, type);
-      return analytics(input.account.providerAccountId, input.remoteIds);
-    },
-    accountMetrics: async (_ctx, input): Promise<AccountMetrics> => {
-      const id = input.account.providerAccountId;
-      followerCalls.set(id, (followerCalls.get(id) ?? 0) + 1);
-      const failure = followerFailures.get(id) ?? followerError;
-      if (failure !== null) throw new ProviderFailure(failure);
-      if (lapseDuringRead.has(id)) await lapse(id);
-      const profile = profiles.get(id);
-      return { followers, apiVersion: 'v-test', ...(profile === undefined ? {} : { profile }) };
-    },
-  };
-  const manifest = {
-    ...fake.manifest,
-    postTypes: fake.manifest.postTypes.map((type) =>
-      windowHours === undefined ? type : { ...type, analytics: { windowHours } },
-    ),
-    capabilities: { analytics: true, delete: false },
-    ...(retainData ? { dataRetention: { disconnectedDays: 7, lapsedDays: 30 } } : {}),
-  };
-  return createProviderRegistry([manifest], [runtime], () => ({}) as HttpClient);
-}
 
 beforeAll(async () => {
   test = await startTestDatabase();
-  await startPosts(test, logger, () => Temporal.Now.instant());
+  await startAnalytics(test);
 });
 
 afterAll(async () => {
   await stopPosts();
   await test?.stop();
 });
-
-interface Published {
-  readonly post: PostDto;
-  readonly destinationId: string;
-  readonly channel: string;
-  readonly remoteId: string;
-  readonly publishedAt: Temporal.Instant;
-}
-
-let published = 0;
-const HOUR_MS = 3_600_000;
-
-async function publishOne(label: string, existing?: string): Promise<Published> {
-  const channel = existing ?? (await insertAccount(`${label} ${published}`));
-  published++;
-  const post = await scheduled(await create(ownerAuth, draft(channel)));
-  const destination = await owner.withActor(SYSTEM, (trx) =>
-    trx
-      .updateTable('post_destinations')
-      .set({ run_at: sql<Date>`now() - interval '1 second'` })
-      .where('post_id', '=', internal(post.id))
-      .returning('id')
-      .executeTakeFirstOrThrow(),
-  );
-  const remoteId = `remote-${label}-${published}`;
-  fake.script({ kind: 'publish', remoteId });
-  const deps = publishDeps({
-    db,
-    providers: registry(),
-    keyring,
-    media,
-    logger,
-    workerId: 'analytics-test',
-    publicBaseUrl: BASE,
-  });
-  await runPublish(deps, { workspaceId, id: destination.id });
-  const row = await owner.withActor(SYSTEM, (trx) =>
-    trx
-      .selectFrom('post_destinations as d')
-      .leftJoin('destination_metric_pulls as p', 'p.destination_id', 'd.id')
-      .select(['d.state', 'd.published_at', 'p.step', 'p.attempts', 'p.next_pull_at'])
-      .where('d.id', '=', destination.id)
-      .executeTakeFirstOrThrow(),
-  );
-  const result = { post, destinationId: destination.id, channel, remoteId };
-  expect(row.state).toBe('published');
-  if (row.step === null) return { ...result, publishedAt: PUBLISHED_AT };
-  expect(row).toMatchObject({ step: 0, attempts: 0 });
-  expect(row.next_pull_at?.getTime()).toBe((row.published_at?.getTime() ?? 0) + HOUR_MS);
-  await pin(destination.id);
-  return { ...result, publishedAt: PUBLISHED_AT };
-}
-
-async function pin(destinationId: string): Promise<void> {
-  const at = new Date(PUBLISHED_AT.epochMilliseconds);
-  await owner.withActor(SYSTEM, async (trx) => {
-    await trx
-      .updateTable('post_destinations')
-      .set({ published_at: at })
-      .where('id', '=', destinationId)
-      .execute();
-    await trx
-      .updateTable('destination_metric_pulls')
-      .set({ next_pull_at: new Date(at.getTime() + HOUR_MS) })
-      .where('destination_id', '=', destinationId)
-      .execute();
-  });
-}
-
-function pullAt(at: Temporal.Instant, retainData = false) {
-  return pullAnalytics({
-    db,
-    keyring,
-    providers: registry(retainData),
-    logger,
-    publicBaseUrl: BASE,
-    now: () => at,
-    flagAccount,
-  });
-}
-
-function pullOf(target: Published) {
-  return owner.withActor(SYSTEM, (trx) =>
-    trx
-      .selectFrom('destination_metric_pulls')
-      .select(['step', 'next_pull_at', 'attempts'])
-      .where('destination_id', '=', target.destinationId)
-      .executeTakeFirstOrThrow(),
-  );
-}
-
-function snapshotsOf(target: Published) {
-  return owner.withActor(SYSTEM, (trx) =>
-    trx
-      .selectFrom('post_metric_snapshots')
-      .select(['metric', 'value', 'provider', 'api_version'])
-      .where('destination_id', '=', target.destinationId)
-      .orderBy('observed_at')
-      .orderBy('metric')
-      .execute(),
-  );
-}
-
-function hoursAfter(target: Published, hours: number) {
-  return target.publishedAt.add({ hours, minutes: 1 });
-}
 
 describe('analytics pulls', () => {
   it('a published destination gets its first pull 1 h after publishing', async () => {
@@ -279,11 +95,11 @@ describe('analytics pulls', () => {
 
     const limited = await publishOne('limited');
     const resetAt = hoursAfter(limited, 1).add({ minutes: 40 });
-    thrown = { kind: 'rate_limited', scope: 'account', resetAt };
+    scenario.thrown = { kind: 'rate_limited', scope: 'account', resetAt };
     try {
       await pullAt(hoursAfter(limited, 1));
     } finally {
-      thrown = null;
+      scenario.thrown = null;
     }
     expect(await pullOf(limited)).toEqual({
       step: 0,
@@ -306,7 +122,7 @@ describe('analytics pulls', () => {
   it('stops a post type with an analytics window after the last step inside it', async () => {
     const story = await publishOne('story');
     replies.set(story.remoteId, { views: 4, reach: 3 });
-    windowHours = 24;
+    scenario.windowHours = 24;
     try {
       await pullAt(hoursAfter(story, 1));
       expect(postTypesSeen.get(story.remoteId)).toBe('post');
@@ -314,7 +130,7 @@ describe('analytics pulls', () => {
       await pullAt(hoursAfter(story, 6));
       expect(await pullOf(story)).toMatchObject({ step: 1, next_pull_at: null });
     } finally {
-      windowHours = undefined;
+      scenario.windowHours = undefined;
     }
     expect((await snapshotsOf(story)).map((row) => [row.metric, row.value])).toEqual([
       ['reach', '3'],
@@ -323,7 +139,7 @@ describe('analytics pulls', () => {
   });
 
   it('seeds no pulls for a window without the first step, and ends a row outside it', async () => {
-    windowHours = 1;
+    scenario.windowHours = 1;
     try {
       const unseeded = await publishOne('unseeded');
       const pulls = await owner.withActor(SYSTEM, (trx) =>
@@ -335,31 +151,31 @@ describe('analytics pulls', () => {
       );
       expect(pulls).toEqual([]);
     } finally {
-      windowHours = undefined;
+      scenario.windowHours = undefined;
     }
     const narrowed = await publishOne('narrowed');
     replies.set(narrowed.remoteId, { views: 1 });
     await pullAt(hoursAfter(narrowed, 1));
     expect(await pullOf(narrowed)).toMatchObject({ step: 1 });
-    const calls = analyticsCalls.get(`fake-narrowed ${published - 1}`);
+    const calls = analyticsCalls.get(`fake-narrowed ${lastPublished()}`);
     replies.set(narrowed.remoteId, { views: 2 });
-    windowHours = 6;
+    scenario.windowHours = 6;
     try {
       await pullAt(hoursAfter(narrowed, 6));
     } finally {
-      windowHours = undefined;
+      scenario.windowHours = undefined;
     }
     expect(await pullOf(narrowed)).toMatchObject({ step: 1, next_pull_at: null });
-    expect(analyticsCalls.get(`fake-narrowed ${published - 1}`)).toBe(calls);
+    expect(analyticsCalls.get(`fake-narrowed ${lastPublished()}`)).toBe(calls);
     expect((await snapshotsOf(narrowed)).map((row) => row.value)).toEqual(['1']);
-    windowHours = 24;
+    scenario.windowHours = 24;
     try {
       const late = await publishOne('late-story');
       await pullAt(hoursAfter(late, 30));
       expect(await pullOf(late)).toMatchObject({ step: 0, next_pull_at: null });
-      expect(analyticsCalls.has(`fake-late-story ${published - 1}`)).toBe(false);
+      expect(analyticsCalls.has(`fake-late-story ${lastPublished()}`)).toBe(false);
     } finally {
-      windowHours = undefined;
+      scenario.windowHours = undefined;
     }
   });
 
@@ -386,21 +202,25 @@ describe('analytics pulls', () => {
           .where('social_account_id', '=', accountId)
           .execute(),
       );
-    followers = 10;
+    scenario.followers = 10;
     await pullAt(day);
     await pullAt(day.add({ minutes: 15 }));
     expect(calls()).toBe(1);
     await pullAt(day.add({ hours: 24 }));
     expect(calls()).toBe(2);
     expect(await rows()).toEqual([{ day: '2027-02-01', metric: 'followers', value: '10' }]);
-    followerError = { kind: 'transient' };
+    scenario.followerError = { kind: 'transient' };
     for (let run = 0; run < 4; run++) await pullAt(day.add({ hours: 48, minutes: 15 * run }));
     expect(calls()).toBe(5);
-    followerError = { kind: 'rate_limited', scope: 'app', resetAt: day.add({ hours: 73 }) };
+    scenario.followerError = {
+      kind: 'rate_limited',
+      scope: 'app',
+      resetAt: day.add({ hours: 73 }),
+    };
     await pullAt(day.add({ hours: 72 }));
     await pullAt(day.add({ hours: 72, minutes: 15 }));
     expect(calls()).toBe(6);
-    followerError = null;
+    scenario.followerError = null;
     await pullAt(day.add({ hours: 73 }));
     expect(calls()).toBe(7);
     await pullAt(day.add({ hours: 73, minutes: 15 }));

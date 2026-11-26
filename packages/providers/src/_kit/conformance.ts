@@ -1,7 +1,14 @@
 import { isDeepStrictEqual } from 'node:util';
-import type { PostTypeSpec, ProviderManifest, ProviderRuntime } from '@kronaut/core';
+import {
+  analyticsScheduleOf,
+  type PostTypeSpec,
+  type ProviderManifest,
+  type ProviderRuntime,
+} from '@kronaut/core';
 
-function postTypeProblems(type: PostTypeSpec): string[] {
+const MAX_PULLS = 6;
+
+function postTypeProblems(type: PostTypeSpec, firstPull: number): string[] {
   const problems: string[] = [];
   const ids = type.steps.map((step) => step.id);
   if (new Set(ids).size !== ids.length) problems.push(`${type.id}: duplicate step ids`);
@@ -10,8 +17,21 @@ function postTypeProblems(type: PostTypeSpec): string[] {
   if (type.text.length === 0) problems.push(`${type.id}: no text limit`);
   if (type.media.minCount > type.media.maxCount) problems.push(`${type.id}: media min > max`);
   const windowHours = type.analytics?.windowHours;
-  if (windowHours !== undefined && !(windowHours > 1))
-    problems.push(`${type.id}: analytics window must cover the first pull at 1 h`);
+  if (windowHours !== undefined && !(windowHours > firstPull))
+    problems.push(`${type.id}: analytics window must cover the first pull at ${firstPull} h`);
+  return problems;
+}
+
+function scheduleProblems(manifest: ProviderManifest): string[] {
+  const { pullHours, followersEveryDays } = analyticsScheduleOf(manifest);
+  const problems: string[] = [];
+  const whole = pullHours.every(
+    (hours, index) => Number.isInteger(hours) && hours > (pullHours[index - 1] ?? 0),
+  );
+  if (pullHours.length === 0 || pullHours.length > MAX_PULLS || !whole)
+    problems.push(`analytics pull hours must be 1–${MAX_PULLS} whole hours, rising from above 0`);
+  if (!(Number.isInteger(followersEveryDays) && followersEveryDays >= 1))
+    problems.push('analytics follower cadence must be whole days, at least 1');
   return problems;
 }
 
@@ -40,7 +60,8 @@ export function conformanceProblems(
   if (manifest.id !== runtime.id) problems.push(`runtime id ${runtime.id} ≠ ${manifest.id}`);
   if (manifest.egressHosts.length === 0) problems.push('no egress hosts');
   if (manifest.postTypes.length === 0) problems.push('no post types');
-  for (const type of manifest.postTypes) problems.push(...postTypeProblems(type));
+  const firstPull = analyticsScheduleOf(manifest).pullHours[0] ?? 0;
+  for (const type of manifest.postTypes) problems.push(...postTypeProblems(type, firstPull));
   if (manifest.auth.refresh !== 'none' && runtime.refresh === undefined)
     problems.push(`refresh ${manifest.auth.refresh} without runtime.refresh`);
   if (manifest.auth.instanceScoped === true && runtime.registerApp === undefined)
@@ -51,6 +72,7 @@ export function conformanceProblems(
     problems.push(`verify ${manifest.verify.mode} without runtime.verify`);
   if (manifest.capabilities.analytics && runtime.analytics === undefined)
     problems.push('analytics without runtime.analytics');
+  problems.push(...scheduleProblems(manifest));
   problems.push(...settingsProblems(manifest));
   problems.push(...retentionProblems(manifest));
   return problems;
