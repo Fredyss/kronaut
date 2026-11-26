@@ -2,6 +2,7 @@ import {
   type AnalyticsResult,
   analyticsScheduleOf,
   encodePublicId,
+  isCreditsDepleted,
   POST_METRICS,
   type PostMetrics,
   type ProviderError,
@@ -14,8 +15,8 @@ import { toProviderFailure } from '@kronaut/providers/failure';
 import { Temporal } from 'temporal-polyfill';
 import { createBaseContext, type ProviderEntry } from '../../base/providers/providers.ts';
 import { sweepCron } from '../../infrastructure/jobs/workspace-sweep.ts';
-import { pullFollowers } from './followers.ts';
-import { type PullPlan, pullPlanOf, stepInside } from './seed.ts';
+import { deferFollowerRead, pullFollowers } from './followers.ts';
+import { pullPlanOf, stepInside } from './seed.ts';
 import {
   errorFields,
   metricValue,
@@ -33,6 +34,7 @@ import {
   latestSnapshots,
   type PullOutcome,
   purgeSnapshots,
+  resumeAt,
   type Snapshot,
   settlePull,
   snapshotKey,
@@ -57,7 +59,8 @@ interface Channel {
 
 type RowResult =
   | { readonly kind: 'metrics'; readonly metrics: PostMetrics }
-  | { readonly kind: 'error'; readonly error: ProviderError; readonly ofPost: boolean }
+  | { readonly kind: 'error'; readonly error: ProviderError }
+  | { readonly kind: 'request_error'; readonly error: ProviderError }
   | { readonly kind: 'unread' };
 
 interface Fetched {
@@ -79,7 +82,7 @@ function rowResult(result: AnalyticsResult, remoteId: string): RowResult {
   }
   const failed = result.failed ?? {};
   const error = Object.hasOwn(failed, remoteId) ? failed[remoteId] : undefined;
-  return error === undefined ? { kind: 'unread' } : { kind: 'error', error, ofPost: true };
+  return error === undefined ? { kind: 'unread' } : { kind: 'error', error };
 }
 
 function changed(
@@ -108,13 +111,9 @@ async function changedSnapshots(
   );
 }
 
-function planOf(channel: Pick<Channel, 'entry'>, row: DueRow): PullPlan {
-  return pullPlanOf(channel.entry.manifest, row.postType);
-}
-
 // Only a post the network itself reported missing; a failed request must never wipe a whole channel's history.
 function purges(channel: Channel, result: RowResult): boolean {
-  if (result.kind !== 'error' || !result.ofPost) return false;
+  if (result.kind !== 'error') return false;
   const { error } = result;
   const missing = error.kind === 'permanent' && error.code === 'not_found';
   return missing && analyticsScheduleOf(channel.entry.manifest).purgeOnMissing;
@@ -130,7 +129,12 @@ async function settle(trx: TenantDb, run: Run, channel: Channel, fetched: Fetche
     const outcome = outcomeOf(result);
     if (outcome === null) continue;
     run.counts.pulled++;
-    const settled = await settlePull(trx, { ...scope, plan: planOf(channel, row) }, row, outcome);
+    const settled = await settlePull(
+      trx,
+      { ...scope, plan: pullPlanOf(channel.entry.manifest, row.postType) },
+      row,
+      outcome,
+    );
     if (purges(channel, result)) await purgeSnapshots(trx, channel.workspaceId, row.destinationId);
     if (settled === 'done') run.counts.done++;
     if (settled === 'transient') run.counts.retried++;
@@ -161,9 +165,10 @@ async function stop(run: Run, channel: Channel, error: ProviderError): Promise<v
     'analytics pulls for a channel stopped for this run',
   );
   const scope = { workspaceId: channel.workspaceId, now: run.deps.now() };
-  await run.deps.db.withTenant(channel.workspaceId, SYSTEM, (trx) =>
-    deferPulls(trx, scope, channel.rows, error),
-  );
+  await run.deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
+    await deferPulls(trx, scope, channel.rows, error);
+    if (isCreditsDepleted(error)) await deferFollowerRead(trx, channel, resumeAt(scope.now, error));
+  });
 }
 
 async function fetchResults(run: Run, channel: Channel): Promise<Fetched | ProviderError> {
@@ -180,10 +185,7 @@ async function fetchResults(run: Run, channel: Channel): Promise<Fetched | Provi
     const error = toProviderFailure(err, 'none').error;
     if (stopsAnalytics(error)) return error;
     const results = new Map(
-      channel.rows.map((row): [DueRow, RowResult] => [
-        row,
-        { kind: 'error', error, ofPost: false },
-      ]),
+      channel.rows.map((row): [DueRow, RowResult] => [row, { kind: 'request_error', error }]),
     );
     return { results, apiVersion: '', observedAt: toDate(deps.now()) };
   }
@@ -231,7 +233,7 @@ async function endExpired(
   if (entry === undefined) return [...rows];
   const now = run.deps.now();
   const expired = rows.filter((row) => {
-    const plan = planOf({ entry }, row);
+    const plan = pullPlanOf(entry.manifest, row.postType);
     if (!stepInside(row.step, plan)) return true;
     const { windowHours } = plan;
     if (windowHours === undefined) return false;

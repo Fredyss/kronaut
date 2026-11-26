@@ -106,7 +106,11 @@ async function markChecked(trx: TenantDb, { workspaceId, accountId }: ChannelRef
     .execute();
 }
 
-async function deferRead(trx: TenantDb, { workspaceId, accountId }: ChannelRef, until: Date) {
+export async function deferFollowerRead(
+  trx: TenantDb,
+  { workspaceId, accountId }: ChannelRef,
+  until: Date,
+) {
   await trx
     .insertInto('account_metric_pulls')
     .values({ workspace_id: workspaceId, social_account_id: accountId, retry_after: until })
@@ -246,7 +250,7 @@ async function readFollowers(run: Run, channel: FollowerChannel): Promise<void> 
   const readAt = utcDayOf(now);
   await deps.db.withTenant(channel.workspaceId, SYSTEM, async (trx) => {
     if (failure?.kind === 'rate_limited' || isCreditsDepleted(failure)) {
-      return await deferRead(trx, channel, resumeAt(now, failure));
+      return await deferFollowerRead(trx, channel, resumeAt(now, failure));
     }
     if (failure?.kind === 'transient') return await countAttempt(trx, channel, readAt.day);
     if (failure !== null) await flagDeadGrant(trx, deps, channel, failure);

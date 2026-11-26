@@ -74,8 +74,9 @@ describe('a provider pull schedule', () => {
     expect(await snapshotsOf(kept)).toHaveLength(1);
   });
 
-  it('spent credits pause the channel for a day and keep its pulls', async () => {
+  it('spent credits pause the channel for a day, follower read included, and keep its pulls', async () => {
     const target = await publishOne('broke');
+    const account = `fake-broke ${lastPublished()}`;
     scenario.thrown = CREDITS;
     try {
       await pullAt(hoursAfter(target, 24));
@@ -88,6 +89,7 @@ describe('a provider pull schedule', () => {
       attempts: 0,
       next_pull_at: new Date(resumed.epochMilliseconds),
     });
+    expect(followerCalls.get(account) ?? 0).toBe(0);
   });
 });
 
