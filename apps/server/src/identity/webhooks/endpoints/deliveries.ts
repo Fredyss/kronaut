@@ -1,6 +1,7 @@
-import { decodePublicId, encodePublicId } from '@kronaut/core';
+import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import * as z from 'zod';
+import { cursorAfter, cursorPageFields } from '../../../base/http/cursor-page.ts';
 import { HttpError } from '../../../base/http/errors.ts';
 import { issueDetails } from '../../../base/http/input.ts';
 import { invalid } from '../../../base/http/issues.ts';
@@ -32,15 +33,7 @@ export const DeliveryPageSchema = z.object({
 
 type DeliveryPage = z.output<typeof DeliveryPageSchema>;
 
-const DeliveryQuery = z.strictObject({
-  cursor: z.string().max(64).optional(),
-  limit: z
-    .string()
-    .regex(/^[0-9]{1,3}$/)
-    .transform(Number)
-    .pipe(z.number().int().min(1).max(DELIVERIES_MAX_LIMIT))
-    .optional(),
-});
+const DeliveryQuery = z.strictObject(cursorPageFields(DELIVERIES_MAX_LIMIT));
 
 export interface DeliveryFilter {
   readonly after: string | null;
@@ -54,11 +47,10 @@ export function deliveryFilter(
   const parsed = DeliveryQuery.safeParse(present);
   if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const { cursor, limit } = parsed.data;
-  const after = cursor === undefined ? null : decodePublicId('webhookDelivery', cursor);
-  if (cursor !== undefined && after === null) {
-    throw invalid([{ path: 'query.cursor', code: 'invalid_cursor' }]);
-  }
-  return { after, limit: limit ?? DELIVERIES_DEFAULT_LIMIT };
+  return {
+    after: cursorAfter('webhookDelivery', cursor),
+    limit: limit ?? DELIVERIES_DEFAULT_LIMIT,
+  };
 }
 
 async function assertEndpoint(trx: TenantDb, ref: EndpointRef): Promise<void> {

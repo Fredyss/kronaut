@@ -1,9 +1,10 @@
 import type { DocJson } from '@kronaut/compose';
-import { decodePublicId, encodePublicId } from '@kronaut/core';
+import { encodePublicId } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { type RawBuilder, sql } from 'kysely';
 import * as z from 'zod';
 import { excerptOf, loadMains } from '../../../access/post-access/reads.ts';
+import { cursorAfter, cursorPageFields } from '../../../base/http/cursor-page.ts';
 import { issueDetails } from '../../../base/http/input.ts';
 import { invalid } from '../../../base/http/issues.ts';
 import { iso } from '../../../base/http/time.ts';
@@ -41,13 +42,7 @@ type Usage = z.output<typeof UsageSchema>;
 
 const LibraryQuery = z.strictObject({
   kind: z.enum(['image', 'video']).optional(),
-  cursor: z.string().max(64).optional(),
-  limit: z
-    .string()
-    .regex(/^[0-9]{1,3}$/)
-    .transform(Number)
-    .pipe(z.number().int().min(1).max(LIBRARY_MAX_LIMIT))
-    .optional(),
+  ...cursorPageFields(LIBRARY_MAX_LIMIT),
 });
 
 export interface LibraryFilter {
@@ -61,10 +56,7 @@ export function libraryFilter(query: Readonly<Record<string, string | undefined>
   const parsed = LibraryQuery.safeParse(present);
   if (!parsed.success) throw invalid(issueDetails('query', parsed.error));
   const { kind, cursor, limit } = parsed.data;
-  const after = cursor === undefined ? null : decodePublicId('media', cursor);
-  if (after === null && cursor !== undefined) {
-    throw invalid([{ path: 'query.cursor', code: 'invalid_cursor' }]);
-  }
+  const after = cursorAfter('media', cursor);
   return { kind: kind ?? null, after, limit: limit ?? LIBRARY_DEFAULT_LIMIT };
 }
 

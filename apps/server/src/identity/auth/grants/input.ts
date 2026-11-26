@@ -7,6 +7,7 @@ import {
   NEVER_GRANTABLE_ACTIONS,
 } from '@kronaut/core';
 import { Temporal } from 'temporal-polyfill';
+import { cursorAfter } from '../../../base/http/cursor-page.ts';
 import { HttpError } from '../../../base/http/errors.ts';
 import { invalid } from '../../../base/http/issues.ts';
 
@@ -89,10 +90,7 @@ export function grantAccess(restricted: boolean, access: AccessIds | undefined):
 }
 
 export function grantPage(cursor: string | undefined, limit: string | undefined): GrantPage {
-  const after = cursor === undefined ? null : decodePublicId('grant', cursor);
-  if (cursor !== undefined && after === null) {
-    throw invalid([{ path: 'query.cursor', code: 'invalid_cursor' }]);
-  }
+  const after = cursorAfter('grant', cursor);
   const size = limit === undefined ? LIST_DEFAULT_LIMIT : Number(limit);
   if (!/^[0-9]{1,3}$/.test(limit ?? '1') || size < 1 || size > LIST_MAX_LIMIT) {
     throw invalid([{ path: 'query.limit', code: 'invalid_limit' }]);
