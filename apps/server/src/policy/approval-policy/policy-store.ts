@@ -110,7 +110,7 @@ async function writePolicyAudit(trx: TenantDb, ctx: RequestContext, audit: Polic
     .insertInto('audit_events')
     .values({
       workspace_id: audit.workspaceId,
-      ...(await auditActor(trx, audit.workspaceId, ctx.principal)),
+      ...(await auditActor(trx, audit.workspaceId, ctx)),
       action: audit.action,
       resource_kind: 'approval_policy',
       resource_id: audit.policyId,

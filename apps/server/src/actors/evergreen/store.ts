@@ -70,7 +70,7 @@ async function audit(trx: TenantDb, ctx: RequestContext, target: EvergreenTarget
     .insertInto('audit_events')
     .values({
       workspace_id: workspaceId,
-      ...(await auditActor(trx, workspaceId, ctx.principal)),
+      ...(await auditActor(trx, workspaceId, ctx)),
       action,
       resource_kind: 'evergreen_post',
       resource_id: postId,

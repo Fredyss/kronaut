@@ -24,27 +24,28 @@ const mcpRoute = defineRoute({
   idempotency: false,
   summary: 'Model Context Protocol endpoint for agents',
   description:
-    'Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request with an Origin header other than this server is refused.',
+    'Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB and each tool call at 30 s.',
   tags: ['mcp'],
 });
 
 export interface McpRouteDeps {
   readonly routes: readonly Route[];
-  readonly publicBaseUrl: string;
 }
 
-function invoker(ctx: RequestContext, workspaceId: string, routes: Map<string, Route>): Invoke {
-  return (routeId, args) => {
-    const route = routes.get(routeId);
-    if (route === undefined) throw new Error(`mcp: no route ${routeId}`);
-    return ctx.dispatch({
-      route,
-      params: { ...args.params, workspaceId },
-      body: args.body,
-      ...(args.idempotencyKey === undefined ? {} : { idempotencyKey: args.idempotencyKey }),
-      idempotencyRetentionMs: MCP_IDEMPOTENCY_RETENTION_MS,
-    });
-  };
+function invoker(ctx: RequestContext, workspaceId: string, routes: Map<string, Route>) {
+  return (tool: string): Invoke =>
+    (routeId, args) => {
+      const route = routes.get(routeId);
+      if (route === undefined) throw new Error(`mcp: no route ${routeId}`);
+      return ctx.dispatch({
+        route,
+        params: { ...args.params, workspaceId },
+        body: args.body,
+        ...(args.idempotencyKey === undefined ? {} : { idempotencyKey: args.idempotencyKey }),
+        idempotencyRetentionMs: MCP_IDEMPOTENCY_RETENTION_MS,
+        via: { surface: 'mcp', tool },
+      });
+    };
 }
 
 function transportRequest(ctx: RequestContext): Request {
@@ -68,32 +69,34 @@ async function answer(response: Response) {
 export function mcpRoutes(deps: McpRouteDeps): BoundRoute[] {
   const byId = new Map(deps.routes.map((route) => [route.id, route]));
   const tools = catalog(deps.routes);
-  const origin = new URL(deps.publicBaseUrl).origin;
   return [
-    bindRoute(mcpRoute, async ({ params, body }, ctx) => {
-      const workspaceId = pathId('workspace', params.workspaceId);
-      ctx.authorize('posts:read', { workspaceId });
-      const from = ctx.header('origin');
-      if (from !== null && from !== origin) {
-        throw new HttpError('forbidden', 'This origin may not use the MCP endpoint.');
-      }
-      const principal = ctx.principal;
-      const server = mcpServer({
-        tools,
-        scopes: principal?.kind === 'grant' ? principal.scopes : [],
-        invoke: invoker(ctx, params.workspaceId, byId),
-        requestId: ctx.requestId,
-        logger: ctx.logger,
-      });
-      const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
-      try {
-        await server.connect(transport);
-        return await answer(
-          await transport.handleRequest(transportRequest(ctx), { parsedBody: body }),
-        );
-      } finally {
-        await server.close();
-      }
-    }),
+    bindRoute(
+      mcpRoute,
+      async ({ params, body }, ctx) => {
+        const workspaceId = pathId('workspace', params.workspaceId);
+        ctx.authorize('posts:read', { workspaceId });
+        const principal = ctx.principal;
+        const server = mcpServer({
+          tools,
+          scopes: principal?.kind === 'grant' ? principal.scopes : [],
+          grantId: principal?.kind === 'grant' ? principal.grantId : null,
+          invoke: invoker(ctx, params.workspaceId, byId),
+          requestId: ctx.requestId,
+          logger: ctx.logger,
+        });
+        const transport = new WebStandardStreamableHTTPServerTransport({
+          enableJsonResponse: true,
+        });
+        try {
+          await server.connect(transport);
+          return await answer(
+            await transport.handleRequest(transportRequest(ctx), { parsedBody: body }),
+          );
+        } finally {
+          await server.close();
+        }
+      },
+      { sameHost: true },
+    ),
   ];
 }

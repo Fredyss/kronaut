@@ -96,7 +96,7 @@ describe('public route snapshot', () => {
               headers: { 'content-type': 'application/json' },
               body: '{}',
             };
-      const response = await app.request(path, init);
+      const response = await app.request(`${deps.publicBaseUrl}${path}`, init);
       expect(response.status, `${route.method} ${route.path}`).toBe(401);
     }
   });

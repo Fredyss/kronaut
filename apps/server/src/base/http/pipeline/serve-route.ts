@@ -99,6 +99,7 @@ async function prepare(kernel: Kernel, req: Authorized): Promise<Prepared> {
     state,
     acceptLanguage: request.headers.get('accept-language'),
     headers: request.headers,
+    via: req.via,
     dispatch: (call) =>
       dispatchRoute(
         {

@@ -35,7 +35,7 @@ export async function auditMedia(
   { workspaceId, mediaId }: AssetTarget,
   action: string,
 ): Promise<void> {
-  const actor = await auditActor(trx, workspaceId, ctx.principal);
+  const actor = await auditActor(trx, workspaceId, ctx);
   await trx
     .insertInto('audit_events')
     .values({

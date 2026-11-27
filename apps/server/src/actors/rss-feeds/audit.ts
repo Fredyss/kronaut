@@ -19,10 +19,10 @@ const SYSTEM_ACTOR = { actor_kind: 'system', surface: 'worker' } as const;
 // The URL can hold a token, so an event names the feed by id only.
 export async function auditFeed(
   trx: TenantDb,
-  ctx: Pick<RequestContext, 'principal' | 'requestId'> | null,
+  ctx: Pick<RequestContext, 'principal' | 'requestId' | 'via'> | null,
   { ref, action, args }: FeedAudit,
 ): Promise<void> {
-  const actor = ctx === null ? SYSTEM_ACTOR : await auditActor(trx, ref.workspaceId, ctx.principal);
+  const actor = ctx === null ? SYSTEM_ACTOR : await auditActor(trx, ref.workspaceId, ctx);
   await trx
     .insertInto('audit_events')
     .values({

@@ -19,6 +19,7 @@ import {
   inMinutes,
   insertAccount,
   insertGrant,
+  internal,
   keyring,
   owner,
   ownerAuth,
@@ -29,6 +30,7 @@ import {
   workspaceId,
 } from '../../flow/posts/testing.ts';
 import { saveCredential } from '../../infrastructure/credentials/credential-store.ts';
+import { addMember, decided, openRequestOf, setPolicy } from '../../steps/approvals/testing.ts';
 
 const ALL_SCOPES = [
   'brands:read',
@@ -133,9 +135,11 @@ describe('mcp endpoint', () => {
     expect(get.status).toBe(405);
   });
 
-  it('refuses a foreign Origin and another workspace in the path', async () => {
+  it('refuses a foreign Host or Origin and another workspace in the path', async () => {
     const foreign = await rpc(agent, 'tools/list', {}, { origin: 'https://evil.example.test' });
     expect(foreign.status).toBe(403);
+    const rebound = await rpc(agent, 'tools/list', {}, { host: 'evil.example.test' });
+    expect(rebound.status).toBe(403);
     const other = await app.request(mcpUrl(otherWorkspace), {
       method: 'POST',
       headers: headersFor(agent),
@@ -212,6 +216,47 @@ describe('mcp tools', () => {
     });
     expect(result.isError).toBe(true);
     expect(codeOf(result)).toBe('approval_required');
+  });
+
+  it('schedules an approved post, and audits a cancel with the tool name', async () => {
+    await setPolicy({ mode: 'required', allow_self_approval: false });
+    const approver = await addMember('mcp-approver', true);
+    const drafted = await callTool(agent, 'draft_campaign', {
+      body: draft(),
+      idempotencyKey: randomUUID(),
+    });
+    const postId = drafted.structuredContent.id as string;
+    const requested = await callTool(agent, 'request_approval', {
+      postId,
+      body: { expectedVersion: drafted.structuredContent.version },
+      idempotencyKey: randomUUID(),
+    });
+    expect(requested.isError).toBeUndefined();
+    await decided(await openRequestOf({ id: postId } as PostDto), 'approve', approver.auth);
+    const status = await callTool(agent, 'get_publish_status', { postId });
+    const scheduled = await callTool(agent, 'schedule_approved_post', {
+      postId,
+      body: { expectedVersion: status.structuredContent.version, mode: 'asap' },
+      idempotencyKey: randomUUID(),
+    });
+    expect(scheduled.isError).toBeUndefined();
+    const [destination] = scheduled.structuredContent.destinations as { state: string }[];
+    expect(destination?.state).toBe('scheduled');
+
+    const canceled = await callTool(agent, 'cancel_scheduled_post', {
+      postId,
+      body: { expectedVersion: scheduled.structuredContent.version },
+    });
+    expect(canceled.isError).toBeUndefined();
+    const audit = await owner.withActor(CLI, (trx) =>
+      trx
+        .selectFrom('audit_events')
+        .select(['actor_kind', 'surface', 'tool'])
+        .where('post_id', '=', internal(postId))
+        .where('action', '=', 'destination.canceled')
+        .execute(),
+    );
+    expect(audit).toEqual([{ actor_kind: 'grant', surface: 'mcp', tool: 'cancel_scheduled_post' }]);
   });
 
   it('INJ-02: wraps third-party text as untrusted', async () => {

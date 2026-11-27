@@ -137,7 +137,7 @@ export async function changeSeries(
     .insertInto('audit_events')
     .values({
       workspace_id: workspaceId,
-      ...(await auditActor(trx, workspaceId, ctx.principal)),
+      ...(await auditActor(trx, workspaceId, ctx)),
       action: to.state === 'active' ? 'series.resumed' : 'series.stopped',
       resource_kind: 'post_series',
       resource_id: row.id,

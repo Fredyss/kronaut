@@ -66,6 +66,11 @@ export function buildTool(definition: ToolDefinition, routes: ReadonlyMap<string
   if (route === undefined) {
     throw new Error(`mcp tool ${definition.name}: no route ${definition.route}`);
   }
+  if (route.query !== undefined) {
+    throw new Error(
+      `mcp tool ${definition.name}: route ${route.id} takes a query, which tools do not pass yet`,
+    );
+  }
   const scope = route.action;
   if (scope === null || !isGrantableScope(scope)) {
     throw new Error(`mcp tool ${definition.name}: route ${route.id} is not open to API keys`);

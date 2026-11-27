@@ -62,6 +62,7 @@ export async function dispatchRoute(caller: Caller, call: RouteCall): Promise<Ro
     requestId: caller.requestId,
     logger: caller.logger,
     socket: null,
+    ...(call.via === undefined ? {} : { via: call.via }),
     ...(call.idempotencyRetentionMs === undefined
       ? {}
       : { idempotencyRetentionMs: call.idempotencyRetentionMs }),

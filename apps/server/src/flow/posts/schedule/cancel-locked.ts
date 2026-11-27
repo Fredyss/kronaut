@@ -24,7 +24,7 @@ export async function cancelLocked(
   targets: readonly CancelTarget[],
 ): Promise<void> {
   const { workspaceId, postId } = post;
-  const actor = await auditActor(trx, workspaceId, ctx.principal);
+  const actor = await auditActor(trx, workspaceId, ctx);
   const correlationId = randomUUID();
   for (const { row, reason, args } of targets) {
     const ref = destinationRef(workspaceId, postId, row, row.frozen_post_version);

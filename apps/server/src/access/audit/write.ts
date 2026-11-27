@@ -1,13 +1,21 @@
 import { randomUUID } from 'node:crypto';
-import type { Principal } from '@kronaut/core';
 import type { TenantDb } from '@kronaut/db';
 import { HttpError } from '../../base/http/errors.ts';
 import type { RequestContext } from '../../base/http/request.ts';
 import type { LockedDestination, PostRef } from '../post-access/locks.ts';
 
-export async function auditActor(trx: TenantDb, workspaceId: string, principal: Principal | null) {
+export type AuditCaller = Pick<RequestContext, 'principal' | 'via'>;
+
+export async function auditActor(trx: TenantDb, workspaceId: string, caller: AuditCaller) {
+  const { principal, via } = caller;
+  const tool = via === null ? {} : { tool: via.tool };
   if (principal?.kind === 'user') {
-    return { actor_kind: 'user', actor_id: principal.userId, surface: 'ui' };
+    return {
+      actor_kind: 'user',
+      actor_id: principal.userId,
+      surface: via?.surface ?? 'ui',
+      ...tool,
+    };
   }
   if (principal?.kind === 'grant') {
     const { kind } = await trx
@@ -21,7 +29,8 @@ export async function auditActor(trx: TenantDb, workspaceId: string, principal: 
       actor_id: principal.grantId,
       grant_kind: kind,
       sponsor_user_id: principal.sponsorUserId,
-      surface: 'api',
+      surface: via?.surface ?? 'api',
+      ...tool,
     };
   }
   throw new HttpError('internal', 'No actor is bound to this request.');
@@ -77,7 +86,7 @@ export async function writePostAudit(trx: TenantDb, audit: PostAudit): Promise<v
     .insertInto('audit_events')
     .values({
       workspace_id: post.workspaceId,
-      ...(await auditActor(trx, post.workspaceId, ctx.principal)),
+      ...(await auditActor(trx, post.workspaceId, ctx)),
       action: audit.action,
       resource_kind: 'post',
       resource_id: post.postId,

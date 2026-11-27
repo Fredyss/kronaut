@@ -118,9 +118,6 @@ export function apiRoutes({
       publicBaseUrl: http.publicBaseUrl,
     }),
   ];
-  const mcp = mcpRoutes({
-    routes: routes.map((bound) => bound.route),
-    publicBaseUrl: http.publicBaseUrl,
-  });
+  const mcp = mcpRoutes({ routes: routes.map((bound) => bound.route) });
   return [...routes, ...mcp];
 }

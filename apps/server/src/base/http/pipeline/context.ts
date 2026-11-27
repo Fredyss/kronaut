@@ -11,7 +11,7 @@ import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import type { TenantTarget } from '../caller/bind.ts';
 import { databaseError, denyError, HttpError } from '../errors.ts';
-import type { RequestContext, RouteCall, RouteReply, SessionInfo } from '../request.ts';
+import type { RequestContext, RouteCall, RouteReply, SessionInfo, Via } from '../request.ts';
 import { serializeCookie } from './cookies.ts';
 
 export interface RequestState {
@@ -34,6 +34,7 @@ export interface ContextInput {
   readonly state: RequestState;
   readonly acceptLanguage: string | null;
   readonly headers: Headers;
+  readonly via: Via | null;
   readonly dispatch: (call: RouteCall) => Promise<RouteReply>;
 }
 
@@ -87,6 +88,7 @@ export function createContext(input: ContextInput): RequestContext {
     logger: input.logger,
     ipPrefix: null,
     acceptLanguage: input.acceptLanguage,
+    via: input.via,
     async tenant(fn) {
       const shared = state.shared;
       try {

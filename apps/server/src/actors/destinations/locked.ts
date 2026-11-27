@@ -86,7 +86,7 @@ export async function auditResolution(
 ): Promise<void> {
   await writeDestinationAudit(trx, {
     ctx,
-    actor: await auditActor(trx, post.workspaceId, ctx.principal),
+    actor: await auditActor(trx, post.workspaceId, ctx),
     post,
     row,
     action,
