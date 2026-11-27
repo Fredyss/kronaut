@@ -26,17 +26,21 @@ jobs:
           private-key: ${{ secrets.BUILDER_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
-      - env:
+      - shell: bash
+        env:
           GH_TOKEN: ${{ steps.builder.outputs.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          gh pr list --state open --limit 200 \
+          prs=$(gh pr list --state open --limit 200 \
             --json number,baseRefName,headRefOid,autoMergeRequest \
-            --jq '.[] | select(.autoMergeRequest != null and (.baseRefName | startswith("feature/"))) | "\(.number) \(.baseRefName) \(.headRefOid)"' |
+            --jq '.[] | select(.autoMergeRequest != null and (.baseRefName | startswith("feature/"))) | "\(.number) \(.baseRefName) \(.headRefOid)"')
           while read -r number base head; do
-            behind=$(gh api "repos/$GH_REPO/compare/$base...$head" --jq .behind_by) || continue
-            if [ "$behind" -gt 0 ]; then
-              gh pr update-branch "$number" ||
-                echo "::warning::could not update #$number; a change under .github/workflows on $base needs the maintainer"
+            [ -n "$number" ] || continue
+            if ! behind=$(gh api "repos/$GH_REPO/compare/$base...$head" --jq .behind_by 2>&1); then
+              echo "::warning::could not compare #$number with $base: $behind"
+              continue
             fi
-          done
+            if [ "$behind" -gt 0 ] && ! out=$(gh pr update-branch "$number" 2>&1); then
+              echo "::warning::could not update #$number onto $base (resolve conflicts, or a .github/workflows change needs the maintainer): $out"
+            fi
+          done <<< "$prs"
