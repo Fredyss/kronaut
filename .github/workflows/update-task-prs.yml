@@ -3,11 +3,14 @@ name: update-task-prs
 on:
   push:
     branches: ['feature/**']
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: update-task-prs-${{ github.ref }}
+  group: update-task-prs
 
 jobs:
   update:
@@ -22,15 +25,17 @@ jobs:
           private-key: ${{ secrets.BUILDER_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
-          permission-workflows: write
       - env:
           GH_TOKEN: ${{ steps.builder.outputs.token }}
           GH_REPO: ${{ github.repository }}
-          BASE: ${{ github.ref_name }}
         run: |
-          gh pr list --base "$BASE" --state open --limit 100 \
-            --json number,autoMergeRequest,mergeStateStatus \
-            --jq '.[] | select(.autoMergeRequest != null and .mergeStateStatus == "BEHIND") | .number' |
-          while read -r number; do
-            gh pr update-branch "$number" || echo "::warning::could not update #$number"
+          gh pr list --state open --limit 200 \
+            --json number,baseRefName,headRefOid,autoMergeRequest \
+            --jq '.[] | select(.autoMergeRequest != null and (.baseRefName | startswith("feature/"))) | "\(.number) \(.baseRefName) \(.headRefOid)"' |
+          while read -r number base head; do
+            behind=$(gh api "repos/$GH_REPO/compare/$base...$head" --jq .behind_by) || continue
+            if [ "$behind" -gt 0 ]; then
+              gh pr update-branch "$number" ||
+                echo "::warning::could not update #$number; a change under .github/workflows on $base needs the maintainer"
+            fi
           done
