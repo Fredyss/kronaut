@@ -410,5 +410,7 @@
   "settings_workspace_apps_client_secret_invalid": "Paste the secret exactly as the developer portal shows it, without spaces or special characters.",
   "settings_workspace_apps_client_id_taken": "This client ID is already registered on this server.",
   "settings_workspace_apps_exists": "Your workspace already has an app for this network. Reload the page to see it.",
-  "settings_workspace_apps_not_supported": "This network doesn't take a workspace's own app on this server."
+  "settings_workspace_apps_not_supported": "This network doesn't take a workspace's own app on this server.",
+  "settings_webhooks_nav": "Webhooks",
+  "settings_api_keys_nav": "API keys"
 }

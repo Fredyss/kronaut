@@ -3,14 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { type FormEvent, useId, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { NameField } from '../../base/ui/name-field.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { BRAND_NAME_MAX, type Brand, brandsQuery } from './queries.ts';
 import { brandError, useCreateBrand, useUpdateBrand } from './writes.ts';
-
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 function CreateBrand({ workspaceId }: { readonly workspaceId: string }) {
   const create = useCreateBrand(workspaceId);
@@ -151,7 +149,7 @@ function BrandList({
 export function BrandSettingsPage() {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
-  const editable = workspace !== undefined && EDITORS.has(workspace.role);
+  const editable = workspace !== undefined && isManager(workspace.role);
   return (
     <SettingsPage
       title={settingsText.settings_brand_list_title()}

@@ -5484,6 +5484,51 @@ export type WebhooksUpdateResponses = {
 
 export type WebhooksUpdateResponse = WebhooksUpdateResponses[keyof WebhooksUpdateResponses];
 
+export type WebhooksDeliveriesData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        webhookId: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: string;
+    };
+    url: '/v1/workspaces/{workspaceId}/webhooks/{webhookId}/deliveries';
+};
+
+export type WebhooksDeliveriesErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type WebhooksDeliveriesError = WebhooksDeliveriesErrors[keyof WebhooksDeliveriesErrors];
+
+export type WebhooksDeliveriesResponses = {
+    /**
+     * OK
+     */
+    200: {
+        items: Array<{
+            attemptCount: number;
+            createdAt: string;
+            eventId: string;
+            eventType: string;
+            id: string;
+            lastError: string | null;
+            lastHttpStatus: number | null;
+            nextAttemptAt: string | null;
+            state: 'pending' | 'delivering' | 'delivered' | 'retry_wait' | 'dead';
+            updatedAt: string;
+        }>;
+        nextCursor: string | null;
+    };
+};
+
+export type WebhooksDeliveriesResponse = WebhooksDeliveriesResponses[keyof WebhooksDeliveriesResponses];
+
 export type WebhooksRotateSecretData = {
     body?: never;
     path: {

@@ -428,5 +428,7 @@
   "settings_workspace_apps_client_secret_invalid": "Vložte tajný klíč přesně tak, jak ho zobrazuje vývojářský portál, bez mezer a speciálních znaků.",
   "settings_workspace_apps_client_id_taken": "Toto ID klienta je na tomto serveru už zaregistrované.",
   "settings_workspace_apps_exists": "Váš pracovní prostor už pro tuto síť aplikaci má. Obnovte stránku a uvidíte ji.",
-  "settings_workspace_apps_not_supported": "Tato síť na tomto serveru vlastní aplikaci pracovního prostoru nepřijímá."
+  "settings_workspace_apps_not_supported": "Tato síť na tomto serveru vlastní aplikaci pracovního prostoru nepřijímá.",
+  "settings_webhooks_nav": "Webhooky",
+  "settings_api_keys_nav": "API klíče"
 }

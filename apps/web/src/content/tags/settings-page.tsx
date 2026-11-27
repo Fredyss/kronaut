@@ -13,7 +13,7 @@ import { useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { NameField } from '../../base/ui/name-field.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
@@ -28,8 +28,6 @@ import {
   tagsKey,
   tagsQuery,
 } from './picker.tsx';
-
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 interface TagChange {
   readonly name?: string;
@@ -151,7 +149,7 @@ function TagList({ workspaceId, role }: { readonly workspaceId: string; readonly
   if (tags.data.length === 0) {
     return <p className="text-muted-foreground text-sm">{settingsText.settings_tags_empty()}</p>;
   }
-  const editable = EDITORS.has(role);
+  const editable = isManager(role);
   return (
     <>
       {editable ? null : (

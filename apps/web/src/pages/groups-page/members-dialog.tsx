@@ -1,14 +1,13 @@
-import { Button, Modal } from '@kronaut/ui';
+import { Button, CheckList, Modal } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useId } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
 import { providerUi } from '../../base/providers/ui.ts';
-import { CheckList } from '../../base/ui/check-list.tsx';
+import { LoadState } from '../../base/ui/load-state.tsx';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { channelsKey, channelsQuery } from '../../records/channels/queries.ts';
 import { useGroupMember } from '../../records/groups/members.ts';
 import type { Group } from '../../records/groups/queries.ts';
-import { LoadState } from './load-state.tsx';
 
 interface MembersDialogProps {
   readonly workspaceId: string;

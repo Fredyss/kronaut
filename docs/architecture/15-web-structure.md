@@ -21,10 +21,10 @@ Each tier imports only tiers below it. Folders in one tier don't import each oth
 | 1. Pages | `pages/` | `post-page`, `channels-page`, `groups-page`, `shell`, `settings` | Pages that put several features on one screen (the group settings page lists channels in each group's members dialog), the app chrome, the account and notification settings |
 | 2. Views | `views/` | `calendar`, `approvals`, `evergreen` | The planning calendar, approval requests and decisions, the evergreen section |
 | 3. Actions | `actions/` | `post-actions`, `post-import`, `notifications` | Post menus and dialogs that open the composer, the CSV import dialog, the notification bell and panel |
-| 4. Lists | `lists/` | `inbox`, `media`, `system`, `rss-feeds` | The needs-action inbox, the media library, system status, RSS feeds |
+| 4. Lists | `lists/` | `inbox`, `media`, `system`, `rss-feeds`, `api-keys` | The needs-action inbox, the media library, system status, RSS feeds, API keys |
 | 5. Composer | `composer/` | `compose` | Drafting, editing, scheduling and submitting a post |
 | 6. Content | `content/` | `saved-texts`, `tags`, `series`, `short-links` | Reusable text and channel signatures, labels, repeat rules, link shortening |
-| 7. Records | `records/` | `posts`, `channels`, `brands`, `groups`, `workspace-apps`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, brands with their settings page and filter, account groups with their queries, writes and filter, the workspace's own provider apps, the approval policy, metrics, sign-in, the theme |
+| 7. Records | `records/` | `posts`, `channels`, `brands`, `groups`, `workspace-apps`, `webhooks`, `approval-policy`, `analytics`, `auth`, `theme` | Post queries and rules, the content document, channels and their dialogs, brands with their settings page and filter, account groups with their queries, writes and filter, the workspace's own provider apps, webhook endpoints and their deliveries, the approval policy, metrics, sign-in, the theme |
 | Base | `base/` | `api`, `locale`, `providers`, `ui`, plus `@kronaut/*` | Client and errors, messages and formatting, platform names, app-wide UI |
 
 A feature in tiers 1 to 7 imports another feature only through a line in [`feature-imports.json`](../../tools/lint/feature-imports.json); a base folder needs none. Type-only imports are outside both.
@@ -41,19 +41,19 @@ The tier check reads production value imports: a feature folder imports only low
 
 ## Wiring
 
-- **`app.tsx`** builds the route tree: paths, `validateSearch`, `beforeLoad`, and which route file each route loads, lazily unless the page is in the shell. It also creates the query client and the router.
+- **`app.tsx`** builds the route tree: paths, `validateSearch`, `beforeLoad`, and which route file each route loads, lazily unless the page is in the shell. It also creates the query client and the router. The settings pages are defined in **`settings-routes.tsx`**, which `app.tsx` mounts under its app route.
 - **`routes/`** holds one file per page, which re-exports that page from its feature, including `not-found.tsx` (from `shell/`), plus `locale-root.tsx`, the locale gate around the router.
-- **`i18n/`** holds the message catalogs of the route groups (`compose`, `calendar`, `media`, `inbox`, `settings`). A file imports a group only if every route that loads it belongs to that group (checked by `i18n/route-catalogs.test.ts`).
-- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these two files, `styles.css`, `routes/`, `i18n/`, `base/` and the tier folders (checked).
+- **`i18n/`** holds the message catalogs of the route groups (`compose`, `calendar`, `media`, `inbox`, `settings`, `integrations`). A file imports a group only if every route that loads it belongs to that group (checked by `i18n/route-catalogs.test.ts`).
+- **`main.tsx`** applies the theme and renders the app. The `src` root holds only these three files, `styles.css`, `routes/`, `i18n/`, `base/` and the tier folders (checked).
 
-Each file in `routes/` and `i18n/` is a node of its own in the folder check, so `app.tsx` loading every page is no loop, but a feature importing a route file that imports the feature is.
+Each file in `routes/` and `i18n/` is a node of its own in the folder check, so `app.tsx` and `settings-routes.tsx` loading every page is no loop, but a feature importing a route file that imports the feature is.
 
 ## Route files
 
-A route file re-exports the page its route loads, and nothing else. Two checks hold this: a route file other than the locale gate `locale-root.tsx` holds only `export { … } from` lines, and no route file imports or re-exports `@tanstack/react-query` or `api/client.ts`. The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, reading through a feature's query options:
+A route file re-exports the page its route loads, and nothing else. Two checks hold this: a route file other than the locale gate `locale-root.tsx` holds only `export { … } from` lines, and no route file imports or re-exports `@tanstack/react-query` or `api/client.ts`. The page, its queries, mutations and forms live in the owning feature. Search validation and a guard live on the route in `app.tsx`, or in `settings-routes.tsx` for a settings page, reading through a feature's query options:
 
 ```tsx
-// app.tsx
+// settings-routes.tsx
 const systemSettingsRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: 'system',
@@ -67,7 +67,7 @@ const systemSettingsRoute = createRoute({
 });
 
 // routes/settings-system.tsx
-export { SystemSettingsPage } from '../system/settings-page.tsx';
+export { SystemSettingsPage } from '../lists/system/settings-page.tsx';
 ```
 
 The route file stays because Vite names a lazy chunk after the module it loads, and [`.size-limit.js`](../../apps/web/.size-limit.js) budgets each route by that name. When a feature also loads a page lazily, as `post-actions` and `post-page` load the composer, the route's chunk becomes a small facade and the page gets a chunk of its own, named after its file. Each budget names its chunks exactly, so the composer entry lists both `compose` and `compose-page`; a new page chunk like that needs adding to its entry, or it counts as shared lazy.
@@ -76,7 +76,7 @@ A page reads its own search and params with `getRouteApi`, as before.
 
 ## Where new code goes
 
-- **A new page:** a `<name>-page.tsx` in the feature it's about, a route file that re-exports it, the route in `app.tsx`, and a budget in `.size-limit.js`.
+- **A new page:** a `<name>-page.tsx` in the feature it's about, a route file that re-exports it, the route in `app.tsx` (a settings page in `settings-routes.tsx`), and a budget in `.size-limit.js`.
 - **A page that puts features from different tiers on one screen:** a `<name>-page` folder in `pages/`, tier 1, like `post-page` and `channels-page`.
 - **A settings page:** in the feature it configures (`tags/settings-page.tsx`, `approvals/settings-page.tsx`). Account-wide pages stay in `settings`.
 - **A rule or query that several features read about posts:** `posts`. Only `destinations.ts`, `queries.ts` and `summary.ts` there join the shell's `data` chunk ([`vite.config.ts`](../../apps/web/vite.config.ts)), so a new file stays lazy unless you add it.

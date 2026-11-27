@@ -2,15 +2,13 @@ import { Button, ConfirmDelete, focusNeighbour, SettingsCard, SettingsPage } fro
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { docText, textToParagraphs } from '../../records/posts/doc.ts';
 import { type Draft, SavedTextForm } from './form.tsx';
 import { type SavedText, savedTextsQuery } from './saved-texts.ts';
 import { useCreateSavedText, useSavedTextWrites } from './writes.ts';
-
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 function toBody({ name, text }: Draft) {
   return {
@@ -156,7 +154,7 @@ function SavedTextList({
       <p className="text-muted-foreground text-sm">{m.loading()}</p>
     );
   }
-  const editable = EDITORS.has(role);
+  const editable = isManager(role);
   return (
     <>
       {editable ? (

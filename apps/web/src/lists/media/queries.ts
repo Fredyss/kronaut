@@ -8,7 +8,8 @@ import {
   mediaUpdate,
   mediaUsage,
 } from '@kronaut/sdk';
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
+import { cursorPagesQuery } from '../../base/api/cursor-pages.ts';
 
 export type LibraryAsset = MediaListResponse['items'][number];
 export type LibraryKind = 'image' | 'video';
@@ -19,22 +20,17 @@ export function libraryKey(workspaceId: string) {
 }
 
 export function libraryQuery(client: Client, workspaceId: string, kind: LibraryKind | null) {
-  return infiniteQueryOptions({
-    queryKey: [...libraryKey(workspaceId), 'list', kind ?? 'all'],
-    queryFn: async ({ pageParam }) =>
+  return cursorPagesQuery(
+    [...libraryKey(workspaceId), 'list', kind ?? 'all'],
+    async (cursor) =>
       (
         await mediaList({
           client,
           path: { workspaceId },
-          query: {
-            ...(kind === null ? {} : { kind }),
-            ...(pageParam === null ? {} : { cursor: pageParam }),
-          },
+          query: { ...(kind === null ? {} : { kind }), ...cursor },
         })
       ).data,
-    initialPageParam: null as string | null,
-    getNextPageParam: (page) => page.nextCursor,
-  });
+  );
 }
 
 export function usageQuery(client: Client, workspaceId: string, mediaId: string) {

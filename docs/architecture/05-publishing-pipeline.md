@@ -261,7 +261,7 @@ The approval events are written in the transaction that opens or decides the req
 
 ## Webhook delivery (ADR-0069)
 
-- **Endpoints:** `GET|POST /v1/workspaces/:workspaceId/webhooks`, `PATCH|DELETE …/webhooks/:webhookId`, `POST …/:webhookId/rotate-secret` and `POST …/:webhookId/test`. Session only, `webhooks:manage` (owner, admin), never an API key. At most 20 per workspace. An endpoint subscribes to one or more of the 13 events above; `webhook.test` and `post.approval_voided` aren't subscribable.
+- **Endpoints:** `GET|POST /v1/workspaces/:workspaceId/webhooks`, `PATCH|DELETE …/webhooks/:webhookId`, `POST …/:webhookId/rotate-secret`, `POST …/:webhookId/test` and `GET …/:webhookId/deliveries` (cursor-paged, newest first; no URL, payload or secret). Session only, `webhooks:manage` (owner, admin), never an API key. At most 20 per workspace. An endpoint subscribes to one or more of the 13 events above; `webhook.test` and `post.approval_voided` aren't subscribable.
   - The URL is `https` on port 443 with a host name and no credentials, at most 2048 characters; anything else is 422 `url_invalid`.
   - Create and rotate return the signing secret (`whsec_` + 32 random bytes, base64) once and run without an idempotency key, so the secret never sits in `idempotency_keys`. It is sealed with AAD `endpoint id | workspace id | webhook_endpoint`.
   - Rotation keeps the replaced secret as `previous_secret` for 24 h; deliveries in that window carry two signatures.

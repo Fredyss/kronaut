@@ -56,6 +56,7 @@ describe('ID_PREFIXES', () => {
       mediaImport: 'mimp',
       rssFeed: 'rss',
       webhookEndpoint: 'whk',
+      webhookDelivery: 'whd',
     });
   });
 

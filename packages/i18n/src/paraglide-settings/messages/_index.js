@@ -3,6 +3,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
+/** @typedef {{}} Settings_Api_Keys_NavInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
@@ -209,6 +210,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} Settings_Webhooks_NavInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
 /** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
@@ -313,6 +315,21 @@ export const settings_allow_self = /** @type {((inputs?: Settings_Allow_SelfInpu
 	if (locale === "sk") return __sk.settings_allow_self(inputs)
 	if (locale === "cs") return __cs.settings_allow_self(inputs)
 	return __en.settings_allow_self(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "API keys" |
+*
+* @param {Settings_Api_Keys_NavInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_api_keys_nav = /** @type {((inputs?: Settings_Api_Keys_NavInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Api_Keys_NavInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_api_keys_nav(inputs)
+	if (locale === "cs") return __cs.settings_api_keys_nav(inputs)
+	return __en.settings_api_keys_nav(inputs)
 });
 /**
 * | output |
@@ -3427,6 +3444,21 @@ export const settings_tolerance = /** @type {((inputs?: Settings_ToleranceInputs
 	if (locale === "sk") return __sk.settings_tolerance(inputs)
 	if (locale === "cs") return __cs.settings_tolerance(inputs)
 	return __en.settings_tolerance(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Webhooks" |
+*
+* @param {Settings_Webhooks_NavInputs} inputs
+* @param {{ locale?: "en" | "sk" | "cs" }} options
+* @returns {LocalizedString}
+*/
+export const settings_webhooks_nav = /** @type {((inputs?: Settings_Webhooks_NavInputs, options?: { locale?: "en" | "sk" | "cs" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Settings_Webhooks_NavInputs, { locale?: "en" | "sk" | "cs" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "sk") return __sk.settings_webhooks_nav(inputs)
+	if (locale === "cs") return __cs.settings_webhooks_nav(inputs)
+	return __en.settings_webhooks_nav(inputs)
 });
 /**
 * | output |

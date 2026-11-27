@@ -3,8 +3,6 @@ import { queryOptions } from '@tanstack/react-query';
 
 export type Queue = ChannelsQueueResponse;
 
-export const QUEUE_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
-
 export function queueQuery(client: Client, workspaceId: string, channelId: string) {
   return queryOptions({
     queryKey: ['channels', workspaceId, 'queue', channelId],

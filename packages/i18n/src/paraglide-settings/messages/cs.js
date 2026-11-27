@@ -1,6 +1,7 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} Settings_Account_TitleInputs */
 /** @typedef {{}} Settings_Allow_SelfInputs */
+/** @typedef {{}} Settings_Api_Keys_NavInputs */
 /** @typedef {{}} Settings_Approval_RequiredInputs */
 /** @typedef {{}} Settings_Approvals_IntroInputs */
 /** @typedef {{}} Settings_Approvals_TitleInputs */
@@ -207,6 +208,7 @@
 /** @typedef {{}} Settings_Tags_TitleInputs */
 /** @typedef {{}} Settings_ThemeInputs */
 /** @typedef {{}} Settings_ToleranceInputs */
+/** @typedef {{}} Settings_Webhooks_NavInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Active_NoteInputs */
 /** @typedef {{}} Settings_Workspace_Apps_CallbackInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Settings_Workspace_Apps_Callback_HintInputs */
@@ -288,6 +290,10 @@ export const settings_account_title = /** @type {(inputs: Settings_Account_Title
 
 export const settings_allow_self = /** @type {(inputs: Settings_Allow_SelfInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Autor žádosti může schválit vlastní příspěvek`)
+};
+
+export const settings_api_keys_nav = /** @type {(inputs: Settings_Api_Keys_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`API klíče`)
 };
 
 export const settings_approval_required = /** @type {(inputs: Settings_Approval_RequiredInputs) => LocalizedString} */ () => {
@@ -1154,6 +1160,10 @@ export const settings_theme = /** @type {(inputs: Settings_ThemeInputs) => Local
 
 export const settings_tolerance = /** @type {(inputs: Settings_ToleranceInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Povolený posun po schválení (v minutách)`)
+};
+
+export const settings_webhooks_nav = /** @type {(inputs: Settings_Webhooks_NavInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Webhooky`)
 };
 
 export const settings_workspace_apps_active_note = /** @type {(inputs: Settings_Workspace_Apps_Active_NoteInputs) => LocalizedString} */ (i) => {

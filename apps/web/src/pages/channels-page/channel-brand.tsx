@@ -4,13 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApiClient } from '../../base/api/client.ts';
 import { errorCode, errorStatus } from '../../base/api/errors.ts';
 import { idempotency, keyFor } from '../../base/api/idempotency.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { apiErrorMessage, m } from '../../base/locale/i18n.ts';
 import { activeBrands, brandsKey, brandsQuery } from '../../records/brands/queries.ts';
 import { type Channel, channelsKey } from '../../records/channels/queries.ts';
 import { postsKey } from '../../records/posts/queries.ts';
-
-const ASSIGN_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 function brandFailure(error: unknown): string {
   const code = errorCode(error);
@@ -66,6 +64,6 @@ function BrandSelect({ workspaceId, channel }: { workspaceId: string; channel: C
 export function ChannelBrand({ channel }: { readonly channel: Channel }) {
   const client = useApiClient();
   const workspace = useQuery(meQuery(client)).data?.workspaces[0];
-  if (workspace === undefined || !ASSIGN_ROLES.has(workspace.role)) return null;
+  if (workspace === undefined || !isManager(workspace.role)) return null;
   return <BrandSelect workspaceId={workspace.id} channel={channel} />;
 }

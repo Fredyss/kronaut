@@ -3,13 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { lazyRouteComponent } from '@tanstack/react-router';
 import { Suspense } from 'react';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { useDisclosure } from '../../base/ui/disclosure.ts';
 import type { Channel } from '../../records/channels/queries.ts';
 import { type Group, groupsQuery } from '../../records/groups/queries.ts';
-
-const ASSIGN_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
 
 interface LineProps {
   readonly workspaceId: string;
@@ -90,6 +88,6 @@ function GroupLine({ workspaceId, channel, editable }: LineProps & { editable: b
 export function ChannelGroups({ channel }: { readonly channel: Channel }) {
   const workspace = useQuery(meQuery(useApiClient())).data?.workspaces[0];
   if (workspace === undefined) return null;
-  const editable = ASSIGN_ROLES.has(workspace.role);
+  const editable = isManager(workspace.role);
   return <GroupLine workspaceId={workspace.id} channel={channel} editable={editable} />;
 }

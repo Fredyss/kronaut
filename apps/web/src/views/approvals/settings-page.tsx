@@ -1,19 +1,17 @@
 import { SettingsPage } from '@kronaut/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '../../base/api/client.ts';
-import { meQuery } from '../../base/api/me.ts';
+import { isManager, meQuery } from '../../base/api/me.ts';
 import { m } from '../../base/locale/i18n.ts';
 import { m as settingsText } from '../../i18n/settings.ts';
 import { approvalPolicyQuery } from '../../records/approval-policy/queries.ts';
 import { BrandOverrides } from './brand-overrides.tsx';
 import { PolicyForm } from './policy-form.tsx';
 
-const EDITORS: ReadonlySet<string> = new Set(['owner', 'admin']);
-
 function ApprovalSettings({ workspaceId, role }: { workspaceId: string; role: string }) {
   const client = useApiClient();
   const policy = useQuery(approvalPolicyQuery(client, workspaceId));
-  const editable = EDITORS.has(role);
+  const editable = isManager(role);
   if (policy.isError && policy.data === undefined) {
     return (
       <p role="alert" className="text-destructive text-sm">

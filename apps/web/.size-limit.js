@@ -12,7 +12,14 @@ function shellChunks() {
     .map((path) => `dist/web/${path}`);
 }
 
-const ROUTE_CATALOGS = ['compose', 'calendar', 'media', 'inbox', 'settings'].flatMap((group) =>
+const ROUTE_CATALOGS = [
+  'compose',
+  'calendar',
+  'media',
+  'inbox',
+  'settings',
+  'integrations',
+].flatMap((group) =>
   ['en', 'sk', 'cs'].map((locale) => [
     `${group}-${locale} messages JS`,
     [`messages-${group}-${locale}`, '8 KB'],
@@ -39,6 +46,8 @@ const LAZY = {
   'feed settings route JS': ['settings-feeds', '40 KB'],
   'short link settings route JS': ['settings-short-links', '40 KB'],
   'workspace app settings route JS': ['settings-workspace-apps', '40 KB'],
+  'webhook settings route JS': ['integrations-webhooks', '40 KB'],
+  'API key settings route JS': ['integrations-api-keys', '40 KB'],
   'system settings route JS': ['settings-system', '40 KB'],
   'notifications panel JS': ['panel', '10 KB'],
   'editor JS': ['editor', '130 KB'],
@@ -77,13 +86,13 @@ function sharedLazyChunks(shell) {
 const shell = shellChunks();
 
 export default [
-  { name: 'shell JS', path: shell, limit: '140 KB', gzip: true },
+  { name: 'shell JS', path: shell, limit: '141 KB', gzip: true },
   ...Object.entries(LAZY).map(([name, [names, limit]]) => ({
     name,
     path: namedChunks(names),
     limit,
     gzip: true,
   })),
-  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '31 KB', gzip: true },
+  { name: 'shared lazy JS', path: sharedLazyChunks(shell), limit: '32 KB', gzip: true },
   { name: 'CSS', path: `${ASSETS}/*.css`, limit: '25 KB', gzip: true },
 ];

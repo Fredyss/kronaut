@@ -8,8 +8,6 @@ import { apiErrorMessage, m } from '../../base/locale/i18n.ts';
 import { providerUi } from '../../base/providers/ui.ts';
 import { type Channel, channelsQuery } from './queries.ts';
 
-export const DISCONNECT_ROLES: ReadonlySet<string> = new Set(['owner', 'admin']);
-
 export function useDisconnect(workspaceId: string) {
   const client = useApiClient();
   const queryClient = useQueryClient();
