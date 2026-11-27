@@ -1,0 +1,46 @@
+name: update-task-prs
+
+on:
+  push:
+    branches: ['feature/**']
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: update-task-prs
+
+jobs:
+  update:
+    if: vars.BUILDER_APP_CLIENT_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - id: builder
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ vars.BUILDER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BUILDER_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - shell: bash
+        env:
+          GH_TOKEN: ${{ steps.builder.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          prs=$(gh pr list --state open --limit 200 \
+            --json number,baseRefName,headRefOid,autoMergeRequest \
+            --jq '.[] | select(.autoMergeRequest != null and (.baseRefName | startswith("feature/"))) | "\(.number) \(.baseRefName) \(.headRefOid)"')
+          while read -r number base head; do
+            [ -n "$number" ] || continue
+            if ! behind=$(gh api "repos/$GH_REPO/compare/$base...$head" --jq .behind_by 2>&1); then
+              echo "::warning::could not compare #$number with $base: $behind"
+              continue
+            fi
+            if [ "$behind" -gt 0 ] && ! out=$(gh pr update-branch "$number" 2>&1); then
+              echo "::warning::could not update #$number onto $base (resolve conflicts, or a .github/workflows change needs the maintainer): $out"
+            fi
+          done <<< "$prs"
