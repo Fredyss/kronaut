@@ -1,0 +1,21 @@
+/*                                          @Fredyss
+
+/packages/db/schema/                        @Fredyss
+/packages/db/migrations/                    @Fredyss
+/docs/adr/                                  @Fredyss
+
+/.claude/                                   @Fredyss
+/.github/                                   @Fredyss
+/.devcontainer/                             @Fredyss
+/infra/                                     @Fredyss
+
+/apps/server/src/identity/auth/             @Fredyss
+/packages/credentials/                      @Fredyss
+/packages/egress/                           @Fredyss
+/apps/server/src/entitlements/              @Fredyss
+
+/tools/                                     @Fredyss
+tsconfig*.json                              @Fredyss
+vitest*.config.ts                           @Fredyss
+package.json                                @Fredyss
+/apps/server/src/base/http/public-routes.json @Fredyss
