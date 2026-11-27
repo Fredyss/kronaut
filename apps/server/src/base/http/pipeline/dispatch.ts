@@ -49,10 +49,12 @@ async function replyOf(response: Response): Promise<RouteReply> {
   const json = response.headers.get('content-type')?.startsWith('application/json') === true;
   let body: unknown;
   if (text !== '') body = json ? JSON.parse(text) : text;
+  const retryAfter = Number.parseInt(response.headers.get('retry-after') ?? '', 10);
   return {
     status: response.status,
     body,
     replayed: response.headers.get('idempotent-replayed') === 'true',
+    ...(Number.isSafeInteger(retryAfter) ? { retryAfterSeconds: retryAfter } : {}),
   };
 }
 

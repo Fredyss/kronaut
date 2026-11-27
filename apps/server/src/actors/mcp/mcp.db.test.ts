@@ -52,6 +52,11 @@ interface ToolResult {
   readonly content: readonly { readonly text: string }[];
 }
 
+interface ToolError {
+  readonly code?: string;
+  readonly details?: unknown;
+}
+
 let test: TestDatabase;
 let agent: Auth;
 let otherWorkspace: string;
@@ -97,7 +102,9 @@ async function callTool(auth: Auth, name: string, args: object): Promise<ToolRes
 }
 
 function codeOf(result: ToolResult): string | undefined {
-  return (result.structuredContent.error as { code?: string } | undefined)?.code;
+  expect(result.isError).toBe(true);
+  const body = JSON.parse(result.content[0]?.text ?? '{}') as { error?: ToolError };
+  return body.error?.code;
 }
 
 beforeAll(async () => {
@@ -130,9 +137,26 @@ describe('mcp endpoint', () => {
     const response = await rpc(agent, 'initialize', init);
     expect(response.status).toBe(200);
     expect(response.headers.get('mcp-session-id')).toBeNull();
-    expect((await rpc(ownerAuth, 'initialize', init)).status).toBe(401);
+    const cookie = await rpc(ownerAuth, 'initialize', init);
+    expect(cookie.status).toBe(401);
+    expect(cookie.headers.get('www-authenticate')).toBe('Bearer realm="kronaut"');
     const get = await app.request(mcpUrl(), { method: 'GET', headers: headersFor(agent) });
     expect(get.status).toBe(405);
+  });
+
+  it('takes one message per request and has no OAuth metadata', async () => {
+    const message = { jsonrpc: '2.0', id: 1, method: 'tools/list' };
+    const batch = await app.request(mcpUrl(), {
+      method: 'POST',
+      headers: headersFor(agent),
+      body: JSON.stringify([message, { ...message, id: 2 }]),
+    });
+    expect(batch.status).toBe(400);
+    const path = new URL(mcpUrl()).pathname;
+    for (const metadata of ['', path]) {
+      const url = `${BASE}/.well-known/oauth-protected-resource${metadata}`;
+      expect((await app.request(url)).status).toBe(404);
+    }
   });
 
   it('refuses a foreign Host or Origin and another workspace in the path', async () => {
@@ -161,6 +185,24 @@ describe('mcp endpoint', () => {
       arguments: { body: draft(), idempotencyKey: randomUUID() },
     });
     expect(((await hidden.json()) as { error?: { code: number } }).error?.code).toBe(-32602);
+  });
+
+  it("lists only what the sponsor's current role allows", async () => {
+    const sponsor = await addMember('mcp-sponsor', false);
+    const sponsored = await insertGrant({ scopes: ALL_SCOPES, sponsorUserId: sponsor.id });
+    expect(await listTools(sponsored)).toHaveLength(13);
+    await owner.withActor(CLI, (trx) =>
+      trx
+        .updateTable('memberships')
+        .set({ role: 'contributor' })
+        .where('workspace_id', '=', workspaceId)
+        .where('user_id', '=', sponsor.id)
+        .execute(),
+    );
+    const listed = await listTools(sponsored);
+    expect(listed).toHaveLength(11);
+    expect(listed).not.toContain('schedule_approved_post');
+    expect(listed).not.toContain('cancel_scheduled_post');
   });
 });
 
@@ -257,6 +299,16 @@ describe('mcp tools', () => {
         .execute(),
     );
     expect(audit).toEqual([{ actor_kind: 'grant', surface: 'mcp', tool: 'cancel_scheduled_post' }]);
+  });
+
+  it('builds the brand context from the parts the key may read', async () => {
+    const full = await callTool(agent, 'get_brand_context', {});
+    expect(full.isError).toBeUndefined();
+    expect(full.structuredContent.omitted).toEqual([]);
+    const brandsOnly = await insertGrant({ scopes: ['posts:read', 'brands:read'] });
+    const partial = await callTool(brandsOnly, 'get_brand_context', {});
+    expect(partial.isError).toBeUndefined();
+    expect(partial.structuredContent.omitted).toEqual(['channels']);
   });
 
   it('INJ-02: wraps third-party text as untrusted', async () => {

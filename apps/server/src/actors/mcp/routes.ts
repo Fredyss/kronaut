@@ -5,11 +5,15 @@ import { HttpError } from '../../base/http/errors.ts';
 import { pathId } from '../../base/http/params.ts';
 import { type BoundRoute, bindRoute, type RequestContext } from '../../base/http/request.ts';
 import { catalog } from './catalog.ts';
+import { TIMED_OUT, withDeadline } from './deadline.ts';
+import { toolRights } from './rights.ts';
 import { mcpServer } from './server.ts';
 import { type Invoke, MCP_IDEMPOTENCY_RETENTION_MS } from './tool.ts';
 
-const MAX_BATCH = 20;
+const MCP_REQUEST_TIMEOUT_MS = 35_000;
+const CHALLENGE = 'Bearer realm="kronaut"';
 const Message = z.looseObject({ jsonrpc: z.literal('2.0') });
+const LATE = `The MCP request did not finish within ${MCP_REQUEST_TIMEOUT_MS / 1000} s.`;
 const TransportError = z.object({ error: z.object({ message: z.string().max(500) }) });
 
 const mcpRoute = defineRoute({
@@ -19,12 +23,12 @@ const mcpRoute = defineRoute({
   auth: 'grant',
   action: 'posts:read',
   params: z.object({ workspaceId: z.string() }),
-  body: z.union([Message, z.array(Message).min(1).max(MAX_BATCH)]),
+  body: Message,
   response: z.unknown(),
   idempotency: false,
   summary: 'Model Context Protocol endpoint for agents',
   description:
-    'Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB and each tool call at 30 s.',
+    'Streamable HTTP without sessions; every answer is JSON, and a request carries exactly one JSON-RPC message (no batches). Only an API key with posts:read signs in; a request without one gets 401 with WWW-Authenticate: Bearer realm="kronaut". tools/list shows the tools the key\'s scopes and its sponsor\'s current role both allow, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB, each tool call at 30 s and the whole request at 35 s.',
   tags: ['mcp'],
 });
 
@@ -78,7 +82,7 @@ export function mcpRoutes(deps: McpRouteDeps): BoundRoute[] {
         const principal = ctx.principal;
         const server = mcpServer({
           tools,
-          scopes: principal?.kind === 'grant' ? principal.scopes : [],
+          allows: toolRights(principal, workspaceId, ctx.now),
           grantId: principal?.kind === 'grant' ? principal.grantId : null,
           invoke: invoker(ctx, params.workspaceId, byId),
           requestId: ctx.requestId,
@@ -89,14 +93,15 @@ export function mcpRoutes(deps: McpRouteDeps): BoundRoute[] {
         });
         try {
           await server.connect(transport);
-          return await answer(
-            await transport.handleRequest(transportRequest(ctx), { parsedBody: body }),
-          );
+          const handled = transport.handleRequest(transportRequest(ctx), { parsedBody: body });
+          const response = await withDeadline(handled, MCP_REQUEST_TIMEOUT_MS);
+          if (response === TIMED_OUT) throw new HttpError('unavailable', LATE);
+          return await answer(response);
         } finally {
           await server.close();
         }
       },
-      { sameHost: true },
+      { sameHost: true, challenge: CHALLENGE },
     ),
   ];
 }

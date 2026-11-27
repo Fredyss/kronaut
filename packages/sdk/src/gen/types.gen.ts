@@ -1871,10 +1871,7 @@ export type McpEndpointData = {
     body: {
         jsonrpc: '2.0';
         [key: string]: unknown;
-    } | Array<{
-        jsonrpc: '2.0';
-        [key: string]: unknown;
-    }>;
+    };
     path: {
         workspaceId: string;
     };

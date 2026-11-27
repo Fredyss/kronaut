@@ -2,7 +2,7 @@ import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { checkAccess } from '../caller/access-check.ts';
 import { checkSameHost } from '../caller/same-host.ts';
-import { errorBody, HttpError } from '../errors.ts';
+import { challenged, errorBody, HttpError } from '../errors.ts';
 import { readLimited } from '../input.ts';
 import { clientIp } from '../rate-limit/client-ip.ts';
 import type { Via } from '../request.ts';
@@ -92,5 +92,10 @@ export async function pipeline(kernel: Kernel, arrival: Arrival): Promise<Respon
     idempotencyRetentionMs: arrival.idempotencyRetentionMs ?? IDEMPOTENCY_RETENTION_MS,
     via: arrival.via ?? null,
   };
-  return await serveRoute(kernel, { ...inbound, matched, raw, raised });
+  const challenge = matched.bound.challenge;
+  try {
+    return await serveRoute(kernel, { ...inbound, matched, raw, raised });
+  } catch (err) {
+    throw challenge === undefined ? err : challenged(err, challenge);
+  }
 }

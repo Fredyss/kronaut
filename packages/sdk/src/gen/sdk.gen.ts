@@ -768,7 +768,7 @@ export const linkShortenerConnect = <ThrowOnError extends boolean = true>(option
 /**
  * Model Context Protocol endpoint for agents
  *
- * Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB and each tool call at 30 s.
+ * Streamable HTTP without sessions; every answer is JSON, and a request carries exactly one JSON-RPC message (no batches). Only an API key with posts:read signs in; a request without one gets 401 with WWW-Authenticate: Bearer realm="kronaut". tools/list shows the tools the key's scopes and its sponsor's current role both allow, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB, each tool call at 30 s and the whole request at 35 s.
  */
 export const mcpEndpoint = <ThrowOnError extends boolean = true>(options: Options<McpEndpointData, ThrowOnError>): RequestResult<McpEndpointResponses, McpEndpointErrors, ThrowOnError> => (options.client ?? client).post<McpEndpointResponses, McpEndpointErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
