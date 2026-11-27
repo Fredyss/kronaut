@@ -183,6 +183,9 @@ catalogs:
     '@inlang/plugin-message-format':
       specifier: 4.6.0
       version: 4.6.0
+    '@modelcontextprotocol/sdk':
+      specifier: 1.32.2
+      version: 1.32.2
     '@node-rs/argon2':
       specifier: 2.2.2
       version: 2.2.2
@@ -413,7 +416,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/providers
       '@modelcontextprotocol/sdk':
-        specifier: ^1.32.2
+        specifier: 'catalog:'
         version: 1.32.2(supports-color@7.2.0)(zod@4.6.7)
       '@node-rs/argon2':
         specifier: 'catalog:'
