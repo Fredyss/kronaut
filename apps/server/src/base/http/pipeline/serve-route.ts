@@ -6,6 +6,7 @@ import { DEFAULT_RATE_LIMITS, limitRate } from '../rate-limit/limit.ts';
 import type { SessionInfo } from '../request.ts';
 import { createContext, preauthorize, type RequestState } from './context.ts';
 import { parseCookies } from './cookies.ts';
+import { dispatchRoute } from './dispatch.ts';
 import { type Execution, execute, type Outcome } from './execute.ts';
 import { executeIdempotent } from './idempotent-run.ts';
 import type { Inbound, Kernel } from './pipeline.ts';
@@ -32,6 +33,7 @@ interface Prepared {
   readonly url: URL;
   readonly requestId: string;
   readonly now: Authorized['now'];
+  readonly idempotencyRetentionMs: number;
   readonly raw: Uint8Array;
   readonly target: TenantTarget | null;
   readonly setCookies: readonly string[];
@@ -96,6 +98,18 @@ async function prepare(kernel: Kernel, req: Authorized): Promise<Prepared> {
     setCookies,
     state,
     acceptLanguage: request.headers.get('accept-language'),
+    headers: request.headers,
+    dispatch: (call) =>
+      dispatchRoute(
+        {
+          reenter: kernel.reenter,
+          origin: kernel.origin,
+          request,
+          requestId: req.requestId,
+          logger: req.logger,
+        },
+        call,
+      ),
   });
   const execution: Execution = { bound: matched.bound, input, ctx, logger: req.logger, state };
   return { ...req, raw, setCookies, execution };

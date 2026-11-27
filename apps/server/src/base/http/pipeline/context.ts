@@ -11,7 +11,7 @@ import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import type { TenantTarget } from '../caller/bind.ts';
 import { databaseError, denyError, HttpError } from '../errors.ts';
-import type { RequestContext, SessionInfo } from '../request.ts';
+import type { RequestContext, RouteCall, RouteReply, SessionInfo } from '../request.ts';
 import { serializeCookie } from './cookies.ts';
 
 export interface RequestState {
@@ -33,6 +33,8 @@ export interface ContextInput {
   readonly setCookies: string[];
   readonly state: RequestState;
   readonly acceptLanguage: string | null;
+  readonly headers: Headers;
+  readonly dispatch: (call: RouteCall) => Promise<RouteReply>;
 }
 
 export function settle(state: RequestState, route: Route): void {
@@ -125,5 +127,9 @@ export function createContext(input: ContextInput): RequestContext {
     clearCookie(name) {
       setCookies.push(serializeCookie(name, '', { maxAgeSeconds: 0 }));
     },
+    header(name) {
+      return input.headers.get(name);
+    },
+    dispatch: input.dispatch,
   };
 }

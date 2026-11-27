@@ -23,6 +23,20 @@ export interface CookieOptions {
   readonly maxAgeSeconds: number;
 }
 
+export interface RouteCall {
+  readonly route: Route;
+  readonly params: Readonly<Record<string, string>>;
+  readonly body?: unknown;
+  readonly idempotencyKey?: string;
+  readonly idempotencyRetentionMs?: number;
+}
+
+export interface RouteReply {
+  readonly status: number;
+  readonly body: unknown;
+  readonly replayed: boolean;
+}
+
 export interface RequestContext {
   readonly requestId: string;
   readonly principal: Principal | null;
@@ -40,6 +54,8 @@ export interface RequestContext {
   cookie(name: string): string | undefined;
   setCookie(name: string, value: string, options: CookieOptions): void;
   clearCookie(name: string): void;
+  header(name: string): string | null;
+  dispatch(call: RouteCall): Promise<RouteReply>;
 }
 
 export interface RouteHeaders {

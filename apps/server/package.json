@@ -19,6 +19,7 @@
     "@kronaut/i18n": "workspace:*",
     "@kronaut/media": "workspace:*",
     "@kronaut/providers": "workspace:*",
+    "@modelcontextprotocol/sdk": "catalog:",
     "@node-rs/argon2": "catalog:",
     "age-encryption": "catalog:",
     "fast-xml-parser": "catalog:",

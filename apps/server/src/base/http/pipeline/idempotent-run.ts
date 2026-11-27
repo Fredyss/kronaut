@@ -18,6 +18,7 @@ export interface IdempotentRun {
   readonly raw: Uint8Array;
   readonly target: TenantTarget | null;
   readonly now: Temporal.Instant;
+  readonly idempotencyRetentionMs: number;
   readonly execution: Execution;
 }
 
@@ -44,7 +45,10 @@ export async function executeIdempotent(run: IdempotentRun): Promise<Settled> {
     target.workspaceId,
     target.actor,
     async (trx): Promise<Settled> => {
-      const reservation = await reserveIdempotency(trx, slot, hash, now);
+      const reservation = await reserveIdempotency(trx, slot, hash, {
+        now,
+        retentionMs: run.idempotencyRetentionMs,
+      });
       if (reservation.kind === 'replay') {
         const body = reservation.body === null ? undefined : reservation.body;
         return { replayed: true, status: reservation.status, body };
