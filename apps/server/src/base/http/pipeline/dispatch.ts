@@ -1,3 +1,4 @@
+import { apiError } from '@kronaut/contract';
 import type { Logger } from 'pino';
 import type { RouteCall, RouteReply } from '../request.ts';
 import { IDEMPOTENCY_HEADER } from './idempotency.ts';
@@ -14,6 +15,18 @@ export interface Caller {
 }
 
 const FORWARDED: readonly string[] = ['authorization', 'cf-access-jwt-assertion'];
+const DOT_SEGMENTS: ReadonlySet<string> = new Set(['', '.', '..']);
+
+function unsafeParams(call: RouteCall): readonly string[] {
+  return call.route.path
+    .split('/')
+    .filter((segment) => segment.startsWith(':'))
+    .map((segment) => segment.slice(1))
+    .filter((name) => {
+      const value = call.params[name];
+      return value !== undefined && DOT_SEGMENTS.has(value);
+    });
+}
 
 function routePath(call: RouteCall): string {
   return call.route.path
@@ -28,7 +41,9 @@ function routePath(call: RouteCall): string {
 }
 
 function innerRequest(caller: Caller, call: RouteCall): Request {
-  const url = new URL(routePath(call), caller.origin);
+  const path = routePath(call);
+  const url = new URL(path, caller.origin);
+  if (url.pathname !== path) throw new Error(`route ${call.route.id}: path resolved elsewhere`);
   const headers = new Headers();
   for (const name of FORWARDED) {
     const value = caller.request.headers.get(name);
@@ -58,7 +73,15 @@ async function replyOf(response: Response): Promise<RouteReply> {
   };
 }
 
+function refused(names: readonly string[]): RouteReply {
+  const details = names.map((name) => ({ path: `params.${name}`, code: 'invalid_string' }));
+  const body = apiError('invalid_request', 'A path parameter is empty or a dot segment.');
+  return { status: 400, body: { error: { ...body.error, details } }, replayed: false };
+}
+
 export async function dispatchRoute(caller: Caller, call: RouteCall): Promise<RouteReply> {
+  const unsafe = unsafeParams(call);
+  if (unsafe.length > 0) return refused(unsafe);
   const response = await caller.reenter({
     request: innerRequest(caller, call),
     requestId: caller.requestId,
