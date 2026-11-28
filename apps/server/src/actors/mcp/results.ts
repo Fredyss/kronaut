@@ -71,24 +71,20 @@ export const MediaImportResult = z.object({
 
 const BrandChannel = z.object({ id: Text, provider: Text, displayName: UntrustedText });
 
-export const SAVED_TEXT_KINDS = ['signature', 'template'] as const;
 export const BRAND_PARTS = ['channels', 'savedTexts'] as const;
 
-const BrandSavedText = z.object({
-  id: Text,
-  kind: z.enum(SAVED_TEXT_KINDS),
-  text: UntrustedText,
-  channelIds: z.array(Text),
-});
+const Signature = z.object({ id: Text, text: UntrustedText, channelIds: z.array(Text) });
+const Template = z.object({ id: Text, text: UntrustedText });
 
 const ChannelGroup = z.object({
   channels: z.array(BrandChannel).optional(),
-  savedTexts: z.array(BrandSavedText).optional(),
+  signatures: z.array(Signature).optional(),
 });
 
 export const BrandContextResult = z.object({
   brands: z.array(ChannelGroup.extend({ id: Text, name: Text, archived: z.boolean() })),
   unbranded: ChannelGroup,
+  templates: z.array(Template).optional(),
   omitted: z.array(z.enum(BRAND_PARTS)),
 });
 

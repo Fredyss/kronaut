@@ -120,32 +120,15 @@ describe('mcp tools/list', () => {
             { id: 'ch_1', provider: 'bluesky', displayName: text('Name ch_1', 'provider') },
             { id: 'ch_2', provider: 'bluesky', displayName: text('Name ch_2', 'provider') },
           ],
-          savedTexts: [
-            { id: 'st_sig', kind: 'signature', text: text('Cheers', 'post'), channelIds: ['ch_1'] },
-            { id: 'st_tpl', kind: 'template', text: text('Hello', 'post'), channelIds: [] },
-          ],
+          signatures: [{ id: 'st_sig', text: text('Cheers', 'post'), channelIds: ['ch_1'] }],
         },
-        {
-          id: 'brand_old',
-          name: 'Old',
-          archived: true,
-          channels: [],
-          savedTexts: [
-            { id: 'st_tpl', kind: 'template', text: text('Hello', 'post'), channelIds: [] },
-          ],
-        },
+        { id: 'brand_old', name: 'Old', archived: true, channels: [], signatures: [] },
       ],
       unbranded: {
         channels: [{ id: 'ch_3', provider: 'bluesky', displayName: text('Name ch_3', 'provider') }],
-        savedTexts: [
-          {
-            id: 'st_other',
-            kind: 'signature',
-            text: text('Elsewhere', 'post'),
-            channelIds: ['ch_3'],
-          },
-        ],
+        signatures: [{ id: 'st_other', text: text('Elsewhere', 'post'), channelIds: ['ch_3'] }],
       },
+      templates: [{ id: 'st_tpl', text: text('Hello', 'post') }],
       omitted: [],
     });
   });
@@ -162,6 +145,19 @@ describe('mcp tools/list', () => {
       ],
       unbranded: {},
       omitted: ['channels', 'savedTexts'],
+    });
+  });
+
+  it('lists the templates once, also in a workspace without brands', async () => {
+    const client = await connected((routeId) => ({
+      status: 200,
+      body: routeId === 'brands.list' ? { items: [] } : PARTS[routeId],
+      replayed: false,
+    }));
+    const result = await client.callTool({ name: 'get_brand_context', arguments: {} });
+    expect(result.structuredContent).toMatchObject({
+      brands: [],
+      templates: [{ id: 'st_tpl', text: { untrusted: true, source: 'post', text: 'Hello' } }],
     });
   });
 });

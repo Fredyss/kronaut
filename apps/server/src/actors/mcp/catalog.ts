@@ -30,7 +30,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
   {
     name: 'get_brand_context',
     description:
-      'Each brand with its channels and saved texts, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.',
+      'Each brand with its channels and signatures, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures; templates lists every template once. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.',
     route: 'brands.list',
     keyed: 'none',
     readOnly: true,

@@ -1,12 +1,11 @@
 import { type DocJson, toPlainText } from '@kronaut/compose';
 import * as z from 'zod';
 import type { RouteReply } from '../../base/http/request.ts';
-import { BRAND_PARTS, type BrandContextResult, type SAVED_TEXT_KINDS } from './results.ts';
+import { BRAND_PARTS, type BrandContextResult } from './results.ts';
 import type { Invoke, ToolArgs } from './tool.ts';
 import { untrusted } from './untrusted.ts';
 
 type Part = (typeof BRAND_PARTS)[number];
-type Kind = (typeof SAVED_TEXT_KINDS)[number];
 
 const PART_ROUTES: Readonly<Record<Part, string>> = {
   channels: 'channels.list',
@@ -71,19 +70,16 @@ export async function gatherBrandContext(invoke: Invoke): Promise<RouteReply> {
   return { status: 200, body: { ...body, omitted }, replayed: false };
 }
 
-function savedTextsOf(
-  groupChannels: readonly Channel[] | null,
-  savedTexts: readonly SavedText[],
-  withTemplates: boolean,
-) {
+function plain(saved: SavedText) {
+  return untrusted('post', toPlainText(saved.doc as unknown as DocJson));
+}
+
+function signaturesOf(groupChannels: readonly Channel[], savedTexts: readonly SavedText[]) {
   return savedTexts.flatMap((saved) => {
-    const channelIds = (groupChannels ?? [])
+    const channelIds = groupChannels
       .filter((channel) => channel.signature?.id === saved.id)
       .map((channel) => channel.id);
-    const kind: Kind = channelIds.length > 0 ? 'signature' : 'template';
-    if (kind === 'template' && (!withTemplates || saved.channelCount > 0)) return [];
-    const text = untrusted('post', toPlainText(saved.doc as unknown as DocJson));
-    return [{ id: saved.id, kind, text, channelIds }];
+    return channelIds.length === 0 ? [] : [{ id: saved.id, text: plain(saved), channelIds }];
   });
 }
 
@@ -94,19 +90,14 @@ interface Parts {
 
 function group(parts: Parts, brandId: string | null) {
   const own = parts.channels?.filter((channel) => channel.brandId === brandId) ?? null;
+  if (own === null) return {};
   return {
-    ...(own === null
-      ? {}
-      : {
-          channels: own.map((c) => ({
-            id: c.id,
-            provider: c.provider,
-            displayName: untrusted('provider', c.displayName),
-          })),
-        }),
-    ...(parts.savedTexts === null
-      ? {}
-      : { savedTexts: savedTextsOf(own, parts.savedTexts, brandId !== null) }),
+    channels: own.map((c) => ({
+      id: c.id,
+      provider: c.provider,
+      displayName: untrusted('provider', c.displayName),
+    })),
+    ...(parts.savedTexts === null ? {} : { signatures: signaturesOf(own, parts.savedTexts) }),
   };
 }
 
@@ -131,6 +122,13 @@ export function brandContext(body: unknown): z.input<typeof BrandContextResult> 
       ...group(parts, brand.id),
     })),
     unbranded: group(parts, null),
+    ...(parts.savedTexts === null
+      ? {}
+      : {
+          templates: parts.savedTexts
+            .filter((saved) => saved.channelCount === 0)
+            .map((saved) => ({ id: saved.id, text: plain(saved) })),
+        }),
     omitted: gathered.omitted,
   };
 }

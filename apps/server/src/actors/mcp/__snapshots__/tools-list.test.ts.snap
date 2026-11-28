@@ -7,7 +7,7 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
       "annotations": {
         "readOnlyHint": true,
       },
-      "description": "Each brand with its channels and saved texts, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.",
+      "description": "Each brand with its channels and signatures, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures; templates lists every template once. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.",
       "inputSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "additionalProperties": false,
@@ -77,7 +77,7 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                 "name": {
                   "type": "string",
                 },
-                "savedTexts": {
+                "signatures": {
                   "items": {
                     "additionalProperties": false,
                     "properties": {
@@ -88,13 +88,6 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                         "type": "array",
                       },
                       "id": {
-                        "type": "string",
-                      },
-                      "kind": {
-                        "enum": [
-                          "signature",
-                          "template",
-                        ],
                         "type": "string",
                       },
                       "text": {
@@ -125,7 +118,6 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                     },
                     "required": [
                       "id",
-                      "kind",
                       "text",
                       "channelIds",
                     ],
@@ -150,6 +142,47 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                 "savedTexts",
               ],
               "type": "string",
+            },
+            "type": "array",
+          },
+          "templates": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                },
+                "text": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "source": {
+                      "enum": [
+                        "post",
+                        "provider",
+                      ],
+                      "type": "string",
+                    },
+                    "text": {
+                      "type": "string",
+                    },
+                    "untrusted": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "untrusted",
+                    "source",
+                    "text",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "id",
+                "text",
+              ],
+              "type": "object",
             },
             "type": "array",
           },
@@ -201,7 +234,7 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                 },
                 "type": "array",
               },
-              "savedTexts": {
+              "signatures": {
                 "items": {
                   "additionalProperties": false,
                   "properties": {
@@ -212,13 +245,6 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                       "type": "array",
                     },
                     "id": {
-                      "type": "string",
-                    },
-                    "kind": {
-                      "enum": [
-                        "signature",
-                        "template",
-                      ],
                       "type": "string",
                     },
                     "text": {
@@ -249,7 +275,6 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
                   },
                   "required": [
                     "id",
-                    "kind",
                     "text",
                     "channelIds",
                   ],
