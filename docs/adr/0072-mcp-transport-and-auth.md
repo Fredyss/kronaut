@@ -1,7 +1,7 @@
 # ADR-0072: MCP transport, authentication and tool contract
 
-- **Status:** Proposed
-- **Date:** 2026-11-27
+- **Status:** Accepted
+- **Date:** 2026-11-28
 - **Deciders:** Frederik Schlentc
 - **Area:** Identity, agents & security
 - **Spec:** [Security](../architecture/06-security.md), [Operations](../architecture/11-operations.md), [Stack](../architecture/01-stack.md)
@@ -12,6 +12,8 @@
 ADR-0030 freezes the 13 MCP tool names, but not how a client reaches them. The architecture review ([AR-11](../reviews/2026-10-21-architecture-hardening.md#ar-11--mcp-transport-and-authentication-are-unspecified)) asks for a transport ADR before Phase 2. It must cover authentication, the Host and Origin policy, generation from the route registry, the action and scope of each tool, idempotency, pagination, size and time limits, cancellation, audit fields and the untrusted-text envelope. The stack chapter already says the tools come from the route registry and share REST's auth and scopes. OAuth with dynamic client registration is Phase 3.
 
 ## Decision
+
+**Role:** REST stays the primary contract for agents and programs. MCP is an optional adapter over it: every tool runs one REST route, and anything a tool can do, the same key can do over REST.
 
 **Transport:** Streamable HTTP from `@modelcontextprotocol/sdk` (`WebStandardStreamableHTTPServerTransport`), stateless and with JSON answers only.
 - No `Mcp-Session-Id`, no SSE stream, no stdio. Each POST gets a fresh server and transport, so any replica can answer any request and nothing is kept between requests.
@@ -110,6 +112,7 @@ ADR-0030 freezes the 13 MCP tool names, but not how a client reaches them. The a
 ## Options considered
 
 - **Chosen:** the decision above.
+- Rejected: REST only, with agents importing the OpenAPI document. Each user would write their own wrapper, agents would choose among every route instead of 13 task tools, and third-party text would reach the model without the untrusted envelope.
 - Rejected: the high-level `McpServer` with `registerTool`. It parses arguments with the Zod schema and hands the parsed values on, so a route's transforms would run twice and its error codes would turn into JSON-RPC `-32602`. The low-level `Server` takes raw arguments; the SDK marks it deprecated for anything but advanced use, which this is.
 - Rejected: SSE streaming and sessions. They need sticky routing or a shared session store, and no tool streams progress.
 - Rejected: `/v1/mcp` without the workspace. The registry rule and `bind()` would need an exception for one route, and a key from another workspace would reach the handler.

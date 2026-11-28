@@ -72,7 +72,7 @@ One-way doors: decisions that are expensive to change once code exists. Anything
 | [0045](0045-audit-partition-maintenance-in-the-database.md) | Audit partition maintenance in the database |
 | [0070](0070-api-key-management-and-rate-limits.md) | API key management and rate limits for our own API (amends 0040) |
 | [0071](0071-deterministic-merge-gate-for-agent-work.md) | Deterministic merge gate for agent work: feature branches, path list, agent identity |
-| [0072](0072-mcp-transport-and-auth.md) | MCP transport, authentication and tool contract (Proposed; extends 0030, 0070) |
+| [0072](0072-mcp-transport-and-auth.md) | MCP transport, authentication and tool contract (extends 0030, 0070) |
 
 ## Providers & product
 
