@@ -17,7 +17,12 @@ const unusedDb: Database = {
 
 const tools = catalog(createTestInstance({ db: unusedDb }).routes.map((bound) => bound.route));
 
-const BRANDS = { items: [{ id: 'brand_a', name: 'Acme', slug: 'acme', archivedAt: null }] };
+const BRANDS = {
+  items: [
+    { id: 'brand_a', name: 'Acme', slug: 'acme', archivedAt: null },
+    { id: 'brand_old', name: 'Old', slug: 'old', archivedAt: '2026-01-01T00:00:00.000Z' },
+  ],
+};
 
 async function connected(reply: (routeId: string) => RouteReply): Promise<Client> {
   const server = mcpServer({
@@ -50,7 +55,11 @@ const channel = (id: string, brandId: string | null, signature: string | null) =
 const PARTS: Readonly<Record<string, unknown>> = {
   'brands.list': BRANDS,
   'channels.list': {
-    items: [channel('ch_1', 'brand_a', 'st_sig'), channel('ch_2', 'brand_a', null)],
+    items: [
+      channel('ch_1', 'brand_a', 'st_sig'),
+      channel('ch_2', 'brand_a', null),
+      channel('ch_3', null, 'st_other'),
+    ],
   },
   'saved_texts.list': {
     items: [
@@ -93,7 +102,7 @@ describe('mcp tools/list', () => {
     ]);
   });
 
-  it('lists each brand with its channels, signatures and the templates', async () => {
+  it('lists each brand, archived or not, and the channels without a brand', async () => {
     const client = await connected((routeId) => ({
       status: 200,
       body: PARTS[routeId],
@@ -106,6 +115,7 @@ describe('mcp tools/list', () => {
         {
           id: 'brand_a',
           name: 'Acme',
+          archived: false,
           channels: [
             { id: 'ch_1', provider: 'bluesky', displayName: text('Name ch_1', 'provider') },
             { id: 'ch_2', provider: 'bluesky', displayName: text('Name ch_2', 'provider') },
@@ -115,7 +125,27 @@ describe('mcp tools/list', () => {
             { id: 'st_tpl', kind: 'template', text: text('Hello', 'post'), channelIds: [] },
           ],
         },
+        {
+          id: 'brand_old',
+          name: 'Old',
+          archived: true,
+          channels: [],
+          savedTexts: [
+            { id: 'st_tpl', kind: 'template', text: text('Hello', 'post'), channelIds: [] },
+          ],
+        },
       ],
+      unbranded: {
+        channels: [{ id: 'ch_3', provider: 'bluesky', displayName: text('Name ch_3', 'provider') }],
+        savedTexts: [
+          {
+            id: 'st_other',
+            kind: 'signature',
+            text: text('Elsewhere', 'post'),
+            channelIds: ['ch_3'],
+          },
+        ],
+      },
       omitted: [],
     });
   });
@@ -126,7 +156,11 @@ describe('mcp tools/list', () => {
     );
     const result = await client.callTool({ name: 'get_brand_context', arguments: {} });
     expect(result.structuredContent).toEqual({
-      brands: [{ id: 'brand_a', name: 'Acme' }],
+      brands: [
+        { id: 'brand_a', name: 'Acme', archived: false },
+        { id: 'brand_old', name: 'Old', archived: true },
+      ],
+      unbranded: {},
       omitted: ['channels', 'savedTexts'],
     });
   });

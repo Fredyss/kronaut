@@ -13,7 +13,7 @@ ADR-0030 freezes the 13 MCP tool names, but not how a client reaches them. The a
 
 ## Decision
 
-**Role:** REST stays the primary contract for agents and programs. MCP is an optional adapter over it: every tool runs one REST route, and anything a tool can do, the same key can do over REST.
+**Role:** REST stays the primary contract for agents and programs. MCP is an optional adapter over it: a tool only runs existing REST routes under the same key (one route, or a fixed few for `get_brand_context` and `add_media_from_url`), so anything a tool can do, the same key can do over REST.
 
 **Transport:** Streamable HTTP from `@modelcontextprotocol/sdk` (`WebStandardStreamableHTTPServerTransport`), stateless and with JSON answers only.
 - No `Mcp-Session-Id`, no SSE stream, no stdio. Each POST gets a fresh server and transport, so any replica can answer any request and nothing is kept between requests.
@@ -60,8 +60,8 @@ ADR-0030 freezes the 13 MCP tool names, but not how a client reaches them. The a
 | `get_post_metrics` | `analytics.post_metrics` | `analytics:read` | none |
 
 - `posts.preflight` (`GET …/posts/:postId/preflight`, `posts:read`) is the one route added for MCP: it runs the preflight that freezing runs, on the draft destinations, and writes nothing. `validate_draft` returns its issues, `preview_post` its rendered text.
-- `get_brand_context` lists each brand with its id and name, its channels (id, provider, display name) and its saved texts (id, kind, plain text, and the channels it is added to).
-  - A saved text added to one of the brand's channels is a `signature` there, with those channels' ids. A saved text added to no channel is a `template` and is listed under every brand with no channel ids. A signature only on other brands' channels is left out.
+- `get_brand_context` lists each brand with its id, name and `archived` (true when it is archived), its channels (id, provider, display name) and its saved texts (id, kind, plain text, and the channels it is added to). `unbranded` holds the same parts for channels without a brand: those channels and their signatures, no templates.
+  - A saved text added to one of the brand's channels is a `signature` there, with those channels' ids. A saved text added to no channel is a `template` and is listed under every brand with no channel ids. A signature only on other brands' channels is left out there.
   - The tool runs `brands.list`, then `channels.list` and `saved_texts.list`, each as its own route with its own action (`channels:read`, `posts:read`). A part the key may not read (`scope_missing` or `not_permitted`) is left out and named in `omitted` (`channels`, `savedTexts`; empty when nothing is left out). Without channels a brand's signatures can't be matched, so only templates are listed.
   - The tool's own scope stays `brands:read`. The lists are whole, as nothing pages (below).
 - `draft_campaign` creates a campaign, which here means one post with its destinations across channels: one draft post with a destination on each channel it goes to. It isn't the `campaigns` table, which groups posts and has no MCP tool.

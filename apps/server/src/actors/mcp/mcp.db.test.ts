@@ -305,6 +305,10 @@ describe('mcp tools', () => {
     const full = await callTool(agent, 'get_brand_context', {});
     expect(full.isError).toBeUndefined();
     expect(full.structuredContent.omitted).toEqual([]);
+    const fullBrands = full.structuredContent.brands as { archived: unknown }[];
+    expect(fullBrands.every((brand) => typeof brand.archived === 'boolean')).toBe(true);
+    const unbranded = full.structuredContent.unbranded as { channels: { id: string }[] };
+    expect(unbranded.channels.length).toBeGreaterThan(0);
     const brandsOnly = await insertGrant({ scopes: ['posts:read', 'brands:read'] });
     const partial = await callTool(brandsOnly, 'get_brand_context', {});
     expect(partial.isError).toBeUndefined();

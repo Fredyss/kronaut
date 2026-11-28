@@ -81,15 +81,14 @@ const BrandSavedText = z.object({
   channelIds: z.array(Text),
 });
 
+const ChannelGroup = z.object({
+  channels: z.array(BrandChannel).optional(),
+  savedTexts: z.array(BrandSavedText).optional(),
+});
+
 export const BrandContextResult = z.object({
-  brands: z.array(
-    z.object({
-      id: Text,
-      name: Text,
-      channels: z.array(BrandChannel).optional(),
-      savedTexts: z.array(BrandSavedText).optional(),
-    }),
-  ),
+  brands: z.array(ChannelGroup.extend({ id: Text, name: Text, archived: z.boolean() })),
+  unbranded: ChannelGroup,
   omitted: z.array(z.enum(BRAND_PARTS)),
 });
 

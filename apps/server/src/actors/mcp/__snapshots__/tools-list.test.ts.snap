@@ -7,7 +7,7 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
       "annotations": {
         "readOnlyHint": true,
       },
-      "description": "Each brand with its channels and saved texts: a signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.",
+      "description": "Each brand with its channels and saved texts, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.",
       "inputSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "additionalProperties": false,
@@ -23,6 +23,9 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
             "items": {
               "additionalProperties": false,
               "properties": {
+                "archived": {
+                  "type": "boolean",
+                },
                 "channels": {
                   "items": {
                     "additionalProperties": false,
@@ -134,6 +137,7 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
               "required": [
                 "id",
                 "name",
+                "archived",
               ],
               "type": "object",
             },
@@ -149,9 +153,117 @@ exports[`mcp tools/list > matches the committed contract 1`] = `
             },
             "type": "array",
           },
+          "unbranded": {
+            "additionalProperties": false,
+            "properties": {
+              "channels": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "displayName": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "source": {
+                          "enum": [
+                            "post",
+                            "provider",
+                          ],
+                          "type": "string",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                        "untrusted": {
+                          "const": true,
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "untrusted",
+                        "source",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                    "id": {
+                      "type": "string",
+                    },
+                    "provider": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "provider",
+                    "displayName",
+                  ],
+                  "type": "object",
+                },
+                "type": "array",
+              },
+              "savedTexts": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "channelIds": {
+                      "items": {
+                        "type": "string",
+                      },
+                      "type": "array",
+                    },
+                    "id": {
+                      "type": "string",
+                    },
+                    "kind": {
+                      "enum": [
+                        "signature",
+                        "template",
+                      ],
+                      "type": "string",
+                    },
+                    "text": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "source": {
+                          "enum": [
+                            "post",
+                            "provider",
+                          ],
+                          "type": "string",
+                        },
+                        "text": {
+                          "type": "string",
+                        },
+                        "untrusted": {
+                          "const": true,
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "untrusted",
+                        "source",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "text",
+                    "channelIds",
+                  ],
+                  "type": "object",
+                },
+                "type": "array",
+              },
+            },
+            "type": "object",
+          },
         },
         "required": [
           "brands",
+          "unbranded",
           "omitted",
         ],
         "type": "object",

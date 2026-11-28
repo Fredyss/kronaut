@@ -22,7 +22,9 @@ const Denial = z.object({
   }),
 });
 
-const Brands = z.object({ items: z.array(z.object({ id: z.string(), name: z.string() })) });
+const Brands = z.object({
+  items: z.array(z.object({ id: z.string(), name: z.string(), archivedAt: z.string().nullable() })),
+});
 const Channels = z.object({
   items: z.array(
     z.object({
@@ -69,16 +71,43 @@ export async function gatherBrandContext(invoke: Invoke): Promise<RouteReply> {
   return { status: 200, body: { ...body, omitted }, replayed: false };
 }
 
-function savedTextsOf(brandChannels: readonly Channel[] | null, savedTexts: readonly SavedText[]) {
+function savedTextsOf(
+  groupChannels: readonly Channel[] | null,
+  savedTexts: readonly SavedText[],
+  withTemplates: boolean,
+) {
   return savedTexts.flatMap((saved) => {
-    const channelIds = (brandChannels ?? [])
+    const channelIds = (groupChannels ?? [])
       .filter((channel) => channel.signature?.id === saved.id)
       .map((channel) => channel.id);
     const kind: Kind = channelIds.length > 0 ? 'signature' : 'template';
-    if (kind === 'template' && saved.channelCount > 0) return [];
+    if (kind === 'template' && (!withTemplates || saved.channelCount > 0)) return [];
     const text = untrusted('post', toPlainText(saved.doc as unknown as DocJson));
     return [{ id: saved.id, kind, text, channelIds }];
   });
+}
+
+interface Parts {
+  readonly channels: readonly Channel[] | null;
+  readonly savedTexts: readonly SavedText[] | null;
+}
+
+function group(parts: Parts, brandId: string | null) {
+  const own = parts.channels?.filter((channel) => channel.brandId === brandId) ?? null;
+  return {
+    ...(own === null
+      ? {}
+      : {
+          channels: own.map((c) => ({
+            id: c.id,
+            provider: c.provider,
+            displayName: untrusted('provider', c.displayName),
+          })),
+        }),
+    ...(parts.savedTexts === null
+      ? {}
+      : { savedTexts: savedTextsOf(own, parts.savedTexts, brandId !== null) }),
+  };
 }
 
 export function brandContext(body: unknown): z.input<typeof BrandContextResult> {
@@ -90,26 +119,18 @@ export function brandContext(body: unknown): z.input<typeof BrandContextResult> 
       omitted: z.array(z.enum(BRAND_PARTS)),
     })
     .parse(body);
-  const channels = gathered.channels?.items ?? null;
-  const savedTexts = gathered.savedTexts?.items ?? null;
+  const parts: Parts = {
+    channels: gathered.channels?.items ?? null,
+    savedTexts: gathered.savedTexts?.items ?? null,
+  };
   return {
-    brands: gathered.brands.items.map((brand) => {
-      const own = channels?.filter((channel) => channel.brandId === brand.id) ?? null;
-      return {
-        id: brand.id,
-        name: brand.name,
-        ...(own === null
-          ? {}
-          : {
-              channels: own.map((c) => ({
-                id: c.id,
-                provider: c.provider,
-                displayName: untrusted('provider', c.displayName),
-              })),
-            }),
-        ...(savedTexts === null ? {} : { savedTexts: savedTextsOf(own, savedTexts) }),
-      };
-    }),
+    brands: gathered.brands.items.map((brand) => ({
+      id: brand.id,
+      name: brand.name,
+      archived: brand.archivedAt !== null,
+      ...group(parts, brand.id),
+    })),
+    unbranded: group(parts, null),
     omitted: gathered.omitted,
   };
 }
