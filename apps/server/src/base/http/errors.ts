@@ -10,6 +10,7 @@ export interface HttpErrorOptions {
   readonly status?: number;
   readonly details?: readonly IssueDetail[];
   readonly retryAfterSeconds?: number;
+  readonly challenge?: string;
 }
 
 export class HttpError extends Error {
@@ -17,6 +18,7 @@ export class HttpError extends Error {
   readonly status: number;
   readonly details: readonly IssueDetail[] | undefined;
   readonly retryAfterSeconds: number | undefined;
+  readonly challenge: string | undefined;
 
   constructor(code: ApiErrorCode, message: string, options: HttpErrorOptions = {}) {
     super(message);
@@ -25,7 +27,17 @@ export class HttpError extends Error {
     this.status = options.status ?? API_ERROR_STATUS[code];
     this.details = options.details;
     this.retryAfterSeconds = options.retryAfterSeconds;
+    this.challenge = options.challenge;
   }
+}
+
+export function challenged(err: unknown, challenge: string): unknown {
+  if (!(err instanceof HttpError) || err.status !== 401) return err;
+  return new HttpError(err.code, err.message, {
+    status: err.status,
+    ...(err.details === undefined ? {} : { details: err.details }),
+    challenge,
+  });
 }
 
 export function httpError(code: ApiErrorCode, message: string): HttpError {

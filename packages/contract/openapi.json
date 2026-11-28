@@ -5759,7 +5759,7 @@
     },
     "/v1/workspaces/{workspaceId}/mcp": {
       "post": {
-        "description": "Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB and each tool call at 30 s.",
+        "description": "Streamable HTTP without sessions; every answer is JSON, and a request carries exactly one JSON-RPC message (no batches). Only an API key with posts:read signs in; a request without one gets 401 with WWW-Authenticate: Bearer realm=\"kronaut\". tools/list shows the tools the key's scopes and its sponsor's current role both allow, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB, each tool call at 30 s and the whole request at 35 s.",
         "operationId": "mcp.endpoint",
         "parameters": [
           {
@@ -5775,39 +5775,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "additionalProperties": {},
-                    "properties": {
-                      "jsonrpc": {
-                        "const": "2.0",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "jsonrpc"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "items": {
-                      "additionalProperties": {},
-                      "properties": {
-                        "jsonrpc": {
-                          "const": "2.0",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "jsonrpc"
-                      ],
-                      "type": "object"
-                    },
-                    "maxItems": 20,
-                    "minItems": 1,
-                    "type": "array"
+                "additionalProperties": {},
+                "properties": {
+                  "jsonrpc": {
+                    "const": "2.0",
+                    "type": "string"
                   }
-                ]
+                },
+                "required": [
+                  "jsonrpc"
+                ],
+                "type": "object"
               }
             }
           },

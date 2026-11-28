@@ -3,6 +3,7 @@ import {
   type AccessScope,
   type AuthorizeInputs,
   authorize,
+  type Decision,
   type DenyCode,
   type Principal,
 } from '@kronaut/core';
@@ -44,6 +45,11 @@ export function settle(state: RequestState, route: Route): void {
 
 const OWED_DENIALS: ReadonlySet<DenyCode> = new Set<DenyCode>(['out_of_scope', 'self_approval']);
 
+// The route knows neither the units, the approval nor the requester yet; the handler must settle these.
+export function deniedAtEntry(decision: Decision): DenyCode | null {
+  return decision.kind === 'deny' && !OWED_DENIALS.has(decision.code) ? decision.code : null;
+}
+
 export type Preauthorization = Pick<
   ContextInput,
   'route' | 'principal' | 'target' | 'now' | 'scopeInput'
@@ -61,11 +67,9 @@ export function preauthorize(input: Preauthorization): boolean {
     target === null ? null : { workspaceId: target.workspaceId },
     { now, ...scopeInput },
   );
-  // The route knows neither the units, the approval nor the requester yet; the handler must settle these.
-  if (decision.kind === 'require_approval') return true;
-  if (decision.kind === 'deny' && OWED_DENIALS.has(decision.code)) return true;
-  if (decision.kind === 'deny') throw denyError(decision.code);
-  return false;
+  const denied = deniedAtEntry(decision);
+  if (denied !== null) throw denyError(denied);
+  return decision.kind === 'require_approval' || decision.kind === 'deny';
 }
 
 export function createContext(input: ContextInput): RequestContext {

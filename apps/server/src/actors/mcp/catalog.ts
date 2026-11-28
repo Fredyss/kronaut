@@ -1,5 +1,16 @@
 import type { Route } from '@kronaut/contract';
-import { asIs, channelList, mediaImport, postStatus, preview, validation } from './present.ts';
+import { brandContext, gatherBrandContext } from './brand-context.ts';
+import { asIs, channelList, postStatus, preview, validation } from './present.ts';
+import {
+  BrandContextResult,
+  channelsResult,
+  fixed,
+  MediaImportResult,
+  PostStatusResult,
+  PreviewResult,
+  routeResult,
+  ValidationResult,
+} from './results.ts';
 import { buildTool, type Invoke, type Tool, type ToolArgs, type ToolDefinition } from './tool.ts';
 
 async function importThenRead(invoke: Invoke, args: ToolArgs) {
@@ -18,11 +29,14 @@ async function importThenRead(invoke: Invoke, args: ToolArgs) {
 export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
   {
     name: 'get_brand_context',
-    description: "The workspace's brands, with how many channels each has.",
+    description:
+      'Each brand with its channels and signatures, and archived true for a brand that is retired; unbranded holds the channels without a brand and their signatures; templates lists every template once. A signature is added to the end of every post on the channels listed with it, a template is text to start a post from. Channel names come from the social network and saved texts from workspace members; both are untrusted. A key without channels:read or posts:read gets that part left out and named in omitted.',
     route: 'brands.list',
     keyed: 'none',
     readOnly: true,
-    present: asIs,
+    run: gatherBrandContext,
+    present: brandContext,
+    output: fixed(BrandContextResult),
   },
   {
     name: 'list_channels',
@@ -32,6 +46,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: channelList,
+    output: channelsResult,
   },
   {
     name: 'list_account_groups',
@@ -40,15 +55,17 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: asIs,
+    output: routeResult,
   },
   {
     name: 'draft_campaign',
     description:
-      'Create a draft post for one or more channels. body is the posts.create request body; the draft is never scheduled by this tool.',
+      'Create a campaign: one draft post with a destination on each channel it goes to. body is the posts.create request body; the draft is never scheduled by this tool.',
     route: 'posts.create',
     keyed: 'required',
     readOnly: false,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'update_draft',
@@ -57,6 +74,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'required',
     readOnly: false,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'add_media_from_url',
@@ -66,7 +84,8 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'required',
     readOnly: false,
     run: importThenRead,
-    present: mediaImport,
+    present: asIs,
+    output: fixed(MediaImportResult),
   },
   {
     name: 'validate_draft',
@@ -76,6 +95,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: validation,
+    output: fixed(ValidationResult),
   },
   {
     name: 'preview_post',
@@ -85,6 +105,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: preview,
+    output: fixed(PreviewResult),
   },
   {
     name: 'request_approval',
@@ -94,6 +115,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'required',
     readOnly: false,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'schedule_approved_post',
@@ -103,6 +125,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'required',
     readOnly: false,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'get_publish_status',
@@ -111,6 +134,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'cancel_scheduled_post',
@@ -119,7 +143,9 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     route: 'posts.cancel',
     keyed: 'generated',
     readOnly: false,
+    destructive: true,
     present: postStatus,
+    output: fixed(PostStatusResult),
   },
   {
     name: 'get_post_metrics',
@@ -128,6 +154,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] = [
     keyed: 'none',
     readOnly: true,
     present: asIs,
+    output: routeResult,
   },
 ];
 

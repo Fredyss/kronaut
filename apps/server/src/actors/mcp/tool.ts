@@ -3,6 +3,7 @@ import type { Route } from '@kronaut/contract';
 import { type GrantableScope, isGrantableScope } from '@kronaut/core';
 import * as z from 'zod';
 import type { RouteReply } from '../../base/http/request.ts';
+import type { ResultOf, ResultSchema } from './results.ts';
 
 export const MCP_IDEMPOTENCY_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -27,13 +28,24 @@ export interface ToolDefinition {
   readonly route: string;
   readonly keyed: Keyed;
   readonly readOnly: boolean;
+  readonly destructive?: true;
   readonly run?: (invoke: Invoke, args: ToolArgs) => Promise<RouteReply>;
   readonly present: (body: unknown) => unknown;
+  readonly output: ResultOf;
+}
+
+export interface Annotations {
+  readonly readOnlyHint: boolean;
+  readonly destructiveHint?: boolean;
+  readonly idempotentHint?: boolean;
 }
 
 export interface Tool extends ToolDefinition {
   readonly scope: GrantableScope;
   readonly inputSchema: Readonly<Record<string, unknown>>;
+  readonly result: ResultSchema;
+  readonly outputSchema: Readonly<Record<string, unknown>>;
+  readonly annotations: Annotations;
   readonly envelope: z.ZodType<Record<string, unknown>>;
   readonly paramNames: readonly string[];
 }
@@ -61,6 +73,17 @@ function envelopeShape(route: Route, keyed: Keyed): Record<string, z.ZodType> {
   };
 }
 
+function annotationsOf(definition: ToolDefinition): Annotations {
+  if (definition.readOnly) return { readOnlyHint: true };
+  return {
+    readOnlyHint: false,
+    destructiveHint: definition.destructive === true,
+    idempotentHint: definition.keyed === 'required',
+  };
+}
+
+const JSON_SCHEMA = { unrepresentable: 'any' } as const;
+
 export function buildTool(definition: ToolDefinition, routes: ReadonlyMap<string, Route>): Tool {
   const route = routes.get(definition.route);
   if (route === undefined) {
@@ -76,10 +99,14 @@ export function buildTool(definition: ToolDefinition, routes: ReadonlyMap<string
     throw new Error(`mcp tool ${definition.name}: route ${route.id} is not open to API keys`);
   }
   const schema = z.strictObject(inputShape(route, definition.keyed));
+  const result = definition.output(route.response);
   return {
     ...definition,
     scope,
-    inputSchema: z.toJSONSchema(schema, { io: 'input', unrepresentable: 'any' }),
+    inputSchema: z.toJSONSchema(schema, { ...JSON_SCHEMA, io: 'input' }),
+    result,
+    outputSchema: z.toJSONSchema(result, { ...JSON_SCHEMA, io: 'output' }),
+    annotations: annotationsOf(definition),
     envelope: z.strictObject(envelopeShape(route, definition.keyed)),
     paramNames: Object.keys(pathParams(route)),
   };

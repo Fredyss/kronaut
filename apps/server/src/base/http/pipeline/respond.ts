@@ -37,6 +37,7 @@ export function failure(err: unknown, requestId: string, logger: Logger, hsts: b
     if (err.retryAfterSeconds !== undefined) {
       headers.set('Retry-After', String(err.retryAfterSeconds));
     }
+    if (err.challenge !== undefined) headers.set('WWW-Authenticate', err.challenge);
     return respond(err.status, errorBody(err, requestId), headers);
   }
   logger.error({ err, requestId }, 'request failed');

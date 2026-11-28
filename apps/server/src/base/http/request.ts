@@ -41,6 +41,7 @@ export interface RouteReply {
   readonly status: number;
   readonly body: unknown;
   readonly replayed: boolean;
+  readonly retryAfterSeconds?: number;
 }
 
 export interface RequestContext {
@@ -85,10 +86,12 @@ export interface BoundRoute<R extends Route = Route> {
   readonly route: R;
   readonly handler: RouteHandler<R>;
   readonly sameHost?: boolean;
+  readonly challenge?: string;
 }
 
 export interface BindOptions {
   readonly sameHost?: boolean;
+  readonly challenge?: string;
 }
 
 export function bindRoute<R extends Route>(
@@ -96,5 +99,10 @@ export function bindRoute<R extends Route>(
   handler: RouteHandler<R>,
   options: BindOptions = {},
 ): BoundRoute<R> {
-  return options.sameHost === true ? { route, handler, sameHost: true } : { route, handler };
+  return {
+    route,
+    handler,
+    ...(options.sameHost === true ? { sameHost: true } : {}),
+    ...(options.challenge === undefined ? {} : { challenge: options.challenge }),
+  };
 }

@@ -1,53 +1,18 @@
 import * as z from 'zod';
+import {
+  PostStatusResult,
+  PreviewDestination,
+  PreviewItem,
+  PreviewResult,
+  type ValidationResult,
+} from './results.ts';
 import { maybeUntrusted, untrusted } from './untrusted.ts';
 
-const DestinationStatus = z.looseObject({
-  id: z.string(),
-  accountId: z.string(),
-  provider: z.string(),
-  publishType: z.string(),
-  state: z.string(),
-  stateReason: z.string().nullable(),
-  scheduledAt: z.string().nullable(),
-  publishedAt: z.string().nullable(),
-  remoteUrl: z.string().nullable(),
-  lastErrorCode: z.string().nullable(),
-});
-
-const PostStatus = z.looseObject({
-  id: z.string(),
-  version: z.number(),
-  title: z.string().nullable(),
-  publishSummary: z.string(),
-  scheduleMode: z.string(),
-  scheduleLocal: z.string().nullable(),
-  scheduleTz: z.string().nullable(),
-  destinations: z.array(DestinationStatus),
-});
+const PostStatus = PostStatusResult.extend({ title: z.string().nullable() });
 
 export function postStatus(body: unknown) {
   const post = PostStatus.parse(body);
-  return {
-    id: post.id,
-    version: post.version,
-    title: maybeUntrusted('post', post.title),
-    publishSummary: post.publishSummary,
-    scheduleMode: post.scheduleMode,
-    scheduleLocal: post.scheduleLocal,
-    scheduleTz: post.scheduleTz,
-    destinations: post.destinations.map((d) => ({
-      id: d.id,
-      accountId: d.accountId,
-      provider: d.provider,
-      publishType: d.publishType,
-      state: d.state,
-      stateReason: d.stateReason,
-      scheduledAt: d.scheduledAt,
-      publishedAt: d.publishedAt,
-      remoteUrl: d.remoteUrl,
-      lastErrorCode: d.lastErrorCode,
-    })),
-  };
+  return { ...post, title: maybeUntrusted('post', post.title) };
 }
 
 const Option = z.looseObject({ value: z.string(), label: z.string() });
@@ -73,53 +38,28 @@ export function channelList(body: unknown) {
   };
 }
 
-const PreviewItem = z.object({ role: z.string(), text: z.string(), mediaCount: z.number() });
-const Preflight = z.looseObject({
-  postId: z.string(),
-  version: z.number(),
-  issues: z.array(z.object({ path: z.string(), code: z.string() })),
-  destinations: z.array(z.looseObject({ items: z.array(PreviewItem) })),
+const Preflight = PreviewResult.extend({
+  destinations: z.array(
+    PreviewDestination.extend({ items: z.array(PreviewItem.extend({ text: z.string() })) }),
+  ),
 });
 
 export function validation(body: unknown) {
   const { postId, version, issues } = Preflight.parse(body);
-  return { postId, version, valid: issues.length === 0, issues };
+  return { postId, version, valid: issues.length === 0, issues } satisfies z.input<
+    typeof ValidationResult
+  >;
 }
 
 export function preview(body: unknown) {
-  const { postId, version, issues, destinations } = Preflight.parse(body);
+  const preflight = Preflight.parse(body);
   return {
-    postId,
-    version,
-    issues,
-    destinations: destinations.map((d) => ({
+    ...preflight,
+    destinations: preflight.destinations.map((d) => ({
       ...d,
       items: d.items.map((item) => ({ ...item, text: untrusted('post', item.text) })),
     })),
   };
-}
-
-const MediaImport = z.looseObject({
-  id: z.string(),
-  state: z.string(),
-  error: z.string().nullable(),
-  media: z
-    .looseObject({
-      id: z.string(),
-      kind: z.string(),
-      state: z.string(),
-      mime: z.string().nullable(),
-    })
-    .nullable(),
-});
-
-export function mediaImport(body: unknown) {
-  const { id, state, error, media } = MediaImport.parse(body);
-  const asset =
-    media === null
-      ? null
-      : { id: media.id, kind: media.kind, state: media.state, mime: media.mime };
-  return { id, state, error, media: asset };
 }
 
 export function asIs(body: unknown): unknown {

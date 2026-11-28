@@ -12,6 +12,7 @@ import { bindRoute } from '../request.ts';
 
 const BASE = 'https://kronaut.example.test';
 const PATH = '/v1/workspaces/ws_probe/same-host';
+const CHALLENGE = 'Bearer realm="probe"';
 
 const unusedDb: Database = {
   withTenant: () => Promise.reject(new Error('database not available in unit tests')),
@@ -43,7 +44,7 @@ const app = createHttpApp(
     authenticate,
     guardSession,
   },
-  [bindRoute(probe, async () => ({ body: {} }), { sameHost: true })],
+  [bindRoute(probe, async () => ({ body: {} }), { sameHost: true, challenge: CHALLENGE })],
 );
 
 async function status(url: string, headers: Record<string, string> = {}): Promise<number> {
@@ -63,5 +64,17 @@ describe('same-host routes', () => {
     expect(await status(`${BASE}${PATH}`, { host: 'KRONAUT.example.test', origin: BASE })).toBe(
       401,
     );
+  });
+
+  it("names the route's challenge on a 401 only", async () => {
+    const unauthenticated = await app.request(`${BASE}${PATH}`, { method: 'POST' });
+    expect(unauthenticated.headers.get('www-authenticate')).toBe(CHALLENGE);
+    const forbidden = await app.request(`${BASE}${PATH}`, {
+      method: 'POST',
+      headers: { origin: 'null' },
+    });
+    expect(forbidden.headers.get('www-authenticate')).toBeNull();
+    const metadata = await app.request(`${BASE}/.well-known/oauth-protected-resource${PATH}`);
+    expect(metadata.status).toBe(404);
   });
 });

@@ -1,7 +1,6 @@
-import type { Actor, Database } from '@kronaut/db';
+import type { Database } from '@kronaut/db';
 import { createHttpClient, type HttpClient } from '@kronaut/egress';
 import { type CronItem, type ParsedCronItem, parseCronItems, type TaskList } from 'graphile-worker';
-import { sql } from 'kysely';
 import type { Logger } from 'pino';
 import { refreshCapabilities } from './access/channels/capabilities-refresh.ts';
 import { purgeDisconnectedCredentials } from './access/channels/retention.ts';
@@ -17,8 +16,10 @@ import { recomputeTimes } from './flow/posts/schedule/tz-recompute.ts';
 import { type DeliveryDeps, deliverWebhooks } from './identity/webhooks/delivery/deliver.ts';
 import { WEBHOOK_EGRESS } from './identity/webhooks/delivery/egress.ts';
 import { purgeWebhookEvents } from './identity/webhooks/retention.ts';
+import { maintainAuditPartitions } from './infrastructure/jobs/audit-maintenance.ts';
 import { recordCronRun } from './infrastructure/jobs/cron-run.ts';
 import { CRON_TASKS, type CronTask, DAY_MS } from './infrastructure/jobs/cron-tasks.ts';
+import { purgeIdempotencyKeys } from './infrastructure/jobs/idempotency-retention.ts';
 import { JOBS } from './infrastructure/jobs/jobs.ts';
 import { pullAnalytics } from './records/analytics/pull.ts';
 import { type EmailDeps, emailNotifications } from './records/notifications/email.ts';
@@ -27,10 +28,6 @@ import { purgeShortLinks } from './records/short-links/gc.ts';
 import { flagAccount } from './steps/publish/incidents.ts';
 import { type RefreshDeps, refreshExpiring } from './steps/publish/refresh/refresh.ts';
 import { reapLeases, reconcile, type SweepDeps, sweepDue } from './steps/publish/sweeps.ts';
-
-const SYSTEM: Actor = { kind: 'system' };
-const AUDIT_BATCH = 10_000;
-const AUDIT_MAX_BATCHES = 100;
 
 const CRON_ITEMS: readonly CronItem[] = [
   {
@@ -74,6 +71,12 @@ const CRON_ITEMS: readonly CronItem[] = [
     identifier: CRON_TASKS.evergreenFill,
     match: '41 * * * *',
     options: { backfillPeriod: 0, maxAttempts: 1 },
+  },
+  {
+    task: CRON_TASKS.idempotencyRetention,
+    identifier: CRON_TASKS.idempotencyRetention,
+    match: '33 3 * * *',
+    options: { backfillPeriod: DAY_MS, maxAttempts: 3 },
   },
   {
     task: CRON_TASKS.instanceRetention,
@@ -161,40 +164,6 @@ export function cronTasks(email: boolean): CronTask[] {
   return registeredItems(email).map((item) => item.task as CronTask);
 }
 
-async function maintainAuditPartitions(db: Database, logger: Logger): Promise<string> {
-  const totals: Record<string, number> = {};
-  let drained = false;
-  for (let batch = 0; batch < AUDIT_MAX_BATCHES && !drained; batch++) {
-    const rows = await db.withActor(SYSTEM, async (trx) => {
-      const result = await sql<{ relation: string; affected: string }>`
-        select relation, affected from maintain_audit_partitions(${AUDIT_BATCH})
-      `.execute(trx);
-      return result.rows;
-    });
-    let pii = 0;
-    for (const row of rows) {
-      const affected = Number(row.affected);
-      if (row.relation === 'audit_events_default') totals[row.relation] = affected;
-      else totals[row.relation] = (totals[row.relation] ?? 0) + affected;
-      if (row.relation === 'audit_events.pii') pii = affected;
-    }
-    drained = pii < AUDIT_BATCH;
-  }
-  const stranded = totals.audit_events_default ?? 0;
-  if (stranded > 0) {
-    logger.error(
-      { task: CRON_TASKS.auditMaintenance, rows: stranded },
-      'audit_events_default holds rows; their months cannot get a partition',
-    );
-  }
-  if (!drained) {
-    throw new Error(
-      `audit PII nulling stopped at the ${AUDIT_MAX_BATCHES}-batch cap: ${JSON.stringify(totals)}`,
-    );
-  }
-  return JSON.stringify(totals);
-}
-
 export type CronDeps = SweepDeps &
   RefreshDeps &
   MediaGcDeps & { readonly webhookHttp?: HttpClient };
@@ -252,6 +221,11 @@ export function cronTaskList(
     },
     [CRON_TASKS.evergreenFill]: async () => {
       await recordCronRun(db, CRON_TASKS.evergreenFill, () => fillEvergreen(sweeps));
+    },
+    [CRON_TASKS.idempotencyRetention]: async () => {
+      await recordCronRun(db, CRON_TASKS.idempotencyRetention, () =>
+        purgeIdempotencyKeys({ db, logger }),
+      );
     },
     [CRON_TASKS.instanceRetention]: async () => {
       await recordCronRun(db, CRON_TASKS.instanceRetention, () => purgeInstanceRetention(db));

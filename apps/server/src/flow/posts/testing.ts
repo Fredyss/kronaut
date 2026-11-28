@@ -234,13 +234,14 @@ export async function startPosts(
 export interface GrantSpec {
   readonly scopes: readonly string[];
   readonly accounts?: readonly string[];
+  readonly sponsorUserId?: string;
 }
 
 async function insertGrantRow(trx: TenantDb, token: string, spec: GrantSpec): Promise<void> {
   const accounts = spec.accounts ?? [];
   const grantId = await insertTestGrant(trx, grantKey, token, {
     workspaceId,
-    sponsorUserId: ownerId,
+    sponsorUserId: spec.sponsorUserId ?? ownerId,
     scopes: spec.scopes,
     restricted: spec.accounts !== undefined,
   });
