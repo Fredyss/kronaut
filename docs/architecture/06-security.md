@@ -77,10 +77,32 @@
   - The revision is tainted and `agent_content` is sticky on the destination.
   - `CHECK agent_content → approval_required`.
   - A human saving a checkpoint does not launder agent content.
-- **MCP tools:** `get_brand_context`, `list_channels`, `list_account_groups`, `draft_campaign`, `update_draft`, `add_media_from_url`, `validate_draft`, `preview_post`, `request_approval`, `schedule_approved_post`, `get_publish_status`, `cancel_scheduled_post`, `get_post_metrics` (Phase 2).
-  - Mutating tools require an idempotency key.
-  - Third-party text is returned wrapped as `{untrusted:true, source, text}`.
+- **MCP tools (ADR-0072):** `get_brand_context`, `list_channels`, `list_account_groups`, `draft_campaign`, `update_draft`, `add_media_from_url`, `validate_draft`, `preview_post`, `request_approval`, `schedule_approved_post`, `get_publish_status`, `cancel_scheduled_post`, `get_post_metrics` (Phase 2).
+  - The ★ tools of ADR-0030 (`draft_campaign`, `update_draft`, `add_media_from_url`, `request_approval`, `schedule_approved_post`) require an `idempotencyKey` argument, else `idempotency_key_required`; `cancel_scheduled_post` takes one optionally and makes one up without it. MCP keys are kept 7 days, REST keys 24 h.
+  - Third-party text is returned wrapped as `{untrusted:true, source, text}`: `source: 'provider'` for channel names and setting labels, `source: 'post'` for post titles and text (a post can hold feed or imported text). Tools that return a post return its status, not its content; `preview_post` shows the text.
   - There are no approve, publish_now, connect, settings or grant tools.
+  - **Endpoint:** `POST /v1/workspaces/:workspaceId/mcp` (`mcp.endpoint`), Streamable HTTP without sessions and with JSON answers only (no SSE, no stdio); `GET`/`DELETE` get 405. API keys only: the same `kro_` bearer as REST, needing `posts:read`; a session cookie gets 401. Before the body is read or the key looked up, a request whose host (URL or `Host` header) isn't `KRONAUT_PUBLIC_URL`'s, or whose `Origin` is present and isn't its origin, gets 403. OAuth/DCR waits for Phase 3.
+  - **Tools are routes:** each tool runs one REST route from the registry in-process (`ctx.dispatch`, never over the network) with the caller's `Authorization`, so authentication, the key's rate-limit bucket, `authorize()` (scopes ∩ sponsor role ∩ resource access, approvals), idempotency and the response check are the route's. A tool's input is the route's path params plus `body` (the route's Zod body); its scope is the route's action. `tools/list` shows only the tools the key has the scope for, and calling a hidden one is an unknown tool. Each tool call takes one rate-limit token for the MCP request and one for each route it runs.
+
+    | Tool | Route | Scope |
+    |---|---|---|
+    | `get_brand_context` | `brands.list` | `brands:read` |
+    | `list_channels` | `channels.list` | `channels:read` |
+    | `list_account_groups` | `groups.list` | `groups:read` |
+    | `draft_campaign` | `posts.create` | `posts:draft` |
+    | `update_draft` | `posts.update` | `posts:draft` |
+    | `add_media_from_url` | `media.import_create`, then `media.import_get` | `media:write` |
+    | `validate_draft` | `posts.preflight` | `posts:read` |
+    | `preview_post` | `posts.preflight` | `posts:read` |
+    | `request_approval` | `posts.request_approval` | `posts:submit` |
+    | `schedule_approved_post` | `posts.schedule` | `posts:schedule` |
+    | `get_publish_status` | `posts.get` | `posts:read` |
+    | `cancel_scheduled_post` | `posts.cancel` | `posts:cancel` |
+    | `get_post_metrics` | `analytics.post_metrics` | `analytics:read` |
+
+  - **Limits:** a batch holds at most 20 messages and the body at most 1 MiB. A tool result over 512 KiB becomes the tool error `payload_too_large`, never a truncated result. A tool call that takes over 30 s answers `unavailable`; the route keeps running to completion and only its answer is dropped, so a ★ tool retried with the same key gets the stored result. MCP cancel notifications are ignored. No route behind a tool pages yet; a tool route with a query schema fails startup until passthrough exists.
+  - **Audit:** each tool call logs `mcp tool call` with the tool, the grant id, the outcome, the error code and the duration, never arguments or text. A route a tool runs writes its audit events with `surface = 'mcp'` and `tool` set.
+  - **Errors:** a route's problem details come back as a tool result with `isError: true` and the same `{error: {code, message, details, requestId}}`; a failure inside the MCP layer is a generic `internal`. Never a stack trace or a secret (`actors/mcp/mcp.db.test.ts` covers TEN-01, SEC-01 and INJ-02).
 - **Server-side AI:** has zero tools and returns Zod-structured drafts only. It never sees credentials, and LLM hosts are allowlisted in egress.
 
 ## Also

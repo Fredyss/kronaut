@@ -12,7 +12,7 @@ import { socketAddress } from '../rate-limit/client-ip.ts';
 import type { RateLimits } from '../rate-limit/limit.ts';
 import type { BoundRoute } from '../request.ts';
 import type { WebApp } from '../web.ts';
-import { type Kernel, pipeline } from './pipeline.ts';
+import { type Arrival, type Kernel, pipeline } from './pipeline.ts';
 import { routeRegistry } from './registry.ts';
 import { failure } from './respond.ts';
 import { createRouter } from './router.ts';
@@ -63,23 +63,27 @@ const REQUEST_ID = /^[A-Za-z0-9-]{8,64}$/;
 export function createHttpApp(deps: HttpDeps, routes: readonly BoundRoute[]): Hono {
   routeRegistry(routes);
   const base = new URL(deps.publicBaseUrl);
+  const serve = async (arrival: Arrival): Promise<Response> => {
+    try {
+      return await pipeline(kernel, arrival);
+    } catch (err) {
+      return failure(err, arrival.requestId, arrival.logger, kernel.hsts);
+    }
+  };
   const kernel: Kernel = {
     deps,
     route: createRouter(routes),
     origin: base.origin,
     hsts: base.protocol === 'https:',
     maxBody: deps.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES,
+    reenter: serve,
   };
 
-  const handle = async (request: Request, socket: string | null): Promise<Response> => {
+  const handle = (request: Request, socket: string | null): Promise<Response> => {
     const inbound = request.headers.get('x-request-id');
     const requestId = inbound !== null && REQUEST_ID.test(inbound) ? inbound : randomUUID();
     const logger = deps.logger.child({ requestId });
-    try {
-      return await pipeline(kernel, { request, requestId, logger, socket });
-    } catch (err) {
-      return failure(err, requestId, logger, kernel.hsts);
-    }
+    return serve({ request, requestId, logger, socket });
   };
 
   const app = new Hono();

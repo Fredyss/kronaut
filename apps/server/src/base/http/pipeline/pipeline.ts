@@ -1,9 +1,13 @@
 import type { Logger } from 'pino';
 import type { Temporal } from 'temporal-polyfill';
 import { checkAccess } from '../caller/access-check.ts';
+import { checkSameHost } from '../caller/same-host.ts';
 import { errorBody, HttpError } from '../errors.ts';
 import { readLimited } from '../input.ts';
 import { clientIp } from '../rate-limit/client-ip.ts';
+import type { Via } from '../request.ts';
+import type { Reentry } from './dispatch.ts';
+import { IDEMPOTENCY_RETENTION_MS } from './idempotency.ts';
 import type { HttpDeps } from './kernel.ts';
 import { headersFor, respond } from './respond.ts';
 import type { RouteMatch } from './router.ts';
@@ -15,6 +19,7 @@ export interface Kernel {
   readonly origin: string;
   readonly hsts: boolean;
   readonly maxBody: number;
+  readonly reenter: Reentry;
 }
 
 export interface Arrival {
@@ -22,6 +27,8 @@ export interface Arrival {
   readonly requestId: string;
   readonly logger: Logger;
   readonly socket: string | null;
+  readonly idempotencyRetentionMs?: number;
+  readonly via?: Via;
 }
 
 export interface Inbound {
@@ -31,6 +38,8 @@ export interface Inbound {
   readonly logger: Logger;
   readonly now: Temporal.Instant;
   readonly clientIp: string | null;
+  readonly idempotencyRetentionMs: number;
+  readonly via: Via | null;
 }
 
 const NOT_FOUND = 'Not found.';
@@ -61,6 +70,9 @@ export async function pipeline(kernel: Kernel, arrival: Arrival): Promise<Respon
     const page = serveWeb(kernel, request, requestId);
     if (page !== null) return page;
   }
+  if (matched.kind === 'found' && matched.bound.sameHost === true) {
+    checkSameHost(kernel.origin, request, url);
+  }
   const raised =
     matched.kind === 'found' ? deps.routeBodyLimits?.[matched.bound.route.id] : undefined;
   // A raised limit is buffered only for a caller the gate has fully allowed; an owed decision keeps the default
@@ -70,6 +82,15 @@ export async function pipeline(kernel: Kernel, arrival: Arrival): Promise<Respon
     return methodNotAllowed(kernel, matched.allow, requestId);
   }
   const ip = clientIp(request, arrival.socket, deps.trustCloudflareIp === true);
-  const inbound: Inbound = { request, url, requestId, logger, now, clientIp: ip };
+  const inbound: Inbound = {
+    request,
+    url,
+    requestId,
+    logger,
+    now,
+    clientIp: ip,
+    idempotencyRetentionMs: arrival.idempotencyRetentionMs ?? IDEMPOTENCY_RETENTION_MS,
+    via: arrival.via ?? null,
+  };
   return await serveRoute(kernel, { ...inbound, matched, raw, raised });
 }

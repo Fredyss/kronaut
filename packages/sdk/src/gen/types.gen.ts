@@ -1867,6 +1867,37 @@ export type LinkShortenerConnectResponses = {
 
 export type LinkShortenerConnectResponse = LinkShortenerConnectResponses[keyof LinkShortenerConnectResponses];
 
+export type McpEndpointData = {
+    body: {
+        jsonrpc: '2.0';
+        [key: string]: unknown;
+    } | Array<{
+        jsonrpc: '2.0';
+        [key: string]: unknown;
+    }>;
+    path: {
+        workspaceId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/mcp';
+};
+
+export type McpEndpointErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type McpEndpointError = McpEndpointErrors[keyof McpEndpointErrors];
+
+export type McpEndpointResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type MediaListData = {
     body?: never;
     path: {
@@ -4097,6 +4128,52 @@ export type AnalyticsPostMetricsResponses = {
 };
 
 export type AnalyticsPostMetricsResponse = AnalyticsPostMetricsResponses[keyof AnalyticsPostMetricsResponses];
+
+export type PostsPreflightData = {
+    body?: never;
+    path: {
+        workspaceId: string;
+        postId: string;
+    };
+    query?: never;
+    url: '/v1/workspaces/{workspaceId}/posts/{postId}/preflight';
+};
+
+export type PostsPreflightErrors = {
+    /**
+     * Error
+     */
+    default: ApiError;
+};
+
+export type PostsPreflightError = PostsPreflightErrors[keyof PostsPreflightErrors];
+
+export type PostsPreflightResponses = {
+    /**
+     * OK
+     */
+    200: {
+        destinations: Array<{
+            accountId: string;
+            id: string;
+            items: Array<{
+                mediaCount: number;
+                role: 'main' | 'thread' | 'comment';
+                text: string;
+            }>;
+            provider: string;
+            publishType: string;
+        }>;
+        issues: Array<{
+            code: string;
+            path: string;
+        }>;
+        postId: string;
+        version: number;
+    };
+};
+
+export type PostsPreflightResponse = PostsPreflightResponses[keyof PostsPreflightResponses];
 
 export type PostsRescheduleData = {
     body: {

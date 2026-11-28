@@ -18,6 +18,11 @@ export interface IdempotencySlot {
   readonly key: string;
 }
 
+export interface Retention {
+  readonly now: Temporal.Instant;
+  readonly retentionMs: number;
+}
+
 export type Reservation =
   | { readonly kind: 'reserved' }
   | { readonly kind: 'replay'; readonly status: number; readonly body: unknown };
@@ -55,7 +60,7 @@ export async function reserveIdempotency(
   db: TenantDb,
   slot: IdempotencySlot,
   hash: Buffer,
-  now: Temporal.Instant,
+  { now, retentionMs }: Retention,
 ): Promise<Reservation> {
   await sql`
     delete from idempotency_keys
@@ -69,7 +74,7 @@ export async function reserveIdempotency(
       key: slot.key,
       request_hash: hash,
       state: 'in_progress',
-      expires_at: now.add({ milliseconds: IDEMPOTENCY_RETENTION_MS }).toString(),
+      expires_at: now.add({ milliseconds: retentionMs }).toString(),
     })
     .onConflict((oc) => oc.doNothing())
     .returning('key')

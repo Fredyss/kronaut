@@ -46,7 +46,7 @@ export async function auditQueueUpdate(
     .insertInto('audit_events')
     .values({
       workspace_id: ref.workspaceId,
-      ...(await auditActor(trx, ref.workspaceId, ctx.principal)),
+      ...(await auditActor(trx, ref.workspaceId, ctx)),
       action: 'channel.queue_updated',
       resource_kind: 'social_account',
       resource_id: ref.accountId,

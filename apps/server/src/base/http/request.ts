@@ -23,6 +23,26 @@ export interface CookieOptions {
   readonly maxAgeSeconds: number;
 }
 
+export interface Via {
+  readonly surface: 'mcp';
+  readonly tool: string;
+}
+
+export interface RouteCall {
+  readonly route: Route;
+  readonly params: Readonly<Record<string, string>>;
+  readonly body?: unknown;
+  readonly idempotencyKey?: string;
+  readonly idempotencyRetentionMs?: number;
+  readonly via?: Via;
+}
+
+export interface RouteReply {
+  readonly status: number;
+  readonly body: unknown;
+  readonly replayed: boolean;
+}
+
 export interface RequestContext {
   readonly requestId: string;
   readonly principal: Principal | null;
@@ -31,6 +51,7 @@ export interface RequestContext {
   readonly logger: Logger;
   readonly ipPrefix: string | null;
   readonly acceptLanguage: string | null;
+  readonly via: Via | null;
   tenant<T>(fn: (db: TenantDb) => Promise<T>): Promise<T>;
   authorize(
     action: Action,
@@ -40,6 +61,8 @@ export interface RequestContext {
   cookie(name: string): string | undefined;
   setCookie(name: string, value: string, options: CookieOptions): void;
   clearCookie(name: string): void;
+  header(name: string): string | null;
+  dispatch(call: RouteCall): Promise<RouteReply>;
 }
 
 export interface RouteHeaders {
@@ -61,8 +84,17 @@ export type RouteHandler<R extends Route> = (
 export interface BoundRoute<R extends Route = Route> {
   readonly route: R;
   readonly handler: RouteHandler<R>;
+  readonly sameHost?: boolean;
 }
 
-export function bindRoute<R extends Route>(route: R, handler: RouteHandler<R>): BoundRoute<R> {
-  return { route, handler };
+export interface BindOptions {
+  readonly sameHost?: boolean;
+}
+
+export function bindRoute<R extends Route>(
+  route: R,
+  handler: RouteHandler<R>,
+  options: BindOptions = {},
+): BoundRoute<R> {
+  return options.sameHost === true ? { route, handler, sameHost: true } : { route, handler };
 }

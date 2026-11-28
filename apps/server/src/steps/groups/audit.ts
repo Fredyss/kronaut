@@ -24,7 +24,7 @@ export async function auditGroup(
     .insertInto('audit_events')
     .values({
       workspace_id: ref.workspaceId,
-      ...(await auditActor(trx, ref.workspaceId, ctx.principal)),
+      ...(await auditActor(trx, ref.workspaceId, ctx)),
       action,
       resource_kind: 'account_group',
       resource_id: ref.groupId,

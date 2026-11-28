@@ -7,7 +7,7 @@ import { HttpError } from '../../../base/http/errors.ts';
 import { unprocessable } from '../../../base/http/issues.ts';
 import type { ProviderRegistry } from '../../../base/providers/providers.ts';
 import { queueSchedules } from '../../../steps/queue/slots.ts';
-import { type Frozen, freeze } from './freeze.ts';
+import { type FreezeTarget, type Frozen, freeze } from './freeze.ts';
 
 const PAST_GRACE_SECONDS = 60;
 const DRAFT_ONLY: ReadonlySet<string> = new Set(['draft']);
@@ -112,6 +112,21 @@ export function draftTargets(
   return targets;
 }
 
+export function freezeTarget({ row, index }: Target): FreezeTarget {
+  return {
+    id: row.id,
+    index,
+    socialAccountId: row.social_account_id,
+    provider: row.provider,
+    publishType: row.publish_type,
+    deliveryMode: row.delivery_mode,
+    settings: row.settings,
+    variantId: row.variant_id,
+    skipSignature: row.skip_signature,
+    held: row.state === 'draft' ? null : { signature: row.frozen_signature },
+  };
+}
+
 export async function freezeTargets(
   trx: TenantDb,
   scope: FreezeScope,
@@ -122,18 +137,7 @@ export async function freezeTargets(
     workspaceId: scope.workspaceId,
     postId: scope.locked.id,
     postVersion: version,
-    targets: targets.map(({ row, index }) => ({
-      id: row.id,
-      index,
-      socialAccountId: row.social_account_id,
-      provider: row.provider,
-      publishType: row.publish_type,
-      deliveryMode: row.delivery_mode,
-      settings: row.settings,
-      variantId: row.variant_id,
-      skipSignature: row.skip_signature,
-      held: row.state === 'draft' ? null : { signature: row.frozen_signature },
-    })),
+    targets: targets.map(freezeTarget),
     acknowledged: new Set(scope.body.acknowledgedCodes ?? []),
     reason: scope.reason ?? 'schedule',
   });

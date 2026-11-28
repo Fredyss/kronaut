@@ -32,7 +32,7 @@ export interface ShortenerChange {
   readonly apiKey?: string | undefined;
 }
 
-type Ctx = Pick<RequestContext, 'tenant' | 'principal' | 'requestId'>;
+type Ctx = Pick<RequestContext, 'tenant' | 'principal' | 'requestId' | 'via'>;
 
 const NONE = () => new HttpError('not_found', 'The workspace has no link shortener.');
 
@@ -61,7 +61,7 @@ async function audit(
     readonly args: Readonly<Record<string, string | boolean>>;
   },
 ) {
-  const actor = await auditActor(trx, row.workspaceId, ctx.principal);
+  const actor = await auditActor(trx, row.workspaceId, ctx);
   await trx
     .insertInto('audit_events')
     .values({

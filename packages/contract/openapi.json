@@ -5757,6 +5757,97 @@
         ]
       }
     },
+    "/v1/workspaces/{workspaceId}/mcp": {
+      "post": {
+        "description": "Streamable HTTP without sessions; every answer is JSON. Only an API key with posts:read signs in. tools/list shows the tools the key has the scope for, and each tool runs its REST route with the same key, so scopes, resource access, approvals, rate limits and idempotency apply as on REST; MCP idempotency keys last 7 days. A request whose Host or Origin is not this server is refused with 403 before authentication. Each tool result is capped at 512 KiB and each tool call at 30 s.",
+        "operationId": "mcp.endpoint",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {},
+                    "properties": {
+                      "jsonrpc": {
+                        "const": "2.0",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "jsonrpc"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "items": {
+                      "additionalProperties": {},
+                      "properties": {
+                        "jsonrpc": {
+                          "const": "2.0",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "jsonrpc"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 20,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Model Context Protocol endpoint for agents",
+        "tags": [
+          "mcp"
+        ],
+        "x-kronaut-action": "posts:read",
+        "x-kronaut-auth": [
+          "grant"
+        ]
+      }
+    },
     "/v1/workspaces/{workspaceId}/media": {
       "get": {
         "description": "The workspace's library assets that are ready or processing, not deleted and not a duplicate, newest first, optionally of one kind (image or video). limit 1–100, default 50; pass nextCursor as cursor for the next page. usageCount is the number of posts that use the asset; previewUrl is a signed URL of the image, or of a video's poster, valid for an hour.",
@@ -16252,6 +16343,163 @@
           "analytics"
         ],
         "x-kronaut-action": "analytics:read",
+        "x-kronaut-auth": [
+          "session",
+          "grant"
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/posts/{postId}/preflight": {
+      "get": {
+        "description": "Runs the preflight that requesting approval and scheduling run, on every draft destination, and writes nothing. issues has the paths and codes of a 422 preflight_failed; empty means the draft passes. Each destination shows its text as it would be sent, with the channel's signature and before links are shortened. When a destination's provider is unavailable or its settings are invalid, only those issues come back and destinations is empty. 409 when the post has no draft destination.",
+        "operationId": "posts.preflight",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "postId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "destinations": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "accountId": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "items": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "mediaCount": {
+                                  "maximum": 9007199254740991,
+                                  "minimum": 0,
+                                  "type": "integer"
+                                },
+                                "role": {
+                                  "enum": [
+                                    "main",
+                                    "thread",
+                                    "comment"
+                                  ],
+                                  "type": "string"
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "role",
+                                "text",
+                                "mediaCount"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "publishType": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "accountId",
+                          "provider",
+                          "publishType",
+                          "items"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "issues": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "code"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "postId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "postId",
+                    "version",
+                    "issues",
+                    "destinations"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "grant": []
+          }
+        ],
+        "summary": "Check a post's draft destinations without freezing them",
+        "tags": [
+          "posts"
+        ],
+        "x-kronaut-action": "posts:read",
         "x-kronaut-auth": [
           "session",
           "grant"

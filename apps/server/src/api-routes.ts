@@ -4,6 +4,7 @@ import type { MediaStore } from '@kronaut/media';
 import { channelRoutes } from './access/channels/routes.ts';
 import { destinationRoutes } from './actors/destinations/routes.ts';
 import { evergreenRoutes } from './actors/evergreen/routes.ts';
+import { mcpRoutes } from './actors/mcp/routes.ts';
 import type { MediaSigner } from './actors/media/access.ts';
 import { importRoutes } from './actors/media/import/import-routes.ts';
 import { libraryRoutes } from './actors/media/library/library-routes.ts';
@@ -73,7 +74,7 @@ export function apiRoutes({
   feedHttp,
   shortenerHttp,
 }: ApiRouteDeps): BoundRoute[] {
-  return [
+  const routes = [
     ...systemRoutes(http),
     ...authRoutes(http),
     ...reauthRoutes(http),
@@ -117,4 +118,6 @@ export function apiRoutes({
       publicBaseUrl: http.publicBaseUrl,
     }),
   ];
+  const mcp = mcpRoutes({ routes: routes.map((bound) => bound.route) });
+  return [...routes, ...mcp];
 }
